@@ -7,7 +7,7 @@ services:
       context: .
       dockerfile: api/VinPlayPortal/Dockerfile
     ports:
-      - "127.0.0.1:8081:8081"
+      - "0.0.0.0:8081:8081"
     restart: always
     network_mode: host
     volumes:
@@ -18,7 +18,7 @@ services:
       context: .
       dockerfile: api/VinPlayBackend/Dockerfile
     ports:
-      - "127.0.0.1:8082:8082"
+      - "0.0.0.0:8082:8082"
     restart: always
     network_mode: host
     volumes:
@@ -43,7 +43,7 @@ services:
       context: .
       dockerfile: api/wspay/Dockerfile
     ports:
-      - "127.0.0.1:18081:18081"
+      - "0.0.0.0:18081:18081"
     restart: always
     network_mode: host
     volumes:
@@ -56,7 +56,7 @@ services:
       context: .
       dockerfile: game/Minigame/Dockerfile
     ports:
-      - "127.0.0.1:1644:1644"
+      - "0.0.0.0:1644:1644"
     restart: always
     network_mode: host
     depends_on:
@@ -72,7 +72,7 @@ services:
       context: .
       dockerfile: game/slot/Dockerfile
     ports:
-      - "127.0.0.1:1844:1844"
+      - "0.0.0.0:1844:1844"
     restart: always
     network_mode: host
     volumes:
