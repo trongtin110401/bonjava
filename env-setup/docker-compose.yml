@@ -23,7 +23,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: Linh742@ASdfH
       MONGO_INITDB_DATABASE: win123club
     ports:
-      - '127.0.0.1:27017-27019:27017-27019'
+      - '0.0.0.0:27017-27019:27017-27019'
 #    entrypoint: [ "mongod", "--replSet", "rsyou88", "--bind_ip_all",  "--keyFile", "/data/replica.key" ]
     command:
       - '--auth'
