@@ -1,0 +1,22 @@
+[0;1;32m●[0m nginx.service - A high performance web server and a reverse proxy server
+     Loaded: loaded (/lib/systemd/system/nginx.service; enabled; vendor preset: enabled)
+     Active: [0;1;32mactive (running)[0m since Thu 2021-07-29 21:49:14 +07; 20min ago
+       Docs: man:nginx(8)
+    Process: 3182259 ExecStartPre=/usr/sbin/nginx -t -q -g daemon on; master_process on; (code=exited, status=0/SUCCESS)
+    Process: 3182268 ExecStart=/usr/sbin/nginx -g daemon on; master_process on; (code=exited, status=0/SUCCESS)
+   Main PID: 3182269 (nginx)
+      Tasks: 9 (limit: 37591)
+     Memory: 9.8M
+     CGroup: /system.slice/nginx.service
+             ├─3182269 nginx: master process /usr/sbin/nginx -g daemon on; master_process on;
+             ├─3182270 nginx: worker process
+             ├─3182271 nginx: worker process
+             ├─3182272 nginx: worker process
+             ├─3182273 nginx: worker process
+             ├─3182274 nginx: worker process
+             ├─3182275 nginx: worker process
+             ├─3182276 nginx: worker process
+             └─3182277 nginx: worker process
+
+Jul 29 21:49:14 vps-71e4d733 systemd[1]: Starting A high performance web server and a reverse proxy server...
+Jul 29 21:49:14 vps-71e4d733 systemd[1]: Started A high performance web server and a reverse proxy server.

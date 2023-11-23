@@ -1,0 +1,41 @@
+package com.vinplay.api.entities;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.python.parser.ast.Str;
+
+public class MomoCallBackResponse {
+
+    int errorCode;
+    String errorDescription;
+
+    public MomoCallBackResponse(int errorCode, String errorDescription) {
+        this.errorCode = errorCode;
+        this.errorDescription = errorDescription;
+    }
+
+    public int getErrorCode() {
+        return errorCode;
+    }
+
+    public void setErrorCode(int errorCode) {
+        this.errorCode = errorCode;
+    }
+
+    public String getErrorDescription() {
+        return errorDescription;
+    }
+
+    public void setErrorDescription(String errorDescription) {
+        this.errorDescription = errorDescription;
+    }
+
+    public String toJson() {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.writeValueAsString((Object) this);
+        } catch (JsonProcessingException mapper) {
+            return "{\"errorCode\":500,\"errorDescription\":\"error\"}";
+        }
+    }
+}

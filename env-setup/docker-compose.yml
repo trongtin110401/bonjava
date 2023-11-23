@@ -1,0 +1,81 @@
+version: '3.3'
+services:
+  mysql:
+    image: mysql:5.7
+    restart: always
+    container_name: game-db
+    environment:
+      MYSQL_PASSWORD: 'AVeAQbajvRtXQ9Twk7AjMRgy73Mq@CD6S'
+      MYSQL_ROOT_PASSWORD: 'AVeAQbajvRtXQ9Twk7AjMRgy73Mq@CD6S'
+    ports:
+      - '3306:3306'
+    volumes:
+      - game-db:/var/lib/mysql
+      - ./config/mysql/conf.d:/etc/mysql/conf.d:ro
+      - ./config/mysql/db:/docker-entrypoint-initdb.d/:ro
+
+  mongo:
+    image: mongo:4.0.16-xenial
+    restart: always
+    container_name: game-mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: Linh742@ASdfH
+      MONGO_INITDB_DATABASE: win123club
+    ports:
+      - '127.0.0.1:27017-27019:27017-27019'
+#    entrypoint: [ "mongod", "--replSet", "rsyou88", "--bind_ip_all",  "--keyFile", "/data/replica.key" ]
+    command:
+      - '--auth'
+      - '-f'
+      - '/configFolder/mongod.conf'
+    volumes:
+      - ./config/mongod:/configFolder
+      - game-mongo:/data/db
+      - $PWD/replset88.key:/data/replica.key
+
+    # hazelcast imdg
+  hazelcast:
+    image: hazelcast/hazelcast:3.12.5
+    restart: always
+    container_name: game-hazelcast
+    volumes:
+      - ./config/hazelcast:/configFolder
+      - "/etc/localtime:/etc/localtime:ro"
+    environment:
+      - JAVA_OPTS=-Dhazelcast.config=/configFolder/hazelcast.xml -Dgroup.name=dev -Dgroup.password=Linh742@ASdfH
+    ports:
+      - "0.0.0.0:5701:5701"
+  ## manage center
+  
+
+    # rabbitmq
+  rabbitmq:
+    image: 'rabbitmq:3.8.3-management'
+    restart: always
+    container_name: game-rabbitmq
+    environment:
+      - "RABBITMQ_DEFAULT_USER=demo"
+      - "RABBITMQ_DEFAULT_PASS=Linh742@ASdfH"
+    ports:
+        - "127.0.0.1:5672:5672"
+        - "127.0.0.1:15672:15672"
+  redis:
+    image: bitnami/redis:latest
+    ports:
+      - "127.0.0.1:6379:6379"
+    expose:
+      - 6379
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    restart: always
+
+# Names our volume
+volumes:
+  game-db:
+    external:
+      name: game-db
+  game-mongo:
+    external:
+      name: mongo-db
+  hazelcast-vl:

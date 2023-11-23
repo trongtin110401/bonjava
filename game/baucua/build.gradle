@@ -1,0 +1,33 @@
+plugins {
+    id 'java'
+}
+
+group 'com.vingame'
+version '1.0-SNAPSHOT'
+sourceCompatibility = 1.8
+//buildDir = "../../../dist/build"
+repositories {
+    mavenCentral()
+}
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    compile project(':VinPlayUserCore')
+    compile project(':VinPlayDAL')
+    compile project(':VinPlayCardLib')
+    compile project(':BitzeroAll')
+    compile project(':CardCoreLib')
+    compile fileTree(include: ['*.jar'], dir: '../../libs')
+}
+task copyJar(type: Copy) {
+    from configurations.compile {
+        include  'VinPlayUserCore*.jar',  "BitzeroAll*.jar",  "CardCoreLib*.jar", "VbeeCommon*.jar", "VinPlayUserCore*.jar","VinPlayDAL*.jar"
+    }
+    into 'libs/'
+}
+
+build.dependsOn copyJar

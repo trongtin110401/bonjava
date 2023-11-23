@@ -1,0 +1,2 @@
+tạo data loto
+sudo rm -r -f fist

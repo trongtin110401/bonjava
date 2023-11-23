@@ -1,0 +1,28 @@
+plugins {
+    id 'java'
+}
+
+group 'com.vingame'
+version '1.0'
+
+sourceCompatibility = 1.8
+//buildDir = "../../../dist/build"
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile project(':VinPlayUserCore')
+    compile project(':VinPlayCardLib')
+    compile project(':VinPlayDAL')
+    compile fileTree(include: ['*.jar'], dir: '../../libs')
+}
+task copyJar(type: Copy) {
+    from configurations.compile {
+        include 'VinPlayUserCore*.jar', 'VinPlayCardLib*.jar', "VinPlayDAL*.jar"
+    }
+    into 'libs/'
+}
+
+build.dependsOn copyJar

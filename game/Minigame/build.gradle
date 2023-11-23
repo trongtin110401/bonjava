@@ -1,0 +1,29 @@
+plugins {
+    id 'java'
+}
+
+group 'com.vingame'
+version ''
+
+sourceCompatibility = 1.8
+//buildDir = "../../../dist/build"
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile project(':VinPlayUserCore')
+    compile project(':VinPlayDAL')
+    compile project(':VinPlayCardLib')
+    compile project(':BitZeroMinigame')
+    compile fileTree(include: ['*.jar'], dir: '../../libs', exclude: 'bz-allinone.jar')
+}
+task copyJar(type: Copy) {
+    from configurations.compile {
+        include  'VinPlayUserCore*.jar',  "VinPlayDAL*.jar",  "VinPlayCardLib*.jar",  "BitZeroMinigame*.jar"
+    }
+    into 'libs/'
+}
+
+build.dependsOn copyJar
