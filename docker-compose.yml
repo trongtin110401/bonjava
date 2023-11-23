@@ -25,58 +25,58 @@ services:
       - ./game-logs:/app/logs
 
 
-  gameplatform_vbee_api:
-    image: 'bancodegame/gameplatform_vbee_api:v1.1'
-    build:
-      context: .
-      dockerfile: api/vbee/Dockerfile
-    restart: always
-    network_mode: host
-    volumes:
-      - ./game-logs:/app/logs
-
-
-
-  gameplatform_wspay_api:
-    image: 'bancodegame/gameplatform_wspay_api:v1.1'
-    build:
-      context: .
-      dockerfile: api/wspay/Dockerfile
-    ports:
-      - '18081:18081'
-    restart: always
-    network_mode: host
-    volumes:
-      - ./game-logs:/app/logs
-
-
-  gameplatform_wminigame:
-    image: 'bancodegame/gameplatform_wminigame:v1.1'
-    build:
-      context: .
-      dockerfile: game/Minigame/Dockerfile
-    ports:
-      - '1644:1644'
-    restart: always
-    network_mode: host
-    depends_on:
-      - gameplatform_vbee_api
-
-    volumes:
-      - ./game-logs:/app/logs
-
-
-  gameplatform_wslot:
-    image: 'bancodegame/gameplatform_wslot:v1.1'
-    build:
-      context: .
-      dockerfile: game/slot/Dockerfile
-    ports:
-      - '1844:1844'
-    restart: always
-    network_mode: host
-    volumes:
-      - ./game-logs:/app/logs
-    depends_on:
-      - gameplatform_vbee_api
-      - gameplatform_wminigame
+#  gameplatform_vbee_api:
+#    image: 'bancodegame/gameplatform_vbee_api:v1.1'
+#    build:
+#      context: .
+#      dockerfile: api/vbee/Dockerfile
+#    restart: always
+#    network_mode: host
+#    volumes:
+#      - ./game-logs:/app/logs
+#
+#
+#
+#  gameplatform_wspay_api:
+#    image: 'bancodegame/gameplatform_wspay_api:v1.1'
+#    build:
+#      context: .
+#      dockerfile: api/wspay/Dockerfile
+#    ports:
+#      - '18081:18081'
+#    restart: always
+#    network_mode: host
+#    volumes:
+#      - ./game-logs:/app/logs
+#
+#
+#  gameplatform_wminigame:
+#    image: 'bancodegame/gameplatform_wminigame:v1.1'
+#    build:
+#      context: .
+#      dockerfile: game/Minigame/Dockerfile
+#    ports:
+#      - '1644:1644'
+#    restart: always
+#    network_mode: host
+#    depends_on:
+#      - gameplatform_vbee_api
+#
+#    volumes:
+#      - ./game-logs:/app/logs
+#
+#
+#  gameplatform_wslot:
+#    image: 'bancodegame/gameplatform_wslot:v1.1'
+#    build:
+#      context: .
+#      dockerfile: game/slot/Dockerfile
+#    ports:
+#      - '1844:1844'
+#    restart: always
+#    network_mode: host
+#    volumes:
+#      - ./game-logs:/app/logs
+#    depends_on:
+#      - gameplatform_vbee_api
+#      - gameplatform_wminigame
