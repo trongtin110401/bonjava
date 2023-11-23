@@ -10,7 +10,7 @@ services:
     ports:
       - '3306:3306'
     volumes:
-      - game-db:/var/lib/mysql
+      - /home/data/mysql:/var/lib/mysql
       - ./config/mysql/conf.d:/etc/mysql/conf.d:ro
       - ./config/mysql/db:/docker-entrypoint-initdb.d/:ro
 
@@ -31,7 +31,7 @@ services:
       - '/configFolder/mongod.conf'
     volumes:
       - ./config/mongod:/configFolder
-      - game-mongo:/data/db
+      - /home/data/mongo:/data/db
       - $PWD/replset88.key:/data/replica.key
 
     # hazelcast imdg
@@ -72,10 +72,10 @@ services:
 
 # Names our volume
 volumes:
-  game-db:
-    external:
-      name: game-db
-  game-mongo:
-    external:
-      name: mongo-db
+#  game-db:
+#    external:
+#      name: game-db
+#  game-mongo:
+#    external:
+#      name: mongo-db
   hazelcast-vl:
