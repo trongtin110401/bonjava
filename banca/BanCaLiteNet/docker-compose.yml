@@ -1,6 +1,6 @@
 services:
   fish:
-    image: bancodegame/fish:${TAG}
+    image: bancodegame/fish
     ports:
       - '2083:2083'
     build:
