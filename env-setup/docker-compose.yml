@@ -45,7 +45,7 @@ services:
     environment:
       - JAVA_OPTS=-Dhazelcast.config=/configFolder/hazelcast.xml -Dgroup.name=dev -Dgroup.password=Linh742@ASdfH
     ports:
-      - "0.0.0.0:5701:5701"
+      - '5701:5701'
   ## manage center
   
 
@@ -58,12 +58,12 @@ services:
       - "RABBITMQ_DEFAULT_USER=demo"
       - "RABBITMQ_DEFAULT_PASS=Linh742@ASdfH"
     ports:
-        - "127.0.0.1:5672:5672"
-        - "127.0.0.1:15672:15672"
+        - '5672:5672'
+        - '15672:15672'
   redis:
     image: bitnami/redis:latest
     ports:
-      - "127.0.0.1:6379:6379"
+      - '6379:6379'
     expose:
       - 6379
     environment:
