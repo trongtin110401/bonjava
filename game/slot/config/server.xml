@@ -1,13 +1,13 @@
 <serverSettings>
   <socketAddresses>
-    <socket address="127.0.0.1" port="1843" type="TCP"/>
+    <socket address="0.0.0.0" port="1843" type="TCP"/>
   </socketAddresses>
   <ipFilter>
     <addressBlackList>
       <string>100.101.102.103</string>
     </addressBlackList>
     <addressWhiteList>
-      <string>127.0.0.1</string>
+      <string>0.0.0.0</string>
     </addressWhiteList>
     <maxConnectionsPerAddress>2000000000</maxConnectionsPerAddress>
   </ipFilter>
@@ -65,7 +65,7 @@
   </admin>
   <webSocket>
     <isActive>true</isActive>
-    <bindAddress>127.0.0.1</bindAddress>
+    <bindAddress>0.0.0.0</bindAddress>
     <tcpPort>1844</tcpPort>
     <sslPort>1845</sslPort>
     <validDomains/>
