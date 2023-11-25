@@ -1,8 +1,8 @@
 services:
   fish:
-    image: bancodegame/fish:${TAG}
+    image: bancodegame/fish
     ports:
-      - "127.0.0.1:2083:2083"
+      - '2083:2083'
     build:
       context: .
       dockerfile: Dockerfile

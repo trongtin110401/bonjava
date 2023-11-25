@@ -229,12 +229,12 @@ main(){
   runSlot
  # clearSource
   runTienLen
-  runXiDach
-  runBacay
+#  runXiDach
+#  runBacay
   runXocDia
-  runBaiCao
+#  runBaiCao
   runSam
-  runBinh
+#  runBinh
   runPoker
   runBauCuaTo2
 }
