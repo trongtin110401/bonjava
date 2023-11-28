@@ -10,7 +10,6 @@ import com.vinplay.dal.common.BroadCastUserMoney;
 import com.vinplay.dichvuthe.dao.RechargeDao;
 import com.vinplay.dichvuthe.dao.impl.RechargeDaoImpl;
 import com.vinplay.dichvuthe.entities.DepositBankModel;
-import com.vinplay.dichvuthe.entities.DepositOnePayModel;
 import com.vinplay.dichvuthe.utils.DvtConst;
 import com.vinplay.lognaprut.HistoryTransConst;
 import com.vinplay.lognaprut.HistoryTransDao;
@@ -29,12 +28,16 @@ import com.vinplay.vbee.common.statics.Consts;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 // todo : approve tiền nạp qua ngân hàng cho user
 public class ApproveDepositBankProcessor implements BaseProcessor<HttpServletRequest, String> {
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    ;
 
     @Override
     public String execute(Param<HttpServletRequest> param) {
@@ -53,6 +56,7 @@ public class ApproveDepositBankProcessor implements BaseProcessor<HttpServletReq
                 long tien = Long.parseLong(tienx);
                 long tien_final = 0;
                 if (transId.isEmpty() || typeStr.isEmpty()) {
+                    logger.error("transId or typeStr is empty");
                     return response.toJson();
                 }
                 int type = Integer.parseInt(typeStr);
@@ -61,17 +65,21 @@ public class ApproveDepositBankProcessor implements BaseProcessor<HttpServletReq
                 // find transaction in db
                 DepositBankModel trans = dao.FindDepositBankById(transId);
                 if (trans == null) {
+                    logger.error("trans is null");
                     return response.toJson();
                 }
                 if (trans.Status == DvtConst.STATUS_APPROVE) {
+                    logger.error("Status = APPROVE");
                     return response.toJson();
                 }
                 // update trans in db
                 int status = type == 100 ? DvtConst.STATUS_APPROVE : DvtConst.STATUS_REJECT;
                 boolean resultUpdateTrans = dao.UpdateDepositBankManualStatus(transId, status, trans.Description, userApprove);
+                logger.debug(this.getClass().getName() + "resultUpdateTrans: " + resultUpdateTrans);
                 if (!resultUpdateTrans) {
                     return response.toJson();
                 }
+                logger.error(this.getClass().getName() + " Type :" + type);
                 if (type == 1) {
                     BroadCastUserMoney.pushBroadTime2(trans.Nickname);
                     response.setSuccess(true);
@@ -80,10 +88,11 @@ public class ApproveDepositBankProcessor implements BaseProcessor<HttpServletReq
                     model.setId(transId);
                     model.setStatus(2);
                     model.setType("DEPOSIT_BANK");
-                    updateCodepay(trans.Nickname, true, trans.getDescription(),trans.BankBrandName);
+                    updateCodepay(trans.Nickname, true, trans.getDescription(), trans.BankBrandName);
                     try {
                         SendToWS.sendBEExcEventaction(model);
                     } catch (IOException e) {
+                        logger.error(e.getMessage());
                         e.printStackTrace();
                     }
                     return response.toJson();
@@ -102,6 +111,7 @@ public class ApproveDepositBankProcessor implements BaseProcessor<HttpServletReq
                         response = service.updateMoneyFromAdmin(trans.Nickname, tien_final, "vin", Consts.RECHARGE_BY_BANK, "Deposit bank", "Deposit bank", totalFee);
 
                     } catch (Exception e) {
+                        logger.error(e.getMessage());
                         e.printStackTrace();
                     }
                     HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
@@ -117,6 +127,7 @@ public class ApproveDepositBankProcessor implements BaseProcessor<HttpServletReq
                     try {
                         SendToWS.sendBEExcEventaction(model);
                     } catch (IOException e) {
+                        logger.error(e.getMessage());
                         e.printStackTrace();
                     }
                 }
@@ -155,6 +166,7 @@ public class ApproveDepositBankProcessor implements BaseProcessor<HttpServletReq
                 //
 
             } catch (Exception e) {
+                logger.error(e.getMessage());
                 return response.toJson();
             }
 
@@ -213,24 +225,24 @@ public class ApproveDepositBankProcessor implements BaseProcessor<HttpServletReq
             MongoDatabase db = MongoDBConnectionFactory.getDB();
             MongoCollection col = db.getCollection("History_User_transaction");
             Document doc = new Document();
-            doc.append("trangthai","Thành công");
+            doc.append("trangthai", "Thành công");
             col.updateOne((Bson) new Document("transId", TrainID), (Bson) new Document("$set", (Object) doc));
             HistoryTransModel his = elk.GetHistorybyTransID(TrainID);
             his.setTrangthai("Thành công");
-            elk.InsertHistoryUserTransOK(his, Long.parseLong(his.getId()),his.getCreateAt());
+            elk.InsertHistoryUserTransOK(his, Long.parseLong(his.getId()), his.getCreateAt());
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
 
-    public void updateCodepay(String nickname, boolean use, String codepay, String bankname){
+    public void updateCodepay(String nickname, boolean use, String codepay, String bankname) {
         try {
             int check = 0;
-            if(use == true){
+            if (use == true) {
                 check = 1;
-            }else{
+            } else {
                 check = 0;
             }
             MongoDatabase db = MongoDBConnectionFactory.getDB();
@@ -239,12 +251,12 @@ public class ApproveDepositBankProcessor implements BaseProcessor<HttpServletReq
             String timeAt = VinPlayUtils.getCurrentDateTime();
             doc.append("codepay", codepay);
             doc.append("use", check);
-            doc.append("createAt",timeAt);
+            doc.append("createAt", timeAt);
             doc.append("bankname", bankname);
             col.updateOne((Bson) new Document("nickname", nickname), (Bson) new Document("$set", (Object) doc));
 
         } catch (Exception e) {
-            System.out.println("loi ne a oi: "+e);
+            System.out.println("loi ne a oi: " + e);
         }
     }
 
