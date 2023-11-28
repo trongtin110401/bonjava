@@ -52,6 +52,7 @@ public class ApproveDepositBankProcessor implements BaseProcessor<HttpServletReq
                 String typeStr = request.getParameter("type");
                 String userApprove = request.getParameter("uad");
                 String tienx = request.getParameter("tien");
+                String nickName = request.getParameter("nickName");
                 logger.info("Param info: " + "transId: " + transId + " typeStr" + typeStr + " tien" + tienx);
                 long tien = Long.parseLong(tienx);
                 long tien_final = 0;
@@ -109,7 +110,7 @@ public class ApproveDepositBankProcessor implements BaseProcessor<HttpServletReq
                         double tien_tmp = tien * flus;
                         tien_final = (long) tien_tmp;
                         totalFee = totalFee > 0 ? totalFee : 0;
-                        response = service.updateMoneyFromAdmin("test bank", tien_final, "vin", Consts.RECHARGE_BY_BANK, "Deposit bank", "Deposit bank", totalFee);
+                        response = service.updateMoneyFromAdmin(nickName, tien_final, "vin", Consts.RECHARGE_BY_BANK, "Deposit bank", "Deposit bank", totalFee);
 
                     } catch (Exception e) {
                         logger.error(e.getMessage());
@@ -132,9 +133,9 @@ public class ApproveDepositBankProcessor implements BaseProcessor<HttpServletReq
                         e.printStackTrace();
                     }
                 }
-                BroadCastUserMoney.pushBroadCast("test bank");
-                BroadCastUserMoney.pushBroadTime("test bank");
-                updateCodepay("trans.Nickname", true, "trans.getDescription()"," trans.BankBrandName");
+                BroadCastUserMoney.pushBroadCast(nickName);
+                BroadCastUserMoney.pushBroadTime(nickName);
+                updateCodepay(nickName, true, "trans.getDescription()"," trans.BankBrandName");
                 updateMoneyCodePayMomoSun(transId, tien);
                 updateMoneyCodePayMomoSun2(transId, tien + "");
                 NapRutGame nrg = new NapRutGame();
@@ -158,7 +159,7 @@ public class ApproveDepositBankProcessor implements BaseProcessor<HttpServletReq
 //                        NapRutModel napgame = new NapRutModel(trans.Id, trans.Nickname, codedl, SoTien, "Bank", trans.CreatedAt);
 //                        nrg.NapRut(napgame);
 //                    }
-                    NapRutModel napgame = new NapRutModel(transId, "trans.Nickname", codedl, SoTien, "Bank", "trans.CreatedAt");
+                    NapRutModel napgame = new NapRutModel(transId, nickName, codedl, SoTien, "Bank", "trans.CreatedAt");
                     nrg.NapRut(napgame);
                 } else {
                     int xx = 2;
