@@ -35,12 +35,13 @@ import java.io.IOException;
 
 // todo : approve tiền nạp qua ngân hàng cho user
 public class ApproveDepositBankProcessor implements BaseProcessor<HttpServletRequest, String> {
-    private static final Logger logger = Logger.getLogger((String) "backend");
+    private static final Logger logger = Logger.getLogger("backend");
 
     @Override
     public String execute(Param<HttpServletRequest> param) {
         // type = 0 is approve
         // type = 1 is reject
+        logger.info("=============ApproveDepositBankProcessor start=============");
         synchronized (this) {
             BaseResponseModel response = new BaseResponseModel(false, "1001");
             HistoryTransService historyTransService = new HistoryTransServiceImpl();
@@ -51,6 +52,7 @@ public class ApproveDepositBankProcessor implements BaseProcessor<HttpServletReq
                 String typeStr = request.getParameter("type");
                 String userApprove = request.getParameter("uad");
                 String tienx = request.getParameter("tien");
+                logger.info("Param info: " + "transId: " + transId + " typeStr" + typeStr + " tien" + tienx);
                 long tien = Long.parseLong(tienx);
                 long tien_final = 0;
                 if (transId.isEmpty() || typeStr.isEmpty()) {
