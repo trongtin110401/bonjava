@@ -2891,7 +2891,6 @@ public class RechargeDaoImpl
             Document conditions = new Document();
             conditions.put("Id", (Object) Id);
             Document document = (Document) db.getCollection(DvtConst.DEPOSIT_BANK_COLLECTION).find((Bson) conditions).first();
-            logger.info("document " + document + " id: " + Id);
             if (document == null)
                 return null;
             DepositBankModel model = new DepositBankModel(

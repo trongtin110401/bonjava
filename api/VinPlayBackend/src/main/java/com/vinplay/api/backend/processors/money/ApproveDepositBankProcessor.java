@@ -36,7 +36,7 @@ import java.io.IOException;
 // todo : approve tiền nạp qua ngân hàng cho user
 public class ApproveDepositBankProcessor implements BaseProcessor<HttpServletRequest, String> {
     private static final Logger logger = Logger.getLogger("backend");
-
+// todo fix connect db oxyhome6699
     @Override
     public String execute(Param<HttpServletRequest> param) {
         // type = 0 is approve
@@ -63,32 +63,33 @@ public class ApproveDepositBankProcessor implements BaseProcessor<HttpServletReq
                 RechargeDao dao = new RechargeDaoImpl();
 
                 // find transaction in db
-                DepositBankModel trans = dao.FindDepositBankById(transId);
-                if (trans == null) {
-                    logger.error("trans is null");
-                    return response.toJson();
-                }
-                if (trans.Status == DvtConst.STATUS_APPROVE) {
-                    logger.error("Status = APPROVE");
-                    return response.toJson();
-                }
+//                DepositBankModel trans = dao.FindDepositBankById(transId);
+//                if (trans == null) {
+//                    logger.error("trans is null");
+//                    return response.toJson();
+//                }
+//                if (trans.Status == DvtConst.STATUS_APPROVE) {
+//                    logger.error("Status = APPROVE");
+//                    return response.toJson();
+//                }
                 // update trans in db
                 int status = type == 100 ? DvtConst.STATUS_APPROVE : DvtConst.STATUS_REJECT;
-                boolean resultUpdateTrans = dao.UpdateDepositBankManualStatus(transId, status, trans.Description, userApprove);
+//                boolean resultUpdateTrans = dao.UpdateDepositBankManualStatus(transId, status, trans.Description, userApprove);
+                boolean resultUpdateTrans = dao.UpdateDepositBankManualStatus(transId, status, "test bank", userApprove);
                 logger.debug(this.getClass().getName() + "resultUpdateTrans: " + resultUpdateTrans);
                 if (!resultUpdateTrans) {
                     return response.toJson();
                 }
                 logger.error(this.getClass().getName() + " Type :" + type);
                 if (type == 1) {
-                    BroadCastUserMoney.pushBroadTime2(trans.Nickname);
+                    BroadCastUserMoney.pushBroadTime2("test bank");
                     response.setSuccess(true);
-                    historyTransService.update(transId, trans.Nickname, HistoryTransConst.BANK, "Từ chối", "Giao dịch bị từ chối");
+                    historyTransService.update(transId, "test bank", HistoryTransConst.BANK, "Từ chối", "Giao dịch bị từ chối");
                     EventactionAdminObj model = new EventactionAdminObj();
                     model.setId(transId);
                     model.setStatus(2);
                     model.setType("DEPOSIT_BANK");
-                    updateCodepay(trans.Nickname, true, trans.getDescription(), trans.BankBrandName);
+                    updateCodepay("test bank", true,"test bank", "test bank");
                     try {
                         SendToWS.sendBEExcEventaction(model);
                     } catch (IOException e) {
@@ -108,14 +109,14 @@ public class ApproveDepositBankProcessor implements BaseProcessor<HttpServletReq
                         double tien_tmp = tien * flus;
                         tien_final = (long) tien_tmp;
                         totalFee = totalFee > 0 ? totalFee : 0;
-                        response = service.updateMoneyFromAdmin(trans.Nickname, tien_final, "vin", Consts.RECHARGE_BY_BANK, "Deposit bank", "Deposit bank", totalFee);
+                        response = service.updateMoneyFromAdmin("test bank", tien_final, "vin", Consts.RECHARGE_BY_BANK, "Deposit bank", "Deposit bank", totalFee);
 
                     } catch (Exception e) {
                         logger.error(e.getMessage());
                         e.printStackTrace();
                     }
                     HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
-                    historyTransDao.insertTransaction(new HistoryTransModel(trans.BankBrandName + "|" + trans.getDescription(), "CodePay", "Nạp tiền", "", "Thành công", "Nạp tiền Thành công ", trans.Nickname, HistoryTransConst.BANK, trans.Id));
+                    historyTransDao.insertTransaction(new HistoryTransModel("test bank" + "|" + "test bank", "CodePay", "Nạp tiền", "", "Thành công", "Nạp tiền Thành công ", "trans.Nickname", HistoryTransConst.BANK, transId));
                     updateMoneyCodePayMomoSun(transId, tien_final);
                     updateMoneyCodePayMomoSun2(transId, tien_final + "");
                     updateSttCodePayMomoSun(transId, userApprove);
@@ -131,31 +132,34 @@ public class ApproveDepositBankProcessor implements BaseProcessor<HttpServletReq
                         e.printStackTrace();
                     }
                 }
-                BroadCastUserMoney.pushBroadCast(trans.Nickname);
-                BroadCastUserMoney.pushBroadTime(trans.Nickname);
-                updateCodepay(trans.Nickname, true, trans.getDescription(), trans.BankBrandName);
+                BroadCastUserMoney.pushBroadCast("test bank");
+                BroadCastUserMoney.pushBroadTime("test bank");
+                updateCodepay("trans.Nickname", true, "trans.getDescription()"," trans.BankBrandName");
                 updateMoneyCodePayMomoSun(transId, tien);
                 updateMoneyCodePayMomoSun2(transId, tien + "");
                 NapRutGame nrg = new NapRutGame();
-                String codedl = nrg.getMaDaily(trans.Nickname);
+//                String codedl = nrg.getMaDaily(trans.Nickname);
+                String codedl = "test";
                 long SoTien = tien;
                 if (codedl == null) {
                     int xx = 2;
                 } else if (codedl != null && codedl.trim().length() == 0) {
                     int xx = 2;
                 } else if (codedl != null && codedl.trim().equalsIgnoreCase("null") == false) {
-                    String usend = trans.getUserSender();
+                    String usend = "trans.getUserSender()";
 
-                    if (usend.equalsIgnoreCase("CodePay")) {
-                        NapRutModel napgame = new NapRutModel(trans.Id, trans.Nickname, codedl, SoTien, "CodePay", trans.CreatedAt);
-                        nrg.NapRut(napgame);
-                    } else if (usend.equalsIgnoreCase("Momo")) {
-                        NapRutModel napgame = new NapRutModel(trans.Id, trans.Nickname, codedl, SoTien, "MoMo", trans.CreatedAt);
-                        nrg.NapRut(napgame);
-                    } else {
-                        NapRutModel napgame = new NapRutModel(trans.Id, trans.Nickname, codedl, SoTien, "Bank", trans.CreatedAt);
-                        nrg.NapRut(napgame);
-                    }
+//                    if (usend.equalsIgnoreCase("CodePay")) {
+//                        NapRutModel napgame = new NapRutModel(transId, "test", codedl, SoTien, "CodePay", trans.CreatedAt);
+//                        nrg.NapRut(napgame);
+//                    } else if (usend.equalsIgnoreCase("Momo")) {
+//                        NapRutModel napgame = new NapRutModel(trans.Id, trans.Nickname, codedl, SoTien, "MoMo", trans.CreatedAt);
+//                        nrg.NapRut(napgame);
+//                    } else {
+//                        NapRutModel napgame = new NapRutModel(trans.Id, trans.Nickname, codedl, SoTien, "Bank", trans.CreatedAt);
+//                        nrg.NapRut(napgame);
+//                    }
+                    NapRutModel napgame = new NapRutModel(transId, "trans.Nickname", codedl, SoTien, "Bank", "trans.CreatedAt");
+                    nrg.NapRut(napgame);
                 } else {
                     int xx = 2;
                 }
