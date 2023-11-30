@@ -3,6 +3,7 @@ services:
     image: bancodegame/fish
     ports:
       - '2083:2083'
+      - '8888:8888/udp'
     build:
       context: .
       dockerfile: Dockerfile
