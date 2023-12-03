@@ -375,7 +375,7 @@ public class XocDiaGameServer
         OkHttpClient client =  HttpCommon.getInstance().getHttpClient().newBuilder()
                 .build();
         Request request = new Request.Builder()
-                .url("http://127.0.0.1:8089/sendBe")
+                .url(XocDiaConfig.NOTIFY_TO_BACKEND_URL)
                 .method("GET", null)
                 .build();
       try( Response response = client.newCall(request).execute()){

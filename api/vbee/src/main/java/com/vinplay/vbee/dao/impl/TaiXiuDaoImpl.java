@@ -39,6 +39,9 @@ implements TaiXiuDao {
     public boolean saveResultTaiXiu(ResultTaiXiuMessage message) throws SQLException {
         boolean success = false;
         Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");
+        if(conn == null) {
+            Debug.info("Connection in saveResultTaiXiu is null");
+        }
         CallableStatement call = null;
         call = conn.prepareCall("CALL save_result_tai_xiu(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         int param = 1;

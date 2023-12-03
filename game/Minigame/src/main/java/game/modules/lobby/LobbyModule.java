@@ -2752,11 +2752,14 @@ public class LobbyModule
 
     private synchronized void broadCastMoney() {
         CacheService cacheService = new CacheServiceImpl();
-        Debug.info("list user iss vao day");
+        // tutl
+//        Debug.info("list user iss vao day");
+
         ArrayList<String> listUser = null;
         try {
             listUser = (ArrayList<String>) cacheService.getObject("List_Money_Change");
-            Debug.info("list user iss" + listUser.size());
+            // tutl
+//            Debug.info("list user iss" + listUser.size());
             if (null != listUser) {
                 for (String username : listUser) {
                     BroadcastMoneyChangeMsg msg = new BroadcastMoneyChangeMsg();
@@ -2770,7 +2773,8 @@ public class LobbyModule
                 }
                 listUser = new ArrayList<>();
                 cacheService.setObject("List_Money_Change", listUser);
-                Debug.info("list user  after send iss" + listUser.size());
+                // tutl
+//                Debug.info("list user  after send iss" + listUser.size());
             }
         } catch (KeyNotFoundException e) {
             listUser = new ArrayList<>();
@@ -2785,7 +2789,7 @@ public class LobbyModule
         ArrayList<String> listUser = null;
         try {
             listUser = (ArrayList<String>) cacheService.getObject("List_Time_Change");
-            Debug.info("list user iss" + listUser.size());
+//            Debug.info("list user iss" + listUser.size());
             if (null != listUser) {
                 for (String username : listUser) {
                     BroadcastTimeChangeMsg msg = new BroadcastTimeChangeMsg();
@@ -2813,7 +2817,7 @@ public class LobbyModule
         ArrayList<String> listUser = null;
         try {
             listUser = (ArrayList<String>) cacheService.getObject("List_Time_Change");
-            Debug.info("list user iss" + listUser.size());
+//            Debug.info("list user iss" + listUser.size());
             if (null != listUser) {
                 for (String username : listUser) {
                     BroadcastTimeChangeMsg msg = new BroadcastTimeChangeMsg();
@@ -2858,7 +2862,7 @@ public class LobbyModule
         ArrayList<String> listUser = null;
         try {
             listUser = (ArrayList<String>) cacheService.getObject("List_Time_OutGame");
-            Debug.info("list user iss" + listUser.size());
+//            Debug.info("list user iss" + listUser.size());
             if (null != listUser) {
                 for (String username : listUser) {
                     String[] datas = username.split("\\|");
