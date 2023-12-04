@@ -112,7 +112,7 @@ public class ApproveDepositBankProcessor implements BaseProcessor<HttpServletReq
                         e.printStackTrace();
                     }
                     HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
-                    historyTransDao.insertTransaction(new HistoryTransModel(transId + "|" + "test bank", "CodePay", "Nạp tiền", "", "Thành công", "Nạp tiền Thành công ", "trans.Nickname", HistoryTransConst.BANK, transId));
+                    historyTransDao.insertTransaction(new HistoryTransModel(transId + "|" + "test bank", "CodePay", "Nạp tiền", "", "Thành công", "Nạp tiền Thành công ", trans.Nickname, HistoryTransConst.BANK, transId));
                     updateMoneyCodePayMomoSun(transId, tien_final);
                     updateMoneyCodePayMomoSun2(transId, tien_final + "");
                     updateSttCodePayMomoSun(transId, userApprove);
@@ -185,15 +185,15 @@ public class ApproveDepositBankProcessor implements BaseProcessor<HttpServletReq
 
     private void updateMoneyCodePayMomoSun2(String TrainID, String tien) {
         try {
-            InsertELK elk = new InsertELK();
+//            InsertELK elk = new InsertELK();
             MongoDatabase db = MongoDBConnectionFactory.getDB();
             MongoCollection col = db.getCollection("History_User_transaction");
             Document doc = new Document();
             doc.append("sotien", tien);
             col.updateOne((Bson) new Document("transId", TrainID), (Bson) new Document("$set", (Object) doc));
-            HistoryTransModel his = elk.GetHistorybyTransID(TrainID);
-            his.setSotien(tien);
-            elk.InsertHistoryUserTransOK(his, Long.parseLong(his.getId()), his.getCreateAt());
+//            HistoryTransModel his = elk.GetHistorybyTransID(TrainID);
+//            his.setSotien(tien);
+//            elk.InsertHistoryUserTransOK(his, Long.parseLong(his.getId()), his.getCreateAt());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -217,15 +217,15 @@ public class ApproveDepositBankProcessor implements BaseProcessor<HttpServletReq
 
     private void updateSTTCodePayMomoSun2(String TrainID) {
         try {
-            InsertELK elk = new InsertELK();
+//            InsertELK elk = new InsertELK();
             MongoDatabase db = MongoDBConnectionFactory.getDB();
             MongoCollection col = db.getCollection("History_User_transaction");
             Document doc = new Document();
             doc.append("trangthai", "Thành công");
             col.updateOne((Bson) new Document("transId", TrainID), (Bson) new Document("$set", (Object) doc));
-            HistoryTransModel his = elk.GetHistorybyTransID(TrainID);
-            his.setTrangthai("Thành công");
-            elk.InsertHistoryUserTransOK(his, Long.parseLong(his.getId()), his.getCreateAt());
+//            HistoryTransModel his = elk.GetHistorybyTransID(TrainID);
+//            his.setTrangthai("Thành công");
+//            elk.InsertHistoryUserTransOK(his, Long.parseLong(his.getId()), his.getCreateAt());
 
         } catch (Exception e) {
             e.printStackTrace();

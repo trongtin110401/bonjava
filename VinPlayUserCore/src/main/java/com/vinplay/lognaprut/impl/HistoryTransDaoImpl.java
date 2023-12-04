@@ -42,7 +42,7 @@ public class HistoryTransDaoImpl implements HistoryTransDao {
         doc.append("transId", historyTransModel.transId);
         doc.append("createAt", timeAt);
         col.insertOne(doc);
-        elk.InsertHistoryUserTransOK(historyTransModel, idelk, timeAt);
+//        elk.InsertHistoryUserTransOK(historyTransModel, idelk, timeAt);
 
     }
 
