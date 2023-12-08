@@ -20,7 +20,7 @@ dependencies {
 }
 task copyJar(type: Copy) {
     from configurations.compile {
-        include 'VinPlayUserCore*.jar', 'VinPlayCardLib*.jar', "VinPlayDAL*.jar"
+        include 'VinPlayUserCore*.jar', 'BitzeroAll*.jar', 'VinPlayCardLib*.jar', "VinPlayDAL*.jar"
     }
     into 'libs/'
 }

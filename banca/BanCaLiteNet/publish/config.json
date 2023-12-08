@@ -1,7 +1,7 @@
 ﻿{
   // these configs load on startup and cannot be change
   // set port 0 to turn off, can be a port number or array of port numbers
-  "mysql-connection": "server=127.0.0.1;database={0};SslMode=none;uid=root;pwd=AVeAQbajvRtXQ9Twk7AjMRgy73Mq@CD6S;",
+  "mysql-connection": "server=127.0.0.1;database={0};SslMode=none;uid=root;pwd=AVeAQbajvRtXQ9Twk7AjMRgy73Mq@CD6S;CharSet=utf8mb4;",
   "mysql-defaul-db": "cgame",
 
   "redis-address": "127.0.0.1",

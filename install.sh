@@ -109,8 +109,6 @@ runTienLen(){
     ../../gradlew build
     cd $SCRIPTPATH;
     nohup java -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/tlmn.jar" game.tienlen.server.TlmnMain >/dev/null 2>&1 &
-
-
 }
 # run Poker
 runPoker() {

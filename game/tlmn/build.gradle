@@ -19,7 +19,7 @@ dependencies {
 }
 task copyJar(type: Copy) {
     from configurations.compile {
-        include  'BitzeroAll*.jar',   "CardCoreLib*.jar", "VbeeCommon*.jar"
+        include  'BitzeroAll*.jar',   "CardCoreLib*.jar", "VbeeCommon*.jar", 'VinPlayUserCore*.jar'
     }
     into 'libs/'
 }

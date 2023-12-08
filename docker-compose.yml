@@ -9,9 +9,9 @@ services:
     ports:
       - '8081:8081'
     restart: always
-    network_mode: host
     volumes:
-    - ./game-logs:/app/logs
+    - ./game-logs/portal_api:/app/logs
+
   gameplatform_backend_api:
     image: 'bancodegame/gameplatform_backend_api:v1.1'
     build:
@@ -20,10 +20,8 @@ services:
     ports:
       - '8082:8082'
     restart: always
-    network_mode: host
     volumes:
-      - ./game-logs:/app/logs
-
+      - ./game-logs/backend_api:/app/logs
 
   gameplatform_vbee_api:
     image: 'bancodegame/gameplatform_vbee_api:v1.1'
@@ -31,11 +29,8 @@ services:
       context: .
       dockerfile: api/vbee/Dockerfile
     restart: always
-    network_mode: host
     volumes:
-      - ./game-logs:/app/logs
-
-
+      - ./game-logs/vbee_api:/app/logs
 
   gameplatform_wspay_api:
     image: 'bancodegame/gameplatform_wspay_api:v1.1'
@@ -45,38 +40,208 @@ services:
     ports:
       - '18081:18081'
     restart: always
-    network_mode: host
+#    network_mode: host
     volumes:
-      - ./game-logs:/app/logs
+      - ./game-logs/wspay_api:/app/logs
+
+  gameplatform_wsreport_api:
+    image: 'bancodegame/gameplatform_wsreport_api:v1.1'
+    build:
+      context: .
+      dockerfile: api/wsreport/Dockerfile
+    ports:
+      - '8089:8089'
+      - '7777:7777'
+    restart: always
+    volumes:
+      - ./game-logs/wsreport_api:/app/logs
 
 
-#  gameplatform_wminigame:
-#    image: 'bancodegame/gameplatform_wminigame:v1.1'
+  gameplatform_wminigame:
+    image: 'bancodegame/gameplatform_wminigame:v1.1'
+    build:
+      context: .
+      dockerfile: game/Minigame/Dockerfile
+    ports:
+      - '1644:1644'
+    restart: always
+    depends_on:
+      - gameplatform_vbee_api
+    volumes:
+      - ./game-logs/wminigame:/app/logs
+
+
+  gameplatform_wslot:
+    image: 'bancodegame/gameplatform_wslot:v1.1'
+    build:
+      context: .
+      dockerfile: game/slot/Dockerfile
+    ports:
+      - '1844:1844'
+    restart: always
+    volumes:
+      - ./game-logs/slot:/app/logs
+    depends_on:
+      - gameplatform_vbee_api
+      - gameplatform_wminigame
+
+  gameplatform_taixiu:
+    image: 'bancodegame/gameplatform_taixiu:v1.1'
+    build:
+      context: .
+      dockerfile: game/taixiuMini/Dockerfile
+    ports:
+      - '2043:2043'
+      - '2044:2044'
+      - '2045:2045'
+    restart: always
+    volumes:
+      - ./game-logs/taixiu:/app/logs
+    depends_on:
+      - gameplatform_vbee_api
+      - gameplatform_wminigame
+
+  gameplatform_xocdia:
+    image: 'bancodegame/gameplatform_xocdia:v1.1'
+    build:
+      context: .
+      dockerfile: game/xocdia/Dockerfile
+    ports:
+      - '2343:2343'
+      - '2344:2344'
+      - '2345:2345'
+    restart: always
+    volumes:
+      - ./game-logs/xocdia:/app/logs
+    depends_on:
+      - gameplatform_vbee_api
+      - gameplatform_wminigame
+
+  gameplatform_baucuato2:
+    image: 'bancodegame/gameplatform_baucuato2:v1.1'
+    build:
+      context: .
+      dockerfile: game/baucuato2/Dockerfile
+    ports:
+      - '3643:3643'
+      - '3644:3644'
+      - '3645:3645'
+    restart: always
+    volumes:
+      - ./game-logs/baucua:/app/logs
+    depends_on:
+      - gameplatform_vbee_api
+      - gameplatform_wminigame
+
+#  gameplatform_bacay:
+#    image: 'bancodegame/gameplatform_bacay:v1.1'
 #    build:
 #      context: .
-#      dockerfile: game/Minigame/Dockerfile
+#      dockerfile: game/bacayServer/Dockerfile
 #    ports:
-#      - '1644:1644'
+#      - '1143:1143'
+#      - '1144:1144'
+#      - '1145:1145'
 #    restart: always
-#    network_mode: host
-#    depends_on:
-#      - gameplatform_vbee_api
-#
-#    volumes:
-#      - ./game-logs:/app/logs
-#
-#
-#  gameplatform_wslot:
-#    image: 'bancodegame/gameplatform_wslot:v1.1'
-#    build:
-#      context: .
-#      dockerfile: game/slot/Dockerfile
-#    ports:
-#      - '1844:1844'
-#    restart: always
-#    network_mode: host
 #    volumes:
 #      - ./game-logs:/app/logs
 #    depends_on:
 #      - gameplatform_vbee_api
 #      - gameplatform_wminigame
+
+  gameplatform_binh:
+    image: 'bancodegame/gameplatform_binh:v1.1'
+    build:
+      context: .
+      dockerfile: game/binh/Dockerfile
+    ports:
+      - '1243:1243'
+      - '1244:1244'
+      - '1245:1245'
+    restart: always
+    volumes:
+      - ./game-logs/binh:/app/logs
+    depends_on:
+      - gameplatform_vbee_api
+      - gameplatform_wminigame
+
+  gameplatform_tlmn:
+    image: 'bancodegame/gameplatform_tlmn:v1.1'
+    build:
+      context: .
+      dockerfile: game/tlmn/Dockerfile
+    ports:
+      - '2143:2143'
+      - '2144:2144'
+      - '2145:2145'
+    restart: always
+    volumes:
+      - ./game-logs/tlmn:/app/logs
+    depends_on:
+      - gameplatform_vbee_api
+      - gameplatform_wminigame
+
+  gameplatform_poker:
+    image: 'bancodegame/gameplatform_poker:v1.1'
+    build:
+      context: .
+      dockerfile: game/poker/Dockerfile
+    ports:
+      - '1743:1743'
+      - '1744:1744'
+      - '1745:1745'
+    restart: always
+    volumes:
+      - ./game-logs/poker:/app/logs
+    depends_on:
+      - gameplatform_vbee_api
+      - gameplatform_wminigame
+
+  gameplatform_xizach:
+    image: 'bancodegame/gameplatform_xizach:v1.1'
+    build:
+      context: .
+      dockerfile: game/xizach/Dockerfile
+    ports:
+      - '2243:2343'
+      - '2244:2344'
+      - '2245:2345'
+    restart: always
+    volumes:
+      - ./game-logs/xizach:/app/logs
+    depends_on:
+      - gameplatform_vbee_api
+      - gameplatform_wminigame
+
+#  gameplatform_baicao:
+#    image: 'bancodegame/gameplatform_baicao:v1.1'
+#    build:
+#      context: .
+#      dockerfile: game/baicao/Dockerfile
+#    ports:
+#      - '1143:1143'
+#      - '1144:1144'
+#      - '1145:1145'
+#    restart: always
+
+#    volumes:
+#      - ./game-logs:/app/logs
+#    depends_on:
+#      - gameplatform_vbee_api
+#      - gameplatform_wminigame
+
+  gameplatform_sam:
+    image: 'bancodegame/gameplatform_sam:v1.1'
+    build:
+      context: .
+      dockerfile: game/sam/Dockerfile
+    ports:
+      - '1943:1943'
+      - '1944:1944'
+      - '1945:1945'
+    restart: always
+    volumes:
+      - ./game-logs/sam:/app/logs
+    depends_on:
+      - gameplatform_vbee_api
+      - gameplatform_wminigame

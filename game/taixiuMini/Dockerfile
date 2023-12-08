@@ -1,9 +1,11 @@
 FROM openjdk:8
 WORKDIR /app
-COPY ./game/Minigame/build/libs .
-COPY ./game/Minigame/config config/
-COPY ./game/Minigame/conf conf/
+COPY ./game/taixiuMini/build/libs .
+COPY ./game/taixiuMini/config config/
+COPY ./game/taixiuMini/conf conf/
 ADD ./libs libs/
-ADD ./game/Minigame/libs libs/
-EXPOSE 1644
+ADD ./game/taixiuMini/libs libs/
+EXPOSE 2043
+EXPOSE 2044
+EXPOSE 2045
 ENTRYPOINT ["java", "-cp", "libs/*:taixiuMini.jar", "game.TaiXiuMiniGameMain"]
