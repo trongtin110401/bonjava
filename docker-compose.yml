@@ -10,7 +10,7 @@ services:
       - '8081:8081'
     restart: always
     volumes:
-    - ./game-logs:/app/logs
+    - ./game-logs/portal_api:/app/logs
 
   gameplatform_backend_api:
     image: 'bancodegame/gameplatform_backend_api:v1.1'
@@ -21,7 +21,7 @@ services:
       - '8082:8082'
     restart: always
     volumes:
-      - ./game-logs:/app/logs
+      - ./game-logs/backend_api:/app/logs
 
   gameplatform_vbee_api:
     image: 'bancodegame/gameplatform_vbee_api:v1.1'
@@ -30,7 +30,7 @@ services:
       dockerfile: api/vbee/Dockerfile
     restart: always
     volumes:
-      - ./game-logs:/app/logs
+      - ./game-logs/vbee_api:/app/logs
 
   gameplatform_wspay_api:
     image: 'bancodegame/gameplatform_wspay_api:v1.1'
@@ -42,7 +42,7 @@ services:
     restart: always
 #    network_mode: host
     volumes:
-      - ./game-logs:/app/logs
+      - ./game-logs/wspay_api:/app/logs
 
   gameplatform_wsreport_api:
     image: 'bancodegame/gameplatform_wsreport_api:v1.1'
@@ -54,7 +54,7 @@ services:
       - '7777:7777'
     restart: always
     volumes:
-      - ./game-logs:/app/logs
+      - ./game-logs/wsreport_api:/app/logs
 
 
   gameplatform_wminigame:
@@ -68,7 +68,7 @@ services:
     depends_on:
       - gameplatform_vbee_api
     volumes:
-      - ./game-logs:/app/logs
+      - ./game-logs/wminigame:/app/logs
 
 
   gameplatform_wslot:
@@ -80,7 +80,7 @@ services:
       - '1844:1844'
     restart: always
     volumes:
-      - ./game-logs:/app/logs
+      - ./game-logs/slot:/app/logs
     depends_on:
       - gameplatform_vbee_api
       - gameplatform_wminigame
@@ -96,7 +96,7 @@ services:
       - '2045:2045'
     restart: always
     volumes:
-      - ./game-logs:/app/logs
+      - ./game-logs/taixiu:/app/logs
     depends_on:
       - gameplatform_vbee_api
       - gameplatform_wminigame
@@ -112,7 +112,7 @@ services:
       - '2345:2345'
     restart: always
     volumes:
-      - ./game-logs:/app/logs
+      - ./game-logs/xocdia:/app/logs
     depends_on:
       - gameplatform_vbee_api
       - gameplatform_wminigame
@@ -128,7 +128,7 @@ services:
       - '3645:3645'
     restart: always
     volumes:
-      - ./game-logs:/app/logs
+      - ./game-logs/baucua:/app/logs
     depends_on:
       - gameplatform_vbee_api
       - gameplatform_wminigame
@@ -160,7 +160,7 @@ services:
       - '1245:1245'
     restart: always
     volumes:
-      - ./game-logs:/app/logs
+      - ./game-logs/binh:/app/logs
     depends_on:
       - gameplatform_vbee_api
       - gameplatform_wminigame
@@ -176,7 +176,7 @@ services:
       - '2145:2145'
     restart: always
     volumes:
-      - ./game-logs:/app/logs
+      - ./game-logs/tlmn:/app/logs
     depends_on:
       - gameplatform_vbee_api
       - gameplatform_wminigame
@@ -192,7 +192,7 @@ services:
       - '1745:1745'
     restart: always
     volumes:
-      - ./game-logs:/app/logs
+      - ./game-logs/poker:/app/logs
     depends_on:
       - gameplatform_vbee_api
       - gameplatform_wminigame
@@ -208,7 +208,7 @@ services:
       - '2245:2345'
     restart: always
     volumes:
-      - ./game-logs:/app/logs
+      - ./game-logs/xizach:/app/logs
     depends_on:
       - gameplatform_vbee_api
       - gameplatform_wminigame
@@ -240,7 +240,7 @@ services:
       - '1945:1945'
     restart: always
     volumes:
-      - ./game-logs:/app/logs
+      - ./game-logs/sam:/app/logs
     depends_on:
       - gameplatform_vbee_api
       - gameplatform_wminigame
