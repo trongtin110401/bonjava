@@ -16,8 +16,7 @@ killProcess() {
 runVbee() {
     currentDir="./api/vbee"
     cd $currentDir
-        ../../gradlew clean
-        ../../gradlew build
+
 
 #    cd $SCRIPTPATH;
     nohup java  -cp "libs/*:build/libs/vbee-1.0.jar" com.vinplay.vbee.main.VBeeMain > ../../trace/vbee.log 2>&1 &
@@ -25,8 +24,7 @@ runVbee() {
 runBackend() {
     currentDir="./api/VinPlayBackend"
     cd $currentDir
-        ../../gradlew clean
-        ../../gradlew build
+
 
 #    cd $SCRIPTPATH;
     nohup java  -cp "libs/*:build/libs/VinPlayBackend-1.0.jar" com.vinplay.api.backend.server.VinPlayBackendMain >../../trace/api_backend.log 2>&1 &
@@ -52,8 +50,7 @@ runWspay(){
 runWsReport(){
     currentDir="./api/wsreport"
     cd $currentDir
-        ../../gradlew clean
-        ../../gradlew build
+
 
 #    cd $SCRIPTPATH;
     nohup java  -jar api/wsreport/build/libs/wsreport-1.0-SNAPSHOT.jar > ../../trace/wsreport.log 2>&1 &
@@ -63,8 +60,7 @@ runWsReport(){
 runMiniGame(){
     currentDir="./game/Minigame"
     cd $currentDir
-        ../../gradlew clean
-        ../../gradlew build
+
 
 #    cd $SCRIPTPATH;
     nohup java   -cp "libs/*:build/libs/Minigame.jar" game.MiniGameMain > ../../trace/minigame.log 2>&1 &
@@ -75,8 +71,7 @@ runMiniGame(){
 runSlot(){
     currentDir="./game/slot"
     cd $currentDir
-        ../../gradlew clean
-        ../../gradlew build
+
 
 #    cd $SCRIPTPATH;
     nohup java  -cp "libs/*:build/libs/SlotMachine.jar" game.SlotMain > ../../trace/slot.log 2>&1 &
@@ -87,8 +82,7 @@ runSlot(){
 runBacay(){
     currentDir="./game/bacayServer"
     cd $currentDir
-        ../../gradlew clean
-        ../../gradlew build
+
 
 #    cd $SCRIPTPATH;
     nohup java  -cp "libs/*:build/libs/bacayServer.jar" game.bacay.server.BacayMain > ../../trace/bacay.log 2>&1 &
@@ -98,8 +92,7 @@ runBacay(){
 runBinh(){
     currentDir="./game/binh"
     cd $currentDir
-        ../../gradlew clean
-        ../../gradlew build
+
 
 #    cd $SCRIPTPATH;
     nohup java   -cp "libs/*:build/libs/binh.jar" game.binh.server.BinhMain > ../../trace/binh.log 2>&1 &
@@ -109,8 +102,7 @@ runBinh(){
 runTienLen(){
     currentDir="./game/tlmn"
     cd $currentDir
-        ../../gradlew clean
-        ../../gradlew build
+
 
 #    cd $SCRIPTPATH;
     nohup java  -cp "libs/*:build/libs/tlmn.jar" game.tienlen.server.TlmnMain > ../../trace/tlmn.log 2>&1 &
@@ -120,8 +112,7 @@ runTienLen(){
 runPoker() {
     currentDir="./game/poker"
     cd $currentDir
-        ../../gradlew clean
-        ../../gradlew build
+
 
 #    cd $SCRIPTPATH;
     nohup java   -cp "libs/*:build/libs/poker.jar" game.poker.server.PokerMain > ../../trace/poker.log 2>&1 &
@@ -131,8 +122,7 @@ runPoker() {
 runBauCuaTo2() {
     currentDir="./game/baucuato2"
     cd $currentDir
-        ../../gradlew clean
-        ../../gradlew build
+
 
 #    cd $SCRIPTPATH;
     nohup java  -cp "libs/*:build/libs/baucuato2.jar" game.BauCuaTo2Main > ../../trace/baucuato2.log 2>&1 &
@@ -141,8 +131,7 @@ runBauCuaTo2() {
 runTaiXiuMini() {
     currentDir="./game/taixiuMini"
     cd $currentDir
-        ../../gradlew clean
-        ../../gradlew build
+
 
 #    cd $SCRIPTPATH;
     nohup java  -cp "libs/*:build/libs/taixiuMini.jar" game.TaiXiuMiniGameMain > ../../trace/taixiu.log 2>&1 &
@@ -152,8 +141,7 @@ runTaiXiuMini() {
 runXiDach(){
     currentDir="./game/xizach"
     cd $currentDir
-        ../../gradlew clean
-        ../../gradlew build
+
 
 #    cd $SCRIPTPATH;
     nohup java  -cp "libs/*:build/libs/xizach.jar"  game.xizach.server.XiZachMain > ../../trace/xizach.log 2>&1 &
@@ -177,8 +165,7 @@ runXocDia(){
   echo "Start building Xoc Dia..."
     currentDir="./game/xocdia"
     cd $currentDir
-        ../../gradlew clean
-        ../../gradlew build
+
 
 #    cd $SCRIPTPATH;
     nohup java  -cp "libs/*:build/libs/xocdia.jar"  game.xocdia.server.XocDiaMain > ../../trace/xocdia.log 2>&1 &
@@ -190,8 +177,7 @@ runSam(){
   echo "Start building Sam..."
     currentDir="./game/sam"
     cd $currentDir
-        ../../gradlew clean
-        ../../gradlew build
+
 
 #    cd $SCRIPTPATH;
     nohup java -cp "libs/*:build/libs/sam.jar" game.sam.server.SamMain > ../../trace/sam.log 2>&1 &
