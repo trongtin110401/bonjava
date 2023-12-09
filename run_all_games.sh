@@ -14,7 +14,7 @@ killProcess() {
 
 # run vbee
 runVbee() {
-    currentDir="./api/vbee"
+    currentDir="api/vbee"
     cd $currentDir
 
 
@@ -22,7 +22,7 @@ runVbee() {
     nohup java  -cp "libs/*:build/libs/vbee-1.0.jar" com.vinplay.vbee.main.VBeeMain > ../../trace/vbee.log 2>&1 &
 }
 runBackend() {
-    currentDir="./api/VinPlayBackend"
+    currentDir="api/VinPlayBackend"
     cd $currentDir
 
 
@@ -31,16 +31,14 @@ runBackend() {
 
 }
 runPortal(){
-  currentDir="./api/VinPlayPortal"
+  currentDir="api/VinPlayPortal"
   cd $currentDir
-      ../../gradlew clean
-      ../../gradlew build
 
 #    cd $SCRIPTPATH;
     nohup java  -cp "libs/*:build/libs/VinPlayPortal.jar" com.vinplay.api.server.JettyServer > ../../trace/api_portal.log 2>&1 &
 }
 runWspay(){
-    currentDir="./api/wspay"
+    currentDir="api/wspay"
 
 #    cd $SCRIPTPATH;
     nohup java   -cp "libs/*:build/libs/wspay.jar" com.vinplay.pay.server.JettyServer > ../../trace/wspay.log 2>&1 &
@@ -48,7 +46,7 @@ runWspay(){
 }
 
 runWsReport(){
-    currentDir="./api/wsreport"
+    currentDir="api/wsreport"
     cd $currentDir
 
 
@@ -58,7 +56,7 @@ runWsReport(){
 ##region run game###
 
 runMiniGame(){
-    currentDir="./game/Minigame"
+    currentDir="game/Minigame"
     cd $currentDir
 
 
@@ -69,7 +67,7 @@ runMiniGame(){
 
 
 runSlot(){
-    currentDir="./game/slot"
+    currentDir="game/slot"
     cd $currentDir
 
 
@@ -80,7 +78,7 @@ runSlot(){
 }
 ### run bacay ###
 runBacay(){
-    currentDir="./game/bacayServer"
+    currentDir="game/bacayServer"
     cd $currentDir
 
 
@@ -90,7 +88,7 @@ runBacay(){
 
 ### run binh ###
 runBinh(){
-    currentDir="./game/binh"
+    currentDir="game/binh"
     cd $currentDir
 
 
@@ -100,7 +98,7 @@ runBinh(){
 
 ### run tlmn ###
 runTienLen(){
-    currentDir="./game/tlmn"
+    currentDir="game/tlmn"
     cd $currentDir
 
 
@@ -110,7 +108,7 @@ runTienLen(){
 
 # run Poker
 runPoker() {
-    currentDir="./game/poker"
+    currentDir="game/poker"
     cd $currentDir
 
 
@@ -120,7 +118,7 @@ runPoker() {
 
 # run baucuato2
 runBauCuaTo2() {
-    currentDir="./game/baucuato2"
+    currentDir="game/baucuato2"
     cd $currentDir
 
 
@@ -129,7 +127,7 @@ runBauCuaTo2() {
 }
 
 runTaiXiuMini() {
-    currentDir="./game/taixiuMini"
+    currentDir="game/taixiuMini"
     cd $currentDir
 
 
@@ -139,7 +137,7 @@ runTaiXiuMini() {
 
 ### run Xi Dach ###
 runXiDach(){
-    currentDir="./game/xizach"
+    currentDir="game/xizach"
     cd $currentDir
 
 
@@ -151,10 +149,8 @@ runXiDach(){
 
 ### run bai cai ###
 runBaiCao(){
-    currentDir="./game/baicao"
+    currentDir="game/baicao"
     cd $currentDir
-    ../../gradlew clean
-    ../../gradlew build
 
 #    cd $SCRIPTPATH;
     nohup java   -cp "libs/*:build/libs/baicao.jar" game.baicao.server.BaiCaoMain > ../../trace/baicao.log 2>&1 &
@@ -163,7 +159,7 @@ runBaiCao(){
 ### run xoc dia ###
 runXocDia(){
   echo "Start building Xoc Dia..."
-    currentDir="./game/xocdia"
+    currentDir="game/xocdia"
     cd $currentDir
 
 
@@ -175,7 +171,7 @@ runXocDia(){
 ### run Sam ###
 runSam(){
   echo "Start building Sam..."
-    currentDir="./game/sam"
+    currentDir="game/sam"
     cd $currentDir
 
 
