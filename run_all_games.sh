@@ -58,7 +58,7 @@ runWsReport(){
 
 
 #    cd $SCRIPTPATH;
-    nohup java  -jar api/wsreport/build/libs/wsreport-1.0-SNAPSHOT.jar > /home/server/logs/wsreport.log 2>&1 &
+    nohup java -jar build/libs/wsreport-1.0-SNAPSHOT.jar > /home/server/logs/wsreport.log 2>&1 &
 }
 ##region run game###
 
