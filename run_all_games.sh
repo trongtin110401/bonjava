@@ -14,141 +14,187 @@ killProcess() {
 
 # run vbee
 runVbee() {
-    working_directory="./api/vbee"
+    currentDir="./api/vbee"
+    cd $currentDir
+        ../../gradlew clean
+        ../../gradlew build
 
     cd $SCRIPTPATH;
-    nohup java -Duser.dir=${working_directory} -cp "libs/*:${working_directory}/libs/*:${working_directory}/build/libs/vbee-1.0.jar" com.vinplay.vbee.main.VBeeMain > trace/vbee.log 2>&1 &
+    nohup java -Duser.dir=${currentDir} -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/vbee-1.0.jar" com.vinplay.vbee.main.VBeeMain > trace/vbee.log 2>&1 &
 }
 runBackend() {
-    working_directory="./api/VinPlayBackend"
+    currentDir="./api/VinPlayBackend"
+    cd $currentDir
+        ../../gradlew clean
+        ../../gradlew build
 
     cd $SCRIPTPATH;
-    nohup java -Duser.dir=${working_directory} -cp "libs/*:${working_directory}/libs/*:${working_directory}/build/libs/VinPlayBackend-1.0.jar" com.vinplay.api.backend.server.VinPlayBackendMain >trace/api_backend.log 2>&1 &
+    nohup java -Duser.dir=${currentDir} -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/VinPlayBackend-1.0.jar" com.vinplay.api.backend.server.VinPlayBackendMain >trace/api_backend.log 2>&1 &
 
 }
 runPortal(){
-  working_directory="./api/VinPlayPortal"
+  currentDir="./api/VinPlayPortal"
+  cd $currentDir
+      ../../gradlew clean
+      ../../gradlew build
 
     cd $SCRIPTPATH;
-    nohup java -Duser.dir=${working_directory} -cp "libs/*:${working_directory}/libs/*:${working_directory}/build/libs/VinPlayPortal.jar" com.vinplay.api.server.JettyServer > trace/api_portal.log 2>&1 &
+    nohup java -Duser.dir=${currentDir} -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/VinPlayPortal.jar" com.vinplay.api.server.JettyServer > trace/api_portal.log 2>&1 &
 }
 runWspay(){
-    working_directory="./api/wspay"
+    currentDir="./api/wspay"
 
     cd $SCRIPTPATH;
-    nohup java -Duser.dir=${working_directory}  -cp "libs/*:${working_directory}/libs/*:${working_directory}/build/libs/wspay.jar" com.vinplay.pay.server.JettyServer > trace/wspay.log 2>&1 &
+    nohup java -Duser.dir=${currentDir}  -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/wspay.jar" com.vinplay.pay.server.JettyServer > trace/wspay.log 2>&1 &
 
 }
 
 runWsReport(){
-    working_directory="./api/wsreport"
+    currentDir="./api/wsreport"
+    cd $currentDir
+        ../../gradlew clean
+        ../../gradlew build
 
     cd $SCRIPTPATH;
-    nohup java -Duser.dir=${working_directory} -jar api/wsreport/build/libs/wsreport-1.0-SNAPSHOT.jar > trace/wsreport.log 2>&1 &
+    nohup java -Duser.dir=${currentDir} -jar api/wsreport/build/libs/wsreport-1.0-SNAPSHOT.jar > trace/wsreport.log 2>&1 &
 }
 ##region run game###
 
 runMiniGame(){
-    working_directory="./game/Minigame"
+    currentDir="./game/Minigame"
+    cd $currentDir
+        ../../gradlew clean
+        ../../gradlew build
 
     cd $SCRIPTPATH;
-    nohup java -Duser.dir=${working_directory}  -cp "libs/*:${working_directory}/libs/*:${working_directory}/build/libs/Minigame.jar" game.MiniGameMain > trace/minigame.log 2>&1 &
+    nohup java -Duser.dir=${currentDir}  -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/Minigame.jar" game.MiniGameMain > trace/minigame.log 2>&1 &
 
 }
 
 
 runSlot(){
-    working_directory="./game/slot"
+    currentDir="./game/slot"
+    cd $currentDir
+        ../../gradlew clean
+        ../../gradlew build
 
     cd $SCRIPTPATH;
-    nohup java -Duser.dir=${working_directory} -cp "libs/*:${working_directory}/libs/*:${working_directory}/build/libs/SlotMachine.jar" game.SlotMain > trace/slot.log 2>&1 &
+    nohup java -Duser.dir=${currentDir} -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/SlotMachine.jar" game.SlotMain > trace/slot.log 2>&1 &
 
 
 }
 ### run bacay ###
 runBacay(){
-    working_directory="./game/bacayServer"
+    currentDir="./game/bacayServer"
+    cd $currentDir
+        ../../gradlew clean
+        ../../gradlew build
 
     cd $SCRIPTPATH;
-    nohup java -Duser.dir=${working_directory} -cp "libs/*:${working_directory}/libs/*:${working_directory}/build/libs/bacayServer.jar" game.bacay.server.BacayMain > trace/bacay.log 2>&1 &
+    nohup java -Duser.dir=${currentDir} -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/bacayServer.jar" game.bacay.server.BacayMain > trace/bacay.log 2>&1 &
 }
 
 ### run binh ###
 runBinh(){
-    working_directory="./game/binh"
+    currentDir="./game/binh"
+    cd $currentDir
+        ../../gradlew clean
+        ../../gradlew build
 
     cd $SCRIPTPATH;
-    nohup java -Duser.dir=${working_directory}  -cp "libs/*:${working_directory}/libs/*:${working_directory}/build/libs/binh.jar" game.binh.server.BinhMain > trace/binh.log 2>&1 &
+    nohup java -Duser.dir=${currentDir}  -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/binh.jar" game.binh.server.BinhMain > trace/binh.log 2>&1 &
 }
 
 ### run tlmn ###
 runTienLen(){
-    working_directory="./game/tlmn"
+    currentDir="./game/tlmn"
+    cd $currentDir
+        ../../gradlew clean
+        ../../gradlew build
 
     cd $SCRIPTPATH;
-    nohup java -Duser.dir=${working_directory} -cp "libs/*:${working_directory}/libs/*:${working_directory}/build/libs/tlmn.jar" game.tienlen.server.TlmnMain > trace/tlmn.log 2>&1 &
+    nohup java -Duser.dir=${currentDir} -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/tlmn.jar" game.tienlen.server.TlmnMain > trace/tlmn.log 2>&1 &
 }
 
 # run Poker
 runPoker() {
-    working_directory="./game/poker"
+    currentDir="./game/poker"
+    cd $currentDir
+        ../../gradlew clean
+        ../../gradlew build
 
     cd $SCRIPTPATH;
-    nohup java -Duser.dir=${working_directory}  -cp "libs/*:${working_directory}/libs/*:${working_directory}/build/libs/poker.jar" game.poker.server.PokerMain > trace/poker.log 2>&1 &
+    nohup java -Duser.dir=${currentDir}  -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/poker.jar" game.poker.server.PokerMain > trace/poker.log 2>&1 &
 }
 
 # run baucuato2
 runBauCuaTo2() {
-    working_directory="./game/baucuato2"
+    currentDir="./game/baucuato2"
+    cd $currentDir
+        ../../gradlew clean
+        ../../gradlew build
 
     cd $SCRIPTPATH;
-    nohup java -Duser.dir=${working_directory} -cp "libs/*:${working_directory}/libs/*:${working_directory}/build/libs/baucuato2.jar" game.BauCuaTo2Main > trace/baucuato2.log 2>&1 &
+    nohup java -Duser.dir=${currentDir} -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/baucuato2.jar" game.BauCuaTo2Main > trace/baucuato2.log 2>&1 &
 }
 
 runTaiXiuMini() {
-    working_directory="./game/taixiuMini"
+    currentDir="./game/taixiuMini"
+    cd $currentDir
+        ../../gradlew clean
+        ../../gradlew build
 
     cd $SCRIPTPATH;
-    nohup java -Duser.dir=${working_directory} -cp "libs/*:${working_directory}/libs/*:${working_directory}/build/libs/taixiuMini.jar" game.TaiXiuMiniGameMain > trace/taixiu.log 2>&1 &
+    nohup java -Duser.dir=${currentDir} -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/taixiuMini.jar" game.TaiXiuMiniGameMain > trace/taixiu.log 2>&1 &
 }
 
 ### run Xi Dach ###
 runXiDach(){
-    working_directory="./game/xizach"
+    currentDir="./game/xizach"
+    cd $currentDir
+        ../../gradlew clean
+        ../../gradlew build
 
     cd $SCRIPTPATH;
-    nohup java -Duser.dir=${working_directory} -cp "libs/*:${working_directory}/libs/*:${working_directory}/build/libs/xizach.jar"  game.xizach.server.XiZachMain > trace/xizach.log 2>&1 &
+    nohup java -Duser.dir=${currentDir} -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/xizach.jar"  game.xizach.server.XiZachMain > trace/xizach.log 2>&1 &
 
 
 }
 
 ### run bai cai ###
 runBaiCao(){
-    working_directory="./game/baicao"
-    cd $working_directory
-#    ../../gradlew clean
-#    ../../gradlew build
+    currentDir="./game/baicao"
+    cd $currentDir
+    ../../gradlew clean
+    ../../gradlew build
+
     cd $SCRIPTPATH;
-    nohup java -Duser.dir=${working_directory}  -cp "libs/*:${working_directory}/libs/*:${working_directory}/build/libs/baicao.jar" game.baicao.server.BaiCaoMain > trace/baicao.log 2>&1 &
+    nohup java -Duser.dir=${currentDir}  -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/baicao.jar" game.baicao.server.BaiCaoMain > trace/baicao.log 2>&1 &
 }
 
 ### run xoc dia ###
 runXocDia(){
   echo "Start building Xoc Dia..."
-    working_directory="./game/xocdia"
+    currentDir="./game/xocdia"
+    cd $currentDir
+        ../../gradlew clean
+        ../../gradlew build
 
     cd $SCRIPTPATH;
-    nohup java -Duser.dir=${working_directory} -cp "libs/*:${working_directory}/libs/*:${working_directory}/build/libs/xocdia.jar"  game.xocdia.server.XocDiaMain > trace/xocdia.log 2>&1 &
+    nohup java -Duser.dir=${currentDir} -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/xocdia.jar"  game.xocdia.server.XocDiaMain > trace/xocdia.log 2>&1 &
    echo "Finish run Xoc Dia..."
 }
 
 ### run Sam ###
 runSam(){
   echo "Start building Sam..."
-    working_directory="./game/sam"
+    currentDir="./game/sam"
+    cd $currentDir
+        ../../gradlew clean
+        ../../gradlew build
 
     cd $SCRIPTPATH;
-    nohup java -Duser.dir=${working_directory} -cp "libs/*:${working_directory}/libs/*:${working_directory}/build/libs/sam.jar" game.sam.server.SamMain > trace/sam.log 2>&1 &
+    nohup java -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/sam.jar" game.sam.server.SamMain > trace/sam.log 2>&1 &
    echo "Finish run Sam..."
 }
 
