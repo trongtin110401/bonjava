@@ -9,7 +9,7 @@ SCRIPTPATH=$(pwd)
 killProcess() {
     echo "Working path: " . $SCRIPTPATH;
     kill -9 $(ps aux | grep "java -cp" | grep -v 'grep' | awk '{print $2}')
-    rm -rf */*/libs
+#    rm -rf */*/libs
 }
 
 # run vbee
