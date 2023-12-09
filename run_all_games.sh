@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# make log server
+mkdir /home/server/logs/
 # Absolute path to this script, e.g. /home/user/bin/foo.sh
 SCRIPT=$(readlink -f "$0")
 # Absolute path this script is in, thus /home/user/bin
@@ -20,7 +22,7 @@ runVbee() {
 
 
 #    cd $SCRIPTPATH;
-    nohup java  -cp "libs/*:build/libs/vbee-1.0.jar" com.vinplay.vbee.main.VBeeMain > ../../trace/vbee.log 2>&1 &
+    nohup java  -cp "libs/*:build/libs/vbee-1.0.jar" com.vinplay.vbee.main.VBeeMain > /home/server/logs/vbee.log 2>&1 &
 }
 runBackend() {
   cd ${SCRIPTPATH}
@@ -29,7 +31,7 @@ runBackend() {
 
 
 #    cd $SCRIPTPATH;
-    nohup java  -cp "libs/*:build/libs/VinPlayBackend-1.0.jar" com.vinplay.api.backend.server.VinPlayBackendMain >../../trace/api_backend.log 2>&1 &
+    nohup java  -cp "libs/*:build/libs/VinPlayBackend-1.0.jar" com.vinplay.api.backend.server.VinPlayBackendMain >/home/server/logs/api_backend.log 2>&1 &
 
 }
 runPortal(){
@@ -38,14 +40,14 @@ runPortal(){
   cd $currentDir
 
 #    cd $SCRIPTPATH;
-    nohup java  -cp "libs/*:build/libs/VinPlayPortal.jar" com.vinplay.api.server.JettyServer > ../../trace/api_portal.log 2>&1 &
+    nohup java  -cp "libs/*:build/libs/VinPlayPortal.jar" com.vinplay.api.server.JettyServer > /home/server/logs/api_portal.log 2>&1 &
 }
 runWspay(){
   cd ${SCRIPTPATH}
     currentDir="api/wspay"
 
 #    cd $SCRIPTPATH;
-    nohup java   -cp "libs/*:build/libs/wspay.jar" com.vinplay.pay.server.JettyServer > ../../trace/wspay.log 2>&1 &
+    nohup java   -cp "libs/*:build/libs/wspay.jar" com.vinplay.pay.server.JettyServer > /home/server/logs/wspay.log 2>&1 &
 
 }
 
@@ -56,7 +58,7 @@ runWsReport(){
 
 
 #    cd $SCRIPTPATH;
-    nohup java  -jar api/wsreport/build/libs/wsreport-1.0-SNAPSHOT.jar > ../../trace/wsreport.log 2>&1 &
+    nohup java  -jar api/wsreport/build/libs/wsreport-1.0-SNAPSHOT.jar > /home/server/logs/wsreport.log 2>&1 &
 }
 ##region run game###
 
@@ -67,7 +69,7 @@ runMiniGame(){
 
 
 #    cd $SCRIPTPATH;
-    nohup java   -cp "libs/*:build/libs/Minigame.jar" game.MiniGameMain > ../../trace/minigame.log 2>&1 &
+    nohup java   -cp "libs/*:build/libs/Minigame.jar" game.MiniGameMain > /home/server/logs/minigame.log 2>&1 &
 
 }
 
@@ -79,7 +81,7 @@ runSlot(){
 
 
 #    cd $SCRIPTPATH;
-    nohup java  -cp "libs/*:build/libs/SlotMachine.jar" game.SlotMain > ../../trace/slot.log 2>&1 &
+    nohup java  -cp "libs/*:build/libs/SlotMachine.jar" game.SlotMain > /home/server/logs/slot.log 2>&1 &
 
 
 }
@@ -91,7 +93,7 @@ runBacay(){
 
 
 #    cd $SCRIPTPATH;
-    nohup java  -cp "libs/*:build/libs/bacayServer.jar" game.bacay.server.BacayMain > ../../trace/bacay.log 2>&1 &
+    nohup java  -cp "libs/*:build/libs/bacayServer.jar" game.bacay.server.BacayMain > /home/server/logs/bacay.log 2>&1 &
 }
 
 ### run binh ###
@@ -102,7 +104,7 @@ runBinh(){
 
 
 #    cd $SCRIPTPATH;
-    nohup java   -cp "libs/*:build/libs/binh.jar" game.binh.server.BinhMain > ../../trace/binh.log 2>&1 &
+    nohup java   -cp "libs/*:build/libs/binh.jar" game.binh.server.BinhMain > /home/server/logs/binh.log 2>&1 &
 }
 
 ### run tlmn ###
@@ -113,7 +115,7 @@ runTienLen(){
 
 
 #    cd $SCRIPTPATH;
-    nohup java  -cp "libs/*:build/libs/tlmn.jar" game.tienlen.server.TlmnMain > ../../trace/tlmn.log 2>&1 &
+    nohup java  -cp "libs/*:build/libs/tlmn.jar" game.tienlen.server.TlmnMain > /home/server/logs/tlmn.log 2>&1 &
 }
 
 # run Poker
@@ -124,7 +126,7 @@ runPoker() {
 
 
 #    cd $SCRIPTPATH;
-    nohup java   -cp "libs/*:build/libs/poker.jar" game.poker.server.PokerMain > ../../trace/poker.log 2>&1 &
+    nohup java   -cp "libs/*:build/libs/poker.jar" game.poker.server.PokerMain > /home/server/logs/poker.log 2>&1 &
 }
 
 # run baucuato2
@@ -135,7 +137,7 @@ runBauCuaTo2() {
 
 
 #    cd $SCRIPTPATH;
-    nohup java  -cp "libs/*:build/libs/baucuato2.jar" game.BauCuaTo2Main > ../../trace/baucuato2.log 2>&1 &
+    nohup java  -cp "libs/*:build/libs/baucuato2.jar" game.BauCuaTo2Main > /home/server/logs/baucuato2.log 2>&1 &
 }
 
 runTaiXiuMini() {
@@ -145,7 +147,7 @@ runTaiXiuMini() {
 
 
 #    cd $SCRIPTPATH;
-    nohup java  -cp "libs/*:build/libs/taixiuMini.jar" game.TaiXiuMiniGameMain > ../../trace/taixiu.log 2>&1 &
+    nohup java  -cp "libs/*:build/libs/taixiuMini.jar" game.TaiXiuMiniGameMain > /home/server/logs/taixiu.log 2>&1 &
 }
 
 ### run Xi Dach ###
@@ -156,7 +158,7 @@ runXiDach(){
 
 
 #    cd $SCRIPTPATH;
-    nohup java  -cp "libs/*:build/libs/xizach.jar"  game.xizach.server.XiZachMain > ../../trace/xizach.log 2>&1 &
+    nohup java  -cp "libs/*:build/libs/xizach.jar"  game.xizach.server.XiZachMain > /home/server/logs/xizach.log 2>&1 &
 
 
 }
@@ -168,7 +170,7 @@ runBaiCao(){
     cd $currentDir
 
 #    cd $SCRIPTPATH;
-    nohup java   -cp "libs/*:build/libs/baicao.jar" game.baicao.server.BaiCaoMain > ../../trace/baicao.log 2>&1 &
+    nohup java   -cp "libs/*:build/libs/baicao.jar" game.baicao.server.BaiCaoMain > /home/server/logs/baicao.log 2>&1 &
 }
 
 ### run xoc dia ###
@@ -180,7 +182,7 @@ runXocDia(){
 
 
 #    cd $SCRIPTPATH;
-    nohup java  -cp "libs/*:build/libs/xocdia.jar"  game.xocdia.server.XocDiaMain > ../../trace/xocdia.log 2>&1 &
+    nohup java  -cp "libs/*:build/libs/xocdia.jar"  game.xocdia.server.XocDiaMain > /home/server/logs/xocdia.log 2>&1 &
    echo "Finish run Xoc Dia..."
 }
 
@@ -193,7 +195,7 @@ runSam(){
 
 
 #    cd $SCRIPTPATH;
-    nohup java -cp "libs/*:build/libs/sam.jar" game.sam.server.SamMain > ../../trace/sam.log 2>&1 &
+    nohup java -cp "libs/*:build/libs/sam.jar" game.sam.server.SamMain > /home/server/logs/sam.log 2>&1 &
    echo "Finish run Sam..."
 }
 
