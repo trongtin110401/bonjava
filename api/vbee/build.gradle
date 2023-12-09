@@ -18,6 +18,7 @@ dependencies {
     compile project(':VinPlayDAL')
     compile fileTree(include: ['*.jar'], dir: '../../libs')
 }
+
 task copyJar(type: Copy) {
     from configurations.compile {
         include 'VinPlayUserCore*.jar', 'BitzeroAll*.jar', 'VinPlayCardLib*.jar', "VinPlayDAL*.jar"
@@ -25,4 +26,10 @@ task copyJar(type: Copy) {
     into 'libs/'
 }
 
-build.dependsOn copyJar
+task copylibs(type: Copy) {
+    from '../../libs'
+    into 'libs'
+}
+
+copylibs.dependsOn copyJar
+build.dependsOn copylibs

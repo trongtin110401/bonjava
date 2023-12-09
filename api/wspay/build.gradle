@@ -26,5 +26,11 @@ task copyJar(type: Copy) {
     into 'libs/'
 }
 
-build.dependsOn copyJar
+task copylibs(type: Copy) {
+    from '../../libs'
+    into 'libs'
+}
+
+copylibs.dependsOn copyJar
+build.dependsOn copylibs
 

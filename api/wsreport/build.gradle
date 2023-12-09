@@ -18,9 +18,6 @@ dependencies {
     implementation group: 'com.hazelcast', name: 'hazelcast', version: '3.6.4'
     compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.20'
     implementation 'com.hazelcast:hazelcast-client:3.6.4'
-
-
-
 }
 
 
