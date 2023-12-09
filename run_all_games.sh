@@ -14,26 +14,26 @@ killProcess() {
 
 # run vbee
 runVbee() {
-    currentDir="api/vbee"
+    currentDir="./api/vbee"
 
     cd $SCRIPTPATH;
-    nohup java -cp "libs/*:api/vbee/libs/*:api/vbee/build/libs/vbee-1.0.jar" -Duser.dir=${currentDir} com.vinplay.vbee.main.VBeeMain > trace/vbee.log 2>&1 &
+    nohup java -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/vbee-1.0.jar" -Duser.dir=${currentDir} com.vinplay.vbee.main.VBeeMain > trace/vbee.log 2>&1 &
 }
 runBackend() {
-    currentDir="api/VinPlayBackend"
+    currentDir="./api/VinPlayBackend"
 
     cd $SCRIPTPATH;
     nohup java -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/VinPlayBackend-1.0.jar" -Duser.dir=${currentDir} com.vinplay.api.backend.server.VinPlayBackendMain >trace/api_backend.log 2>&1 &
 
 }
 runPortal(){
-  currentDir="api/VinPlayPortal"
+  currentDir="./api/VinPlayPortal"
 
     cd $SCRIPTPATH;
     nohup java -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/VinPlayPortal.jar" -Duser.dir=${currentDir} com.vinplay.api.server.JettyServer > trace/api_portal.log 2>&1 &
 }
 runWspay(){
-    currentDir="api/wspay"
+    currentDir="./api/wspay"
 
     cd $SCRIPTPATH;
     nohup java -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/wspay.jar" -Duser.dir=${currentDir} com.vinplay.pay.server.JettyServer > trace/wspay.log 2>&1 &
@@ -41,7 +41,7 @@ runWspay(){
 }
 
 runWsReport(){
-    currentDir="api/wsreport"
+    currentDir="./api/wsreport"
 
     cd $SCRIPTPATH;
     nohup java -jar api/wsreport/build/libs/wsreport-1.0-SNAPSHOT.jar -Duser.dir=${currentDir} > trace/wsreport.log 2>&1 &
@@ -49,7 +49,7 @@ runWsReport(){
 ##region run game###
 
 runMiniGame(){
-    currentDir="game/Minigame"
+    currentDir="./game/Minigame"
 
     cd $SCRIPTPATH;
     nohup java -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/Minigame.jar" -Duser.dir=${currentDir} game.MiniGameMain > trace/minigame.log 2>&1 &
@@ -58,7 +58,7 @@ runMiniGame(){
 
 
 runSlot(){
-    currentDir="game/slot"
+    currentDir="./game/slot"
 
     cd $SCRIPTPATH;
     nohup java -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/SlotMachine.jar" -Duser.dir=${currentDir} game.SlotMain > trace/slot.log 2>&1 &
@@ -67,7 +67,7 @@ runSlot(){
 }
 ### run bacay ###
 runBacay(){
-    currentDir="game/bacayServer"
+    currentDir="./game/bacayServer"
 
     cd $SCRIPTPATH;
     nohup java -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/bacayServer.jar" -Duser.dir=${currentDir} game.bacay.server.BacayMain > trace/bacay.log 2>&1 &
@@ -75,7 +75,7 @@ runBacay(){
 
 ### run binh ###
 runBinh(){
-    currentDir="game/binh"
+    currentDir="./game/binh"
 
     cd $SCRIPTPATH;
     nohup java -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/binh.jar" -Duser.dir=${currentDir} game.binh.server.BinhMain > trace/binh.log 2>&1 &
@@ -83,7 +83,7 @@ runBinh(){
 
 ### run tlmn ###
 runTienLen(){
-    currentDir="game/tlmn"
+    currentDir="./game/tlmn"
 
     cd $SCRIPTPATH;
     nohup java -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/tlmn.jar" -Duser.dir=${currentDir} game.tienlen.server.TlmnMain > trace/tlmn.log 2>&1 &
@@ -91,7 +91,7 @@ runTienLen(){
 
 # run Poker
 runPoker() {
-    currentDir="game/poker"
+    currentDir="./game/poker"
 
     cd $SCRIPTPATH;
     nohup java -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/poker.jar" -Duser.dir=${currentDir} game.poker.server.PokerMain > trace/poker.log 2>&1 &
@@ -99,14 +99,14 @@ runPoker() {
 
 # run baucuato2
 runBauCuaTo2() {
-    currentDir="game/baucuato2"
+    currentDir="./game/baucuato2"
 
     cd $SCRIPTPATH;
     nohup java -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/baucuato2.jar" -Duser.dir=${currentDir} game.BauCuaTo2Main > trace/baucuato2.log 2>&1 &
 }
 
 runTaiXiuMini() {
-    currentDir="game/taixiuMini"
+    currentDir="./game/taixiuMini"
 
     cd $SCRIPTPATH;
     nohup java -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/taixiuMini.jar" -Duser.dir=${currentDir} game.TaiXiuMiniGameMain > trace/taixiu.log 2>&1 &
@@ -114,7 +114,7 @@ runTaiXiuMini() {
 
 ### run Xi Dach ###
 runXiDach(){
-    currentDir="game/xizach"
+    currentDir="./game/xizach"
 
     cd $SCRIPTPATH;
     nohup java -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/xizach.jar" -Duser.dir=${currentDir} game.xizach.server.XiZachMain > trace/xizach.log 2>&1 &
@@ -124,7 +124,7 @@ runXiDach(){
 
 ### run bai cai ###
 runBaiCao(){
-    currentDir="game/baicao"
+    currentDir="./game/baicao"
     cd $currentDir
 #    ../../gradlew clean
 #    ../../gradlew build
@@ -135,7 +135,7 @@ runBaiCao(){
 ### run xoc dia ###
 runXocDia(){
   echo "Start building Xoc Dia..."
-    currentDir="game/xocdia"
+    currentDir="./game/xocdia"
 
     cd $SCRIPTPATH;
     nohup java -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/xocdia.jar" -Duser.dir=${currentDir} game.xocdia.server.XocDiaMain > trace/xocdia.log 2>&1 &
@@ -145,7 +145,7 @@ runXocDia(){
 ### run Sam ###
 runSam(){
   echo "Start building Sam..."
-    currentDir="game/sam"
+    currentDir="./game/sam"
 
     cd $SCRIPTPATH;
     nohup java -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/sam.jar" -Duser.dir=${currentDir} game.sam.server.SamMain > trace/sam.log 2>&1 &
