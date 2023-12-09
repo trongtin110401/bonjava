@@ -123,15 +123,14 @@ runXiDach(){
 }
 
 ### run bai cai ###
-#runBaiCao(){
-#    currentDir="game/baicao"
-#    cd $currentDir
+runBaiCao(){
+    currentDir="game/baicao"
+    cd $currentDir
 #    ../../gradlew clean
 #    ../../gradlew build
-#    cd $SCRIPTPATH;
-#    nohup java -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/baicao.jar" game.baicao.server.BaiCaoMain >/dev/null 2>&1 &
-#   #java -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/baicao.jar" game.baicao.server.BaiCaoMain
-#}
+    cd $SCRIPTPATH;
+    nohup java -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/baicao.jar" -Duser.dir=${currentDir} game.baicao.server.BaiCaoMain > trace/baicao.log 2>&1 &
+}
 
 ### run xoc dia ###
 runXocDia(){
