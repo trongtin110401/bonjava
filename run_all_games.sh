@@ -20,7 +20,7 @@ runVbee() {
         ../../gradlew build
 
 #    cd $SCRIPTPATH;
-    nohup java  -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/vbee-1.0.jar" com.vinplay.vbee.main.VBeeMain > trace/vbee.log 2>&1 &
+    nohup java  -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/vbee-1.0.jar" com.vinplay.vbee.main.VBeeMain > ../../trace/vbee.log 2>&1 &
 }
 runBackend() {
     currentDir="./api/VinPlayBackend"
@@ -29,7 +29,7 @@ runBackend() {
         ../../gradlew build
 
 #    cd $SCRIPTPATH;
-    nohup java  -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/VinPlayBackend-1.0.jar" com.vinplay.api.backend.server.VinPlayBackendMain >trace/api_backend.log 2>&1 &
+    nohup java  -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/VinPlayBackend-1.0.jar" com.vinplay.api.backend.server.VinPlayBackendMain >../../trace/api_backend.log 2>&1 &
 
 }
 runPortal(){
@@ -39,13 +39,13 @@ runPortal(){
       ../../gradlew build
 
 #    cd $SCRIPTPATH;
-    nohup java  -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/VinPlayPortal.jar" com.vinplay.api.server.JettyServer > trace/api_portal.log 2>&1 &
+    nohup java  -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/VinPlayPortal.jar" com.vinplay.api.server.JettyServer > ../../trace/api_portal.log 2>&1 &
 }
 runWspay(){
     currentDir="./api/wspay"
 
 #    cd $SCRIPTPATH;
-    nohup java   -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/wspay.jar" com.vinplay.pay.server.JettyServer > trace/wspay.log 2>&1 &
+    nohup java   -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/wspay.jar" com.vinplay.pay.server.JettyServer > ../../trace/wspay.log 2>&1 &
 
 }
 
@@ -56,7 +56,7 @@ runWsReport(){
         ../../gradlew build
 
 #    cd $SCRIPTPATH;
-    nohup java  -jar api/wsreport/build/libs/wsreport-1.0-SNAPSHOT.jar > trace/wsreport.log 2>&1 &
+    nohup java  -jar api/wsreport/build/libs/wsreport-1.0-SNAPSHOT.jar > ../../trace/wsreport.log 2>&1 &
 }
 ##region run game###
 
@@ -67,7 +67,7 @@ runMiniGame(){
         ../../gradlew build
 
 #    cd $SCRIPTPATH;
-    nohup java   -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/Minigame.jar" game.MiniGameMain > trace/minigame.log 2>&1 &
+    nohup java   -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/Minigame.jar" game.MiniGameMain > ../../trace/minigame.log 2>&1 &
 
 }
 
@@ -79,7 +79,7 @@ runSlot(){
         ../../gradlew build
 
 #    cd $SCRIPTPATH;
-    nohup java  -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/SlotMachine.jar" game.SlotMain > trace/slot.log 2>&1 &
+    nohup java  -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/SlotMachine.jar" game.SlotMain > ../../trace/slot.log 2>&1 &
 
 
 }
@@ -91,7 +91,7 @@ runBacay(){
         ../../gradlew build
 
 #    cd $SCRIPTPATH;
-    nohup java  -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/bacayServer.jar" game.bacay.server.BacayMain > trace/bacay.log 2>&1 &
+    nohup java  -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/bacayServer.jar" game.bacay.server.BacayMain > ../../trace/bacay.log 2>&1 &
 }
 
 ### run binh ###
@@ -102,7 +102,7 @@ runBinh(){
         ../../gradlew build
 
 #    cd $SCRIPTPATH;
-    nohup java   -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/binh.jar" game.binh.server.BinhMain > trace/binh.log 2>&1 &
+    nohup java   -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/binh.jar" game.binh.server.BinhMain > ../../trace/binh.log 2>&1 &
 }
 
 ### run tlmn ###
@@ -113,7 +113,7 @@ runTienLen(){
         ../../gradlew build
 
 #    cd $SCRIPTPATH;
-    nohup java  -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/tlmn.jar" game.tienlen.server.TlmnMain > trace/tlmn.log 2>&1 &
+    nohup java  -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/tlmn.jar" game.tienlen.server.TlmnMain > ../../trace/tlmn.log 2>&1 &
 }
 
 # run Poker
@@ -124,7 +124,7 @@ runPoker() {
         ../../gradlew build
 
 #    cd $SCRIPTPATH;
-    nohup java   -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/poker.jar" game.poker.server.PokerMain > trace/poker.log 2>&1 &
+    nohup java   -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/poker.jar" game.poker.server.PokerMain > ../../trace/poker.log 2>&1 &
 }
 
 # run baucuato2
@@ -135,7 +135,7 @@ runBauCuaTo2() {
         ../../gradlew build
 
 #    cd $SCRIPTPATH;
-    nohup java  -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/baucuato2.jar" game.BauCuaTo2Main > trace/baucuato2.log 2>&1 &
+    nohup java  -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/baucuato2.jar" game.BauCuaTo2Main > ../../trace/baucuato2.log 2>&1 &
 }
 
 runTaiXiuMini() {
@@ -145,7 +145,7 @@ runTaiXiuMini() {
         ../../gradlew build
 
 #    cd $SCRIPTPATH;
-    nohup java  -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/taixiuMini.jar" game.TaiXiuMiniGameMain > trace/taixiu.log 2>&1 &
+    nohup java  -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/taixiuMini.jar" game.TaiXiuMiniGameMain > ../../trace/taixiu.log 2>&1 &
 }
 
 ### run Xi Dach ###
@@ -156,7 +156,7 @@ runXiDach(){
         ../../gradlew build
 
 #    cd $SCRIPTPATH;
-    nohup java  -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/xizach.jar"  game.xizach.server.XiZachMain > trace/xizach.log 2>&1 &
+    nohup java  -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/xizach.jar"  game.xizach.server.XiZachMain > ../../trace/xizach.log 2>&1 &
 
 
 }
@@ -169,7 +169,7 @@ runBaiCao(){
     ../../gradlew build
 
 #    cd $SCRIPTPATH;
-    nohup java   -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/baicao.jar" game.baicao.server.BaiCaoMain > trace/baicao.log 2>&1 &
+    nohup java   -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/baicao.jar" game.baicao.server.BaiCaoMain > ../../trace/baicao.log 2>&1 &
 }
 
 ### run xoc dia ###
@@ -181,7 +181,7 @@ runXocDia(){
         ../../gradlew build
 
 #    cd $SCRIPTPATH;
-    nohup java  -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/xocdia.jar"  game.xocdia.server.XocDiaMain > trace/xocdia.log 2>&1 &
+    nohup java  -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/xocdia.jar"  game.xocdia.server.XocDiaMain > ../../trace/xocdia.log 2>&1 &
    echo "Finish run Xoc Dia..."
 }
 
@@ -194,7 +194,7 @@ runSam(){
         ../../gradlew build
 
 #    cd $SCRIPTPATH;
-    nohup java -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/sam.jar" game.sam.server.SamMain > trace/sam.log 2>&1 &
+    nohup java -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/sam.jar" game.sam.server.SamMain > ../../trace/sam.log 2>&1 &
    echo "Finish run Sam..."
 }
 
