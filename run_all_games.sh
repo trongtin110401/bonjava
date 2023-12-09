@@ -23,20 +23,20 @@ runBackend() {
     currentDir="api/VinPlayBackend"
 
     cd $SCRIPTPATH;
-    nohup java -cp "libs/*:api/VinPlayBackend/libs/*:api/VinPlayBackend/build/libs/VinPlayBackend-1.0.jar" -Duser.dir=${currentDir} com.vinplay.api.backend.server.VinPlayBackendMain >trace/api_backend.log 2>&1 &
+    nohup java -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/VinPlayBackend-1.0.jar" -Duser.dir=${currentDir} com.vinplay.api.backend.server.VinPlayBackendMain >trace/api_backend.log 2>&1 &
 
 }
 runPortal(){
   currentDir="api/VinPlayPortal"
 
     cd $SCRIPTPATH;
-    nohup java -cp "libs/*:api/VinPlayPortal/libs/*:api/VinPlayPortal/build/libs/VinPlayPortal.jar" -Duser.dir=${currentDir} com.vinplay.api.server.JettyServer > trace/api_portal.log 2>&1 &
+    nohup java -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/VinPlayPortal.jar" -Duser.dir=${currentDir} com.vinplay.api.server.JettyServer > trace/api_portal.log 2>&1 &
 }
 runWspay(){
     currentDir="api/wspay"
 
     cd $SCRIPTPATH;
-    nohup java -cp "libs/*:api/wspay/libs/*:api/wspay/build/libs/wspay.jar" -Duser.dir=${currentDir} com.vinplay.pay.server.JettyServer > trace/wspay.log 2>&1 &
+    nohup java -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/wspay.jar" -Duser.dir=${currentDir} com.vinplay.pay.server.JettyServer > trace/wspay.log 2>&1 &
 
 }
 
@@ -52,7 +52,7 @@ runMiniGame(){
     currentDir="game/Minigame"
 
     cd $SCRIPTPATH;
-    nohup java -cp "libs/*:game/Minigame/libs/*:game/Minigame/build/libs/Minigame.jar" -Duser.dir=${currentDir} game.MiniGameMain > trace/minigame.log 2>&1 &
+    nohup java -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/Minigame.jar" -Duser.dir=${currentDir} game.MiniGameMain > trace/minigame.log 2>&1 &
 
 }
 
