@@ -14,6 +14,7 @@ killProcess() {
 
 # run vbee
 runVbee() {
+    cd ${SCRIPTPATH}
     currentDir="api/vbee"
     cd $currentDir
 
@@ -22,6 +23,7 @@ runVbee() {
     nohup java  -cp "libs/*:build/libs/vbee-1.0.jar" com.vinplay.vbee.main.VBeeMain > ../../trace/vbee.log 2>&1 &
 }
 runBackend() {
+  cd ${SCRIPTPATH}
     currentDir="api/VinPlayBackend"
     cd $currentDir
 
@@ -31,6 +33,7 @@ runBackend() {
 
 }
 runPortal(){
+  cd ${SCRIPTPATH}
   currentDir="api/VinPlayPortal"
   cd $currentDir
 
@@ -38,6 +41,7 @@ runPortal(){
     nohup java  -cp "libs/*:build/libs/VinPlayPortal.jar" com.vinplay.api.server.JettyServer > ../../trace/api_portal.log 2>&1 &
 }
 runWspay(){
+  cd ${SCRIPTPATH}
     currentDir="api/wspay"
 
 #    cd $SCRIPTPATH;
@@ -46,6 +50,7 @@ runWspay(){
 }
 
 runWsReport(){
+  cd ${SCRIPTPATH}
     currentDir="api/wsreport"
     cd $currentDir
 
@@ -56,6 +61,7 @@ runWsReport(){
 ##region run game###
 
 runMiniGame(){
+  cd ${SCRIPTPATH}
     currentDir="game/Minigame"
     cd $currentDir
 
@@ -67,6 +73,7 @@ runMiniGame(){
 
 
 runSlot(){
+  cd ${SCRIPTPATH}
     currentDir="game/slot"
     cd $currentDir
 
@@ -78,6 +85,7 @@ runSlot(){
 }
 ### run bacay ###
 runBacay(){
+  cd ${SCRIPTPATH}
     currentDir="game/bacayServer"
     cd $currentDir
 
@@ -88,6 +96,7 @@ runBacay(){
 
 ### run binh ###
 runBinh(){
+  cd ${SCRIPTPATH}
     currentDir="game/binh"
     cd $currentDir
 
@@ -98,6 +107,7 @@ runBinh(){
 
 ### run tlmn ###
 runTienLen(){
+  cd ${SCRIPTPATH}
     currentDir="game/tlmn"
     cd $currentDir
 
@@ -108,6 +118,7 @@ runTienLen(){
 
 # run Poker
 runPoker() {
+  cd ${SCRIPTPATH}
     currentDir="game/poker"
     cd $currentDir
 
@@ -118,6 +129,7 @@ runPoker() {
 
 # run baucuato2
 runBauCuaTo2() {
+  cd ${SCRIPTPATH}
     currentDir="game/baucuato2"
     cd $currentDir
 
@@ -127,6 +139,7 @@ runBauCuaTo2() {
 }
 
 runTaiXiuMini() {
+  cd ${SCRIPTPATH}
     currentDir="game/taixiuMini"
     cd $currentDir
 
@@ -137,6 +150,7 @@ runTaiXiuMini() {
 
 ### run Xi Dach ###
 runXiDach(){
+  cd ${SCRIPTPATH}
     currentDir="game/xizach"
     cd $currentDir
 
@@ -149,6 +163,7 @@ runXiDach(){
 
 ### run bai cai ###
 runBaiCao(){
+  cd ${SCRIPTPATH}
     currentDir="game/baicao"
     cd $currentDir
 
@@ -158,6 +173,7 @@ runBaiCao(){
 
 ### run xoc dia ###
 runXocDia(){
+  cd ${SCRIPTPATH}
   echo "Start building Xoc Dia..."
     currentDir="game/xocdia"
     cd $currentDir
@@ -170,6 +186,7 @@ runXocDia(){
 
 ### run Sam ###
 runSam(){
+  cd ${SCRIPTPATH}
   echo "Start building Sam..."
     currentDir="game/sam"
     cd $currentDir
