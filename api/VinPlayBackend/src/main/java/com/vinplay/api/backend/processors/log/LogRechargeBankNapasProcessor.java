@@ -47,22 +47,22 @@ implements BaseProcessor<HttpServletRequest, String> {
             String pages = request.getParameter("p");
             String numberMax = request.getParameter("max_item");
 
-//            String codepay = request.getParameter("codepay");
-//            String nicknamex = "";
-//            if(codepay != null){
-//                if(codepay.trim().length() != 0){
-//                    ArrayList<String> listnick = GetNicknameByCode(codepay.trim().toUpperCase());
-//                    if(listnick.size() == 0){
-//                        nicknamex = "KhongThay";
-//                    }else if(listnick.size() == 1){
-//                        nicknamex = listnick.get(0);
-//                    }else{
-//                        nicknamex = listnick.get(listnick.size()-1);
-//                    }
-//                    nickname = nicknamex;
-//                }
-//
-//            }
+            String codepay = request.getParameter("codepay");
+            String nicknamex = "";
+            if(codepay != null){
+                if(codepay.trim().length() != 0){
+                    ArrayList<String> listnick = GetNicknameByCode(codepay.trim().toUpperCase());
+                    if(listnick.size() == 0){
+                        nicknamex = "KhongThay";
+                    }else if(listnick.size() == 1){
+                        nicknamex = listnick.get(0);
+                    }else{
+                        nicknamex = listnick.get(listnick.size()-1);
+                    }
+                    nickname = nicknamex;
+                }
+
+            }
 
             int page = Integer.parseInt(pages);
             int maxItem = numberMax != null ? Integer.parseInt(numberMax) : MAX_ITEM;
