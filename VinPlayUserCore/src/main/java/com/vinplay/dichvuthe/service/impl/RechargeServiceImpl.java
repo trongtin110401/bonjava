@@ -1117,7 +1117,7 @@ public class RechargeServiceImpl
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{\"Id\":\"" + Id + "\",\"Nickname\":\"" + Nickname + "\",\"CreatedAt\":\"" + CreatedAt + "\",\"UpdatedAt\":\"" + UpdatedAt + "\",\"Amount\":" + Amount + ",\"Status\":1,\"BankBrandName\":\"" + BankBrandName + "\",\"BankAccountNumber\":\"" + BankAccountNumber + "\",\"BankAccountName\":\"" + BankAccountName + "\",\"Description\":\"" + Description + "\",\"UserApprove\":\"" + UserApprove + "\",\"UserSender\":\"" + UserSender + "\",\"Note1\":\"\",\"Note2\":\"\",\"Note3\":\"\"}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/deposit_codepay_manual/_doc")
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/deposit_codepay_manual/_doc")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();
@@ -1153,7 +1153,7 @@ public class RechargeServiceImpl
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{\"Id\":\"" + Id + "\",\"Nickname\":\"" + Nickname + "\",\"CreatedAt\":\"" + CreatedAt + "\",\"UpdatedAt\":\"" + UpdatedAt + "\",\"Amount\":" + Amount + ",\"Status\":1,\"BankBrandName\":\"" + BankBrandName + "\",\"BankAccountNumber\":\"" + BankAccountNumber + "\",\"BankAccountName\":\"" + BankAccountName + "\",\"Description\":\"" + Description + "\",\"UserApprove\":\"" + UserApprove + "\",\"UserSender\":\"" + UserSender + "\",\"Note1\":\"\",\"Note2\":\"\",\"Note3\":\"\"}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/deposit_momo2_manual/_doc")
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/deposit_momo2_manual/_doc")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();
@@ -1184,7 +1184,7 @@ public class RechargeServiceImpl
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{\"Id\":\"" + Id + "\",\"Nickname\":\"" + Nickname + "\",\"CreatedAt\":\"" + CreatedAt + "\",\"UpdatedAt\":\"" + UpdatedAt + "\",\"Amount\":" + Amount + ",\"Status\":1,\"BankBrandName\":\"" + BankBrandName + "\",\"BankAccountNumber\":\"" + BankAccountNumber + "\",\"BankAccountName\":\"" + BankAccountName + "\",\"Description\":\"" + Description + "\",\"UserApprove\":\"" + UserApprove + "\",\"UserSender\":\"" + UserSender + "\",\"Note1\":\"\",\"Note2\":\"\",\"Note3\":\"\"}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/deposit_nh_manual/_doc")
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/deposit_nh_manual/_doc")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();

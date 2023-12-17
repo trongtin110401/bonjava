@@ -98,7 +98,7 @@ public class LogChuyenTienDaiLyImpl  {
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, " {\r\n\"_class\": \"vn.com.syncmonges.entity.log_chuyen_tien_dai_ly\",\r\n\"id\": \""+message.getTransactionId()+"\",\r\n\"nick_name_send\": \""+ message.getNicknameSend()+"\",\r\n\"nick_name_receive\": \""+ message.getNicknameReceive()+"\",\r\n\"money_send\": "+ message.getMoneySend()+",\r\n\"money_receive\": "+ message.getMoneyReceive()+",\r\n\"status\": "+message.getStatus()+",\r\n\"fee\": "+message.getFee()+",\r\n\"trans_time\": \""+message.getTransTime()+"\",\r\n\"top_ds\": 1,\r\n\"process\": 0,\r\n\"des_send\": \""+message.getDesSend()+"\",\r\n\"des_receive\": \""+message.getDesReceive()+"\",\r\n\"create_time\": \""+time_create+"\",\r\n\"transaction_no\": \""+message.getTransactionId()+"\",\r\n\"is_freeze_money\": "+message.getIsFreezeMoney()+",\r\n\"agent_level1\": \""+message.getAgentLevel1()+"\",\r\n\"session_id_freeze_money\": \""+message.getSessionIdFreezeMoney()+"\"\r\n}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/log_chuyen_tien_dai_ly/_doc")
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/log_chuyen_tien_dai_ly/_doc")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();

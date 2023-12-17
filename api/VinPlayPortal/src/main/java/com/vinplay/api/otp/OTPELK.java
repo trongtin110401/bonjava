@@ -22,7 +22,7 @@ public class OTPELK {
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{ \"nickname\": \""+uo.getNickname()+"\", \"username\": \""+uo.getUsername()+"\", \"phone\": \""+uo.getPhone()+"\", \"otp\": \""+uo.getOtp()+"\", \"active\": "+uo.getActive()+", \"creat_time\": "+uo.getCreat_time()+", \"active_time\": "+uo.getActive_time()+", \"turn\": "+uo.getTurn()+", \"timelog\": \""+uo.getTimelog()+"\" }");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/active/_doc/")
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/active/_doc/")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();
@@ -53,7 +53,7 @@ public class OTPELK {
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{\"query\":{\"bool\":{\"must\":[{\"match\":{\"nickname.keyword\":\""+nickname+"\"}}],\"must_not\":[],\"should\":[]}},\"from\":0,\"size\":10,\"sort\":[],\"aggs\":{}}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/active/_search")
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/active/_search")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();
@@ -100,7 +100,7 @@ public class OTPELK {
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{ \"nickname\": \""+uo.getNickname()+"\", \"username\": \""+uo.getUsername()+"\", \"phone\": \""+uo.getPhone()+"\", \"otp\": \""+uo.getOtp()+"\", \"active\": "+uo.getActive()+", \"creat_time\": "+uo.getCreat_time()+", \"active_time\": "+uo.getActive_time()+", \"turn\": "+uo.getTurn()+", \"timelog\": \""+uo.getTimelog()+"\" }");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/active/_doc/"+id_elk)
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/active/_doc/"+id_elk)
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();

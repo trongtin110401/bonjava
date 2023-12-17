@@ -31,7 +31,7 @@ public class ELKrmq {
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{\r\n\"_class\": \"vn.com.syncmonges.entity.log_money_user_vin\",\r\n\"id\": \"" + transId + "\",\r\n\"trans_id\": " + transId + ",\r\n\"user_id\": " + message.getUserId() + ",\r\n\"nick_name\": \"" + message.getNickname() + "\",\r\n\"service_name\": \"" + message.getServiceName() + "\",\r\n\"current_money\": " + message.getCurrentMoney() + ",\r\n\"money_exchange\": " + message.getMoneyExchange() + ",\r\n\"description\": \"" + message.getDescription() + "\",\r\n\"trans_time\": \"" + message.getCreateTime() + "\",\r\n\"action_name\": \"" + message.getActionName() + "\",\r\n\"fee\": " + message.getFee() + ",\r\n\"is_bot\": " + isBot + ",\r\n\"play_game\": " + playGame + ",\r\n\"create_time\": \"" + time_create + "\"\r\n}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/log_money_user_vin/_doc")
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/log_money_user_vin/_doc")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();
@@ -66,7 +66,7 @@ public class ELKrmq {
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{\r\n    \"_class\": \"vn.com.syncmonges.entity.TransactionTaiXiuEs\",\r\n    \"id_my\": " + id_my + ",\r\n    \"reference_id\": " + reference_id + ",\r\n    \"user_id\": " + user_id + ",\r\n    \"user_name\": \"" + user_name + "\",\r\n    \"bet_value\": " + bet_value + ",\r\n    \"bet_side\": " + bet_side + ",\r\n    \"total_prize\": " + total_prize + ",\r\n    \"total_refund\": " + total_refund + ",\r\n    \"total_exchange\": " + total_exchange + ",\r\n    \"money_type\": " + money_type + ",\r\n    \"timestamp\": " + timestamp + ",\r\n    \"timecreate\": " + timestamp + "\r\n}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/transaction_tai_xiu/_doc")
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/transaction_tai_xiu/_doc")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();
@@ -101,7 +101,7 @@ public class ELKrmq {
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{\r\n    \"query\": {\r\n        \"bool\": {\r\n            \"must\": [\r\n                {\r\n                    \"match\": {\r\n                        \"user_name\": \"thanhdung1992\"\r\n                    }\r\n                },\r\n                {\r\n                    \"range\": {\r\n                        \"timestamp\": {\r\n                            \"gt\": \"1547303203000\",\r\n                            \"lt\": \"1747303203000\"\r\n                        }\r\n                    }\r\n                }\r\n            ],\r\n            \"must_not\": [],\r\n            \"should\": []\r\n        }\r\n    },\r\n    \"from\": 0,\r\n    \"size\": 1000,\r\n    \"sort\": [],\r\n    \"aggs\": {}\r\n}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/transaction_tai_xiu/_search")
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/transaction_tai_xiu/_search")
                         .method("POST", body)
                         .addHeader("Connection", "keep-alive")
                         .build();
@@ -167,7 +167,7 @@ public class ELKrmq {
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{\r\n\"_class\": \"vn.com.syncmonges.entity.log_money_user_vin\",\r\n\"id\": \"" + transId + "\",\r\n\"trans_id\": " + transId + ",\r\n\"user_id\": " + message.getUserId() + ",\r\n\"nick_name\": \"" + message.getNickname() + "\",\r\n\"service_name\": \"" + message.getServiceName() + "\",\r\n\"current_money\": " + message.getCurrentMoney() + ",\r\n\"money_exchange\": " + message.getMoneyExchange() + ",\r\n\"description\": \"" + message.getDescription() + "\",\r\n\"trans_time\": \"" + message.getCreateTime() + "\",\r\n\"action_name\": \"" + message.getActionName() + "\",\r\n\"fee\": " + message.getFee() + ",\r\n\"is_bot\": " + isBot + ",\r\n\"play_game\": " + playGame + ",\r\n\"create_time\": \"" + time_create + "\"\r\n}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/log_money_user_xu/_doc")
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/log_money_user_xu/_doc")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();
@@ -200,7 +200,7 @@ public class ELKrmq {
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{\r\n    \"trans_id\":" + transId + ",\r\n    \"user_id\":" + message.getUserId() + ",\r\n    \"nick_name\":\"" + message.getNickname() + "\",\r\n    \"service_name\":\"" + message.getServiceName() + "\",\r\n    \"current_money\":" + message.getCurrentMoney() + ",\r\n    \"money_exchange\":" + message.getMoneyExchange() + ",\r\n    \"description\":\"" + message.getDescription() + "\",\r\n    \"trans_time\":\"" + message.getCreateTime() + "\",\r\n    \"action_name\":\"" + message.getActionName() + "\",\r\n    \"fee\":" + message.getFee() + ",\r\n    \"create_time\":\"" + time_create + "\"\r\n\r\n}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/log_money_user_nap_vin/_doc")
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/log_money_user_nap_vin/_doc")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();
@@ -232,7 +232,7 @@ public class ELKrmq {
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{\r\n    \"trans_id\":" + transId + ",\r\n    \"user_id\":" + message.getUserId() + ",\r\n    \"nick_name\":\"" + message.getNickname() + "\",\r\n    \"service_name\":\"" + message.getServiceName() + "\",\r\n    \"current_money\":" + message.getCurrentMoney() + ",\r\n    \"money_exchange\":" + message.getMoneyExchange() + ",\r\n    \"description\":\"" + message.getDescription() + "\",\r\n    \"trans_time\":\"" + message.getCreateTime() + "\",\r\n    \"action_name\":\"" + message.getActionName() + "\",\r\n    \"fee\":" + message.getFee() + ",\r\n    \"create_time\":\"" + time_create + "\"\r\n\r\n}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/log_money_user_tieu_vin/_doc")
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/log_money_user_tieu_vin/_doc")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();

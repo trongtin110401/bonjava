@@ -24,7 +24,7 @@ public class CheckBankingTruocELK {
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{\"code\":\""+code+"\",\"xuly\":\"0\",\"timelog\":\""+timelog+"\",\"time\":"+time+",\"tien\": "+tien+"}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/taodontruoc/_doc")
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/taodontruoc/_doc")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();
@@ -54,7 +54,7 @@ public class CheckBankingTruocELK {
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{\"code\":\""+code+"\",\"xuly\":\"1\",\"timelog\":\""+timelog+"\",\"time\":"+time+",\"tien\": "+tien+"}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/taodontruoc/_doc/"+idelk)
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/taodontruoc/_doc/"+idelk)
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();
@@ -88,7 +88,7 @@ public class CheckBankingTruocELK {
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{\"query\":{\"bool\":{\"must\":[{\"match\":{\"xuly.keyword\":\"0\"}},{\"match\":{\"code.keyword\":\"SN1234567\"}}],\"must_not\":[],\"should\":[]}},\"from\":0,\"size\":10,\"sort\":[],\"aggs\":{}}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/taodontruoc/_search")
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/taodontruoc/_search")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();
@@ -143,7 +143,7 @@ public class CheckBankingTruocELK {
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{\"query\":{\"bool\":{\"must\":[{\"match\":{\"code.keyword\":\""+code1+"\"}}],\"must_not\":[],\"should\":[]}},\"from\":0,\"size\":10,\"sort\":[],\"aggs\":{}}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/codeuserbank/_search")
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/codeuserbank/_search")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();

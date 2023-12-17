@@ -26,7 +26,7 @@ public class GetELK {
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{\"query\":{\"bool\":{\"must\":[{\"match_all\":{}}],\"must_not\":[],\"should\":[]}},\"from\":0,\"size\":10000,\"sort\":[],\"aggs\":{}}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/analytics_daily/_search")
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/analytics_daily/_search")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();
@@ -70,7 +70,7 @@ public class GetELK {
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{\"query\":{\"bool\":{\"must\":[{\"match\":{\"utm_dl.keyword\":\""+dl+"\"}},{\"range\":{\"create_time.keyword\":{\"gt\":\""+time_start+"\",\"lt\":\""+time_end+"\"}}}],\"must_not\":[],\"should\":[]}},\"from\":0,\"size\":10000,\"sort\":[],\"aggs\":{}}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/analytics_tai_you88/_search")
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/analytics_tai_you88/_search")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();
@@ -109,7 +109,7 @@ public class GetELK {
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{\"query\":{\"bool\":{\"must\":[{\"match\":{\"utm_dl.keyword\":\""+dl+"\"}},{\"range\":{\"create_time.keyword\":{\"gt\":\""+time_start+"\",\"lt\":\""+time_end+"\"}}},{\"match\":{\"utm_medium.keyword\":\""+dieukien+"\"}}],\"must_not\":[],\"should\":[]}},\"from\":0,\"size\":10000,\"sort\":[],\"aggs\":{}}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/analytics_tai_you88/_search")
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/analytics_tai_you88/_search")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();
@@ -158,7 +158,7 @@ public class GetELK {
                     MediaType mediaType = MediaType.parse("application/json");
                     RequestBody body = RequestBody.create(mediaType, "{\"query\":{\"bool\":{\"must\":[{\"match\":{\"utm_dl.keyword\":\""+dl+"\"}},{\"range\":{\"create_time.keyword\":{\"gt\":\""+time_start+"\",\"lt\":\""+time_end+"\"}}}],\"must_not\":[],\"should\":[]}},\"from\":0,\"size\":10000,\"sort\":[],\"aggs\":{}}");
                     Request request = new Request.Builder()
-                            .url("http://127.0.0.1:9200/analytics_tai_you88/_search")
+                            .url(System.getenv("ELASTICSEARCH_URL") + "/analytics_tai_you88/_search")
                             .method("POST", body)
                             .addHeader("Content-Type", "application/json")
                             .build();

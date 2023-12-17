@@ -26,7 +26,7 @@ public class InsertELK {
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, " {\r\n\"_class\": \"vn.com.syncmonges.entity.HistoryUserTransaction\",\r\n\"id\": \""+historyTransModel.getId()+"\",\r\n\"giaodich\": \""+historyTransModel.getGiaodich()+"\",\r\n\"congGiaoDich\": \""+historyTransModel.getCongGiaoDich()+"\",\r\n\"hinhthuc\": \""+historyTransModel.getHinhthuc()+"\",\r\n\"sotien\": \""+historyTransModel.getSotien()+"\",\r\n\"trangthai\": \" "+historyTransModel.getTrangthai()+"\",\r\n\"ghiChu\": \" "+historyTransModel.getGhiChu()+"\",\r\n\"nickName\": \""+historyTransModel.getNickName()+"\",\r\n\"hinhthucTrans\": \""+historyTransModel.getHinhthucTrans()+"\",\r\n\"transId\": \""+historyTransModel.getTransId()+"\",\r\n\"createAt\": \""+historyTransModel.getCreateAt()+"\"\r\n}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/history_user_transaction/_doc")
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/history_user_transaction/_doc")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();
@@ -60,7 +60,7 @@ public class InsertELK {
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{\r\n\"_class\": \"vn.com.syncmonges.entity.HistoryUserTransaction\",\r\n\"id\": \""+idelk+"\",\r\n\"giaodich\": \""+historyTransModel.getGiaodich()+"\",\r\n\"congGiaoDich\": \""+historyTransModel.congGiaoDich+"\",\r\n\"hinhthuc\": \""+historyTransModel.hinhthuc+"\",\r\n\"sotien\": \""+historyTransModel.sotien+"\",\r\n\"trangthai\": \""+historyTransModel.trangthai+"\",\r\n\"ghiChu\": \""+historyTransModel.ghiChu+"\",\r\n\"nickName\": \""+historyTransModel.nickName+"\",\r\n\"hinhthucTrans\": \""+historyTransModel.hinhthucTrans+"\",\r\n\"transId\": \""+historyTransModel.transId+"\",\r\n\"createAt\": \""+timeAt+"\"\r\n}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/history_user_transaction/_doc/"+idelk)
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/history_user_transaction/_doc/"+idelk)
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();
@@ -95,7 +95,7 @@ public class InsertELK {
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{\"query\":{\"bool\":{\"must\":[{\"match\":{\"transId.keyword\":\""+TranID+"\"}}],\"must_not\":[],\"should\":[]}},\"from\":0,\"size\":50,\"sort\":[],\"aggs\":{}}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/history_user_transaction/_search")
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/history_user_transaction/_search")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();

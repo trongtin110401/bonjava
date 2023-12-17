@@ -24,7 +24,7 @@ public class ELKAutoBankNew {
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{\"nickname\":\""+nickname+"\", \"code\":\""+code+"\"}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/codeuserbank/_doc")
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/codeuserbank/_doc")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();
@@ -55,7 +55,7 @@ public class ELKAutoBankNew {
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{\"query\":{\"bool\":{\"must\":[{\"match\":{\"code.keyword\":\""+code1+"\"}}],\"must_not\":[],\"should\":[]}},\"from\":0,\"size\":10,\"sort\":[],\"aggs\":{}}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/codeuserbank/_search")
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/codeuserbank/_search")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();
@@ -105,7 +105,7 @@ public class ELKAutoBankNew {
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{\"query\":{\"bool\":{\"must\":[{\"match\":{\"nickname.keyword\":\""+nickname+"\"}}],\"must_not\":[],\"should\":[]}},\"from\":0,\"size\":10,\"sort\":[],\"aggs\":{}}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/codeuserbank/_search")
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/codeuserbank/_search")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();
@@ -158,7 +158,7 @@ public class ELKAutoBankNew {
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{\"query\":{\"bool\":{\"must\":[{\"match\":{\"code.keyword\":\""+code1+"\"}}],\"must_not\":[],\"should\":[]}},\"from\":0,\"size\":10,\"sort\":[],\"aggs\":{}}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/codeuserbank/_search")
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/codeuserbank/_search")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();
