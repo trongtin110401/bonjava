@@ -1,5 +1,6 @@
 #!/bin/bash
 
+export ELASTICSEARCH_URL=http://localhost:9200
 # make log server
 mkdir /home/server/logs/
 # Absolute path to this script, e.g. /home/user/bin/foo.sh
@@ -90,10 +91,17 @@ runBacay(){
   cd ${SCRIPTPATH}
     currentDir="game/bacayServer"
     cd $currentDir
-
-
 #    cd $SCRIPTPATH;
     nohup java  -cp "libs/*:build/libs/bacayServer.jar" game.bacay.server.BacayMain > /home/server/logs/bacay.log 2>&1 &
+}
+
+### run bacay ###
+runBaicao(){
+  cd ${SCRIPTPATH}
+    currentDir="game/baicao"
+    cd $currentDir
+#    cd $SCRIPTPATH;
+    nohup java  -cp "libs/*:build/libs/baicao.jar" game.baicao.server.BaiCaoMain > /home/server/logs/baicao.log 2>&1 &
 }
 
 ### run binh ###
