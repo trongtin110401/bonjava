@@ -1,0 +1,33 @@
+package com.vinplay.api.backend.processors.taixiu;
+
+import com.vinplay.dal.service.CacheService;
+import com.vinplay.dal.service.impl.CacheServiceImpl;
+import com.vinplay.miniGame.TaiXiuBotSetUpObj;
+import com.vinplay.vbee.common.cp.BaseProcessor;
+import com.vinplay.vbee.common.cp.Param;
+
+import javax.servlet.http.HttpServletRequest;
+
+public class SetBotTaiXiuMd5Processor implements BaseProcessor<HttpServletRequest, String> {
+  @Override
+  public String execute(Param<HttpServletRequest> param) {
+    String res = "0";
+    HttpServletRequest request = (HttpServletRequest) param.get();
+    String moneyMin = request.getParameter("moneyMin");
+    String moneyMax = request.getParameter("moneyMax");
+    String numberUserTaiMax = request.getParameter("numberUserTaiMax");
+    String numberUserXiuMax = request.getParameter("numberUserXiuMax");
+    try {
+      CacheService cacheService = new CacheServiceImpl();
+      TaiXiuBotSetUpObj obj = new TaiXiuBotSetUpObj(true, "0");
+      obj.setMoneyMin(Long.parseLong(moneyMin));
+      obj.setMoneyMax(Long.parseLong(moneyMax));
+      obj.setNumberUserXiuMax(Integer.parseInt(numberUserXiuMax));
+      obj.setNumberUserTaiMax(Integer.parseInt(numberUserTaiMax));
+      cacheService.setObject("tai_xiu_set_bot_md5", obj);
+      return "1";
+    } catch (Exception e) {
+      return res;
+    }
+  }
+}

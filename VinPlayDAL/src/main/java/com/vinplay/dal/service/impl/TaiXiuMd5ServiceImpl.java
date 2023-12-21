@@ -31,7 +31,7 @@ import com.hazelcast.core.IMap;
 import com.vinplay.dal.dao.TaiXiuDAO;
 import com.vinplay.dal.dao.impl.MiniGameDAOImpl;
 import com.vinplay.dal.dao.impl.ReportDaoImpl;
-import com.vinplay.dal.dao.impl.TaiXiuDAOImpl;
+import com.vinplay.dal.dao.impl.TaiXiuMd5DAOImpl;
 import com.vinplay.dal.entities.report.ReportMoneySystemModel;
 import com.vinplay.dal.entities.taixiu.*;
 import com.vinplay.dal.service.TaiXiuService;
@@ -60,10 +60,10 @@ import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 // todo : xử lý tài xỉu bằng cách đẩy vào queue
-public class TaiXiuServiceImpl
+public class TaiXiuMd5ServiceImpl
         implements TaiXiuService {
     private Logger logger = Logger.getLogger((String) "rmq");
-    private TaiXiuDAO dao = new TaiXiuDAOImpl();  // lớp DAO , thực hiện đẩy dữ liệu vào database
+    private TaiXiuDAO dao = new TaiXiuMd5DAOImpl();  // lớp DAO , thực hiện đẩy dữ liệu vào database
 
     private ReportDaoImpl reportDao = new ReportDaoImpl();
 
