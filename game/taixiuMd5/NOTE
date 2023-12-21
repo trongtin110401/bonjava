@@ -1,0 +1,30 @@
+1. Lưu ý biến cache public static String CacheCurrentReference = "Tai_xiu_current_reference_md5"; trong TaiXiuModule.java
+    - Biến này có liên quan tới việc can thiệp kết quả từ phái ADMIN PHP, tham khảo class ForceResultTaiXiu. Có thể phải clone class ForceResultTaiXiu cho riêng Tài xỉu MD5
+
+2. Lưu ý biến cache "allow_betting_"; trong TaiXiuModule.java
+    - Biến này có liên quan tới việc can thiệp kết quả từ phía ADMIN PHP, tham khảo class ForceResultTaiXiu. Có thể phải clone class ForceResultTaiXiu cho riêng Tài xỉu MD5
+
+3. Lưu ý biến cache "taixiu_bot_fake_amount_md5"; trong TaiXiuModule.java
+    - Biến này có liên quan tới việc can thiệp kết quả từ phía ADMIN PHP, tham khảo class SetBotFakeTaiXiuProcessor. Có thể phải clone class SetBotFakeTaiXiuProcessor cho riêng Tài xỉu MD5
+
+4. Lưu ý biến cache "Md5_Lobby_tx_tai_" và "Md5_Lobby_tx_xiu_" trong TaiXiuModule.java
+    - Biến này có liên quan tới việc broatcast trạng thái game tài xíu, tham khảo class LobbyModule.java. Có thể phải viết thêm logic cho TaiXiuMd5
+
+5. Lưu ý biến cache "user_tai_xiu_md5" TaiXiuModule.java
+    - Biến này có liên quan tới các api services, tham khảo class:
+        + GetUserInfoTaiXiuProcessor.java
+        + GetListBotTaiXiuProcessor.java
+        + wsportal.ScheduledTasks.sendTXAdmin().
+    Có thể phải viết thêm logic cho TaiXiuMd5
+
+6. Lưu ý biến cache "md5_force_result_"; trong TaiXiuModule.java
+    - Biến này có liên quan tới việc can thiệp kết quả từ phía ADMIN PHP, tham khảo class ForceResultTaiXiu. Có thể phải clone class ForceResultTaiXiu cho riêng Tài xỉu MD5
+
+7. Lưu ý biến cache "tai_xiu_be_cang_md5"; trong TaiXiuModule.java
+    - Biến này có liên quan tới việc can thiệp kết quả từ phía ADMIN PHP, tham khảo class ForceResultTaiXiu và GetCacheResultTaiXiuProcessor. Có thể phải clone những class này cho riêng Tài xỉu MD5
+
+8. Lưu ý biến cache "min_hu_tx_auto_md5", "max_hu_tx_auto_md5", "hu_tx_auto_md5"; trong TaiXiuModule.java
+    - Biến này có liên quan tới việc tính toán kết quả tài xỉu, tham khảo class GetCacheResultTaiXiuProcessor và TaiXiuAdminSetHuProcessor. Có thể phải clone những class này cho riêng Tài xỉu MD5
+
+5. Các vấn đề vể BOT tự động, đối với MD5 có nên bật tính năng BOT không?
+Trong trường hợp bỏ BOT thì cân nhắc việc sửa mã nguồn liên quan tới BOT, tham chiếu (TaiXiuModule.scheduleBot())

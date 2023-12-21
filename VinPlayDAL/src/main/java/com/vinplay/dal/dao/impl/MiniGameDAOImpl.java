@@ -20,7 +20,7 @@ import java.util.List;
 // TODO: 3/18/2021 get thông tin minigameDAO 
 public class MiniGameDAOImpl
 implements MiniGameDAO {
-    // TODO: lấy referentId từ trong database phụ thuộc vào id (tài xỉu id = 2 còn bầu cua id = 3 )
+    // TODO: lấy referentId từ trong database phụ thuộc vào id (tài xỉu id = 2, bầu cua id = 3, tài xỉu md5 = 4)
     @Override
     public long getReferenceId(int gameId) throws SQLException {
         long referenceId = -1L;

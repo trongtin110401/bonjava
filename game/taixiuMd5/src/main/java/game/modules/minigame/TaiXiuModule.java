@@ -121,7 +121,7 @@ public class TaiXiuModule
     private long MaxCtrl = 1000000L;
     private List<String> listChat = new ArrayList<String>();
     private List<String> listChatUsers = new ArrayList<String>();
-    public static String CacheCurrentReference = "Tai_xiu_current_reference";
+    public static String CacheCurrentReference = "Tai_xiu_current_reference_md5";
     public static long moneyHu = 50000000; // được lấy từ trong database
     ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(8);
 
@@ -145,6 +145,7 @@ public class TaiXiuModule
         BitZeroServer.getInstance().getTaskScheduler().schedule(this.serverReadyTask, 10, TimeUnit.SECONDS);
         Debug.trace("SERVER READY TASK RUNNING...");
         this.getParentExtension().addEventListener((IBZEventType) BZEventType.USER_DISCONNECT, (IBZEventListener) this);
+
         scheduler.scheduleAtFixedRate(updateCacheTopDay, 2000, 3600, TimeUnit.SECONDS);
         scheduler.scheduleAtFixedRate(updateCacheTopMonth, 2000, 86400, TimeUnit.SECONDS);
         try {
@@ -209,7 +210,7 @@ public class TaiXiuModule
     private void loadData() {
         this.referenceTaiXiuId = 1L;
         try {
-            this.referenceTaiXiuId = this.mgService.getReferenceId(2);
+            this.referenceTaiXiuId = this.mgService.getReferenceId(4);
             this.lichSuPhienTX = this.txService.getListLichSuPhien(120, 1);
         } catch (SQLException e) {
             sendLogToTele(e.getMessage());
@@ -232,9 +233,10 @@ public class TaiXiuModule
         }
     }
 
+    // TUTL OK đã sửa cho MD5
     private void saveReferences() {
         try {
-            this.mgService.saveReferenceId(this.referenceTaiXiuId, 2);
+            this.mgService.saveReferenceId(this.referenceTaiXiuId, 4);
         } catch (SQLException e) {
             sendLogToTele(e.getMessage());
             Debug.trace((Object) ("Save reference error " + e.getMessage()));
@@ -364,7 +366,7 @@ public class TaiXiuModule
 //        msg.remainTimeRutLoc = this.getRemainTimeRutLoc();
         this.sendMessageToTaiXiuNewThread(msg);
         this.saveReferences();
-        this.cacheService.setValue("allow_betting_" + this.referenceTaiXiuId, 1);
+        this.cacheService.setValue("md5_allow_betting_" + this.referenceTaiXiuId, 1);
         this.cacheService.setValue(CacheCurrentReference, Long.toString(this.referenceTaiXiuId));
     }
 
@@ -435,7 +437,7 @@ public class TaiXiuModule
         }
         taiXiuAdminReportObj.setLstMsg(listChat);
         taiXiuAdminReportObj.setGetListChatUsers(this.getListChatUsers());
-        cacheService.setValue("user_tai_xiu", taiXiuAdminReportObj.toJson());
+        cacheService.setValue("user_tai_xiu_md5", taiXiuAdminReportObj.toJson());
         cacheService.setObject("lstTaiXiuAdminMsg",new ArrayList<>());
     }
 
@@ -453,7 +455,7 @@ public class TaiXiuModule
             //cacheService.setValue("tai_xiu_no_hu", null);
             ///
             try{
-                TaiXiuSetAmountBotFake taiXiuSetAmountBotFake = (TaiXiuSetAmountBotFake) cacheService.getObject("taixiu_bot_fake_amount");
+                TaiXiuSetAmountBotFake taiXiuSetAmountBotFake = (TaiXiuSetAmountBotFake) cacheService.getObject("taixiu_bot_fake_amount_md5");
                 if(taiXiuSetAmountBotFake != null ){
                     amountBotTaiFake += (taiXiuSetAmountBotFake.getNumberBotTaiFake())/40 ;
                     amountBotXiuFake += (taiXiuSetAmountBotFake.getNumberBotXiuFake())/40;
@@ -586,7 +588,7 @@ public class TaiXiuModule
         Debug.info((Object) ("FORCE==============" + this.forceBetSide));
         String keyBeCang = "auto";
         try {
-            keyBeCang = cacheService.getValueStr("tai_xiu_be_cang");
+            keyBeCang = cacheService.getValueStr("tai_xiu_be_cang_md5");
 
         } catch (Exception r) {
             sendLogToTele(r.getMessage());
@@ -611,10 +613,10 @@ public class TaiXiuModule
         Debug.info("xxxxx " + totalRealBetTai+"  vvvvvv"+ totalRealBetXiu);
         if("auto".equals(keyBeCang)) {
             try {
-                //tin duoc tien chenh lech
-                String min_hu = cacheService.getValueStr("min_hu_tx_auto");
-                String max_hu = cacheService.getValueStr("max_hu_tx_auto");
-                String hu_tx = cacheService.getValueStr("hu_tx_auto");
+                //tinh duoc tien chenh lech
+                String min_hu = cacheService.getValueStr("min_hu_tx_auto_md5");
+                String max_hu = cacheService.getValueStr("max_hu_tx_auto_md5");
+                String hu_tx = cacheService.getValueStr("hu_tx_auto_md5");
                 long minHu = Long.parseLong(min_hu);
                 long maxHu = Long.parseLong(max_hu);
                 long huTx = Long.parseLong(hu_tx);
@@ -641,9 +643,9 @@ public class TaiXiuModule
                 }
             }catch (Exception e) {
                 Debug.info((Object) ("hahahaa check log" + e.getMessage()));
-                cacheService.setValue("min_hu_tx_auto",0);
-                cacheService.setValue("max_hu_tx_auto",0);
-                cacheService.setValue("hu_tx_auto",0);
+                cacheService.setValue("min_hu_tx_auto_md5",0);
+                cacheService.setValue("max_hu_tx_auto_md5",0);
+                cacheService.setValue("hu_tx_auto_md5",0);
             }
 
         }
@@ -654,7 +656,7 @@ public class TaiXiuModule
         } else {
             this.forceBetSide = -1;
         }
-        cacheService.setValue("tai_xiu_be_cang", "auto");
+        cacheService.setValue("tai_xiu_be_cang_md5", "auto");
 
         short[] dices = null;
         String keyNoHu = "auto";

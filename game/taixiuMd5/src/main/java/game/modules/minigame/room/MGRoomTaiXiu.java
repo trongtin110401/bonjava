@@ -140,8 +140,8 @@ public class MGRoomTaiXiu
         this.startTime = System.currentTimeMillis();
         this.bettingRound = false;
         try {
-            this.cacheService.removeKey("allow_betting_" + this.referenceId); // xóa key cho phép đặt tài xỉu
-            this.cacheService.removeKey("force_result_" + this.referenceId); // xóa key kết quả bắt buộc
+            this.cacheService.removeKey("md5_allow_betting_" + this.referenceId); // xóa key cho phép đặt tài xỉu
+            this.cacheService.removeKey("md5_force_result_" + this.referenceId); // xóa key kết quả bắt buộc
         } catch (Exception e) {
 
         }
@@ -151,7 +151,7 @@ public class MGRoomTaiXiu
     // todo : không cho phép đặt cược
     public void disableBetting() {
         this.enableBetting = false;
-        this.cacheService.setValue("allow_betting_" + this.referenceId, 0); // không cho phép đặt cược nữa
+        this.cacheService.setValue("md5_allow_betting_" + this.referenceId, 0); // không cho phép đặt cược nữa
     }
 
     public void updateResultDices(short[] dices, short result) {
@@ -359,8 +359,8 @@ public class MGRoomTaiXiu
 //            msg.moneyHu = TaiXiuModule.moneyHu;
 //        }
 //        AdminSocketAlert.sendMessageAlert("chatevent", "TaiXiu", new Date() + ""); // todo : alert admin
-        cacheService.setValue("Lobby_tx_tai_" + this.moneyType, String.valueOf(this.getPotTai()));
-        cacheService.setValue("Lobby_tx_xiu_" + this.moneyType, String.valueOf(this.getPotXiu()));
+        cacheService.setValue("Md5_Lobby_tx_tai_" + this.moneyType, String.valueOf(this.getPotTai()));
+        cacheService.setValue("Md5_Lobby_tx_xiu_" + this.moneyType, String.valueOf(this.getPotXiu()));
         this.sendMessageToRoom(msg);
     }
 
@@ -371,7 +371,7 @@ public class MGRoomTaiXiu
         //CHECK admin set result  //
 
         CacheServiceImpl sv = new CacheServiceImpl();
-        int result = sv.getValueIntWithDefault("force_result_" + this.referenceId); // set kết quả tài xỉu trong cache
+        int result = sv.getValueIntWithDefault("md5_force_result_" + this.referenceId); // set kết quả tài xỉu trong cache
         if (result > -1) {
             return (short) result;
         }
