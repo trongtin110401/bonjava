@@ -33,6 +33,7 @@ import java.util.Map;
 public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho nhung cai thay doi lien tuc nhu thoi gian cua game thoi ko nen dung cho nhung thang co event
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
     private static final String USER_TAI_XIU = "user_tai_xiu";
+    private static final String USER_TAI_XIU_MD5 = "user_tai_xiu_md5";
     private static final String CASHOUTBYBANK_ADMIN = "cashoutbybank_admin";
     private static final String CASHOUTBYCARDMANUAL_ADMIN = "cashoutbycardmanual_admin";
     private static final String RECHARGEBYBANK_ADMIN = "rechargebybank_admin";
@@ -205,6 +206,44 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
         }
     }
 
+    /**
+     * Send thông tin tài xỉu sang admin php
+     *
+     * @return
+     */
+    @Scheduled(fixedRate = 1000)
+    public void sendTXMD5Admin() {
+        try {
+            ArrayList<TaiXiuAdminReportResponse> lstTaiXiuAdminReportObjs = new ArrayList<>();
+            TaiXiuAdminReportObj obj = MapperUtils.mapper.readValue(cacheService.getValueStr(USER_TAI_XIU_MD5), TaiXiuAdminReportObj.class);
+            TaiXiuAdminReportResponse response = new TaiXiuAdminReportResponse();
+            response.setMoneyTai(obj.getMoneyTai());
+            response.setMoneyXiu(obj.getMoneyXiu());
+            response.setNguoiChoiBetTai(obj.getNumberUserRealTai());
+            response.setNguoiChoiBetXiu(obj.getNumberUserRealXiu());
+            response.setMoneyTaiFull(obj.getMoneyTaiFull());
+            response.setMoneyXiuFull(obj.getMoneyXiuFull());
+            response.setPhienId(obj.getPhienId());
+            response.setContributors(obj.getContributors());
+            response.setNumberUserAndBotBetTai(obj.getNumberUserAndBotBetTai());
+            response.setNumberUserAndBotBetXiu(obj.getNumberUserAndBotBetXiu());
+            response.setRealTime(obj.getRealTime());
+            response.setBettingRound(obj.isBettingRound());
+            if (obj.getLstMsg().size() > 10)
+                obj.getLstMsg().subList(0, obj.getLstMsg().size() - 10).clear();
+            response.setLstMsg(obj.getLstMsg());
+            lstTaiXiuAdminReportObjs.add(response);
+            TaiXiuReportResponse oResponse = new TaiXiuReportResponse("2", lstTaiXiuAdminReportObjs);
+            String json = MapperUtils.mapper.writeValueAsString(oResponse);
+            this.sendMessTXMd5ToAdmin(json);
+            cacheService.removeKey(USER_TAI_XIU_MD5);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Loi senTXAdmin");
+
+        }
+    }
+
 
     private void sendMessToAdmin(String mess) {
         for (Session session : ServerGame.sessions) {
@@ -220,6 +259,12 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
 
     private void sendMessTXToAdmin(String mess) {
         for (Session session : ServerTXGame.sessions) {
+            session.sendText(mess);
+        }
+    }
+
+    private void sendMessTXMd5ToAdmin(String mess) {
+        for (Session session : ServerTXMD5Game.sessions) {
             session.sendText(mess);
         }
     }

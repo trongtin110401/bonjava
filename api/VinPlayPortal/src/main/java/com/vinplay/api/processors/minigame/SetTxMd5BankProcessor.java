@@ -10,22 +10,15 @@
  */
 package com.vinplay.api.processors.minigame;
 
-import com.vinplay.api.processors.minigame.response.LSGDBauCuaResponse;
-import com.vinplay.dal.service.impl.BauCuaServiceImpl;
-import com.vinplay.vbee.common.cp.BaseProcessor;
-import com.vinplay.vbee.common.cp.Param;
-import java.util.List;
-import javax.servlet.http.HttpServletRequest;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
+import com.vinplay.vbee.common.cp.BaseProcessor;
+import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
-public class SetTxBankProcessor
+import javax.servlet.http.HttpServletRequest;
+
+public class SetTxMd5BankProcessor
 implements BaseProcessor<HttpServletRequest, String> {
     public String execute(Param<HttpServletRequest> param) {
         HttpServletRequest request = (HttpServletRequest)param.get();
@@ -33,7 +26,7 @@ implements BaseProcessor<HttpServletRequest, String> {
         long amount = Long.parseLong(request.getParameter("amount"));
         int moneyType = 1;
         try {
-            String keyHazel = type == 1 ? "txBank_md5" : "txBank2_md5";
+            String keyHazel = type == 1 ? "txBank" : "txBank2";
             HazelcastInstance client = HazelcastClientFactory.getInstance();
             IMap bankMap = client.getMap(keyHazel);
             String key = keyHazel + ":" + moneyType;

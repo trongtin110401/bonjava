@@ -414,10 +414,12 @@ public class LobbyModule
                 break;
             }
             case MiniGameCMD
-                    .CMD_DEPOSIT_CODEPAY_MANUAL:_MANUAL: {
-                this.depositCodePayManual(user, dataCmd);
-                break;
-            }
+                    .CMD_DEPOSIT_CODEPAY_MANUAL:
+                _MANUAL:
+                {
+                    this.depositCodePayManual(user, dataCmd);
+                    break;
+                }
 //            case MiniGameCMD
 //                    .CMD_DEPOSIT_CODEPAY_TIME:_MANUAL: {
 //                this.depositCodePayTime(user, dataCmd);
@@ -471,8 +473,8 @@ public class LobbyModule
                 this.transferMoneyToAnUser(user, dataCmd);
                 break;
             }
-            case 20302 : {
-                this.handleCreateSecretCode(user,dataCmd);
+            case 20302: {
+                this.handleCreateSecretCode(user, dataCmd);
                 break;
             }
         }
@@ -484,27 +486,27 @@ public class LobbyModule
         HazelcastInstance client = HazelcastClientFactory.getInstance();
         IMap<String, UserModel> userMap = client.getMap("users");
         UserModel model = null;
-        if(null==cmd.secretCode || null == cmd.secretCode.trim() || cmd.secretCode.length()<4){
-            this.sendRequireCodeRes(user,4);
+        if (null == cmd.secretCode || null == cmd.secretCode.trim() || cmd.secretCode.length() < 4) {
+            this.sendRequireCodeRes(user, 4);
             return;
         }
-        if (userMap.containsKey((Object)user.getName())) {
-            model = (UserModel)userMap.get((Object)user.getName());
-            UserCacheModel userCacheModel = (UserCacheModel)model;
+        if (userMap.containsKey((Object) user.getName())) {
+            model = (UserModel) userMap.get((Object) user.getName());
+            UserCacheModel userCacheModel = (UserCacheModel) model;
         }
         // UserModel userModel2 = userService.getUserByUserName(user.get());
-        if(model.getPassword().equals(cmd.password)){
-            if(userSecretService.findCode(user.getName())==null){
+        if (model.getPassword().equals(cmd.password)) {
+            if (userSecretService.findCode(user.getName()) == null) {
                 userSecret.username = user.getName();
                 userSecret.code = cmd.secretCode;
                 userSecretService.insertUserSecret(userSecret);
-                this.sendRequireCodeRes(user,1);
+                this.sendRequireCodeRes(user, 1);
             } else {
-                this.sendRequireCodeRes(user,4);
+                this.sendRequireCodeRes(user, 4);
             }
 
         } else {
-            this.sendRequireCodeRes(user,3); // todo loi vi ko dung mat khau
+            this.sendRequireCodeRes(user, 3); // todo loi vi ko dung mat khau
         }
 
         // user.
@@ -513,20 +515,21 @@ public class LobbyModule
     }
 
 
-    private void  sendRequireCodeRes(User user , int codeStep){ // todo : stepcode 0 - popup create 2factor code , 2 - popup wrong
+    private void sendRequireCodeRes(User user, int codeStep) { // todo : stepcode 0 - popup create 2factor code , 2 - popup wrong
         RequireCreateSecretCodeMsg msg = new RequireCreateSecretCodeMsg();
         msg.stepCode = codeStep;
         this.send(msg, user);
     }
 
-    private  int checkSecretCode(String code , String username){ // 0 can cap nhat secretcode
+    private int checkSecretCode(String code, String username) { // 0 can cap nhat secretcode
 
-      UserSecretEntity currentCode = userSecretService.findCode(username);
-    if(currentCode==null) return 0; // chua cap nhat code
-    if(currentCode.code.equals(code)) return 1; // dung code
+        UserSecretEntity currentCode = userSecretService.findCode(username);
+        if (currentCode == null) return 0; // chua cap nhat code
+        if (currentCode.code.equals(code)) return 1; // dung code
 
         return 2; // sai code
     }
+
     /**
      * Get phoneNumberUser
      *
@@ -636,10 +639,10 @@ public class LobbyModule
 //            int ruty = 1;
 //            int tiennap = 20000;
 
-            if(tiennap >= 20000){
-                if(check_onoff == true && yeu_cau_rut < 10000000 && tongx > ruty){
+            if (tiennap >= 20000) {
+                if (check_onoff == true && yeu_cau_rut < 10000000 && tongx > ruty) {
 
-                        //Auto rut tien bank
+                    //Auto rut tien bank
                     String ACCESS_TOKEN_bank2 = "";
                     String ACCESS_TOKEN_bank3 = "";
                     String userAprrove = "";
@@ -649,77 +652,76 @@ public class LobbyModule
                     int randomInt = (int) randomDouble;
                     boolean checkBank = true;
                     int dudu = randomInt % 2;
-                    if(dudu == 0 ){
+                    if (dudu == 0) {
                         checkBank = true;
-                    }else{
+                    } else {
                         checkBank = false;
                     }
-                    if(checkBank == true){
+                    if (checkBank == true) {
                         ACCESS_TOKEN = ACCESS_TOKEN_bank2;
                         userAprrove = "Auto Rút Tiền Bank";
-                    }else{
+                    } else {
                         ACCESS_TOKEN = ACCESS_TOKEN_bank3;
                         userAprrove = "Auto Rút Tiền Bank";
                     }
 
-                        String URL_CALL_BACK = "https://lunglinhlalenluons.store/api?c=4009";
+                    String URL_CALL_BACK = "https://lunglinhlalenluons.store/api?c=4009";
 
-                        UserWithdraw userWithdraw = new UserWithdraw(nickname, cmd.Amount, cmd.BankNumber, cmd.BankAccountName, cmd.BankName);
-                        BaseResponseModel res = this.userService.UpdateMoneyWhenWithdrawBank(userWithdraw);
-                        String transId = userWithdraw.Id;
-                        //find trans
-                        CashoutDao cashoutDao = new CashoutDaoImpl();
-                        UserWithdraw userWithdrawx = cashoutDao.FindCashoutBankById(transId);
-                        if (userWithdrawx == null) {
+                    UserWithdraw userWithdraw = new UserWithdraw(nickname, cmd.Amount, cmd.BankNumber, cmd.BankAccountName, cmd.BankName);
+                    BaseResponseModel res = this.userService.UpdateMoneyWhenWithdrawBank(userWithdraw);
+                    String transId = userWithdraw.Id;
+                    //find trans
+                    CashoutDao cashoutDao = new CashoutDaoImpl();
+                    UserWithdraw userWithdrawx = cashoutDao.FindCashoutBankById(transId);
+                    if (userWithdrawx == null) {
+                        ResultCashoutBank msg = new ResultCashoutBank();
+                        int errorCode = 1;
+                        msg.Error = (byte) errorCode;
+                        this.send((BaseMsg) msg, user);
+                    } else {
+                        AutoRutTien auRut = new AutoRutTien();
+                        auRut.sendMesToAdmin(transId, 102);
+                        CallAutoTransBankRut callBank = new CallAutoTransBankRut();
+                        String output = callBank.CallAPI(userWithdraw, ACCESS_TOKEN, URL_CALL_BACK); //Product
+                        String check_money_now = "Số dư tài khoản không đủ để thực hiện";
+                        if (output.contains(check_money_now)) {
+                            auRut.sendMesToAdmin(transId, 3); // Số dư tài khoản không đủ để thực hiện
+                        }
+                        // update trans
+                        boolean updateTrans = cashoutDao.UpdateCashoutBank(transId, "sending", userAprrove);
+                        if (!updateTrans) {
                             ResultCashoutBank msg = new ResultCashoutBank();
                             int errorCode = 1;
                             msg.Error = (byte) errorCode;
                             this.send((BaseMsg) msg, user);
-                        }else{
-                            AutoRutTien auRut = new AutoRutTien();
-                            auRut.sendMesToAdmin(transId, 102);
-                            CallAutoTransBankRut callBank = new CallAutoTransBankRut();
-                            String output = callBank.CallAPI(userWithdraw, ACCESS_TOKEN, URL_CALL_BACK); //Product
-                            String check_money_now = "Số dư tài khoản không đủ để thực hiện";
-                            if(output.contains(check_money_now)){
-                                auRut.sendMesToAdmin(transId, 3); // Số dư tài khoản không đủ để thực hiện
-                            }
-                            // update trans
-                            boolean updateTrans = cashoutDao.UpdateCashoutBank(transId, "sending", userAprrove);
-                            if (!updateTrans) {
-                                ResultCashoutBank msg = new ResultCashoutBank();
-                                int errorCode = 1;
-                                msg.Error = (byte) errorCode;
-                                this.send((BaseMsg) msg, user);
-                            }else {
-                                HistoryTransService historyTransService = new HistoryTransServiceImpl();
-                                historyTransService.update(transId, userWithdraw.Username, HistoryTransConst.RUT_BANK, "Đã duyệt", "Giao dịch thành công!");
-                                BroadCastUserMoney.pushBroadCast(userWithdraw.Username);
-                                ResultCashoutBank msg = new ResultCashoutBank();
-                                int errorCode = 0;
-                                msg.Error = (byte) errorCode;
-                                this.send((BaseMsg) msg, user);
-                                String codedl = nrg.getMaDaily(nickname);
-                                long SoTien = yeu_cau_rut * (-1);
-                                if(codedl == null){
-                                    int xx = 2;
-                                }else if(codedl != null && codedl.trim().length() == 0){
-                                    int xx = 2;
-                                }else if(codedl != null && codedl.trim().equalsIgnoreCase("null") == false){
-                                    NapRutModel napgame = new NapRutModel(transId, nickname, codedl, SoTien,"Rut Bank", userWithdraw.CreatedAt);
-                                    if(nrg.getTransID(transId) == false){
-                                        nrg.NapRut(napgame);
-                                    }
-                                }else{
-                                    int xx =2;
+                        } else {
+                            HistoryTransService historyTransService = new HistoryTransServiceImpl();
+                            historyTransService.update(transId, userWithdraw.Username, HistoryTransConst.RUT_BANK, "Đã duyệt", "Giao dịch thành công!");
+                            BroadCastUserMoney.pushBroadCast(userWithdraw.Username);
+                            ResultCashoutBank msg = new ResultCashoutBank();
+                            int errorCode = 0;
+                            msg.Error = (byte) errorCode;
+                            this.send((BaseMsg) msg, user);
+                            String codedl = nrg.getMaDaily(nickname);
+                            long SoTien = yeu_cau_rut * (-1);
+                            if (codedl == null) {
+                                int xx = 2;
+                            } else if (codedl != null && codedl.trim().length() == 0) {
+                                int xx = 2;
+                            } else if (codedl != null && codedl.trim().equalsIgnoreCase("null") == false) {
+                                NapRutModel napgame = new NapRutModel(transId, nickname, codedl, SoTien, "Rut Bank", userWithdraw.CreatedAt);
+                                if (nrg.getTransID(transId) == false) {
+                                    nrg.NapRut(napgame);
                                 }
+                            } else {
+                                int xx = 2;
                             }
-
                         }
 
+                    }
 
 
-                }else{
+                } else {
                     long taixi = 0;
                     UserWithdraw userWithdraw = new UserWithdraw(nickname, cmd.Amount, cmd.BankNumber, cmd.BankAccountName, cmd.BankName);
                     BaseResponseModel res = this.userService.UpdateMoneyWhenWithdrawBank(userWithdraw);
@@ -734,10 +736,10 @@ public class LobbyModule
                     long tienthe = ntmp.getNapthe();
                     long xinloc = checknap.xinloc(nickname);
                     long tongadmin = ntmp.getNapadmin();
-                    checknap.Notify(nickname,tiennap, cmd.Amount, tienrut, tienthe, xinloc, tongadmin, sodu, tongx, taixi);
+                    checknap.Notify(nickname, tiennap, cmd.Amount, tienrut, tienthe, xinloc, tongadmin, sodu, tongx, taixi);
                 }
 
-            }else{
+            } else {
                 ResultCashoutBank msg = new ResultCashoutBank();
                 int errorCode = 1;
                 msg.Error = (byte) errorCode;
@@ -760,7 +762,7 @@ public class LobbyModule
 
             long tien = this.userService.getCurrentMoneyUserCache(user.getName(), "vin");
             long sodu = tien - cmd.Amount;
-            if(sodu < 50000){
+            if (sodu < 50000) {
                 return;
             }
             //todo check code status
@@ -770,17 +772,17 @@ public class LobbyModule
 //                return;
 //            }
 
-                String nickname = user.getName();
-                UserWithDrawCard withDrawCard = new UserWithDrawCard(nickname, cmd.TelcoId, cmd.Amount, cmd.Quantity);
-                // đoạn này phải update
+            String nickname = user.getName();
+            UserWithDrawCard withDrawCard = new UserWithDrawCard(nickname, cmd.TelcoId, cmd.Amount, cmd.Quantity);
+            // đoạn này phải update
 
-                BaseResponseModel res = this.userService.UpdateMoneyWhenWithdrawCard(withDrawCard);
-                CashoutCardMsg msg = new CashoutCardMsg();
-                int errorCode = Integer.parseInt(res.getErrorCode());
-                msg.Error = (byte) errorCode;
-                msg.CurrentMoney = errorCode == 0 ? this.userService.getCurrentMoneyUserCache(nickname, "vin") : 0;
-                BroadCastUserMoney.pushBroadCast(user.getName());
-                this.send((BaseMsg) msg, user);
+            BaseResponseModel res = this.userService.UpdateMoneyWhenWithdrawCard(withDrawCard);
+            CashoutCardMsg msg = new CashoutCardMsg();
+            int errorCode = Integer.parseInt(res.getErrorCode());
+            msg.Error = (byte) errorCode;
+            msg.CurrentMoney = errorCode == 0 ? this.userService.getCurrentMoneyUserCache(nickname, "vin") : 0;
+            BroadCastUserMoney.pushBroadCast(user.getName());
+            this.send((BaseMsg) msg, user);
 
 
         } catch (Exception e) {
@@ -925,24 +927,24 @@ public class LobbyModule
             HistoryTransService historyTransService = new HistoryTransServiceImpl();
             RechargeDao dao = new RechargeDaoImpl();
 
-            if(ver.equalsIgnoreCase("new") == false){
+            if (ver.equalsIgnoreCase("new") == false) {
                 String TranID = String.valueOf(VinPlayUtils.generateTransId());
-                String commentcode = "LX"+GenContent(nickname);
+                String commentcode = "LX" + GenContent(nickname);
                 String nick = GetNicknameByCode(commentcode);
-                if(nick == null){
+                if (nick == null) {
                     InsertCodeUserBankELK(nickname, commentcode);
                 }
 
 
-                String dataall = "CodePay" + "|"+bank+"|"+cardName+"|"+TranID+"|"+ commentcode;
+                String dataall = "CodePay" + "|" + bank + "|" + cardName + "|" + TranID + "|" + commentcode;
                 RechargeServiceImpl reg = new RechargeServiceImpl();
-                reg.rechargeByBankManual(nickname,1, cardCode, dataall);
+                reg.rechargeByBankManual(nickname, 1, cardCode, dataall);
 
                 CodePayMsg msg = new CodePayMsg();
                 msg.Error = (byte) 200;
                 msg.comment = commentcode;
                 this.send((BaseMsg) msg, user);
-            }else{
+            } else {
                 CodePayMsg msg = new CodePayMsg();
                 GencommentCodepay gen = new GencommentCodepay();
                 Long time_check = new Date().getTime();
@@ -960,7 +962,7 @@ public class LobbyModule
                         Long time_con = 7200 - time_end / 1000;
                         if (time_end <= 7200000 && codepay3.getUse() == 0) {
                             msg.Error = (byte) 200;
-                            msg.comment = codepay3.getCodepay()+"|"+time_con+"|"+codepay3.getBankname();
+                            msg.comment = codepay3.getCodepay() + "|" + time_con + "|" + codepay3.getBankname();
                             this.send((BaseMsg) msg, user);
                         } else {
 
@@ -992,7 +994,7 @@ public class LobbyModule
 
                         Long time_con = 7200L;
                         msg.Error = (byte) 200;
-                        msg.comment = commentcode+"|"+time_con+"|"+bank;
+                        msg.comment = commentcode + "|" + time_con + "|" + bank;
                         this.send((BaseMsg) msg, user);
 
                     } else {
@@ -1002,62 +1004,60 @@ public class LobbyModule
 
                         boolean check = false;
 
-                        do{
-                            if(codepay3.getUse() == 1){
+                        do {
+                            if (codepay3.getUse() == 1) {
 
-                                String commentcodeyyy = "LX"+gen.randomMaChuyenTien().toUpperCase();
+                                String commentcodeyyy = "LX" + gen.randomMaChuyenTien().toUpperCase();
                                 Codepayok codepay12 = gen.findCodepay(commentcodeyyy);
-                                if(codepay12 == null){
-                                    gen.updateCodepay(nickname,false, commentcodeyyy, bank);
+                                if (codepay12 == null) {
+                                    gen.updateCodepay(nickname, false, commentcodeyyy, bank);
                                     check = true;
                                     checktaodon = true;
                                     commentcode = commentcodeyyy;
-                                }else{
+                                } else {
                                     check = false;
                                     checktaodon = false;
                                 }
-                            }else{
-                                Long time_end = time_check- timelog;
-                                if(time_end <= 7200000){
+                            } else {
+                                Long time_end = time_check - timelog;
+                                if (time_end <= 7200000) {
                                     commentcode = codepay3.getCodepay();
                                     check = true;
-                                }else{
+                                } else {
 
-                                    String commentcodeyyy = "LX"+gen.randomMaChuyenTien().toUpperCase();
+                                    String commentcodeyyy = "LX" + gen.randomMaChuyenTien().toUpperCase();
                                     Codepayok codepay12 = gen.findCodepay(commentcodeyyy);
-                                    if(codepay12 == null){
-                                        gen.updateCodepay(nickname,false, commentcodeyyy, bank);
+                                    if (codepay12 == null) {
+                                        gen.updateCodepay(nickname, false, commentcodeyyy, bank);
                                         commentcode = commentcodeyyy;
                                         check = true;
                                         checktaodon = true;
-                                    }else{
+                                    } else {
                                         check = false;
                                         checktaodon = false;
                                     }
                                 }
                             }
 
-                        }while (check == false);
+                        } while (check == false);
 
                         //commentcode = gen.TaoMaCodePayNickNotNull(nickname, bank, codepay3, time_check, timelog);
                         Codepayok codepayx = gen.findNickname(nickname);
                         Long time_end = time_check - timelog;
                         Long time_con = 7200 - time_end / 1000;
 
-                        if(checktaodon == true){
+                        if (checktaodon == true) {
                             String dataall = "CodePay" + "|" + codepayx.getBankname() + "|" + cardName + "|" + TranID + "|" + commentcode;
                             RechargeServiceImpl reg = new RechargeServiceImpl();
                             reg.rechargeByBankManual(nickname, 1, cardCode, dataall);
                         }
 
                         msg.Error = (byte) 200;
-                        msg.comment = commentcode+"|"+time_con+"|"+codepayx.getBankname();
+                        msg.comment = commentcode + "|" + time_con + "|" + codepayx.getBankname();
                         this.send((BaseMsg) msg, user);
                     }
                 }
             }
-
-
 
 
         } catch (Exception e) {
@@ -1074,7 +1074,7 @@ public class LobbyModule
             String bank = cmd.bank;
             String cardName = cmd.cardName;
             String cardCode = cmd.cardCode;
-            String commentcode = "LX"+GenContent(nickname);
+            String commentcode = "LX" + GenContent(nickname);
             HashMap<String, Object> conditions = new HashMap<String, Object>();
             final ArrayList<DepositBankModel> records = new ArrayList<DepositBankModel>();
             MongoDatabase db = MongoDBConnectionFactory.getDB();
@@ -1104,36 +1104,36 @@ public class LobbyModule
                     records.add(modelz);
                 }
             });
-            if(records.size() == 0){
+            if (records.size() == 0) {
                 CodePayMsg msg = new CodePayMsg();
                 msg.Error = (byte) 300;
                 msg.comment = commentcode;
                 this.send((BaseMsg) msg, user);
-            }else{
+            } else {
                 CodePayMsg msg = new CodePayMsg();
                 msg.Error = (byte) 200;
                 msg.comment = commentcode;
                 this.send((BaseMsg) msg, user);
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.error(e);
         }
     }
 
-    public void InsertCodeUserBankELK(String nickname, String code){
+    public void InsertCodeUserBankELK(String nickname, String code) {
         try {
             boolean check = false;
             String sig = "\"successful\":1";
             int retry = 3;
-            do{
+            do {
                 retry--;
-                if(retry < 0) {
+                if (retry < 0) {
                     break;
                 }
                 OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
                         .build();
                 MediaType mediaType = MediaType.parse("application/json");
-                RequestBody body = RequestBody.create(mediaType, "{\"nickname\":\""+nickname+"\", \"code\":\""+code+"\"}");
+                RequestBody body = RequestBody.create(mediaType, "{\"nickname\":\"" + nickname + "\", \"code\":\"" + code + "\"}");
                 Request request = new Request.Builder()
                         .url(System.getenv("ELASTICSEARCH_URL") + "/codeuserbank/_doc")
                         .method("POST", body)
@@ -1141,31 +1141,31 @@ public class LobbyModule
                         .build();
                 Response response = client.newCall(request).execute();
                 String data = response.body().string();
-                if(data.contains(sig) == true){
+                if (data.contains(sig) == true) {
                     check = true;
                 }
-            }while (check == false);
-        }catch (Exception e) {
+            } while (check == false);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public String GetNicknameByCode(String code){
+    public String GetNicknameByCode(String code) {
         try {
             String nick = "";
             String code1 = code.toUpperCase();
             boolean check = false;
             String sig = "\"successful\":1";
             int retry = 3;
-            do{
+            do {
                 retry--;
-                if(retry < 0) {
+                if (retry < 0) {
                     break;
                 }
                 OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
                         .build();
                 MediaType mediaType = MediaType.parse("application/json");
-                RequestBody body = RequestBody.create(mediaType, "{\"query\":{\"bool\":{\"must\":[{\"match\":{\"code.keyword\":\""+code1+"\"}}],\"must_not\":[],\"should\":[]}},\"from\":0,\"size\":10,\"sort\":[],\"aggs\":{}}");
+                RequestBody body = RequestBody.create(mediaType, "{\"query\":{\"bool\":{\"must\":[{\"match\":{\"code.keyword\":\"" + code1 + "\"}}],\"must_not\":[],\"should\":[]}},\"from\":0,\"size\":10,\"sort\":[],\"aggs\":{}}");
                 Request request = new Request.Builder()
                         .url(System.getenv("ELASTICSEARCH_URL") + "/codeuserbank/_search")
                         .method("POST", body)
@@ -1173,15 +1173,15 @@ public class LobbyModule
                         .build();
                 Response response = client.newCall(request).execute();
                 String data = response.body().string();
-                if(data.contains(sig) == true){
+                if (data.contains(sig) == true) {
                     check = true;
                 }
                 JSONObject obj = new JSONObject(data);
                 JSONArray jsonArray = obj.getJSONObject("hits").getJSONArray("hits");
                 final int n = jsonArray.length();
-                if(n == 0){
+                if (n == 0) {
                     nick = null;
-                }else{
+                } else {
                     for (int i = 0; i < n; ++i) {
                         final JSONObject person = jsonArray.getJSONObject(i);
                         JSONObject test = person.getJSONObject("_source");
@@ -1190,46 +1190,46 @@ public class LobbyModule
                     }
                 }
 
-            }while (check == false);
+            } while (check == false);
             return nick;
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    public String GenContent(String nickname){
+    public String GenContent(String nickname) {
         //txt to decimal
         char[] nick_char = nickname.toCharArray();
         ArrayList<Integer> list1 = new ArrayList<>();
-        for(char c : nick_char){
+        for (char c : nick_char) {
             int y = (int) c;
             list1.add(y);
         }
 
         //decimal to hex
         String hex = "";
-        for(int i : list1){
+        for (int i : list1) {
             String h = Integer.toHexString(i);
-            hex = hex+h+",";
+            hex = hex + h + ",";
         }
 
         // hex to key
         hex = hex.toUpperCase();
         int sum = 0;
-        int size=3;
-        int range=65536;//16 bit
+        int size = 3;
+        int range = 65536;//16 bit
         ArrayList<String> list3 = new ArrayList<>();
         String[] list2 = hex.split(",");
-        for(String s : list2){
-            int u = Integer.parseInt(s,16);
+        for (String s : list2) {
+            int u = Integer.parseInt(s, 16);
             sum = sum + u;
         }
         sum %= range;
         String sum1 = Integer.toHexString(sum).toUpperCase();
         String sum2 = "000000000" + sum1;
-        String sum3 = sum2.substring(sum2.length()-size);
+        String sum3 = sum2.substring(sum2.length() - size);
         sum3 = nickname.substring(0, 2).toUpperCase() + sum3 + nickname.length();
         return sum3;
 
@@ -1605,12 +1605,12 @@ public class LobbyModule
     }
 
     private void napTheDienThoai(User user, DataCmd dataCmd) {
-       ;
+        ;
         GachTheDienThoaiCmd cmd = new GachTheDienThoaiCmd(dataCmd);
         byte result = 1;
         RechargeResponse res = null;
         NapTheDienThoaiMsg msg = new NapTheDienThoaiMsg();
-        if( GameUtils.allowDepositCard(user.getName())){ // todo check time ban allow deposit
+        if (GameUtils.allowDepositCard(user.getName())) { // todo check time ban allow deposit
             try {
                 Debug.trace((Object) ("Recharge error: " + PartnerConfig.CongGachThe + ":" + cmd.provider + ":" + cmd.serial + ":" + cmd.pin + ":" + cmd.menhgia));
                 Platform platform = Platform.find((String) ((String) user.getProperty((Object) "pf")));
@@ -1641,7 +1641,7 @@ public class LobbyModule
         Debug.trace((Object) ("Recharge Gachthe error: " + msg.Error));
         this.send((BaseMsg) msg, user);
         CardBanMoneyService banMoneyService = new CardBanMoneyService();
-        banMoneyService.banWidrawUser(user.getName(),2000);
+        banMoneyService.banWidrawUser(user.getName(), 2000);
     }
 
     private void napTheDienThoaiGachthe(User user, DataCmd dataCmd) {
@@ -1949,12 +1949,12 @@ public class LobbyModule
         MuaMaTheCmd cmd = new MuaMaTheCmd(dataCmd);
         MuaMaTheMsg msg = new MuaMaTheMsg();
         try {
-                SoftpinResponse res = this.cashOutService.cashOutByCardKhoThe(user.getName(), ProviderType.getProviderById((int) cmd.provider), PhoneCardType.getPhoneCardById((int) cmd.amount), (int) cmd.quantity, true);
-                msg.Error = (byte) res.getCode();
-                if (res.getCode() == 0) {
-                    user.setProperty((Object) CURRENT_COMMAND, (Object) dataCmd.getId());
-                    user.setProperty((Object) CURRENT_OBJECT_COMMAND, (Object) cmd);
-                }
+            SoftpinResponse res = this.cashOutService.cashOutByCardKhoThe(user.getName(), ProviderType.getProviderById((int) cmd.provider), PhoneCardType.getPhoneCardById((int) cmd.amount), (int) cmd.quantity, true);
+            msg.Error = (byte) res.getCode();
+            if (res.getCode() == 0) {
+                user.setProperty((Object) CURRENT_COMMAND, (Object) dataCmd.getId());
+                user.setProperty((Object) CURRENT_OBJECT_COMMAND, (Object) cmd);
+            }
 
         } catch (Exception e) {
             msg.Error = 1;
@@ -1991,37 +1991,37 @@ public class LobbyModule
             TanThuDAO ttdao = new TanThuDAO();
             OTPCheck otpcheck = new OTPCheck();
             ArrayList<CodeTT> listcode = ttdao.GetCode();
-            CodeTT codex= null;
+            CodeTT codex = null;
             UserOTP usotp = ttdao.GetActive(user.getName());
             boolean check_code_tt = false;
             boolean check_use_code_tanthu = ttdao.CheckUseCode(user.getName());
 //            boolean check_user_active_otp = otpcheck.checkUserActiveOTP(user.getName());
             boolean check_user_active_otp = false;
-            if(usotp.getActive() == 1){
+            if (usotp.getActive() == 1) {
                 check_user_active_otp = true;
-            }else{
+            } else {
                 check_user_active_otp = false;
             }
 
 
-            for(CodeTT cc : listcode){
-                if(cc.getCode().trim().equals(cmd.giftCode.trim()) && cc.getStop() == 0){
+            for (CodeTT cc : listcode) {
+                if (cc.getCode().trim().equals(cmd.giftCode.trim()) && cc.getStop() == 0) {
                     check_code_tt = true;
                     codex = new CodeTT(cc.getCode(), cc.getMoney(), cc.getTimelog(), cc.getStop());
                     break;
-                }else {
+                } else {
                     check_code_tt = false;
                 }
             }
 
-            if(check_user_active_otp == true){
-                if(check_use_code_tanthu == false && check_code_tt == true){
+            if (check_user_active_otp == true) {
+                if (check_use_code_tanthu == false && check_code_tt == true) {
                     String timelog = VinPlayUtils.getCurrentDateTime();
-                    UseCode usercode = new UseCode(user.getName(), codex.getCode(), 1,timelog, usotp.getUsername(), usotp.getPhone(), usotp.getActive());
+                    UseCode usercode = new UseCode(user.getName(), codex.getCode(), 1, timelog, usotp.getUsername(), usotp.getPhone(), usotp.getActive());
                     ttdao.InsertCode(usercode);
                     MoneyResponse mnres = userService.updateMoney(user.getName(), codex.getMoney(), "vin", "GiftCodeTanThu", "GiftCodeTanThu", "M\u00e3: " + cmd.giftCode, 0L, null, TransType.NO_VIPPOINT);
                     msg.Error = this.parseErrorCodeGiftCode("0");
-                } else{
+                } else {
                     if (exists) {
                         GiftCodeUpdateResponse response = this.gfService.updateSpecialGiftCodeNew(user.getName(), cmd.giftCode);
                         Debug.trace("Giftcode:" + cmd.giftCode + ":" + response.getErrorCode());
@@ -2435,13 +2435,13 @@ public class LobbyModule
                         }
                         case 20015: {
                             MuaMaTheCmd mmtCmd = (MuaMaTheCmd) ((Object) objCmd);
-                                SoftpinResponse sfres = this.cashOutService.cashOutByCardKhoThe(user.getName(), ProviderType.getProviderById((int) mmtCmd.provider), PhoneCardType.getPhoneCardById((int) mmtCmd.amount), (int) mmtCmd.quantity, false);
-                                ResultMuaMaTheMsg mtmsg = new ResultMuaMaTheMsg();
-                                mtmsg.Error = (byte) sfres.getCode();
-                                mtmsg.currentMoney = sfres.getCurrentMoney();
-                                mtmsg.softpin = sfres.getSoftpin();
-                                this.send((BaseMsg) mtmsg, user);
-                                break;
+                            SoftpinResponse sfres = this.cashOutService.cashOutByCardKhoThe(user.getName(), ProviderType.getProviderById((int) mmtCmd.provider), PhoneCardType.getPhoneCardById((int) mmtCmd.amount), (int) mmtCmd.quantity, false);
+                            ResultMuaMaTheMsg mtmsg = new ResultMuaMaTheMsg();
+                            mtmsg.Error = (byte) sfres.getCode();
+                            mtmsg.currentMoney = sfres.getCurrentMoney();
+                            mtmsg.softpin = sfres.getSoftpin();
+                            this.send((BaseMsg) mtmsg, user);
+                            break;
 
                         }
                         case 20016: {
@@ -2606,9 +2606,38 @@ public class LobbyModule
                 this.send(msg, user);
             }
         } catch (Exception e) {
-            cacheService.setValue("Lobby_tx_tai_1",0);
-            cacheService.setValue("Lobby_tx_xiu_1",0);
-            cacheService.setValue("Hu_TX_1",0);
+            cacheService.setValue("Lobby_tx_tai_1", 0);
+            cacheService.setValue("Lobby_tx_xiu_1", 0);
+            cacheService.setValue("Hu_TX_1", 0);
+            Debug.info("Hu TX lỗi " + e.getMessage());
+        }
+    }
+
+    public void txMd5Jackpot() {
+        try {
+            //CacheService cacheService = new CacheServiceImpl();
+            long txHu;
+            long txTai;
+            long txXiu;
+            txTai = Long.parseLong(cacheService.getValueStr("Md5_Lobby_tx_tai_1"));
+            txXiu = Long.parseLong(cacheService.getValueStr("Md5_Lobby_tx_xiu_1"));
+            try {
+                txHu = Long.parseLong(cacheService.getValueStr("Hu_TX_1"));
+            } catch (Exception ex) {
+                txHu = 0;
+            }
+            UpdateTXJackpotMsg msg = new UpdateTXJackpotMsg();
+            msg.moneyHu = txHu;
+            msg.moneyTai = txTai;
+            msg.moneyXiu = txXiu;
+            for (User user : this.usersSubJackpot) {
+                if (user == null) continue;
+                this.send(msg, user);
+            }
+        } catch (Exception e) {
+            cacheService.setValue("Md5_Lobby_tx_tai_1", 0);
+            cacheService.setValue("Md5_Lobby_tx_xiu_1", 0);
+            cacheService.setValue("Hu_TX_1", 0);
             Debug.info("Hu TX lỗi " + e.getMessage());
         }
     }
@@ -2714,6 +2743,7 @@ public class LobbyModule
             this.updateJackpot();
             this.bauCuaJackpot();
             this.txJackpot();
+            this.txMd5Jackpot();
             this.countUpdateJackpot = 0L;
         }
 
@@ -2784,7 +2814,7 @@ public class LobbyModule
         }
     }
 
-    private synchronized void broadCastTime(){
+    private synchronized void broadCastTime() {
         CacheService cacheService = new CacheServiceImpl();
         ArrayList<String> listUser = null;
         try {
@@ -2793,7 +2823,8 @@ public class LobbyModule
             if (null != listUser) {
                 for (String username : listUser) {
                     BroadcastTimeChangeMsg msg = new BroadcastTimeChangeMsg();
-                    msg.time = 0;  msg.Error = (byte) 200;
+                    msg.time = 0;
+                    msg.Error = (byte) 200;
                     if (listuserCr.get(username) == null) {
                         listUser.remove(username);
                         continue;
@@ -2804,7 +2835,7 @@ public class LobbyModule
 
             }
             cacheService.setObject("List_Time_Change", listUser);
-        }catch (Exception e) {
+        } catch (Exception e) {
             listUser = new ArrayList<>();
             cacheService.setObject("List_Time_Change", listUser);
             Debug.info("Call exception user  after send iss" + listUser.size());
@@ -2812,7 +2843,7 @@ public class LobbyModule
         }
     }
 
-    private synchronized void broadCastTime2(){
+    private synchronized void broadCastTime2() {
         CacheService cacheService = new CacheServiceImpl();
         ArrayList<String> listUser = null;
         try {
@@ -2821,7 +2852,8 @@ public class LobbyModule
             if (null != listUser) {
                 for (String username : listUser) {
                     BroadcastTimeChangeMsg msg = new BroadcastTimeChangeMsg();
-                    msg.time = 300;  msg.Error = (byte) 200;
+                    msg.time = 300;
+                    msg.Error = (byte) 200;
                     if (listuserCr.get(username) == null) {
                         listUser.remove(username);
                         continue;
@@ -2832,7 +2864,7 @@ public class LobbyModule
 
             }
             cacheService.setObject("List_Time_Change", listUser);
-        }catch (Exception e) {
+        } catch (Exception e) {
             listUser = new ArrayList<>();
             cacheService.setObject("List_Time_Change", listUser);
             Debug.info("Call exception user  after send iss" + listUser.size());
@@ -2848,7 +2880,7 @@ public class LobbyModule
             try {
 
                 LobbyModule.this.broadCastOutGame();
-            } catch(Exception e) {
+            } catch (Exception e) {
                 CacheService cacheService = new CacheServiceImpl();
                 cacheService.setObject("List_Time_OutGame", new ArrayList<String>());
                 Debug.info(e.getMessage());
@@ -2857,7 +2889,7 @@ public class LobbyModule
         }
     }
 
-    private synchronized void broadCastOutGame(){
+    private synchronized void broadCastOutGame() {
         CacheService cacheService = new CacheServiceImpl();
         ArrayList<String> listUser = null;
         try {
@@ -2868,7 +2900,8 @@ public class LobbyModule
                     String[] datas = username.split("\\|");
                     BroadcastOutGameChangeMsg msg = new BroadcastOutGameChangeMsg();
                     String username2 = datas[0];
-                    msg.idGame = datas[1];  msg.Error = (byte) 200;
+                    msg.idGame = datas[1];
+                    msg.Error = (byte) 200;
                     if (listuserCr.get(username2) == null) {
                         listUser.remove(username2);
                         continue;
@@ -2879,7 +2912,7 @@ public class LobbyModule
 
             }
             cacheService.setObject("List_Time_OutGame", listUser);
-        }catch (Exception e) {
+        } catch (Exception e) {
             listUser = new ArrayList<>();
             cacheService.setObject("List_Time_OutGame", listUser);
             Debug.info("Call exception user  after send iss" + listUser.size());
@@ -3235,7 +3268,7 @@ public class LobbyModule
             try {
 
                 LobbyModule.this.broadCastTime();
-            } catch(Exception e) {
+            } catch (Exception e) {
                 CacheService cacheService = new CacheServiceImpl();
                 cacheService.setObject("List_Time_Change", new ArrayList<String>());
                 Debug.info(e.getMessage());
@@ -3252,7 +3285,7 @@ public class LobbyModule
             try {
 
                 LobbyModule.this.broadCastTime2();
-            } catch(Exception e) {
+            } catch (Exception e) {
                 CacheService cacheService = new CacheServiceImpl();
                 cacheService.setObject("List_Time_Change", new ArrayList<String>());
                 Debug.info(e.getMessage());

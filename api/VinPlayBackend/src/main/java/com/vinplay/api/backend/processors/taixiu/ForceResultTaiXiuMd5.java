@@ -26,11 +26,11 @@ public class ForceResultTaiXiuMd5 implements BaseProcessor<HttpServletRequest, S
 
         try{
             currentReference = cacheService.getValueStr("Tai_xiu_current_reference_md5");
-            int allowBetting = cacheService.getValueInt("allow_betting_"+currentReference);
+            int allowBetting = cacheService.getValueInt("md5_allow_betting_"+currentReference);
             if(allowBetting == 0){
                 return "-1";
             }
-            cacheService.setValue("force_result_"+currentReference, result);
+            cacheService.setValue("md5_force_result_"+currentReference, result);
             return "1";
         }catch (Exception e){
             return res;
