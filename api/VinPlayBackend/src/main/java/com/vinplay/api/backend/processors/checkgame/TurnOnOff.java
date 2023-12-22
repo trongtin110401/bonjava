@@ -19,7 +19,7 @@ public class TurnOnOff {
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{\r\n   \"check\" : \""+status+"\"\r\n}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/checkgame/_doc/1")
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/checkgame/_doc/1")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();

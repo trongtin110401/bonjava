@@ -66,7 +66,7 @@ public class NapRutGame {
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{\"query\":{\"bool\":{\"must\":[{\"match\":{\"nickName.keyword\":\""+nickname+"\"}}],\"must_not\":[],\"should\":[]}},\"from\":0,\"size\":10,\"sort\":[],\"aggs\":{}}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/user_map_daily/_search")
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/user_map_daily/_search")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();

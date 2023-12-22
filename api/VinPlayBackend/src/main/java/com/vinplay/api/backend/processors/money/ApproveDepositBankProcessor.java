@@ -10,7 +10,7 @@ import com.vinplay.dal.common.BroadCastUserMoney;
 import com.vinplay.dichvuthe.dao.RechargeDao;
 import com.vinplay.dichvuthe.dao.impl.RechargeDaoImpl;
 import com.vinplay.dichvuthe.entities.DepositBankModel;
-import com.vinplay.dichvuthe.entities.DepositOnePayModel;
+import com.vinplay.dichvuthe.service.impl.RechargeServiceImpl;
 import com.vinplay.dichvuthe.utils.DvtConst;
 import com.vinplay.lognaprut.HistoryTransConst;
 import com.vinplay.lognaprut.HistoryTransDao;
@@ -27,6 +27,7 @@ import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.response.BaseResponseModel;
 import com.vinplay.vbee.common.statics.Consts;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
+import org.apache.log4j.Logger;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
@@ -35,11 +36,13 @@ import java.io.IOException;
 
 // todo : approve tiền nạp qua ngân hàng cho user
 public class ApproveDepositBankProcessor implements BaseProcessor<HttpServletRequest, String> {
-
+    private static final Logger logger = Logger.getLogger("backend");
+// todo fix connect db oxyhome6699
     @Override
     public String execute(Param<HttpServletRequest> param) {
         // type = 0 is approve
         // type = 1 is reject
+        logger.info("=============ApproveDepositBankProcessor start=============");
         synchronized (this) {
             BaseResponseModel response = new BaseResponseModel(false, "1001");
             HistoryTransService historyTransService = new HistoryTransServiceImpl();
@@ -50,40 +53,43 @@ public class ApproveDepositBankProcessor implements BaseProcessor<HttpServletReq
                 String typeStr = request.getParameter("type");
                 String userApprove = request.getParameter("uad");
                 String tienx = request.getParameter("tien");
+                logger.info("Param info: " + "transId: " + transId + " typeStr" + typeStr + " tien" + tienx);
                 long tien = Long.parseLong(tienx);
                 long tien_final = 0;
                 if (transId.isEmpty() || typeStr.isEmpty()) {
+                    logger.error("transId or typeStr is empty");
                     return response.toJson();
                 }
                 int type = Integer.parseInt(typeStr);
                 RechargeDao dao = new RechargeDaoImpl();
 
-                // find transaction in db
-                DepositBankModel trans = dao.FindDepositBankById(transId);
-                if (trans == null) {
-                    return response.toJson();
-                }
-                if (trans.Status == DvtConst.STATUS_APPROVE) {
-                    return response.toJson();
-                }
+                RechargeServiceImpl rechargeService = new RechargeServiceImpl();
+                DepositBankModel trans = rechargeService.finMoMoDepositByTransactionId(transId);
+
+
+
                 // update trans in db
                 int status = type == 100 ? DvtConst.STATUS_APPROVE : DvtConst.STATUS_REJECT;
-                boolean resultUpdateTrans = dao.UpdateDepositBankManualStatus(transId, status, trans.Description, userApprove);
+//                boolean resultUpdateTrans = dao.UpdateDepositBankManualStatus(transId, status, trans.Description, userApprove);
+                boolean resultUpdateTrans = dao.UpdateDepositBankManualStatus(transId, status, trans.getDescription(), userApprove);
+                logger.debug(this.getClass().getName() + "resultUpdateTrans: " + resultUpdateTrans);
                 if (!resultUpdateTrans) {
                     return response.toJson();
                 }
+                logger.error(this.getClass().getName() + " Type :" + type);
                 if (type == 1) {
-                    BroadCastUserMoney.pushBroadTime2(trans.Nickname);
+                    BroadCastUserMoney.pushBroadTime2(trans.getNickname());
                     response.setSuccess(true);
-                    historyTransService.update(transId, trans.Nickname, HistoryTransConst.BANK, "Từ chối", "Giao dịch bị từ chối");
+                    historyTransService.update(transId, trans.getNickname(), HistoryTransConst.BANK, "Từ chối", "Giao dịch bị từ chối");
                     EventactionAdminObj model = new EventactionAdminObj();
                     model.setId(transId);
                     model.setStatus(2);
                     model.setType("DEPOSIT_BANK");
-                    updateCodepay(trans.Nickname, true, trans.getDescription(),trans.BankBrandName);
+                    updateCodepay(trans.getNickname(), true,trans.getDescription(), trans.getUserSender());
                     try {
                         SendToWS.sendBEExcEventaction(model);
                     } catch (IOException e) {
+                        logger.error(e.getMessage());
                         e.printStackTrace();
                     }
                     return response.toJson();
@@ -99,16 +105,17 @@ public class ApproveDepositBankProcessor implements BaseProcessor<HttpServletReq
                         double tien_tmp = tien * flus;
                         tien_final = (long) tien_tmp;
                         totalFee = totalFee > 0 ? totalFee : 0;
-                        response = service.updateMoneyFromAdmin(trans.Nickname, tien_final, "vin", Consts.RECHARGE_BY_BANK, "Deposit bank", "Deposit bank", totalFee);
+                        response = service.updateMoneyFromAdmin(trans.getNickname(), tien_final, "vin", Consts.RECHARGE_BY_BANK, "Deposit bank", "Deposit bank", totalFee);
 
                     } catch (Exception e) {
+                        logger.error(e.getMessage());
                         e.printStackTrace();
                     }
                     HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
-                    historyTransDao.insertTransaction(new HistoryTransModel(trans.BankBrandName + "|" + trans.getDescription(), "CodePay", "Nạp tiền", "", "Thành công", "Nạp tiền Thành công ", trans.Nickname, HistoryTransConst.BANK, trans.Id));
-                    updateMoneyCodePayMomoSun(transId,tien_final);
-                    updateMoneyCodePayMomoSun2(transId, tien_final+"");
-                    updateSttCodePayMomoSun(transId,userApprove);
+                    historyTransDao.insertTransaction(new HistoryTransModel(transId + "|" + "test bank", "CodePay", "Nạp tiền", "", "Thành công", "Nạp tiền Thành công ", trans.Nickname, HistoryTransConst.BANK, transId));
+                    updateMoneyCodePayMomoSun(transId, tien_final);
+                    updateMoneyCodePayMomoSun2(transId, tien_final + "");
+                    updateSttCodePayMomoSun(transId, userApprove);
                     updateSTTCodePayMomoSun2(transId);
                     EventactionAdminObj model = new EventactionAdminObj();
                     model.setId(transId);
@@ -117,44 +124,45 @@ public class ApproveDepositBankProcessor implements BaseProcessor<HttpServletReq
                     try {
                         SendToWS.sendBEExcEventaction(model);
                     } catch (IOException e) {
+                        logger.error(e.getMessage());
                         e.printStackTrace();
                     }
                 }
-                BroadCastUserMoney.pushBroadCast(trans.Nickname);
-                BroadCastUserMoney.pushBroadTime(trans.Nickname);
-                updateCodepay(trans.Nickname, true, trans.getDescription(),trans.BankBrandName);
-                updateMoneyCodePayMomoSun(transId,tien);
-                updateMoneyCodePayMomoSun2(transId, tien+"");
+                BroadCastUserMoney.pushBroadCast(trans.getNickname());
+                BroadCastUserMoney.pushBroadTime(trans.getNickname());
+                updateCodepay(trans.getNickname(), true, trans.getDescription(),trans.getBankBrandName());
+                updateMoneyCodePayMomoSun(transId, tien);
+                updateMoneyCodePayMomoSun2(transId, tien + "");
                 NapRutGame nrg = new NapRutGame();
                 String codedl = nrg.getMaDaily(trans.Nickname);
                 long SoTien = tien;
-                if(codedl == null){
+                if (codedl == null) {
                     int xx = 2;
-                }else if(codedl != null && codedl.trim().length() == 0){
+                } else if (codedl != null && codedl.trim().length() == 0) {
                     int xx = 2;
-                }else if(codedl != null && codedl.trim().equalsIgnoreCase("null") == false){
+                } else if (codedl != null && codedl.trim().equalsIgnoreCase("null") == false) {
                     String usend = trans.getUserSender();
 
-                    if(usend.equalsIgnoreCase("CodePay")){
-                        NapRutModel napgame = new NapRutModel(trans.Id, trans.Nickname, codedl, SoTien,"CodePay", trans.CreatedAt);
+                    if (usend.equalsIgnoreCase("CodePay")) {
+                        NapRutModel napgame = new NapRutModel(transId, trans.getNickname(), codedl, SoTien, "CodePay", trans.CreatedAt);
                         nrg.NapRut(napgame);
-                    }else if(usend.equalsIgnoreCase("Momo")){
-                        NapRutModel napgame = new NapRutModel(trans.Id, trans.Nickname, codedl, SoTien,"MoMo", trans.CreatedAt);
+                    } else if (usend.equalsIgnoreCase("Momo")) {
+                        NapRutModel napgame = new NapRutModel(trans.getId(),  trans.getNickname(), codedl, SoTien, "MoMo", trans.CreatedAt);
                         nrg.NapRut(napgame);
-                    }else{
-                        NapRutModel napgame = new NapRutModel(trans.Id, trans.Nickname, codedl, SoTien,"Bank", trans.CreatedAt);
+                    } else {
+                        NapRutModel napgame = new NapRutModel(trans.getId(),  trans.getNickname(), codedl, SoTien, "Bank", trans.CreatedAt);
                         nrg.NapRut(napgame);
                     }
-                }else{
-                    int xx =2;
+                    NapRutModel napgame = new NapRutModel(transId,trans.getNickname() , codedl, SoTien, "Bank", trans.CreatedAt);
+                    nrg.NapRut(napgame);
+                } else {
+                    int xx = 2;
                 }
 
                 return response.toJson();
-                //send to user
-
-                //
 
             } catch (Exception e) {
+                logger.error(e.getMessage());
                 return response.toJson();
             }
 
@@ -166,10 +174,10 @@ public class ApproveDepositBankProcessor implements BaseProcessor<HttpServletReq
             MongoDatabase db = MongoDBConnectionFactory.getDB();
             MongoCollection col = db.getCollection("deposit_bank_manual");
             Document doc = new Document();
-            doc.append("Amount",tien);
+            doc.append("Amount", tien);
             col.updateOne((Bson) new Document("Id", TrainID), (Bson) new Document("$set", (Object) doc));
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -177,16 +185,16 @@ public class ApproveDepositBankProcessor implements BaseProcessor<HttpServletReq
 
     private void updateMoneyCodePayMomoSun2(String TrainID, String tien) {
         try {
-            InsertELK elk = new InsertELK();
+//            InsertELK elk = new InsertELK();
             MongoDatabase db = MongoDBConnectionFactory.getDB();
             MongoCollection col = db.getCollection("History_User_transaction");
             Document doc = new Document();
-            doc.append("sotien",tien);
+            doc.append("sotien", tien);
             col.updateOne((Bson) new Document("transId", TrainID), (Bson) new Document("$set", (Object) doc));
-            HistoryTransModel his = elk.GetHistorybyTransID(TrainID);
-            his.setSotien(tien);
-            elk.InsertHistoryUserTransOK(his, Long.parseLong(his.getId()),his.getCreateAt());
-        }catch (Exception e) {
+//            HistoryTransModel his = elk.GetHistorybyTransID(TrainID);
+//            his.setSotien(tien);
+//            elk.InsertHistoryUserTransOK(his, Long.parseLong(his.getId()), his.getCreateAt());
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -197,11 +205,11 @@ public class ApproveDepositBankProcessor implements BaseProcessor<HttpServletReq
             MongoDatabase db = MongoDBConnectionFactory.getDB();
             MongoCollection col = db.getCollection("deposit_bank_manual");
             Document doc = new Document();
-            doc.append("Status",100);
-            doc.append("UserApprove",ua);
+            doc.append("Status", 100);
+            doc.append("UserApprove", ua);
             col.updateOne((Bson) new Document("Id", TrainID), (Bson) new Document("$set", (Object) doc));
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -209,28 +217,28 @@ public class ApproveDepositBankProcessor implements BaseProcessor<HttpServletReq
 
     private void updateSTTCodePayMomoSun2(String TrainID) {
         try {
-            InsertELK elk = new InsertELK();
+//            InsertELK elk = new InsertELK();
             MongoDatabase db = MongoDBConnectionFactory.getDB();
             MongoCollection col = db.getCollection("History_User_transaction");
             Document doc = new Document();
-            doc.append("trangthai","Thành công");
+            doc.append("trangthai", "Thành công");
             col.updateOne((Bson) new Document("transId", TrainID), (Bson) new Document("$set", (Object) doc));
-            HistoryTransModel his = elk.GetHistorybyTransID(TrainID);
-            his.setTrangthai("Thành công");
-            elk.InsertHistoryUserTransOK(his, Long.parseLong(his.getId()),his.getCreateAt());
+//            HistoryTransModel his = elk.GetHistorybyTransID(TrainID);
+//            his.setTrangthai("Thành công");
+//            elk.InsertHistoryUserTransOK(his, Long.parseLong(his.getId()), his.getCreateAt());
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
 
-    public void updateCodepay(String nickname, boolean use, String codepay, String bankname){
+    public void updateCodepay(String nickname, boolean use, String codepay, String bankname) {
         try {
             int check = 0;
-            if(use == true){
+            if (use == true) {
                 check = 1;
-            }else{
+            } else {
                 check = 0;
             }
             MongoDatabase db = MongoDBConnectionFactory.getDB();
@@ -239,12 +247,12 @@ public class ApproveDepositBankProcessor implements BaseProcessor<HttpServletReq
             String timeAt = VinPlayUtils.getCurrentDateTime();
             doc.append("codepay", codepay);
             doc.append("use", check);
-            doc.append("createAt",timeAt);
+            doc.append("createAt", timeAt);
             doc.append("bankname", bankname);
-            col.updateOne((Bson) new Document("nickname", nickname), (Bson) new Document("$set", (Object) doc));
+            col.updateOne((Bson) new Document("nickname", nickname), new Document("$set", doc));
 
         } catch (Exception e) {
-            System.out.println("loi ne a oi: "+e);
+            System.out.println("loi ne a oi: " + e);
         }
     }
 

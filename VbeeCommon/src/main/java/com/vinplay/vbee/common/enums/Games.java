@@ -7,6 +7,7 @@ public enum Games {
     MINIGAME(0, "MiniGame", "Minigame"),
     MINI_POKER(1, "MiniPoker", "Mini poker"),
     TAI_XIU(2, "TaiXiu", "T\u00e0i x\u1ec9u"),
+    TAI_XIU_MD5(2000, "TaiXiuMd5", "T\u00e0i x\u1ec9u Md5"),
     BAU_CUA(3, "BauCua", "B\u1ea7u cua"),
     CAO_THAP(4, "CaoThap", "Cao th\u1ea5p"),
     POKE_GO(5, "PokeGo", "Pokego"),

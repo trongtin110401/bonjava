@@ -45,18 +45,19 @@ import com.vinplay.vbee.common.models.minigame.TopWin;
 import com.vinplay.vbee.common.models.minigame.taixiu.XepHangRLTLModel;
 import com.vinplay.vbee.common.rmq.ELKrmq;
 import com.vinplay.vbee.common.rmq.RMQApi;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeoutException;
-
-import org.apache.log4j.Logger;
 
 // todo : xử lý tài xỉu bằng cách đẩy vào queue
 public class TaiXiuServiceImpl

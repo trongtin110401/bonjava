@@ -981,6 +981,42 @@ public class RechargeServiceImpl
         }
         return null;
     }
+
+    public DepositBankModel finMoMoDepositByTransactionId(String transactionId) {
+        try {
+            HashMap<String, Object> conditions = new HashMap<String, Object>();
+            MongoDatabase db = MongoDBConnectionFactory.getDB();
+            MongoCollection col = db.getCollection("deposit_momo2_manual");
+            conditions.put("Id", transactionId);
+            conditions.put("Status", 1);
+//            BasicDBObject sortCondtions = new BasicDBObject();
+//            sortCondtions.put("CreatedAt", -1);
+            Document document = (Document) col.find((Bson) new Document(conditions)).first();
+//            Document document = (Document) col.find((Bson) new Document(conditions)).sort((Bson) sortCondtions).first();
+            if (document != null) {
+                String Id = document.getString((Object) "Id");
+                String Nickname = document.getString((Object) "Nickname");
+                String CreatedAt = document.getString((Object) "CreatedAt");
+                String UpdatedAt = document.getString((Object) "UpdatedAt");
+                long Amount = document.getLong((Object) "Amount");
+                int Status = document.getInteger((Object) "Status");
+                String BankBrandName = document.getString((Object) "BankBrandName");
+                String BankAccountNumber = document.getString((Object) "BankAccountNumber");
+                String BankAccountName = document.getString((Object) "BankAccountName");
+                String Description = document.getString((Object) "Description");
+                String UserApprove = document.getString((Object) "UserApprove");
+                String UserSender = document.getString((Object) "UserSender");
+                DepositBankModel desp = new DepositBankModel(Id, Nickname, CreatedAt, UpdatedAt, Amount, Status, BankBrandName, BankAccountNumber, BankAccountName, Description);
+                return desp;
+            }
+
+        } catch (Exception e) {
+            DepositBankModel desp = new DepositBankModel("Id", "Nickname", "CreatedAt", "UpdatedAt", 0, 0, "BankBrandName", "BankAccountNumber", "BankAccountName", e.getMessage());
+            return desp;
+        }
+        return null;
+    }
+
     public DepositBankModel finMoMoDepositByID(String id) {
         try {
             ArrayList<DepositBankModel> list_nick = new ArrayList<>();
@@ -1081,7 +1117,7 @@ public class RechargeServiceImpl
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{\"Id\":\"" + Id + "\",\"Nickname\":\"" + Nickname + "\",\"CreatedAt\":\"" + CreatedAt + "\",\"UpdatedAt\":\"" + UpdatedAt + "\",\"Amount\":" + Amount + ",\"Status\":1,\"BankBrandName\":\"" + BankBrandName + "\",\"BankAccountNumber\":\"" + BankAccountNumber + "\",\"BankAccountName\":\"" + BankAccountName + "\",\"Description\":\"" + Description + "\",\"UserApprove\":\"" + UserApprove + "\",\"UserSender\":\"" + UserSender + "\",\"Note1\":\"\",\"Note2\":\"\",\"Note3\":\"\"}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/deposit_codepay_manual/_doc")
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/deposit_codepay_manual/_doc")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();
@@ -1117,7 +1153,7 @@ public class RechargeServiceImpl
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{\"Id\":\"" + Id + "\",\"Nickname\":\"" + Nickname + "\",\"CreatedAt\":\"" + CreatedAt + "\",\"UpdatedAt\":\"" + UpdatedAt + "\",\"Amount\":" + Amount + ",\"Status\":1,\"BankBrandName\":\"" + BankBrandName + "\",\"BankAccountNumber\":\"" + BankAccountNumber + "\",\"BankAccountName\":\"" + BankAccountName + "\",\"Description\":\"" + Description + "\",\"UserApprove\":\"" + UserApprove + "\",\"UserSender\":\"" + UserSender + "\",\"Note1\":\"\",\"Note2\":\"\",\"Note3\":\"\"}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/deposit_momo2_manual/_doc")
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/deposit_momo2_manual/_doc")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();
@@ -1148,7 +1184,7 @@ public class RechargeServiceImpl
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{\"Id\":\"" + Id + "\",\"Nickname\":\"" + Nickname + "\",\"CreatedAt\":\"" + CreatedAt + "\",\"UpdatedAt\":\"" + UpdatedAt + "\",\"Amount\":" + Amount + ",\"Status\":1,\"BankBrandName\":\"" + BankBrandName + "\",\"BankAccountNumber\":\"" + BankAccountNumber + "\",\"BankAccountName\":\"" + BankAccountName + "\",\"Description\":\"" + Description + "\",\"UserApprove\":\"" + UserApprove + "\",\"UserSender\":\"" + UserSender + "\",\"Note1\":\"\",\"Note2\":\"\",\"Note3\":\"\"}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/deposit_nh_manual/_doc")
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/deposit_nh_manual/_doc")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();

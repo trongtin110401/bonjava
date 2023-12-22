@@ -133,7 +133,7 @@ public class GetBankingProcessor implements BaseProcessor<HttpServletRequest, St
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{\"query\":{\"bool\":{\"must\":[{\"match\":{\"nickName.keyword\":\""+nickname+"\"}},{\"match\":{\"congGiaoDich.keyword\":\"Ngân Hàng\"}},{\"match\":{\"trangthai.keyword\":\"Đang xử lý\"}}],\"must_not\":[],\"should\":[]}},\"from\":0,\"size\":1000,\"sort\":[],\"aggs\":{}}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/history_user_transaction/_search")
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/history_user_transaction/_search")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();

@@ -25,7 +25,7 @@ public class InsertELK {
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{\r\n\"_class\": \"vn.com.syncmonges.entity.user_map_daily\",\r\n\"id\": \"666999\",\r\n\"userId\": "+userId+",\r\n\"user_name\": \""+username+"\",\r\n\"nickName\": \""+nickname+"\",\r\n\"id_daily\": \""+codeDaily+"\",\r\n\"time_log\": \""+time_log+"\"\r\n}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/user_map_daily/_doc")
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/user_map_daily/_doc")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();
@@ -59,7 +59,7 @@ public class InsertELK {
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{\"query\":{\"bool\":{\"must\":[{\"term\":{\"userId\":\""+userId+"\"}}],\"must_not\":[],\"should\":[]}},\"from\":0,\"size\":250,\"sort\":[],\"aggs\":{}}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/user_map_daily/_search")
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/user_map_daily/_search")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();
@@ -112,7 +112,7 @@ public class InsertELK {
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{\r\n\"_class\": \"vn.com.syncmonges.entity.user_map_daily\",\r\n\"id\": \"666999\",\r\n\"userId\": "+userId+",\r\n\"user_name\": \""+username+"\",\r\n\"nickName\": \""+nickname+"\",\r\n\"id_daily\": \""+codeDaily+"\",\r\n\"time_log\": \""+time_log+"\"\r\n}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/user_map_daily/_doc/"+id_elk)
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/user_map_daily/_doc/"+id_elk)
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();

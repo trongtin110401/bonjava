@@ -17,6 +17,46 @@ public class DepositBankModel {
     public String UserApprove;
     public String UserSender;
 
+    public long getAmount() {
+        return Amount;
+    }
+
+    public void setAmount(long amount) {
+        Amount = amount;
+    }
+
+    public String getBankBrandName() {
+        return BankBrandName;
+    }
+
+    public void setBankBrandName(String bankBrandName) {
+        BankBrandName = bankBrandName;
+    }
+
+    public String getBankAccountNumber() {
+        return BankAccountNumber;
+    }
+
+    public void setBankAccountNumber(String bankAccountNumber) {
+        BankAccountNumber = bankAccountNumber;
+    }
+
+    public String getBankAccountName() {
+        return BankAccountName;
+    }
+
+    public void setBankAccountName(String bankAccountName) {
+        BankAccountName = bankAccountName;
+    }
+
+    public String getUserApprove() {
+        return UserApprove;
+    }
+
+    public void setUserApprove(String userApprove) {
+        UserApprove = userApprove;
+    }
+
     public String getId() {
         return Id;
     }
@@ -63,6 +103,14 @@ public class DepositBankModel {
 
     public void setUpdatedAt(String updatedAt) {
         UpdatedAt = updatedAt;
+    }
+
+    public String getNickname() {
+        return Nickname;
+    }
+
+    public void setNickname(String nickname) {
+        Nickname = nickname;
     }
 
     public DepositBankModel(String id, String nickname, String createdAt, String updatedAt, long amount, int status, String bankBrandName, String bankAccountNumber, String bankAccountName, String description) {

@@ -47,7 +47,7 @@ public class CheckNap {
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{\"query\":{\"bool\":{\"must\":[{\"match\":{\"nickName.keyword\":\"duhfusdfhie\"}},{\"match\":{\"hinhthuc.keyword\":\"Nạp tiền\"}},{\"match\":{\"trangthai.keyword\":\"Thành công\"}}],\"must_not\":[],\"should\":[]}},\"from\":0,\"size\":1000,\"sort\":[],\"aggs\":{}}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/history_user_transaction/_search")
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/history_user_transaction/_search")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();
@@ -129,7 +129,7 @@ public class CheckNap {
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{\"query\":{\"bool\":{\"must\":[{\"match\":{\"nickName.keyword\":\"duhfusdfhie\"}},{\"match\":{\"hinhthuc.keyword\":\"Rút tiền\"}},{\"match\":{\"trangthai.keyword\":\"Đã duyệt\"}}],\"must_not\":[],\"should\":[]}},\"from\":0,\"size\":10,\"sort\":[],\"aggs\":{}}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/history_user_transaction/_search")
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/history_user_transaction/_search")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();
@@ -190,7 +190,7 @@ public class CheckNap {
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{\"query\":{\"bool\":{\"must\":[{\"match\":{\"nickName.keyword\":\"duhfusdfhie\"}},{\"match\":{\"hinhthuc.keyword\":\"Nhận Tiền\"}},{\"match\":{\"trangthai.keyword\":\"Thành Công\"}},{\"match\":{\"hinhthucTrans.keyword\":\"GAMER\"}}],\"must_not\":[],\"should\":[]}},\"from\":0,\"size\":10,\"sort\":[],\"aggs\":{}}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/history_user_transaction/_search")
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/history_user_transaction/_search")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();

@@ -7,6 +7,7 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -79,14 +80,14 @@ public class CommonUtils {
      * @param cls
      * @return
      */
-    public static String getBasePath(Class cls) {
+    public static String  getBasePath(Class cls) {
         String basePath = cls.getResource(cls.getSimpleName() + ".class").getPath();
         basePath = basePath.replace("file:", "");
         int index = basePath.indexOf("build");
         if (index >= 0) {
             basePath = basePath.substring(0, index);
         } else {
-            basePath = "";
+            basePath = System.getProperty("user.dir") + File.separator;
         }
         return basePath;
     }

@@ -39,8 +39,12 @@ implements TaiXiuDao {
     public boolean saveResultTaiXiu(ResultTaiXiuMessage message) throws SQLException {
         boolean success = false;
         Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");
+        if(conn == null) {
+            Debug.info("Connection in saveResultTaiXiu is null");
+        }
         CallableStatement call = null;
-        call = conn.prepareCall("CALL save_result_tai_xiu(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+//        call = conn.prepareCall("CALL save_result_tai_xiu(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        call = conn.prepareCall("CALL save_result_tai_xiu(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         int param = 1;
         call.setLong(param++, message.referenceId);
         call.setByte(param++, (byte)message.result);
@@ -56,8 +60,8 @@ implements TaiXiuDao {
         call.setLong(param++, message.totalRefundXiu);
         call.setLong(param++, message.totalRevenue);
         call.setByte(param++, (byte)message.moneyType);
-        call.setLong(param++, message.moneyHu);
-        call.setInt(param++, message.statusHu);
+//        call.setLong(param++, message.moneyHu);
+//        call.setInt(param++, message.statusHu);
         try {
             success = call.execute();
         }catch(Exception ex){

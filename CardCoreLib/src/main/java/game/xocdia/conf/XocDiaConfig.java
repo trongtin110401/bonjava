@@ -125,6 +125,9 @@ public class XocDiaConfig {
     public static int bkSellPotMax;
     public static double bkRatioReject;
 
+    // tutl
+    public static String NOTIFY_TO_BACKEND_URL;
+
     private XocDiaConfig() {
         this.configTask = new ConfigTask();
         try {
@@ -276,6 +279,15 @@ public class XocDiaConfig {
         bkSellPotMin = Integer.parseInt(prop.getProperty("bkSellPotMin"));
         bkSellPotMax = Integer.parseInt(prop.getProperty("bkSellPotMax"));
         bkRatioReject = Double.parseDouble(prop.getProperty("bkRatioReject"));
+
+        // tutl
+        Properties prop2 = new Properties();
+        FileInputStream input2 = new FileInputStream(VBeePath.basePath.concat("config/api.properties"));
+        prop2.load(input2);
+
+        NOTIFY_TO_BACKEND_URL = prop2.getProperty("WSREPORT_NOTIFY_URL");
+
+        Debug.trace((Object) ("NOTIFY TO BACKEND URL: " + NOTIFY_TO_BACKEND_URL));
     }
 
     public static int getTransMinInWeek(int moneyBet) {

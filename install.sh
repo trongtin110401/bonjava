@@ -88,10 +88,8 @@ runBacay(){
     ../../gradlew build
     cd $SCRIPTPATH;
     nohup java -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/bacayServer.jar" game.bacay.server.BacayMain >/dev/null 2>&1 &
-
-
-
 }
+
 ### run binh ###
 runBinh(){
     currentDir="game/binh"
@@ -101,6 +99,7 @@ runBinh(){
     cd $SCRIPTPATH;
     nohup java -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/binh.jar" game.binh.server.BinhMain >/dev/null 2>&1 &
 }
+
 ### run tlmn ###
 runTienLen(){
     currentDir="game/tlmn"
@@ -109,9 +108,8 @@ runTienLen(){
     ../../gradlew build
     cd $SCRIPTPATH;
     nohup java -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/tlmn.jar" game.tienlen.server.TlmnMain >/dev/null 2>&1 &
-
-
 }
+
 # run Poker
 runPoker() {
     currentDir="game/poker"
@@ -122,17 +120,7 @@ runPoker() {
     nohup java -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/poker.jar" game.poker.server.PokerMain >/dev/null 2>&1 &
 }
 
-#runBauCuaTo2(){
-#    currentDir="game/baucuato2"
-#    cd $currentDir
-#    ../../gradlew clean
-#    ../../gradlew build
-#    cd $SCRIPTPATH;
-#    nohup java -cp "libs/*:game/baucuato2/libs/*:game/baucuato2/build/libs/baucuato2.jar" game.BauCuaTo2Main >/dev/null 2>&1 &
-#
-#}
-
-# run Poker
+# run baucuato2
 runBauCuaTo2() {
     currentDir="game/baucuato2"
     cd $currentDir
@@ -164,17 +152,15 @@ runXiDach(){
 }
 
 ### run bai cai ###
-runBaiCao(){
-    currentDir="game/baicao"
-    cd $currentDir
-    ../../gradlew clean
-    ../../gradlew build
-    cd $SCRIPTPATH;
-    nohup java -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/baicao.jar" game.baicao.server.BaiCaoMain >/dev/null 2>&1 &
-   #java -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/baicao.jar" game.baicao.server.BaiCaoMain
-
-
-}
+#runBaiCao(){
+#    currentDir="game/baicao"
+#    cd $currentDir
+#    ../../gradlew clean
+#    ../../gradlew build
+#    cd $SCRIPTPATH;
+#    nohup java -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/baicao.jar" game.baicao.server.BaiCaoMain >/dev/null 2>&1 &
+#   #java -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/baicao.jar" game.baicao.server.BaiCaoMain
+#}
 
 ### run xoc dia ###
 runXocDia(){
@@ -187,8 +173,6 @@ runXocDia(){
     nohup java -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/xocdia.jar" game.xocdia.server.XocDiaMain >/dev/null 2>&1 &
    #java -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/baicao.jar" game.baicao.server.BaiCaoMain
    echo "Finish run Xoc Dia..."
-
-
 }
 
 ### run Sam ###
@@ -202,8 +186,6 @@ runSam(){
     nohup java -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/sam.jar" game.sam.server.SamMain >/dev/null 2>&1 &
    #java -cp "libs/*:${currentDir}/libs/*:${currentDir}/build/libs/sam.jar" game.sam.server.SamMain
    echo "Finish run Sam..."
-
-
 }
 
 runAllApi(){
@@ -211,8 +193,7 @@ runAllApi(){
   runPortal
   runWspay
   runBackend
-
-
+  runWsReport
 }
 
 # clearSource(){
@@ -222,23 +203,32 @@ runAllApi(){
 # }
 main(){
   killProcess
+
   runAllApi
-  runWsReport
+
   runMiniGame
+
   runTaiXiuMini
-  runSlot
- # clearSource
-  runTienLen
-#  runXiDach
-#  runBacay
-  runXocDia
-#  runBaiCao
-  runSam
-#  runBinh
-  runPoker
   runBauCuaTo2
+  runXocDia
+  runSlot
+
+ # clearSource
+
+
+  runTienLen
+  runXiDach
+  runBacay
+  runBaiCao
+
+  runSam
+  runBinh
+  runPoker
 }
+
 main
+
+
 #runMiniGame
 #killProcess
 #rm -rf logs

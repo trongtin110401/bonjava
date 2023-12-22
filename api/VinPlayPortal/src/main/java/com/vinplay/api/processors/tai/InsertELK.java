@@ -20,7 +20,7 @@ public class InsertELK {
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{\r\n\"_class\": \"vn.com.syncmonges.entity.AnalyticsDaily\",\r\n\"id\": \"666999\",\r\n\"utm_dl\": \""+utm_dl+"\"\r\n}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/analytics_daily/_doc")
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/analytics_daily/_doc")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();
@@ -52,7 +52,7 @@ public class InsertELK {
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{\r\n\"_class\": \"vn.com.syncmonges.entity.AnalyticsTaiYou88\",\r\n\"id\": \"666999\",\r\n\"utm_dl\": \""+utm_dl+"\",\r\n\"utm_source\": \""+utm_source+"\",\r\n\"utm_medium\": \""+utm_medium+"\",\r\n\"utm_campaign\": \""+utm_campaign+"\",\r\n\"create_time\": \""+create_time+"\"\r\n}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/analytics_tai_you88/_doc")
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/analytics_tai_you88/_doc")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();

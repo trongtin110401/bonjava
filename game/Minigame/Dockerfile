@@ -3,6 +3,7 @@ WORKDIR /app
 COPY ./game/Minigame/build/libs .
 COPY ./game/Minigame/config config/
 COPY ./game/Minigame/conf conf/
+COPY ./data data/
 ADD ./libs libs/
 ADD ./game/Minigame/libs libs/
 EXPOSE 1644

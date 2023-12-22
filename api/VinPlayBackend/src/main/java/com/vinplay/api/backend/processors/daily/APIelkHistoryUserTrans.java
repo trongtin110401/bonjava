@@ -30,7 +30,7 @@ public class APIelkHistoryUserTrans {
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{\"query\":{\"bool\":{\"must\":[{\"range\":{\"createAt.keyword\":{\"gt\":\""+time_start+"\",\"lt\":\""+time_end+"\"}}}],\"must_not\":[],\"should\":[]}},\"from\":0,\"size\":10000,\"sort\":[],\"aggs\":{}}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/history_user_transaction/_search")
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/history_user_transaction/_search")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();
@@ -91,7 +91,7 @@ public class APIelkHistoryUserTrans {
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{\"query\":{\"bool\":{\"must\":[{\"match\":{\"nickName.keyword\":\""+nickname+"\"}},{\"range\":{\"createAt.keyword\":{\"gt\":\""+time_start+"\",\"lt\":\""+time_end+"\"}}}],\"must_not\":[],\"should\":[]}},\"from\":0,\"size\":10000,\"sort\":[],\"aggs\":{}}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/history_user_transaction/_search")
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/history_user_transaction/_search")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();
@@ -152,7 +152,7 @@ public class APIelkHistoryUserTrans {
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{\"query\":{\"bool\":{\"must\":[{\"match\":{\"nick_name_send.keyword\":\""+nickname+"\"}},{\"range\":{\"create_time.keyword\":{\"gt\":\""+time_start+"\",\"lt\":\""+time_end+"\"}}}],\"must_not\":[],\"should\":[]}},\"from\":0,\"size\":10000,\"sort\":[],\"aggs\":{}}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/log_chuyen_tien_dai_ly/_search")
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/log_chuyen_tien_dai_ly/_search")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();
@@ -212,7 +212,7 @@ public class APIelkHistoryUserTrans {
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{\"query\":{\"bool\":{\"must\":[{\"match\":{\"nick_name_receive.keyword\":\""+nickname+"\"}},{\"range\":{\"create_time.keyword\":{\"gt\":\""+time_start+"\",\"lt\":\""+time_end+"\"}}}],\"must_not\":[],\"should\":[]}},\"from\":0,\"size\":10000,\"sort\":[],\"aggs\":{}}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/log_chuyen_tien_dai_ly/_search")
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/log_chuyen_tien_dai_ly/_search")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();
@@ -272,7 +272,7 @@ public class APIelkHistoryUserTrans {
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "{\"query\":{\"bool\":{\"must\":[{\"term\":{\"status\":\""+status+"\"}},{\"range\":{\"create_time.keyword\":{\"gt\":\""+time_start+"\",\"lt\":\""+time_end+"\"}}}],\"must_not\":[],\"should\":[]}},\"from\":0,\"size\":10000,\"sort\":[],\"aggs\":{}}");
                 Request request = new Request.Builder()
-                        .url("http://127.0.0.1:9200/log_chuyen_tien_dai_ly/_search")
+                        .url(System.getenv("ELASTICSEARCH_URL") + "/log_chuyen_tien_dai_ly/_search")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();
