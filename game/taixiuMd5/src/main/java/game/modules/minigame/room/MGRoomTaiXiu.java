@@ -42,7 +42,6 @@ import com.vinplay.dal.service.impl.CacheServiceImpl;
 import com.vinplay.dal.service.impl.TaiXiuServiceImpl;
 import com.vinplay.usercore.service.UserService;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
-import com.vinplay.utils.AdminSocketAlert;
 import com.vinplay.vbee.common.enums.Games;
 import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
 import com.vinplay.vbee.common.models.UserModel;
@@ -82,7 +81,7 @@ public class MGRoomTaiXiu
     public boolean bettingRound = false;
     public boolean enableBetting = false;
     public ResultTaiXiu resultTX;
-    private TaiXiuService api = new TaiXiuServiceImpl(); // tài xỉu service lấy cả trong rabbitmq và cả trong cache server
+    private TaiXiuService taiXiuService = new TaiXiuServiceImpl(); // tài xỉu service lấy cả trong rabbitmq và cả trong cache server
     private UserService userService = new UserServiceImpl();   // user service
     private CacheService cacheService = new CacheServiceImpl(); // cache service
     private BroadcastMessageService broadcastMsgService = new BroadcastMessageServiceImpl();
@@ -104,7 +103,7 @@ public class MGRoomTaiXiu
         if (moneyType == 1) {
             this.moneyTypeStr = "vin";
             this.tax = MinigameConstant.MINIGAME_TAX_VIN;
-            ReportMoneySystemModel model = this.api.getReportTX(ConfigGame.getIntValue("interval_reset_balance", 10));
+            ReportMoneySystemModel model = this.taiXiuService.getReportTX(ConfigGame.getIntValue("interval_reset_balance", 10));
             if (model != null) {
                 this.balance = new BalanceMoneyTX(model.moneyWin, model.moneyLost, model.fee, model.dateReset);
                 Debug.trace((Object) ("TAI XIU VIN, win=" + model.moneyWin + ", loss=" + model.moneyLost + ", fee= " + model.fee + ", date reset= " + model.dateReset));
@@ -349,9 +348,10 @@ public class MGRoomTaiXiu
         msg.potTai = this.getPotTai();
         msg.potXiu = this.getPotXiu();
 
-        msg.numBetTai =  (this.potTai.getNumBet() + amountBotTaiFake);
-        msg.numBetXiu =  (this.potXiu.getNumBet() + amountBotXiuFake)
-        ;msg.moneyHu = TaiXiuModule.moneyHu;
+        msg.numBetTai = (this.potTai.getNumBet() + amountBotTaiFake);
+        msg.numBetXiu = (this.potXiu.getNumBet() + amountBotXiuFake)
+        ;
+        msg.moneyHu = TaiXiuModule.moneyHu;
         //todo: lấy hũ trong cache done
 //        try {
 //            msg.moneyHu = Long.parseLong(cacheService.getValueStr("Hu_TX_" + this.moneyType));
@@ -453,7 +453,7 @@ public class MGRoomTaiXiu
 
         try {
             HazelcastInstance client = HazelcastClientFactory.getInstance();
-            IMap bankMap = client.getMap("txBank");
+            IMap bankMap = client.getMap("txBank_md5");
             String key = "txBank:" + this.moneyType;
             long bank = 0L;
             //bankMap.lock(key);
@@ -506,17 +506,9 @@ public class MGRoomTaiXiu
         long totalDice = this.resultTX.dice1 + this.resultTX.dice2 + this.resultTX.dice3;
         StringBuilder userNameHu = new StringBuilder();
         StringBuilder moneyUserHu = new StringBuilder();
-        ResultTaiXiu rs = new ResultTaiXiu();
-        try {
-            if (this.resultTX != null) {
-                rs = this.resultTX;
-                Debug.trace((Object) ("resultTX " + (Object) this.resultTX));
-            } else {
-                Debug.trace((Object) (" error: " + (Object) this.resultTX));
-            }
-        } catch (Exception ex) {
-            Debug.trace((Object) (" error resultTX: " + ex.getMessage()));
-        }
+        ResultTaiXiu rs = this.resultTX;
+        Debug.trace("resultTX {}", this.resultTX);
+
         switch (this.result) {
             case 0: {
                 if (potX != null && potX.contributors != null) {
@@ -711,7 +703,7 @@ public class MGRoomTaiXiu
 
             try {
                 HazelcastInstance client = HazelcastClientFactory.getInstance();
-                IMap bankMap = client.getMap("txBank");
+                IMap bankMap = client.getMap("txBank_md5");
                 String key = "txBank:" + this.moneyType;
                 long bank = 0L;
                 //bankMap.lock(key);
@@ -753,13 +745,13 @@ public class MGRoomTaiXiu
         try {
             //lưu kết quả tài xỉu
             Debug.trace((Object) ("Ket qua của phiên sẽ lưu "));
-            this.api.saveResultTaiXiu(rs);
+            this.taiXiuService.saveResultTaiXiu(rs);
         } catch (Exception e) {
             e.printStackTrace();
         }
         try {
             //Save tổng giao dịch trên phiên
-            if (this.api.saveTransactionTaiXiu(trans)) {
+            if (this.taiXiuService.saveTransactionTaiXiu(trans)) {
                 Debug.info("Save thanh cong");
             }
         } catch (Exception e) {
@@ -930,7 +922,7 @@ public class MGRoomTaiXiu
      */
     private void saveTransactionDetailTX(TransactionTaiXiuDetail tran) {
         try {
-            this.api.saveTransactionTaiXiuDetail(tran);
+            this.taiXiuService.saveTransactionTaiXiuDetail(tran);
         } catch (Exception e) {
             Debug.trace((Object) ("Update transaction detail tai xiu error: " + e.getMessage()));
         }
@@ -1151,8 +1143,7 @@ public class MGRoomTaiXiu
         }
     }
 
-    private final class CalculateEndTXTask
-            extends Thread {
+    private final class CalculateEndTXTask extends Thread {
         private List<TransactionTaiXiu> trans;
 
         private CalculateEndTXTask(List<TransactionTaiXiu> trans) {
@@ -1162,11 +1153,11 @@ public class MGRoomTaiXiu
         @Override
         public void run() {
             try {
-                MGRoomTaiXiu.this.api.calculateThanhDu(MGRoomTaiXiu.this.referenceId, this.trans, (int) MGRoomTaiXiu.this.result);
+                MGRoomTaiXiu.this.taiXiuService.calculateThanhDu(MGRoomTaiXiu.this.referenceId, this.trans, (int) MGRoomTaiXiu.this.result);
                 for (TransactionTaiXiu tran : this.trans) {
                     if (tran.betValue - tran.totalRefund < 20000L) continue;
                     int soLuotThem = RutLocUtils.getLuotRutLoc(tran.betValue - tran.totalRefund);
-                    int soLuotRut = MGRoomTaiXiu.this.api.updateLuotRutLoc(tran.username, soLuotThem);
+                    int soLuotRut = MGRoomTaiXiu.this.taiXiuService.updateLuotRutLoc(tran.username, soLuotThem);
                     UpdateRutLocMsg msg = new UpdateRutLocMsg();
                     msg.soLuotRut = soLuotRut;
                     MGRoomTaiXiu.this.sendMessageToUser((BaseMsg) msg, tran.username);

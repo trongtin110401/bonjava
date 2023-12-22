@@ -26,5 +26,8 @@
 8. Lưu ý biến cache "min_hu_tx_auto_md5", "max_hu_tx_auto_md5", "hu_tx_auto_md5"; trong TaiXiuModule.java
     - Biến này có liên quan tới việc tính toán kết quả tài xỉu, tham khảo class GetCacheResultTaiXiuProcessor và TaiXiuAdminSetHuProcessor. Có thể phải clone những class này cho riêng Tài xỉu MD5
 
-5. Các vấn đề vể BOT tự động, đối với MD5 có nên bật tính năng BOT không?
+9. Lưu ý biến cache "txBank_md5" trong MGRoomTaiXiu.java
+    - Biến này có liên quan tới việc tính toán kết quả tài xỉu, tham khảo class GetTxBankProcessor và SetTxBankProcessor. Có thể phải clone những class này cho riêng Tài xỉu MD5
+
+10. Các vấn đề vể BOT tự động, đối với MD5 có nên bật tính năng BOT không?
 Trong trường hợp bỏ BOT thì cân nhắc việc sửa mã nguồn liên quan tới BOT, tham chiếu (TaiXiuModule.scheduleBot())

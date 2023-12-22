@@ -49,6 +49,7 @@ import com.vinplay.dal.service.MiniGameService;
 import com.vinplay.dal.service.TaiXiuService;
 import com.vinplay.dal.service.impl.CacheServiceImpl;
 import com.vinplay.dal.service.impl.MiniGameServiceImpl;
+import com.vinplay.dal.service.impl.TaiXiuMd5ServiceImpl;
 import com.vinplay.dal.service.impl.TaiXiuServiceImpl;
 import com.vinplay.miniGame.TaiXiuAdminReportObj;
 import com.vinplay.miniGame.TaiXiuSetAmountBotFake;
@@ -85,8 +86,7 @@ import java.text.ParseException;
 import java.util.*;
 import java.util.concurrent.*;
 
-public class TaiXiuModule
-        extends BaseClientRequestHandler {
+public class TaiXiuModule extends BaseClientRequestHandler {
     private static final Logger logger = Logger.getLogger(TaiXiuModule.class);
     private Map<String, MGRoom> rooms = new HashMap<String, MGRoom>();
     private final Runnable gameLoopTask = new GameLoopTask();  // thread game loop
@@ -102,7 +102,7 @@ public class TaiXiuModule
     private boolean serverReady = false;
     private ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);  // thread pool 10 cái thread
     private long referenceTaiXiuId; // được lấy từ trong database
-    private TaiXiuService txService = new TaiXiuServiceImpl();
+    private TaiXiuService txService = new TaiXiuMd5ServiceImpl();
     private MiniGameService mgService = new MiniGameServiceImpl();
     private List<ResultTaiXiu> lichSuPhienTX = new ArrayList<ResultTaiXiu>();
     private GenerationTaiXiu generationTX = new GenerationTaiXiu();
