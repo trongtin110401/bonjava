@@ -138,7 +138,7 @@ public class TaiXiuMd5ServiceImpl
         TopWinCache topTXCache;
         HazelcastInstance client = HazelcastClientFactory.getInstance();
         IMap topMap = client.getMap("cacheTop");
-        if (topMap.containsKey((Object) (Games.TAI_XIU.getName() + "_" + moneyType)) && (topTXCache = (TopWinCache) topMap.get((Object) (Games.TAI_XIU.getName() + "_" + moneyType))) != null) {
+        if (topMap.containsKey((Object) (Games.TAI_XIU_MD5.getName() + "_" + moneyType)) && (topTXCache = (TopWinCache) topMap.get((Object) (Games.TAI_XIU_MD5.getName() + "_" + moneyType))) != null) {
             List<TopWin> lst = topTXCache.getResult();
             for (TopWin item : lst) {
                 //old mysql
@@ -163,7 +163,7 @@ public class TaiXiuMd5ServiceImpl
         TopWinCache topTXCache;
         HazelcastInstance client = HazelcastClientFactory.getInstance();
         IMap topMap = client.getMap("cacheTop");
-        if (topMap.containsKey((Games.TAI_XIU_VINH_DANH_BY_DAY.getName())) && (topTXCache = (TopWinCache) topMap.get((Games.TAI_XIU_VINH_DANH_BY_DAY.getName()))) != null) {
+        if (topMap.containsKey((Games.TAI_XIU_MD5_VINH_DANH_BY_DAY.getName())) && (topTXCache = (TopWinCache) topMap.get((Games.TAI_XIU_MD5_VINH_DANH_BY_DAY.getName()))) != null) {
             return topTXCache.getResult();
         }
         return new ArrayList<>();
@@ -174,7 +174,7 @@ public class TaiXiuMd5ServiceImpl
         TopWinCache topTXCache;
         HazelcastInstance client = HazelcastClientFactory.getInstance();
         IMap topMap = client.getMap("cacheTop");
-        if (topMap.containsKey((Games.TAI_XIU_VINH_DANH_BY_MONTH.getName())) && (topTXCache = (TopWinCache) topMap.get((Games.TAI_XIU_VINH_DANH_BY_MONTH.getName()))) != null) {
+        if (topMap.containsKey((Games.TAI_XIU_MD5_VINH_DANH_BY_MONTH.getName())) && (topTXCache = (TopWinCache) topMap.get((Games.TAI_XIU_MD5_VINH_DANH_BY_MONTH.getName()))) != null) {
             return topTXCache.getResult();
         }
         return new ArrayList<>();
@@ -195,12 +195,12 @@ public class TaiXiuMd5ServiceImpl
 
             HazelcastInstance client = HazelcastClientFactory.getInstance();
             IMap topMap = client.getMap("cacheTop");
-            TopWinCache cacheVin = (TopWinCache) topMap.get((Games.TAI_XIU.getName() + "_1"));
+            TopWinCache cacheVin = (TopWinCache) topMap.get((Games.TAI_XIU_MD5.getName() + "_1"));
             if (cacheVin == null) {
                 cacheVin = new TopWinCache();
             }
             cacheVin.setResult(topWinVin);
-            topMap.put((Games.TAI_XIU.getName() + "_1"), cacheVin);
+            topMap.put((Games.TAI_XIU_MD5.getName() + "_1"), cacheVin);
         } catch (SQLException e) {
             this.logger.error("UPDATE ALL TOP exception: ", (Throwable) e);
             e.printStackTrace();
@@ -220,12 +220,12 @@ public class TaiXiuMd5ServiceImpl
             ZonedDateTime zdtStart = today.atStartOfDay(zoneId);
             ZonedDateTime zdtStop = today.plusDays(1).atStartOfDay(zoneId);
             List<TopWin> topWinVinhDanhByDay = this.dao.getTopTaiXiuVinhDanh(1, Timestamp.from(Instant.from(zdtStart)), Timestamp.from(Instant.from(zdtStop)), 10);
-            TopWinCache cacheVinTxVinhDanhByDay = (TopWinCache) topMap.get((Games.TAI_XIU_VINH_DANH_BY_DAY.getName()));
+            TopWinCache cacheVinTxVinhDanhByDay = (TopWinCache) topMap.get((Games.TAI_XIU_MD5_VINH_DANH_BY_DAY.getName()));
             if (cacheVinTxVinhDanhByDay == null) {
                 cacheVinTxVinhDanhByDay = new TopWinCache();
             }
             cacheVinTxVinhDanhByDay.setResult(topWinVinhDanhByDay);
-            topMap.put((Games.TAI_XIU_VINH_DANH_BY_DAY.getName()), cacheVinTxVinhDanhByDay);
+            topMap.put((Games.TAI_XIU_MD5_VINH_DANH_BY_DAY.getName()), cacheVinTxVinhDanhByDay);
         } catch (SQLException e) {
             this.logger.error("UPDATE ALL TOP DAY exception: ", e);
             e.printStackTrace();
@@ -242,12 +242,12 @@ public class TaiXiuMd5ServiceImpl
             ZoneId zoneId = ZoneId.of("Asia/Ho_Chi_Minh");
             LocalDate getFirstDateOfMonth = LocalDate.now();
             List<TopWin> topWinVinhDanhByMonth = this.dao.getTopTaiXiuVinhDanh(1, Timestamp.from(Instant.from(getFirstDateOfMonth.withDayOfMonth(1).atStartOfDay(zoneId))), Timestamp.from(Instant.now()), 20);
-            TopWinCache cacheVinTxVinhDanhByMonth = (TopWinCache) topMap.get((Games.TAI_XIU_VINH_DANH_BY_MONTH.getName()));
+            TopWinCache cacheVinTxVinhDanhByMonth = (TopWinCache) topMap.get((Games.TAI_XIU_MD5_VINH_DANH_BY_MONTH.getName()));
             if (cacheVinTxVinhDanhByMonth == null) {
                 cacheVinTxVinhDanhByMonth = new TopWinCache();
             }
             cacheVinTxVinhDanhByMonth.setResult(topWinVinhDanhByMonth);
-            topMap.put((Games.TAI_XIU_VINH_DANH_BY_MONTH.getName()), cacheVinTxVinhDanhByMonth);
+            topMap.put((Games.TAI_XIU_MD5_VINH_DANH_BY_MONTH.getName()), cacheVinTxVinhDanhByMonth);
         } catch (SQLException e) {
             this.logger.error("UPDATE ALL TOP MONTH exception: ", (Throwable) e);
             e.printStackTrace();

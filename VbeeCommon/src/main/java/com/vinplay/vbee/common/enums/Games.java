@@ -45,7 +45,9 @@ public enum Games {
     BENLEY(170, "BENLEY", "BENLEY"),
     ROLL_ROYE(180, "ROLL_ROYE", "ROLL_ROYE"),
     TAI_XIU_VINH_DANH_BY_DAY(181, "tx_vinh_danh_day", "TAI XIU VINH DANH THEO NGAY"),
-    TAI_XIU_VINH_DANH_BY_MONTH(182, "tx_vinh_danh_month", "TAI XIU VINH DANH THEO THANG");
+    TAI_XIU_VINH_DANH_BY_MONTH(182, "tx_vinh_danh_month", "TAI XIU VINH DANH THEO THANG"),
+    TAI_XIU_MD5_VINH_DANH_BY_DAY(181, "tx_md5_vinh_danh_day", "TAI XIU MD5 VINH DANH THEO NGAY"),
+    TAI_XIU_MD5_VINH_DANH_BY_MONTH(182, "tx_md5_vinh_danh_month", "TAI XIU MD5 VINH DANH THEO THANG");
 
     private int id;
     private String name;
