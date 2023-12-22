@@ -1077,7 +1077,7 @@ public class MGRoomTaiXiu
                     TransactionTaiXiu txt = entry.getValue();
                     long currentMoney = MGRoomTaiXiu.this.userService.getCurrentMoneyUserCache(username, MGRoomTaiXiu.this.moneyTypeStr);
                     if (txt.totalPrize == 0L && txt.totalRefund == 0L) {
-                        MGRoomTaiXiu.this.userService.updateMoney(username, 0L, MGRoomTaiXiu.this.moneyTypeStr, "TaiXiu", "", "", 0L, MGRoomTaiXiu.this.referenceId, TransType.END_TRANS);
+                        MGRoomTaiXiu.this.userService.updateMoney(username, 0L, MGRoomTaiXiu.this.moneyTypeStr, "TaiXiuMd5", "", "", 0L, MGRoomTaiXiu.this.referenceId, TransType.END_TRANS);
                     } else {
                         MoneyResponse res;
                         if (txt.totalPrize > 0L) {
@@ -1090,7 +1090,7 @@ public class MGRoomTaiXiu
                             if (!MGRoomTaiXiu.this.isBot(username)) {
                                 if (username.equals("banhday"))
                                     System.out.println(txt.totalPrize + " qua tien nay ghet vl");
-                                res2 = MGRoomTaiXiu.this.userService.updateMoney(username, txt.totalPrize, MGRoomTaiXiu.this.moneyTypeStr, "TaiXiu", "Th\u1eafng t\u00e0i x\u1ec9u", "Phi\u00ean " + MGRoomTaiXiu.this.referenceId, fee, MGRoomTaiXiu.this.referenceId, transType);
+                                res2 = MGRoomTaiXiu.this.userService.updateMoney(username, txt.totalPrize, MGRoomTaiXiu.this.moneyTypeStr, "TaiXiuMd5", "Th\u1eafng t\u00e0i x\u1ec9u", "Phi\u00ean " + MGRoomTaiXiu.this.referenceId, fee, MGRoomTaiXiu.this.referenceId, transType);
                             } else {
                                 res2.setSuccess(true);
                             }
@@ -1108,7 +1108,7 @@ public class MGRoomTaiXiu
                         }
                         if (txt.totalRefund > 0L) {
                             if (!MGRoomTaiXiu.this.isBot(username)) {
-                                res = MGRoomTaiXiu.this.userService.updateMoney(username, txt.totalRefund, MGRoomTaiXiu.this.moneyTypeStr, "TaiXiu", "Ho\u00e0n tr\u1ea3 t\u00e0i x\u1ec9u", "Phi\u00ean " + MGRoomTaiXiu.this.referenceId, 0L, Long.valueOf(MGRoomTaiXiu.this.referenceId), TransType.END_TRANS);
+                                res = MGRoomTaiXiu.this.userService.updateMoney(username, txt.totalRefund, MGRoomTaiXiu.this.moneyTypeStr, "TaiXiuMd5", "Ho\u00e0n tr\u1ea3 t\u00e0i x\u1ec9u", "Phi\u00ean " + MGRoomTaiXiu.this.referenceId, 0L, Long.valueOf(MGRoomTaiXiu.this.referenceId), TransType.END_TRANS);
                                 if (res.isSuccess()) {
                                     if (MGRoomTaiXiu.this.moneyType == 1) {
                                         MGRoomTaiXiu.this.balance.addWin(txt.totalRefund);
