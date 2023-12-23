@@ -36,10 +36,7 @@ import com.vinplay.dal.entities.taixiu.TransactionTaiXiuDetail;
 import com.vinplay.dal.service.BroadcastMessageService;
 import com.vinplay.dal.service.CacheService;
 import com.vinplay.dal.service.TaiXiuService;
-import com.vinplay.dal.service.impl.AgentServiceImpl;
-import com.vinplay.dal.service.impl.BroadcastMessageServiceImpl;
-import com.vinplay.dal.service.impl.CacheServiceImpl;
-import com.vinplay.dal.service.impl.TaiXiuServiceImpl;
+import com.vinplay.dal.service.impl.*;
 import com.vinplay.usercore.service.UserService;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.vbee.common.enums.Games;
@@ -81,7 +78,7 @@ public class MGRoomTaiXiu
     public boolean bettingRound = false;
     public boolean enableBetting = false;
     public ResultTaiXiu resultTX;
-    private TaiXiuService taiXiuService = new TaiXiuServiceImpl(); // tài xỉu service lấy cả trong rabbitmq và cả trong cache server
+    private TaiXiuService taiXiuService = new TaiXiuMd5ServiceImpl(); // tài xỉu service lấy cả trong rabbitmq và cả trong cache server
     private UserService userService = new UserServiceImpl();   // user service
     private CacheService cacheService = new CacheServiceImpl(); // cache service
     private BroadcastMessageService broadcastMsgService = new BroadcastMessageServiceImpl();
@@ -509,6 +506,7 @@ public class MGRoomTaiXiu
         ResultTaiXiu rs = this.resultTX;
         Debug.trace("resultTX {}", this.resultTX);
 
+        // Tính toán tiền thắng thua trong game
         switch (this.result) {
             case 0: {
                 if (potX != null && potX.contributors != null) {
@@ -698,12 +696,12 @@ public class MGRoomTaiXiu
             }
 
             //cacheService.setValue("Hu_TX_" + this.moneyType, String.valueOf(TaiXiuModule.moneyHu));
-            CalculateEndTXTask task = new CalculateEndTXTask(trans);
-            task.start();
+//            CalculateEndTXTask task = new CalculateEndTXTask(trans);
+//            task.start();
 
             try {
                 HazelcastInstance client = HazelcastClientFactory.getInstance();
-                IMap bankMap = client.getMap("txBank_md5");
+                IMap bankMap = client.getMap("txBank_md5");  // Đây có thể là quỹ thưởng được sử dụng để tính toán cân bằng lỗ lãi của nhà cái khi ra kết quả
                 String key = "txBank:" + this.moneyType;
                 long bank = 0L;
                 //bankMap.lock(key);

@@ -3,7 +3,8 @@
  */
 package com.vinplay.vbee.common.enums;
 
-public enum Games {
+public enum
+Games {
     MINIGAME(0, "MiniGame", "Minigame"),
     MINI_POKER(1, "MiniPoker", "Mini poker"),
     TAI_XIU(2, "TaiXiu", "T\u00e0i x\u1ec9u"),

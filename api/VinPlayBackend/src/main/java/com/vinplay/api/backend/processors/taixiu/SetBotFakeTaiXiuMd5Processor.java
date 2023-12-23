@@ -17,8 +17,8 @@ public class SetBotFakeTaiXiuMd5Processor implements BaseProcessor<HttpServletRe
   public String execute(Param<HttpServletRequest> param) {
     String res = "0";
     HttpServletRequest request = (HttpServletRequest) param.get();
-    String numberBotTaiFake = request.getParameter("numberBotTaiFakeMd5").trim();
-    String numberBotXiuFake = request.getParameter("numberBotXiuFakeMd5").trim();
+    String numberBotTaiFake = request.getParameter("numberBotTaiFake").trim();
+    String numberBotXiuFake = request.getParameter("numberBotXiuFake").trim();
     try {
       CacheService cacheService = new CacheServiceImpl();
       TaiXiuSetAmountBotFake taiXiuSetAmountBotFake = new TaiXiuSetAmountBotFake(true, "0");

@@ -24,6 +24,7 @@ import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.vbee.common.config.VBeePath;
 import com.vinplay.vbee.common.utils.DateTimeUtils;
 import game.utils.ConfigGame;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.io.*;
 import java.security.NoSuchAlgorithmException;
@@ -344,12 +345,7 @@ public class BotMinigame {
                 Debug.trace((Object) ("NUMBER BOTS:" + results.size()));
             }
         } catch (Exception ex) {
-            Debug.trace("Exception:" + ex.getMessage());
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            ex.printStackTrace(pw);
-            String sStackTrace = sw.toString(); // stack trace as a string
-            Debug.trace((Object) sStackTrace);
+            ExceptionUtils.printRootCauseStackTrace(ex);
         }
         return results;
     }
