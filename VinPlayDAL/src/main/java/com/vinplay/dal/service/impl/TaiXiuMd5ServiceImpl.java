@@ -82,7 +82,7 @@ public class TaiXiuMd5ServiceImpl
         msg.prize = prize;
         msg.refund = refund;
         //msg.totalExchange = totalExchange;
-        RMQApi.publishMessage((String) "queue_taixiu", (BaseMessage) msg, (int) 100);
+        RMQApi.publishMessage((String) "queue_taixiu_md5", (BaseMessage) msg, (int) 100);
         return true;
     }
 
@@ -95,7 +95,7 @@ public class TaiXiuMd5ServiceImpl
         msg.username = username;
         msg.userMoneyHu = userMoneyHu;
         msg.totalUser = totalUser;
-        RMQApi.publishMessage((String) "queue_taixiu", (BaseMessage) msg, (int) 69);
+        RMQApi.publishMessage((String) "queue_taixiu_md5", (BaseMessage) msg, (int) 69);
         logger.info("Tien Hu TX đẩy lên queue " + moneyHu);
         return false;
     }
@@ -123,7 +123,7 @@ public class TaiXiuMd5ServiceImpl
         msg.moneyType = moneyType;
         msg.moneyHu = moneyHu;
         msg.statusHu = statusHu;
-        RMQApi.publishMessage((String) "queue_taixiu", (BaseMessage) msg, (int) 101);  // ném vào trong queue tài xỉu
+        RMQApi.publishMessage((String) "queue_taixiu_md5", (BaseMessage) msg, (int) 101);  // ném vào trong queue tài xỉu
         return true;
     }
 
@@ -324,7 +324,7 @@ public class TaiXiuMd5ServiceImpl
         msg.refund = tran.refund;
         msg.inputTime = tran.inputTime;
         msg.moneyType = tran.moneyType;
-        RMQApi.publishMessage((String) "queue_taixiu", (BaseMessage) msg, (int) 102);
+        RMQApi.publishMessage((String) "queue_taixiu_md5", (BaseMessage) msg, (int) 102);
         return true;
     }
 
@@ -365,7 +365,7 @@ public class TaiXiuMd5ServiceImpl
         msg.refund = tran.refund;
         msg.inputTime = tran.inputTime;
         msg.moneyType = tran.moneyType;
-        RMQApi.publishMessage((String) "queue_taixiu", (BaseMessage) msg, (int) 103);
+        RMQApi.publishMessage((String) "queue_taixiu_md5", (BaseMessage) msg, (int) 103);
         return true;
     }
 
@@ -430,7 +430,7 @@ public class TaiXiuMd5ServiceImpl
                 if (model.number <= model.maxNumber || !model.valid) break lbl42;
                 model.maxNumber = model.number;
                 ThanhDuMessage message = new ThanhDuMessage(model.username, model.number, model.totalValue, model.currentReferenceId, model.getReferences(), (short) type);
-                RMQApi.publishMessage((String) "queue_taixiu", (BaseMessage) message, (int) 104);
+                RMQApi.publishMessage((String) "queue_taixiu_md5", (BaseMessage) message, (int) 104);
             } catch (Exception e) {
             } finally {
 
@@ -453,7 +453,7 @@ public class TaiXiuMd5ServiceImpl
             if (moneyExchange >= 10000L) {
                 model.valid = true;
                 ThanhDuMessage message2 = new ThanhDuMessage(model.username, model.number, model.totalValue, model.currentReferenceId, model.getReferences(), (short) type);
-                RMQApi.publishMessage((String) "queue_taixiu", (BaseMessage) message2, (int) 104);
+                RMQApi.publishMessage((String) "queue_taixiu_md5", (BaseMessage) message2, (int) 104);
             }
         }
 
@@ -503,7 +503,7 @@ public class TaiXiuMd5ServiceImpl
         LogTanLocMessage message = new LogTanLocMessage();
         message.username = username;
         message.value = money;
-        RMQApi.publishMessage((String) "queue_taixiu", (BaseMessage) message, (int) 107);
+        RMQApi.publishMessage((String) "queue_taixiu_md5", (BaseMessage) message, (int) 107);
     }
 
     @Override
@@ -521,7 +521,7 @@ public class TaiXiuMd5ServiceImpl
         message.prize = prize;
         message.timeRequest = timeRequest;
         message.currentFund = currentFund;
-        RMQApi.publishMessage((String) "queue_taixiu", (BaseMessage) message, (int) 108);
+        RMQApi.publishMessage((String) "queue_taixiu_md5", (BaseMessage) message, (int) 108);
     }
 
     /*
@@ -532,7 +532,7 @@ public class TaiXiuMd5ServiceImpl
         UpdateLuotRutLocMessage message = new UpdateLuotRutLocMessage();
         message.username = username;
         message.soLuotThem = soLuotThem;
-        RMQApi.publishMessage((String) "queue_taixiu", (BaseMessage) message, (int) 109);
+        RMQApi.publishMessage((String) "queue_taixiu_md5", (BaseMessage) message, (int) 109);
         int soLuotRut = soLuotThem;
         HazelcastInstance client = HazelcastClientFactory.getInstance();
         IMap userMap = client.getMap("cacheRutLocTX");
