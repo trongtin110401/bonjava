@@ -12,11 +12,10 @@
 package com.vinplay.api.processors.minigame;
 
 import com.vinplay.api.processors.minigame.response.LichSuRLTLResponse;
-import com.vinplay.dal.entities.taixiu.VinhDanhRLTLModel;
 import com.vinplay.dal.service.impl.TaiXiuServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
-import com.vinplay.vbee.common.models.minigame.taixiu.XepHangRLTLModel;
+
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 

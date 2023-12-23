@@ -14,15 +14,15 @@ package com.vinplay.api.processors.minigame;
 import com.vinplay.api.processors.minigame.response.ChiTietPhienTXResponse;
 import com.vinplay.dal.entities.taixiu.ResultTaiXiu;
 import com.vinplay.dal.service.impl.OverUnderServiceImpl;
-import com.vinplay.dal.service.impl.TaiXiuServiceImpl;
+import com.vinplay.dal.service.impl.TaiXiuMd5ServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 
+import javax.servlet.http.HttpServletRequest;
 import java.sql.SQLException;
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
 
-public class ChiTietPhienTXProcessor
+public class ChiTietPhienTXMD5Processor
         implements BaseProcessor<HttpServletRequest, String> {
     public String execute(Param<HttpServletRequest> param) {
         ChiTietPhienTXResponse response = new ChiTietPhienTXResponse(false, "1001");
@@ -33,7 +33,7 @@ public class ChiTietPhienTXProcessor
 
         if (txType == null || txType.equals("1")) {
             try {
-                TaiXiuServiceImpl service = new TaiXiuServiceImpl();
+                TaiXiuMd5ServiceImpl service = new TaiXiuMd5ServiceImpl();
                 List transaction = service.getChiTietPhienTX(referenceId, moneyType);
                 response.setTransactions(transaction);
                 ResultTaiXiu resultTX = service.getKetQuaPhien(referenceId, moneyType);

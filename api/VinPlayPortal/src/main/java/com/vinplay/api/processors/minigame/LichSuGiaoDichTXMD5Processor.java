@@ -12,16 +12,16 @@ package com.vinplay.api.processors.minigame;
 
 import com.vinplay.api.processors.minigame.response.LichSuGiaoDichTXResponse;
 import com.vinplay.dal.service.impl.OverUnderServiceImpl;
-import com.vinplay.dal.service.impl.TaiXiuServiceImpl;
+import com.vinplay.dal.service.impl.TaiXiuMd5ServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import org.apache.log4j.Logger;
 
+import javax.servlet.http.HttpServletRequest;
 import java.sql.SQLException;
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
 
-public class LichSuGiaoDichTXProcessor
+public class LichSuGiaoDichTXMD5Processor
 implements BaseProcessor<HttpServletRequest, String> {
     private static final Logger logger = Logger.getLogger((String)"api");
     public String execute(Param<HttpServletRequest> param) {
@@ -37,13 +37,12 @@ implements BaseProcessor<HttpServletRequest, String> {
         String txType = request.getParameter("txType");
         logger.debug("vao day"+ txType);
         if(txType == null || txType.equals("1")){
-            TaiXiuServiceImpl service = new TaiXiuServiceImpl();
+            TaiXiuMd5ServiceImpl service = new TaiXiuMd5ServiceImpl();
             logger.debug("vao day ok"+ moneyType);
             try {
                 logger.debug("vao day ok kkkk "+ username + " | "+page+ " | " +moneyType);
                 List trans = service.getLichSuGiaoDich(username, page, moneyType);
                 logger.debug("vao day"+ username + " | "+page+ " | " +moneyType);
-                int totalPages = 10;
                 response.setTotalPages(10);
                 response.setTransactions(trans);
                 response.setSuccess(true);
@@ -58,7 +57,6 @@ implements BaseProcessor<HttpServletRequest, String> {
             OverUnderServiceImpl service = new OverUnderServiceImpl();
             try {
                 List trans = service.getLichSuGiaoDich(username, page, moneyType);
-                int totalPages = 10;
                 response.setTotalPages(10);
                 response.setTransactions(trans);
                 response.setSuccess(true);

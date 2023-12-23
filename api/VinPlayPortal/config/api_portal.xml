@@ -88,15 +88,36 @@
             <name>check register</name>
             <path>com.vinplay.api.processors.CheckRegister</path>
         </command>
+<!--        MD5-->
+        <command>
+            <id>55100</id>
+            <name>lich su giao dich tai xiu</name>
+            <path>com.vinplay.api.processors.minigame.LichSuGiaoDichTXMD5Processor</path>
+        </command>
         <command>
             <id>100</id>
             <name>lich su giao dich tai xiu</name>
             <path>com.vinplay.api.processors.minigame.LichSuGiaoDichTXProcessor</path>
         </command>
+
+        <!--        MD5-->
+        <command>
+            <id>55101</id>
+            <name>lich su giao dich tai xiu</name>
+            <path>com.vinplay.api.processors.minigame.TopWinTXMD5Processor</path>
+        </command>
+
         <command>
             <id>101</id>
             <name>lich su giao dich tai xiu</name>
             <path>com.vinplay.api.processors.minigame.TopWinTXProcessor</path>
+        </command>
+
+        <!--        MD5-->
+        <command>
+            <id>102</id>
+            <name>chi tiet phien tai xiu</name>
+            <path>com.vinplay.api.processors.minigame.ChiTietPhienTXMD5Processor</path>
         </command>
         <command>
             <id>102</id>
@@ -242,6 +263,12 @@
             <id>138</id>
             <name>List no hu</name>
             <path>com.vinplay.api.processors.slot.LSNoHuProcessor</path>
+        </command>
+<!--        MD5-->
+        <command>
+            <id>55139</id>
+            <name>Lịch sử nổ hũ</name>
+            <path>com.vinplay.api.processors.minigame.HisToryHuTaiXiuMD5Processor</path>
         </command>
         <command>
             <id>139</id>

@@ -17,12 +17,10 @@ import com.vinplay.dal.service.impl.TaiXiuServiceImpl;
 import com.vinplay.usercore.service.impl.UserExtraServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
-import com.vinplay.vbee.common.models.cache.ThanhDuTXModel;
 
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.List;
-import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 public class TopThanhDuProcessor
