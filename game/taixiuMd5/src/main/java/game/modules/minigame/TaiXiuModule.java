@@ -79,6 +79,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
 
 import java.io.*;
@@ -477,8 +478,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
             this.getUserPotTaiXiu();
             this.sendTXTime(roomTXVin.getRemainTime(), roomTXVin.isBetting()); // todo tinh thoi gian con lai
             switch (this.count) {
-
-
                 case 55: {
                     roomTXVin.disableBetting();
                     roomTXXu.disableBetting();
@@ -489,13 +488,11 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                     roomTXXu.finish();
                     break;
                 }
-                case 48: {
-                    break;
-                }
-                case 58: {
-                    this.forceBetSide = roomTXVin.suggestResult();
-                    break;
-                }
+//
+//                case 58: {
+//                    this.forceBetSide = roomTXVin.suggestResult();
+//                    break;
+//                }
                 case 61: {
                     this.generateTaiXiuDicesMD5(roomTXVin, roomTXXu);
                     break;
@@ -522,6 +519,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                     } catch (Exception e) {
                         sendLogToTele(e.getMessage());
                         Debug.trace("got bug", e.getCause());
+                        ExceptionUtils.printRootCauseStackTrace(e);
                     }
 
                 }
@@ -530,6 +528,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         } catch (Exception e) {
             sendLogToTele(e.getMessage());
             Debug.trace((Object[]) new Object[]{"Exception: " + e.getMessage(), e});
+            ExceptionUtils.printRootCauseStackTrace(e);
         }
     }
 
@@ -586,7 +585,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
             sendLogToTele(r.getMessage());
             Debug.info("Loi get key becang");
         }
-
+        keyBeCang = "tai";
         if ("tai".equals(keyBeCang)) {
             this.forceBetSide = 1;
         } else if ("xiu".equals(keyBeCang)) {
@@ -601,6 +600,9 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         // can thiep be cau
         if (forceBetSide != -1) {
             dices = this.generationTX.generateResult(this.forceBetSide);
+            String result = generationTX.buildResultText(dices);
+            roomTXVin.resultTX.setPlantTextResult(result);
+            roomTXXu.resultTX.setPlantTextResult(result);
         } else {
             dices[0] = (short) roomTXVin.resultTX.dice1;
             dices[1] = (short) roomTXVin.resultTX.dice2;
