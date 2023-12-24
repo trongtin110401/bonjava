@@ -115,7 +115,7 @@
 
         <!--        MD5-->
         <command>
-            <id>102</id>
+            <id>55102</id>
             <name>chi tiet phien tai xiu</name>
             <path>com.vinplay.api.processors.minigame.ChiTietPhienTXMD5Processor</path>
         </command>
