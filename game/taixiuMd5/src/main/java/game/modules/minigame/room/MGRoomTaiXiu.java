@@ -31,6 +31,7 @@ import com.vinplay.dal.dao.LogMoneyUserDao;
 import com.vinplay.dal.dao.impl.LogMoneyUserDaoImpl;
 import com.vinplay.dal.entities.report.ReportMoneySystemModel;
 import com.vinplay.dal.entities.taixiu.ResultTaiXiu;
+import com.vinplay.dal.entities.taixiu.ResultTaiXiuMd5;
 import com.vinplay.dal.entities.taixiu.TransactionTaiXiu;
 import com.vinplay.dal.entities.taixiu.TransactionTaiXiuDetail;
 import com.vinplay.dal.service.BroadcastMessageService;
@@ -77,7 +78,7 @@ public class MGRoomTaiXiu
     private short result = (short) -1;
     public boolean bettingRound = false;
     public boolean enableBetting = false;
-    public ResultTaiXiu resultTX;
+    public ResultTaiXiuMd5 resultTX;
     private TaiXiuService taiXiuService = new TaiXiuMd5ServiceImpl(); // tài xỉu service lấy cả trong rabbitmq và cả trong cache server
     private UserService userService = new UserServiceImpl();   // user service
     private CacheService cacheService = new CacheServiceImpl(); // cache service
@@ -157,7 +158,7 @@ public class MGRoomTaiXiu
         msg.dice1 = dices[0];
         msg.dice2 = dices[1];
         msg.dice3 = dices[2];
-        this.resultTX = new ResultTaiXiu();
+        this.resultTX = new ResultTaiXiuMd5();
         this.resultTX.referenceId = this.referenceId;
         this.resultTX.dice1 = msg.dice1;
         this.resultTX.dice2 = msg.dice2;
@@ -338,7 +339,7 @@ public class MGRoomTaiXiu
         return msg;
     }
 
-    public void updateTaiXiuPerSecond(int amountBotTaiFake, int amountBotXiuFake) {
+    public void updateTaiXiuPerSecond(int amountBotTaiFake, int amountBotXiuFake, int secondGamePlay) {
         UpdateTaiXiuPerSecondMsg msg = new UpdateTaiXiuPerSecondMsg();
         msg.remainTime = this.getRemainTime();
         msg.bettingState = this.bettingRound;
@@ -346,16 +347,12 @@ public class MGRoomTaiXiu
         msg.potXiu = this.getPotXiu();
 
         msg.numBetTai = (this.potTai.getNumBet() + amountBotTaiFake);
-        msg.numBetXiu = (this.potXiu.getNumBet() + amountBotXiuFake)
-        ;
+        msg.numBetXiu = (this.potXiu.getNumBet() + amountBotXiuFake);
         msg.moneyHu = TaiXiuModule.moneyHu;
-        //todo: lấy hũ trong cache done
-//        try {
-//            msg.moneyHu = Long.parseLong(cacheService.getValueStr("Hu_TX_" + this.moneyType));
-//        } catch (KeyNotFoundException ex) {
-//            msg.moneyHu = TaiXiuModule.moneyHu;
-//        }
-//        AdminSocketAlert.sendMessageAlert("chatevent", "TaiXiu", new Date() + ""); // todo : alert admin
+        msg.md5TextResult = resultTX.getMd5TextResult();
+        if (secondGamePlay >= 60) {
+            msg.plaintTextResult = resultTX.getPlantTextResult();
+        }
         cacheService.setValue("Md5_Lobby_tx_tai_" + this.moneyType, String.valueOf(this.getPotTai()));
         cacheService.setValue("Md5_Lobby_tx_xiu_" + this.moneyType, String.valueOf(this.getPotXiu()));
         this.sendMessageToRoom(msg);
@@ -1165,5 +1162,7 @@ public class MGRoomTaiXiu
             }
         }
     }
+
+
 }
 

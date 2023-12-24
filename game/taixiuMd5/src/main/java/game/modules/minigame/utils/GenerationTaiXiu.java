@@ -13,6 +13,8 @@ import game.utils.ConfigGame;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -51,31 +53,83 @@ public class GenerationTaiXiu {
                 Debug.trace((Object) ("gd= " + this.cauTX.data));
                 result = this.cauTX.getResultTX();
             } else {
-                dices= this.generateDices();
+                dices = this.generateDices();
                 if ((dices[0] + dices[1] + dices[2]) == 18 || (dices[0] + dices[1] + dices[2]) == 3)
                     return this.generateResult(forceBetSide);
                 return dices;
             }
         }
         if (result == -1) {
-            dices= this.generateDices();
+            dices = this.generateDices();
             if ((dices[0] + dices[1] + dices[2]) == 18 || (dices[0] + dices[1] + dices[2]) == 3)
                 return this.generateResult(forceBetSide);
             return dices; // đoạn này check mới cho return;
         }
-        while ((genResult = (totalDices = (dices = this.generateDices())[0] + dices[1] + dices[2]) > 10 ? 1 : 0) != result ){
+        while ((genResult = (totalDices = (dices = this.generateDices())[0] + dices[1] + dices[2]) > 10 ? 1 : 0) != result) {
         }
         if ((dices[0] + dices[1] + dices[2]) == 18 || (dices[0] + dices[1] + dices[2]) == 3)
             return this.generateResult(forceBetSide);
         return dices;
     }
 
-    private short[] generateDices() {
+    public short[] generateDices() {
         short[] dices = new short[3];
         dices[0] = (short) (ThreadLocalRandom.current().nextInt(6) + 1);
         dices[1] = (short) (ThreadLocalRandom.current().nextInt(6) + 1);
         dices[2] = (short) (ThreadLocalRandom.current().nextInt(6) + 1);
         return dices;
+    }
+
+    public String buildResultText(short[] dices) {
+        return generateRandomString(10 + ThreadLocalRandom.current().nextInt(10) + 1)
+                + "{" + dices[0] + "-" + dices[1] + "-" + dices[2] + "}" +
+                generateRandomString(10 + ThreadLocalRandom.current().nextInt(10) + 1);
+    }
+
+    public static String hashMD5(String input) {
+        try {
+            // Create an MD5 message digest
+            MessageDigest md = MessageDigest.getInstance("MD5");
+
+            // Update the message digest with the input bytes
+            md.update(input.getBytes());
+
+            // Get the hash value as an array of bytes
+            byte[] digest = md.digest();
+
+            // Convert the byte array to a hexadecimal string
+            StringBuilder result = new StringBuilder();
+            for (byte b : digest) {
+                result.append(String.format("%02x", b));
+            }
+
+            return result.toString();
+        } catch (NoSuchAlgorithmException e) {
+            // Handle the exception, e.g., log it or throw a custom exception
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static String generateRandomString(int length) {
+        // Define the characters that can be used in the random string
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+";
+
+        // Create a StringBuilder to build the random string
+        StringBuilder randomStringBuilder = new StringBuilder();
+
+        // Create a Random object
+        Random random = new Random();
+
+        // Generate the random string of the specified length
+        for (int i = 0; i < length; i++) {
+            int randomIndex = random.nextInt(characters.length());
+            char randomChar = characters.charAt(randomIndex);
+            randomStringBuilder.append(randomChar);
+        }
+
+        // Convert StringBuilder to String and return
+        return randomStringBuilder.toString();
     }
 
     public short[] generateDiceNoHu(short forceBetSide) {
@@ -86,9 +140,6 @@ public class GenerationTaiXiu {
             dices[0] = dices[1] = dices[2] = 1;
         }
         return dices;
-    }
-
-    public static void main(String[] agrs) throws IOException {
     }
 
     private class CauTaiXiu {

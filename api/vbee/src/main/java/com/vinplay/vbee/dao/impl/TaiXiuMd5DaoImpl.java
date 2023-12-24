@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  com.mongodb.client.MongoCollection
  *  com.mongodb.client.MongoDatabase
@@ -36,22 +36,22 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class TaiXiuMd5DaoImpl
-implements TaiXiuDao {
+        implements TaiXiuDao {
     @Override
     public boolean saveResultTaiXiu(ResultTaiXiuMessage message) throws SQLException {
         boolean success = false;
         Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");
-        if(conn == null) {
+        if (conn == null) {
             Debug.info("Connection in saveResultTaiXiu is null");
         }
         CallableStatement call = null;
-        call = conn.prepareCall("CALL save_result_tai_xiu_md5(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        call = conn.prepareCall("CALL save_result_tai_xiu_md5(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         int param = 1;
         call.setLong(param++, message.referenceId);
-        call.setByte(param++, (byte)message.result);
-        call.setByte(param++, (byte)message.dice1);
-        call.setByte(param++, (byte)message.dice2);
-        call.setByte(param++, (byte)message.dice3);
+        call.setByte(param++, (byte) message.result);
+        call.setByte(param++, (byte) message.dice1);
+        call.setByte(param++, (byte) message.dice2);
+        call.setByte(param++, (byte) message.dice3);
         call.setLong(param++, message.totalTai);
         call.setLong(param++, message.totalXiu);
         call.setInt(param++, message.numBetTai);
@@ -60,12 +60,12 @@ implements TaiXiuDao {
         call.setLong(param++, message.totalRefundTai);
         call.setLong(param++, message.totalRefundXiu);
         call.setLong(param++, message.totalRevenue);
-        call.setByte(param++, (byte)message.moneyType);
-//        call.setLong(param++, message.moneyHu);
-//        call.setInt(param++, message.statusHu);
+        call.setByte(param++, (byte) message.moneyType);
+        call.setString(param++, message.md5);
+        call.setString(param++, message.plaintText);
         try {
             success = call.execute();
-        }catch(Exception ex){
+        } catch (Exception ex) {
             Debug.info("saveResultTaiXiu error" + ex.getMessage());
         }
         if (call != null) {
@@ -88,11 +88,11 @@ implements TaiXiuDao {
         call.setInt(param++, message.userId);
         call.setString(param++, message.username);
         call.setLong(param++, message.betValue);
-        call.setByte(param++, (byte)message.betSide);
+        call.setByte(param++, (byte) message.betSide);
         call.setLong(param++, message.prize);
         call.setLong(param++, message.refund);
-        call.setByte(param++, (byte)message.moneyType);
-       // call.setLong(param++, (byte)message.totalExchange);
+        call.setByte(param++, (byte) message.moneyType);
+        // call.setLong(param++, (byte)message.totalExchange);
         success = call.execute();
         if (call != null) {
             call.close();
@@ -142,7 +142,7 @@ implements TaiXiuDao {
         call.setLong(param++, message.prize);
         call.setLong(param++, message.refund);
         call.setInt(param++, message.inputTime);
-        call.setByte(param++, (byte)message.moneyType);
+        call.setByte(param++, (byte) message.moneyType);
         success = call.execute();
         if (call != null) {
             call.close();
@@ -185,7 +185,7 @@ implements TaiXiuDao {
         call.setLong(param++, message.getTotalValue());
         call.setLong(param++, message.getCurrentReferenceId());
         call.setString(param++, message.getReferences());
-        call.setByte(param++, (byte)message.getType());
+        call.setByte(param++, (byte) message.getType());
         success = call.execute();
         if (call != null) {
             call.close();
@@ -198,7 +198,7 @@ implements TaiXiuDao {
 
     @Override
     public boolean updatePot(UpdatePotMessage message) {
-        try{
+        try {
             boolean success = false;
             Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");
             CallableStatement call = null;
@@ -214,7 +214,7 @@ implements TaiXiuDao {
                 conn.close();
             }
             return success;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
@@ -228,11 +228,11 @@ implements TaiXiuDao {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection col = db.getCollection("tan_loc_md5");
         Document doc = new Document();
-        doc.append("user_name", (Object)message.username);
-        doc.append("money", (Object)message.value);
-        doc.append("time_log", (Object)timeLog);
+        doc.append("user_name", (Object) message.username);
+        doc.append("money", (Object) message.value);
+        doc.append("time_log", (Object) timeLog);
         doc.append("create_time", VinPlayUtils.getCurrentDateTime());
-        col.insertOne((Object)doc);
+        col.insertOne((Object) doc);
     }
 
     @Override
@@ -242,13 +242,13 @@ implements TaiXiuDao {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection col = db.getCollection("rut_loc_md5");
         Document doc = new Document();
-        doc.append("user_name", (Object)message.username);
-        doc.append("money", (Object)message.prize);
-        doc.append("time_request", (Object)message.timeRequest);
-        doc.append("current_fund", (Object)message.currentFund);
-        doc.append("time_log", (Object)timeLog);
+        doc.append("user_name", (Object) message.username);
+        doc.append("money", (Object) message.prize);
+        doc.append("time_request", (Object) message.timeRequest);
+        doc.append("current_fund", (Object) message.currentFund);
+        doc.append("time_log", (Object) timeLog);
         doc.append("create_time", VinPlayUtils.getCurrentDateTime());
-        col.insertOne((Object)doc);
+        col.insertOne((Object) doc);
     }
 
     @Override

@@ -127,6 +127,34 @@ public class TaiXiuMd5ServiceImpl
         return true;
     }
 
+
+    public boolean saveResultTaiXiu(long referenceId, int result, int dice1, int dice2, int dice3, long totalTai,
+                                    long totalXiu, int numBetTai, int numBetXiu, long totalPrize,
+                                    long totalRefundTai, long totalRefundXiu, long totalRevenue, int moneyType,
+                                    long moneyHu, int statusHu, String md5, String plaintText) throws Exception {
+        ResultTaiXiuMessage msg = new ResultTaiXiuMessage();
+        msg.referenceId = referenceId;
+        msg.result = result;
+        msg.dice1 = dice1;
+        msg.dice2 = dice2;
+        msg.dice3 = dice3;
+        msg.totalTai = totalTai;
+        msg.totalXiu = totalXiu;
+        msg.numBetTai = numBetTai;
+        msg.numBetXiu = numBetXiu;
+        msg.totalPrize = totalPrize;
+        msg.totalRefundTai = totalRefundTai;
+        msg.totalRefundXiu = totalRefundXiu;
+        msg.totalRevenue = totalRevenue;
+        msg.moneyType = moneyType;
+        msg.moneyHu = moneyHu;
+        msg.statusHu = statusHu;
+        msg.md5 = md5;
+        msg.plaintText = plaintText;
+        RMQApi.publishMessage((String) "queue_taixiu_md5", (BaseMessage) msg, (int) 101);  // ném vào trong queue tài xỉu
+        return true;
+    }
+
     @Override
     public String getLichSuPhien(int soPhien, int moneyType) throws SQLException {
         List<ResultTaiXiu> results = this.dao.getLichSuPhien(soPhien, moneyType);
@@ -282,11 +310,12 @@ public class TaiXiuMd5ServiceImpl
     }
 
     @Override
-    public boolean saveResultTaiXiu(ResultTaiXiu rs) throws Exception {
+    public boolean saveResultTaiXiu(ResultTaiXiu rs1) throws Exception {
+        ResultTaiXiuMd5 rs = (ResultTaiXiuMd5) rs1;
         //this.logger.debug((Object)"Save result tx");
         return this.saveResultTaiXiu(rs.referenceId, rs.result, rs.dice1, rs.dice2, rs.dice3, rs.totalTai, rs.totalXiu, rs.numBetTai,
                 rs.numBetXiu, rs.totalPrize, rs.totalRefundTai, rs.totalRefundXiu,
-                rs.totalRevenue, rs.moneyType, rs.moneyHu, rs.statusHu);
+                rs.totalRevenue, rs.moneyType, rs.moneyHu, rs.statusHu, rs.getMd5TextResult(), rs.getPlantTextResult());
     }
 
     @Override
