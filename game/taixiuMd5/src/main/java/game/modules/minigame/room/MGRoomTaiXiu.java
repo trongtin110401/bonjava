@@ -133,7 +133,6 @@ public class MGRoomTaiXiu
 
     // todo :kết thúc 1 game
     public void finish() {
-        this.resultTX = null;
         this.startTime = System.currentTimeMillis();
         this.bettingRound = false;
         try {
@@ -158,7 +157,6 @@ public class MGRoomTaiXiu
         msg.dice1 = dices[0];
         msg.dice2 = dices[1];
         msg.dice3 = dices[2];
-        this.resultTX = new ResultTaiXiuMd5();
         this.resultTX.referenceId = this.referenceId;
         this.resultTX.dice1 = msg.dice1;
         this.resultTX.dice2 = msg.dice2;
@@ -350,7 +348,7 @@ public class MGRoomTaiXiu
         msg.numBetXiu = (this.potXiu.getNumBet() + amountBotXiuFake);
         msg.moneyHu = TaiXiuModule.moneyHu;
         msg.md5TextResult = resultTX.getMd5TextResult();
-        if (secondGamePlay >= 60) {
+        if (secondGamePlay >= 62) {
             msg.plaintTextResult = resultTX.getPlantTextResult();
         }
         cacheService.setValue("Md5_Lobby_tx_tai_" + this.moneyType, String.valueOf(this.getPotTai()));

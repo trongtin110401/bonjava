@@ -45,7 +45,8 @@ public class UpdateTaiXiuPerSecondMsg
         }
         super.putBoolean(buffer, hasPlaintTextResult);
         super.putStr(buffer, this.md5TextResult);
-        super.putStr(buffer, this.plaintTextResult);
+        if (hasPlaintTextResult)
+            super.putStr(buffer, this.plaintTextResult);
         return this.packBuffer(buffer);
     }
 
