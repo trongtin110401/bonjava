@@ -356,6 +356,8 @@ public class MGRoomTaiXiu
         cacheService.setValue("Md5_Lobby_tx_tai_" + this.moneyType, String.valueOf(this.getPotTai()));
         cacheService.setValue("Md5_Lobby_tx_xiu_" + this.moneyType, String.valueOf(this.getPotXiu()));
         this.sendMessageToRoom(msg);
+
+        System.out.println("Second: " + secondGamePlay + " | md5: " + resultTX.getMd5TextResult() + " | plain: " + resultTX.getPlantTextResult());
     }
 
     //todo : gợi ý kết quả , kiểm tra admin có set kết quả ko
