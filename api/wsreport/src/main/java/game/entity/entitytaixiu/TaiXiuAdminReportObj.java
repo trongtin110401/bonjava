@@ -16,9 +16,9 @@ public class TaiXiuAdminReportObj implements Serializable {
     long realTime;
     boolean bettingRound;
 
-    private String taiXiuMd5Hash;
+    String taiXiuMd5Hash;
 
-    private String taiXiuPlainResult;
+    String taiXiuPlainResult;
 
 
     List<TaiXiuAdmin> contributors;
