@@ -182,6 +182,7 @@ main() {
   runMiniGame
 
   runTaiXiuMini
+  runTaiXiuMd5
   runBauCuaTo2
   runXocDia
   runSlot

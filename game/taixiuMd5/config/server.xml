@@ -1,6 +1,6 @@
 <serverSettings>
   <socketAddresses>
-    <socket address="0.0.0.0" port="52043" type="TCP"/>
+    <socket address="0.0.0.0" port="12043" type="TCP"/>
   </socketAddresses>
   <ipFilter>
     <addressBlackList>
@@ -66,8 +66,8 @@
   <webSocket>
     <isActive>true</isActive>
     <bindAddress>0.0.0.0</bindAddress>
-    <tcpPort>52044</tcpPort>
-    <sslPort>52045</sslPort>
+    <tcpPort>12044</tcpPort>
+    <sslPort>12045</sslPort>
     <validDomains/>
     <isSSL>true</isSSL>
     <isUsingFixThreadPool>true</isUsingFixThreadPool>
