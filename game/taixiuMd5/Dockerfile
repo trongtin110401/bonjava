@@ -8,4 +8,4 @@ ADD ./game/taixiuMini/libs libs/
 EXPOSE 2043
 EXPOSE 2044
 EXPOSE 2045
-ENTRYPOINT ["java", "-cp", "libs/*:taixiuMini.jar", "game.TaiXiuMiniGameMain"]
+ENTRYPOINT ["java", "-cp", "libs/*:taixiuMd5.jar", "game.TaiXiuMiniGameMain"]

@@ -1,6 +1,6 @@
 <serverSettings>
   <socketAddresses>
-    <socket address="0.0.0.0" port="2043" type="TCP"/>
+    <socket address="0.0.0.0" port="52043" type="TCP"/>
   </socketAddresses>
   <ipFilter>
     <addressBlackList>
@@ -31,7 +31,7 @@
     </administrators>
     <allowedRemoteAddresses>
     </allowedRemoteAddresses>
-    <adminTcpPort>2043</adminTcpPort>
+    <adminTcpPort>52043</adminTcpPort>
   </remoteAdmin>
   <bannedUserManager>
     <isAutoRemove>true</isAutoRemove>
@@ -66,8 +66,8 @@
   <webSocket>
     <isActive>true</isActive>
     <bindAddress>0.0.0.0</bindAddress>
-    <tcpPort>2044</tcpPort>
-    <sslPort>2045</sslPort>
+    <tcpPort>52044</tcpPort>
+    <sslPort>52045</sslPort>
     <validDomains/>
     <isSSL>true</isSSL>
     <isUsingFixThreadPool>true</isUsingFixThreadPool>
