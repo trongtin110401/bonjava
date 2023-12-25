@@ -23,6 +23,10 @@ public class TaiXiuAdminReportResponse implements Serializable {
   List<TaiXiuChatMsg> lstMsg = new ArrayList<>();
   List<String> getListChatUsers;
 
+  private String taiXiuMd5Hash;
+
+  private String taiXiuPlainResult;
+
 
   public List<TaiXiuAdmin> getContributors() {
     return contributors;
@@ -148,6 +152,22 @@ public class TaiXiuAdminReportResponse implements Serializable {
 
   public void setGetListChatUsers(List<String> getListChatUsers) {
     this.getListChatUsers = getListChatUsers;
+  }
+
+  public String getTaiXiuMd5Hash() {
+    return taiXiuMd5Hash;
+  }
+
+  public void setTaiXiuMd5Hash(String taiXiuMd5Hash) {
+    this.taiXiuMd5Hash = taiXiuMd5Hash;
+  }
+
+  public String getTaiXiuPlainResult() {
+    return taiXiuPlainResult;
+  }
+
+  public void setTaiXiuPlainResult(String taiXiuPlainResult) {
+    this.taiXiuPlainResult = taiXiuPlainResult;
   }
 
   @Override

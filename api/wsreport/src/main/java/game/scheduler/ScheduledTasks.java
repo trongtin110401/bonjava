@@ -229,6 +229,8 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             response.setNumberUserAndBotBetXiu(obj.getNumberUserAndBotBetXiu());
             response.setRealTime(obj.getRealTime());
             response.setBettingRound(obj.isBettingRound());
+            response.setTaiXiuMd5Hash(obj.getTaiXiuMd5Hash());
+            response.setTaiXiuPlainResult(obj.getTaiXiuPlainResult());
             if (obj.getLstMsg().size() > 10)
                 obj.getLstMsg().subList(0, obj.getLstMsg().size() - 10).clear();
             response.setLstMsg(obj.getLstMsg());

@@ -16,6 +16,10 @@ public class TaiXiuAdminReportObj implements Serializable {
     long realTime;
     boolean bettingRound;
 
+  private String taiXiuMd5Hash;
+
+  private String taiXiuPlainResult;
+
 
   List<TaiXiuAdmin> contributors;
   List<TaiXiuChatMsg> lstMsg;
@@ -144,6 +148,22 @@ public class TaiXiuAdminReportObj implements Serializable {
 
   public void setGetListChatUsers(List<String> getListChatUsers) {
     this.getListChatUsers = getListChatUsers;
+  }
+
+  public String getTaiXiuMd5Hash() {
+    return taiXiuMd5Hash;
+  }
+
+  public void setTaiXiuMd5Hash(String taiXiuMd5Hash) {
+    this.taiXiuMd5Hash = taiXiuMd5Hash;
+  }
+
+  public String getTaiXiuPlainResult() {
+    return taiXiuPlainResult;
+  }
+
+  public void setTaiXiuPlainResult(String taiXiuPlainResult) {
+    this.taiXiuPlainResult = taiXiuPlainResult;
   }
 
   @Override

@@ -444,6 +444,8 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         }
         taiXiuAdminReportObj.setLstMsg(listChat);
         taiXiuAdminReportObj.setGetListChatUsers(this.getListChatUsers());
+        taiXiuAdminReportObj.setTaiXiuMd5Hash(this.getRoomTX(typeBet).resultTX.getMd5TextResult());
+        taiXiuAdminReportObj.setTaiXiuPlainResult(this.getRoomTX(typeBet).resultTX.getPlantTextResult());
         cacheService.setValue("user_tai_xiu_md5", taiXiuAdminReportObj.toJson());
         cacheService.setObject("lstTaiXiuAdminMsg", new ArrayList<>());
     }
