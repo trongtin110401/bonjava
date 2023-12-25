@@ -591,7 +591,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
             sendLogToTele(r.getMessage());
             Debug.info("Loi get key becang");
         }
-        keyBeCang = "tai";
+
         if ("tai".equals(keyBeCang)) {
             this.forceBetSide = 1;
         } else if ("xiu".equals(keyBeCang)) {
