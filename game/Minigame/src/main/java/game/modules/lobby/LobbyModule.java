@@ -2626,7 +2626,7 @@ public class LobbyModule
             } catch (Exception ex) {
                 txHu = 0;
             }
-            UpdateTXJackpotMsg msg = new UpdateTXJackpotMsg();
+            UpdateTX5JackpotMsg msg = new UpdateTX5JackpotMsg();
             msg.moneyHu = txHu;
             msg.moneyTai = txTai;
             msg.moneyXiu = txXiu;
