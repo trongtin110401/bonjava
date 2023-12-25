@@ -23,9 +23,9 @@ public class TaiXiuAdminReportResponse implements Serializable {
   List<TaiXiuChatMsg> lstMsg = new ArrayList<>();
   List<String> getListChatUsers;
 
-  private String taiXiuMd5Hash;
+  String taiXiuMd5Hash;
 
-  private String taiXiuPlainResult;
+  String taiXiuPlainResult;
 
 
   public List<TaiXiuAdmin> getContributors() {
