@@ -1,11 +1,11 @@
 FROM openjdk:8
 WORKDIR /app
-COPY ./game/taixiuMini/build/libs .
-COPY ./game/taixiuMini/config config/
-COPY ./game/taixiuMini/conf conf/
+COPY ./game/taixiuMd5/build/libs .
+COPY ./game/taixiuMd5/config config/
+COPY ./game/taixiuMd5/conf conf/
 ADD ./libs libs/
-ADD ./game/taixiuMini/libs libs/
-EXPOSE 2043
-EXPOSE 2044
-EXPOSE 2045
+ADD ./game/taixiuMd5/libs libs/
+EXPOSE 12043
+EXPOSE 12044
+EXPOSE 12045
 ENTRYPOINT ["java", "-cp", "libs/*:taixiuMd5.jar", "game.TaiXiuMiniGameMain"]
