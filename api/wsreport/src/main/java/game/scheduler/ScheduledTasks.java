@@ -241,7 +241,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             cacheService.removeKey(USER_TAI_XIU_MD5);
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Loi senTXAdmin");
+            System.out.println("Loi senTXMD5Admin");
 
         }
     }
