@@ -142,7 +142,7 @@ runTaiXiuMd5() {
   currentDir="game/taixiuMd5"
   cd $currentDir
   echo "Starting TaiXiu..."
-  nohup java -cp "libs/*:build/libs/taixiuMini.jar" game.TaiXiuMiniGameMain >/home/server/logs/taixiuMd5.log 2>&1 &
+  nohup java -cp "libs/*:build/libs/taixiuMd5.jar" game.TaiXiuMiniGameMain >/home/server/logs/taixiuMd5.log 2>&1 &
 }
 
 
