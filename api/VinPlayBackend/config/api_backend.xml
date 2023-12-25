@@ -267,7 +267,7 @@
         <command>
             <id>556699</id>
             <name>Get info SetBot TaiXiu</name>
-            <path>com.vinplay.api.backend.processors.taixiu.GetListBotTaiXiuMd5Processor</path>
+            <path>com.vinplay.api.backend.processors.taixiu.GetInfSetBotTaiXiuMd5Processor</path>
         </command>
         <command>
             <id>6699</id>
