@@ -251,10 +251,12 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         switch (dataCmd.getId()) {
             case 2000: {
                 // mở game lên vào đây
+                System.out.println("=====> Subscribe: " + dataCmd.getId() + " | " + user.getName());
                 this.subcribeMiniGame(user, dataCmd);
                 break;
             }
             case 2001: {
+                System.out.println("=====> Unsubscribe: " + dataCmd.getId() + " | " + user.getName());
                 this.unsubscribeMiniGame(user, dataCmd);
                 break;
             }
@@ -263,6 +265,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                 break;
             }
             case 2110: {
+                System.out.println("=====> Bet: " + dataCmd.getId() + " | " + user.getName());
                 if (GameUtils.disablePlayMiniGame(user)) {
                     return;
                 }
@@ -270,6 +273,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                 break;
             }
             case 2116: {
+                System.out.println("=====> History: " + dataCmd.getId() + " | " + user.getName());
                 this.getLichSuPhienTX(user);
                 break;
             }
