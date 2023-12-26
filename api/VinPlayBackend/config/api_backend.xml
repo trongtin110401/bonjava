@@ -1110,6 +1110,14 @@
             <name>Force Result taixiu</name>
             <path>com.vinplay.api.backend.processors.taixiu.ForceResultTaiXiuMd5</path>
         </command>
+
+        <!--            MD5-->
+        <command>
+            <id>558799</id>
+            <name>Force Result taixiu</name>
+            <path>com.vinplay.api.backend.processors.taixiu.GetResultMd5Processor</path>
+        </command>
+
         <command>
             <id>8798</id>
             <name>Force Result taixiu</name>
