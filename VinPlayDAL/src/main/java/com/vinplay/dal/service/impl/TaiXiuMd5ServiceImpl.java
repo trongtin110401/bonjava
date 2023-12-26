@@ -43,13 +43,13 @@ import com.vinplay.vbee.common.models.UserModel;
 import com.vinplay.vbee.common.models.cache.*;
 import com.vinplay.vbee.common.models.minigame.TopWin;
 import com.vinplay.vbee.common.models.minigame.taixiu.XepHangRLTLModel;
+import com.vinplay.vbee.common.pools.ConnectionPool;
 import com.vinplay.vbee.common.rmq.ELKrmq;
 import com.vinplay.vbee.common.rmq.RMQApi;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.*;
@@ -173,7 +173,7 @@ public class TaiXiuMd5ServiceImpl
                 //item.setTotalMoneyOnGame(dao.getMoneyStakesTX(item.getUsername()));
                 //new elk
                 ELKrmq elKrmq = new ELKrmq();
-                Long totalStakesTx = elKrmq.getTotalStakesTx(userCurrent, atStartOfDay(new Date()).getTime(),atEndOfDay(new Date()).getTime());
+                Long totalStakesTx = elKrmq.getTotalStakesTx(userCurrent, atStartOfDay(new Date()).getTime(), atEndOfDay(new Date()).getTime());
                 item.setTotalMoneyOnGame(totalStakesTx);
                 //end
                 //test log
@@ -259,8 +259,9 @@ public class TaiXiuMd5ServiceImpl
             e.printStackTrace();
         }
     }
+
     @Override
-    public void updateAllTopMonth () {
+    public void updateAllTopMonth() {
         try {
             HazelcastInstance client = HazelcastClientFactory.getInstance();
             IMap topMap = client.getMap("cacheTop");
@@ -738,6 +739,22 @@ public class TaiXiuMd5ServiceImpl
         return result;
     }
 
+    public String getHashMd5(String plainText) throws SQLException {
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");) {
+            String sql = "SELECT * FROM result_tai_xiu_md5 WHERE plainText=? order by timestamp desc limit 1";
+            PreparedStatement stm = conn.prepareStatement(sql);
+            stm.setString(1, plainText);
+            ResultSet rs = stm.executeQuery();
+            String md5Hash = null;
+            while (rs.next()) {
+                md5Hash = rs.getString("md5");
+            }
+            rs.close();
+            stm.close();
+            return md5Hash;
+        }
+    }
+
     private boolean isBot(String nickname) {
         try {
             HazelcastInstance client = HazelcastClientFactory.getInstance();
@@ -765,6 +782,7 @@ public class TaiXiuMd5ServiceImpl
         LocalDateTime endOfDay = localDateTime.with(LocalTime.MAX);
         return localDateTimeToDate(endOfDay);
     }
+
     private static LocalDateTime dateToLocalDateTime(Date date) {
         return LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
     }

@@ -11,16 +11,21 @@ import java.sql.SQLException;
 
 public class GetResultMd5Processor implements BaseProcessor<HttpServletRequest, String> {
     @Override
-    public String execute(Param<HttpServletRequest> param) throws SQLException {
-        HttpServletRequest request = param.get();
-        String plainText = request.getParameter("plainText");
-        String response;
-        TaiXiuMd5ServiceImpl taiXiuMd5Service = new TaiXiuMd5ServiceImpl();
-        response = taiXiuMd5Service.getHashMd5(plainText);
-        if (response == null) {
-            response = hashMD5(plainText);
+    public String execute(Param<HttpServletRequest> param) {
+        String response = null;
+        try {
+            HttpServletRequest request = param.get();
+            String plainText = request.getParameter("plainText");
+            TaiXiuMd5ServiceImpl taiXiuMd5Service = new TaiXiuMd5ServiceImpl();
+            response = taiXiuMd5Service.getHashMd5(plainText);
+            if (response == null) {
+                response = hashMD5(plainText);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return response;
+
     }
 
 
