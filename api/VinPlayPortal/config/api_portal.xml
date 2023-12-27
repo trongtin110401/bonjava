@@ -403,6 +403,12 @@
             <name>list danh sach ban</name>
             <path>com.vinplay.api.processors.gamebai.GetListNguoiChoi</path>
         </command>
+<!--        MD5-->
+        <command>
+            <id>554007</id>
+            <name>list top tx vinh danh</name>
+            <path>com.vinplay.api.processors.minigame.TopWinTXMD5VinhDanhProcessor</path>
+        </command>
         <command>
             <id>4007</id>
             <name>list top tx vinh danh</name>
