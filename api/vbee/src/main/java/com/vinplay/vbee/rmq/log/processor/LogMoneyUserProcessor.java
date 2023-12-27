@@ -43,9 +43,7 @@ public class LogMoneyUserProcessor
             } else if (message.getMoneyType().equals("xu")) {
                 transId = ++com.vinplay.vbee.main.VBeeMain.moneyXuReferenceId;
             }
-//            InsertELK elk = new InsertELK();
-//            String time_creat = VinPlayUtils.getCurrentDateTime();
-//            elk.InsertLogMoneyUserVin(message, transId, message.isBot(), message.isVp(), time_creat);
+
             dao.saveLogMoneyUser(message, transId, message.isBot(), message.isVp());
             if (message.getMoneyType().equalsIgnoreCase("vin")) {
                 if (message.getMoneyExchange() > 0L) {

@@ -5,8 +5,7 @@ package com.vinplay.dal.entities.taixiu;
 
 import java.io.Serializable;
 
-public class ResultTaiXiu
-implements Serializable {
+public class ResultTaiXiu implements Serializable {
     private static final long serialVersionUID = 1L;
     public long referenceId;
     public int result;

@@ -218,8 +218,6 @@ public class TaiXiuMd5ServiceImpl
     public void updateAllTop() {
         try {
             List<TopWin> topWinVin = this.dao.getTopTaiXiu(1);
-//            List<TopWin> topWinXu = this.dao.getTopTaiXiu(0);
-
 
             HazelcastInstance client = HazelcastClientFactory.getInstance();
             IMap topMap = client.getMap("cacheTop");

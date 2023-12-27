@@ -256,7 +256,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                 break;
             }
             case 2001: {
-                System.out.println("=====> Unsubscribe: " + dataCmd.getId() + " | " + user.getName());
                 this.unsubscribeMiniGame(user, dataCmd);
                 break;
             }
@@ -265,7 +264,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                 break;
             }
             case 2110: {
-                System.out.println("=====> Bet: " + dataCmd.getId() + " | " + user.getName());
                 if (GameUtils.disablePlayMiniGame(user)) {
                     return;
                 }
@@ -273,22 +271,12 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                 break;
             }
             case 2116: {
-                System.out.println("=====> History: " + dataCmd.getId() + " | " + user.getName());
                 this.getLichSuPhienTX(user);
                 break;
             }
-            case 2118: {
-//                if (GameUtils.disablePlayMiniGame(user)) {
-//                    return;
-//                }
-//                this.tanLoc(user, dataCmd);
-                break;
-            }
+            case 2118:
             case 2119: {
-//                if (GameUtils.disablePlayMiniGame(user)) {
-//                    return;
-//                }
-//                this.rutLoc(user, dataCmd);
+                break;
             }
         }
     }
@@ -384,11 +372,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
             this.botsVin.clear();
             this.botsVin = BotMinigame.getBotTaiXiu("vin");
             Debug.trace((Object) ("BOTS VIN: " + this.botsVin.size()));
-//      List<BotTaiXiu> botsVip = BotMinigame.getVipBotTaiXiu();
-//      this.botsVin.addAll(botsVip);
-//      Debug.trace((Object) ("TX BOTS VIP: " + botsVip.size()));
-            //this.botsXu = BotMinigame.getBotTaiXiu("xu");
-//            Debug.trace((Object) ("BOTS XU: " + this.botsXu.size()));
         } catch (Exception e) {
             sendLogToTele(e.getMessage());
             GameUtils.sendAlert("Bot tai xiu start error: " + e.getMessage() + ", time= " + DateTimeUtils.getCurrentTime());
@@ -405,11 +388,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                 roomVin.betTaiXiu(b.getNickname(), 0, b.getBetValue(), b.getTimeBetting(), (short) 1, b.getBetSide(), true);
             }
         }
-
-//    for (BotTaiXiu b : this.botsXu) {
-//      if (b.getTimeBetting() != 60 - count) continue;
-//      roomXu.betTaiXiu(b.getNickname(), 0, b.getBetValue(), b.getTimeBetting(), (short) 0, b.getBetSide(), true);
-//    }
     }
 
     // todo : user đặt cược tiền
@@ -470,7 +448,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                     amountBotXiuFake += (taiXiuSetAmountBotFake.getNumberBotXiuFake()) / 40;
                 }
             } catch (KeyNotFoundException ex) {
-//                sendLogToTele(ex.getMessage());
                 amountBotXiuFake = 0;
                 amountBotTaiFake = 0;
             }
@@ -494,11 +471,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                     roomTXXu.finish();
                     break;
                 }
-//
-//                case 58: {
-//                    this.forceBetSide = roomTXVin.suggestResult();
-//                    break;
-//                }
                 case 61: {
                     this.generateTaiXiuDicesMD5(roomTXVin, roomTXXu);
                     break;
@@ -862,15 +834,15 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         public void run() {
             long startTime = System.currentTimeMillis();
             try {
-                MGRoomTaiXiu room = TaiXiuModule.this.getRoomTX(this.roomId);
-                room.calculatePrize(TaiXiuModule.this.referenceTaiXiuId);
+                TaiXiuModule.this.getRoomTX(this.roomId).calculatePrize(referenceTaiXiuId);
             } catch (Exception e) {
                 sendLogToTele(e.getMessage() + "Calculate TX " + this.roomId + ", phien= " + TaiXiuModule.this.referenceTaiXiuId + " error: ");
                 Debug.trace((Object) ("Calculate TX " + this.roomId + ", phien= " + TaiXiuModule.this.referenceTaiXiuId + " error: " + e.getMessage()));
+            } finally {
+                long endTime = System.currentTimeMillis();
+                Debug.trace((Object) ("CALCUALTE PRIZE, time handle= " + (endTime - startTime) + " (ms)") + " Room " + (roomId == 1 ? "vin" : "xu"));
+                TaiXiuModule.this.txService.updateAllTop();
             }
-            long endTime = System.currentTimeMillis();
-            Debug.trace((Object) ("CALCUALTE PRIZE, time handle= " + (endTime - startTime) + " (ms)") + " Room " + (roomId == 1 ? "vin" : "xu"));
-            TaiXiuModule.this.txService.updateAllTop();
         }
     }
 

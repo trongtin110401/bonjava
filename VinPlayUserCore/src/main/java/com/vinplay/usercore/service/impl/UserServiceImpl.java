@@ -336,31 +336,8 @@ public class UserServiceImpl
                         try {
                             user.setMoney(moneyType, moneyUser += money);
                             user.setCurrentMoney(moneyType, currentMoney += money);
-//                            long moneyVP = VippointUtils.calculateMoneyVP(moneyType, transId, client, nickname, gameName, money, type);
                             int vp = 0;
                             int moneyVPs = 0;
-//                            int vpAddEvent = 0;
-//                            if (moneyVP > 0L) { // nếu mà vip >0 thì
-//                                List<Integer> vpLst = VippointUtils.calculateVP(client, user.getNickname(), (long) user.getMoneyVP() + moneyVP, false);
-//                                vp = vpLst.get(0);
-//                                moneyVPs = vpLst.get(1);
-//                                vpAddEvent = vpLst.get(2);
-//                                user.setVippoint(user.getVippoint() + vp);
-//                                user.setVippointSave(user.getVippointSave() + vp);
-//                                user.setMoneyVP(moneyVPs);
-//                                if (vpAddEvent > 0) {
-//                                    int vpReal = user.getVpEventReal();
-//                                    int vpEvent = user.getVpEvent();
-//                                    int place = VippointUtils.calculatePlace(vpEvent += vpAddEvent);
-//                                    int placeMax = place > user.getPlace() ? place : user.getPlace();
-//                                    user.setVpEventReal(vpReal += vpAddEvent);
-//                                    user.setVpEvent(vpEvent);
-//                                    user.setPlace(place);
-//                                    user.setPlaceMax(placeMax);
-//                                    VippointEventMessage vpEventMessage = new VippointEventMessage(user.getId(), nickname, vpReal, vpEvent, 0, 0, 0, 0, place, placeMax, 0, 0);
-//                                    RMQApi.publishMessage((String) "queue_vippoint_event", (BaseMessage) vpEventMessage, (int) 801);
-//                                }
-//                            }
                             boolean playgame = false;
                             if (transId != null || type == TransType.VIPPOINT) {
                                 playgame = true;
