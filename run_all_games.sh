@@ -1,6 +1,7 @@
 #!/bin/bash
 
 export ELASTICSEARCH_URL=http://localhost:9200
+
 # make log server
 mkdir /home/server/logs/
 # Absolute path to this script, e.g. /home/user/bin/foo.sh

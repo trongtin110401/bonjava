@@ -902,8 +902,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         }
     }
 
-    private final class ScheduleBotTask
-            extends Thread {
+    private final class ScheduleBotTask extends Thread {
         private ScheduleBotTask() {
         }
 
