@@ -141,7 +141,7 @@ runTaiXiuMd5() {
   cd ${SCRIPT_PATH}
   currentDir="game/taixiuMd5"
   cd $currentDir
-  echo "Starting TaiXiu..."
+  echo "Starting TaiXiu MD5..."
   nohup java -cp "libs/*:build/libs/taixiuMd5.jar" game.TaiXiuMiniGameMain >/home/server/logs/taixiuMd5.log 2>&1 &
 }
 
