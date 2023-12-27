@@ -3,7 +3,7 @@
         "thisSocket":{
 			"ip":"173.212.205.213",
 			"port":440,
-                        "ip_private":"127.0.0.1",
+                        "ip_private":"10.40.112.3",
                         "port_private":490,
                         "type":"index",
                         "prefixId":1
@@ -11,21 +11,21 @@
         "index":{
 			"ip":"173.212.205.213",
 			"port":440,
-                        "ip_private":"127.0.0.1",
+                        "ip_private":"10.40.112.3",
                         "port_private":490,
                         "prefixId":1
         },"serverList":[
 		{
 			"ip":"173.212.205.213",
 			"port":442,
-                        "ip_private":"127.0.0.1",
+                        "ip_private":"10.40.112.3",
                         "port_private":492,
                         "prefixId":2
 		},
 		{
 			"ip":"173.212.205.213",
 			"port":444,
-                        "ip_private":"127.0.0.1",
+                        "ip_private":"10.40.112.3",
                         "port_private":494,
                         "prefixId":3
 		}

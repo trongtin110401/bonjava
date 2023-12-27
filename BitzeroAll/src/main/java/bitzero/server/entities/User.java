@@ -126,7 +126,7 @@ public class User {
 
     public String getIpAddress() {
         if (this.session == null) {
-            return "127.0.0.1";
+            return "10.40.112.3";
         }
         return this.session.getAddress();
     }
@@ -225,7 +225,7 @@ public class User {
     }
 
     public String toString() {
-        String s = this.session == null ? "127.0.0.1" : this.session.getFullIpAddress();
+        String s = this.session == null ? "10.40.112.3" : this.session.getFullIpAddress();
         return String.format("( User Name: %s, Id: %s, Priv: %s, Sess: %s ) ", this.name, this.id, this.privilegeId, s);
     }
 

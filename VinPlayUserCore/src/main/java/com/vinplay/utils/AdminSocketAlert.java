@@ -14,7 +14,7 @@ public class AdminSocketAlert {
     public static Socket getInstance() {
         if (_instance == null) {
             try {
-                _instance = IO.socket("http://127.0.0.1:9092");
+                _instance = IO.socket("http://10.40.112.3:9092");
 
             } catch (URISyntaxException e) {
                 e.printStackTrace();

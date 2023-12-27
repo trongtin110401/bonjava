@@ -6,10 +6,10 @@ package bitzero.engine.websocket;
 import java.util.List;
 
 public class WebSocketConfig {
-    public static final String LOCALHOST = "127.0.0.1";
+    public static final String LOCALHOST = "10.40.112.3";
     private int port = 8888;
     private int sslPort = 8889;
-    private String host = "127.0.0.1";
+    private String host = "10.40.112.3";
     private List<String> validDomains;
     private boolean isActive = false;
     private boolean isSSL = true;

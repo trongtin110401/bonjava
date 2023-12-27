@@ -135,7 +135,7 @@ namespace LiteNetLib
             if (targetList.Count == 0)
             {
                 if(ipv4)
-                    targetList.Add("127.0.0.1");
+                    targetList.Add("10.40.112.3");
                 if(ipv6)
                     targetList.Add("::1");
             }

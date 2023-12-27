@@ -10,7 +10,7 @@ services:
       - '8081:8081'
     restart: always
     environment:
-      - ELASTICSEARCH_URL=http://192.168.1.96:9200
+      - ELASTICSEARCH_URL=http://10.40.112.3:9200
     volumes:
     - ./game-logs/portal_api:/app/logs
 
@@ -23,7 +23,7 @@ services:
       - '8082:8082'
     restart: always
     environment:
-      - ELASTICSEARCH_URL=http://192.168.1.96:9200
+      - ELASTICSEARCH_URL=http://10.40.112.3:9200
     volumes:
       - ./game-logs/backend_api:/app/logs
 
@@ -34,7 +34,7 @@ services:
       dockerfile: api/vbee/Dockerfile
     restart: always
     environment:
-      - ELASTICSEARCH_URL=http://192.168.1.96:9200
+      - ELASTICSEARCH_URL=http://10.40.112.3:9200
     volumes:
       - ./game-logs/vbee_api:/app/logs
 
@@ -47,7 +47,7 @@ services:
       - '18081:18081'
     restart: always
     environment:
-      - ELASTICSEARCH_URL=http://192.168.1.96:9200
+      - ELASTICSEARCH_URL=http://10.40.112.3:9200
 #    network_mode: host
     volumes:
       - ./game-logs/wspay_api:/app/logs
@@ -62,7 +62,7 @@ services:
       - '7777:7777'
     restart: always
     environment:
-      - ELASTICSEARCH_URL=http://192.168.1.96:9200
+      - ELASTICSEARCH_URL=http://10.40.112.3:9200
     volumes:
       - ./game-logs/wsreport_api:/app/logs
 
@@ -76,7 +76,7 @@ services:
       - '1644:1644'
     restart: always
     environment:
-      - ELASTICSEARCH_URL=http://192.168.1.96:9200
+      - ELASTICSEARCH_URL=http://10.40.112.3:9200
     depends_on:
       - gameplatform_vbee_api
     volumes:
@@ -92,7 +92,7 @@ services:
       - '1844:1844'
     restart: always
     environment:
-      - ELASTICSEARCH_URL=http://192.168.1.96:9200
+      - ELASTICSEARCH_URL=http://10.40.112.3:9200
     volumes:
       - ./game-logs/slot:/app/logs
     depends_on:
@@ -110,7 +110,7 @@ services:
       - '2045:2045'
     restart: always
     environment:
-      - ELASTICSEARCH_URL=http://192.168.1.96:9200
+      - ELASTICSEARCH_URL=http://10.40.112.3:9200
     volumes:
       - ./game-logs/taixiu:/app/logs
     depends_on:
@@ -128,7 +128,7 @@ services:
       - '2345:2345'
     restart: always
     environment:
-      - ELASTICSEARCH_URL=http://192.168.1.96:9200
+      - ELASTICSEARCH_URL=http://10.40.112.3:9200
     volumes:
       - ./game-logs/xocdia:/app/logs
     depends_on:
@@ -146,7 +146,7 @@ services:
       - '3645:3645'
     restart: always
     environment:
-      - ELASTICSEARCH_URL=http://192.168.1.96:9200
+      - ELASTICSEARCH_URL=http://10.40.112.3:9200
     volumes:
       - ./game-logs/baucua:/app/logs
     depends_on:
@@ -180,7 +180,7 @@ services:
       - '1245:1245'
     restart: always
     environment:
-      - ELASTICSEARCH_URL=http://192.168.1.96:9200
+      - ELASTICSEARCH_URL=http://10.40.112.3:9200
     volumes:
       - ./game-logs/binh:/app/logs
     depends_on:
@@ -198,7 +198,7 @@ services:
       - '2145:2145'
     restart: always
     environment:
-      - ELASTICSEARCH_URL=http://192.168.1.96:9200
+      - ELASTICSEARCH_URL=http://10.40.112.3:9200
     volumes:
       - ./game-logs/tlmn:/app/logs
     depends_on:
@@ -216,7 +216,7 @@ services:
       - '1745:1745'
     restart: always
     environment:
-      - ELASTICSEARCH_URL=http://192.168.1.96:9200
+      - ELASTICSEARCH_URL=http://10.40.112.3:9200
     volumes:
       - ./game-logs/poker:/app/logs
     depends_on:
@@ -234,7 +234,7 @@ services:
       - '2245:2345'
     restart: always
     environment:
-      - ELASTICSEARCH_URL=http://192.168.1.96:9200
+      - ELASTICSEARCH_URL=http://10.40.112.3:9200
     volumes:
       - ./game-logs/xizach:/app/logs
     depends_on:
@@ -269,7 +269,7 @@ services:
       - '1945:1945'
     restart: always
     environment:
-      - ELASTICSEARCH_URL=http://192.168.1.96:9200
+      - ELASTICSEARCH_URL=http://10.40.112.3:9200
     volumes:
       - ./game-logs/sam:/app/logs
     depends_on:

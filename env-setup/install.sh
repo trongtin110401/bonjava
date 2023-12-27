@@ -16,7 +16,7 @@ TODAY=`date +"%d%b%Y"`
 ######################################################################
  
 DB_BACKUP_PATH='/home/card-game/backup'
-MONGO_HOST='127.0.0.1'
+MONGO_HOST='10.40.112.3'
 MONGO_PORT='27017'
 
 # If mongodb is protected with username password.

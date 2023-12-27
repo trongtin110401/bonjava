@@ -1044,7 +1044,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `twitter_id` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT '',
   `device_id` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `avatar` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT '0',
-  `ip` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT '127.0.0.1',
+  `ip` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT '10.40.112.3',
   `time_register` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `time_login` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `block` tinyint(3) DEFAULT '0',

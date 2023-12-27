@@ -84,7 +84,7 @@ public class AutoTaoAcc {
                                 }
 
                                 SecurityServiceImpl sercuSer = new SecurityServiceImpl();
-                                sercuSer.saveLoginInfo(userId, username, "", "127.0.0.1", "all", 0, "web");
+                                sercuSer.saveLoginInfo(userId, username, "", "10.40.112.3", "all", 0, "web");
                                 // Leon:
                                 if (codeDaiLy != null && !codeDaiLy.isEmpty()) {
                                     sercuSer.saveUserMapToDailyInfo(userId, username, nickname, codeDaiLy);
