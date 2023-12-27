@@ -16,146 +16,166 @@ public class TaiXiuAdminReportObj implements Serializable {
     long realTime;
     boolean bettingRound;
 
+    String taiXiuMd5Hash;
 
-  List<TaiXiuAdmin> contributors;
-  List<TaiXiuChatMsg> lstMsg;
-  List<String> getListChatUsers;
+    String taiXiuPlainResult;
 
-  public List<TaiXiuAdmin> getContributors() {
-    return contributors;
-  }
 
-  public void setContributors(List<TaiXiuAdmin> contributors) {
-    this.contributors = contributors;
-  }
+    List<TaiXiuAdmin> contributors;
+    List<TaiXiuChatMsg> lstMsg;
+    List<String> getListChatUsers;
 
-  public TaiXiuAdminReportObj(long moneyTai, long moneyXiu, long numberUserRealTai, long numberUserRealXiu, long moneyTaiFull, long moneyXiuFull, long phienId) {
-    this.moneyTai = moneyTai;
-    this.moneyXiu = moneyXiu;
-    this.numberUserRealTai = numberUserRealTai;
-    this.numberUserRealXiu = numberUserRealXiu;
-    this.moneyTaiFull = moneyTaiFull;
-    this.moneyXiuFull = moneyXiuFull;
-    this.phienId = phienId;
-  }
+    public List<TaiXiuAdmin> getContributors() {
+        return contributors;
+    }
 
-  public TaiXiuAdminReportObj() {
-  }
+    public void setContributors(List<TaiXiuAdmin> contributors) {
+        this.contributors = contributors;
+    }
 
-  public long getMoneyTai() {
-    return moneyTai;
-  }
+    public TaiXiuAdminReportObj(long moneyTai, long moneyXiu, long numberUserRealTai, long numberUserRealXiu, long moneyTaiFull, long moneyXiuFull, long phienId) {
+        this.moneyTai = moneyTai;
+        this.moneyXiu = moneyXiu;
+        this.numberUserRealTai = numberUserRealTai;
+        this.numberUserRealXiu = numberUserRealXiu;
+        this.moneyTaiFull = moneyTaiFull;
+        this.moneyXiuFull = moneyXiuFull;
+        this.phienId = phienId;
+    }
 
-  public void setMoneyTai(long moneyTai) {
-    this.moneyTai = moneyTai;
-  }
+    public TaiXiuAdminReportObj() {
+    }
 
-  public long getMoneyXiu() {
-    return moneyXiu;
-  }
+    public long getMoneyTai() {
+        return moneyTai;
+    }
 
-  public void setMoneyXiu(long moneyXiu) {
-    this.moneyXiu = moneyXiu;
-  }
+    public void setMoneyTai(long moneyTai) {
+        this.moneyTai = moneyTai;
+    }
 
-  public long getNumberUserRealTai() {
-    return numberUserRealTai;
-  }
+    public long getMoneyXiu() {
+        return moneyXiu;
+    }
 
-  public void setNumberUserRealTai(long numberUserRealTai) {
-    this.numberUserRealTai = numberUserRealTai;
-  }
+    public void setMoneyXiu(long moneyXiu) {
+        this.moneyXiu = moneyXiu;
+    }
 
-  public long getNumberUserRealXiu() {
-    return numberUserRealXiu;
-  }
+    public long getNumberUserRealTai() {
+        return numberUserRealTai;
+    }
 
-  public void setNumberUserRealXiu(long numberUserRealXiu) {
-    this.numberUserRealXiu = numberUserRealXiu;
-  }
+    public void setNumberUserRealTai(long numberUserRealTai) {
+        this.numberUserRealTai = numberUserRealTai;
+    }
 
-  public long getMoneyTaiFull() {
-    return moneyTaiFull;
-  }
+    public long getNumberUserRealXiu() {
+        return numberUserRealXiu;
+    }
 
-  public void setMoneyTaiFull(long moneyTaiFull) {
-    this.moneyTaiFull = moneyTaiFull;
-  }
+    public void setNumberUserRealXiu(long numberUserRealXiu) {
+        this.numberUserRealXiu = numberUserRealXiu;
+    }
 
-  public long getMoneyXiuFull() {
-    return moneyXiuFull;
-  }
+    public long getMoneyTaiFull() {
+        return moneyTaiFull;
+    }
 
-  public void setMoneyXiuFull(long moneyXiuFull) {
-    this.moneyXiuFull = moneyXiuFull;
-  }
+    public void setMoneyTaiFull(long moneyTaiFull) {
+        this.moneyTaiFull = moneyTaiFull;
+    }
 
-  public long getPhienId() {
-    return phienId;
-  }
+    public long getMoneyXiuFull() {
+        return moneyXiuFull;
+    }
 
-  public void setPhienId(long phienId) {
-    this.phienId = phienId;
-  }
+    public void setMoneyXiuFull(long moneyXiuFull) {
+        this.moneyXiuFull = moneyXiuFull;
+    }
 
-  public long getNumberUserAndBotBetTai() {
-    return numberUserAndBotBetTai;
-  }
+    public long getPhienId() {
+        return phienId;
+    }
 
-  public void setNumberUserAndBotBetTai(long numberUserAndBotBetTai) {
-    this.numberUserAndBotBetTai = numberUserAndBotBetTai;
-  }
+    public void setPhienId(long phienId) {
+        this.phienId = phienId;
+    }
 
-  public long getNumberUserAndBotBetXiu() {
-    return numberUserAndBotBetXiu;
-  }
+    public long getNumberUserAndBotBetTai() {
+        return numberUserAndBotBetTai;
+    }
 
-  public void setNumberUserAndBotBetXiu(long numberUserAndBotBetXiu) {
-    this.numberUserAndBotBetXiu = numberUserAndBotBetXiu;
-  }
+    public void setNumberUserAndBotBetTai(long numberUserAndBotBetTai) {
+        this.numberUserAndBotBetTai = numberUserAndBotBetTai;
+    }
 
-  public long getRealTime() {
-    return realTime;
-  }
+    public long getNumberUserAndBotBetXiu() {
+        return numberUserAndBotBetXiu;
+    }
 
-  public void setRealTime(long realTime) {
-    this.realTime = realTime;
-  }
+    public void setNumberUserAndBotBetXiu(long numberUserAndBotBetXiu) {
+        this.numberUserAndBotBetXiu = numberUserAndBotBetXiu;
+    }
 
-  public boolean isBettingRound() {
-    return bettingRound;
-  }
+    public long getRealTime() {
+        return realTime;
+    }
 
-  public void setBettingRound(boolean bettingRound) {
-    this.bettingRound = bettingRound;
-  }
+    public void setRealTime(long realTime) {
+        this.realTime = realTime;
+    }
 
-  public List<TaiXiuChatMsg> getLstMsg() {
-    return lstMsg;
-  }
+    public boolean isBettingRound() {
+        return bettingRound;
+    }
 
-  public void setLstMsg(List<TaiXiuChatMsg> lstMsg) {
-    this.lstMsg = lstMsg;
-  }
+    public void setBettingRound(boolean bettingRound) {
+        this.bettingRound = bettingRound;
+    }
 
-  public List<String> getGetListChatUsers() {
-    return getListChatUsers;
-  }
+    public List<TaiXiuChatMsg> getLstMsg() {
+        return lstMsg;
+    }
 
-  public void setGetListChatUsers(List<String> getListChatUsers) {
-    this.getListChatUsers = getListChatUsers;
-  }
+    public void setLstMsg(List<TaiXiuChatMsg> lstMsg) {
+        this.lstMsg = lstMsg;
+    }
 
-  @Override
-  public String toString() {
-    return "TaiXiuAdminReportObj{" +
-        "moneyTai=" + moneyTai +
-        ", moneyXiu=" + moneyXiu +
-        ", nguoiChoiBetTai=" + numberUserRealTai +
-        ", nguoiChoiBetXiu=" + numberUserRealXiu +
-        ", moneyTaiFull=" + moneyTaiFull +
-        ", moneyXiuFull=" + moneyXiuFull +
-        ", phienId=" + phienId +
-        '}';
-  }
+    public List<String> getGetListChatUsers() {
+        return getListChatUsers;
+    }
+
+    public void setGetListChatUsers(List<String> getListChatUsers) {
+        this.getListChatUsers = getListChatUsers;
+    }
+
+    public String getTaiXiuMd5Hash() {
+        return taiXiuMd5Hash;
+    }
+
+    public void setTaiXiuMd5Hash(String taiXiuMd5Hash) {
+        this.taiXiuMd5Hash = taiXiuMd5Hash;
+    }
+
+    public String getTaiXiuPlainResult() {
+        return taiXiuPlainResult;
+    }
+
+    public void setTaiXiuPlainResult(String taiXiuPlainResult) {
+        this.taiXiuPlainResult = taiXiuPlainResult;
+    }
+
+    @Override
+    public String toString() {
+        return "TaiXiuAdminReportObj{" +
+                "moneyTai=" + moneyTai +
+                ", moneyXiu=" + moneyXiu +
+                ", nguoiChoiBetTai=" + numberUserRealTai +
+                ", nguoiChoiBetXiu=" + numberUserRealXiu +
+                ", moneyTaiFull=" + moneyTaiFull +
+                ", moneyXiuFull=" + moneyXiuFull +
+                ", phienId=" + phienId +
+                '}';
+    }
 }

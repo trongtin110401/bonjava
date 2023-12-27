@@ -174,7 +174,7 @@
         <command>
             <id>556667</id>
             <name>be cang sang tai</name>
-            <path>com.vinplay.api.backend.processors.taixiu.GetCacheResultTaiXiuMD5Processor</path>
+            <path>com.vinplay.api.backend.processors.taixiu.GetCacheResultTaiXiuMd5Processor</path>
         </command>
         <command>
             <id>6667</id>
@@ -205,7 +205,7 @@
         <command>
             <id>556669</id>
             <name>Send message admin chat bot to user</name>
-            <path>com.vinplay.api.backend.processors.taixiu.TaiXiuMD5AdminChatProcessor</path>
+            <path>com.vinplay.api.backend.processors.taixiu.TaiXiuAdminMd5ListChatProcessor</path>
         </command>
 
         <command>
@@ -267,7 +267,7 @@
         <command>
             <id>556699</id>
             <name>Get info SetBot TaiXiu</name>
-            <path>com.vinplay.api.backend.processors.taixiu.GetInfSetBotTaiXiuMD5Processor</path>
+            <path>com.vinplay.api.backend.processors.taixiu.GetInfSetBotTaiXiuMd5Processor</path>
         </command>
         <command>
             <id>6699</id>
@@ -1110,6 +1110,14 @@
             <name>Force Result taixiu</name>
             <path>com.vinplay.api.backend.processors.taixiu.ForceResultTaiXiuMd5</path>
         </command>
+
+        <!--            MD5-->
+        <command>
+            <id>558799</id>
+            <name>Force Result taixiu</name>
+            <path>com.vinplay.api.backend.processors.taixiu.GetResultMd5Processor</path>
+        </command>
+
         <command>
             <id>8798</id>
             <name>Force Result taixiu</name>

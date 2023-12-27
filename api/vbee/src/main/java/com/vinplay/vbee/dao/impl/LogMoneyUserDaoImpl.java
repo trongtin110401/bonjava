@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  com.mongodb.BasicDBObject
  *  com.mongodb.client.FindIterable
@@ -35,6 +35,7 @@ import com.vinplay.vbee.common.pools.ConnectionPool;
 import com.vinplay.vbee.common.utils.DateTimeUtils;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
 import com.vinplay.vbee.dao.LogMoneyUserDao;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -42,11 +43,12 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
-public class LogMoneyUserDaoImpl
-implements LogMoneyUserDao {
+public class LogMoneyUserDaoImpl implements LogMoneyUserDao {
+
     @Override
     public boolean saveLogMoneyUser(LogMoneyUserMessage message, long transId, boolean isBot, boolean playGame) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
@@ -54,26 +56,26 @@ implements LogMoneyUserDao {
         MongoCollection col = null;
         if (message.getMoneyType().equals("vin")) {
             col = db.getCollection("log_money_user_vin");
-        } else if (message.getMoneyType().equals("xu")) {
+        } else {
             col = db.getCollection("log_money_user_xu");
         }
         String time_creat = VinPlayUtils.getCurrentDateTime();
         Document doc = new Document();
-        doc.append("trans_id", (Object)transId);
-        doc.append("user_id", (Object)message.getUserId());
-        doc.append("nick_name", (Object)message.getNickname());
-        doc.append("service_name", (Object)message.getServiceName());
-        doc.append("current_money", (Object)message.getCurrentMoney());
-        doc.append("money_exchange", (Object)message.getMoneyExchange());
-        doc.append("description", (Object)message.getDescription());
-        doc.append("trans_time", (Object)message.getCreateTime());
-        doc.append("action_name", (Object)message.getActionName());
-        doc.append("fee", (Object)message.getFee());
-        doc.append("is_bot", (Object)isBot);
-        doc.append("play_game", (Object)playGame);
+        doc.append("trans_id", (Object) transId);
+        doc.append("user_id", (Object) message.getUserId());
+        doc.append("nick_name", (Object) message.getNickname());
+        doc.append("service_name", (Object) message.getServiceName());
+        doc.append("current_money", (Object) message.getCurrentMoney());
+        doc.append("money_exchange", (Object) message.getMoneyExchange());
+        doc.append("description", (Object) message.getDescription());
+        doc.append("trans_time", (Object) message.getCreateTime());
+        doc.append("action_name", (Object) message.getActionName());
+        doc.append("fee", (Object) message.getFee());
+        doc.append("is_bot", (Object) isBot);
+        doc.append("play_game", (Object) playGame);
         doc.append("create_time", time_creat);
-        col.insertOne((Object)doc);
-//        elk.InsertLogMoneyUserVin(message, transId, isBot, playGame, time_creat);
+        col.insertOne((Object) doc);
+        elk.InsertLogMoneyUserVin(message, transId, isBot, playGame, time_creat);
         return true;
     }
 
@@ -83,18 +85,18 @@ implements LogMoneyUserDao {
         MongoCollection col = null;
         col = type == 3 ? db.getCollection("log_money_user_nap_vin") : db.getCollection("log_money_user_tieu_vin");
         Document doc = new Document();
-        doc.append("trans_id", (Object)transId);
-        doc.append("user_id", (Object)message.getUserId());
-        doc.append("nick_name", (Object)message.getNickname());
-        doc.append("service_name", (Object)message.getServiceName());
-        doc.append("current_money", (Object)message.getCurrentMoney());
-        doc.append("money_exchange", (Object)message.getMoneyExchange());
-        doc.append("description", (Object)message.getDescription());
-        doc.append("trans_time", (Object)message.getCreateTime());
-        doc.append("action_name", (Object)message.getActionName());
-        doc.append("fee", (Object)message.getFee());
+        doc.append("trans_id", (Object) transId);
+        doc.append("user_id", (Object) message.getUserId());
+        doc.append("nick_name", (Object) message.getNickname());
+        doc.append("service_name", (Object) message.getServiceName());
+        doc.append("current_money", (Object) message.getCurrentMoney());
+        doc.append("money_exchange", (Object) message.getMoneyExchange());
+        doc.append("description", (Object) message.getDescription());
+        doc.append("trans_time", (Object) message.getCreateTime());
+        doc.append("action_name", (Object) message.getActionName());
+        doc.append("fee", (Object) message.getFee());
         doc.append("create_time", VinPlayUtils.getCurrentDateTime());
-        col.insertOne((Object)doc);
+        col.insertOne((Object) doc);
         return true;
     }
 
@@ -106,12 +108,12 @@ implements LogMoneyUserDao {
         objsort.put("_id", -1);
         FindIterable iterable = null;
         if (moneyType.equals("vin")) {
-            iterable = db.getCollection("log_money_user_vin").find((Bson)new Document(conditions)).sort((Bson)objsort).limit(1);
+            iterable = db.getCollection("log_money_user_vin").find((Bson) new Document(conditions)).sort((Bson) objsort).limit(1);
         } else if (moneyType.equals("xu")) {
-            iterable = db.getCollection("log_money_user_xu").find((Bson)new Document(conditions)).sort((Bson)objsort).limit(1);
+            iterable = db.getCollection("log_money_user_xu").find((Bson) new Document(conditions)).sort((Bson) objsort).limit(1);
         }
-        Document document = iterable != null ? (Document)iterable.first() : null;
-        long transId = document == null ? 0L : document.getLong((Object)"trans_id");
+        Document document = iterable != null ? (Document) iterable.first() : null;
+        long transId = document == null ? 0L : document.getLong((Object) "trans_id");
         return transId;
     }
 
@@ -120,12 +122,12 @@ implements LogMoneyUserDao {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection col = db.getCollection("log_money_system");
         Document doc = new Document();
-        doc.append("name", (Object)name);
-        doc.append("current_money", (Object)currentMoney);
-        doc.append("money_exchange", (Object)moneyExchange);
-        doc.append("trans_time", (Object)transTime);
+        doc.append("name", (Object) name);
+        doc.append("current_money", (Object) currentMoney);
+        doc.append("money_exchange", (Object) moneyExchange);
+        doc.append("trans_time", (Object) transTime);
         doc.append("create_time", VinPlayUtils.getCurrentDateTime());
-        col.insertOne((Object)doc);
+        col.insertOne((Object) doc);
     }
 
     @Override
@@ -134,14 +136,14 @@ implements LogMoneyUserDao {
         MongoCollection col = null;
         col = userWin.getMoneyType().equals("vin") ? db.getCollection("top_user_play_game_vin") : db.getCollection("top_user_play_game_xu");
         BasicDBObject updateFields = new BasicDBObject();
-        updateFields.append("money_win", (Object)userWin.getMoneyWin());
+        updateFields.append("money_win", (Object) userWin.getMoneyWin());
         BasicDBObject conditions = new BasicDBObject();
-        conditions.append("nick_name", (Object)userWin.getNickname());
-        conditions.append("money_type", (Object)userWin.getMoneyType());
-        conditions.append("date", (Object)userWin.getDate());
+        conditions.append("nick_name", (Object) userWin.getNickname());
+        conditions.append("money_type", (Object) userWin.getMoneyType());
+        conditions.append("date", (Object) userWin.getDate());
         FindOneAndUpdateOptions options = new FindOneAndUpdateOptions();
         options.upsert(true);
-        col.findOneAndUpdate((Bson)conditions, (Bson)new Document("$inc", (Object)updateFields), options);
+        col.findOneAndUpdate((Bson) conditions, (Bson) new Document("$inc", (Object) updateFields), options);
         return true;
     }
 
@@ -152,24 +154,24 @@ implements LogMoneyUserDao {
         Document doc = new Document();
         InsertELK elk = new InsertELK();
         String time_create = VinPlayUtils.getCurrentDateTime();
-        doc.append("nick_name_send", (Object)message.getNicknameSend());
-        doc.append("nick_name_receive", (Object)message.getNicknameReceive());
-        doc.append("money_send", (Object)message.getMoneySend());
-        doc.append("money_receive", (Object)message.getMoneyReceive());
-        doc.append("status", (Object)message.getStatus());
-        doc.append("fee", (Object)message.getFee());
-        doc.append("trans_time", (Object)message.getTransTime());
-        doc.append("top_ds", (Object)1);
-        doc.append("process", (Object)0);
-        doc.append("des_send", (Object)message.getDesSend());
-        doc.append("des_receive", (Object)message.getDesReceive());
-        doc.append("process", (Object)0);
+        doc.append("nick_name_send", (Object) message.getNicknameSend());
+        doc.append("nick_name_receive", (Object) message.getNicknameReceive());
+        doc.append("money_send", (Object) message.getMoneySend());
+        doc.append("money_receive", (Object) message.getMoneyReceive());
+        doc.append("status", (Object) message.getStatus());
+        doc.append("fee", (Object) message.getFee());
+        doc.append("trans_time", (Object) message.getTransTime());
+        doc.append("top_ds", (Object) 1);
+        doc.append("process", (Object) 0);
+        doc.append("des_send", (Object) message.getDesSend());
+        doc.append("des_receive", (Object) message.getDesReceive());
+        doc.append("process", (Object) 0);
         doc.append("create_time", time_create);
-        doc.append("transaction_no", (Object)message.getTransactionId());
-        doc.append("is_freeze_money", (Object)message.getIsFreezeMoney());
-        doc.append("agent_level1", (Object)message.getAgentLevel1());
-        doc.append("session_id_freeze_money", (Object)message.getSessionIdFreezeMoney());
-        col.insertOne((Object)doc);
+        doc.append("transaction_no", (Object) message.getTransactionId());
+        doc.append("is_freeze_money", (Object) message.getIsFreezeMoney());
+        doc.append("agent_level1", (Object) message.getAgentLevel1());
+        doc.append("session_id_freeze_money", (Object) message.getSessionIdFreezeMoney());
+        col.insertOne((Object) doc);
         elk.InsertLogChuyenTienDaiLy(message, time_create);
         return true;
     }
@@ -197,11 +199,10 @@ implements LogMoneyUserDao {
             stmt.setString(14, message.getDesReceive());
             stmt.setString(15, message.getSessionIdFreezeMoney());
             stmt.setString(16, message.getTransTime());
-            stmt.setString(17, DateTimeUtils.getCurrentTime((String)"yyyy-MM-dd HH:mm:ss"));
+            stmt.setString(17, DateTimeUtils.getCurrentTime((String) "yyyy-MM-dd HH:mm:ss"));
             stmt.executeUpdate();
             stmt.close();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             throw e;
         }
@@ -215,16 +216,16 @@ implements LogMoneyUserDao {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection col = db.getCollection("log_no_hu_game_bai");
         Document doc = new Document();
-        doc.append("nick_name", (Object)message.getNickname());
-        doc.append("room", (Object)message.getRoom());
-        doc.append("pot_value", (Object)message.getPotValue());
-        doc.append("money_win", (Object)message.getMoneyWin());
-        doc.append("game_name", (Object)message.getGamename());
-        doc.append("description", (Object)message.getDescription());
-        doc.append("trans_time", (Object)message.getCreateTime());
+        doc.append("nick_name", (Object) message.getNickname());
+        doc.append("room", (Object) message.getRoom());
+        doc.append("pot_value", (Object) message.getPotValue());
+        doc.append("money_win", (Object) message.getMoneyWin());
+        doc.append("game_name", (Object) message.getGamename());
+        doc.append("description", (Object) message.getDescription());
+        doc.append("trans_time", (Object) message.getCreateTime());
         doc.append("create_time", VinPlayUtils.getCurrentDateTime());
-        doc.append("tour_id", (Object)message.getTourId());
-        col.insertOne((Object)doc);
+        doc.append("tour_id", (Object) message.getTourId());
+        col.insertOne((Object) doc);
         return true;
     }
 
@@ -252,19 +253,19 @@ implements LogMoneyUserDao {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection col = db.getCollection("log_exchange_money");
         Document doc = new Document();
-        doc.append("nick_name", (Object)message.nickname);
-        doc.append("merchant_id", (Object)message.merchantId);
-        doc.append("trans_id", (Object)message.merchantTransId);
-        doc.append("money", (Object)message.money);
-        doc.append("money_type", (Object)message.moneyType);
-        doc.append("type", (Object)message.type);
-        doc.append("money_exchange", (Object)message.exchangeMoney);
-        doc.append("fee", (Object)message.fee);
-        doc.append("code", (Object)message.code);
-        doc.append("ip", (Object)message.ip);
-        doc.append("trans_time", (Object)message.getCreateTime());
+        doc.append("nick_name", (Object) message.nickname);
+        doc.append("merchant_id", (Object) message.merchantId);
+        doc.append("trans_id", (Object) message.merchantTransId);
+        doc.append("money", (Object) message.money);
+        doc.append("money_type", (Object) message.moneyType);
+        doc.append("type", (Object) message.type);
+        doc.append("money_exchange", (Object) message.exchangeMoney);
+        doc.append("fee", (Object) message.fee);
+        doc.append("code", (Object) message.code);
+        doc.append("ip", (Object) message.ip);
+        doc.append("trans_time", (Object) message.getCreateTime());
         doc.append("create_time", VinPlayUtils.getCurrentDateTime());
-        col.insertOne((Object)doc);
+        col.insertOne((Object) doc);
         return true;
     }
 }

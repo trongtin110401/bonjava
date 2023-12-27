@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  bitzero.server.config.ConfigHandle
  *  bitzero.server.entities.User
@@ -23,6 +23,7 @@ import com.vinplay.vbee.common.enums.Games;
 import com.vinplay.vbee.common.response.UserResponse;
 import game.entities.PlayerInfo;
 import game.entities.UserScore;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Random;
 
@@ -52,6 +53,7 @@ public class GameUtils {
         }
         return allow;
     }
+
     // todo :get user infor với userName và session key
     public static UserInfo getUserInfo(String username, String sessionKey) {
         if (dev_mod) {
@@ -60,8 +62,7 @@ public class GameUtils {
             try {
                 Integer v = new Integer(username);
                 userId = v;
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 Random rd = new Random();
                 userId = Math.abs(rd.nextInt() % 100000);
             }
@@ -93,8 +94,7 @@ public class GameUtils {
             try {
                 AlertServiceImpl alert = new AlertServiceImpl();
                 alert.sendSMS2User(username, message);
-            }
-            catch (Exception alert) {
+            } catch (Exception alert) {
                 // empty catch block
             }
         }
@@ -102,8 +102,8 @@ public class GameUtils {
 
     public static boolean disablePlayMiniGame(User user) {
         int daily;
-        String status = (String)user.getProperty((Object)"dai_ly");
-        return status != null && !status.isEmpty() && (daily = Integer.parseInt(status)) > 0;
+        String status = (String) user.getProperty((Object) "dai_ly");
+        return StringUtils.isNotEmpty(status) && (daily = Integer.parseInt(status)) > 0;
     }
 }
 

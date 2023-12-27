@@ -1,7 +1,14 @@
 package game.bean;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class MapperUtils {
-    public static ObjectMapper mapper = new ObjectMapper();
+    public static ObjectMapper mapper;
+
+
+    static {
+        mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    }
 }
