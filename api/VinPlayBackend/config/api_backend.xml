@@ -162,7 +162,7 @@
         <command>
             <id>556666</id>
             <name>be cang sang tai</name>
-            <path>com.vinplay.api.backend.processors.taixiu.SetResultTaiXiuMD5Processor</path>
+            <path>com.vinplay.api.backend.processors.taixiu.SetResultTaiXiuMd5Processor</path>
         </command>
         <command>
             <id>6666</id>
@@ -186,7 +186,7 @@
         <command>
             <id>556668</id>
             <name>lay nguoi choi dat tai xiu</name>
-            <path>com.vinplay.api.backend.processors.taixiu.GetUserInfoTaiXiuMD5Processor</path>
+            <path>com.vinplay.api.backend.processors.taixiu.GetUserInfoTaiXiuMd5Processor</path>
         </command>
         <command>
             <id>6668</id>
@@ -198,7 +198,7 @@
         <command>
             <id>556668</id>
             <name>lay nguoi choi dat tai xiu</name>
-            <path>com.vinplay.api.backend.processors.taixiu.GetUserInfoTaiXiuMD5Processor</path>
+            <path>com.vinplay.api.backend.processors.taixiu.GetUserInfoTaiXiuMd5Processor</path>
         </command>
 
 <!--        MD5-->
@@ -218,7 +218,7 @@
         <command>
             <id>556670</id>
             <name>update lay hu tai xiu</name>
-            <path>com.vinplay.api.backend.processors.taixiu.TaiXiuMD5AdminSetHuProcessor</path>
+            <path>com.vinplay.api.backend.processors.taixiu.TaiXiuMd5AdminSetHuProcessor</path>
         </command>
 
         <command>
@@ -242,7 +242,7 @@
         <command>
             <id>5569</id>
             <name>Get list name bot chat</name>
-            <path>com.vinplay.api.backend.processors.taixiu.GetListBotTaiXiuMD5Processor</path>
+            <path>com.vinplay.api.backend.processors.taixiu.GetListBotTaiXiuMd5Processor</path>
         </command>
 
         <command>
@@ -479,7 +479,7 @@
         <command>
             <id>55137</id>
             <name>search tai xiu result</name>
-            <path>com.vinplay.api.backend.processors.SearchLogTaiXiuMD5ResultProcessor</path>
+            <path>com.vinplay.api.backend.processors.SearchLogTaiXiuMd5ResultProcessor</path>
         </command>
         <command>
             <id>137</id>
