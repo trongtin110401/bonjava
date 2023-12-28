@@ -255,7 +255,7 @@
         <command>
             <id>5570</id>
             <name>SetBot TaiXiu</name>
-            <path>com.vinplay.api.backend.processors.taixiu.SetBotTaiXiuMD5Processor</path>
+            <path>com.vinplay.api.backend.processors.taixiu.SetBotTaiXiuMd5Processor</path>
         </command>
         <command>
             <id>70</id>
