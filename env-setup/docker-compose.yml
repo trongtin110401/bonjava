@@ -47,7 +47,6 @@ services:
     ports:
       - '5701:5701'
   ## manage center
-  
 
     # rabbitmq
   rabbitmq:
@@ -68,6 +67,21 @@ services:
       - 6379
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
+    restart: always
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.8.23
+    container_name: elasticsearch
+    environment:
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms4g -Xmx4g"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - 9200:9200
     restart: always
 
 # Names our volume

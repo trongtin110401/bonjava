@@ -48,12 +48,12 @@
                 <multicast-group>224.2.2.3</multicast-group>
                 <multicast-port>54327</multicast-port>
             </multicast>
-            <tcp-ip enabled="true">
-                <interface>10.40.112.3</interface>
+            <tcp-ip enabled="false">
+                <interface>localhost</interface>
                 <member-list>
-                    <member>10.40.112.3</member>
+                    <member>192.168.1.96</member>
                     <!--<member>123.31.29.145</member>-->
-                    <member>10.40.112.3</member>
+                    <member>192.168.1.96</member>
                 </member-list>
             </tcp-ip>
             <aws enabled="false">
@@ -71,8 +71,8 @@
             <discovery-strategies>
             </discovery-strategies>
         </join>
-        <interfaces enabled="true">
-            <interface>10.40.112.3</interface>
+        <interfaces enabled="false">
+            <interface>localhost</interface>
         </interfaces>
         <ssl enabled="false"/>
         <socket-interceptor enabled="false"/>

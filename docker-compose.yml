@@ -66,7 +66,6 @@ services:
     volumes:
       - ./game-logs/wsreport_api:/app/logs
 
-
   gameplatform_wminigame:
     image: 'bancodegame/gameplatform_wminigame:v1.1'
     build:
