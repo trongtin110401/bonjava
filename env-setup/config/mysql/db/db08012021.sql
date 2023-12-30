@@ -2896,6 +2896,36 @@ CREATE TABLE `event_vp` (
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ROW_FORMAT=DYNAMIC;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+
+DROP TABLE IF EXISTS `giftcodett`;
+CREATE TABLE `giftcodett`
+(
+  `id` int NOT NULL AUTO_INCREMENT,
+  `code` varchar(50) DEFAULT NULL,
+  `money` int DEFAULT NULL,
+  `timelog` varchar(50) DEFAULT NULL,
+  `stop` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `id_index` (`id`) USING BTREE,
+  KEY `code_index` (`code`) USING BTREE
+);
+
+DROP TABLE IF EXISTS `active`;
+CREATE TABLE active (
+  `id` int NOT NULL AUTO_INCREMENT,
+    `nickname` VARCHAR(255),
+    `username` VARCHAR(255),
+    `phone` VARCHAR(20),
+    `otp` VARCHAR(6),
+    `active` INT,
+    `create_time` LONG,
+    `active_time` LONG,
+    `turn` INT,
+    `timelog` VARCHAR(255),
+    PRIMARY KEY (`id`),
+	KEY `id_index` (`id`) USING BTREE
+);
+
 --
 -- Dumping data for table `event_vp`
 --
