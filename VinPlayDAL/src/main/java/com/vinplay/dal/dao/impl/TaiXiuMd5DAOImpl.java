@@ -329,13 +329,13 @@ public class TaiXiuMd5DAOImpl
 
     @Override
     public ResultTaiXiu getKetQuaPhien(long referenceId, int moneyType) throws SQLException {
-        ResultTaiXiu entry = null;
+        ResultTaiXiuMd5 entry = null;
         try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");) {
             String sql = "SELECT * FROM result_tai_xiu_md5 WHERE reference_id=" + referenceId + " AND money_type=" + moneyType;
             PreparedStatement stmt = conn.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                entry = new ResultTaiXiu();
+                entry = new ResultTaiXiuMd5();
                 entry.referenceId = rs.getLong("reference_id");
                 entry.result = rs.getInt("result");
                 entry.dice1 = rs.getInt("dice1");
@@ -352,6 +352,8 @@ public class TaiXiuMd5DAOImpl
                 entry.moneyType = rs.getInt("money_type");
                 Timestamp timestamp = rs.getTimestamp("timestamp");
                 entry.timestamp = CommonUtils.convertTimestampToString((java.util.Date) timestamp);
+                entry.setPlantTextResult(rs.getString("plainText"));
+                entry.setMd5TextResult(rs.getString("md5"));
             }
             rs.close();
             stmt.close();
