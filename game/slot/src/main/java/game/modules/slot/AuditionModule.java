@@ -186,6 +186,7 @@ extends SlotModule {
     @Override
     public void handleClientRequest(User user, DataCmd dataCmd) {
         Debug.trace((Object)("audition handleClientRequest " + dataCmd.getId()));
+        System.out.println("Game name : " + this.gameName);
 
         switch (dataCmd.getId()) {
             case 2003: {
