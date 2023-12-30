@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  bitzero.server.extensions.data.BaseMsg
  */
@@ -18,6 +18,7 @@ import game.sam.server.logic.Card;
 import game.sam.server.logic.CardSuit;
 import game.sam.server.logic.Gamble;
 import game.sam.server.logic.GroupCard;
+
 import java.util.List;
 import java.util.Vector;
 
@@ -59,6 +60,7 @@ public class GameManager {
     }
 
     public void gameLoop() {
+        System.out.println("State: " + gameState + " | action: " + gameAction + " | countdown: " + countDown);
         if (this.gameState == 0 && this.isAutoStart) {
             --this.countDown;
             if (this.countDown <= 0) {
@@ -68,48 +70,34 @@ public class GameManager {
         } else if (this.gameState == 1) {
             if (this.gameAction != -1) {
                 --this.countDown;
-                if (this.gameAction == 2 && this.countDown == 5) {
-                    this.gameServer.botBaoSam();
-                }
-                if (this.gameAction == 4 && this.countDown == 17) {
-                    this.gameServer.botAutoPlay();
-                }
                 if (this.countDown <= 0) {
                     if (this.gameAction == 0) {
                         this.kiemTraDiDau();
                     } else if (this.gameAction == 1) {
                         this.chiaBai();
                     } else if (this.gameAction == 2) {
-                        if (this.countDown == 5) {
-                            this.gameServer.botBaoSam();
-                        }
                         this.chonSam();
-                    } else if (this.gameAction == 5) {
-                        this.moididau(20);
                     } else if (this.gameAction == 3) {
                         this.toitrang();
                     } else if (this.gameAction == 4) {
                         this.tudongChoi();
+                    } else if (this.gameAction == 5) {
+                        this.moididau(20);
                     }
                 }
             }
         } else if (this.gameState == 3) {
             --this.countDown;
-            if (this.countDown == 5) {
-                this.gameServer.notifyNoHu();
-            }
             if (this.countDown <= 0) {
                 this.gameServer.pPrepareNewGame();
             }
-        } else {
-            this.gameServer.botJoinRoom();
         }
     }
 
     public void notifyAutoStartToUsers(int after) {
         SendUpdateAutoStart msg = new SendUpdateAutoStart();
         msg.isAutoStart = this.isAutoStart;
-        msg.autoStartTime = (byte)after;
+        msg.autoStartTime = (byte) after;
         this.gameServer.sendMsg(msg);
     }
 
@@ -143,10 +131,10 @@ public class GameManager {
             msg.isRandom = true;
             msg.cards = this.logic.genFirstTurn();
             this.xacDinhDiDau(msg.cards);
-            this.countDown = 3;
+            this.countDown = 5;
         }
         this.currentChair = this.logic.firstTurn;
-        msg.chair = (byte)this.logic.firstTurn;
+        msg.chair = (byte) this.logic.firstTurn;
         this.gameServer.logQuyetDinhDiDau(msg);
         this.gameServer.sendMsgToPlayingUser(msg);
         this.gameAction = 1;
@@ -202,7 +190,7 @@ public class GameManager {
         } else {
             SendChonSam msg = new SendChonSam();
             msg.baosam = false;
-            msg.chair = (byte)this.currentChair;
+            msg.chair = (byte) this.currentChair;
             this.gameServer.sendMsg(msg);
             this.gameAction = 5;
             this.countDown = 0;
