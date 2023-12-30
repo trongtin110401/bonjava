@@ -447,6 +447,7 @@ public class MGRoomTaiXiu extends MGRoom {
         rs.totalXiu = potX.getTotalValue();
         rs.numBetXiu = potX.getNumBet();
         rs.moneyHu = TaiXiuModule.moneyHu;
+        rs.moneyType = this.moneyType;
 
         // Tính tiền và trả lại cho khách
         new UpdateMoneyTXTask(sumTai).start();
