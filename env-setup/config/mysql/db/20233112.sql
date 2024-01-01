@@ -5068,10 +5068,10 @@ SELECT tran_tx.reference_id,
 FROM (SELECT *
       FROM transaction_tai_xiu_md5
       WHERE user_name = nickname
-        AND transaction_tai_xiu.money_type = money_type
+        AND transaction_tai_xiu_md5.money_type = money_type
       ORDER BY id DESC LIMIT num_start, num_end) as tran_tx
          INNER JOIN
-     (SELECT * FROM result_tai_xiu_md5 WHERE result_tai_xiu.money_type = money_type) as result_tx
+     (SELECT * FROM result_tai_xiu_md5 WHERE result_tai_xiu_md5.money_type = money_type) as result_tx
      ON tran_tx.reference_id = result_tx.reference_id
 ORDER BY tran_tx.reference_id DESC LIMIT 0, 10;
 END ;;
