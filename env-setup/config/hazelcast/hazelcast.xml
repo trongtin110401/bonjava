@@ -16,7 +16,7 @@
   -->
 
 <!--
-    The nginx Hazelcast configuration. This is used when no hazelcast.xml is present.
+    The default Hazelcast configuration. This is used when no hazelcast.xml is present.
     Please see the schema for how to configure Hazelcast at https://hazelcast.com/schema/config/hazelcast-config-3.10.xsd
     or the documentation at https://hazelcast.org/documentation/
 -->
@@ -49,21 +49,21 @@
                 <multicast-port>54327</multicast-port>
             </multicast>
             <tcp-ip enabled="true">
-                <interface>10.40.112.3</interface>
+                <interface>127.0.0.1</interface>
                 <member-list>
-                    <member>10.40.112.3</member>
+                    <member>127.0.0.1</member>
                     <!--<member>123.31.29.145</member>-->
-                    <member>10.40.112.3</member>
+                    <member>127.0.0.1</member>
                 </member-list>
             </tcp-ip>
             <aws enabled="false">
                 <access-key>my-access-key</access-key>
                 <secret-key>my-secret-key</secret-key>
-                <!--optional, nginx is us-east-1 -->
+                <!--optional, default is us-east-1 -->
                 <region>us-west-1</region>
-                <!--optional, nginx is ec2.amazonaws.com. If set, region shouldn't be set as it will override this property -->
+                <!--optional, default is ec2.amazonaws.com. If set, region shouldn't be set as it will override this property -->
                 <host-header>ec2.amazonaws.com</host-header>
-                <!-- optional, only instances belonging to this group will be discovered, nginx will try all running instances -->
+                <!-- optional, only instances belonging to this group will be discovered, default will try all running instances -->
                 <security-group-name>hazelcast-sg</security-group-name>
                 <tag-key>type</tag-key>
                 <tag-value>hz-nodes</tag-value>
@@ -72,7 +72,7 @@
             </discovery-strategies>
         </join>
         <interfaces enabled="true">
-            <interface>10.40.112.3</interface>
+            <interface>127.0.0.1</interface>
         </interfaces>
         <ssl enabled="false"/>
         <socket-interceptor enabled="false"/>
@@ -135,7 +135,7 @@
         <!--
            Data type that will be used for storing recordMap.
            Possible values:
-           BINARY (nginx): keys and values will be stored as binary data
+           BINARY (default): keys and values will be stored as binary data
            OBJECT : values will be stored in their object forms
            NATIVE : values will be stored in non-heap region of JVM
         -->
@@ -170,7 +170,7 @@
             NONE (no eviction),
             LRU (Least Recently Used),
             LFU (Least Frequently Used).
-            NONE is the nginx.
+            NONE is the default.
         -->
         <eviction-policy>NONE</eviction-policy>
         <!--
