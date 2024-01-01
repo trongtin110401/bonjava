@@ -469,6 +469,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                 case 60: {
                     roomTXVin.finish();
                     roomTXXu.finish();
+
                     break;
                 }
                 case 61: {
