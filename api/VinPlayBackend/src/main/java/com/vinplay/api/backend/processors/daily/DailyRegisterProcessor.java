@@ -30,6 +30,8 @@ public class DailyRegisterProcessor implements BaseProcessor<HttpServletRequest,
             String bankAccount = request.getParameter("bankAccount");
             String bankNumber = request.getParameter("bankNumber");
             String accountName = request.getParameter("accountName");
+            String cryptoAddressWallet = request.getParameter("cryptoAddressWallet");
+            String cryptoTypeWallet = request.getParameter("cryptoTypeWallet");
             if (checkExisted(username)) {
                 return response.toJson();
             }
@@ -40,20 +42,31 @@ public class DailyRegisterProcessor implements BaseProcessor<HttpServletRequest,
             Document doc = new Document();
             doc.append("user_name", username);
             doc.append("password", hashMD5(password));
-            doc.append("nickName", nickName);
-            doc.append("bankAccount", bankAccount);
-            doc.append("bankNumber", bankNumber);
-            doc.append("accountName", accountName);
+            doc.append("nick_name", nickName);
+            doc.append("bank_account", bankAccount);
+            doc.append("bank_number", bankNumber);
+            doc.append("account_name", accountName);
             String referentCode = generateString(5);
             doc.append("referent_code", referentCode);
             doc.append("time_log", time_log);
             String accessToken = generateUniqueString();
             doc.append("access_token", accessToken);
+            doc.append("crypto_address_wallet",cryptoAddressWallet);
+            doc.append("crypto_type_wallet",cryptoTypeWallet);
             col.insertOne(doc);
             response = new DailyEntity(true, "200");
+
             response.setUsername(username);
             response.setReferentCode(referentCode);
             response.setAccessToken(accessToken);
+            response.setNickName(nickName);
+            response.setBankAccount(bankAccount);
+            response.setBankNumber(bankNumber);
+            response.setAccountName(accountName);
+            response.setCryptoAddressWallet(cryptoAddressWallet);
+            response.setCryptoTypeWallet(cryptoTypeWallet);
+
+
             return response.toJson();
         } catch (Exception e) {
             logger.error(e.getStackTrace());

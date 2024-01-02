@@ -42,6 +42,14 @@ public class DailyLoginProcessor implements BaseProcessor<HttpServletRequest, St
             response.setUsername(username);
             response.setReferentCode(daily.getString("referent_code"));
             response.setAccessToken(accessToken);
+            response.setNickName(daily.getString("nick_name"));
+            response.setBankAccount(daily.getString("bank_account"));
+            response.setBankNumber(daily.getString("bank_number"));
+            response.setAccountName(daily.getString("account_name"));
+            response.setCryptoAddressWallet(daily.getString("crypto_address_wallet"));
+            response.setCryptoTypeWallet(daily.getString("crypto_type_wallet"));
+            response.setId(daily.getObjectId("_id").toString());
+
             return response.toJson();
         } catch (Exception e) {
             logger.error(e.getStackTrace());
