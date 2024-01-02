@@ -10,7 +10,7 @@ public class TaiXiuMiniGameMain {
         VBeePath.initBasePath(TaiXiuMiniGameMain.class);
 
         boolean clusterMode = false;
-        boolean useConsole = true;
+        boolean useConsole = false;
         if (args.length > 0) {
             clusterMode = args[0].equalsIgnoreCase("cluster");
             useConsole = args.length > 1 && args[1].equalsIgnoreCase("console");
