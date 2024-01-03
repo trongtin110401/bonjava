@@ -2,12 +2,14 @@ package com.vinplay.api.backend.processors.daily;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.InsertOneOptions;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
 import org.apache.log4j.Logger;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 
 import javax.servlet.http.HttpServletRequest;
 import java.nio.ByteBuffer;
@@ -16,9 +18,12 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
 
-
 public class DailyRegisterProcessor implements BaseProcessor<HttpServletRequest, String> {
     private static final Logger logger = Logger.getLogger("backend");
+
+
+    private static final String DOMAIN = "http://45.76.178.154:3000/?code_daily=";
+
 
     public String execute(Param<HttpServletRequest> param) {
         HttpServletRequest request = param.get();
@@ -35,7 +40,6 @@ public class DailyRegisterProcessor implements BaseProcessor<HttpServletRequest,
             if (checkExisted(username)) {
                 return response.toJson();
             }
-
             MongoDatabase db = MongoDBConnectionFactory.getDB();
             MongoCollection col = db.getCollection("daily");
             String time_log = VinPlayUtils.getCurrentDateTime();
@@ -47,13 +51,16 @@ public class DailyRegisterProcessor implements BaseProcessor<HttpServletRequest,
             doc.append("bank_number", bankNumber);
             doc.append("account_name", accountName);
             String referentCode = generateString(5);
+            String qrCode = "https://api.qrserver.com/v1/create-qr-code/?data=" + DOMAIN + referentCode + "&amp;size=100x100";
             doc.append("referent_code", referentCode);
             doc.append("time_log", time_log);
             String accessToken = generateUniqueString();
             doc.append("access_token", accessToken);
-            doc.append("crypto_address_wallet",cryptoAddressWallet);
-            doc.append("crypto_type_wallet",cryptoTypeWallet);
+            doc.append("crypto_address_wallet", cryptoAddressWallet);
+            doc.append("crypto_type_wallet", cryptoTypeWallet);
+            doc.append("qr_code", qrCode);
             col.insertOne(doc);
+            ObjectId generatedId = doc.getObjectId("_id");
             response = new DailyEntity(true, "200");
 
             response.setUsername(username);
@@ -65,6 +72,8 @@ public class DailyRegisterProcessor implements BaseProcessor<HttpServletRequest,
             response.setAccountName(accountName);
             response.setCryptoAddressWallet(cryptoAddressWallet);
             response.setCryptoTypeWallet(cryptoTypeWallet);
+            response.setQrCode(qrCode);
+            response.setId(generatedId.toString());
 
 
             return response.toJson();

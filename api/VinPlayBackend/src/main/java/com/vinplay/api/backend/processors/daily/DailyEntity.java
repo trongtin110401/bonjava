@@ -23,6 +23,8 @@ public class DailyEntity extends BaseResponseModel {
 
     private String cryptoTypeWallet;
 
+    private String qrCode;
+
     public DailyEntity(boolean success, String errorCode) {
         super(success, errorCode);
     }
@@ -105,5 +107,13 @@ public class DailyEntity extends BaseResponseModel {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getQrCode() {
+        return qrCode;
+    }
+
+    public void setQrCode(String qrCode) {
+        this.qrCode = qrCode;
     }
 }
