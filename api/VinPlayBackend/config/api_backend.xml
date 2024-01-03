@@ -1618,5 +1618,10 @@
             <name>dai ly update referent code</name>
             <path>com.vinplay.api.backend.processors.daily.DailyUpdateReferentCodeProcessor</path>
         </command>
+        <command>
+            <id>11004</id>
+            <name>dai ly update information</name>
+            <path>com.vinplay.api.backend.processors.daily.DailyUpdateInformationProcessor</path>
+        </command>
     </commands>
 </backend>
