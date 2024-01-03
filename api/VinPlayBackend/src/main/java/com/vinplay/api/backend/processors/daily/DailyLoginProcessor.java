@@ -21,7 +21,7 @@ public class DailyLoginProcessor implements BaseProcessor<HttpServletRequest, St
     private static final Logger logger = Logger.getLogger("backend");
 
     public String execute(Param<HttpServletRequest> param) {
-        HttpServletRequest request = param.get();
+            HttpServletRequest request = param.get();
         DailyEntity response = new DailyEntity(false, "1001");
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection col = db.getCollection("daily");
@@ -49,6 +49,7 @@ public class DailyLoginProcessor implements BaseProcessor<HttpServletRequest, St
             response.setCryptoAddressWallet(daily.getString("crypto_address_wallet"));
             response.setCryptoTypeWallet(daily.getString("crypto_type_wallet"));
             response.setId(daily.getObjectId("_id").toString());
+            response.setQrCode(daily.getString("qr_code"));
 
             return response.toJson();
         } catch (Exception e) {
