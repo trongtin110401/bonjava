@@ -170,7 +170,7 @@ public class PortalUtils {
             sessionKey = VinPlayUtils.genSessionKey((UserClientInfo) userInfo);
             try {
                 SecurityServiceImpl sercuSer = new SecurityServiceImpl();
-                if(!ip.contains("10.40.112.3")) {
+                if(!ip.contains("192.168.1.96")) {
                     sercuSer.saveLoginInfo(userCache.getId(), userCache.getUsername(), userCache.getNickname(), ip, PortalUtils.getUserAgent(request), 1, platform);
                 }
                 UserExtraInfoModel userExtraModel = new UserExtraInfoModel(userCache.getNickname(), platform);
