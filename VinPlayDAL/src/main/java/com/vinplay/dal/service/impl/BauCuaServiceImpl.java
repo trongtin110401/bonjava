@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  com.hazelcast.core.HazelcastInstance
  *  com.hazelcast.core.IMap
@@ -42,14 +42,16 @@ import com.vinplay.vbee.common.models.minigame.baucua.ToiChonCa;
 import com.vinplay.vbee.common.models.minigame.baucua.TransactionBauCua;
 import com.vinplay.vbee.common.models.minigame.baucua.TransactionBauCuaDetail;
 import com.vinplay.vbee.common.rmq.RMQApi;
+
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 public class BauCuaServiceImpl
-implements BauCuaService {
+        implements BauCuaService {
     private BauCuaDAO dao = new BauCuaDAOImpl();
 
     @Override
@@ -61,7 +63,7 @@ implements BauCuaService {
         msg.transactionCode = tranDetail.transactionCode;
         msg.betValues = tranDetail.betValues;
         msg.moneyType = tranDetail.moneyType;
-        RMQApi.publishMessage((String)"queue_baucua", (BaseMessage)msg, (int)130);
+        RMQApi.publishMessage((String) "queue_baucua", (BaseMessage) msg, (int) 130);
     }
 
     @Override
@@ -76,7 +78,7 @@ implements BauCuaService {
         msg.prizes = transaction.prizes;
         msg.totalExchange = transaction.totalExchange;
         msg.moneyType = transaction.moneyType;
-        RMQApi.publishMessage((String)"queue_baucua", (BaseMessage)msg, (int)131);
+        RMQApi.publishMessage((String) "queue_baucua", (BaseMessage) msg, (int) 131);
     }
 
     @Override
@@ -90,7 +92,7 @@ implements BauCuaService {
         msg.xValue = resultBC.xValue;
         msg.totalBetValues = resultBC.totalBetValues;
         msg.totalPrizes = resultBC.totalPrizes;
-        RMQApi.publishMessage((String)"queue_baucua", (BaseMessage)msg, (int)132);
+        RMQApi.publishMessage((String) "queue_baucua", (BaseMessage) msg, (int) 132);
     }
 
     @Override
@@ -105,13 +107,17 @@ implements BauCuaService {
 
     @Override
     public List<TopWin> getTopBauCua(byte moneyType, String startDate, String endDate) {
+        List<TopWin> rs = new ArrayList<>();
         TopWinCache topBCCache;
         HazelcastInstance client = HazelcastClientFactory.getInstance();
         IMap topMap = client.getMap("cacheTop");
-        if (topMap.containsKey((Object)(Games.BAU_CUA.getName() + "_" + moneyType)) && (topBCCache = (TopWinCache)topMap.get((Object)(Games.BAU_CUA.getName() + "_" + moneyType))) != null) {
-            return topBCCache.getResult();
+        if (topMap.containsKey((Object) (Games.BAU_CUA.getName() + "_" + moneyType)) && (topBCCache = (TopWinCache) topMap.get((Object) (Games.BAU_CUA.getName() + "_" + moneyType))) != null) {
+            rs = topBCCache.getResult();
         }
-        return this.dao.getTopBauCua(moneyType, startDate, endDate);
+        if (rs == null || rs.isEmpty()) {
+            rs = this.dao.getTopBauCua(moneyType, startDate, endDate);
+        }
+        return rs;
     }
 
     @Override
@@ -120,22 +126,22 @@ implements BauCuaService {
         String currentDate = df.format(new Date());
         String startDate = currentDate + " 00:00:00";
         String endDate = currentDate + " 23:59:59";
-        List<TopWin> topWinVin = this.dao.getTopBauCua((byte)1, startDate, endDate);
-        List<TopWin> topWinXu = this.dao.getTopBauCua((byte)0, startDate, endDate);
+        List<TopWin> topWinVin = this.dao.getTopBauCua((byte) 1, startDate, endDate);
+        List<TopWin> topWinXu = this.dao.getTopBauCua((byte) 0, startDate, endDate);
         HazelcastInstance client = HazelcastClientFactory.getInstance();
         IMap topMap = client.getMap("cacheTop");
-        TopWinCache cacheVin = (TopWinCache)topMap.get((Object)(Games.BAU_CUA.getName() + "_1"));
+        TopWinCache cacheVin = (TopWinCache) topMap.get((Object) (Games.BAU_CUA.getName() + "_1"));
         if (cacheVin == null) {
             cacheVin = new TopWinCache();
         }
         cacheVin.setResult(topWinVin);
-        topMap.put((Object)(Games.BAU_CUA.getName() + "_1"), (Object)cacheVin);
-        TopWinCache cacheXu = (TopWinCache)topMap.get((Object)(Games.BAU_CUA.getName() + "_0"));
+        topMap.put((Object) (Games.BAU_CUA.getName() + "_1"), (Object) cacheVin);
+        TopWinCache cacheXu = (TopWinCache) topMap.get((Object) (Games.BAU_CUA.getName() + "_0"));
         if (cacheXu == null) {
             cacheXu = new TopWinCache();
         }
         cacheXu.setResult(topWinXu);
-        topMap.put((Object)(Games.BAU_CUA.getName() + "_0"), (Object)cacheXu);
+        topMap.put((Object) (Games.BAU_CUA.getName() + "_0"), (Object) cacheXu);
     }
 
     @Override
@@ -158,17 +164,17 @@ implements BauCuaService {
         IMap map = client.getMap("cacheToiChonCa");
         for (TransactionBauCua tran : transactions) {
             ToiChonCaModel model2;
-            if (map.containsKey((Object)tran.username)) {
+            if (map.containsKey((Object) tran.username)) {
                 try {
-                    map.lock((Object)tran.username);
-                    model2 = (ToiChonCaModel)map.get((Object)tran.username);
+                    map.lock((Object) tran.username);
+                    model2 = (ToiChonCaModel) map.get((Object) tran.username);
                     if (!model2.playOnToday()) {
                         model2.soCaHighScore = 0;
                         model2.clear();
                     }
                     if (tran.betValues[3] >= 2000L && existCa) {
                         ToiChonCaModel toiChonCaModel = model2;
-                        toiChonCaModel.soCa = (short)(toiChonCaModel.soCa + 1);
+                        toiChonCaModel.soCa = (short) (toiChonCaModel.soCa + 1);
                         model2.addNewPhien(tran.referenceId);
                         ToiChonCaModel toiChonCaModel2 = model2;
                         toiChonCaModel2.tongDat += tran.betValues[3];
@@ -183,13 +189,11 @@ implements BauCuaService {
                     } else {
                         model2.clear();
                     }
-                    map.put((Object)tran.username, (Object)model2);
-                }
-                catch (Exception e) {
+                    map.put((Object) tran.username, (Object) model2);
+                } catch (Exception e) {
                     continue;
-                }
-                finally {
-                    map.unlock((Object)tran.username);
+                } finally {
+                    map.unlock((Object) tran.username);
                     continue;
                 }
             }
@@ -202,7 +206,7 @@ implements BauCuaService {
                     this.newHighScoreToiChonCa(model2);
                 }
             }
-            map.put((Object)tran.username, (Object)model2);
+            map.put((Object) tran.username, (Object) model2);
         }
     }
 
@@ -216,7 +220,7 @@ implements BauCuaService {
         msg.tongThang = model.tongThang;
         msg.currentPhien = model.currentPhien;
         msg.listPhien = model.getListPhien();
-        RMQApi.publishMessage((String)"queue_baucua", (BaseMessage)msg, (int)133);
+        RMQApi.publishMessage((String) "queue_baucua", (BaseMessage) msg, (int) 133);
     }
 
     @Override
