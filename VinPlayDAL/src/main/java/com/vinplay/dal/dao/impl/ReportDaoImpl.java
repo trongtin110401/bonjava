@@ -253,12 +253,44 @@ implements ReportDAO {
         return res;
     }
 
+    public long getCurrentMoneyAllUsersByDaily(String nickname) throws SQLException {
+        long res = 0L;
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");){
+            String sql = "SELECT sum(vin_total) as vin_total FROM users WHERE user_daily = ?";
+            PreparedStatement stm = conn.prepareStatement(sql);
+            stm.setString(1, nickname);
+            ResultSet rs = stm.executeQuery();
+            if (rs.next()) {
+                res = rs.getLong("vin_total");
+            }
+            rs.close();
+            stm.close();
+        }
+        return res;
+    }
+
     @Override
     public long getSafeMoney(String nickname) throws SQLException {
         long res = 0L;
         try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");){
             String sql = "SELECT safe FROM users WHERE nick_name=?";
             PreparedStatement stm = conn.prepareStatement("SELECT safe FROM users WHERE nick_name=?");
+            stm.setString(1, nickname);
+            ResultSet rs = stm.executeQuery();
+            if (rs.next()) {
+                res = rs.getLong("safe");
+            }
+            rs.close();
+            stm.close();
+        }
+        return res;
+    }
+
+    public long getSafeMoneyAllUsersByDaily(String nickname) throws SQLException {
+        long res = 0L;
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");){
+            String sql = "SELECT sum(safe) as safe FROM users WHERE  user_daily =?";
+            PreparedStatement stm = conn.prepareStatement(sql);
             stm.setString(1, nickname);
             ResultSet rs = stm.executeQuery();
             if (rs.next()) {
