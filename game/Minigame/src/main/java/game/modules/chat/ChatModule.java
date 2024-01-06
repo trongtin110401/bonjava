@@ -250,7 +250,7 @@ public class ChatModule
         String username = user.getName();
         ChatMsg msg = new ChatMsg();
 
-        if (!this.containBadword(username, cmd.message)) {
+        if (this.containBadword(username, cmd.message)) {
             msg.Error = 5;
             this.send(msg, user);
         } else if ((cmd.message.length() >= 40)) {
