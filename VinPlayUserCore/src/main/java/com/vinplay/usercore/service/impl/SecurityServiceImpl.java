@@ -492,7 +492,7 @@ public class SecurityServiceImpl
             } finally {
                 try {
                     userMap.unlock(nickname);
-                }catch (Exception e3) {
+                } catch (Exception e3) {
                     logger.error((Object) ("sendMoneyToSafe error: " + e3.getMessage()));
                 }
             }
@@ -911,17 +911,37 @@ public class SecurityServiceImpl
     public boolean saveUserMapToDailyInfo(int userId, String username, String nickname, String codeDaily) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         InsertELK elk = new InsertELK();
+        UserDaoImpl userService = new UserDaoImpl();
+
         String time_log = VinPlayUtils.getCurrentDateTime();
         MongoCollection col = db.getCollection("user_map_daily");
         Document doc = new Document();
-        doc.append("userId", userId);
+        doc.append("user_id", userId);
         doc.append("user_name", username);
-        doc.append("nickName", nickname);
-        doc.append("id_daily", codeDaily);
-        doc.append("time_log", (Object)time_log);
-        col.insertOne((Object)doc);
+        doc.append("nick_name", nickname);
+        Document conditions = new Document();
+        conditions.put("referent_code", codeDaily);
+        Document daiLy = db.getCollection("daily").find(conditions).first();
+        doc.append("id_daily", daiLy.getString("nick_name"));
+        doc.append("time_log", time_log);
+
+        try {
+            userService.updateDailyToUser(userId, getNicknameByReferentCode(codeDaily));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        col.insertOne(doc);
         elk.InsertUserMapDaily(userId, username, nickname, codeDaily, time_log);
         return true;
+    }
+
+    public String getNicknameByReferentCode(String codeDaily) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection col = db.getCollection("daily");
+        Document conditions = new Document();
+        conditions.put("referent_code", codeDaily);
+        Document response = (Document) col.find(conditions).first();
+        return response.get("nick_name").toString();
     }
 
 }
