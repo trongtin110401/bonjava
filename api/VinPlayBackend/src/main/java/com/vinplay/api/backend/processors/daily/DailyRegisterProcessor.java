@@ -36,7 +36,7 @@ public class DailyRegisterProcessor implements BaseProcessor<HttpServletRequest,
             String accountName = request.getParameter("accountName");
             String cryptoAddressWallet = request.getParameter("cryptoAddressWallet");
             String cryptoTypeWallet = request.getParameter("cryptoTypeWallet");
-            if (checkExisted(username)) {
+            if (checkExisted(username, nickName)) {
                 return response.toJson();
             }
             MongoDatabase db = MongoDBConnectionFactory.getDB();
@@ -82,10 +82,11 @@ public class DailyRegisterProcessor implements BaseProcessor<HttpServletRequest,
         return response.toJson();
     }
 
-    private Boolean checkExisted(String username) {
+    private Boolean checkExisted(String username, String nickName) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         Document conditions = new Document();
         conditions.put("user_name", username);
+        conditions.put("nick_name", nickName);
         long totalRows = db.getCollection("daily").count(conditions);
         if (totalRows > 0)
             return Boolean.TRUE;
