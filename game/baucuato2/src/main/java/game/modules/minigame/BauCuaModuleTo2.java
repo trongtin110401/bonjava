@@ -188,29 +188,29 @@ extends BaseClientRequestHandler {
         }
 
         switch (this.count) {
-            case 25: {
+            case 15: {
                 this.isBettingRound = false;
                 break;
             }
-            case 30: {
+            case 20: {
                 genResult = true;
                 break;
             }
-            case 31: {
+            case 21: {
                 genResult = false;
                 this.generateResult();
                 break;
             }
-            case 35: {
+            case 22: {
                 CalculatePrizeTask task = new CalculatePrizeTask();
                 task.run();
                 break;
             }
-            case 50: {
+            case 27: {
                 this.startNewRound();
                 break;
             }
-            case 45: {
+            case 30: {
                 this.broadcastMessage();
             }
         }
@@ -296,7 +296,7 @@ extends BaseClientRequestHandler {
 
     private byte getRemainTime() {
         if (this.genResult) {
-            return (byte)(30 - this.count);
+            return (byte)(20 - this.count);
         }
         return (byte)(50 - this.count);
     }

@@ -13,6 +13,7 @@ SCRIPT_PATH=$(pwd)
 killProcess() {
   echo "Working path: " . $SCRIPT_PATH
   kill -9 $(ps aux | grep "java -cp" | grep -v 'grep' | awk '{print $2}')
+  kill -9 $(ps aux | grep "wsreport" | grep -v 'grep' | awk '{print $2}')
 }
 
 # run vbee
