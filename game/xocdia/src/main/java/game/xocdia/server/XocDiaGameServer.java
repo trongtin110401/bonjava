@@ -421,13 +421,13 @@ public class XocDiaGameServer
                     --this.countTime;
                     break;
                 }
-                case 30: {
+                case 20: {
                     this.stopBetting();
                     this.finishStep = true;
                     break;
                 }
 
-                case 35: {
+                case 23: {
                     if (this.finishStep) {
                         this.finishStep = false;
                         this.startReward();
@@ -438,7 +438,7 @@ public class XocDiaGameServer
                     --this.countTime;
                     break;
                 }
-                case 50: {
+                case 33: {
                     if (this.finishStep) {
                         this.finish();
                         break;
