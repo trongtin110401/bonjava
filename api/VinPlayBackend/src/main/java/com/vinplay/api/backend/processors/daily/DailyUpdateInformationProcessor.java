@@ -31,7 +31,6 @@ public class DailyUpdateInformationProcessor implements BaseProcessor<HttpServle
 
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-        String nickName = request.getParameter("nickName");
         String bankAccount = request.getParameter("bankAccount");
         String bankNumber = request.getParameter("bankNumber");
         String accountName = request.getParameter("accountName");
@@ -52,7 +51,6 @@ public class DailyUpdateInformationProcessor implements BaseProcessor<HttpServle
             updateNonNullField("password", hashMD5(password), updatedDocument);
         }
         updateNonNullField("user_name", username, updatedDocument);
-        updateNonNullField("nick_name", nickName, updatedDocument);
         updateNonNullField("bank_account", bankAccount, updatedDocument);
         updateNonNullField("bank_number", bankNumber, updatedDocument);
         updateNonNullField("account_name", accountName, updatedDocument);

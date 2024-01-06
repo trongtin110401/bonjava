@@ -1,4 +1,5 @@
 package com.vinplay.api.backend.processors.daily;
+
 import com.mongodb.BasicDBObject;
 import com.mongodb.Block;
 import com.mongodb.client.FindIterable;
@@ -27,17 +28,14 @@ public class GetUserOfDailyProcessor implements BaseProcessor<HttpServletRequest
         try {
             String codeDaily = request.getParameter("dl");
             String typeSearch = request.getParameter("type");
-            if(typeSearch.equals("elk")) {
+
+            if (typeSearch.equals("elk")) {
                 APIelk apielk = new APIelk();
                 List<UserDailyResponse> listUser;
                 listUser = apielk.UserbyIDDaiLy2(codeDaily);
                 Collections.reverse(listUser);
                 res.ListUserOfDaily = listUser;
-                res.setErrorCode("0");
-                res.setSuccess(true);
-            }
-
-            if(typeSearch.equals("mongo")) {
+            } else {
                 List<UserDailyResponse> listUser = new ArrayList<>();
                 MongoDatabase db = MongoDBConnectionFactory.getDB();
                 MongoCollection col = db.getCollection("user_map_daily");
@@ -49,9 +47,9 @@ public class GetUserOfDailyProcessor implements BaseProcessor<HttpServletRequest
                 } else {
                     return res.toJson();
                 }
-                FindIterable iterable = col.find( new Document(conditions)).sort( objSort).limit(1000);
+                FindIterable iterable = col.find(new Document(conditions)).sort(objSort).limit(1000);
                 iterable.forEach((Block<Document>) document -> {
-                    String nick_name = document.getString("nickName");
+                    String nick_name = document.getString("nick_name");
                     String user_name = document.getString("user_name");
                     String time_log = document.getString("time_log");
                     if (!nick_name.equals("")) {
@@ -61,11 +59,10 @@ public class GetUserOfDailyProcessor implements BaseProcessor<HttpServletRequest
                 });
                 Collections.reverse(listUser);
                 res.ListUserOfDaily = listUser;
-                res.setErrorCode("0");
-                res.setSuccess(true);
             }
-        }
-        catch (Exception e) {
+            res.setErrorCode("0");
+            res.setSuccess(true);
+        } catch (Exception e) {
             logger.debug(e);
         }
         return res.toJson();
