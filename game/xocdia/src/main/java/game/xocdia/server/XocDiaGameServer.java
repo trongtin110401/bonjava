@@ -422,7 +422,6 @@ public class XocDiaGameServer
                     break;
                 }
                 case 30: {
-
                     this.stopBetting();
                     this.finishStep = true;
                     break;
@@ -677,7 +676,7 @@ public class XocDiaGameServer
             this.isBetting = false;
             this.gameState = (byte) 2;
             this.enableBetting = true;
-            this.notifyActionGamme((byte) 2, (byte) 30);
+            this.notifyActionGamme((byte) 2, (byte) 20);
         } catch (Exception e) {
             String content = "Xoc Dia exception: " + e.getMessage() + ", function: startBetting() " + this.roomId + " " + this.gameId;
             MsgUtils.alertServer(content, false, true);
@@ -739,7 +738,7 @@ public class XocDiaGameServer
                 Debug.trace((Object[]) new Object[]{"START REWARD", VinPlayUtils.getCurrentDateTime(), this.roomId, this.gameId});
                 this.gameState = (byte) 6;
                 this.gameLog.append(">").append("XDKQ<");
-                this.notifyActionGamme((byte) 6, (byte) 15);
+                this.notifyActionGamme((byte) 6, (byte) 10);
                 this.reward();
             }
         } catch (Exception e) {
