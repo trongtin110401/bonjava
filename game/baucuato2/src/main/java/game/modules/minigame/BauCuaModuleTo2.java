@@ -188,29 +188,29 @@ extends BaseClientRequestHandler {
         }
 
         switch (this.count) {
-            case 15: {
+            case 20: {
                 this.isBettingRound = false;
                 break;
             }
-            case 20: {
+            case 21: {
                 genResult = true;
                 break;
             }
-            case 21: {
+            case 22: {
                 genResult = false;
                 this.generateResult();
                 break;
             }
-            case 22: {
+            case 26: {
                 CalculatePrizeTask task = new CalculatePrizeTask();
                 task.run();
                 break;
             }
-            case 27: {
+            case 30: {
                 this.startNewRound();
                 break;
             }
-            case 30: {
+            case 32: {
                 this.broadcastMessage();
             }
         }
