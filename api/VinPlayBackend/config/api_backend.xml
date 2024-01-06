@@ -1623,5 +1623,10 @@
             <name>dai ly update information</name>
             <path>com.vinplay.api.backend.processors.daily.DailyUpdateInformationProcessor</path>
         </command>
+        <command>
+            <id>11008</id>
+            <name>dai ly update information</name>
+            <path>com.vinplay.api.backend.processors.daily.ReportAllMoneyUsersOfDailyProcessor</path>
+        </command>
     </commands>
 </backend>
