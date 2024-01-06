@@ -256,7 +256,7 @@ public class ChatModule
         } else if ((cmd.message.length() >= 40)) {
             msg.Error = 6;
             this.send(msg, user);
-        } else if (this.allowUserChat(user.getName(), daiLy) && !this.containBadword(username, cmd.message) && (cmd.message.length() <= 40)) {
+        } else if (this.allowUserChat(user.getName(), daiLy)) {
             try {
                 HazelcastInstance client = HazelcastClientFactory.getInstance();
                 IMap<String, UserModel> userMap = client.getMap("users");
