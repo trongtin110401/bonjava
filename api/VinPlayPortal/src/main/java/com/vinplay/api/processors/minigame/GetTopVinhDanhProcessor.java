@@ -38,12 +38,11 @@ public class GetTopVinhDanhProcessor
 
     public String execute(Param<HttpServletRequest> param) {
         HttpServletRequest request = param.get();
-        int moneyType = Integer.parseInt(request.getParameter("mt"));
-        String txType = request.getParameter("txType");
-        String userCurrent = request.getParameter("userCurrent");
-        String typeVinhDanh = request.getParameter("typeVinhDanh");
+//        int moneyType = Integer.parseInt(request.getParameter("mt"));
+//        String txType = request.getParameter("txType");
+//        String userCurrent = request.getParameter("userCurrent");
+//        String typeVinhDanh = request.getParameter("typeVinhDanh");
         TopVinhDanhResponse response = new TopVinhDanhResponse(false, "1001");
-        TopWin topWin = new TopWin();
         response.setListVinhDanh(getListTopWin(""));
         return response.toJson();
     }
