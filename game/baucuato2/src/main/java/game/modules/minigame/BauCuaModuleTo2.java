@@ -207,11 +207,11 @@ extends BaseClientRequestHandler {
                 break;
             }
             case 30: {
-                this.startNewRound();
-                break;
+                this.broadcastMessage();
             }
             case 32: {
-                this.broadcastMessage();
+                this.startNewRound();
+                break;
             }
         }
     }
@@ -298,7 +298,7 @@ extends BaseClientRequestHandler {
         if (this.genResult) {
             return (byte)(20 - this.count);
         }
-        return (byte)(50 - this.count);
+        return (byte)(32 - this.count);
     }
 
     private String getRoomName(short moneyType, long baseBetting) {
