@@ -910,5 +910,10 @@
             <name>get codepay</name>
             <path>com.vinplay.api.processors.demo.Demo</path>
         </command>
+        <command>
+            <id>4105</id>
+            <name>get top vinh danh by game</name>
+            <path>com.vinplay.api.processors.minigame.GetTopVinhDanhProcessor</path>
+        </command>
     </commands>
 </portal>
