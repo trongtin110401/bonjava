@@ -915,5 +915,10 @@
             <name>get top vinh danh by game</name>
             <path>com.vinplay.api.processors.minigame.GetTopVinhDanhProcessor</path>
         </command>
+        <command>
+            <id>4106</id>
+            <name>get top vinh danh by game</name>
+            <path>com.vinplay.api.processors.minigame.GetLichSuXocDiaProcessor</path>
+        </command>
     </commands>
 </portal>
