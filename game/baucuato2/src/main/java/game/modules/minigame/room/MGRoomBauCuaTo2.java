@@ -441,6 +441,9 @@ public class MGRoomBauCuaTo2
                     // tinh phe giao dich = 2%
                     long fee = (long) ((float) totalBetValues * this.tax / 100.0f);
                     totalPrize = totalPrize - fee;
+
+                    long feePrice = (long) ((float)  tran.prizes[i] * this.tax / 100.0f);
+                    tran.prizes[i] =   tran.prizes[i] - feePrice;
                 }
 
                 totalBetValues += tran.betValues[i];
