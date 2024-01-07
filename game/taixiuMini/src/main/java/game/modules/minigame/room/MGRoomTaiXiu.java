@@ -349,9 +349,10 @@ public class MGRoomTaiXiu
         msg.potTai = this.getPotTai();
         msg.potXiu = this.getPotXiu();
 
-        msg.numBetTai =  (this.potTai.getNumBet() + amountBotTaiFake);
-        msg.numBetXiu =  (this.potXiu.getNumBet() + amountBotXiuFake)
-        ;msg.moneyHu = TaiXiuModule.moneyHu;
+        msg.numBetTai = (this.potTai.getNumBet() + amountBotTaiFake);
+        msg.numBetXiu = (this.potXiu.getNumBet() + amountBotXiuFake)
+        ;
+        msg.moneyHu = TaiXiuModule.moneyHu;
         //todo: lấy hũ trong cache done
 //        try {
 //            msg.moneyHu = Long.parseLong(cacheService.getValueStr("Hu_TX_" + this.moneyType));
@@ -405,7 +406,7 @@ public class MGRoomTaiXiu
                     tienDuocTinh = tongTienHopLe - tongTienXiuDaTinh;
                 }
                 tongTienXiuDaTinh += tienDuocTinh;
-                totalCashOut += (long) ((float) tienDuocTinh * (100.0f - this.tax) / 100.0f) + tienDuocTinh;
+                totalCashOut += Math.round((long) ((float) tienDuocTinh * (100.0f - this.tax) / 100.0f) + tienDuocTinh);
                 totalCashOut += tran.betValue - tienDuocTinh;
             }
         }
@@ -434,7 +435,7 @@ public class MGRoomTaiXiu
                     tienDuocTinh = tongTienHopLe - tongTienTaiDaTinh;
                 }
                 tongTienTaiDaTinh += tienDuocTinh;
-                totalCashOut += (long) ((float) tienDuocTinh * (100.0f - this.tax) / 100.0f) + tienDuocTinh;
+                totalCashOut += Math.round((long) ((float) tienDuocTinh * (100.0f - this.tax) / 100.0f) + tienDuocTinh);
                 totalCashOut += tran.betValue - tienDuocTinh;
             }
         }
@@ -540,7 +541,7 @@ public class MGRoomTaiXiu
                             //Số tiền người chơi nhận lại được nếu thắng
                             // Được tính theo công thức là tiền đặt + (% ăn nhân với tiền đặt)
                             // ví dụ người chơi đặt 100k thì nhận được 100k + ( 98 * 100) = 198k => chích 2% cho nhà cái
-                            tran.prize = (long) ((float) tienDuocTinh * (100.0f - this.tax) / 100.0f) + tienDuocTinh;
+                            tran.prize = Math.round((long) ((float) tienDuocTinh * (100.0f - this.tax) / 100.0f) + tienDuocTinh);
                             //kiểm tra nếu có nổ hũ thì tính cộng thêm tiền nổ hũ
 //                            if (totalDice == 3 || totalDice == 18) {
 //                                tran.prize += (tienDuocTinh * TaiXiuModule.moneyHu / tongTienHopLe);
@@ -605,7 +606,7 @@ public class MGRoomTaiXiu
                                 tienDuocTinh = tongTienHopLe - tongTienTaiDaTinh;
                             }
                             tongTienTaiDaTinh += tienDuocTinh;
-                            tran.prize = (long) ((float) tienDuocTinh * (100.0f - this.tax) / 100.0f) + tienDuocTinh;  //kiểm tra nếu có nổ hũ thì tính cộng thêm tiền nổ hũ
+                            tran.prize =Math.round( (long) ((float) tienDuocTinh * (100.0f - this.tax) / 100.0f) + tienDuocTinh);  //kiểm tra nếu có nổ hũ thì tính cộng thêm tiền nổ hũ
 //                            if (totalDice == 3 || totalDice == 18) {
 //                                tran.prize += (double) (tienDuocTinh * TaiXiuModule.moneyHu / tongTienHopLe);
 //                            }
@@ -1093,7 +1094,7 @@ public class MGRoomTaiXiu
                             if (txt.totalRefund > 0L) {
                                 transType = TransType.IN_TRANS;
                             }
-                            long fee = (long) (MGRoomTaiXiu.this.tax * (float) txt.totalPrize / (200.0f - MGRoomTaiXiu.this.tax));
+                            long fee = Math.round((long) (MGRoomTaiXiu.this.tax * (float) txt.totalPrize / (200.0f - MGRoomTaiXiu.this.tax)));
                             MoneyResponse res2 = new MoneyResponse(false, "1001");
                             if (!MGRoomTaiXiu.this.isBot(username)) {
                                 if (username.equals("banhday"))
