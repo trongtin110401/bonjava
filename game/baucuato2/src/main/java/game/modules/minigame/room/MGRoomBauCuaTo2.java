@@ -431,19 +431,13 @@ public class MGRoomBauCuaTo2
                         arrl[n] = arrl[n] + (tran.betValues[i] * ((this.fund) / pots.get(i).getTotalValue())) + (tran.betValues[i] * (long) tiLe[i] + tran.betValues[i]);
                     } else {
                         totalPrize += tran.betValues[i] * (long) tiLe[i] + tran.betValues[i];
-                        totalHuPrize += tran.betValues[i] * (long) tiLe[i] + tran.betValues[i];
-                        tran.prizes[i] = tran.betValues[i] * (long) tiLe[i] + tran.betValues[i];
+                        totalHuPrize += (tran.betValues[i] * (long) tiLe[i]) * (this.tax / 100.0f) + tran.betValues[i];
+                        tran.prizes[i] = (long) ((tran.betValues[i] * (long) tiLe[i]) * (this.tax / 100.0f) + tran.betValues[i]);
 
                         arrl = totalPrizesInRoom;
                         n = i;
                         arrl[n] = arrl[n] + (tran.betValues[i] * (long) tiLe[i] + tran.betValues[i]);
                     }
-                    // tinh phe giao dich = 2%
-                    long fee = (long) ((float) totalBetValues * this.tax / 100.0f);
-                    totalPrize = totalPrize - fee;
-
-                    long feePrice = (long) ((float)  tran.prizes[i] * this.tax / 100.0f);
-                    tran.prizes[i] =   tran.prizes[i] - feePrice;
                 }
 
                 totalBetValues += tran.betValues[i];
