@@ -42,7 +42,7 @@ public class GetTopVinhDanhProcessor
 //        String txType = request.getParameter("txType");
 //        String userCurrent = request.getParameter("userCurrent");
 //        String typeVinhDanh = request.getParameter("typeVinhDanh");
-        TopVinhDanhResponse response = new TopVinhDanhResponse(false, "1001");
+        TopVinhDanhResponse response = new TopVinhDanhResponse(true, "0");
         response.setListVinhDanh(getListTopWin(""));
         return response.toJson();
     }
