@@ -424,10 +424,11 @@ public class MGRoomBauCuaTo2
                         potIdNohu = i;
                         long bet = tran.betValues[i];
                         long win = bet * tiLe[i];
-                        long fee = (long) ((win - bet) * (tax / 100));
-                        totalHuPrize += (long) (bet * ((double) (this.fund) / pots.get(i).getTotalValue()));
+                        long fee = (long) (win * (tax / 100));
                         totalPrize += (long) (bet * ((double) (this.fund) / pots.get(i).getTotalValue()) + (win - fee));
                         tran.prizes[i] = totalPrize;
+
+                        totalHuPrize += (long) (bet * ((double) (this.fund) / pots.get(i).getTotalValue()));
 
                         arrl = totalPrizesInRoom;
                         n = i;
@@ -435,10 +436,11 @@ public class MGRoomBauCuaTo2
                     } else {
                         long bet = tran.betValues[i];
                         long win = bet * tiLe[i];
-                        long fee = (long) ((win - bet) * (tax / 100.0f));
-                        totalPrize += (win - fee);
-                        totalHuPrize += (bet * tiLe[i]) + bet;
+                        long fee = (long) (win * (tax / 100.0f));
+                        totalPrize += (win + bet - fee);
                         tran.prizes[i] = totalPrize;
+
+                        totalHuPrize += (bet * tiLe[i]) + bet;
 
                         arrl = totalPrizesInRoom;
                         n = i;
