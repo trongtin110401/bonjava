@@ -9,7 +9,7 @@ public class MinigameConstant {
     public static final int BAU_CUA = 3;
     public static final int XENG_HOA_QUA = 4;
     public static final String TAI_XIU_STR = "TaiXiu";
-    public static float MINIGAME_TAX_VIN = 1.0f;
+    public static float MINIGAME_TAX_VIN = 2.0f;
     public static float MINIGAME_TAX_XU = 7.0f;
     public static final int WAITING_SERVER_READY_TIME = 10;
     public static final int TX_MAX_LICH_SU_PHIEN = 120;

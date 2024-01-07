@@ -100,7 +100,8 @@ public class MGRoomBauCuaTo2
     private Map<Integer, Long> mapReportBet = new HashMap<>();
     private Map<Integer, Long> mapBotReportBet = new HashMap<>();
     private Map<String, BauCuaUserInfomation> listBauCuaInformation = new HashMap<>();
-    private  ObjectMapper objectMapper = new ObjectMapper();
+    private ObjectMapper objectMapper = new ObjectMapper();
+
     public MGRoomBauCuaTo2(String name, int minBetValue, byte moneyType, byte id, long fund) {
         super(name);
         this.id = id;
@@ -318,8 +319,6 @@ public class MGRoomBauCuaTo2
                 listBauCuaInformation.put(username, bauCuaUserInfomation);
 
 
-
-
             }
         } catch (Exception e) {
 
@@ -338,7 +337,7 @@ public class MGRoomBauCuaTo2
         Collection<BauCuaUserInfomation> values = listBauCuaInformation.values();
         ArrayList<BauCuaUserInfomation> baucualist = new ArrayList<>(values);
         try {
-            cacheService.setValue("baucualist", objectMapper.writeValueAsString(baucualist) );
+            cacheService.setValue("baucualist", objectMapper.writeValueAsString(baucualist));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
@@ -358,7 +357,7 @@ public class MGRoomBauCuaTo2
             ArrayList<BauCuaUserInfomation> baucualist = new ArrayList<>(values);
 
             try {
-                cacheService.setValue("baucualist", objectMapper.writeValueAsString(baucualist) );
+                cacheService.setValue("baucualist", objectMapper.writeValueAsString(baucualist));
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
@@ -432,14 +431,13 @@ public class MGRoomBauCuaTo2
                         arrl[n] = arrl[n] + (tran.betValues[i] * ((this.fund) / pots.get(i).getTotalValue())) + (tran.betValues[i] * (long) tiLe[i] + tran.betValues[i]);
                     } else {
                         totalPrize += tran.betValues[i] * (long) tiLe[i] + tran.betValues[i];
-                        totalHuPrize += tran.betValues[i] * (long) tiLe[i] + tran.betValues[i];
-                        tran.prizes[i] = tran.betValues[i] * (long) tiLe[i] + tran.betValues[i];
+                        totalHuPrize += (tran.betValues[i] * (long) tiLe[i]) * (this.tax / 100.0f) + tran.betValues[i];
+                        tran.prizes[i] = (long) ((tran.betValues[i] * (long) tiLe[i]) * (this.tax / 100.0f) + tran.betValues[i]);
 
                         arrl = totalPrizesInRoom;
                         n = i;
                         arrl[n] = arrl[n] + (tran.betValues[i] * (long) tiLe[i] + tran.betValues[i]);
                     }
-
                 }
 
                 totalBetValues += tran.betValues[i];
@@ -483,8 +481,8 @@ public class MGRoomBauCuaTo2
             }
 
             //if (!isBot(tran.username)) { // check user is bot or not to calculate profit of session
-                totalPrizesUser += totalPrize; // calculate total prizes in current room
-                totalUserBetInRoom += totalBetValues; // calculate total bet value
+            totalPrizesUser += totalPrize; // calculate total prizes in current room
+            totalUserBetInRoom += totalBetValues; // calculate total bet value
 //            } else {
 //                totalBotBetInRoom += totalBetValues;
 //                totalPrizesBot += totalPrize;
@@ -497,7 +495,7 @@ public class MGRoomBauCuaTo2
             if (list50WinHu.size() >= 50) {
                 list50WinHu.remove(0);
             }
-            this.fund -= ( totalPrizesUser); // tru di tong giai trong game
+            this.fund -= (totalPrizesUser); // tru di tong giai trong game
             if (this.fund < 500000) {
                 this.fund = 500000;
             }
@@ -537,7 +535,7 @@ public class MGRoomBauCuaTo2
 
     private String getDateTime() {
         LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
-      //  now.plusHours(7);
+        //  now.plusHours(7);
         System.out.println("Before Formatting: " + now);
         DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
         String formatDateTime = now.format(format);
@@ -612,7 +610,7 @@ public class MGRoomBauCuaTo2
         Collection<BauCuaUserInfomation> values = listBauCuaInformation.values();
         ArrayList<BauCuaUserInfomation> baucualist = new ArrayList<>(values);
         try {
-            cacheService.setValue("baucualist", objectMapper.writeValueAsString(baucualist) );
+            cacheService.setValue("baucualist", objectMapper.writeValueAsString(baucualist));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
@@ -636,7 +634,7 @@ public class MGRoomBauCuaTo2
         ArrayList<BauCuaUserInfomation> baucualist = new ArrayList<>(values);
 
         try {
-            cacheService.setValue("baucualist", objectMapper.writeValueAsString(baucualist) );
+            cacheService.setValue("baucualist", objectMapper.writeValueAsString(baucualist));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }

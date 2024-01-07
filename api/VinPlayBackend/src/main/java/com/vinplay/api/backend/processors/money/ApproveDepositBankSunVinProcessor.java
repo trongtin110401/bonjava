@@ -47,6 +47,7 @@ public class ApproveDepositBankSunVinProcessor implements BaseProcessor<HttpServ
                 String transId = request.getParameter("transId");
                 String typeStr = request.getParameter("type");
                 String userApprove = request.getParameter("uad");
+                long money = Long.parseLong(request.getParameter("money"));
                 long tien_final = 0;
                 if (transId.isEmpty() || typeStr.isEmpty()) {
                     return response.toJson();
@@ -88,9 +89,9 @@ public class ApproveDepositBankSunVinProcessor implements BaseProcessor<HttpServ
                     try {
                         double flus = GameCommon.getValueDouble("RATIO_RECHARGE_BANK_TL");
                         double fee = GameCommon.getValueDouble("RATIO_RECHARGE_MOMO");
-                        double amount = fee * trans.Amount;
-                        long totalFee = Math.round(trans.Amount - amount);
-                        double tien_tmp = trans.Amount * flus;
+                        double amount = fee * money;
+                        long totalFee = Math.round(money - amount);
+                        double tien_tmp = money * flus;
                         tien_final = (long) tien_tmp;
                         totalFee = totalFee > 0 ? totalFee : 0;
                         response = service.updateMoneyFromAdmin(trans.Nickname, tien_final, "vin", Consts.RECHARGE_BY_BANK, "Deposit bank", "Deposit bank", totalFee);
@@ -99,9 +100,9 @@ public class ApproveDepositBankSunVinProcessor implements BaseProcessor<HttpServ
                         e.printStackTrace();
                     }
                     HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
-                    historyTransDao.insertTransaction(new HistoryTransModel(trans.BankBrandName + "|" + trans.getDescription(), "CodePay", "Nạp tiền", trans.Amount+"", "Thành công", "Nạp tiền Thành công ", trans.Nickname, HistoryTransConst.BANK, trans.Id));
+                    historyTransDao.insertTransaction(new HistoryTransModel(trans.BankBrandName + "|" + trans.getDescription(), "CodePay", "Nạp tiền", money + "", "Thành công", "Nạp tiền Thành công ", trans.Nickname, HistoryTransConst.BANK, trans.Id));
                     updateSttCodePayMomoSun(transId);
-                    updateSTTCodePayMomoSun2(transId,trans.Description);
+                    updateSTTCodePayMomoSun2(transId, trans.Description);
                     EventactionAdminObj model = new EventactionAdminObj();
                     model.setId(transId);
                     model.setStatus(100);
@@ -111,34 +112,29 @@ public class ApproveDepositBankSunVinProcessor implements BaseProcessor<HttpServ
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    updateMoneyCodePayMomoSun(transId,tien_final);
-                    updateMoneyCodePayMomoSun2(transId, tien_final+"");
+                    updateMoneyCodePayMomoSun(transId, tien_final);
+                    updateMoneyCodePayMomoSun2(transId, tien_final + "");
                 }
                 BroadCastUserMoney.pushBroadCast(trans.Nickname);
-                updateMoneyCodePayMomoSun(transId,trans.Amount);
-                updateMoneyCodePayMomoSun2(transId, trans.Amount+"");
+                updateMoneyCodePayMomoSun(transId, money);
+                updateMoneyCodePayMomoSun2(transId, money + "");
                 NapRutGame nrg = new NapRutGame();
                 String codedl = nrg.getMaDaily(trans.Nickname);
-                long SoTien = trans.Amount;
-                if(codedl == null){
-                    int xx = 2;
-                }else if(codedl != null && codedl.trim().length() == 0){
-                    int xx = 2;
-                }else if(codedl != null && codedl.trim().equalsIgnoreCase("null") == false){
+                long SoTien = money;
+                if (codedl == null) {
+                } else if (codedl != null && codedl.trim().length() == 0) {
+                } else if (codedl != null && codedl.trim().equalsIgnoreCase("null") == false) {
                     String usend = trans.getUserSender();
-
-                    if(usend.equalsIgnoreCase("CodePay")){
-                        NapRutModel napgame = new NapRutModel(trans.Id, trans.Nickname, codedl, SoTien,"CodePay", trans.CreatedAt);
+                    if (usend.equalsIgnoreCase("CodePay")) {
+                        NapRutModel napgame = new NapRutModel(trans.Id, trans.Nickname, codedl, SoTien, "CodePay", trans.CreatedAt);
                         nrg.NapRut(napgame);
-                    }else if(usend.equalsIgnoreCase("Momo")){
-                        NapRutModel napgame = new NapRutModel(trans.Id, trans.Nickname, codedl, SoTien,"MoMo", trans.CreatedAt);
+                    } else if (usend.equalsIgnoreCase("Momo")) {
+                        NapRutModel napgame = new NapRutModel(trans.Id, trans.Nickname, codedl, SoTien, "MoMo", trans.CreatedAt);
                         nrg.NapRut(napgame);
-                    }else{
-                        NapRutModel napgame = new NapRutModel(trans.Id, trans.Nickname, codedl, SoTien,"Bank", trans.CreatedAt);
+                    } else {
+                        NapRutModel napgame = new NapRutModel(trans.Id, trans.Nickname, codedl, SoTien, "Bank", trans.CreatedAt);
                         nrg.NapRut(napgame);
                     }
-                }else{
-                    int xx =2;
                 }
 
                 return response.toJson();
@@ -158,10 +154,10 @@ public class ApproveDepositBankSunVinProcessor implements BaseProcessor<HttpServ
             MongoDatabase db = MongoDBConnectionFactory.getDB();
             MongoCollection col = db.getCollection("deposit_bank_manual");
             Document doc = new Document();
-            doc.append("Amount",tien);
+            doc.append("Amount", tien);
             col.updateOne((Bson) new Document("Id", TrainID), (Bson) new Document("$set", (Object) doc));
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -173,13 +169,13 @@ public class ApproveDepositBankSunVinProcessor implements BaseProcessor<HttpServ
             MongoDatabase db = MongoDBConnectionFactory.getDB();
             MongoCollection col = db.getCollection("History_User_transaction");
             Document doc = new Document();
-            doc.append("sotien",tien);
+            doc.append("sotien", tien);
             col.updateOne((Bson) new Document("transId", TrainID), (Bson) new Document("$set", (Object) doc));
             HistoryTransModel his = elk.GetHistorybyTransID(TrainID);
             his.setSotien(tien);
-            elk.InsertHistoryUserTransOK(his, Long.parseLong(his.getId()),his.getCreateAt());
+            elk.InsertHistoryUserTransOK(his, Long.parseLong(his.getId()), his.getCreateAt());
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -190,11 +186,11 @@ public class ApproveDepositBankSunVinProcessor implements BaseProcessor<HttpServ
             MongoDatabase db = MongoDBConnectionFactory.getDB();
             MongoCollection col = db.getCollection("deposit_bank_manual");
             Document doc = new Document();
-            doc.append("Status",100);
-            doc.append("UserApprove","Nap Bank Auto");
+            doc.append("Status", 100);
+            doc.append("UserApprove", "Nap Bank Auto");
             col.updateOne((Bson) new Document("Id", TrainID), (Bson) new Document("$set", (Object) doc));
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -206,15 +202,15 @@ public class ApproveDepositBankSunVinProcessor implements BaseProcessor<HttpServ
             MongoDatabase db = MongoDBConnectionFactory.getDB();
             MongoCollection col = db.getCollection("History_User_transaction");
             Document doc = new Document();
-            doc.append("trangthai","Thành công");
-            doc.append("ghiChu",comment);
+            doc.append("trangthai", "Thành công");
+            doc.append("ghiChu", comment);
             col.updateOne((Bson) new Document("transId", TrainID), (Bson) new Document("$set", (Object) doc));
             HistoryTransModel his = elk.GetHistorybyTransID(TrainID);
             his.setTrangthai("Thành công");
             his.setGhiChu(comment);
-            elk.InsertHistoryUserTransOK(his, Long.parseLong(his.getId()),his.getCreateAt());
+            elk.InsertHistoryUserTransOK(his, Long.parseLong(his.getId()), his.getCreateAt());
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
