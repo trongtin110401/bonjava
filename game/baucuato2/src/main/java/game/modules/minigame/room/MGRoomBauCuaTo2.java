@@ -422,20 +422,22 @@ public class MGRoomBauCuaTo2
                     if (tiLe[i] == 3 && pots.get(i).getTotalValue() > 0) { // noo hu
                         isNohu = true;
                         potIdNohu = i;
-                        totalHuPrize += (long) (tran.betValues[i] * ((double) (this.fund) / pots.get(i).getTotalValue()));
-                        long win = tran.betValues[i] * tiLe[i];
-                        long fee = (long) ((tran.betValues[i] * tiLe[i]) * (tax / 100));
-                        totalPrize += (long) (tran.betValues[i] * ((double) (this.fund) / pots.get(i).getTotalValue()) + (win + tran.betValues[i] - fee));
+                        long bet = tran.betValues[i];
+                        long win = bet * tiLe[i];
+                        long fee = (long) ((win - bet) * (tax / 100));
+                        totalHuPrize += (long) (bet * ((double) (this.fund) / pots.get(i).getTotalValue()));
+                        totalPrize += (long) (bet * ((double) (this.fund) / pots.get(i).getTotalValue()) + (win - fee));
                         tran.prizes[i] = totalPrize;
 
                         arrl = totalPrizesInRoom;
                         n = i;
                         arrl[n] = arrl[n] + (tran.betValues[i] * ((this.fund) / pots.get(i).getTotalValue())) + (tran.betValues[i] * (long) tiLe[i] + tran.betValues[i]);
                     } else {
-                        long win = tran.betValues[i] * tiLe[i];
-                        long fee = (long) (win * (tax / 100.0f));
-                        totalPrize += win + tran.betValues[i] - fee;
-                        totalHuPrize += (tran.betValues[i] * tiLe[i]) + tran.betValues[i];
+                        long bet = tran.betValues[i];
+                        long win = bet * tiLe[i];
+                        long fee = (long) ((win - bet) * (tax / 100.0f));
+                        totalPrize += (win - fee);
+                        totalHuPrize += (bet * tiLe[i]) + bet;
                         tran.prizes[i] = totalPrize;
 
                         arrl = totalPrizesInRoom;
