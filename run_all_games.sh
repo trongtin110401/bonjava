@@ -1,7 +1,7 @@
 #!/bin/bash
 
-export ELASTICSEARCH_URL=http://localhost:9200
-export TZ=Asia/Ho_Chi_Minh
+export ELASTICSEARCH_URL="http://localhost:9200"
+export TZ="Asia/Ho_Chi_Minh"
 
 # make log server
 mkdir /home/server/logs/
