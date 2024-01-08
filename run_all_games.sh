@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# setting for elasticsearch in case of running in docker
+sysctl -w vm.max_map_count=262144
+
+# global environment
 export ELASTICSEARCH_URL="http://localhost:9200"
 export TZ="Asia/Ho_Chi_Minh"
 
