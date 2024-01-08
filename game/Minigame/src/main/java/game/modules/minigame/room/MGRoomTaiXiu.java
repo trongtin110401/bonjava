@@ -545,7 +545,7 @@ public class MGRoomTaiXiu
                             //Số tiền người chơi nhận lại được nếu thắng
                             // Được tính theo công thức là tiền đặt + (% ăn nhân với tiền đặt)
                             // ví dụ người chơi đặt 100k thì nhận được 100k + ( 98 * 100) = 198k => chích 2% cho nhà cái
-                            tran.prize = (long) ((float) tienDuocTinh * (100.0f - this.tax) / 100.0f) + tienDuocTinh;
+                            tran.prize = Math.round((long) ((float) tienDuocTinh * (100.0f - this.tax) / 100.0f) + tienDuocTinh);
                             //kiểm tra nếu có nổ hũ thì tính cộng thêm tiền nổ hũ
 //                            if (totalDice == 3 || totalDice == 18) {
 //                                tran.prize += (tienDuocTinh * TaiXiuModule.moneyHu / tongTienHopLe);

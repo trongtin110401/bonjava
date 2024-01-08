@@ -188,30 +188,30 @@ extends BaseClientRequestHandler {
         }
 
         switch (this.count) {
-            case 25: {
+            case 20: {
                 this.isBettingRound = false;
                 break;
             }
-            case 30: {
+            case 21: {
                 genResult = true;
                 break;
             }
-            case 31: {
+            case 22: {
                 genResult = false;
                 this.generateResult();
                 break;
             }
-            case 35: {
+            case 26: {
                 CalculatePrizeTask task = new CalculatePrizeTask();
                 task.run();
                 break;
             }
-            case 50: {
+            case 30: {
+                this.broadcastMessage();
+            }
+            case 32: {
                 this.startNewRound();
                 break;
-            }
-            case 45: {
-                this.broadcastMessage();
             }
         }
     }
@@ -296,9 +296,9 @@ extends BaseClientRequestHandler {
 
     private byte getRemainTime() {
         if (this.genResult) {
-            return (byte)(30 - this.count);
+            return (byte)(20 - this.count);
         }
-        return (byte)(50 - this.count);
+        return (byte)(32 - this.count);
     }
 
     private String getRoomName(short moneyType, long baseBetting) {

@@ -4884,14 +4884,15 @@ IN total_refund BIGINT,
 IN money_type TINYINT(4))
 BEGIN
   DECLARE total_exchange BIGINT;
-    IF (total_prize > 0) THEN
-    IF (money_type = 1) THEN
-      SET total_exchange = total_prize * 98 / 198;
-ELSE
-      SET total_exchange = total_prize * 95 / 195;
-END IF;
-ELSE
-    SET total_exchange = -(bet_value - total_refund);
+   IF (total_prize > 0) THEN
+    SET total_exchange = total_prize - bet_value;
+  --  IF (money_type = 1) THEN
+ --     SET total_exchange = total_prize * 98 / 198;
+  --      ELSE
+  --    SET total_exchange = total_prize * 95 / 195;
+ --       END IF;
+   ELSE
+    SET total_exchange = 0;
 END IF;
 INSERT INTO transaction_tai_xiu_md5 (`reference_id`, `user_id`, `user_name`, `bet_value`, `bet_side`, `total_prize`,
                                      `total_refund`, `total_exchange`, `money_type`)

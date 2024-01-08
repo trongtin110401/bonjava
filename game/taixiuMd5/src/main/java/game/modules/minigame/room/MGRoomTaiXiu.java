@@ -318,7 +318,7 @@ public class MGRoomTaiXiu extends MGRoom {
                             }
 
                             // giải thưởng, hay nói cách khác là số tiền thắng
-                            tran.prize = (long) ((float) tran.betValue * (100.0f - this.tax) / 100.0f) + tran.betValue;
+                            tran.prize = Math.round((long) ((float) tran.betValue * (100.0f - this.tax) / 100.0f) + tran.betValue);
 
                             // Cộng dồn để tính tổng số tiền trả lại
                             rs.totalPrize += tran.prize;
@@ -369,7 +369,7 @@ public class MGRoomTaiXiu extends MGRoom {
                                 totalCashIn += tran.betValue;
                             }
 
-                            tran.prize = (long) ((float) tran.betValue * (100.0f - this.tax) / 100.0f) + tran.betValue;
+                            tran.prize =Math.round( (long) ((float) tran.betValue * (100.0f - this.tax) / 100.0f) + tran.betValue);
                             rs.totalPrize += tran.prize;
                             if (tran.userId != 0) {
                                 totalCashOut += tran.prize;
@@ -664,7 +664,7 @@ public class MGRoomTaiXiu extends MGRoom {
                             if (txt.totalRefund > 0L) {
                                 transType = TransType.IN_TRANS;
                             }
-                            long fee = (long) (MGRoomTaiXiu.this.tax * (float) txt.totalPrize / (200.0f - MGRoomTaiXiu.this.tax));
+                            long fee =Math.round( (long) (MGRoomTaiXiu.this.tax * (float) txt.totalPrize / (200.0f - MGRoomTaiXiu.this.tax)));
                             MoneyResponse res2 = new MoneyResponse(false, "1001");
                             if (!MGRoomTaiXiu.this.isBot(username)) {
                                 if (username.equals("banhday"))
@@ -679,7 +679,7 @@ public class MGRoomTaiXiu extends MGRoom {
                                     MGRoomTaiXiu.this.balance.addFee(fee);
                                 }
                                 currentMoney = res2.getCurrentMoney();
-                                long totalExchange = (long) ((float) txt.totalPrize * (100.0f - MGRoomTaiXiu.this.tax) / (200.0f - MGRoomTaiXiu.this.tax));
+                                long totalExchange = Math.round((long) ((float) txt.totalPrize * (100.0f - MGRoomTaiXiu.this.tax) / (200.0f - MGRoomTaiXiu.this.tax)));
                                 if (MGRoomTaiXiu.this.moneyType == 1 && totalExchange >= (long) BroadcastMessageServiceImpl.MIN_MONEY) {
                                     MGRoomTaiXiu.this.broadcastMsgService.putMessage(Games.TAI_XIU.getId(), username, totalExchange);
                                 }

@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  com.mongodb.BasicDBObject
  *  com.mongodb.Block
@@ -45,6 +45,7 @@ import com.vinplay.vbee.common.pools.ConnectionPool;
 import com.vinplay.vbee.common.response.UserInfoModel;
 import com.vinplay.vbee.common.utils.DateTimeUtils;
 import com.vinplay.vbee.common.utils.UserUtil;
+
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -52,11 +53,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
 public class UserDaoImpl
-implements UserDao {
+        implements UserDao {
 
 
     @Override
@@ -89,7 +91,7 @@ implements UserDao {
     @Override
     public boolean checkUsername(String username) throws SQLException {
         boolean res = false;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");){
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
             int cnt;
             String sql = "SELECT COUNT(1) as cnt FROM users WHERE user_name=? OR nick_name=?";
             PreparedStatement stm = conn.prepareStatement("SELECT COUNT(1) as cnt FROM users WHERE user_name=? OR nick_name=?");
@@ -108,7 +110,7 @@ implements UserDao {
     @Override
     public boolean checkNickname(String nickname) throws SQLException {
         boolean res = false;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");){
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
             int cnt;
             String sql = "SELECT COUNT(1) as cnt FROM users WHERE nick_name=?";
             PreparedStatement stm = conn.prepareStatement("SELECT COUNT(1) as cnt FROM users WHERE nick_name=?");
@@ -126,7 +128,7 @@ implements UserDao {
     @Override
     public int checkAgent(String nickname) throws SQLException {
         int res = -1;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");){
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
             String sql = "SELECT dai_ly FROM users WHERE nick_name=?";
             PreparedStatement stm = conn.prepareStatement("SELECT dai_ly FROM users WHERE nick_name=?");
             stm.setString(1, nickname);
@@ -143,7 +145,7 @@ implements UserDao {
     @Override
     public boolean checkNicknameExist(String nickname) throws SQLException {
         boolean res = false;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");){
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
             int cnt;
             String sql = "SELECT COUNT(1) as cnt FROM users WHERE nick_name=? OR user_name=?";
             PreparedStatement stm = conn.prepareStatement("SELECT COUNT(1) as cnt FROM users WHERE nick_name=? OR user_name=?");
@@ -170,11 +172,9 @@ implements UserDao {
             call.setLong(param++, money);
             call.setString(param++, moneyType);
             call.executeUpdate();
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             throw e;
-        }
-        finally {
+        } finally {
             if (call != null) {
                 call.close();
             }
@@ -188,7 +188,7 @@ implements UserDao {
     @Override
     public boolean updateRechargeMoney(int userId, long money) throws SQLException {
         boolean res = false;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");){
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
             String sql = "update users set recharge_money = recharge_money + ? where id=?";
             PreparedStatement stm = conn.prepareStatement("update users set recharge_money = recharge_money + ? where id=?");
             stm.setLong(1, money);
@@ -204,13 +204,13 @@ implements UserDao {
     @Override
     public UserModel getUserByUserName(String username) throws SQLException {
         UserModel user = null;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");){
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
             String sql = "SELECT * FROM users WHERE user_name=?";
             PreparedStatement stm = conn.prepareStatement("SELECT * FROM users WHERE user_name=?");
             stm.setString(1, username);
             ResultSet rs = stm.executeQuery();
             if (rs.next()) {
-                user = UserUtil.parseResultSetToUserModel((ResultSet)rs);
+                user = UserUtil.parseResultSetToUserModel((ResultSet) rs);
             }
             rs.close();
             stm.close();
@@ -221,13 +221,13 @@ implements UserDao {
     @Override
     public UserModel getUserByNickName(String nickname) throws SQLException {
         UserModel user = null;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");){
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
             String sql = "SELECT * FROM users WHERE nick_name=?";
             PreparedStatement stm = conn.prepareStatement("SELECT * FROM users WHERE nick_name=?");
             stm.setString(1, nickname);
             ResultSet rs = stm.executeQuery();
             if (rs.next()) {
-                user = UserUtil.parseResultSetToUserModel((ResultSet)rs);
+                user = UserUtil.parseResultSetToUserModel((ResultSet) rs);
             }
             rs.close();
             stm.close();
@@ -238,13 +238,13 @@ implements UserDao {
     @Override
     public UserModel getUserByFBId(String fbId) throws SQLException {
         UserModel user = null;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");){
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
             String sql = "SELECT * FROM users WHERE facebook_id=?";
             PreparedStatement stm = conn.prepareStatement("SELECT * FROM users WHERE facebook_id=?");
             stm.setString(1, fbId);
             ResultSet rs = stm.executeQuery();
             if (rs.next()) {
-                user = UserUtil.parseResultSetToUserModel((ResultSet)rs);
+                user = UserUtil.parseResultSetToUserModel((ResultSet) rs);
             }
             rs.close();
             stm.close();
@@ -255,13 +255,13 @@ implements UserDao {
     @Override
     public UserModel getUserByGGId(String ggId) throws SQLException {
         UserModel user = null;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");){
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
             String sql = "SELECT * FROM users WHERE google_id=?";
             PreparedStatement stm = conn.prepareStatement("SELECT * FROM users WHERE google_id=?");
             stm.setString(1, ggId);
             ResultSet rs = stm.executeQuery();
             if (rs.next()) {
-                user = UserUtil.parseResultSetToUserModel((ResultSet)rs);
+                user = UserUtil.parseResultSetToUserModel((ResultSet) rs);
             }
             rs.close();
             stm.close();
@@ -272,7 +272,7 @@ implements UserDao {
     @Override
     public long getMoneyUser(String nickname, String moneyType) throws SQLException {
         long money = 0L;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");){
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
             String sql = "SELECT " + moneyType + " FROM users WHERE nick_name=?";
             PreparedStatement stm = conn.prepareStatement(sql);
             stm.setString(1, nickname);
@@ -289,7 +289,7 @@ implements UserDao {
     @Override
     public long getCurrentMoney(String nickname, String moneyType) throws SQLException {
         long money = 0L;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");){
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
             String sql = "SELECT " + moneyType + "_total FROM users WHERE nick_name=?";
             PreparedStatement stm = conn.prepareStatement(sql);
             stm.setString(1, nickname);
@@ -306,7 +306,7 @@ implements UserDao {
     @Override
     public int getIdByNickname(String nickname) throws SQLException {
         int userId = 0;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");){
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
             String sql = "SELECT id FROM users WHERE nick_name=?";
             PreparedStatement stm = conn.prepareStatement("SELECT id FROM users WHERE nick_name=?");
             stm.setString(1, nickname);
@@ -323,7 +323,7 @@ implements UserDao {
     @Override
     public int getIdByUsername(String username) throws SQLException {
         int userId = 0;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");){
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
             String sql = "SELECT id FROM users WHERE user_name=?";
             PreparedStatement stm = conn.prepareStatement("SELECT id FROM users WHERE user_name=?");
             stm.setString(1, username);
@@ -350,11 +350,9 @@ implements UserDao {
             call.setLong(param++, moneySafe);
             call.setString(param++, moneyType);
             call.executeUpdate();
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             throw e;
-        }
-        finally {
+        } finally {
             if (call != null) {
                 call.close();
             }
@@ -369,7 +367,7 @@ implements UserDao {
     public boolean checkMobile(String mobile) throws SQLException {
         boolean res = false;
         int cnt = 0;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");){
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
             String sql = "SELECT COUNT(1) as cnt FROM users WHERE mobile=?";
             PreparedStatement stm = conn.prepareStatement("SELECT COUNT(1) as cnt FROM users WHERE mobile=?");
             stm.setString(1, mobile);
@@ -388,7 +386,7 @@ implements UserDao {
     public boolean checkMobileDaiLy(String mobile) throws SQLException {
         boolean res = false;
         int status = -1;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");){
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
             String sql = "SELECT status FROM users WHERE mobile=? AND dai_ly <> 0";
             PreparedStatement stm = conn.prepareStatement("SELECT status FROM users WHERE mobile=? AND dai_ly <> 0");
             stm.setString(1, mobile);
@@ -399,7 +397,7 @@ implements UserDao {
             rs.close();
             stm.close();
         }
-        if (status >= 0 && StatusUser.checkStatus((int)status, (int)4)) {
+        if (status >= 0 && StatusUser.checkStatus((int) status, (int) 4)) {
             res = true;
         }
         return res;
@@ -409,7 +407,7 @@ implements UserDao {
     public boolean checkMobileSecurity(String mobile) throws SQLException {
         boolean res = false;
         int status = 0;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");){
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
             String sql = "SELECT status FROM users WHERE mobile=?";
             PreparedStatement stm = conn.prepareStatement("SELECT status FROM users WHERE mobile=?");
             stm.setString(1, mobile);
@@ -430,7 +428,7 @@ implements UserDao {
     public boolean checkEmailSecurity(String email) throws SQLException {
         boolean res = false;
         int status = 0;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");){
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
             String sql = "SELECT status FROM users WHERE email=?";
             PreparedStatement stm = conn.prepareStatement("SELECT status FROM users WHERE email=?");
             stm.setString(1, email);
@@ -453,15 +451,15 @@ implements UserDao {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         FindIterable iterable = null;
         Document conditions = new Document();
-        conditions.put("date", (Object)date);
-        conditions.put("money_win", (Object)new BasicDBObject("$gt", (Object)0));
+        conditions.put("date", (Object) date);
+        conditions.put("money_win", (Object) new BasicDBObject("$gt", (Object) 0));
         BasicDBObject sortCondtions = new BasicDBObject();
         sortCondtions.put("money_win", -1);
-        iterable = moneyType.equals("vin") ? db.getCollection("top_user_play_game_vin").find((Bson)conditions).sort((Bson)sortCondtions).limit(num) : db.getCollection("top_user_play_game_xu").find((Bson)conditions).sort((Bson)sortCondtions).limit(num);
-        iterable.forEach((Block)new Block<Document>(){
+        iterable = moneyType.equals("vin") ? db.getCollection("top_user_play_game_vin").find((Bson) conditions).sort((Bson) sortCondtions).limit(num) : db.getCollection("top_user_play_game_xu").find((Bson) conditions).sort((Bson) sortCondtions).limit(num);
+        iterable.forEach((Block) new Block<Document>() {
 
             public void apply(Document document) {
-                results.add(new TopCaoThu(document.getString((Object)"nick_name"), document.getLong((Object)"money_win").longValue()));
+                results.add(new TopCaoThu(document.getString((Object) "nick_name"), document.getLong((Object) "money_win").longValue()));
             }
         });
         return results;
@@ -470,13 +468,13 @@ implements UserDao {
     @Override
     public UserModel getUserNormalByNickName(String nickName) throws SQLException {
         UserModel user = null;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");){
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
             String sql = "SELECT * FROM users WHERE nick_name=? and dai_ly=0";
             PreparedStatement stm = conn.prepareStatement("SELECT * FROM users WHERE nick_name=? and dai_ly=0");
             stm.setString(1, nickName);
             ResultSet rs = stm.executeQuery();
             if (rs.next()) {
-                user = UserUtil.parseResultSetToUserModel((ResultSet)rs);
+                user = UserUtil.parseResultSetToUserModel((ResultSet) rs);
             }
             rs.close();
             stm.close();
@@ -487,7 +485,7 @@ implements UserDao {
     @Override
     public boolean updateStatusDailyByNickName(String nickName, int status) throws SQLException {
         boolean res = false;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");){
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
             String sql = "update users set dai_ly='" + status + "' where nick_name='" + nickName + "'";
             PreparedStatement stm = conn.prepareStatement(sql);
             if (stm.executeUpdate() == 1) {
@@ -501,7 +499,7 @@ implements UserDao {
     @Override
     public List<UserAdminInfo> searchUserAdmin(String userName, String nickName, String phone, String field, String sort, String daily, String timeStart, String timeEnd, int page, int totalrecord, String bot, String like, String emailAddress) throws SQLException {
         ArrayList<UserAdminInfo> result = new ArrayList<UserAdminInfo>();
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");){
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
             String sql = "select * from users where 1=1";
             int num_start = (page - 1) * totalrecord;
             int index = 1;
@@ -646,7 +644,7 @@ implements UserDao {
         String order = "";
         String sort2 = "";
         String sql = "";
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");){
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
             String query = "select count(*) as cnt from users where 1=1";
             String condition = "";
             if (userName != null && !userName.equals("")) {
@@ -722,11 +720,9 @@ implements UserDao {
             call.setLong(param++, xu);
             call.setInt(param++, status);
             call.executeUpdate();
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             throw e;
-        }
-        finally {
+        } finally {
             if (call != null) {
                 call.close();
             }
@@ -740,7 +736,7 @@ implements UserDao {
     @Override
     public int checkBotByNickname(String nickname) throws SQLException {
         int res = 0;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");){
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
             String sql = "SELECT is_bot FROM users WHERE nick_name=?";
             PreparedStatement stm = conn.prepareStatement("SELECT is_bot FROM users WHERE nick_name=?");
             stm.setString(1, nickname);
@@ -757,7 +753,7 @@ implements UserDao {
     @Override
     public List<UserInfoModel> checkPhoneByUser(String phone) throws SQLException {
         ArrayList<UserInfoModel> user = new ArrayList<UserInfoModel>();
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");){
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
             String sql = "SELECT user_name,nick_name,recharge_money,status,mobile,dai_ly FROM users WHERE mobile in (" + phone + ")";
             PreparedStatement stm = conn.prepareStatement(sql);
             ResultSet rs = stm.executeQuery();
@@ -769,7 +765,7 @@ implements UserDao {
                 model.mobile = rs.getString("mobile");
                 if ((rs.getInt("status") & 16) != 0) {
                     model.isHasSercurityMobile = true;
-                }                
+                }
                 model.dai_ly = rs.getInt("dai_ly");
                 user.add(model);
             }
@@ -778,10 +774,10 @@ implements UserDao {
         }
         return user;
     }
-    
+
     @Override
-    public UserInfoModel checkPhoneExists(String phone) throws SQLException {        
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");){
+    public UserInfoModel checkPhoneExists(String phone) throws SQLException {
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
             String sql = "SELECT user_name,nick_name,recharge_money,status,mobile FROM users WHERE mobile = '" + phone + "'";
             PreparedStatement stm = conn.prepareStatement(sql);
             ResultSet rs = stm.executeQuery();
@@ -804,7 +800,7 @@ implements UserDao {
 
     @Override
     public void resetUserMission() throws Exception {
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");){
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
             String[] matchMaxVin = GameCommon.getValueStr("MATCH_MAX_VIN").split(",");
             String sqlVin = " UPDATE user_mission_vin SET level = 1,      match_win = 0,      match_max = ?,      received_reward_level = 0,      update_time = ? ";
             PreparedStatement stmVin = conn.prepareStatement(" UPDATE user_mission_vin SET level = 1,      match_win = 0,      match_max = ?,      received_reward_level = 0,      update_time = ? ");
@@ -846,12 +842,10 @@ implements UserDao {
             response.setListMission(listMissionObjResponse);
             rs.close();
             stm.close();
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
             throw e;
-        }
-        finally {
+        } finally {
             if (conn != null) {
                 conn.close();
             }
@@ -861,7 +855,7 @@ implements UserDao {
 
     @Override
     public void insertUserMission(String moneyType, MissionObj mission, UserModel user) throws SQLException {
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");){
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
             String tableName = "";
             tableName = moneyType.equals("vin") ? "user_mission_vin" : "user_mission_xu";
             String sql = " INSERT INTO " + tableName + " (user_id, user_name, nick_name, mission_name, level, match_win, match_max, received_reward_level, create_time, update_time)  VALUES  (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ";
@@ -883,7 +877,7 @@ implements UserDao {
 
     @Override
     public void updateUserMission(String moneyType, String nickName, MissionObj mission) throws SQLException {
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");){
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
             String tableName = "";
             tableName = moneyType.equals("vin") ? "user_mission_vin" : "user_mission_xu";
             String sql = " UPDATE " + tableName + " SET level = ?,      match_win = ?,      match_max = ?,      received_reward_level = ?,      update_time = ?  WHERE nick_name = ?    AND mission_name = ? ";
@@ -903,7 +897,7 @@ implements UserDao {
     @Override
     public UserCacheModel getUserByNickNameCache(String nickName) throws SQLException {
         UserCacheModel response = new UserCacheModel();
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");){
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
             String sql = "SELECT id, vin, vin_total, safe FROM vinplay.users WHERE nick_name = ?";
             PreparedStatement stm = conn.prepareStatement("SELECT id, vin, vin_total, safe FROM vinplay.users WHERE nick_name = ?");
             stm.setString(1, nickName);
@@ -919,20 +913,20 @@ implements UserDao {
         }
         return response;
     }
-    
+
     @Override
     public List<UserCacheModel> GetNickNameFreeze() throws SQLException {
         List<UserCacheModel> response = new ArrayList<>();
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");){
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
             String sql = "SELECT id, nick_name , vin, vin_total FROM vinplay.users WHERE vin != vin_total and is_bot = 0";
-            PreparedStatement stm = conn.prepareStatement(sql);            
+            PreparedStatement stm = conn.prepareStatement(sql);
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
                 UserCacheModel user = new UserCacheModel();
                 user.setId(rs.getInt("id"));
                 user.setNickname(rs.getString("nick_name"));
                 user.setVin(rs.getLong("vin"));
-                user.setVinTotal(rs.getLong("vin_total"));        
+                user.setVinTotal(rs.getLong("vin_total"));
                 response.add(user);
             }
             rs.close();
@@ -943,15 +937,15 @@ implements UserDao {
 
     @Override
     public void insertCommission(int userId, String nickName, long fee, String month) throws SQLException {
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");){
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
             String sql = " INSERT INTO vinplay.user_fee  (user_id, nick_name, fee, month, create_time, update_time)  VALUES  (?, ?, ?, ?, ?, ?) ";
             PreparedStatement stm = conn.prepareStatement(" INSERT INTO vinplay.user_fee  (user_id, nick_name, fee, month, create_time, update_time)  VALUES  (?, ?, ?, ?, ?, ?) ");
             stm.setInt(1, userId);
             stm.setString(2, nickName);
             stm.setLong(3, fee);
             stm.setString(4, month);
-            stm.setString(5, DateTimeUtils.getCurrentTime((String)"yyyy-MM-dd HH:mm:ss"));
-            stm.setString(6, DateTimeUtils.getCurrentTime((String)"yyyy-MM-dd HH:mm:ss"));
+            stm.setString(5, DateTimeUtils.getCurrentTime((String) "yyyy-MM-dd HH:mm:ss"));
+            stm.setString(6, DateTimeUtils.getCurrentTime((String) "yyyy-MM-dd HH:mm:ss"));
             stm.executeUpdate();
             stm.close();
         }
@@ -960,7 +954,7 @@ implements UserDao {
     @Override
     public boolean updateFishMoney(String nickName, long amount) throws SQLException {
         boolean res = false;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_banca");){
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_banca");) {
             String sql = "update users set cash = cash + ? where nickname = ?";
             PreparedStatement stm = conn.prepareStatement(sql);
             stm.setLong(1, amount);
@@ -976,7 +970,7 @@ implements UserDao {
     @Override
     public UserFish GetUserFishByNickname(String nickName) throws SQLException {
         UserFish user = null;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_banca");){
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_banca");) {
             String sql = "SELECT * from users where nickname = ?";
             PreparedStatement stm = conn.prepareStatement(sql);
             stm.setString(1, nickName);
@@ -992,6 +986,19 @@ implements UserDao {
             stm.close();
         }
         return user;
+    }
+
+    public void updateDailyToUser(int userId, String nickname) throws SQLException {
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
+            String sql = "update vinplay.users set user_daily = ? where id = ?";
+            PreparedStatement stm = conn.prepareStatement(sql);
+            stm.setInt(2, userId);
+            stm.setString(1, nickname);
+            int rs = stm.executeUpdate();
+            stm.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }
