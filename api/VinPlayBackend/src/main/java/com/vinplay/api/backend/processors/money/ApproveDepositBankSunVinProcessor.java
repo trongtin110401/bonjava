@@ -47,12 +47,15 @@ public class ApproveDepositBankSunVinProcessor implements BaseProcessor<HttpServ
                 String transId = request.getParameter("transId");
                 String typeStr = request.getParameter("type");
                 String userApprove = request.getParameter("uad");
-                long money = Long.parseLong(request.getParameter("money"));
+                int type = Integer.parseInt(typeStr);
+                long money = 0;
+                if (type == 0) {
+                    money = Long.parseLong(request.getParameter("money"));
+                }
                 long tien_final = 0;
                 if (transId.isEmpty() || typeStr.isEmpty()) {
                     return response.toJson();
                 }
-                int type = Integer.parseInt(typeStr);
                 RechargeDao dao = new RechargeDaoImpl();
 
                 // find transaction in db
