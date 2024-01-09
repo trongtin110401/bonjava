@@ -17,12 +17,10 @@
  */
 package game.modules.slot;
 
-import bitzero.server.BitZeroServer;
 import bitzero.server.entities.User;
 import bitzero.server.extensions.BaseClientRequestHandler;
 import bitzero.server.extensions.data.BaseMsg;
 import bitzero.server.extensions.data.DataCmd;
-import bitzero.server.util.TaskScheduler;
 import com.vinplay.dal.service.MiniGameService;
 import com.vinplay.dal.service.SlotMachineService;
 import com.vinplay.dal.service.impl.MiniGameServiceImpl;
@@ -30,26 +28,20 @@ import com.vinplay.dal.service.impl.SlotMachineServiceImpl;
 import com.vinplay.usercore.service.UserService;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
 //import game.modules.slot.cmd.send.khobau.PokeGoX2Msg;
-import game.modules.slot.entities.BotMinigame;
 import game.modules.slot.room.SlotRoom;
-import game.modules.slot.utils.SlotUtils;
 import game.util.ConfigGame;
-import java.util.Calendar;
-import java.util.Collection;
+
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
-public abstract class SlotModule
-extends BaseClientRequestHandler {
+public abstract class SlotModule extends BaseClientRequestHandler {
     protected Map<String, SlotRoom> rooms = new HashMap<String, SlotRoom>();
     protected MiniGameService service = new MiniGameServiceImpl();
     protected SlotMachineService slotService = new SlotMachineServiceImpl();
     protected UserService userService = new UserServiceImpl();
     protected boolean eventX2 = false;
     protected String ngayX2;
-    protected long[] pots = new long[4];
+    protected long[] jackpots = new long[4];
     protected long lastTimeUpdatePotToRoom = 0L;
     protected int countBot100;
     protected int countBot1000;

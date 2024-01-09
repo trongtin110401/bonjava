@@ -796,7 +796,7 @@ public class XocDiaGameServer
                     this.getRsList(user, dataCmd);
                     break;
                 }
-                case 3008: {
+                case 3080: {
                     this.chat(user, dataCmd);
                     break;
                 }

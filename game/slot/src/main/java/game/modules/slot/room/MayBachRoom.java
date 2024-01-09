@@ -30,20 +30,14 @@ import bitzero.server.extensions.data.BaseMsg;
 import bitzero.util.common.business.Debug;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
-import com.vinplay.dal.dao.LogMoneyUserDao;
-import com.vinplay.dal.dao.impl.LogMoneyUserDaoImpl;
-import com.vinplay.dal.service.impl.AgentServiceImpl;
 import com.vinplay.dal.service.impl.BroadcastMessageServiceImpl;
 import com.vinplay.dal.service.impl.CacheServiceImpl;
 import com.vinplay.usercore.dao.impl.UserDaoImpl;
-import com.vinplay.usercore.utils.PartnerConfig;
 import com.vinplay.vbee.common.enums.Games;
 import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
 import com.vinplay.vbee.common.models.UserModel;
 import com.vinplay.vbee.common.models.cache.SlotFreeDaily;
 import com.vinplay.vbee.common.models.cache.UserCacheModel;
-import com.vinplay.vbee.common.response.AgentResponse;
-import com.vinplay.vbee.common.response.LogUserMoneyResponse;
 import com.vinplay.vbee.common.response.MoneyResponse;
 import com.vinplay.vbee.common.statics.TransType;
 import com.vinplay.vbee.common.utils.CommonUtils;
@@ -100,7 +94,7 @@ extends SlotRoom {
         cacheService.setValue(name, (int)pot);
         this.fund = fund;
         this.betValue = betValue;
-        this.initPotValue = initPotValue;
+        this.initJackpotValues = initPotValue;
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
         this.boxValues.add(10);
         this.boxValues.add(10);
@@ -327,7 +321,7 @@ extends SlotRoom {
                                         moneyOnLine = (long)(award.getRatio() * (float)this.betValue);
                                     } else if (award == NDVAward.PENTA_NU_DIEP_VIEN) {
                                         if (result == 3) {
-                                            moneyOnLine = this.initPotValue;
+                                            moneyOnLine = this.initJackpotValues;
                                         } else {
                                             if (this.huX2) {
                                                 moneyOnLine = this.pot * 2L;
@@ -337,7 +331,7 @@ extends SlotRoom {
                                                 moneyOnLine = this.pot;
                                             }
                                             result = 3;
-                                            soTienNoHuKhongTruQuy += this.pot - this.initPotValue;
+                                            soTienNoHuKhongTruQuy += this.pot - this.initJackpotValues;
                                         }
                                     } else if (award == NDVAward.QUADRA_KIEM_NHAT) {
                                         MiniGameSlotResponse response = this.generatePickStars();
@@ -447,7 +441,7 @@ extends SlotRoom {
                                     }
                                     countNoHu = 0;
                                     this.noHuX2();
-                                    this.pot = this.initPotValue;
+                                    this.pot = this.initJackpotValues;
                                     //this.fund -= totalPrizes - soTienNoHuKhongTruQuy;
                                     this.fund = 0;
                                     if (this.moneyType == 1) {
@@ -844,7 +838,7 @@ extends SlotRoom {
 
             int isReset = sv.getValueInt("reset_pot_"+this.gn+"_"+this.betValue);
             if(isReset == 1){
-                this.pot = this.initPotValue;
+                this.pot = this.initJackpotValues;
                 this.fund = 0;
                 this.savePot();
                 this.saveFund();

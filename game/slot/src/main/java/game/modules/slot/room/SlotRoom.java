@@ -46,8 +46,6 @@ import java.util.concurrent.TimeoutException;
 
 public abstract class SlotRoom {
     protected SlotModule module;
-    public static final String MGROOM_KHO_BAU_INFO = "MGROOM_KHO_BAU_INFO";
-    public static final String MGROOM_NU_DIEP_VIEN_INFO = "MGROOM_NU_DIEP_VIEN_INFO";
 
     public static final String CACHE_NAME_USER_SPOT = "user_force_jackpot_";
     public static final String CACHE_BET_VALUE_SLOT = "bet_value_jackpot_";
@@ -59,7 +57,7 @@ public abstract class SlotRoom {
     protected List<User> users = new ArrayList<User>();
     protected long pot;
     protected long fund;
-    protected long initPotValue;
+    protected long initJackpotValues;
     protected int betValue;
     protected short moneyType;
     protected String moneyTypeStr;
@@ -80,7 +78,7 @@ public abstract class SlotRoom {
         this.moneyType = moneyType;
         this.pot = pot;
         this.fund = fund;
-        this.initPotValue = initPotValue;
+        this.initJackpotValues = initPotValue;
         this.moneyTypeStr = this.moneyType == 1 ? "vin" : "xu";
         try {
             this.countHu = this.sv.getValueInt(String.valueOf(name) + "_count_hu");

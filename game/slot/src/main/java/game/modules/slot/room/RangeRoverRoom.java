@@ -30,9 +30,6 @@ import bitzero.server.extensions.data.BaseMsg;
 import bitzero.util.common.business.Debug;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
-import com.vinplay.dal.dao.LogMoneyUserDao;
-import com.vinplay.dal.dao.impl.LogMoneyUserDaoImpl;
-import com.vinplay.dal.service.impl.AgentServiceImpl;
 import com.vinplay.dal.service.impl.BroadcastMessageServiceImpl;
 import com.vinplay.dal.service.impl.CacheServiceImpl;
 import com.vinplay.usercore.dao.impl.UserDaoImpl;
@@ -41,8 +38,6 @@ import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
 import com.vinplay.vbee.common.models.UserModel;
 import com.vinplay.vbee.common.models.cache.SlotFreeDaily;
 import com.vinplay.vbee.common.models.cache.UserCacheModel;
-import com.vinplay.vbee.common.response.AgentResponse;
-import com.vinplay.vbee.common.response.LogUserMoneyResponse;
 import com.vinplay.vbee.common.response.MoneyResponse;
 import com.vinplay.vbee.common.statics.TransType;
 import com.vinplay.vbee.common.utils.CommonUtils;
@@ -60,8 +55,6 @@ import game.util.ConfigGame;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.Executors;
@@ -91,7 +84,7 @@ public class RangeRoverRoom
         CacheServiceImpl cacheService = new CacheServiceImpl();
         cacheService.setValue(name, (int) pot);
         this.betValue = betValue;
-        this.initPotValue = initPotValue;
+        this.initJackpotValues = initPotValue;
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
         this.boxValues.add(10);
         this.boxValues.add(10);
@@ -327,7 +320,7 @@ public class RangeRoverRoom
                                             moneyOnLine = this.pot;
                                         }
                                         result = 3;
-                                        soTienNoHuKhongTruQuy += this.pot - this.initPotValue;
+                                        soTienNoHuKhongTruQuy += this.pot - this.initJackpotValues;
                                     } else {
                                         MiniGameSlotResponse response = this.generatePickStars();
                                         moneyOnLine = response.getTotalPrize();
@@ -425,7 +418,7 @@ public class RangeRoverRoom
                                     }
                                     countNoHu = 0;
                                     this.noHuX2();
-                                    this.pot = this.initPotValue;
+                                    this.pot = this.initJackpotValues;
                                     logger.error("no hu cho nay gia tri: "+ result+ " gia tri pot:" + this.pot+ " id: "+ id);
 
                                     cacheService.setValue(cacheKey, 1);
@@ -745,7 +738,7 @@ public class RangeRoverRoom
         try {
             int isReset = sv.getValueInt("reset_pot_" + this.gn + "_" + this.betValue);
             if (isReset == 1) {
-                this.pot = this.initPotValue;
+                this.pot = this.initJackpotValues;
                 logger.error("reset lại pot "+ pot+" : "+ name);
                 this.fund = 0;
                 this.savePot();
@@ -762,8 +755,8 @@ public class RangeRoverRoom
 
     private void resetPotFund() {
         try {
-            this.fund = this.initPotValue;
-            this.pot = this.initPotValue;
+            this.fund = this.initJackpotValues;
+            this.pot = this.initJackpotValues;
             this.saveFund();
             this.saveFund();
         } catch (Exception e) {

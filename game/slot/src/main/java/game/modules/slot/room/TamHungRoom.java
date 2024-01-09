@@ -31,26 +31,19 @@ import bitzero.server.extensions.data.BaseMsg;
 import bitzero.util.common.business.Debug;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
-import com.vinplay.dal.dao.LogMoneyUserDao;
-import com.vinplay.dal.dao.impl.LogMoneyUserDaoImpl;
-import com.vinplay.dal.service.impl.AgentServiceImpl;
 import com.vinplay.dal.service.impl.BroadcastMessageServiceImpl;
 import com.vinplay.dal.service.impl.CacheServiceImpl;
 import com.vinplay.usercore.dao.impl.UserDaoImpl;
-import com.vinplay.usercore.utils.PartnerConfig;
 import com.vinplay.vbee.common.enums.Games;
 import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
 import com.vinplay.vbee.common.models.UserModel;
 import com.vinplay.vbee.common.models.cache.SlotFreeDaily;
 import com.vinplay.vbee.common.models.cache.UserCacheModel;
 import com.vinplay.vbee.common.models.slot.SlotFreeSpin;
-import com.vinplay.vbee.common.response.AgentResponse;
-import com.vinplay.vbee.common.response.LogUserMoneyResponse;
 import com.vinplay.vbee.common.response.MoneyResponse;
 import com.vinplay.vbee.common.statics.TransType;
 import com.vinplay.vbee.common.utils.CommonUtils;
 import com.vinplay.vbee.common.utils.DateTimeUtils;
-import game.modules.slot.RollRoyModule;
 import game.modules.slot.TamHungModule;
 import game.modules.slot.cmd.send.tamhung.*;
 import game.modules.slot.entities.slot.AutoUser;
@@ -103,7 +96,7 @@ public class TamHungRoom
         CacheServiceImpl cacheService = new CacheServiceImpl();
         cacheService.setValue(name, (int) pot);
         this.betValue = betValue;
-        this.initPotValue = initPotValue;
+        this.initJackpotValues = initPotValue;
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
         this.boxValues.add(10);
         this.boxValues.add(10);
@@ -381,9 +374,9 @@ public class TamHungRoom
                                                 moneyOnLine = this.pot;
                                             }
                                             result = 3;
-                                            soTienNoHuKhongTruQuy += this.pot - this.initPotValue;
+                                            soTienNoHuKhongTruQuy += this.pot - this.initJackpotValues;
                                         } else {
-                                            moneyOnLine = this.initPotValue;
+                                            moneyOnLine = this.initJackpotValues;
                                         }
                                     } else if (award.getRatio() == -2.0f) {
                                         if (ratioBonus > 0) continue block4;
@@ -499,7 +492,7 @@ public class TamHungRoom
                                     }
                                     countNoHu = 0;
                                     this.noHuX2();
-                                    this.pot = this.initPotValue;
+                                    this.pot = this.initJackpotValues;
                                     //this.fund -= totalPrizes - soTienNoHuKhongTruQuy;
                                     this.fund = 0;
                                     if (this.moneyType == 1) {
@@ -693,7 +686,7 @@ public class TamHungRoom
                                 result = 4;
                             }
                             this.noHuX2();
-                            this.pot = this.initPotValue;
+                            this.pot = this.initJackpotValues;
                             this.fund -= totalPrizes;
                         } else {
                             this.fund -= totalPrizes;
@@ -1002,7 +995,7 @@ public class TamHungRoom
 
             int isReset = sv.getValueInt("reset_pot_" + this.gn + "_" + this.betValue);
             if (isReset == 1) {
-                this.pot = this.initPotValue;
+                this.pot = this.initJackpotValues;
                 this.fund = 0;
                 this.savePot();
                 this.saveFund();

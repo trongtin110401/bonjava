@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  bitzero.server.BitZeroServer
  *  bitzero.server.entities.User
@@ -26,28 +26,20 @@ package game.modules.slot.room;
 
 import bitzero.server.BitZeroServer;
 import bitzero.server.entities.User;
-import bitzero.server.extensions.data.BaseMsg;
 import bitzero.util.common.business.Debug;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
-import com.vinplay.dal.dao.LogMoneyUserDao;
-import com.vinplay.dal.dao.impl.LogMoneyUserDaoImpl;
-import com.vinplay.dal.service.impl.AgentServiceImpl;
 import com.vinplay.dal.service.impl.BroadcastMessageServiceImpl;
 import com.vinplay.dal.service.impl.CacheServiceImpl;
 import com.vinplay.usercore.dao.impl.UserDaoImpl;
-import com.vinplay.usercore.utils.PartnerConfig;
 import com.vinplay.vbee.common.enums.Games;
 import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
 import com.vinplay.vbee.common.models.UserModel;
 import com.vinplay.vbee.common.models.cache.SlotFreeDaily;
 import com.vinplay.vbee.common.models.cache.UserCacheModel;
 import com.vinplay.vbee.common.models.slot.SlotFreeSpin;
-import com.vinplay.vbee.common.response.AgentResponse;
-import com.vinplay.vbee.common.response.LogUserMoneyResponse;
 import com.vinplay.vbee.common.response.MoneyResponse;
 import com.vinplay.vbee.common.statics.TransType;
-import com.vinplay.vbee.common.utils.CommonUtils;
 import com.vinplay.vbee.common.utils.DateTimeUtils;
 import game.modules.slot.BenleyModule;
 import game.modules.slot.cmd.send.benley.*;
@@ -55,23 +47,14 @@ import game.modules.slot.entities.slot.AutoUser;
 import game.modules.slot.entities.slot.AwardsOnLine;
 import game.modules.slot.entities.slot.Line;
 import game.modules.slot.entities.slot.MiniGameSlotResponse;
-import game.modules.slot.entities.slot.avengers.AvengersAward;
-import game.modules.slot.entities.slot.avengers.AvengersAwards;
-import game.modules.slot.entities.slot.avengers.AvengersFreeSpinAward;
-import game.modules.slot.entities.slot.avengers.AvengersItem;
-import game.modules.slot.entities.slot.avengers.AvengersLines;
+import game.modules.slot.entities.slot.avengers.*;
 import game.modules.slot.utils.AvengersUtils;
 import game.modules.slot.utils.SlotUtils;
 import game.util.ConfigGame;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -79,33 +62,31 @@ import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class BenleyRoom
-extends SlotRoom {
+public class BenleyRoom extends SlotRoom {
     private final Runnable gameLoopTask = new GameLoopTask();
     private final Runnable checkResetPotTask = new CheckResetPot();
-    private AvengersLines lines = new AvengersLines();
+    private final AvengersLines lines = new AvengersLines();
     private long lastTimeUpdatePotToRoom = 0L;
     private long lastTimeUpdateFundToRoom = 0L;
-    private ThreadPoolExecutor executor = (ThreadPoolExecutor)Executors.newFixedThreadPool(10);
-    private String gn;
+    private final ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
     private int countNoHu = 0;
-//    private static final org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger((String)"bitzero");
-    private static final org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger((String)"slot");
+    private static final org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger("slot");
 
-    public BenleyRoom(BenleyModule module, byte id, String name, short moneyType, long pot, long fund, int betValue, long initPotValue) {
-        super(id, name, betValue, moneyType, pot, fund, initPotValue);
+    public BenleyRoom(BenleyModule module, byte id, String gameName, short moneyType, long pot, long fund, int betValue, long initJackpotValue) {
+
+        super(id, gameName, betValue, moneyType, pot, fund, initJackpotValue);
+
         this.module = module;
         this.moneyType = moneyType;
         this.gameName = Games.BENLEY.getName();
-        this.cacheFreeName = String.valueOf(this.gameName) + betValue;
+        this.cacheFreeName = this.gameName + betValue;
         CacheServiceImpl cacheService = new CacheServiceImpl();
-        cacheService.setValue(name, (int)pot);
+        cacheService.setValue(gameName, (int) pot);
         this.betValue = betValue;
-        this.initPotValue = initPotValue;        
-        gn = this.gameName;
+        this.initJackpotValues = initJackpotValue;
+
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.checkResetPotTask, 10, 10, TimeUnit.SECONDS);
-
     }
 
     /*
@@ -118,7 +99,7 @@ extends SlotRoom {
         synchronized (map) {
             this.usersAuto.remove(user.getName());
             ForceStopAutoPlayBenleyMsg msg = new ForceStopAutoPlayBenleyMsg();
-            SlotUtils.sendMessageToUser((BaseMsg)msg, user);
+            SlotUtils.sendMessageToUser(msg, user);
         }
     }
 
@@ -128,64 +109,73 @@ extends SlotRoom {
     }
 
     public ResultBenleyMsg playNormal(String username, String linesStr, long referenceId) {
-        long startTime = System.currentTimeMillis();
-        String currentTimeStr = DateTimeUtils.getCurrentTime();
+
         short result = 0;
+        String currentTimeStr = DateTimeUtils.getCurrentTime();
+        ResultBenleyMsg resultBenleyMsg = new ResultBenleyMsg();
+
         String[] lineArr = linesStr.split(",");
-        long currentMoney = this.userService.getMoneyUserCache(username, this.moneyTypeStr);
-        UserCacheModel u = this.userService.getUser(username);
-        long totalBetValue = lineArr.length * this.betValue;
-        ResultBenleyMsg msg = new ResultBenleyMsg();
+        long totalBetValue = (long) lineArr.length * this.betValue;
 
         boolean forceJackpotByUser = false;
+
         //get force user jackpot
         CacheServiceImpl cacheService = new CacheServiceImpl();
-        String userForce = "";
-        String betValueCache = "";
+        String userForce;
+        String betValueCache;
         try {
-            userForce = cacheService.getValueStr(CACHE_NAME_USER_SPOT + this.gn);
-            betValueCache = cacheService.getValueStr(CACHE_BET_VALUE_SLOT + this.gn);
+            userForce = cacheService.getValueStr(CACHE_NAME_USER_SPOT + gameName);
+            betValueCache = cacheService.getValueStr(CACHE_BET_VALUE_SLOT + gameName);
         } catch (Exception e) {
             userForce = "";
             betValueCache = "";
         }
 
+        UserCacheModel u = userService.getUser(username);
+        long currentMoney = userService.getMoneyUserCache(username, this.moneyTypeStr);
+
+        // số lines được chọn > 0
         if (lineArr.length > 0 && !linesStr.isEmpty()) {
+            // check tiền đặt cược hợp lệ
             if (totalBetValue > 0L) {
+                // check đủ tiền
                 if (totalBetValue <= currentMoney) {
+                    // trừ phế 2%
                     long fee = totalBetValue * 2L / 100L;
                     MoneyResponse moneyRes = new MoneyResponse(false, "1001");
-                    if(!u.isBot()){
-                        moneyRes = this.userService.updateMoney(username, -totalBetValue, this.moneyTypeStr, this.gameName, "Quay " + gn, "\u0110\u1eb7t c\u01b0\u1ee3c " + gn, fee, Long.valueOf(referenceId), TransType.START_TRANS);
-                    }else{
+                    // Không phải lả BOT => Cập nhật tiền
+                    if (!u.isBot()) {
+                        moneyRes = this.userService.updateMoney(username, -totalBetValue, this.moneyTypeStr, this.gameName, "Quay " + gameName, "Đặt cược " + gameName, fee, referenceId, TransType.START_TRANS);
+                    } else {
                         moneyRes.setSuccess(true);
                     }
                     if (moneyRes != null && moneyRes.isSuccess()) {
-                        long moneyToPot = totalBetValue * 1L / 100L;
+                        // một phần trăm cho vào hũ JACKPOT
+                        long moneyToPot = totalBetValue / 100L;
+                        this.pot += moneyToPot;
+
+                        // số tiền còn lại sau khi trừ phế và 1% POT cho vào quỹ thưởng
                         long moneyToFund = totalBetValue - fee - moneyToPot;
                         if (!u.isBot()) {
                             this.fund += moneyToFund;
                         }
-                        this.pot += moneyToPot;
+
                         boolean enoughPair = false;
-                        ArrayList<AwardsOnLine<AvengersAward>> awardsOnLines = new ArrayList<AwardsOnLine<AvengersAward>>();
-                        long totalPrizes = 0L;
-                        long soTienNoHuKhongTruQuy = 0L;
-                        long tienThuongX2 = 0L;
-                        int countScatter = 0;
-                        int countBonus = 0;
-                        MiniGameSlotResponse miniGameSlot = null;
-                        block4 : while (!enoughPair) {
-                            int n;
+                        ArrayList<AwardsOnLine<AvengersAward>> awardsOnLines = new ArrayList<>();
+                        long totalPrizes;
+                        long tienThuongX2;
+                        int countScatter;
+                        int countBonus;
+                        MiniGameSlotResponse miniGameSlot;
+                        block4:
+                        while (!enoughPair) {
                             int soLanNoHu;
-                            Random rd;
                             result = 0;
                             awardsOnLines.clear();
                             totalPrizes = 0L;
-                            soTienNoHuKhongTruQuy = 0L;
                             tienThuongX2 = 0L;
-                            String linesWin = "";
-                            String prizesOnLine = "";
+                            String linesWin;
+                            String prizesOnLine;
                             miniGameSlot = null;
                             countScatter = 0;
                             countBonus = 0;
@@ -193,9 +183,8 @@ extends SlotRoom {
 //                            if (lineArr.length >= 5 && (soLanNoHu = ConfigGame.getIntValue(String.valueOf(this.gameName) + "_so_lan_no_hu")) > 0 && this.fund > this.initPotValue * 2L && (n = (rd = new Random()).nextInt(soLanNoHu)) == 0) {
 //                                forceNoHu = true;
 //                            }
-                            if (betValue == 100)
-                            {
-                                soLanNoHu = ConfigGame.getIntValue(String.valueOf(this.gameName) + "_so_lan_no_hu_100");
+                            if (betValue == 100) {
+                                soLanNoHu = ConfigGame.getIntValue(this.gameName + "_so_lan_no_hu_100");
 //                                if (lineArr.length >= 20 && soLanNoHu > 0 && this.fund > this.pot * 2L && (n = (rd = new Random()).nextInt(soLanNoHu)) == 0 && countNoHu >= soLanNoHu) {
 //                                    forceNoHu = true;
 //                                }
@@ -207,10 +196,8 @@ extends SlotRoom {
                                     forceNoHu = true;
                                     forceJackpotByUser = true;
                                 }
-                            }
-                            else if (betValue == 1000)
-                            {
-                                soLanNoHu = ConfigGame.getIntValue(String.valueOf(this.gameName) + "_so_lan_no_hu_1000");
+                            } else if (betValue == 1000) {
+                                soLanNoHu = ConfigGame.getIntValue(this.gameName + "_so_lan_no_hu_1000");
 //                                if (lineArr.length >= 25 && soLanNoHu > 0 && this.fund > this.pot * 3L && (n = (rd = new Random()).nextInt(soLanNoHu)) == 0 && countNoHu >= soLanNoHu) {
 //                                    forceNoHu = true;
 //                                }
@@ -222,10 +209,8 @@ extends SlotRoom {
                                     forceNoHu = true;
                                     forceJackpotByUser = true;
                                 }
-                            }
-                            else
-                            {
-                                soLanNoHu = ConfigGame.getIntValue(String.valueOf(this.gameName) + "_so_lan_no_hu_10000");
+                            } else {
+                                soLanNoHu = ConfigGame.getIntValue(this.gameName + "_so_lan_no_hu_10000");
 //                                if (lineArr.length >= 25 && soLanNoHu > 0 && this.fund > this.pot * 3L && (n = (rd = new Random()).nextInt(soLanNoHu)) == 0 && countNoHu >= soLanNoHu) {
 //                                    forceNoHu = true;
 //                                }
@@ -324,7 +309,10 @@ extends SlotRoom {
 //                                }
 //                            }
                             AvengersItem[][] matrix = forceNoHu ? AvengersUtils.generateMatrixNoHu(lineArr) : AvengersUtils.generateMatrix();
+
+                            // hàng
                             for (int i = 0; i < 3; ++i) {
+                                // cột
                                 for (int j = 0; j < 5; ++j) {
                                     if (matrix[i][j] == AvengersItem.SCATTER) {
                                         ++countScatter;
@@ -334,6 +322,7 @@ extends SlotRoom {
                                     ++countBonus;
                                 }
                             }
+
                             if (countBonus >= 3 || countScatter >= 3) {
                                 Random rd2 = new Random();
                                 int tiLeAn = lineArr.length * 100 / 25;
@@ -343,35 +332,33 @@ extends SlotRoom {
                             if (countBonus >= 3) {
                                 miniGameSlot = AvengersUtils.addMiniGameSlot(this.betValue, countBonus);
                                 AvengersAward award = AvengersAwards.getAward(AvengersItem.BONUS, countBonus);
-                                AwardsOnLine<AvengersAward> aol = new AwardsOnLine<AvengersAward>(award, miniGameSlot.getTotalPrize(), "line0");
+                                AwardsOnLine<AvengersAward> aol = new AwardsOnLine<>(award, miniGameSlot.getTotalPrize(), "line0");
                                 awardsOnLines.add(aol);
                                 result = 5;
                             }
                             AvengersItem[][] matrixWild = AvengersUtils.revertMatrix(matrix);
                             for (String entry2 : lineArr) {
-                                ArrayList<AvengersAward> awardList = new ArrayList<AvengersAward>();
+                                ArrayList<AvengersAward> awardList = new ArrayList<>();
                                 Line line = AvengersUtils.getLine(this.lines, matrixWild, Integer.parseInt(entry2));
                                 AvengersUtils.calculateLine(line, awardList);
                                 for (AvengersAward award2 : awardList) {
                                     long moneyOnLine = 0L;
                                     if (award2.getRatio() > 0.0f) {
-                                        moneyOnLine = (long)(award2.getRatio() * (float)this.betValue);
+                                        moneyOnLine = (long) (award2.getRatio() * (float) this.betValue);
                                     } else if (award2 == AvengersAward.PENTA_JACK_POT) {
                                         if (result == 3) {
-                                            moneyOnLine = this.initPotValue;
+                                            moneyOnLine = this.initJackpotValues;
                                         } else {
                                             if (this.huX2) {
                                                 moneyOnLine = this.pot * 2L;
                                                 tienThuongX2 = this.pot;
-                                                soTienNoHuKhongTruQuy += this.pot;
                                             } else {
                                                 moneyOnLine = this.pot;
                                             }
                                             result = 3;
-                                            soTienNoHuKhongTruQuy += this.pot - this.initPotValue;
                                         }
                                     }
-                                    AwardsOnLine<AvengersAward> aol2 = new AwardsOnLine<AvengersAward>(award2, moneyOnLine, line.getName());
+                                    AwardsOnLine<AvengersAward> aol2 = new AwardsOnLine<>(award2, moneyOnLine, line.getName());
                                     awardsOnLines.add(aol2);
                                 }
                             }
@@ -459,57 +446,44 @@ extends SlotRoom {
                                     if (this.huX2) {
                                         if (countNoHu < soLanNoHu * 2) continue;
                                         result = 4;
-                                    }
-                                    else
-                                    {
+                                    } else {
                                         if (countNoHu < soLanNoHu) continue;
                                     }
                                     countNoHu = 0;
                                     this.noHuX2();
-                                    this.pot = this.initPotValue;
+                                    this.pot = this.initJackpotValues;
                                     //this.fund -= totalPrizes - soTienNoHuKhongTruQuy;
                                     this.fund = 0;
-                                    if (this.moneyType == 1) {
-                                        //GameUtils.sendSMSToUser(username, "Chuc mung " + username + " da no hu game " + gn + " phong " + this.betValue + ". So tien no hu: " + totalPrizes + " vin");
-                                    }
+
                                     // get usercache
                                     HazelcastInstance client = HazelcastClientFactory.getInstance();
                                     IMap<String, UserModel> userMap = client.getMap("users");
-                                    UserModel model = null;
+                                    UserModel model;
                                     String displayName = username;
-                                    if (userMap.containsKey((Object)username)) {
-                                        model = (UserModel)userMap.get((Object)displayName);
-                                        if (model.getClient() != null && model.getClient() != "")
-                                        {
+                                    if (userMap.containsKey(username)) {
+                                        model = userMap.get(displayName);
+                                        if (model.getClient() != null && !Objects.equals(model.getClient(), "")) {
                                             displayName = "[" + model.getClient() + "] " + username;
-                                        }
-                                        else
-                                        {
+                                        } else {
                                             displayName = "[X] " + username;
                                         }
-                                    }
-                                    else
-                                    {
+                                    } else {
                                         UserDaoImpl dao = new UserDaoImpl();
                                         try {
                                             model = dao.getUserByNickName(username);
-                                            if (model.getClient() != null && model.getClient() != "")
-                                            {
+                                            if (model.getClient() != null && !Objects.equals(model.getClient(), "")) {
                                                 displayName = "[" + model.getClient() + "] " + username;
-                                            }
-                                            else
-                                            {
+                                            } else {
                                                 displayName = "[X] " + username;
                                             }
-                                        } catch (SQLException ex) {
-                                            
-                                        }                                        
+                                        } catch (SQLException ignored) {
+                                        }
                                     }
 
                                     if (forceJackpotByUser) {
                                         try {
-                                            cacheService.removeKey(CACHE_NAME_USER_SPOT + this.gn);
-                                            cacheService.removeKey(CACHE_BET_VALUE_SLOT + this.gn);
+                                            cacheService.removeKey(CACHE_NAME_USER_SPOT + gameName);
+                                            cacheService.removeKey(CACHE_BET_VALUE_SLOT + gameName);
                                         } catch (Exception e) {
                                             logger.error(" Reset cache BenLey - Cung Hỷ Phát Tài error with : " + e.getMessage());
                                         }
@@ -521,21 +495,20 @@ extends SlotRoom {
                                         this.fund -= totalPrizes;
                                     }
                                     if (result == 0) {
-                                        result = totalPrizes >= (long)(this.betValue * 100) ? (short)2 : 1;
+                                        result = totalPrizes >= (this.betValue * 100L) ? (short) 2 : 1;
                                     }
                                 }
                             }
-                            msg.freeSpin = 0;//(byte)this.setFreeSpin(username, linesStr, countScatter);
+                            resultBenleyMsg.freeSpin = 0;//(byte)this.setFreeSpin(username, linesStr, countScatter);
                             long moneyExchange = totalPrizes - tienThuongX2;
-                            String des = "Quay " + gn;
                             //update when x2
                             // only save real user
                             if (tienThuongX2 > 0L && !u.isBot()) {
-                                this.userService.updateMoney(username, tienThuongX2, this.moneyTypeStr, this.gameName, "Quay " + gn, "Th\u01b0\u1edfng h\u0169 X2", 0L, (Long) null, TransType.NO_VIPPOINT);
+                                this.userService.updateMoney(username, tienThuongX2, this.moneyTypeStr, this.gameName, "Quay " + gameName, "Thưởng hũ X2", 0L, null, TransType.NO_VIPPOINT);
                             }
                             // only save real user
                             if (moneyExchange != 0 && !u.isBot()) {
-                                moneyRes = this.userService.updateMoney(username, moneyExchange, this.moneyTypeStr, this.gameName, "Quay " + gn, this.buildDescription(totalBetValue, totalPrizes, result), 0L, Long.valueOf(referenceId), TransType.END_TRANS);
+                                moneyRes = this.userService.updateMoney(username, moneyExchange, this.moneyTypeStr, this.gameName, "Quay " + gameName, this.buildDescription(totalBetValue, totalPrizes, result), 0L, referenceId, TransType.END_TRANS);
                                 if (moneyRes != null && moneyRes.isSuccess()) {
                                     currentMoney = moneyRes.getCurrentMoney();
                                     if (this.moneyType == 1 && moneyExchange - (long) this.betValue >= (long) BroadcastMessageServiceImpl.MIN_MONEY) {
@@ -545,37 +518,32 @@ extends SlotRoom {
                             }
                             linesWin = builderLinesWin.toString();
                             prizesOnLine = builderPrizesOnLine.toString();
-                            msg.referenceId = referenceId;
-                            msg.matrix = AvengersUtils.matrixToString(matrix);
-                            msg.linesWin = linesWin;
-                            msg.prize = totalPrizes;
-                            msg.isFreeSpin = false;
+                            resultBenleyMsg.referenceId = referenceId;
+                            resultBenleyMsg.matrix = AvengersUtils.matrixToString(matrix);
+                            resultBenleyMsg.linesWin = linesWin;
+                            resultBenleyMsg.prize = totalPrizes;
+                            resultBenleyMsg.isFreeSpin = false;
                             if (miniGameSlot != null) {
-                                msg.haiSao = miniGameSlot.getPrizes();
+                                resultBenleyMsg.haiSao = miniGameSlot.getPrizes();
                             }
                             try {
-                                if(!u.isBot()){
-                                    this.slotService.logBenley(referenceId, username, (long)this.betValue, linesStr, linesWin, prizesOnLine, result, totalPrizes, currentTimeStr);
-
+                                if (!u.isBot()) {
+                                    this.slotService.logBenley(referenceId, username, this.betValue, linesStr, linesWin, prizesOnLine, result, totalPrizes, currentTimeStr);
                                 }
                                 if (result == 3 || result == 4) {
-                                    this.slotService.addTop(gn, username, this.betValue, totalPrizes, currentTimeStr, (int)result);
+                                    this.slotService.addTop(gameName, username, this.betValue, totalPrizes, currentTimeStr, result);
                                 }
                                 if (result == 3 || result == 2 || result == 4) {
                                     BigWinBenleyMsg bigWinMsg = new BigWinBenleyMsg();
                                     bigWinMsg.username = username;
-                                    bigWinMsg.type = (byte)result;
-                                    bigWinMsg.betValue = (short)this.betValue;
+                                    bigWinMsg.type = (byte) result;
+                                    bigWinMsg.betValue = (short) this.betValue;
                                     bigWinMsg.totalPrizes = totalPrizes;
                                     bigWinMsg.timestamp = DateTimeUtils.getCurrentTime();
                                     this.module.sendMsgToAllUsers(bigWinMsg);
                                 }
-                            }
-                            catch (InterruptedException bigWinMsg) {
-                            }
-                            catch (TimeoutException bigWinMsg) {
-                            }
-                            catch (IOException bigWinMsg) {
+                            } catch (InterruptedException | TimeoutException ignored) {
+                            } catch (IOException bigWinMsg) {
                                 // empty catch block
                             }
                             this.saveFund();
@@ -591,252 +559,15 @@ extends SlotRoom {
         } else {
             result = 101;
         }
-        msg.result = (byte)result;
-        msg.currentMoney = currentMoney;
-        long endTime = System.currentTimeMillis();
-        long handleTime = endTime - startTime;
-        String ratioTime = CommonUtils.getRatioTime((long)handleTime);
+        resultBenleyMsg.result = (byte) result;
+        resultBenleyMsg.currentMoney = currentMoney;
         //Update cache tien hu
-        cacheService.setValue(CACHE_JACK_POT_VALUE_SLOT + "_" + this.betValue + "_"  + this.gn , String.valueOf(this.pot));
+        cacheService.setValue(CACHE_JACK_POT_VALUE_SLOT + "_" + this.betValue + "_" + gameName, String.valueOf(this.pot));
         if (forceJackpotByUser) {
-            this.sendNotifyNoHu(username, (byte) 1, msg.prize,"BENLEY");
+            this.sendNotifyNoHu(username, (byte) 1, resultBenleyMsg.prize, "BENLEY");
         }
-       // SlotUtils.logAvengers(referenceId, username, this.betValue, msg.matrix, msg.haiSao, result, handleTime, ratioTime, currentTimeStr);
-        return msg;
-    }
-
-    public ResultBenleyMsg playFreeDaily(String username, long referenceId) throws Exception {
-        try
-        {
-        String linesStr = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25";
-        long startTime = System.currentTimeMillis();
-        String currentTimeStr = DateTimeUtils.getCurrentTime();
-        short result = 0;
-        String[] lineArr = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25".split(",");
-        long currentMoney = this.userService.getMoneyUserCache(username, this.moneyTypeStr);
-        UserCacheModel u = this.userService.getUser(username);
-        ResultBenleyMsg msg = new ResultBenleyMsg();
-        boolean enoughPair = false;
-        ArrayList<AwardsOnLine<AvengersAward>> awardsOnLines = new ArrayList<AwardsOnLine<AvengersAward>>();
-        long totalPrizes = 0L;
-        long tienThuongX2 = 0L;
-        int countScatter = 0;
-        int countBonus = 0;
-        
-        block4 : while (!enoughPair) {
-            result = 0;
-            awardsOnLines.clear();
-            totalPrizes = 0L;
-            String linesWin = "";
-            String prizesOnLine = "";
-            countScatter = 0;
-            countBonus = 0;
-            AvengersItem[][] matrix = AvengersUtils.generateMatrix();
-            for (int i = 0; i < 3; ++i) {
-                for (int j = 0; j < 5; ++j) {
-                    if (matrix[i][j] == AvengersItem.SCATTER) {
-                        ++countScatter;
-                        continue;
-                    }
-                    if (matrix[i][j] != AvengersItem.BONUS) continue;
-                    ++countBonus;
-                }
-            }
-            if (countBonus >= 3 || countScatter >= 3) continue;
-            AvengersItem[][] matrixWild = AvengersUtils.revertMatrix(matrix);
-            for (String entry2 : lineArr) {
-                ArrayList<AvengersAward> awardList = new ArrayList<AvengersAward>();
-                Line line = AvengersUtils.getLine(this.lines, matrixWild, Integer.parseInt(entry2));
-                AvengersUtils.calculateLine(line, awardList);
-                for (AvengersAward award : awardList) {
-                    long moneyOnLine = 0L;
-                    if (award.getRatio() > 0.0f) {
-                        moneyOnLine = (long)(award.getRatio() * (float)this.betValue);
-                    } else if (award == AvengersAward.PENTA_JACK_POT) continue block4;
-                    AwardsOnLine<AvengersAward> aol = new AwardsOnLine<AvengersAward>(award, moneyOnLine, line.getName());
-                    awardsOnLines.add(aol);
-                }
-            }
-            StringBuilder builderLinesWin = new StringBuilder();
-            StringBuilder builderPrizesOnLine = new StringBuilder();
-            for (AwardsOnLine entry2 : awardsOnLines) {
-                if (entry2.getAward() == AvengersAward.PENTA_JACK_POT && !u.isBot()) continue block4;
-                totalPrizes += entry2.getMoney();
-                builderLinesWin.append(",");
-                builderLinesWin.append(entry2.getLineId());
-                builderPrizesOnLine.append(",");
-                builderPrizesOnLine.append(entry2.getMoney());
-            }
-            if (builderLinesWin.length() > 0) {
-                builderLinesWin.deleteCharAt(0);
-            }
-            if (builderPrizesOnLine.length() > 0) {
-                builderPrizesOnLine.deleteCharAt(0);
-            }
-            if (totalPrizes > (long)ConfigGame.getIntValue("max_prize_free_daily", 2000)) continue;
-            enoughPair = true;
-            boolean updated = this.slotService.updateLuotQuayFreeDaily(this.gameName, username, this.betValue);
-            if (!updated) {
-                Debug.trace((Object)(String.valueOf(username) + " luot quay free " + this.gameName + " khong hop le"));
-                result = 103;
-                continue;
-            }
-            long moneyExchange = totalPrizes - 0L;
-            if (moneyExchange > 0L) {
-                String des = "Quay "+ gn +" Free ";
-                MoneyResponse moneyRes = this.userService.updateMoney(username, moneyExchange, this.moneyTypeStr, this.gameName+"_Free", "Quay "+ gn +" Free ", "C\u01b0\u1ee3c: 0, Th\u1eafng: " + totalPrizes, 0L, (Long)null, TransType.NO_VIPPOINT);
-                if (moneyRes != null && moneyRes.isSuccess()) {
-                    currentMoney = moneyRes.getCurrentMoney();
-                }
-            }
-            linesWin = builderLinesWin.toString();
-            prizesOnLine = builderPrizesOnLine.toString();
-            msg.referenceId = referenceId;
-            msg.matrix = AvengersUtils.matrixToString(matrix);
-            msg.linesWin = linesWin;
-            msg.prize = totalPrizes;
-            msg.isFreeSpin = false;
-            try {
-                this.slotService.logAvengers(referenceId, username, (long)this.betValue, "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25", linesWin, prizesOnLine, result, totalPrizes, currentTimeStr);
-            }
-            catch (InterruptedException des) {
-            }
-            catch (TimeoutException des) {
-            }
-            catch (IOException des) {}
-        }
-        msg.result = (byte)result;
-        msg.currentMoney = currentMoney;
-        long endTime = System.currentTimeMillis();
-        long handleTime = endTime - startTime;
-        String ratioTime = CommonUtils.getRatioTime((long)handleTime);
-
-        return msg;
-        }catch (Exception ex)
-        {
-            throw ex;
-        }
-    }
-
-    public ResultBenleyMsg playFree(String username, String linesStr, String itemsWild, int ratio, long referenceId) {
-        long startTime = System.currentTimeMillis();
-        String currentTimeStr = DateTimeUtils.getCurrentTime();
-        short result = 0;
-        String[] lineArr = linesStr.split(",");
-        long currentMoney = this.userService.getMoneyUserCache(username, this.moneyTypeStr);
-        long totalBetValue = 0L;
-        ResultBenleyMsg msg = new ResultBenleyMsg();
-        long fee = 0L;
-        long moneyToPot = 0L;
-        long moneyToFund = 0L;
-        this.fund += 0L;
-        this.pot += 0L;
-        boolean enoughPair = false;
-        ArrayList<AwardsOnLine<AvengersFreeSpinAward>> awardsOnLines = new ArrayList<AwardsOnLine<AvengersFreeSpinAward>>();
-        long totalPrizes = 0L;
-        while (!enoughPair) {
-            SlotFreeSpin freeSpin;
-            result = 0;
-            awardsOnLines.clear();
-            totalPrizes = 0L;
-            String linesWin = "";
-            String prizesOnLine = "";
-            String haiSao = "";
-            AvengersItem[][] matrix = AvengersUtils.generateMatrixFreeSpin(itemsWild);
-            for (String entry : lineArr) {
-                ArrayList<AvengersFreeSpinAward> awardList = new ArrayList<AvengersFreeSpinAward>();
-                Line line = AvengersUtils.getLine(this.lines, matrix, Integer.parseInt(entry));
-                AvengersUtils.calculateFreeSpinLine(line, awardList);
-                for (AvengersFreeSpinAward award : awardList) {
-                    long moneyOnLine = 0L;
-                    if (!(award.getRatio() > 0.0f)) continue;
-                    moneyOnLine = (long)(award.getRatio() * (float)this.betValue);
-                    AwardsOnLine<AvengersFreeSpinAward> aol = new AwardsOnLine<AvengersFreeSpinAward>(award, moneyOnLine, line.getName());
-                    awardsOnLines.add(aol);
-                }
-            }
-            StringBuilder builderLinesWin = new StringBuilder();
-            StringBuilder builderPrizesOnLine = new StringBuilder();
-            for (AwardsOnLine entry2 : awardsOnLines) {
-                totalPrizes += entry2.getMoney();
-                builderLinesWin.append(",");
-                builderLinesWin.append(entry2.getLineId());
-                builderPrizesOnLine.append(",");
-                builderPrizesOnLine.append(entry2.getMoney());
-            }
-            if (builderLinesWin.length() > 0) {
-                builderLinesWin.deleteCharAt(0);
-            }
-            if (builderPrizesOnLine.length() > 0) {
-                builderPrizesOnLine.deleteCharAt(0);
-            }
-            int tmpPrizes = (int)totalPrizes;
-            if (result == 3 ? this.fund - totalPrizes < 0L : this.fund - (totalPrizes *= (long)ratio) < this.initPotValue * 2L && totalPrizes - 0L >= 0L) continue;
-            enoughPair = true;
-            if (totalPrizes > 0L) {
-                this.fund -= totalPrizes;
-                if (result == 0) {
-                    result = 1;
-                }
-            }
-            long moneyExchange = totalPrizes - 0L;
-            String des = gn + " - Free";
-            MoneyResponse moneyRes = this.userService.updateMoney(username, moneyExchange, this.moneyTypeStr, this.gameName, gn + " - Free", this.buildDescription(0L, totalPrizes, result), 0L, (Long)null, TransType.VIPPOINT);
-            if (moneyRes != null && moneyRes.isSuccess()) {
-                currentMoney = moneyRes.getCurrentMoney();
-                if (this.moneyType == 1 && moneyExchange >= (long)BroadcastMessageServiceImpl.MIN_MONEY) {
-                    this.broadcastMsgService.putMessage(Games.BENLEY.getId(), username, moneyExchange);
-                }
-                this.slotService.addPrizes(this.cacheFreeName, username, tmpPrizes);
-            }
-            if ((freeSpin = this.slotService.updateLuotQuaySlotFree(this.cacheFreeName, username)).getNum() == 0) {
-                BenleyTotalFreeSpin totalFreeSpinMsg = new BenleyTotalFreeSpin();
-                totalFreeSpinMsg.prize = freeSpin.getPrizes();
-                totalFreeSpinMsg.ratio = (byte)ratio;
-                SlotUtils.sendMessageToUser((BaseMsg)totalFreeSpinMsg, username);
-            }
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < 3; ++i) {
-                for (int j = 0; j < 5; ++j) {
-                    if (matrix[i][j] != AvengersItem.WILD) continue;
-                    sb.append(String.valueOf(i) + "," + j + ",");
-                }
-            }
-            if (sb.length() > 0) {
-                sb.deleteCharAt(sb.length() - 1);
-            }
-            this.slotService.setItemsWild(this.cacheFreeName, username, sb.toString());
-            linesWin = builderLinesWin.toString();
-            prizesOnLine = builderPrizesOnLine.toString();
-            msg.referenceId = referenceId;
-            msg.matrix = AvengersUtils.matrixToString(matrix);
-            msg.linesWin = linesWin;
-            msg.prize = totalPrizes;
-            msg.haiSao = "";
-            msg.freeSpin = (byte)freeSpin.getNum();
-            msg.isFreeSpin = true;
-            msg.itemsWild = sb.toString();
-            msg.ratioFree = (byte)ratio;
-            try {
-
-                this.slotService.logBenley(referenceId, username, (long)this.betValue, linesStr, linesWin, prizesOnLine, result, totalPrizes, currentTimeStr);
-            }
-            catch (InterruptedException i) {
-            }
-            catch (TimeoutException i) {
-            }
-            catch (IOException i) {
-                // empty catch block
-            }
-            this.saveFund();
-            this.savePot();
-        }
-        msg.result = (byte)result;
-        msg.currentMoney = currentMoney;
-        long endTime = System.currentTimeMillis();
-        long handleTime = endTime - startTime;
-        String ratioTime = CommonUtils.getRatioTime((long)handleTime);
-        return msg;
+        // SlotUtils.logAvengers(referenceId, username, this.betValue, msg.matrix, msg.haiSao, result, handleTime, ratioTime, currentTimeStr);
+        return resultBenleyMsg;
     }
 
     private int setFreeSpin(String nickName, String lines, int countFreeSpin) {
@@ -862,8 +593,7 @@ extends SlotRoom {
 
     public short play(User user, String linesStr) throws Exception {
         String username = user.getName();
-        int numFree = 0;
-        ResultBenleyMsg msg = null;
+        ResultBenleyMsg msg;
         BenleyFreeDailyMsg freeDailyMsg = new BenleyFreeDailyMsg();
         freeDailyMsg.remain = 0;
         msg = this.play(username, linesStr);
@@ -872,10 +602,10 @@ extends SlotRoom {
             miniMsg.prize = msg.prize;
             miniMsg.curretMoney = msg.currentMoney;
             miniMsg.result = msg.result;
-            SlotUtils.sendMessageToUser((BaseMsg)miniMsg, user);
+            SlotUtils.sendMessageToUser(miniMsg, user);
         } else {
-            SlotUtils.sendMessageToUser((BaseMsg)msg, user);
-            SlotUtils.sendMessageToUser((BaseMsg)freeDailyMsg, user);
+            SlotUtils.sendMessageToUser(msg, user);
+            SlotUtils.sendMessageToUser(freeDailyMsg, user);
         }
         return msg.result;
     }
@@ -885,11 +615,8 @@ extends SlotRoom {
         if (currentTime - this.lastTimeUpdateFundToRoom >= 60000L) {
             try {
                 this.mgService.saveFund(this.name, this.fund);
-            }
-            catch (IOException | InterruptedException | TimeoutException ex2) {
-                Exception ex;
-                Exception e = ex = ex2;
-                Debug.trace((Object[])new Object[]{String.valueOf(this.gameName) + ": update fund error ", e.getMessage()});
+            } catch (IOException | InterruptedException | TimeoutException e) {
+                Debug.trace(this.gameName + ": update fund error ", e.getMessage());
             }
             this.lastTimeUpdateFundToRoom = currentTime;
         }
@@ -901,15 +628,12 @@ extends SlotRoom {
             this.lastTimeUpdatePotToRoom = currentTime;
             try {
                 this.mgService.savePot(this.name, this.pot, this.huX2);
-            }
-            catch (IOException | InterruptedException | TimeoutException ex2) {
-                Exception ex;
-                Exception e = ex = ex2;
-                Debug.trace((Object[])new Object[]{String.valueOf(this.gameName) + ": update pot error ", e.getMessage()});
+            } catch (IOException | InterruptedException | TimeoutException e) {
+                Debug.trace(this.gameName + ": update pot error ", e.getMessage());
             }
             UpdatePotBenleyMsg msg = new UpdatePotBenleyMsg();
             msg.value = this.pot;
-            msg.x2 = (byte)(this.huX2 ? 1 : 0);
+            msg.x2 = (byte) (this.huX2 ? 1 : 0);
             this.sendMessageToRoom(msg);
         }
     }
@@ -917,8 +641,8 @@ extends SlotRoom {
     public void updatePot(User user) {
         UpdatePotBenleyMsg msg = new UpdatePotBenleyMsg();
         msg.value = this.pot;
-        msg.x2 = (byte)(this.huX2 ? 1 : 0);
-        SlotUtils.sendMessageToUser((BaseMsg)msg, user);
+        msg.x2 = (byte) (this.huX2 ? 1 : 0);
+        SlotUtils.sendMessageToUser(msg, user);
     }
 
     /*
@@ -926,7 +650,7 @@ extends SlotRoom {
      */
     @Override
     protected void gameLoop() {
-        ArrayList<AutoUser> usersPlay = new ArrayList<AutoUser>();
+        ArrayList<AutoUser> usersPlay = new ArrayList<>();
         Map map = this.usersAuto;
         synchronized (map) {
             for (AutoUser user : this.usersAuto.values()) {
@@ -942,9 +666,8 @@ extends SlotRoom {
             if (toIndex > usersPlay.size()) {
                 toIndex = usersPlay.size();
             }
-            ArrayList<AutoUser> tmp = new ArrayList<AutoUser>(usersPlay.subList(fromIndex, toIndex));
+            ArrayList<AutoUser> tmp = new ArrayList<>(usersPlay.subList(fromIndex, toIndex));
             PlayListAutoUserTask task = new PlayListAutoUserTask(tmp);
-//            PlayListAutoUserTask task = new PlayListAutoUserTask(this, tmp);
             this.executor.execute(task);
         }
         usersPlay.clear();
@@ -952,27 +675,26 @@ extends SlotRoom {
 
     @Override
     protected void checkResetPot() {
-        try{
+        try {
 
-            int isReset = sv.getValueInt("reset_pot_"+this.gn+"_"+this.betValue);
-            if(isReset == 1){
-                this.pot = this.initPotValue;
+            int isReset = sv.getValueInt("reset_pot_" + gameName + "_" + this.betValue);
+            if (isReset == 1) {
+                this.pot = this.initJackpotValues;
                 this.fund = 0;
                 this.savePot();
                 this.saveFund();
-                this.sv.removeKey("reset_pot_"+this.gn+"_"+this.betValue);
+                this.sv.removeKey("reset_pot_" + gameName + "_" + this.betValue);
 
             }
-        }catch (Exception e){
-
+        } catch (Exception ignored) {
         }
     }
 
-    public boolean isBot(String nickName){
-        try{
+    public boolean isBot(String nickName) {
+        try {
             UserCacheModel u = this.userService.getUser(nickName);
             return u.isBot();
-        }catch (Exception e){
+        } catch (Exception e) {
             return true;
         }
     }
@@ -1008,14 +730,14 @@ extends SlotRoom {
         SlotFreeDaily model = this.slotService.getLuotQuayFreeDaily(this.gameName, user.getName(), this.betValue);
         BenleyFreeDailyMsg freeDailyMsg = new BenleyFreeDailyMsg();
         if (model != null && model.getRotateFree() > 0) {
-            user.setProperty((Object)"numFreeDaily", (Object)model.getRotateFree());
-            freeDailyMsg.remain = (byte)model.getRotateFree();
+            user.setProperty("numFreeDaily", model.getRotateFree());
+            freeDailyMsg.remain = (byte) model.getRotateFree();
         } else {
-            user.removeProperty((Object)"numFreeDaily");
+            user.removeProperty("numFreeDaily");
         }
-        SlotUtils.sendMessageToUser((BaseMsg)freeDailyMsg, user);
+        SlotUtils.sendMessageToUser(freeDailyMsg, user);
         if (result) {
-            user.setProperty((Object)("MGROOM_" + this.gameName + "_INFO"), (Object)this);
+            user.setProperty("MGROOM_" + this.gameName + "_INFO", this);
         }
         return result;
     }

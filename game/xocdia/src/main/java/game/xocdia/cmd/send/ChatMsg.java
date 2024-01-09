@@ -9,14 +9,13 @@ package game.xocdia.cmd.send;
 import bitzero.server.extensions.data.BaseMsg;
 import java.nio.ByteBuffer;
 
-public class ChatMsg
-extends BaseMsg {
+public class ChatMsg extends BaseMsg {
     public String nickname;
     public boolean isIcon;
     public String content;
 
     public ChatMsg() {
-        super((short)3125);
+        super((short)3090);
     }
 
     public byte[] createData() {

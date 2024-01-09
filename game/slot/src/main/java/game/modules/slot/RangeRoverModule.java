@@ -50,10 +50,7 @@ import game.modules.slot.cmd.rev.rangeRover.PlayRangeRoverCmd;
 import game.modules.slot.cmd.rev.rangeRover.*;
 import game.modules.slot.cmd.send.rangeRover.RangeRoverInfoMsg;
 import game.modules.slot.cmd.send.rangeRover.UpdatePotRangeRoverMsg;
-import game.modules.slot.cmd.send.rangeRover.RangeRoverInfoMsg;
-import game.modules.slot.cmd.send.rangeRover.UpdatePotRangeRoverMsg;
 import game.modules.slot.entities.BotMinigame;
-import game.modules.slot.room.RangeRoverRoom;
 import game.modules.slot.room.RangeRoverRoom;
 import game.modules.slot.utils.SlotUtils;
 import game.util.ConfigGame;
@@ -82,18 +79,18 @@ public class RangeRoverModule
             for (int i = 0; i < arr.length; ++i) {
                 initPotValues[i] = Integer.parseInt(arr[i]);
             }
-            this.pots = this.service.getPots(Games.RANGE_ROVER.getName());
-            Debug.trace((Object)(this.gameName+" POTS: " + CommonUtils.arrayLongToString((long[])this.pots)));
+            this.jackpots = this.service.getPots(Games.RANGE_ROVER.getName());
+            Debug.trace((Object)(this.gameName+" POTS: " + CommonUtils.arrayLongToString((long[])this.jackpots)));
             funds = this.service.getFunds(Games.RANGE_ROVER.getName());
             Debug.trace((Object)(this.gameName+" FUNDS: " + CommonUtils.arrayLongToString((long[])funds)));
         }
         catch (Exception e) {
             Debug.trace((Object[])new Object[]{"Init range rover error ", e});
         }
-        this.rooms.put(String.valueOf(this.gameName) + "_vin_100", new RangeRoverRoom(this, (byte)0, String.valueOf(this.gameName) + "_vin_100", (short)1, this.pots[0], funds[0], 100, initPotValues[0]));
-        this.rooms.put(String.valueOf(this.gameName) + "_vin_1000", new RangeRoverRoom(this, (byte)1, String.valueOf(this.gameName) + "_vin_1000", (short)1, this.pots[1], funds[1], 1000, initPotValues[1]));
-        this.rooms.put(String.valueOf(this.gameName) + "_vin_5000", new RangeRoverRoom(this, (byte)2, String.valueOf(this.gameName) + "_vin_5000", (short) 1, this.pots[2], funds[2], 5000, initPotValues[2]));
-        this.rooms.put(String.valueOf(this.gameName) + "_vin_10000", new RangeRoverRoom(this, (byte)3, String.valueOf(this.gameName) + "_vin_10000", (short)1, this.pots[3], funds[3], 10000, initPotValues[3]));
+        this.rooms.put(String.valueOf(this.gameName) + "_vin_100", new RangeRoverRoom(this, (byte)0, String.valueOf(this.gameName) + "_vin_100", (short)1, this.jackpots[0], funds[0], 100, initPotValues[0]));
+        this.rooms.put(String.valueOf(this.gameName) + "_vin_1000", new RangeRoverRoom(this, (byte)1, String.valueOf(this.gameName) + "_vin_1000", (short)1, this.jackpots[1], funds[1], 1000, initPotValues[1]));
+        this.rooms.put(String.valueOf(this.gameName) + "_vin_5000", new RangeRoverRoom(this, (byte)2, String.valueOf(this.gameName) + "_vin_5000", (short) 1, this.jackpots[2], funds[2], 5000, initPotValues[2]));
+        this.rooms.put(String.valueOf(this.gameName) + "_vin_10000", new RangeRoverRoom(this, (byte)3, String.valueOf(this.gameName) + "_vin_10000", (short)1, this.jackpots[3], funds[3], 10000, initPotValues[3]));
 
         Debug.trace((Object)"INIT "+this.gameName+" DONE");
         this.getParentExtension().addEventListener((IBZEventType)BZEventType.USER_DISCONNECT, (IBZEventListener)this);
@@ -150,7 +147,7 @@ public class RangeRoverModule
     }
 
     public void updatePot(byte id, long value, byte x2) {
-        this.pots[id] = value;
+        this.jackpots[id] = value;
         this.x2Arr[id] = x2;
         long currentTime = System.currentTimeMillis();
         if (currentTime - this.lastTimeUpdatePotToRoom >= 3000L) {
@@ -164,10 +161,10 @@ public class RangeRoverModule
 
     public UpdatePotRangeRoverMsg getPotsInfo() {
         UpdatePotRangeRoverMsg msg = new UpdatePotRangeRoverMsg();
-        msg.value100 = this.pots[0];
-        msg.value1000 = this.pots[1];
-        msg.value5000 = this.pots[2];
-        msg.value10000 = this.pots[3];
+        msg.value100 = this.jackpots[0];
+        msg.value1000 = this.jackpots[1];
+        msg.value5000 = this.jackpots[2];
+        msg.value10000 = this.jackpots[3];
         msg.x2Room100 = this.x2Arr[0];
         msg.x2Room1000 = this.x2Arr[1];
         return msg;
