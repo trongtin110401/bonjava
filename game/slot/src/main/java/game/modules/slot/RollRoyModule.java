@@ -37,35 +37,25 @@ import bitzero.server.core.IBZEventParam;
 import bitzero.server.core.IBZEventType;
 import bitzero.server.entities.User;
 import bitzero.server.exceptions.BZException;
-import bitzero.server.extensions.BZExtension;
 import bitzero.server.extensions.data.BaseMsg;
 import bitzero.server.extensions.data.DataCmd;
-import bitzero.server.util.TaskScheduler;
 import bitzero.util.ExtensionUtility;
 import bitzero.util.common.business.Debug;
 import com.vinplay.dal.common.BroadCastUserState;
-import com.vinplay.dal.service.MiniGameService;
-import com.vinplay.dal.service.SlotMachineService;
 import com.vinplay.dal.service.impl.CacheServiceImpl;
-import com.vinplay.usercore.service.UserService;
 import com.vinplay.vbee.common.enums.Games;
 import com.vinplay.vbee.common.exceptions.KeyNotFoundException;
 import com.vinplay.vbee.common.models.slot.SlotFreeSpin;
 import com.vinplay.vbee.common.utils.CommonUtils;
-import game.modules.slot.SlotModule;
 import game.modules.slot.cmd.rev.rollRoyce.*;
 import game.modules.slot.cmd.send.rollRoy.RollRoyInfoMsg;
 import game.modules.slot.cmd.send.rollRoy.UpdatePotRollRoyMsg;
 import game.modules.slot.entities.BotMinigame;
-import game.modules.slot.room.SlotRoom;
 import game.modules.slot.room.RollRoyRoom;
 import game.modules.slot.utils.SlotUtils;
 import game.util.ConfigGame;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class RollRoyModule
@@ -91,17 +81,17 @@ extends SlotModule {
             for (int i = 0; i < arr.length; ++i) {
                 initPotValues[i] = Integer.parseInt(arr[i]);
             }
-            this.pots = this.service.getPots(this.gameName);
-            Debug.trace((Object)(String.valueOf(this.gameName) + " POTS: " + CommonUtils.arrayLongToString((long[])this.pots)));
+            this.jackpots = this.service.getPots(this.gameName);
+            Debug.trace((Object)(String.valueOf(this.gameName) + " POTS: " + CommonUtils.arrayLongToString((long[])this.jackpots)));
             funds = this.service.getFunds(this.gameName);
             Debug.trace((Object)(String.valueOf(this.gameName) + " FUNDS: " + CommonUtils.arrayLongToString((long[])funds)));
         }
         catch (Exception e) {
             Debug.trace((Object[])new Object[]{"Init " + this.gameName + " error ", e});
         }
-        this.rooms.put(String.valueOf(this.gameName) + "_vin_100", new RollRoyRoom(this, (byte)0, String.valueOf(this.gameName) + "_vin_100", (short) 1, this.pots[0], funds[0], 100, initPotValues[0]));
-        this.rooms.put(String.valueOf(this.gameName) + "_vin_1000", new RollRoyRoom(this, (byte)1, String.valueOf(this.gameName) + "_vin_1000", (short) 1, this.pots[1], funds[1], 1000, initPotValues[1]));
-        this.rooms.put(String.valueOf(this.gameName) + "_vin_10000", new RollRoyRoom(this, (byte)2, String.valueOf(this.gameName) + "_vin_10000", (short) 1, this.pots[2], funds[2], 10000, initPotValues[2]));
+        this.rooms.put(String.valueOf(this.gameName) + "_vin_100", new RollRoyRoom(this, (byte)0, String.valueOf(this.gameName) + "_vin_100", (short) 1, this.jackpots[0], funds[0], 100, initPotValues[0]));
+        this.rooms.put(String.valueOf(this.gameName) + "_vin_1000", new RollRoyRoom(this, (byte)1, String.valueOf(this.gameName) + "_vin_1000", (short) 1, this.jackpots[1], funds[1], 1000, initPotValues[1]));
+        this.rooms.put(String.valueOf(this.gameName) + "_vin_10000", new RollRoyRoom(this, (byte)2, String.valueOf(this.gameName) + "_vin_10000", (short) 1, this.jackpots[2], funds[2], 10000, initPotValues[2]));
         Debug.trace((Object)("INIT " + this.gameName + " DONE"));
         this.getParentExtension().addEventListener((IBZEventType)BZEventType.USER_DISCONNECT, (IBZEventListener)this);
         referenceId = this.slotService.getLastReferenceId(this.gameName);
@@ -157,7 +147,7 @@ extends SlotModule {
     }
 
     public void updatePot(byte id, long value, byte x2) {
-        this.pots[id] = value;
+        this.jackpots[id] = value;
         this.x2Arr[id] = x2;
         long currentTime = System.currentTimeMillis();
         if (currentTime - this.lastTimeUpdatePotToRoom >= 3000L) {
@@ -170,9 +160,9 @@ extends SlotModule {
 
     public UpdatePotRollRoyMsg getPotsInfo() {
         UpdatePotRollRoyMsg msg = new UpdatePotRollRoyMsg();
-        msg.value100 = this.pots[0];
-        msg.value1000 = this.pots[1];
-        msg.value10000 = this.pots[2];
+        msg.value100 = this.jackpots[0];
+        msg.value1000 = this.jackpots[1];
+        msg.value10000 = this.jackpots[2];
         msg.x2Room100 = this.x2Arr[0];
         msg.x2Room1000 = this.x2Arr[1];
         return msg;

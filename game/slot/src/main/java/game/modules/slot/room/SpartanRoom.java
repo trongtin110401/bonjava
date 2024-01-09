@@ -88,7 +88,7 @@ public class SpartanRoom
         CacheServiceImpl cacheService = new CacheServiceImpl();
         cacheService.setValue(name, (int) pot);
         this.betValue = betValue;
-        this.initPotValue = initPotValue;
+        this.initJackpotValues = initPotValue;
         gn = this.gameName;
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.checkResetPotTask, 10, 10, TimeUnit.SECONDS);
@@ -232,7 +232,7 @@ public class SpartanRoom
                                         moneyOnLine = (long)(award2.getRatio() * (float)this.betValue);
                                     } else if (award2 == SpartanAward.PENTA_JACK_POT) {
                                         if (result == 3) {
-                                            moneyOnLine = this.initPotValue;
+                                            moneyOnLine = this.initJackpotValues;
                                         } else {
                                             if (this.huX2) {
                                                 moneyOnLine = this.pot * 2L;
@@ -278,7 +278,7 @@ public class SpartanRoom
                                     }
                                     countNoHu = 0;
                                     this.noHuX2();
-                                    this.pot = this.initPotValue;
+                                    this.pot = this.initJackpotValues;
                                     //this.fund -= totalPrizes - soTienNoHuKhongTruQuy;
                                     this.fund = 0;
                                     if (this.moneyType == 1) {
@@ -570,7 +570,7 @@ public class SpartanRoom
                 builderPrizesOnLine.deleteCharAt(0);
             }
             int tmpPrizes = (int) totalPrizes;
-            if (result == 3 ? this.fund - totalPrizes < 0L : this.fund - (totalPrizes *= (long) ratio) < this.initPotValue * 2L && totalPrizes - 0L >= 0L)
+            if (result == 3 ? this.fund - totalPrizes < 0L : this.fund - (totalPrizes *= (long) ratio) < this.initJackpotValues * 2L && totalPrizes - 0L >= 0L)
                 continue;
             enoughPair = true;
             if (totalPrizes > 0L) {
@@ -781,7 +781,7 @@ public class SpartanRoom
 
             int isReset = sv.getValueInt("reset_pot_" + this.gn + "_" + this.betValue);
             if (isReset == 1) {
-                this.pot = this.initPotValue;
+                this.pot = this.initJackpotValues;
                 this.fund = 0;
                 this.savePot();
                 this.saveFund();

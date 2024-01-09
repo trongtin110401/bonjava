@@ -64,7 +64,7 @@ public class AuditionRoom
         CacheServiceImpl cacheService = new CacheServiceImpl();
         cacheService.setValue(name, (int) pot);
         this.betValue = betValue;
-        this.initPotValue = initPotValue;
+        this.initJackpotValues = initPotValue;
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
         this.boxValues.add(10);
         this.boxValues.add(10);
@@ -280,7 +280,7 @@ public class AuditionRoom
                                             moneyOnLine = this.pot;
                                         }
                                         result = 3;
-                                        soTienNoHuKhongTruQuy += this.pot - this.initPotValue;
+                                        soTienNoHuKhongTruQuy += this.pot - this.initJackpotValues;
                                     } else {
                                         MiniGameSlotResponse response = this.generatePickStars();
                                         moneyOnLine = response.getTotalPrize();
@@ -379,7 +379,7 @@ public class AuditionRoom
                                     }
                                     countNoHu = 0;
                                     this.noHuX2();
-                                    this.pot = this.initPotValue;
+                                    this.pot = this.initJackpotValues;
                                     //this.fund -= totalPrizes - soTienNoHuKhongTruQuy;
                                     this.fund = 0;
                                     if (this.moneyType == 1) {
@@ -679,7 +679,7 @@ public class AuditionRoom
 
             int isReset = sv.getValueInt("reset_pot_" + this.gn + "_" + this.betValue);
             if (isReset == 1) {
-                this.pot = this.initPotValue;
+                this.pot = this.initJackpotValues;
                 this.fund = 0;
                 this.savePot();
                 this.saveFund();
@@ -693,8 +693,8 @@ public class AuditionRoom
 
     private void resetPotFund() {
         try {
-            this.fund = this.initPotValue;
-            this.pot = this.initPotValue;
+            this.fund = this.initJackpotValues;
+            this.pot = this.initJackpotValues;
             this.saveFund();
             this.saveFund();
         } catch (Exception e) {

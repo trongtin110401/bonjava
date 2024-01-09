@@ -21,6 +21,7 @@ import game.modules.slot.entities.BotMinigame;
 import game.modules.slot.room.BenleyRoom;
 import game.modules.slot.utils.SlotUtils;
 import game.util.ConfigGame;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -42,26 +43,27 @@ public class BenleyModule extends SlotModule {
 
         // quỹ thưởng
         long[] funds = new long[3];
-
         //  jacpot
-        int[] initPotValues = new int[6];
+        int[] initJackpotValues = new int[6];
         try {
+
             String initPotValuesStr = ConfigGame.getValueString(this.gameName + "_init_pot_values");
             String[] arr = initPotValuesStr.split(",");
             for (int i = 0; i < arr.length; ++i) {
-                initPotValues[i] = Integer.parseInt(arr[i]);
+                initJackpotValues[i] = Integer.parseInt(arr[i]);
             }
-            this.pots = this.service.getPots(this.gameName);
-            Debug.trace(this.gameName + " POTS: " + CommonUtils.arrayLongToString(this.pots));
+
+            this.jackpots = this.service.getPots(this.gameName);
+            Debug.trace(this.gameName + " POTS: " + CommonUtils.arrayLongToString(this.jackpots));
             funds = this.service.getFunds(this.gameName);
             Debug.trace(this.gameName + ": " + CommonUtils.arrayLongToString(funds));
         } catch (Exception e) {
             Debug.trace("Init " + this.gameName + " error ", e);
         }
 
-        this.rooms.put(this.gameName + "_vin_100", new BenleyRoom(this, (byte) 0, this.gameName + "_vin_100", (short) 1, this.pots[0], funds[0], 100, initPotValues[0]));
-        this.rooms.put(this.gameName + "_vin_1000", new BenleyRoom(this, (byte) 1, this.gameName + "_vin_1000", (short) 1, this.pots[1], funds[1], 1000, initPotValues[1]));
-        this.rooms.put(this.gameName + "_vin_10000", new BenleyRoom(this, (byte) 2, this.gameName + "_vin_10000", (short) 1, this.pots[2], funds[2], 10000, initPotValues[2]));
+        this.rooms.put(this.gameName + "_vin_100", new BenleyRoom(this, (byte) 0, this.gameName + "_vin_100", (short) 1, this.jackpots[0], funds[0], 100, initJackpotValues[0]));
+        this.rooms.put(this.gameName + "_vin_1000", new BenleyRoom(this, (byte) 1, this.gameName + "_vin_1000", (short) 1, this.jackpots[1], funds[1], 1000, initJackpotValues[1]));
+        this.rooms.put(this.gameName + "_vin_10000", new BenleyRoom(this, (byte) 2, this.gameName + "_vin_10000", (short) 1, this.jackpots[2], funds[2], 10000, initJackpotValues[2]));
         Debug.trace("INIT " + this.gameName + " DONE");
 
         this.getParentExtension().addEventListener(BZEventType.USER_DISCONNECT, this);
@@ -243,12 +245,7 @@ public class BenleyModule extends SlotModule {
             try {
                 room.play(user, cmd.lines);
             } catch (Exception ex) {
-                StringWriter sw = new StringWriter();
-                PrintWriter pw = new PrintWriter(sw);
-                ex.printStackTrace(pw);
-                String sStackTrace = sw.toString(); // stack trace as a string
-                Debug.trace(sStackTrace);
-                Debug.trace(ex.getMessage());
+                Debug.trace(ExceptionUtils.getStackTrace(ex));
             }
         }
         assert room != null;

@@ -74,17 +74,17 @@ extends SlotModule {
             for (int i = 0; i < arr.length; ++i) {
                 initPotValues[i] = Integer.parseInt(arr[i]);
             }
-            this.pots = this.service.getPots(this.gameName);
-            Debug.trace((Object)(this.gameName+"POTS: " + CommonUtils.arrayLongToString((long[])this.pots)));
+            this.jackpots = this.service.getPots(this.gameName);
+            Debug.trace((Object)(this.gameName+"POTS: " + CommonUtils.arrayLongToString((long[])this.jackpots)));
             funds = this.service.getFunds(this.gameName);
             Debug.trace((Object)(this.gameName+": " + CommonUtils.arrayLongToString((long[])funds)));
         }
         catch (Exception e) {
             Debug.trace((Object[])new Object[]{"Init POKE GO error ", e});
         }
-        this.rooms.put(String.valueOf(this.gameName) + "_vin_100", new MayBachRoom(this, (byte)0, String.valueOf(this.gameName) + "_vin_100", (short) 1, this.pots[0], funds[0], 100, initPotValues[0]));
-        this.rooms.put(String.valueOf(this.gameName) + "_vin_1000", new MayBachRoom(this, (byte)1, String.valueOf(this.gameName) + "_vin_1000", (short) 1, this.pots[1], funds[1], 1000, initPotValues[1]));
-        this.rooms.put(String.valueOf(this.gameName) + "_vin_10000", new MayBachRoom(this, (byte)2, String.valueOf(this.gameName) + "_vin_10000", (short) 1, this.pots[2], funds[2], 10000, initPotValues[2]));
+        this.rooms.put(String.valueOf(this.gameName) + "_vin_100", new MayBachRoom(this, (byte)0, String.valueOf(this.gameName) + "_vin_100", (short) 1, this.jackpots[0], funds[0], 100, initPotValues[0]));
+        this.rooms.put(String.valueOf(this.gameName) + "_vin_1000", new MayBachRoom(this, (byte)1, String.valueOf(this.gameName) + "_vin_1000", (short) 1, this.jackpots[1], funds[1], 1000, initPotValues[1]));
+        this.rooms.put(String.valueOf(this.gameName) + "_vin_10000", new MayBachRoom(this, (byte)2, String.valueOf(this.gameName) + "_vin_10000", (short) 1, this.jackpots[2], funds[2], 10000, initPotValues[2]));
         Debug.trace((Object)"INIT "+this.gameName+" DONE");
         this.getParentExtension().addEventListener((IBZEventType)BZEventType.USER_DISCONNECT, (IBZEventListener)this);
         this.referenceId = this.slotService.getLastReferenceId(this.gameName);

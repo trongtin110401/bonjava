@@ -1,0 +1,5 @@
+1. BenleyModule.init();
+        1.1. String initPotValuesStr = ConfigGame.getValueString(this.gameName + "_init_pot_values");
+            => in case of creating new game, must configure the default JACKPOT for it
+        1.2 this.jackpots = this.service.getPots(this.gameName);
+            => in case of creating new game, should check this method to see what dose it do?

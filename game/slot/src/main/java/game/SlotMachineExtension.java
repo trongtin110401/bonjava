@@ -40,7 +40,6 @@ public class SlotMachineExtension
             BotMinigame.loadData();
             GameCommon.init();
             try {
-//                PartnerConfig.ReadConfig("config/partner.properties");
                 PartnerConfig.ReadConfig();
             } catch (Exception e) {
                 Debug.trace("init partnerconfig event error " + e);
