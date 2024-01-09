@@ -753,7 +753,7 @@ public class LogMoneyUserDaoImpl
         objsort.put("_id", -1);
         int numStart = (page - 1) * 100;
         int numEnd = 100;
-        conditions.put("action_name", "TransferMoney");
+//        conditions.put("action_name", "TransferMoney");
         if (!nickName.isEmpty()) {
             conditions.put("nick_name", nickName);
         }
@@ -805,7 +805,7 @@ public class LogMoneyUserDaoImpl
                 results.add(tranlogmoney);
             }
         });
-        return results;
+            return results;
     }
 
     @Override
