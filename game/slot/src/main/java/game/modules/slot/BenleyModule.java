@@ -1,42 +1,11 @@
-/*
- * Decompiled with CFR 0.144.
- *
- * Could not load the following classes:
- *  bitzero.server.BitZeroServer
- *  bitzero.server.core.BZEventParam
- *  bitzero.server.core.BZEventType
- *  bitzero.server.core.IBZEvent
- *  bitzero.server.core.IBZEventListener
- *  bitzero.server.core.IBZEventParam
- *  bitzero.server.core.IBZEventType
- *  bitzero.server.entities.User
- *  bitzero.server.exceptions.BZException
- *  bitzero.server.extensions.BZExtension
- *  bitzero.server.extensions.data.BaseMsg
- *  bitzero.server.extensions.data.DataCmd
- *  bitzero.server.util.TaskScheduler
- *  bitzero.util.common.business.Debug
- *  com.vinplay.dal.service.MiniGameService
- *  com.vinplay.dal.service.SlotMachineService
- *  com.vinplay.dal.service.impl.CacheServiceImpl
- *  com.vinplay.usercore.service.UserService
- *  com.vinplay.vbee.common.enums.Games
- *  com.vinplay.vbee.common.exceptions.KeyNotFoundException
- *  com.vinplay.vbee.common.models.slot.SlotFreeSpin
- *  com.vinplay.vbee.common.utils.CommonUtils
- */
+
 package game.modules.slot;
 
 import bitzero.server.BitZeroServer;
 import bitzero.server.core.BZEventParam;
 import bitzero.server.core.BZEventType;
 import bitzero.server.core.IBZEvent;
-import bitzero.server.core.IBZEventListener;
-import bitzero.server.core.IBZEventParam;
-import bitzero.server.core.IBZEventType;
 import bitzero.server.entities.User;
-import bitzero.server.exceptions.BZException;
-import bitzero.server.extensions.data.BaseMsg;
 import bitzero.server.extensions.data.DataCmd;
 import bitzero.util.common.business.Debug;
 import com.vinplay.dal.common.BroadCastUserState;
@@ -62,10 +31,7 @@ import java.util.logging.Logger;
 
 public class BenleyModule extends SlotModule {
     private long referenceId = 1L;
-    private String fullLines = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25";
-    private Runnable pokeGoX2Task = new X2Task();
-//    private Runnable pokeGoX2Task = new X2Task(this);
-
+    private final String fullLines = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25";
     public BenleyModule() {
         this.gameName = Games.BENLEY.getName();
     }
@@ -74,7 +40,10 @@ public class BenleyModule extends SlotModule {
 
         super.init();
 
+        // quỹ thưởng
         long[] funds = new long[3];
+
+        //  jacpot
         int[] initPotValues = new int[6];
         try {
             String initPotValuesStr = ConfigGame.getValueString(this.gameName + "_init_pot_values");
@@ -112,11 +81,11 @@ public class BenleyModule extends SlotModule {
         int nextX2Time = SlotUtils.calculateTimePokeGoX2(this.gameName, SlotUtils.getX2Days(this.gameName), lastDayFinish);
         Debug.trace(this.gameName + " Ngay X2: " + this.ngayX2 + ", remain time = " + nextX2Time);
 
-        /*if (nextX2Time >= 0) {
-            BitZeroServer.getInstance().getTaskScheduler().schedule(this.pokeGoX2Task, nextX2Time, TimeUnit.SECONDS);
-        } else {
-            this.startX2();
-        }*/
+//        if (nextX2Time >= 0) {
+//            BitZeroServer.getInstance().getTaskScheduler().schedule(this.pokeGoX2Task, nextX2Time, TimeUnit.SECONDS);
+//        } else {
+//            this.startX2();
+//        }
 
         this.getParentExtension().addEventListener(BZEventType.USER_DISCONNECT, this);
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
@@ -263,12 +232,13 @@ public class BenleyModule extends SlotModule {
         } else {
             Debug.trace(this.gameName + ": change room error, leaved= " + cmd.roomLeavedId + ", joined= " + cmd.roomJoinedId);
         }
+        assert roomJoined != null;
         BroadCastUserState.pushBroadCast(user.getName(), user.getName() + " play " + gameName + " " + roomJoined.getBetValue());
     }
 
     private void play(User user, DataCmd dataCmd) {
         PlayBenleyCmd cmd = new PlayBenleyCmd(dataCmd);
-        BenleyRoom room = (BenleyRoom) user.getProperty((Object) ("MGROOM_" + this.gameName + "_INFO"));
+        BenleyRoom room = (BenleyRoom) user.getProperty("MGROOM_" + this.gameName + "_INFO");
         if (room != null) {
             try {
                 room.play(user, cmd.lines);
@@ -281,12 +251,13 @@ public class BenleyModule extends SlotModule {
                 Debug.trace(ex.getMessage());
             }
         }
+        assert room != null;
         BroadCastUserState.pushBroadCast(user.getName(), user.getName() + " play " + gameName + " " + room.getBetValue());
     }
 
     private void autoPlay(User user, DataCmd dataCMD) {
         AutoPlayBenleyCmd cmd = new AutoPlayBenleyCmd(dataCMD);
-        BenleyRoom room = (BenleyRoom) user.getProperty((Object) ("MGROOM_" + this.gameName + "_INFO"));
+        BenleyRoom room = (BenleyRoom) user.getProperty("MGROOM_" + this.gameName + "_INFO");
         if (room != null) {
             if (cmd.autoPlay == 1) {
                 try {
@@ -303,6 +274,7 @@ public class BenleyModule extends SlotModule {
                 room.stopAutoPlay(user);
             }
         }
+        assert room != null;
         BroadCastUserState.pushBroadCast(user.getName(), user.getName() + " play " + gameName + " " + room.getBetValue());
     }
 
@@ -325,7 +297,7 @@ public class BenleyModule extends SlotModule {
                 bots = BotMinigame.getBots(ConfigGame.getIntValue(this.gameName + "_num_bot_100"), "vin");
                 for (String bot : bots) {
                     if (bot == null) continue;
-                    room = (BenleyRoom) this.rooms.get(String.valueOf(this.gameName) + "_vin_100");
+                    room = (BenleyRoom) this.rooms.get(this.gameName + "_vin_100");
                     long referenceId = getNewReferenceId();
                     room.playNormal(bot, this.fullLines, referenceId);
                 }
