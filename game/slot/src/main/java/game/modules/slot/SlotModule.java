@@ -41,8 +41,7 @@ import java.util.Map;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-public abstract class SlotModule
-extends BaseClientRequestHandler {
+public abstract class SlotModule extends BaseClientRequestHandler {
     protected Map<String, SlotRoom> rooms = new HashMap<String, SlotRoom>();
     protected MiniGameService service = new MiniGameServiceImpl();
     protected SlotMachineService slotService = new SlotMachineServiceImpl();
