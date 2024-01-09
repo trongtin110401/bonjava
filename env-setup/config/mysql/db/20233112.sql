@@ -19,6 +19,10 @@
 -- Current Database: `cgame`
 --
 
+SET GLOBAL max_connections = 5000;
+SET GLOBAL time_zone = '+7:00';
+
+
 CREATE DATABASE /*!32312 IF NOT EXISTS*/ `cgame` /*!40100 DEFAULT CHARACTER SET latin1 */;
 
 USE `cgame`;
