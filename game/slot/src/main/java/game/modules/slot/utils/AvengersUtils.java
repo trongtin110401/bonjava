@@ -135,7 +135,7 @@ public class AvengersUtils {
         int ratio = Constant.AVENGERS_BONUS_RATIO[indexRatioRow][indexRatioCol];
         MiniGameSlotResponse res = AvengersUtils.generateMiniGameSlot(baseBetting);
         res.setTotalPrize(res.getTotalPrize() * (long)ratio);
-        res.setPrizes(String.valueOf(res.getPrizes()) + "," + ratio + "," + countBonus);
+        res.setPrizes(res.getPrizes() + "," + ratio + "," + countBonus);
         return res;
     }
 
@@ -143,17 +143,16 @@ public class AvengersUtils {
         MiniGameSlotResponse response = new MiniGameSlotResponse();
         int step = 0;
         long tongGiai = 0L;
-        boolean chonTiep = false;
+        boolean chonTiep;
         Random rd = new Random();
         StringBuilder sb = new StringBuilder();
         do {
-            int numChonTiep;
-            if ((numChonTiep = rd.nextInt(100) + 1) > Constant.AVENGERS_TANK_TI_LE_TRUOT[step]) {
+            if (rd.nextInt(100) + 1 > Constant.AVENGERS_TANK_TI_LE_TRUOT[step]) {
                 int indexCol = rd.nextInt(15);
                 int prize = Constant.AVENGERS_TANK_PRIZES[step][indexCol] * baseBetting;
                 sb.append(prize);
                 sb.append(",");
-                tongGiai += (long)prize;
+                tongGiai += prize;
                 chonTiep = true;
             } else {
                 chonTiep = false;
@@ -181,11 +180,11 @@ public class AvengersUtils {
 
     public static void calculateLine(Line line, List<AvengersAward> awardList) {
         int countNumItems = 0;
-        AvengersItem itemSample = (AvengersItem)((Object)line.getCell(0).getItem());
+        AvengersItem itemSample = (AvengersItem) line.getCell(0).getItem();
         if (itemSample != AvengersItem.BONUS && itemSample != AvengersItem.SCATTER) {
             AvengersAward award;
             byte id;
-            for (int j = 0; j < line.getCells().size() && ((id = ((AvengersItem)((Object)line.getCell(j).getItem())).getId()) == itemSample.getId() || itemSample.getId() != AvengersItem.JACK_POT.getId() && id == AvengersItem.WILD.getId()); ++j) {
+            for (int j = 0; j < line.getCells().size() && ((id = ((AvengersItem) line.getCell(j).getItem()).getId()) == itemSample.getId() || itemSample.getId() != AvengersItem.JACK_POT.getId() && id == AvengersItem.WILD.getId()); ++j) {
                 ++countNumItems;
             }
             if (countNumItems >= 3 && (award = AvengersAwards.getAward(itemSample, countNumItems)) != null) {
@@ -196,7 +195,7 @@ public class AvengersUtils {
 
     public static void calculateFreeSpinLine(Line line, List<AvengersFreeSpinAward> awardList) {
         int countNumItems = 0;
-        AvengersItem itemSample = (AvengersItem)((Object)line.getCell(0).getItem());
+        AvengersItem itemSample = (AvengersItem) line.getCell(0).getItem();
         if (itemSample != AvengersItem.BONUS && itemSample != AvengersItem.SCATTER && itemSample != AvengersItem.JACK_POT) {
             AvengersFreeSpinAward award;
             for (int j = 0; j < line.getCells().size() && (line.getCell(j).getItem() == itemSample || line.getCell(j).getItem() == AvengersItem.WILD); ++j) {

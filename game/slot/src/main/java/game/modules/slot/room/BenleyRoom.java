@@ -37,7 +37,6 @@ import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
 import com.vinplay.vbee.common.models.UserModel;
 import com.vinplay.vbee.common.models.cache.SlotFreeDaily;
 import com.vinplay.vbee.common.models.cache.UserCacheModel;
-import com.vinplay.vbee.common.models.slot.SlotFreeSpin;
 import com.vinplay.vbee.common.response.MoneyResponse;
 import com.vinplay.vbee.common.statics.TransType;
 import com.vinplay.vbee.common.utils.DateTimeUtils;
@@ -161,12 +160,12 @@ public class BenleyRoom extends SlotRoom {
                         }
 
                         boolean enoughPair = false;
-                        ArrayList<AwardsOnLine<AvengersAward>> awardsOnLines = new ArrayList<>();
                         long totalPrizes;
                         long tienThuongX2;
                         int countScatter;
                         int countBonus;
                         MiniGameSlotResponse miniGameSlot;
+                        ArrayList<AwardsOnLine<AvengersAward>> awardsOnLines = new ArrayList<>();
                         block4:
                         while (!enoughPair) {
                             int soLanNoHu;
@@ -345,7 +344,7 @@ public class BenleyRoom extends SlotRoom {
                                     long moneyOnLine = 0L;
                                     if (award2.getRatio() > 0.0f) {
                                         moneyOnLine = (long) (award2.getRatio() * (float) this.betValue);
-                                    } else if (award2 == AvengersAward.PENTA_JACK_POT) {
+                                    } else if (award2 == AvengersAward.PENTA_H) {
                                         if (result == 3) {
                                             moneyOnLine = this.initJackpotValues;
                                         } else {
@@ -365,7 +364,7 @@ public class BenleyRoom extends SlotRoom {
                             StringBuilder builderLinesWin = new StringBuilder();
                             StringBuilder builderPrizesOnLine = new StringBuilder();
                             for (AwardsOnLine entry2 : awardsOnLines) {
-                                if ((entry2.getAward() == AvengersAward.PENTA_JACK_POT || entry2.getAward() == AvengersAward.QUADAR_JACK_POT || entry2.getAward() == AvengersAward.TRIPLE_JACK_POT) && !forceNoHu)
+                                if ((entry2.getAward() == AvengersAward.PENTA_H || entry2.getAward() == AvengersAward.QUADAR_H || entry2.getAward() == AvengersAward.TRIPLE_H) && !forceNoHu)
                                     continue block4;
 
 //                                if (betValue == 100)
