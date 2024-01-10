@@ -766,5 +766,16 @@
                 </command>
             </commands>
         </queue>
+        <queue>
+            <name>queue_game_play_transaction</name>
+            <threads>1</threads>
+            <commands>
+                <command>
+                    <id>1401</id>
+                    <name></name>
+                    <path>com.vinplay.vbee.rmq.log.processor.LogRechargeSMSProcessor</path>
+                </command>
+            </commands>
+        </queue>
     </queues>
 </rabbitmq>

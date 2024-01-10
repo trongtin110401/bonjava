@@ -3,7 +3,6 @@
  */
 package game.modules.slot.entities.slot.avengers;
 
-import game.modules.slot.entities.slot.avengers.AvengersItem;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;

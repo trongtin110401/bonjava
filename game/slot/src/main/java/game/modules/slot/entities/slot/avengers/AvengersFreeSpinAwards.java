@@ -3,18 +3,15 @@
  */
 package game.modules.slot.entities.slot.avengers;
 
-import game.modules.slot.entities.slot.avengers.AvengersFreeSpinAward;
-import game.modules.slot.entities.slot.avengers.AvengersItem;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class AvengersFreeSpinAwards {
     private static List<AvengersFreeSpinAward> awards = new ArrayList<AvengersFreeSpinAward>();
 
     public AvengersFreeSpinAwards() {
-        for (AvengersFreeSpinAward entry : AvengersFreeSpinAward.values()) {
-            awards.add(entry);
-        }
+        awards.addAll(Arrays.asList(AvengersFreeSpinAward.values()));
     }
 
     public static List<AvengersFreeSpinAward> list() {
