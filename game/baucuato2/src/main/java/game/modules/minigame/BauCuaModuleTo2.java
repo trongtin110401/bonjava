@@ -188,11 +188,12 @@ extends BaseClientRequestHandler {
         }
 
         switch (this.count) {
-            case 18: {
-                this.isBettingRound = false;
-                break;
-            }
+//            case 18: {
+//                this.isBettingRound = false;
+//                break;
+//            }
             case 19: {
+                this.isBettingRound = false;
                 genResult = true;
                 break;
             }
