@@ -50,7 +50,7 @@ public class DvtConst {
     public static final int STATUS_DONE_ONE_PAY = 105;
     public static final int STATUS_OTP_ONE_PAY_EXPIRES = 101;
     public static final String DEPOSIT_BANK_COLLECTION = "deposit_bank_manual";
-    public static final String DEPOSIT_MOMO_COLLECTION = "deposit_momo_manual";
+    public static final String DEPOSIT_MOMO_COLLECTION = "deposit_momo2_manual";
 
     // recharge status code
     public static final int RECHARGE_STATUS_ERROR = 1;

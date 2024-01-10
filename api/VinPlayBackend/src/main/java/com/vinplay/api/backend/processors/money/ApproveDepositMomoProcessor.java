@@ -42,7 +42,11 @@ public class ApproveDepositMomoProcessor implements BaseProcessor<HttpServletReq
             String transId = request.getParameter("transId");
             String typeStr = request.getParameter("type");
             String userApprove = request.getParameter("uad");
-            long tien_final = 0;
+            String tienx = request.getParameter("tien");
+            long tien = 0;
+            if (tienx != null) {
+                tien = Long.parseLong(tienx);
+            }
             if (transId.isEmpty() || typeStr.isEmpty()) {
                 return response.toJson();
             }
@@ -85,10 +89,10 @@ public class ApproveDepositMomoProcessor implements BaseProcessor<HttpServletReq
                 try {
 
                     double fee = GameCommon.getValueDouble("RATIO_RECHARGE_MOMO");
-                    double amount = fee * trans.Amount;
-                    long totalFee = Math.round(trans.Amount - amount);
+                    double amount = fee * tien;
+                    long totalFee = Math.round(tien - amount);
                     totalFee = totalFee > 0 ? totalFee : 0;
-                    response = service.updateMoneyFromAdmin(trans.Nickname, trans.Amount, "vin", Consts.RECHARGE_BY_MOMO, "Deposit Momo", "Deposit Momo", totalFee);
+                    response = service.updateMoneyFromAdmin(trans.Nickname,tien, "vin", Consts.RECHARGE_BY_MOMO, "Deposit Momo", "Deposit Momo", totalFee);
 
                 } catch (Exception e) {
                     e.printStackTrace();
