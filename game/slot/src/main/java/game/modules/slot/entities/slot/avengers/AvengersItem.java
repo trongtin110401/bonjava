@@ -3,26 +3,37 @@
  */
 package game.modules.slot.entities.slot.avengers;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
 public enum AvengersItem {
-    NONE("NONE", 0, "none", (byte) -1),
     SCATTER("SCATTER", 1, "Scatter", (byte) 0),
     BONUS("BONUS", 2, "Bonus", (byte) 1),
     WILD("WILD", 3, "Wild", (byte) 2),
-    JACK_POT("JACK_POT", 4, "Jackpot", (byte) 3),
-    NAM_TAY("NAM_TAY", 5, "NamTay", (byte) 4),
-    BUA("BUA", 6, "Bua", (byte) 5),
-    KHIEN("KHIEN", 7, "Khien", (byte) 6),
-    KIM_CUONG("KIM_CUONG", 8, "KimCuong", (byte) 7),
-    DAI_BANG("DAI_BANG", 9, "DaiBang", (byte) 8),
-    NGUOI_NHEN("NGUOI_NHEN", 10, "NguoiNhen", (byte) 9),
-    RADAR("RADAR", 11, "Radar", (byte) 10);
+    JACKPOT("JACK_POT", 4, "Jackpot", (byte) 3),
+    G("G", 5, "G", (byte) 4),
+    F("F", 6, "F", (byte) 5),
+    E("E", 7, "E", (byte) 6),
+    D("D", 8, "D", (byte) 7),
+    C("C", 9, "C", (byte) 8),
+    B("B", 10, "B", (byte) 9),
+    A("A", 11, "A", (byte) 10);
 
     private String name;
     private byte id;
 
+    private static Map<Integer, AvengersItem> map = new HashMap<>();
+
     AvengersItem(String s, int n2, String name, byte id) {
         this.name = name;
         this.id = id;
+    }
+
+    static {
+        Arrays.stream(AvengersItem.values()).forEach(avengersItem -> {
+            map.put((int) avengersItem.getId(), avengersItem);
+        });
     }
 
     public void setName(String name) {
@@ -42,11 +53,12 @@ public enum AvengersItem {
     }
 
     public static AvengersItem findItem(byte id) {
-        for (AvengersItem entry : AvengersItem.values()) {
-            if (entry.getId() != id) continue;
-            return entry;
-        }
-        return null;
+//        for (AvengersItem entry : AvengersItem.values()) {
+//            if (entry.getId() != id) continue;
+//            return entry;
+//        }
+//        return null;
+        return map.get((int) id);
     }
 }
 

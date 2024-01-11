@@ -3,11 +3,15 @@
  */
 package game.modules.slot.entities.slot.avengers;
 
-import game.modules.slot.entities.slot.avengers.AvengersItem;
-import game.modules.slot.entities.slot.avengers.AvengersWheel;
-
 public class AvengersFreeSpinItems {
-    private static int[][] config = new int[][]{{0, 0, 0, 1, 3, 5, 6, 11, 12, 13, 15}, {0, 0, 1, 1, 3, 5, 8, 12, 15, 16, 18}, {0, 0, 1, 1, 3, 4, 5, 11, 12, 13, 14}, {0, 0, 1, 1, 3, 5, 6, 11, 13, 14, 15}, {0, 0, 1, 1, 3, 5, 6, 11, 13, 14, 14}};
+    private static int[][] config = new int[][]
+            {
+                    {0, 0, 0, 1, 3, 5, 6, 11, 12, 13, 15},
+                    {0, 0, 1, 1, 3, 5, 8, 12, 15, 16, 18},
+                    {0, 0, 1, 1, 3, 4, 5, 11, 12, 13, 14},
+                    {0, 0, 1, 1, 3, 5, 6, 11, 13, 14, 15},
+                    {0, 0, 1, 1, 3, 5, 6, 11, 13, 14, 14}
+            };
     private AvengersWheel[] wheels = new AvengersWheel[5];
 
     public AvengersFreeSpinItems() {

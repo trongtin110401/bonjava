@@ -76,8 +76,5 @@ public class AvengersLines {
     public Line<AvengersItem> get(int index) {
         return this.lines.get(index);
     }
-
-    public void renew() {
-    }
 }
 

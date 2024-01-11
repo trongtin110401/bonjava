@@ -23,9 +23,11 @@ import game.modules.slot.entities.slot.AutoUser;
 import game.modules.slot.entities.slot.AwardsOnLine;
 import game.modules.slot.entities.slot.Line;
 import game.modules.slot.entities.slot.MiniGameSlotResponse;
-import game.modules.slot.entities.slot.avengers.*;
+import game.modules.slot.entities.slot.avengers.AvengersAward;
+import game.modules.slot.entities.slot.avengers.AvengersAwards;
+import game.modules.slot.entities.slot.avengers.AvengersItem;
+import game.modules.slot.entities.slot.avengers.AvengersLines;
 import game.modules.slot.utils.AvengersUtils;
-import game.modules.slot.utils.Constant;
 import game.modules.slot.utils.SlotUtils;
 import game.util.ConfigGame;
 
@@ -39,7 +41,8 @@ import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class BenleyRoom extends SlotRoom {
+public class Slot25BasicRoom extends SlotRoom {
+    // Room Lifecycle
     private final Runnable gameLoopTask = new GameLoopTask();
     private final Runnable checkResetPotTask = new CheckResetPot();
     private final AvengersLines lines = new AvengersLines();
@@ -49,7 +52,7 @@ public class BenleyRoom extends SlotRoom {
     private int countNoHu = 0;
     private static final org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger("slot");
 
-    public BenleyRoom(BenleyModule module, byte id, String gameName, short moneyType, long pot, long fund, int betValue, long initJackpotValue) {
+    public Slot25BasicRoom(BenleyModule module, byte id, String gameName, short moneyType, long pot, long fund, int betValue, long initJackpotValue) {
 
         super(id, gameName, betValue, moneyType, pot, fund, initJackpotValue);
 
@@ -57,8 +60,11 @@ public class BenleyRoom extends SlotRoom {
         this.moneyType = moneyType;
         this.gameName = Games.BENLEY.getName();
         this.cacheFreeName = this.gameName + betValue;
+
+        // init jackpot value
         CacheServiceImpl cacheService = new CacheServiceImpl();
         cacheService.setValue(gameName, (int) pot);
+
         this.betValue = betValue;
         this.initJackpotValues = initJackpotValue;
 
@@ -72,6 +78,7 @@ public class BenleyRoom extends SlotRoom {
     @Override
     public void forceStopAutoPlay(User user) {
         super.forceStopAutoPlay(user);
+
         Map map = this.usersAuto;
         synchronized (map) {
             this.usersAuto.remove(user.getName());
@@ -94,18 +101,18 @@ public class BenleyRoom extends SlotRoom {
         String[] lineArr = linesStr.split(",");
         long totalBetValue = (long) lineArr.length * this.betValue;
 
-        boolean forceJackpotByUser = false;
+        boolean forceJackpotToUser = false;
 
         // get force user jackpot
         CacheServiceImpl cacheService = new CacheServiceImpl();
-        String forceJackpotUser;
-        String forceJackpotBetValue;
+        String userForce;
+        String betValueCache;
         try {
-            forceJackpotUser = cacheService.getValueStr(CACHE_NAME_USER_SPOT + gameName);
-            forceJackpotBetValue = cacheService.getValueStr(CACHE_BET_VALUE_SLOT + gameName);
+            userForce = cacheService.getValueStr(CACHE_NAME_USER_SPOT + gameName);
+            betValueCache = cacheService.getValueStr(CACHE_BET_VALUE_SLOT + gameName);
         } catch (Exception e) {
-            forceJackpotUser = "";
-            forceJackpotBetValue = "";
+            userForce = "";
+            betValueCache = "";
         }
 
         UserCacheModel u = userService.getUser(username);
@@ -136,12 +143,15 @@ public class BenleyRoom extends SlotRoom {
                         if (!u.isBot()) {
                             this.fund += moneyToFund;
                         }
-
+                        // sử dụng để check matrix data
                         boolean enoughPair = false;
+
                         long totalPrizes;
                         long tienThuongX2;
+
                         int countScatter;
                         int countBonus;
+
                         MiniGameSlotResponse miniGameSlot;
                         ArrayList<AwardsOnLine<AvengersAward>> awardsOnLines = new ArrayList<>();
                         block4:
@@ -169,9 +179,9 @@ public class BenleyRoom extends SlotRoom {
 //                                    forceNoHu = true;
 //                                    forceJackpotByUser = true;
 //                                }
-                                if (forceJackpotUser.equals(username) && forceJackpotBetValue.equals(String.valueOf(100))) {
+                                if (userForce.equals(username) && betValueCache.equals(String.valueOf(100))) {
                                     forceNoHu = true;
-                                    forceJackpotByUser = true;
+                                    forceJackpotToUser = true;
                                 }
                             } else if (betValue == 1000) {
                                 soLanNoHu = ConfigGame.getIntValue(this.gameName + "_so_lan_no_hu_1000");
@@ -182,9 +192,9 @@ public class BenleyRoom extends SlotRoom {
 //                                    forceNoHu = true;
 //                                    forceJackpotByUser = true;
 //                                }
-                                if (forceJackpotUser.equals(username) && forceJackpotBetValue.equals(String.valueOf(1000))) {
+                                if (userForce.equals(username) && betValueCache.equals(String.valueOf(1000))) {
                                     forceNoHu = true;
-                                    forceJackpotByUser = true;
+                                    forceJackpotToUser = true;
                                 }
                             } else {
                                 soLanNoHu = ConfigGame.getIntValue(this.gameName + "_so_lan_no_hu_10000");
@@ -195,9 +205,9 @@ public class BenleyRoom extends SlotRoom {
 //                                    forceNoHu = true;
 //                                    forceJackpotByUser = true;
 //                                }
-                                if (forceJackpotUser.equals(username) && forceJackpotBetValue.equals(String.valueOf(10000))) {
+                                if (userForce.equals(username) && betValueCache.equals(String.valueOf(10000))) {
                                     forceNoHu = true;
-                                    forceJackpotByUser = true;
+                                    forceJackpotToUser = true;
                                 }
                             }
                             //logger.info(gn+" username: "+username + " forceNoHu:"+forceNoHu);
@@ -285,9 +295,11 @@ public class BenleyRoom extends SlotRoom {
 //                                    forceNoHu = false;
 //                                }
 //                            }
+
+                            // sinh Matrix
                             AvengersItem[][] matrix = forceNoHu ? AvengersUtils.generateMatrixNoHu(lineArr) : AvengersUtils.generateMatrix();
 
-                            // hàng
+                            // Đếm số lượng BONUS và SCATTER
                             for (int i = 0; i < 3; ++i) {
                                 // cột
                                 for (int j = 0; j < 5; ++j) {
@@ -297,17 +309,24 @@ public class BenleyRoom extends SlotRoom {
                                     }
                                     if (matrix[i][j] == AvengersItem.BONUS) {
                                         ++countBonus;
+                                        continue;
                                     }
                                 }
                             }
 
+                            // sau khi Matrix được sinh
+                            // trong trường hợp thỏa mãn BONUS VÀ SCATTER,
+                            // ràng buộc thêm điều kiện (Được gọi là điều kiện A) để giảm tỷ lệ ăn BONUS và SCATTER xuống
                             if (countBonus >= 3 || countScatter >= 3) {
                                 Random rd2 = new Random();
-                                int n2 = rd2.nextInt(100);
-
                                 int tiLeAn = lineArr.length * 100 / 25;
-                                if (n2 >= tiLeAn) continue;
+                                int n2 = rd2.nextInt(100);
+                                if (n2 >= tiLeAn)
+                                    continue;
                             }
+
+                            // Sau khi vượt qua được điều kiện ràng buộc A,
+                            // Tính toán phần thưởng cho BONUS GAME
                             if (countBonus >= 3) {
                                 miniGameSlot = AvengersUtils.addMiniGameSlot(this.betValue, countBonus);
                                 AvengersAward award = AvengersAwards.getAward(AvengersItem.BONUS, countBonus);
@@ -315,6 +334,7 @@ public class BenleyRoom extends SlotRoom {
                                 awardsOnLines.add(aol);
                                 result = 5;
                             }
+
                             AvengersItem[][] matrixWild = AvengersUtils.revertMatrix(matrix);
                             for (String entry2 : lineArr) {
                                 ArrayList<AvengersAward> awardList = new ArrayList<>();
@@ -341,10 +361,14 @@ public class BenleyRoom extends SlotRoom {
                                     awardsOnLines.add(aol2);
                                 }
                             }
+
                             StringBuilder builderLinesWin = new StringBuilder();
                             StringBuilder builderPrizesOnLine = new StringBuilder();
                             for (AwardsOnLine entry2 : awardsOnLines) {
-                                if ((entry2.getAward() == AvengersAward.PENTA_JACKPOT || entry2.getAward() == AvengersAward.QUADAR_JACKPOT || entry2.getAward() == AvengersAward.TRIPLE_JACKPOT) && !forceNoHu)
+                                if ((entry2.getAward() == AvengersAward.PENTA_JACKPOT
+                                        || entry2.getAward() == AvengersAward.QUADAR_JACKPOT
+                                        || entry2.getAward() == AvengersAward.TRIPLE_JACKPOT)
+                                        && !forceNoHu)
                                     continue block4;
 
 //                                if (betValue == 100)
@@ -411,6 +435,7 @@ public class BenleyRoom extends SlotRoom {
                                 builderPrizesOnLine.append(",");
                                 builderPrizesOnLine.append(entry2.getMoney());
                             }
+
                             if (builderLinesWin.length() > 0) {
                                 builderLinesWin.deleteCharAt(0);
                             }
@@ -418,6 +443,7 @@ public class BenleyRoom extends SlotRoom {
                                 builderPrizesOnLine.deleteCharAt(0);
                             }
 //                            if (result == 3 ? this.fund - (totalPrizes - soTienNoHuKhongTruQuy) < 0L : this.fund - totalPrizes < this.pot * 2L && totalPrizes - totalBetValue >= 0L) continue;
+
                             enoughPair = true;
                             String matrixStr = AvengersUtils.matrixToString(matrix);
                             if (totalPrizes > 0L) {
@@ -459,7 +485,7 @@ public class BenleyRoom extends SlotRoom {
                                         }
                                     }
 
-                                    if (forceJackpotByUser) {
+                                    if (forceJackpotToUser) {
                                         try {
                                             cacheService.removeKey(CACHE_NAME_USER_SPOT + gameName);
                                             cacheService.removeKey(CACHE_BET_VALUE_SLOT + gameName);
@@ -542,7 +568,7 @@ public class BenleyRoom extends SlotRoom {
         resultBenleyMsg.currentMoney = currentMoney;
         //Update cache tien hu
         cacheService.setValue(CACHE_JACK_POT_VALUE_SLOT + "_" + this.betValue + "_" + gameName, String.valueOf(this.pot));
-        if (forceJackpotByUser) {
+        if (forceJackpotToUser) {
             this.sendNotifyNoHu(username, (byte) 1, resultBenleyMsg.prize, "BENLEY");
         }
         // SlotUtils.logAvengers(referenceId, username, this.betValue, msg.matrix, msg.haiSao, result, handleTime, ratioTime, currentTimeStr);
@@ -591,7 +617,7 @@ public class BenleyRoom extends SlotRoom {
 
     private void saveFund() {
         long currentTime = System.currentTimeMillis();
-        if (currentTime - this.lastTimeUpdateFundToRoom >= Constant.UPDATE_FUND_PERIOD_TIME) {
+        if (currentTime - this.lastTimeUpdateFundToRoom >= 60000L) {
             try {
                 this.miniGameService.saveFund(this.name, this.fund);
             } catch (IOException | InterruptedException | TimeoutException e) {
@@ -603,7 +629,7 @@ public class BenleyRoom extends SlotRoom {
 
     private void savePot() {
         long currentTime = System.currentTimeMillis();
-        if (currentTime - this.lastTimeUpdatePotToRoom >= Constant.UPDATE_POT_PERIOD_TIME) {
+        if (currentTime - this.lastTimeUpdatePotToRoom >= 3000L) {
             this.lastTimeUpdatePotToRoom = currentTime;
             try {
                 this.miniGameService.savePot(this.name, this.pot, this.huX2);
@@ -629,16 +655,15 @@ public class BenleyRoom extends SlotRoom {
      */
     @Override
     protected void gameLoop() {
-
         ArrayList<AutoUser> usersPlay = new ArrayList<>();
-        synchronized (this.usersAuto) {
+        Map map = this.usersAuto;
+        synchronized (map) {
             for (AutoUser user : this.usersAuto.values()) {
                 boolean play = user.incCount();
                 if (!play) continue;
                 usersPlay.add(user);
             }
         }
-
         int numThreads = usersPlay.size() / 100 + 1;
         for (int i = 1; i <= numThreads; ++i) {
             int fromIndex = (i - 1) * 100;
@@ -656,6 +681,7 @@ public class BenleyRoom extends SlotRoom {
     @Override
     protected void checkResetPot() {
         try {
+
             int isReset = cacheService.getValueInt("reset_pot_" + gameName + "_" + this.betValue);
             if (isReset == 1) {
                 this.pot = this.initJackpotValues;
@@ -663,6 +689,7 @@ public class BenleyRoom extends SlotRoom {
                 this.savePot();
                 this.saveFund();
                 this.cacheService.removeKey("reset_pot_" + gameName + "_" + this.betValue);
+
             }
         } catch (Exception ignored) {
         }
@@ -696,7 +723,7 @@ public class BenleyRoom extends SlotRoom {
                 }
                 user.setMaxCount(8);
             } catch (Exception ex) {
-                Logger.getLogger(BenleyRoom.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Slot25BasicRoom.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         users.clear();

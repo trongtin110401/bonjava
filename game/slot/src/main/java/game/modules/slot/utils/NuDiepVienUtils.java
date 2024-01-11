@@ -41,9 +41,9 @@ public class NuDiepVienUtils {
 //                while (gen) {
 //                    item = items.random(j);
 //                    gen = false;
-////                    if (!NuDiepVienUtils.specialItem(item)) continue;
+////                    if (!NuDiepVienUtils.isSpecialItem(item)) continue;
 ////                    if (item == NDVItem.THAY_THE) {
-////                        if (!NuDiepVienUtils.specialItem(matrix[0][j]) && !NuDiepVienUtils.specialItem(matrix[1][j]) && !NuDiepVienUtils.specialItem(matrix[2][j])) continue;
+////                        if (!NuDiepVienUtils.isSpecialItem(matrix[0][j]) && !NuDiepVienUtils.isSpecialItem(matrix[1][j]) && !NuDiepVienUtils.isSpecialItem(matrix[2][j])) continue;
 ////                        gen = true;
 ////                        items.refundItem(item, j);
 ////                        continue;

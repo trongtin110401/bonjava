@@ -724,7 +724,7 @@ public class RangeRoverRoom
         long currentTime = System.currentTimeMillis();
         if (currentTime - this.lastTimeUpdateFundToRoom >= 60000L) {
             try {
-                this.mgService.saveFund(this.name, this.fund);
+                this.miniGameService.saveFund(this.name, this.fund);
             } catch (IOException | InterruptedException | TimeoutException ex2) {
                 Exception ex;
                 Exception e = ex = ex2;
@@ -736,14 +736,14 @@ public class RangeRoverRoom
 
     protected void checkResetPot() {
         try {
-            int isReset = sv.getValueInt("reset_pot_" + this.gn + "_" + this.betValue);
+            int isReset = cacheService.getValueInt("reset_pot_" + this.gn + "_" + this.betValue);
             if (isReset == 1) {
                 this.pot = this.initJackpotValues;
                 logger.error("reset lại pot "+ pot+" : "+ name);
                 this.fund = 0;
                 this.savePot();
                 this.saveFund();
-                this.sv.removeKey("reset_pot_" + this.gn + "_" + this.betValue);
+                this.cacheService.removeKey("reset_pot_" + this.gn + "_" + this.betValue);
                 CacheServiceImpl cacheService = new CacheServiceImpl();
                 cacheService.setValue(name, (int) pot);
 
@@ -778,7 +778,7 @@ public class RangeRoverRoom
         if (currentTime - this.lastTimeUpdatePotToRoom >= 3000L) {
             this.lastTimeUpdatePotToRoom = currentTime;
             try {
-                this.mgService.savePot(this.name, this.pot, this.huX2);
+                this.miniGameService.savePot(this.name, this.pot, this.huX2);
             } catch (IOException | InterruptedException | TimeoutException ex2) {
                 Exception ex;
                 Exception e = ex = ex2;
