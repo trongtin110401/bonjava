@@ -180,8 +180,8 @@ public class BauCuaModuleTo2
         this.count = (byte) (this.count + 1);
         for (MGRoom entry : this.rooms.values()) {
             MGRoomBauCuaTo2 room = (MGRoomBauCuaTo2) entry;
-            room.updateBauCuaPerSecond(this.getRemainTime(), this.isBettingRound);
             room.botBet(60 - this.count, this.isBettingRound);
+            room.updateBauCuaPerSecond(this.getRemainTime(), this.isBettingRound);
         }
 
         switch (this.count) {
