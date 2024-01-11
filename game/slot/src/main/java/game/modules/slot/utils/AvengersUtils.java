@@ -34,15 +34,15 @@ public class AvengersUtils {
                 boolean isContinueGenerate = true;
                 AvengersItem item = null;
                 while (isContinueGenerate) {
-                    item = items.random(column);
                     isContinueGenerate = false;
-                    if (!AvengersUtils.specialItem(item)) {
+                    item = items.random(column);
+                    if (!AvengersUtils.isSpecialItem(item)) {
                         continue;
                     }
                     if (item == AvengersItem.WILD) {
-                        if (!AvengersUtils.specialItem(matrix[0][column])
-                                && !AvengersUtils.specialItem(matrix[1][column])
-                                && !AvengersUtils.specialItem(matrix[2][column])) {
+                        if (!AvengersUtils.isSpecialItem(matrix[0][column])
+                                && !AvengersUtils.isSpecialItem(matrix[1][column])
+                                && !AvengersUtils.isSpecialItem(matrix[2][column])) {
                             continue;
                         }
                         isContinueGenerate = true;
@@ -66,7 +66,7 @@ public class AvengersUtils {
         return matrix;
     }
 
-    public static boolean specialItem(AvengersItem item) {
+    public static boolean isSpecialItem(AvengersItem item) {
         return item == AvengersItem.BONUS || item == AvengersItem.SCATTER || item == AvengersItem.JACKPOT || item == AvengersItem.WILD;
     }
 

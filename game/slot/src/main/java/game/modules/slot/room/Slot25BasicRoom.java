@@ -101,7 +101,7 @@ public class Slot25BasicRoom extends SlotRoom {
         String[] lineArr = linesStr.split(",");
         long totalBetValue = (long) lineArr.length * this.betValue;
 
-        boolean forceJackpotByUser = false;
+        boolean forceJackpotToUser = false;
 
         // get force user jackpot
         CacheServiceImpl cacheService = new CacheServiceImpl();
@@ -181,7 +181,7 @@ public class Slot25BasicRoom extends SlotRoom {
 //                                }
                                 if (userForce.equals(username) && betValueCache.equals(String.valueOf(100))) {
                                     forceNoHu = true;
-                                    forceJackpotByUser = true;
+                                    forceJackpotToUser = true;
                                 }
                             } else if (betValue == 1000) {
                                 soLanNoHu = ConfigGame.getIntValue(this.gameName + "_so_lan_no_hu_1000");
@@ -194,7 +194,7 @@ public class Slot25BasicRoom extends SlotRoom {
 //                                }
                                 if (userForce.equals(username) && betValueCache.equals(String.valueOf(1000))) {
                                     forceNoHu = true;
-                                    forceJackpotByUser = true;
+                                    forceJackpotToUser = true;
                                 }
                             } else {
                                 soLanNoHu = ConfigGame.getIntValue(this.gameName + "_so_lan_no_hu_10000");
@@ -207,7 +207,7 @@ public class Slot25BasicRoom extends SlotRoom {
 //                                }
                                 if (userForce.equals(username) && betValueCache.equals(String.valueOf(10000))) {
                                     forceNoHu = true;
-                                    forceJackpotByUser = true;
+                                    forceJackpotToUser = true;
                                 }
                             }
                             //logger.info(gn+" username: "+username + " forceNoHu:"+forceNoHu);
@@ -299,7 +299,7 @@ public class Slot25BasicRoom extends SlotRoom {
                             // sinh Matrix
                             AvengersItem[][] matrix = forceNoHu ? AvengersUtils.generateMatrixNoHu(lineArr) : AvengersUtils.generateMatrix();
 
-                            // hàng
+                            // Đếm số lượng BONUS và SCATTER
                             for (int i = 0; i < 3; ++i) {
                                 // cột
                                 for (int j = 0; j < 5; ++j) {
@@ -307,17 +307,26 @@ public class Slot25BasicRoom extends SlotRoom {
                                         ++countScatter;
                                         continue;
                                     }
-                                    if (matrix[i][j] != AvengersItem.BONUS) continue;
-                                    ++countBonus;
+                                    if (matrix[i][j] == AvengersItem.BONUS) {
+                                        ++countBonus;
+                                        continue;
+                                    }
                                 }
                             }
 
+                            // sau khi Matrix được sinh
+                            // trong trường hợp thỏa mãn BONUS VÀ SCATTER,
+                            // ràng buộc thêm điều kiện (Được gọi là điều kiện A) để giảm tỷ lệ ăn BONUS và SCATTER xuống
                             if (countBonus >= 3 || countScatter >= 3) {
                                 Random rd2 = new Random();
                                 int tiLeAn = lineArr.length * 100 / 25;
                                 int n2 = rd2.nextInt(100);
-                                if (n2 >= tiLeAn) continue;
+                                if (n2 >= tiLeAn)
+                                    continue;
                             }
+
+                            // Sau khi vượt qua được điều kiện ràng buộc A,
+                            // Tính toán phần thưởng cho BONUS GAME
                             if (countBonus >= 3) {
                                 miniGameSlot = AvengersUtils.addMiniGameSlot(this.betValue, countBonus);
                                 AvengersAward award = AvengersAwards.getAward(AvengersItem.BONUS, countBonus);
@@ -325,6 +334,7 @@ public class Slot25BasicRoom extends SlotRoom {
                                 awardsOnLines.add(aol);
                                 result = 5;
                             }
+
                             AvengersItem[][] matrixWild = AvengersUtils.revertMatrix(matrix);
                             for (String entry2 : lineArr) {
                                 ArrayList<AvengersAward> awardList = new ArrayList<>();
@@ -351,10 +361,14 @@ public class Slot25BasicRoom extends SlotRoom {
                                     awardsOnLines.add(aol2);
                                 }
                             }
+
                             StringBuilder builderLinesWin = new StringBuilder();
                             StringBuilder builderPrizesOnLine = new StringBuilder();
                             for (AwardsOnLine entry2 : awardsOnLines) {
-                                if ((entry2.getAward() == AvengersAward.PENTA_JACKPOT || entry2.getAward() == AvengersAward.QUADAR_JACKPOT || entry2.getAward() == AvengersAward.TRIPLE_JACKPOT) && !forceNoHu)
+                                if ((entry2.getAward() == AvengersAward.PENTA_JACKPOT
+                                        || entry2.getAward() == AvengersAward.QUADAR_JACKPOT
+                                        || entry2.getAward() == AvengersAward.TRIPLE_JACKPOT)
+                                        && !forceNoHu)
                                     continue block4;
 
 //                                if (betValue == 100)
@@ -471,7 +485,7 @@ public class Slot25BasicRoom extends SlotRoom {
                                         }
                                     }
 
-                                    if (forceJackpotByUser) {
+                                    if (forceJackpotToUser) {
                                         try {
                                             cacheService.removeKey(CACHE_NAME_USER_SPOT + gameName);
                                             cacheService.removeKey(CACHE_BET_VALUE_SLOT + gameName);
@@ -554,7 +568,7 @@ public class Slot25BasicRoom extends SlotRoom {
         resultBenleyMsg.currentMoney = currentMoney;
         //Update cache tien hu
         cacheService.setValue(CACHE_JACK_POT_VALUE_SLOT + "_" + this.betValue + "_" + gameName, String.valueOf(this.pot));
-        if (forceJackpotByUser) {
+        if (forceJackpotToUser) {
             this.sendNotifyNoHu(username, (byte) 1, resultBenleyMsg.prize, "BENLEY");
         }
         // SlotUtils.logAvengers(referenceId, username, this.betValue, msg.matrix, msg.haiSao, result, handleTime, ratioTime, currentTimeStr);
