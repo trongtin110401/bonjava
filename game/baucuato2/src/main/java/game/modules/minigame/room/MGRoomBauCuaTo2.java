@@ -38,7 +38,6 @@ import com.vinplay.dal.service.impl.CacheServiceImpl;
 import com.vinplay.dal.service.impl.MiniGameServiceImpl;
 import com.vinplay.usercore.service.UserService;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
-import com.vinplay.utils.AdminSocketAlert;
 import com.vinplay.vbee.common.enums.Games;
 import com.vinplay.vbee.common.exceptions.KeyNotFoundException;
 import com.vinplay.vbee.common.models.cache.UserCacheModel;
@@ -61,14 +60,13 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.TimeoutException;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class MGRoomBauCuaTo2
         extends MGRoom {
     private static final double RATE_NO_HU = 0.3;
     public byte id;
-    public long fund;
+    public long jackpotValue;
     private List<PotBauCua> pots = new ArrayList<PotBauCua>();
     private List<PotBauCua> potsUser = new ArrayList<PotBauCua>();
     private byte moneyType;
@@ -105,10 +103,10 @@ public class MGRoomBauCuaTo2
     private ObjectMapper objectMapper = new ObjectMapper();
     private ReentrantLock lock = new ReentrantLock();
 
-    public MGRoomBauCuaTo2(String name, int minBetValue, byte moneyType, byte id, long fund) {
+    public MGRoomBauCuaTo2(String name, int minBetValue, byte moneyType, byte id, long jackpot) {
         super(name);
         this.id = id;
-        this.fund = fund;
+        this.jackpotValue = jackpot;
         this.moneyType = moneyType;
         if (moneyType == 1) {
             this.moneyTypeStr = "vin";
@@ -149,7 +147,7 @@ public class MGRoomBauCuaTo2
         msg.xValue = this.resultBC.xValue;
         msg.room = this.id;
         msg.userRoomInfoList = userRoomInfoList;
-        msg.funds = this.fund;
+        msg.funds = this.jackpotValue;
         msg.isNohu = false;
         msg.allTransaction = allTransactionsMapRealtime;
         cacheService.setValue("BauCuareferenceId", (int) this.referenceId);
@@ -433,15 +431,15 @@ public class MGRoomBauCuaTo2
                         long bet = tran.betValues[i];
                         long win = bet * tiLe[i];
                         long fee = (long) (win * (tax / 100));
-                        long prize = (long) (bet * ((double) (this.fund) / pots.get(i).getTotalValue()) + (win - fee));
+                        long prize = (long) (bet * ((double) (this.jackpotValue) / pots.get(i).getTotalValue()) + (win - fee));
                         totalPrize += prize;
                         tran.prizes[i] = prize;
 
-                        totalHuPrize += (long) (bet * ((double) (this.fund) / pots.get(i).getTotalValue()));
+                        totalHuPrize += (long) (bet * ((double) (this.jackpotValue) / pots.get(i).getTotalValue()));
 
                         arrl = totalPrizesInRoom;
                         n = i;
-                        arrl[n] = arrl[n] + (tran.betValues[i] * ((this.fund) / pots.get(i).getTotalValue())) + (tran.betValues[i] * (long) tiLe[i] + tran.betValues[i]);
+                        arrl[n] = arrl[n] + (tran.betValues[i] * ((this.jackpotValue) / pots.get(i).getTotalValue())) + (tran.betValues[i] * (long) tiLe[i] + tran.betValues[i]);
                     } else {
                         long bet = tran.betValues[i];
                         long win = bet * tiLe[i];
@@ -509,24 +507,24 @@ public class MGRoomBauCuaTo2
         }
 
         if (isNohu) {
-            list50WinHu.add(new HuBauCuaWinTransaction(this.referenceId, Base64.getEncoder().encodeToString(VinPlayUtils.getCurrentDateTime().getBytes()), (potIdNohu), this.fund, userWinHuBauCuaList));
+            list50WinHu.add(new HuBauCuaWinTransaction(this.referenceId, Base64.getEncoder().encodeToString(VinPlayUtils.getCurrentDateTime().getBytes()), (potIdNohu), this.jackpotValue, userWinHuBauCuaList));
             if (list50WinHu.size() >= 50) {
                 list50WinHu.remove(0);
             }
-            this.fund -= (totalPrizesUser); // tru di tong giai trong game
-            if (this.fund < 500000) {
-                this.fund = 500000;
+            this.jackpotValue -= (totalPrizesUser); // tru di tong giai trong game
+            if (this.jackpotValue < 500000) {
+                this.jackpotValue = 500000;
             }
 
         } else {
             long profit = totalUserBetInRoom - totalPrizesUser;
             if (profit > 0) { // nếu là bot thì không tính vào hũ
 
-                this.fund += profit * RATE_NO_HU;
+                this.jackpotValue += profit * RATE_NO_HU;
             }
         }
         try {
-            this.mgService.saveFund(this.name, this.fund);
+            this.mgService.saveFund(this.name, this.jackpotValue);
         } catch (IOException | InterruptedException | TimeoutException response) {
         }
 
@@ -542,10 +540,10 @@ public class MGRoomBauCuaTo2
         } catch (IOException | InterruptedException | TimeoutException list) {
             // empty catch block
         }
-        cacheService.setValue("Hu_Bau_cua_to2" + this.id, (int) this.fund);
+        cacheService.setValue("Hu_Bau_cua_to2" + this.id, (int) this.jackpotValue);
         UpdateBauCuaWinEffect msg = new UpdateBauCuaWinEffect();
         msg.listWinUser = listWin;
-        msg.funds = this.fund;
+        msg.funds = this.jackpotValue;
         msg.isNohu = isNohu;
         this.sendMessageToRoom(msg);
         return totalVinPay;
@@ -684,7 +682,7 @@ public class MGRoomBauCuaTo2
                     return generateDices();
                 }
                 long totalPrizes = this.tryCalculatePrizes(tiLe);
-                if (this.fund - totalPrizes > 0L) break block1;
+                if (this.jackpotValue - totalPrizes > 0L) break block1;
             } while (++num <= 3);
             return this.traGiaiBeNhat();
         }

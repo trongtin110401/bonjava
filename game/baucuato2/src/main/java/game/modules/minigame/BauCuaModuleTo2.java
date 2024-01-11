@@ -45,7 +45,6 @@ import com.vinplay.dal.service.MiniGameService;
 import com.vinplay.dal.service.impl.BauCuaServiceImpl;
 import com.vinplay.dal.service.impl.BroadcastMessageServiceImpl;
 import com.vinplay.dal.service.impl.MiniGameServiceImpl;
-import com.vinplay.utils.AdminSocketAlert;
 import com.vinplay.vbee.common.utils.CommonUtils;
 import com.vinplay.vbee.common.utils.DateTimeUtils;
 import game.modules.lobby.cmd.send.BroadcastMessageMsg;
@@ -69,7 +68,7 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
     private long referenceId;
     private boolean isBettingRound;
     private byte count = 0;
-    private long[] funds = new long[3];
+    private long[] jackpots = new long[3];
     private boolean serverReady = false;
     private BauCuaService bcService = new BauCuaServiceImpl();
     private MiniGameService mgService = new MiniGameServiceImpl();
@@ -81,9 +80,9 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
     public void init() {
         super.init();
         this.loadData();
-        this.rooms.put("BauCuaTo_vin_1000", new MGRoomBauCuaTo2("BauCuaTo_vin_1000", 100, (byte) 1, (byte) 0, this.funds[0]));
-        this.rooms.put("BauCuaTo_vin_10000", new MGRoomBauCuaTo2("BauCuaTo_vin_10000", 1000, (byte) 1, (byte) 1, this.funds[1]));
-        this.rooms.put("BauCuaTo_vin_100000", new MGRoomBauCuaTo2("BauCuaTo_vin_100000", 10000, (byte) 1, (byte) 2, this.funds[2]));
+        this.rooms.put("BauCuaTo_vin_1000", new MGRoomBauCuaTo2("BauCuaTo_vin_1000", 100, (byte) 1, (byte) 0, this.jackpots[0]));
+        this.rooms.put("BauCuaTo_vin_10000", new MGRoomBauCuaTo2("BauCuaTo_vin_10000", 1000, (byte) 1, (byte) 1, this.jackpots[1]));
+        this.rooms.put("BauCuaTo_vin_100000", new MGRoomBauCuaTo2("BauCuaTo_vin_100000", 10000, (byte) 1, (byte) 2, this.jackpots[2]));
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
         BitZeroServer.getInstance().getTaskScheduler().schedule(this.serverReadyTask, 10, TimeUnit.SECONDS);
         this.getParentExtension().addEventListener((IBZEventType) BZEventType.USER_DISCONNECT, (IBZEventListener) this);
@@ -100,12 +99,12 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
     private void loadData() {
         try {
             this.referenceId = this.mgService.getReferenceId(3);
-            this.funds = this.mgService.getFunds("BauCuaTo");
+            this.jackpots = this.mgService.getFunds("BauCuaTo");
         } catch (SQLException e) {
             Debug.trace("LOAD DATA BAU CUA ERROR: " + e.getMessage());
         }
         Debug.trace("BAU CUA referenceId: " + this.referenceId);
-        Debug.trace("BAU CUA FUND: " + CommonUtils.arrayLongToString((long[]) this.funds));
+        Debug.trace("BAU CUA FUND: " + CommonUtils.arrayLongToString((long[]) this.jackpots));
     }
 
     public void handleServerEvent(IBZEvent ibzevent) throws BZException {
@@ -194,9 +193,6 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
                 this.generateResult();
                 break;
             }
-            case 22: {
-
-            }
             case 24: {
                 CalculatePrizeTask task = new CalculatePrizeTask();
                 task.run();
@@ -206,6 +202,11 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
                 this.broadcastMessage();
             }
             case 30: {
+                genResult = true;
+                break;
+            }
+            // 2 giây diễn hoạt animation lắc bát
+            case 32: {
                 this.startNewRound();
                 break;
             }
@@ -223,7 +224,7 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
             room.startNewGame(this.referenceId);
         }
         this.count = 0;
-        genResult = true;
+//        genResult = true;
         this.isBettingRound = true;
         this.saveReferences();
     }
@@ -326,15 +327,11 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
             case 0: {
                 return 1000L;
             }
-            case 1: {
-                return 10000L;
-            }
-            case 2: {
-                return 100000L;
-            }
+            case 1:
             case 3: {
                 return 10000L;
             }
+            case 2:
             case 4: {
                 return 100000L;
             }
@@ -365,7 +362,7 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
         msg.message = message;
         List users = ExtensionUtility.globalUserManager.getAllUsers();
         if (users != null) {
-            this.send((BaseMsg) msg, users);
+            this.send(msg, users);
         }
         this.broadcastMsg.clearMessage();
     }
