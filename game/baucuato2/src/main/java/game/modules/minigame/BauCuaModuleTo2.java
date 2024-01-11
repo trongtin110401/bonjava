@@ -176,7 +176,7 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
 
     private synchronized void gameLoop() {
         this.count = (byte) (this.count + 1);
-        updateGameStatePerSecond();
+        updateGameStatePerSecond(true);
 
         switch (this.count) {
             case 19: {
@@ -199,7 +199,7 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
             }
             case 30: {
                 genResult = true;
-                updateGameStatePerSecond();
+                updateGameStatePerSecond(false);
                 break;
             }
             // 2 giây diễn hoạt animation lắc bát
@@ -210,10 +210,12 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
         }
     }
 
-    private void updateGameStatePerSecond() {
+    private void updateGameStatePerSecond(boolean isBotBet) {
         for (MGRoom entry : this.rooms.values()) {
             MGRoomBauCuaTo2 room = (MGRoomBauCuaTo2) entry;
-            room.botBet(60 - this.count, this.isBettingRound);
+            if(isBotBet) {
+                room.botBet(60 - this.count, this.isBettingRound);
+            }
             room.updateBauCuaPerSecond(this.getRemainTime(), this.isBettingRound);
         }
     }
