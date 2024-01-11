@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  bitzero.util.common.business.Debug
  *  com.vinplay.dal.service.BotService
@@ -21,6 +21,7 @@ import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.vbee.common.config.VBeePath;
 import com.vinplay.vbee.common.utils.DateTimeUtils;
 import game.utils.ConfigGame;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -50,45 +51,39 @@ public class BotBauCuaTo2 {
         BotServiceImpl service;
         BufferedReader br22;
         try {
-            br22 = new BufferedReader(new FileReader(VBeePath.basePath+"config/bots.txt"));
+            br22 = new BufferedReader(new FileReader(VBeePath.basePath + "config/bots.txt"));
             service = new BotServiceImpl();
             while ((botName = br22.readLine()) != null) {
                 try {
                     service.login(botName);
                     bots.add(botName);
-                }
-                catch (NoSuchAlgorithmException | SQLException e) {
-                    Debug.trace((Object[])new Object[]{"Load bot " + botName + " error: ", e});
+                } catch (NoSuchAlgorithmException | SQLException e) {
+                    Debug.trace((Object[]) new Object[]{"Load bot " + botName + " error: ", e});
                 }
             }
             br22.close();
-        }
-        catch (FileNotFoundException e) {
-        }
-        catch (IOException e) {
+        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             // empty catch block
         }
         try {
-            br22 = new BufferedReader(new FileReader(VBeePath.basePath+"config/bots_vip.txt"));
+            br22 = new BufferedReader(new FileReader(VBeePath.basePath + "config/bots_vip.txt"));
             service = new BotServiceImpl();
             while ((botName = br22.readLine()) != null) {
                 try {
                     service.login(botName);
                     botsVip.add(botName);
-                }
-                catch (NoSuchAlgorithmException | SQLException e) {
-                    Debug.trace((Object[])new Object[]{"Load vip bot " + botName + " error: ", e});
+                } catch (NoSuchAlgorithmException | SQLException e) {
+                    Debug.trace((Object[]) new Object[]{"Load vip bot " + botName + " error: ", e});
                 }
             }
             br22.close();
-        }
-        catch (FileNotFoundException e) {
-        }
-        catch (IOException e) {
+        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             // empty catch block
         }
         BotBauCuaTo2.loadBotsVip();
-        Debug.trace((Object)("TOTAL BOTS: " + bots.size()));
+        Debug.trace((Object) ("TOTAL BOTS: " + bots.size()));
     }
 
     public static void loadBotsVip() {
@@ -97,7 +92,7 @@ public class BotBauCuaTo2 {
         int numBotVip = maxBotVip + 10;
         Random rd = new Random();
         if (numBotVip >= botsVip.size()) {
-            Debug.trace((Object)"Khong the tao bot vip hang ngay");
+            Debug.trace((Object) "Khong the tao bot vip hang ngay");
             return;
         }
         int i = 0;
@@ -166,8 +161,6 @@ public class BotBauCuaTo2 {
     }
 
 
-
-
     private static int randomBettingTime(int minTime, int maxTime, int phanTramVaoSom) {
         Random rd = new Random();
         int n = rd.nextInt(100);
@@ -200,14 +193,13 @@ public class BotBauCuaTo2 {
         List<String> botsName = BotBauCuaTo2.getBots(numBots, moneyType);
         for (int i = 0; i < numBots && i < botsName.size(); ++i) {
             String nickname = botsName.get(i);
-            short bettingTime = (short)BotBauCuaTo2.randomBettingTime(minBettingTime, maxBettingTime, 70);
+            short bettingTime = (short) BotBauCuaTo2.randomBettingTime(minBettingTime, maxBettingTime, 70);
             long[] betArr = new long[6];
             int j = maxBetSide;
             while (j > 0) {
-                long betValue;
-                short betSide = (short)rd.nextInt(6);
+                short betSide = (short) rd.nextInt(6);
                 if (betArr[betSide] != 0L) continue;
-                betArr[betSide] = betValue = getBetValue(rd.nextInt(6));
+                betArr[betSide] = getBetValue(rd.nextInt(6));
                 --j;
             }
             StringBuilder builder = new StringBuilder();
@@ -314,16 +306,16 @@ public class BotBauCuaTo2 {
         Random rd = new Random();
         if (2 <= hourOfDay && hourOfDay <= 8) {
             switch (hourOfDay) {
-                case 2: 
+                case 2:
                 case 8: {
                     return rd.nextInt(20) + 80;
                 }
-                case 3: 
+                case 3:
                 case 7: {
                     return rd.nextInt(30) + 50;
                 }
-                case 4: 
-                case 5: 
+                case 4:
+                case 5:
                 case 6: {
                     return rd.nextInt(20) + 30;
                 }
