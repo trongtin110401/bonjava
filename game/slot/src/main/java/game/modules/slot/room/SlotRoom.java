@@ -46,7 +46,6 @@ import java.util.concurrent.TimeoutException;
 
 public abstract class SlotRoom {
     protected SlotModule module;
-
     public static final String CACHE_NAME_USER_SPOT = "user_force_jackpot_";
     public static final String CACHE_BET_VALUE_SLOT = "bet_value_jackpot_";
     public static final String CACHE_JACK_POT_VALUE_SLOT = "pot_value_jackpot";
@@ -67,9 +66,9 @@ public abstract class SlotRoom {
     protected UserService userService = new UserServiceImpl();
     protected SlotMachineService slotService = new SlotMachineServiceImpl();
     protected BroadcastMessageService broadcastMsgService = new BroadcastMessageServiceImpl();
-    protected MiniGameService mgService = new MiniGameServiceImpl();
-    protected CacheService sv = new CacheServiceImpl();
-    protected Map<String, AutoUser> usersAuto = new HashMap<String, AutoUser>();
+    protected MiniGameService miniGameService = new MiniGameServiceImpl();
+    protected CacheService cacheService = new CacheServiceImpl();
+    protected final Map<String, AutoUser> usersAuto = new HashMap<>();
 
     public SlotRoom(byte id, String name, int betValue, short moneyType, long pot, long fund, long initPotValue) {
         this.id = id;
@@ -81,18 +80,15 @@ public abstract class SlotRoom {
         this.initJackpotValues = initPotValue;
         this.moneyTypeStr = this.moneyType == 1 ? "vin" : "xu";
         try {
-            this.countHu = this.sv.getValueInt(String.valueOf(name) + "_count_hu");
-            this.countNoHuX2 = this.sv.getValueInt(String.valueOf(name) + "_count_no_hu_x2");
+            this.countHu = this.cacheService.getValueInt(name + "_count_hu");
+            this.countNoHuX2 = this.cacheService.getValueInt(name + "_count_no_hu_x2");
             this.calculatHuX2();
         } catch (KeyNotFoundException keyNotFoundException) {
             // empty catch block
         }
         try {
-            this.mgService.savePot(name, pot, this.huX2);
-        } catch (InterruptedException interruptedException) {
-        } catch (TimeoutException timeoutException) {
-        } catch (IOException iOException) {
-            // empty catch block
+            this.miniGameService.savePot(name, pot, this.huX2);
+        } catch (InterruptedException | TimeoutException | IOException ignored) {
         }
     }
 
@@ -102,7 +98,7 @@ public abstract class SlotRoom {
     public boolean joinRoom(User user) {
         List<User> list = this.users;
         synchronized (list) {
-            if (!this.users.contains((Object) user)) {
+            if (!this.users.contains(user)) {
                 this.users.add(user);
                 return true;
             }
@@ -156,8 +152,8 @@ public abstract class SlotRoom {
         this.countHu = -1;
         this.countNoHuX2 = 0;
         this.huX2 = false;
-        this.sv.setValue(String.valueOf(this.name) + "_count_hu", this.countHu);
-        this.sv.setValue(String.valueOf(this.name) + "_count_no_hu_x2", this.countNoHuX2);
+        this.cacheService.setValue(String.valueOf(this.name) + "_count_hu", this.countHu);
+        this.cacheService.setValue(String.valueOf(this.name) + "_count_no_hu_x2", this.countNoHuX2);
     }
 
     public void noHuX2() {
@@ -330,9 +326,9 @@ public abstract class SlotRoom {
         public static final short MINIGAME_SLOT = 5;
     }
 
-    protected final class GameLoopTask
-            implements Runnable {
-        protected GameLoopTask() {
+    protected final class GameLoopTask implements Runnable {
+
+        GameLoopTask() {
         }
 
         @Override

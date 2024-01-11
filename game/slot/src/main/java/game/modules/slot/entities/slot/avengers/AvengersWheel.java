@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Random;
 
 public class AvengersWheel {
-    private List<AvengersItem> items = new ArrayList<AvengersItem>();
+    private List<AvengersItem> items = new ArrayList<>();
 
     public void addItem(AvengersItem item) {
         this.items.add(item);
@@ -24,6 +24,15 @@ public class AvengersWheel {
         if (n >= 0 && n < this.items.size()) {
             this.items.remove(n);
         }
+    }
+
+    public void print() {
+        StringBuilder item = new StringBuilder();
+        items.forEach(avengersItem -> {
+            item.append(avengersItem.getName()).append("|");
+        });
+        item.deleteCharAt(item.length() - 1);
+        System.out.println(item);
     }
 }
 
