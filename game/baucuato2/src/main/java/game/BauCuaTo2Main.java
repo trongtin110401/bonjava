@@ -4,6 +4,7 @@ import bitzero.server.BitZeroServer;
 import com.vinplay.vbee.common.config.VBeePath;
 
 public class BauCuaTo2Main {
+
     public static void main(String[] args) {
 
         // init base path khoi tao path game
@@ -23,8 +24,5 @@ public class BauCuaTo2Main {
         }
 
         bzServer.start();
-
-//        double a =2.3 ;
-//        System.out.println(a/2);
     }
 }

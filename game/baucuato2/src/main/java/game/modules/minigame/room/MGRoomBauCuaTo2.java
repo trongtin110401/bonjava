@@ -94,8 +94,8 @@ public class MGRoomBauCuaTo2
     private static final byte BETTING_FAIL = 100;
     private static final byte INVALID_BETTING_STATE = 101;
     private static final byte NOT_ENOUGH_MONEY = 102;
-    private List<BauCuaRealtimeTransaction> transactionsMapRealtime = new ArrayList<>();
-    private List<BauCuaRealtimeTransaction> allTransactionsMapRealtime = new ArrayList<>();
+    private List<BauCuaRealtimeTransaction> transactionsMapRealtime = Collections.synchronizedList(new ArrayList<>());
+    private List<BauCuaRealtimeTransaction> allTransactionsMapRealtime = Collections.synchronizedList(new ArrayList<>());
     private Map<String, UserRoomInfo> userRoomInfoList = new HashMap<>();
     private List<HuBauCuaWinTransaction> list50WinHu = new ArrayList<>();
 
@@ -103,7 +103,6 @@ public class MGRoomBauCuaTo2
     private Map<Integer, Long> mapBotReportBet = new HashMap<>();
     private Map<String, BauCuaUserInfomation> listBauCuaInformation = new HashMap<>();
     private ObjectMapper objectMapper = new ObjectMapper();
-
     private ReentrantLock lock = new ReentrantLock();
 
     public MGRoomBauCuaTo2(String name, int minBetValue, byte moneyType, byte id, long fund) {
