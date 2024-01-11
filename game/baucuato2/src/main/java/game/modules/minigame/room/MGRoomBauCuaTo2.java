@@ -92,8 +92,8 @@ public class MGRoomBauCuaTo2
     private static final byte BETTING_FAIL = 100;
     private static final byte INVALID_BETTING_STATE = 101;
     private static final byte NOT_ENOUGH_MONEY = 102;
-    private List<BauCuaRealtimeTransaction> transactionsMapRealtime = new ArrayList<>();
-    private List<BauCuaRealtimeTransaction> allTransactionsMapRealtime = new ArrayList<>();
+    private List<BauCuaRealtimeTransaction> transactionsMapRealtime = Collections.synchronizedList(new ArrayList<>());
+    private List<BauCuaRealtimeTransaction> allTransactionsMapRealtime = Collections.synchronizedList(new ArrayList<>());
     private Map<String, UserRoomInfo> userRoomInfoList = new HashMap<>();
     private List<HuBauCuaWinTransaction> list50WinHu = new ArrayList<>();
 
@@ -230,21 +230,12 @@ public class MGRoomBauCuaTo2
                             long fee = (long) ((float) totalBetValue * this.tax / 100.0f);
                             MoneyResponse response = new MoneyResponse(false, "1001");
                             if (!this.isBot(username)) {
-                                response = this.userService.updateMoney(username, -totalBetValue, this.moneyTypeStr, GAME_NAME, "B\u1ea7u cua: \u0110\u1eb7t c\u01b0\u1ee3c", "Phi\u00ean " + this.referenceId, fee, Long.valueOf(this.referenceId), TransType.START_TRANS);
+                                response = this.userService.updateMoney(username, -totalBetValue, this.moneyTypeStr, GAME_NAME, "Bầu cua: Đặt cược", "Phiên " + this.referenceId, fee, this.referenceId, TransType.START_TRANS);
 
                             } else {
                                 response.setSuccess(true);
                             }
                             if (!response.isSuccess()) break block15;
-
-                            if (!bettingState) {
-                                result = 1;
-                                if (!isBot(username)) {
-                                    this.userService.updateMoney(username, totalBetValue, this.moneyTypeStr, GAME_NAME, "B\u1ea7u cua: Tr\u1ea3 c\u01b0\u1ee3c", "Ho\u00e0n tr\u1ea3 \u0111\u1eb7t c\u01b0\u1ee3c phi\u00ean " + this.referenceId, 0L, Long.valueOf(this.referenceId), TransType.END_TRANS);
-                                    break block15;
-                                }
-
-                            }
 
                             if (!this.transactionsMap.containsKey(username)) {
                                 TransactionBauCua newTransaction = new TransactionBauCua();
@@ -386,13 +377,11 @@ public class MGRoomBauCuaTo2
         msg.potData = this.buildPotData();
         msg.remainTime = remainTime;
         msg.bettingState = bettingState;
-        msg.listBet = transactionsMapRealtime;
-        transactionsMapRealtime = new ArrayList<>();
-//        AdminSocketAlert.sendMessageAlert("chatevent", "BauCuaLoop"+this.id, remainTime + ""); // todo : alert admin
+        msg.listBet = new ArrayList<>(transactionsMapRealtime);
+        transactionsMapRealtime.clear();
         cacheService.setValue("BauCuaRemainTime", String.valueOf(remainTime));
         cacheService.setObject("bettingStateBauCua", bettingState);
         this.sendMessageToRoom(msg);
-
     }
 
     public long calculatePrizes() {
