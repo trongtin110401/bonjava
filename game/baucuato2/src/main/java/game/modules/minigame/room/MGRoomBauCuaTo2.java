@@ -164,8 +164,8 @@ public class MGRoomBauCuaTo2
         }
         cacheService.setObject("mapBotReportBet", mapBotReportBet);
         cacheService.setObject("mapReportBet", mapReportBet);
-        transactionsMapRealtime = new ArrayList<>();
-        allTransactionsMapRealtime = new ArrayList<>();
+        transactionsMapRealtime.clear();
+        allTransactionsMapRealtime.clear();
         this.transactionsMap.clear();
         this.resultBC = new ResultBauCua(this.referenceId, this.id, this.minBetValue);
         OldBotBC = this.botBC;
@@ -386,8 +386,8 @@ public class MGRoomBauCuaTo2
 
     public long calculatePrizes() {
         boolean isNohu = false;
-        transactionsMapRealtime = new ArrayList<>();
-        allTransactionsMapRealtime = new ArrayList<>();
+        transactionsMapRealtime.clear();
+        allTransactionsMapRealtime.clear();
         List<WinUser> listWin = new ArrayList<>();
         List<UserWinHuBauCua> userWinHuBauCuaList = new ArrayList<>();
         int potIdNohu = -1;
