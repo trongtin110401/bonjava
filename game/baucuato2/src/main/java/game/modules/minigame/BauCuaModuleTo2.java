@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  bitzero.server.BitZeroServer
  *  bitzero.server.core.BZEventParam
@@ -65,7 +65,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class BauCuaModuleTo2
-extends BaseClientRequestHandler {
+        extends BaseClientRequestHandler {
     private Map<String, MGRoom> rooms = new HashMap<String, MGRoom>();
     private long referenceId;
     private boolean isBettingRound;
@@ -82,20 +82,19 @@ extends BaseClientRequestHandler {
     public void init() {
         super.init();
         this.loadData();
-        this.rooms.put("BauCuaTo_vin_1000", new MGRoomBauCuaTo2("BauCuaTo_vin_1000", 100, (byte)1, (byte)0, this.funds[0]));
-        this.rooms.put("BauCuaTo_vin_10000", new MGRoomBauCuaTo2("BauCuaTo_vin_10000", 1000, (byte)1, (byte)1, this.funds[1]));
-        this.rooms.put("BauCuaTo_vin_100000", new MGRoomBauCuaTo2("BauCuaTo_vin_100000", 10000, (byte)1, (byte)2, this.funds[2]));
+        this.rooms.put("BauCuaTo_vin_1000", new MGRoomBauCuaTo2("BauCuaTo_vin_1000", 100, (byte) 1, (byte) 0, this.funds[0]));
+        this.rooms.put("BauCuaTo_vin_10000", new MGRoomBauCuaTo2("BauCuaTo_vin_10000", 1000, (byte) 1, (byte) 1, this.funds[1]));
+        this.rooms.put("BauCuaTo_vin_100000", new MGRoomBauCuaTo2("BauCuaTo_vin_100000", 10000, (byte) 1, (byte) 2, this.funds[2]));
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
         BitZeroServer.getInstance().getTaskScheduler().schedule(this.serverReadyTask, 10, TimeUnit.SECONDS);
-        this.getParentExtension().addEventListener((IBZEventType)BZEventType.USER_DISCONNECT, (IBZEventListener)this);
+        this.getParentExtension().addEventListener((IBZEventType) BZEventType.USER_DISCONNECT, (IBZEventListener) this);
         try {
             int remainTimeRewardToiChonCa = MiniGameUtils.calculateTimeRewardOnNextDay("");
             BitZeroServer.getInstance().getTaskScheduler().schedule(this.rewardToiChonCaTask, remainTimeRewardToiChonCa, TimeUnit.SECONDS);
+        } catch (ParseException e) {
+            Debug.trace((Object[]) new Object[]{"Calculate time reward Toi chon ca error ", e.getMessage()});
         }
-        catch (ParseException e) {
-            Debug.trace((Object[])new Object[]{"Calculate time reward Toi chon ca error ", e.getMessage()});
-        }
-        String msg = "Start MiniGame " + DateTimeUtils.getCurrentTime((String)"HH-mm-ss yyyy-MM-dd");
+        String msg = "Start MiniGame " + DateTimeUtils.getCurrentTime((String) "HH-mm-ss yyyy-MM-dd");
         GameUtils.sendAlert(msg);
     }
 
@@ -103,23 +102,22 @@ extends BaseClientRequestHandler {
         try {
             this.referenceId = this.mgService.getReferenceId(4);
             this.funds = this.mgService.getFunds("BauCuaTo");
+        } catch (SQLException e) {
+            Debug.trace((Object) ("LOAD DATA BAU CUA ERROR: " + e.getMessage()));
         }
-        catch (SQLException e) {
-            Debug.trace((Object)("LOAD DATA BAU CUA ERROR: " + e.getMessage()));
-        }
-        Debug.trace((Object)("BAU CUA referenceId: " + this.referenceId));
-        Debug.trace((Object)("BAU CUA FUND: " + CommonUtils.arrayLongToString((long[])this.funds)));
+        Debug.trace((Object) ("BAU CUA referenceId: " + this.referenceId));
+        Debug.trace((Object) ("BAU CUA FUND: " + CommonUtils.arrayLongToString((long[]) this.funds)));
     }
 
     public void handleServerEvent(IBZEvent ibzevent) throws BZException {
         if (ibzevent.getType() == BZEventType.USER_DISCONNECT) {
-            User user = (User)ibzevent.getParameter((IBZEventParam)BZEventParam.USER);
+            User user = (User) ibzevent.getParameter((IBZEventParam) BZEventParam.USER);
             this.userDis(user);
         }
     }
 
     private void userDis(User user) {
-        MGRoomBauCuaTo2 room = (MGRoomBauCuaTo2)user.getProperty((Object)"MGROOM_BAU_CUA_TO2_INFO");
+        MGRoomBauCuaTo2 room = (MGRoomBauCuaTo2) user.getProperty((Object) "MGROOM_BAU_CUA_TO2_INFO");
         if (room != null) {
             room.removeUser(user);
             room.NotifyUser();
@@ -130,7 +128,7 @@ extends BaseClientRequestHandler {
 
     public void handleClientRequest(User user, DataCmd dataCmd) {
         if (!this.serverReady) {
-            Debug.trace((Object)"Server bau cua not ready, try again!");
+            Debug.trace((Object) "Server bau cua not ready, try again!");
             return;
         }
         switch (dataCmd.getId()) {
@@ -146,16 +144,15 @@ extends BaseClientRequestHandler {
                 this.changeRoomBauCua(user, dataCmd);
                 break;
             }
-            case  5018 :{
-                this.chatRoomBauCua(user,dataCmd);
+            case 5018: {
+                this.chatRoomBauCua(user, dataCmd);
                 break;
             }
-            case  5019:{
-                this.getLichSuNoHu(user,dataCmd);
+            case 5019: {
+                this.getLichSuNoHu(user, dataCmd);
                 break;
             }
             case 5004: {
-
                 this.betBauCua(user, dataCmd);
             }
         }
@@ -170,7 +167,7 @@ extends BaseClientRequestHandler {
     private void chatRoomBauCua(User user, DataCmd dataCmd) {
         ChatRoomCmd cmd = new ChatRoomCmd(dataCmd);
         MGRoomBauCuaTo2 room = this.getRoom(cmd.roomId);
-        ChatRoomMsg  msg = new ChatRoomMsg();
+        ChatRoomMsg msg = new ChatRoomMsg();
         msg.nickName = user.getName();
         msg.isIcon = cmd.isIcon;
         msg.content = cmd.content;
@@ -180,18 +177,14 @@ extends BaseClientRequestHandler {
     boolean genResult = false;
 
     private synchronized void gameLoop() {
-        this.count = (byte)(this.count + 1);
+        this.count = (byte) (this.count + 1);
         for (MGRoom entry : this.rooms.values()) {
-            MGRoomBauCuaTo2 room = (MGRoomBauCuaTo2)entry;
+            MGRoomBauCuaTo2 room = (MGRoomBauCuaTo2) entry;
             room.updateBauCuaPerSecond(this.getRemainTime(), this.isBettingRound);
             room.botBet(60 - this.count, this.isBettingRound);
         }
 
         switch (this.count) {
-//            case 18: {
-//                this.isBettingRound = false;
-//                break;
-//            }
             case 19: {
                 this.isBettingRound = false;
                 genResult = true;
@@ -221,13 +214,13 @@ extends BaseClientRequestHandler {
     }
 
     private void startNewRound() {
-        Debug.trace((Object)"START NEW ROUND BAU CUA");
+        Debug.trace((Object) "START NEW ROUND BAU CUA");
         ++this.referenceId;
         StartNewGameBauCuaMsg msg = new StartNewGameBauCuaMsg();
         msg.referenceId = this.referenceId;
         this.sendMessageBauCuaNewThread(msg);
         for (MGRoom entry : this.rooms.values()) {
-            MGRoomBauCuaTo2 room = (MGRoomBauCuaTo2)entry;
+            MGRoomBauCuaTo2 room = (MGRoomBauCuaTo2) entry;
             room.startNewGame(this.referenceId);
         }
         this.count = 0;
@@ -257,7 +250,7 @@ extends BaseClientRequestHandler {
         }
     }
 
-    private  List<User> GetListUserInRoom(byte roomId){
+    private List<User> GetListUserInRoom(byte roomId) {
         MGRoomBauCuaTo2 room = this.getRoom(roomId);
         return room.getUsers();
     }
@@ -277,20 +270,20 @@ extends BaseClientRequestHandler {
 
     private void betBauCua(User user, DataCmd dataCmd) {
         BetBauCuaCmd cmd = new BetBauCuaCmd(dataCmd);
-        MGRoomBauCuaTo2 room = (MGRoomBauCuaTo2)user.getProperty((Object)"MGROOM_BAU_CUA_TO2_INFO");
+        MGRoomBauCuaTo2 room = (MGRoomBauCuaTo2) user.getProperty("MGROOM_BAU_CUA_TO2_INFO");
         room.bet(user, cmd.betValue, this.isBettingRound);
     }
 
     private void generateResult() {
         for (MGRoom entry : this.rooms.values()) {
-            MGRoomBauCuaTo2 room = (MGRoomBauCuaTo2)entry;
+            MGRoomBauCuaTo2 room = (MGRoomBauCuaTo2) entry;
             room.generateResult();
         }
     }
 
     private void calculateResult() {
         for (MGRoom entry : this.rooms.values()) {
-            MGRoomBauCuaTo2 room = (MGRoomBauCuaTo2)entry;
+            MGRoomBauCuaTo2 room = (MGRoomBauCuaTo2) entry;
             room.calculatePrizes();
         }
         if (this.referenceId % 50L == 0L) {
@@ -300,9 +293,9 @@ extends BaseClientRequestHandler {
 
     private byte getRemainTime() {
         if (this.genResult) {
-            return (byte)(20 - this.count);
+            return (byte) (20 - this.count);
         }
-        return (byte)(32 - this.count);
+        return (byte) (32 - this.count);
     }
 
     private String getRoomName(short moneyType, long baseBetting) {
@@ -317,7 +310,7 @@ extends BaseClientRequestHandler {
         short moneyType = this.getMoneyTypeFromRoomId(roomId);
         long baseBetting = this.getBaseBetting(roomId);
         String roomName = this.getRoomName(moneyType, baseBetting);
-        MGRoomBauCuaTo2 room = (MGRoomBauCuaTo2)this.rooms.get(roomName);
+        MGRoomBauCuaTo2 room = (MGRoomBauCuaTo2) this.rooms.get(roomName);
         return room;
     }
 
@@ -356,9 +349,8 @@ extends BaseClientRequestHandler {
     private void saveReferences() {
         try {
             this.mgService.saveReferenceId(this.referenceId, 3);
-        }
-        catch (SQLException e) {
-            Debug.trace((Object)("Save reference error " + e.getMessage()));
+        } catch (SQLException e) {
+            Debug.trace((Object) ("Save reference error " + e.getMessage()));
         }
     }
 
@@ -374,7 +366,7 @@ extends BaseClientRequestHandler {
         msg.message = message;
         List users = ExtensionUtility.globalUserManager.getAllUsers();
         if (users != null) {
-            this.send((BaseMsg)msg, users);
+            this.send((BaseMsg) msg, users);
         }
         this.broadcastMsg.clearMessage();
     }
@@ -385,7 +377,7 @@ extends BaseClientRequestHandler {
     }
 
     private final class GameLoopTask
-    implements Runnable {
+            implements Runnable {
         private GameLoopTask() {
         }
 
@@ -393,15 +385,14 @@ extends BaseClientRequestHandler {
         public void run() {
             try {
                 BauCuaModuleTo2.this.gameLoop();
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
     private final class SendMessageToTXThread
-    extends Thread {
+            extends Thread {
         private BaseMsg msg;
 
         private SendMessageToTXThread(BaseMsg msg) {
@@ -415,14 +406,14 @@ extends BaseClientRequestHandler {
     }
 
     private final class ServerReadyTask
-    implements Runnable {
+            implements Runnable {
         private ServerReadyTask() {
         }
 
         @Override
         public void run() {
             if (!BauCuaModuleTo2.this.serverReady) {
-                Debug.trace((Object)"START BAU CUA");
+                Debug.trace((Object) "START BAU CUA");
                 BauCuaModuleTo2.this.serverReady = true;
                 BauCuaModuleTo2.this.startNewRound();
             }
@@ -430,24 +421,21 @@ extends BaseClientRequestHandler {
     }
 
 
-
-
-
     private final class RewardToiChonCaTask
-    implements Runnable {
+            implements Runnable {
         private RewardToiChonCaTask() {
         }
 
         @Override
         public void run() {
-           // BauCuaUtils.rewardToiChonCa();
+            // BauCuaUtils.rewardToiChonCa();
             BitZeroServer.getInstance().getTaskScheduler().schedule(BauCuaModuleTo2.this.rewardToiChonCaTask, 24, TimeUnit.HOURS);
-            Debug.trace((Object)"Tra thuong Toi chon ca");
+            Debug.trace((Object) "Tra thuong Toi chon ca");
         }
     }
 
     private final class CalculatePrizeTask
-    implements Runnable {
+            implements Runnable {
         private CalculatePrizeTask() {
         }
 

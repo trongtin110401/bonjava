@@ -6,8 +6,7 @@ package game.modules.minigame.cmd.send.baucua;
 import game.BaseMsgEx;
 import java.nio.ByteBuffer;
 
-public class ResultBetBauCuaMsg
-extends BaseMsgEx {
+public class ResultBetBauCuaMsg extends BaseMsgEx {
     public byte result;
     public long currentMoney;
     public byte potId;
