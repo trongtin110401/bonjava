@@ -61,6 +61,8 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class MGRoomBauCuaTo2
         extends MGRoom {
@@ -92,8 +94,8 @@ public class MGRoomBauCuaTo2
     private static final byte BETTING_FAIL = 100;
     private static final byte INVALID_BETTING_STATE = 101;
     private static final byte NOT_ENOUGH_MONEY = 102;
-    private List<BauCuaRealtimeTransaction> transactionsMapRealtime = Collections.synchronizedList(new ArrayList<>());
-    private List<BauCuaRealtimeTransaction> allTransactionsMapRealtime = Collections.synchronizedList(new ArrayList<>());
+    private List<BauCuaRealtimeTransaction> transactionsMapRealtime = new ArrayList<>();
+    private List<BauCuaRealtimeTransaction> allTransactionsMapRealtime = new ArrayList<>();
     private Map<String, UserRoomInfo> userRoomInfoList = new HashMap<>();
     private List<HuBauCuaWinTransaction> list50WinHu = new ArrayList<>();
 
@@ -101,6 +103,8 @@ public class MGRoomBauCuaTo2
     private Map<Integer, Long> mapBotReportBet = new HashMap<>();
     private Map<String, BauCuaUserInfomation> listBauCuaInformation = new HashMap<>();
     private ObjectMapper objectMapper = new ObjectMapper();
+
+    private ReentrantLock lock = new ReentrantLock();
 
     public MGRoomBauCuaTo2(String name, int minBetValue, byte moneyType, byte id, long fund) {
         super(name);
@@ -194,7 +198,12 @@ public class MGRoomBauCuaTo2
             this.bet(b.getNickname(), b.getBetStr(), bettingState);
             if (bettingState) {
                 allTransactionsMapRealtime.add(new BauCuaRealtimeTransaction(b.getNickname(), b.getBetStr()));
-                transactionsMapRealtime.add(new BauCuaRealtimeTransaction(b.getNickname(), b.getBetStr()));
+                try {
+                    lock.lock();
+                    transactionsMapRealtime.add(new BauCuaRealtimeTransaction(b.getNickname(), b.getBetStr()));
+                } finally {
+                    lock.unlock();
+                }
             }
         }
     }
@@ -322,7 +331,12 @@ public class MGRoomBauCuaTo2
 
     public void bet(User user, String betStr, boolean bettingState) {
         ResultBetBauCuaMsg msg = this.bet(user.getName(), betStr, bettingState);
-        transactionsMapRealtime.add(new BauCuaRealtimeTransaction(user.getName(), betStr));
+        try {
+            lock.lock();
+            transactionsMapRealtime.add(new BauCuaRealtimeTransaction(user.getName(), betStr));
+        } finally {
+            lock.unlock();
+        }
         allTransactionsMapRealtime.add(new BauCuaRealtimeTransaction(user.getName(), betStr));
         this.sendMessageToUser((BaseMsg) msg, user);
         Collection<BauCuaUserInfomation> values = listBauCuaInformation.values();
@@ -377,8 +391,14 @@ public class MGRoomBauCuaTo2
         msg.potData = this.buildPotData();
         msg.remainTime = remainTime;
         msg.bettingState = bettingState;
-        msg.listBet = new ArrayList<>(transactionsMapRealtime);
-        transactionsMapRealtime.clear();
+        msg.listBet = new ArrayList<>();
+        msg.listBet.addAll(transactionsMapRealtime);
+        try {
+            lock.lock();
+            transactionsMapRealtime.clear();
+        } finally {
+            lock.unlock();
+        }
         cacheService.setValue("BauCuaRemainTime", String.valueOf(remainTime));
         cacheService.setObject("bettingStateBauCua", bettingState);
         this.sendMessageToRoom(msg);
