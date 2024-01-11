@@ -64,8 +64,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public class BauCuaModuleTo2
-        extends BaseClientRequestHandler {
+public class BauCuaModuleTo2 extends BaseClientRequestHandler {
     private Map<String, MGRoom> rooms = new HashMap<String, MGRoom>();
     private long referenceId;
     private boolean isBettingRound;
@@ -92,7 +91,7 @@ public class BauCuaModuleTo2
             int remainTimeRewardToiChonCa = MiniGameUtils.calculateTimeRewardOnNextDay("");
             BitZeroServer.getInstance().getTaskScheduler().schedule(this.rewardToiChonCaTask, remainTimeRewardToiChonCa, TimeUnit.SECONDS);
         } catch (ParseException e) {
-            Debug.trace((Object[]) new Object[]{"Calculate time reward Toi chon ca error ", e.getMessage()});
+            Debug.trace(new Object[]{"Calculate time reward Toi chon ca error ", e.getMessage()});
         }
         String msg = "Start MiniGame " + DateTimeUtils.getCurrentTime((String) "HH-mm-ss yyyy-MM-dd");
         GameUtils.sendAlert(msg);
@@ -100,24 +99,24 @@ public class BauCuaModuleTo2
 
     private void loadData() {
         try {
-            this.referenceId = this.mgService.getReferenceId(4);
+            this.referenceId = this.mgService.getReferenceId(3);
             this.funds = this.mgService.getFunds("BauCuaTo");
         } catch (SQLException e) {
-            Debug.trace((Object) ("LOAD DATA BAU CUA ERROR: " + e.getMessage()));
+            Debug.trace("LOAD DATA BAU CUA ERROR: " + e.getMessage());
         }
-        Debug.trace((Object) ("BAU CUA referenceId: " + this.referenceId));
-        Debug.trace((Object) ("BAU CUA FUND: " + CommonUtils.arrayLongToString((long[]) this.funds)));
+        Debug.trace("BAU CUA referenceId: " + this.referenceId);
+        Debug.trace("BAU CUA FUND: " + CommonUtils.arrayLongToString((long[]) this.funds));
     }
 
     public void handleServerEvent(IBZEvent ibzevent) throws BZException {
         if (ibzevent.getType() == BZEventType.USER_DISCONNECT) {
-            User user = (User) ibzevent.getParameter((IBZEventParam) BZEventParam.USER);
+            User user = (User) ibzevent.getParameter(BZEventParam.USER);
             this.userDis(user);
         }
     }
 
     private void userDis(User user) {
-        MGRoomBauCuaTo2 room = (MGRoomBauCuaTo2) user.getProperty((Object) "MGROOM_BAU_CUA_TO2_INFO");
+        MGRoomBauCuaTo2 room = (MGRoomBauCuaTo2) user.getProperty("MGROOM_BAU_CUA_TO2_INFO");
         if (room != null) {
             room.removeUser(user);
             room.NotifyUser();
@@ -128,7 +127,7 @@ public class BauCuaModuleTo2
 
     public void handleClientRequest(User user, DataCmd dataCmd) {
         if (!this.serverReady) {
-            Debug.trace((Object) "Server bau cua not ready, try again!");
+            Debug.trace("Server bau cua not ready, try again!");
             return;
         }
         switch (dataCmd.getId()) {
