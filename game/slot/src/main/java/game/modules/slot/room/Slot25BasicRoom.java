@@ -98,8 +98,8 @@ public class Slot25BasicRoom extends SlotRoom {
         String currentTimeStr = DateTimeUtils.getCurrentTime();
         ResultBenleyMsg resultBenleyMsg = new ResultBenleyMsg();
 
-        String[] lineArr = linesStr.split(",");
-        long totalBetValue = (long) lineArr.length * this.betValue;
+        String[] selectedLines = linesStr.split(",");
+        long totalBetValue = (long) selectedLines.length * this.betValue;
 
         boolean forceJackpotToUser = false;
 
@@ -119,7 +119,7 @@ public class Slot25BasicRoom extends SlotRoom {
         long currentMoney = userService.getMoneyUserCache(username, this.moneyTypeStr);
 
         // số lines được chọn > 0
-        if (lineArr.length > 0 && !linesStr.isEmpty()) {
+        if (selectedLines.length > 0 && !linesStr.isEmpty()) {
             // check tiền đặt cược hợp lệ
             if (totalBetValue > 0L) {
                 // check đủ tiền
@@ -297,7 +297,7 @@ public class Slot25BasicRoom extends SlotRoom {
 //                            }
 
                             // sinh Matrix
-                            AvengersItem[][] matrix = forceNoHu ? AvengersUtils.generateMatrixNoHu(lineArr) : AvengersUtils.generateMatrix();
+                            AvengersItem[][] matrix = forceNoHu ? AvengersUtils.generateMatrixNoHu(selectedLines) : AvengersUtils.generateMatrix();
 
                             // Đếm số lượng BONUS và SCATTER
                             for (int i = 0; i < 3; ++i) {
@@ -314,18 +314,23 @@ public class Slot25BasicRoom extends SlotRoom {
                                 }
                             }
 
+                            // không cho phép xảy ra đồng thời cả bonus và free spin
+                            if (countBonus >= 3 && countScatter >= 3) {
+                                continue;
+                            }
+
                             // sau khi Matrix được sinh
                             // trong trường hợp thỏa mãn BONUS VÀ SCATTER,
-                            // ràng buộc thêm điều kiện (Được gọi là điều kiện A) để giảm tỷ lệ ăn BONUS và SCATTER xuống
+                            // ràng buộc thêm điều kiện để giảm tỷ lệ ăn BONUS và SCATTER xuống
+                            // nếu không thỏa mãn điều kiện, tiếp tục vòng lặp để sinh lại Matrix
                             if (countBonus >= 3 || countScatter >= 3) {
                                 Random rd2 = new Random();
-                                int tiLeAn = lineArr.length * 100 / 25;
+                                int tiLeAn = selectedLines.length * 100 / 25;
                                 int n2 = rd2.nextInt(100);
                                 if (n2 >= tiLeAn)
                                     continue;
                             }
 
-                            // Sau khi vượt qua được điều kiện ràng buộc A,
                             // Tính toán phần thưởng cho BONUS GAME
                             if (countBonus >= 3) {
                                 miniGameSlot = AvengersUtils.addMiniGameSlot(this.betValue, countBonus);
@@ -335,11 +340,18 @@ public class Slot25BasicRoom extends SlotRoom {
                                 result = 5;
                             }
 
-                            AvengersItem[][] matrixWild = AvengersUtils.revertMatrix(matrix);
-                            for (String entry2 : lineArr) {
+                            // MÃ LỆNH NÀY ÁP ỤNG CHO SLOT MACHINE 25LINE EXTENDS.
+                            // Trường hợp 1 WHEEL có xuất hiện item WILD, toàn bộ WHEEL đó sẽ được thay thế bởi nó
+                            // Trong trường hợp này (Slot Machine 25Line Basic thì không áp dụng)
+
+                            /* AvengersItem[][] matrixWild = AvengersUtils.revertMatrix(matrix); */
+                            AvengersItem[][] matrixWild = matrix;
+
+                            // Duyệt toàn bộ Lines được chọn bởi người chơi để tính toán giải thưởng trên từng Line
+                            for (String selectedLine : selectedLines) {
                                 ArrayList<AvengersAward> awardList = new ArrayList<>();
-                                Line line = AvengersUtils.getLine(this.lines, matrixWild, Integer.parseInt(entry2));
-                                AvengersUtils.calculateLine(line, awardList);
+                                Line line = AvengersUtils.getLine(this.lines, matrixWild, Integer.parseInt(selectedLine));
+                                AvengersUtils.calculateAward(line, awardList);
                                 for (AvengersAward award2 : awardList) {
                                     long moneyOnLine = 0L;
                                     if (award2.getRatio() > 0.0f) {
