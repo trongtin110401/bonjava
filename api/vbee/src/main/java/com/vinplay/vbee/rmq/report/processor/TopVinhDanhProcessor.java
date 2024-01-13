@@ -34,7 +34,8 @@ public class TopVinhDanhProcessor {
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();
-                client.newCall(request).execute();
+                Response response = client.newCall(request).execute();
+                response.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
