@@ -26,6 +26,15 @@ killProcess() {
   echo "Working path: " . $SCRIPT_PATH
   kill -9 $(ps aux | grep "java -cp" | grep -v 'grep' | awk '{print $2}')
   kill -9 $(ps aux | grep "wsreport" | grep -v 'grep' | awk '{print $2}')
+  kill -9 $(ps aux | grep "boardService" | grep -v 'grep' | awk '{print $2}')
+}
+
+runBoardService() {
+  cd ${SCRIPT_PATH}
+  currentDir="api/BoardService"
+  cd $currentDir
+  echo "Starting BoardService..."
+  nohup java -jar build/libs/BoardService-1.0-SNAPSHOT.jar >/home/server/logs/boardService.log 2>&1 &
 }
 
 # run vbee
@@ -36,6 +45,7 @@ runVbee() {
   echo "Starting VBEE..."
   nohup java -cp "libs/*:build/libs/vbee-1.0.jar" com.vinplay.vbee.main.VBeeMain >/home/server/logs/vbee.log 2>&1 &
 }
+
 
 runBackend() {
   cd ${SCRIPT_PATH}
