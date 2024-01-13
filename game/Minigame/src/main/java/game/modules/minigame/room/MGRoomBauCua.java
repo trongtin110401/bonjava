@@ -302,9 +302,10 @@ extends MGRoom {
             try {
                 tran.totalExchange = totalPrize - totalBetValues;
                 tran.dices = CommonUtils.arrayByteToString((byte[])this.resultBC.dices);
-                if(!isBot(tran.username)){
-                    this.bcService.saveTransactionBauCua(tran);
-                }
+//                if(!isBot(tran.username)){
+//                    this.bcService.saveTransactionBauCua(tran);
+//                }
+                this.bcService.saveTransactionBauCua(tran);
 
             }
             catch (IOException | InterruptedException | TimeoutException response) {
