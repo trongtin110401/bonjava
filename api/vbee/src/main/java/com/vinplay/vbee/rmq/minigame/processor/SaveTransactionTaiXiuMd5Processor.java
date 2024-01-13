@@ -33,6 +33,7 @@ public class SaveTransactionTaiXiuMd5Processor
             topVinhDanhDto.setUsername(message.username);
             topVinhDanhDto.setScore(message.prize - message.betValue);
             TopVinhDanhProcessor.addTopVinhDanh(topVinhDanhDto);
+            System.out.println("add top vinh danh" + topVinhDanhDto.toJson());
             dao.saveTransactionTaiXiu(message);
             saveToElk(message);
             logger.debug((Object) ("Handle message : " + message.referenceId));
