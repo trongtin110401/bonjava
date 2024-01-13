@@ -24,6 +24,7 @@ public class SaveTransactionBauCuaProcessor
     public Boolean execute(Param<byte[]> param) {
         byte[] body = param.get();
         TransactionBauCuaMsg message = (TransactionBauCuaMsg) BaseMessage.fromBytes((byte[]) body);
+        System.out.println("add top vinh danh");
         if (message.moneyType == 1) {
             addTopVinhDanh(message);
         }
@@ -34,6 +35,7 @@ public class SaveTransactionBauCuaProcessor
 
     public void addTopVinhDanh(TransactionBauCuaMsg message) {
         try {
+            System.out.println("add top " + message.toJson());
             TopVinhDanhDto topVinhDanhDto = new TopVinhDanhDto();
             topVinhDanhDto.setUsername(message.username);
             topVinhDanhDto.setScore(message.totalExchange);
