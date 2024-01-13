@@ -14,6 +14,8 @@ import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.messages.minigame.TransactionTaiXiuMessage;
 import com.vinplay.vbee.common.rmq.ELKrmq;
 import com.vinplay.vbee.dao.impl.TaiXiuDaoImpl;
+import com.vinplay.vbee.dto.TopVinhDanhDto;
+import com.vinplay.vbee.rmq.report.processor.TopVinhDanhProcessor;
 import org.apache.log4j.Logger;
 
 import java.util.Date;
@@ -27,10 +29,10 @@ implements BaseProcessor<byte[], Boolean> {
         try {
             TransactionTaiXiuMessage message = (TransactionTaiXiuMessage)TransactionTaiXiuMessage.fromBytes((byte[])body);
             TaiXiuDaoImpl dao = new TaiXiuDaoImpl();
-            /*int totalRecord = dao.getTotalTrans();
-            if(totalRecord > 100 ){
-                dao.deleteTopTrans();
-            }*/
+            TopVinhDanhDto topVinhDanhDto = new TopVinhDanhDto();
+            topVinhDanhDto.setUsername(message.username);
+            topVinhDanhDto.setScore(message.prize - message.betValue);
+            TopVinhDanhProcessor.addTopVinhDanh(topVinhDanhDto);
             dao.saveTransactionTaiXiu(message);
             saveToElk(message);
             logger.debug((Object)("Handle message : " + message.referenceId));

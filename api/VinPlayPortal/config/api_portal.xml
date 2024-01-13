@@ -88,7 +88,7 @@
             <name>check register</name>
             <path>com.vinplay.api.processors.CheckRegister</path>
         </command>
-<!--        MD5-->
+        <!--        MD5-->
         <command>
             <id>55100</id>
             <name>lich su giao dich tai xiu</name>
@@ -264,7 +264,7 @@
             <name>List no hu</name>
             <path>com.vinplay.api.processors.slot.LSNoHuProcessor</path>
         </command>
-<!--        MD5-->
+        <!--        MD5-->
         <command>
             <id>55139</id>
             <name>Lịch sử nổ hũ</name>
@@ -385,7 +385,7 @@
         </command>
         <command>
             <id>4003</id>
-            <name>get list keo client </name>
+            <name>get list keo client</name>
             <path>com.vinplay.api.processors.bongda.GetListKeoProcess</path>
         </command>
         <command>
@@ -403,7 +403,7 @@
             <name>list danh sach ban</name>
             <path>com.vinplay.api.processors.gamebai.GetListNguoiChoi</path>
         </command>
-<!--        MD5-->
+        <!--        MD5-->
         <command>
             <id>554007</id>
             <name>list top tx vinh danh</name>
@@ -421,7 +421,7 @@
         </command>
         <command>
             <id>4009</id>
-            <name>Bank CallBack </name>
+            <name>Bank CallBack</name>
             <path>com.vinplay.api.processors.cashout.BankCallBackProcess</path>
         </command>
         <command>
@@ -880,7 +880,6 @@
             <name>Get Token Sicbo Moi</name>
             <path>com.vinplay.api.processors.sicbomodule.GetTokenSicboProcessor</path>
         </command>
-
         <command>
             <id>4101</id>
             <name>Nap rut sicbo</name>
@@ -891,20 +890,16 @@
             <name>Thoat game dau</name>
             <path>com.vinplay.api.processors.sicbomodule.OutGameProcess</path>
         </command>
-
         <command>
             <id>4103</id>
             <name>Get url game dau</name>
             <path>com.vinplay.api.processors.sicbomodule.GetUrlGameDauProcess</path>
         </command>
-
-
         <command>
             <id>411</id>
             <name>get codepay</name>
             <path>com.vinplay.api.processors.lichsunaprut.SearchCodePay</path>
         </command>
-
         <command>
             <id>4104</id>
             <name>get codepay</name>
@@ -925,5 +920,11 @@
             <name>get game name</name>
             <path>com.vinplay.api.processors.GetGameNameProcessor</path>
         </command>
+        <command>
+            <id>4108</id>
+            <name>Get top vinh danh by game name</name>
+            <path>com.vinplay.api.processors.GetTopVinhDanhByGameNameProcessor</path>
+        </command>
+
     </commands>
 </portal>
