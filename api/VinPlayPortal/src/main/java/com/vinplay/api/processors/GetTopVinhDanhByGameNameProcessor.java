@@ -59,6 +59,7 @@ public class GetTopVinhDanhByGameNameProcessor
             rp.setSuccess(true);
             rp.setErrorCode("0");
             rp.setListVinhDanh(topWins);
+            response.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
