@@ -49,7 +49,7 @@ public class GetTopVinhDanhByGameNameProcessor
                     .build();
             String typeDate = getDate(type);
 
-            String url = "http://localhost:8089/leaderboard?boardName=" + boardName + "_" + typeDate + "&pageIndex=" + pageIndex + "&pageSize=" + pageSize;
+            String url = "http://localhost:8087/leaderboard?boardName=" + boardName + "_" + typeDate + "&pageIndex=" + pageIndex + "&pageSize=" + pageSize;
             Request rq = new Request.Builder()
                     .url(url)
                     .method("GET", null)
