@@ -11,6 +11,7 @@ package com.vinplay.vbee.rmq.minigame.processor;
 
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
+import com.vinplay.vbee.common.enums.Games;
 import com.vinplay.vbee.common.messages.minigame.TransactionTaiXiuMessage;
 import com.vinplay.vbee.common.rmq.ELKrmq;
 import com.vinplay.vbee.dao.impl.TaiXiuDaoImpl;
@@ -29,10 +30,10 @@ implements BaseProcessor<byte[], Boolean> {
         try {
             TransactionTaiXiuMessage message = (TransactionTaiXiuMessage)TransactionTaiXiuMessage.fromBytes((byte[])body);
             TaiXiuDaoImpl dao = new TaiXiuDaoImpl();
-            TopVinhDanhDto topVinhDanhDto = new TopVinhDanhDto();
-            topVinhDanhDto.setUsername(message.username);
-            topVinhDanhDto.setScore(message.prize - message.betValue);
-            TopVinhDanhProcessor.addTopVinhDanh(topVinhDanhDto);
+
+            if (message.moneyType == 1) {
+                addTopVinhDanh(message);
+            }
             dao.saveTransactionTaiXiu(message);
             saveToElk(message);
             logger.debug((Object)("Handle message : " + message.referenceId));
@@ -56,6 +57,18 @@ implements BaseProcessor<byte[], Boolean> {
         }
         ELKrmq elKrmq = new ELKrmq();
         elKrmq.InsertLogTranSactionTaiXiu(0L,message.referenceId,message.userId,message.username,message.betValue,message.betSide,message.prize,message.refund,total_exchange,message.moneyType,new Date().getTime());
+    }
+
+    public void addTopVinhDanh(TransactionTaiXiuMessage message) {
+        try {
+            TopVinhDanhDto topVinhDanhDto = new TopVinhDanhDto();
+            topVinhDanhDto.setUsername(message.username);
+            topVinhDanhDto.setScore(message.prize - message.betValue);
+            topVinhDanhDto.setBoardName(Games.TAI_XIU.getName());
+            TopVinhDanhProcessor.addTopVinhDanh(topVinhDanhDto);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
 
