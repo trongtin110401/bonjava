@@ -969,7 +969,7 @@ public class TaiXiuModule
             }
             long endTime = System.currentTimeMillis();
             Debug.trace((Object) ("CALCUALTE PRIZE, time handle= " + (endTime - startTime) + " (ms)") + " Room " + (roomId == 1 ? "vin" : "xu"));
-            TaiXiuModule.this.txService.updateAllTop();
+//            TaiXiuModule.this.txService.updateAllTop();
         }
     }
 

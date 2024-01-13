@@ -1060,7 +1060,7 @@ public class SpartanRoom
 //                            for (String entry2 : lineArr) {
 //                                ArrayList<SpartanAward> awardList = new ArrayList<SpartanAward>();
 //                                Line line = SpartanUtils.getLine(this.lines, matrixWild, Integer.parseInt(entry2));
-//                                SpartanUtils.calculateLine(line, awardList);
+//                                SpartanUtils.calculateAward(line, awardList);
 //                                for (SpartanAward award2 : awardList) {
 //                                    long moneyOnLine = 0L;
 //                                    if (award2.getRatio() > 0.0f) {

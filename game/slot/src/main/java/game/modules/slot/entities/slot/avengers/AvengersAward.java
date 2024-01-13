@@ -18,7 +18,7 @@ public enum AvengersAward {
     TRIPLE_WILD("TRIPLE_WILD", 8, (byte) 9, AvengersItem.WILD, (byte) 3, 50.0f),
     DOUBLE_WILD("TRIPLE_WILD", 9, (byte) 10, AvengersItem.WILD, (byte) 2, 10.0f),
 
-    PENTA_JACKPOT("PENTA_JACK_POT", 11, (byte) 10, AvengersItem.JACKPOT, (byte) 5, -1.0f),
+    PENTA_JACKPOT("PENTA_JACK_POT", 11, (byte) 10, AvengersItem.JACKPOT, (byte) 5, 0f),
     QUADAR_JACKPOT("QUADAR_JACK_POT", 12, (byte) 11, AvengersItem.JACKPOT, (byte) 4, 100.0f),
     TRIPLE_JACKPOT("TRIPLE_JACK_POT", 13, (byte) 12, AvengersItem.JACKPOT, (byte) 3, 25.0f),
     DOUBLE_JACKPOT("DOUBLE_JACK_POT", 14, (byte) 12, AvengersItem.JACKPOT, (byte) 2, 4.0f),

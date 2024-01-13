@@ -197,21 +197,26 @@ public class AvengersUtils {
         System.out.println(matrixToString(generateMatrix()));
     }
 
-    public static void calculateLine(Line line, List<AvengersAward> awardList) {
+    public static void calculateAward(Line line, List<AvengersAward> awardList) {
         int countNumItems = 0;
-        AvengersItem itemSample = (AvengersItem) line.getCell(0).getItem();
-        if (itemSample != AvengersItem.BONUS && itemSample != AvengersItem.SCATTER) {
-            AvengersAward award;
-            byte id;
-            for (int j = 0;
-                 j < line.getCells().size()
-                         && ((id = ((AvengersItem) line.getCell(j).getItem()).getId()) == itemSample.getId()
-                         || itemSample.getId() != AvengersItem.JACKPOT.getId() && id == AvengersItem.WILD.getId());
-                 ++j) {
-                ++countNumItems;
+        AvengersItem item = (AvengersItem) line.getCell(0).getItem();
+        if (item != AvengersItem.BONUS && item != AvengersItem.SCATTER) {
+            for (int j = 0; j < line.getCells().size(); ++j) {
+                byte itemId = ((AvengersItem) line.getCell(j).getItem()).getId();
+                if (itemId == item.getId()
+                        || item.getId() != AvengersItem.JACKPOT.getId()
+                        && itemId == AvengersItem.WILD.getId()) {
+                    ++countNumItems;
+                }
             }
-            if (countNumItems >= 3 && (award = AvengersAwards.getAward(itemSample, countNumItems)) != null) {
+
+            AvengersAward award;
+            if (countNumItems >= 3 && (award = AvengersAwards.getAward(item, countNumItems)) != null) {
                 awardList.add(award);
+            } else if (countNumItems >= 2) {
+
+            } else {
+
             }
         }
     }

@@ -319,7 +319,7 @@ public class BenleyRoom extends SlotRoom {
                             for (String entry2 : lineArr) {
                                 ArrayList<AvengersAward> awardList = new ArrayList<>();
                                 Line line = AvengersUtils.getLine(this.lines, matrixWild, Integer.parseInt(entry2));
-                                AvengersUtils.calculateLine(line, awardList);
+                                AvengersUtils.calculateAward(line, awardList);
                                 for (AvengersAward award2 : awardList) {
                                     long moneyOnLine = 0L;
                                     if (award2.getRatio() > 0.0f) {

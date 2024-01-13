@@ -722,7 +722,7 @@ extends BaseClientRequestHandler {
             long endTime = System.currentTimeMillis();
             Debug.trace((Object)("CALCUALTE PRIZE, time handle= " + (endTime - startTime) + " (ms)"));
             logger.debug("Run txService.updateAllTop");
-            TaiXiuModule.this.txService.updateAllTop();
+//            TaiXiuModule.this.txService.updateAllTop();
         }
     }
 
