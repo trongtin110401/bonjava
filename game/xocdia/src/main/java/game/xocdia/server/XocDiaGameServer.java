@@ -1331,9 +1331,8 @@ public class XocDiaGameServer
                         if (gPot.isWin) {
                             transactionXocDiaMessages.setResult(gPot.getPotName());
                         }
+                        userToTransaction.put(username, transactionXocDiaMessages);
                     }
-
-
                     System.out.println("Xoc Dia mapppppppppppp" + userToTransaction);
 
 
