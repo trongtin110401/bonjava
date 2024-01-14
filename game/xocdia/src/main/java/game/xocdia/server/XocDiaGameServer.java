@@ -1328,6 +1328,18 @@ public class XocDiaGameServer
                         } else if (gPot.getPotName().equals("odd")) {
                             transactionXocDiaMessages.getBetResult().setOdd(totalBetValue);
                         }
+                        else if (gPot.getPotName().equals("zeroWhite")) {
+                            transactionXocDiaMessages.getBetResult().setZeroWhite(totalBetValue);
+                        }
+                        else if (gPot.getPotName().equals("fourWhite")) {
+                            transactionXocDiaMessages.getBetResult().setFourWhite(totalBetValue);
+                        }
+                        else if (gPot.getPotName().equals("threeWhite")) {
+                            transactionXocDiaMessages.getBetResult().setThreeWhite(totalBetValue);
+                        }
+                        else if (gPot.getPotName().equals("oneWhite")) {
+                            transactionXocDiaMessages.getBetResult().setOneWhite(totalBetValue);
+                        }
                         if (gPot.isWin) {
                             transactionXocDiaMessages.setResult(gPot.getPotName());
                         }
@@ -1390,12 +1402,13 @@ public class XocDiaGameServer
                         transactionXocDiaMessage.setTotalExchange(rewardModel.moneyWin - transactionXocDiaMessage.getBetResult().getTotalBetValue());
                     }
                     XocDiaServiceImpl xocDiaService = new XocDiaServiceImpl();
-                    System.out.println("Xoc Dia Transaction : username" + transactionXocDiaMessage.username);
-                    System.out.println("Xoc Dia Transaction : totalBetValue" + transactionXocDiaMessage.getBetResult().getTotalBetValue());
-                    System.out.println("Xoc Dia Transaction : result" + transactionXocDiaMessage.getResult());
-                    System.out.println("Xoc Dia Transaction : totalExchange" + transactionXocDiaMessage.getTotalExchange());
-                    System.out.println("Xoc Dia Transaction : betValue" + transactionXocDiaMessage.getBetResult().toString());
-
+                    if (transactionXocDiaMessage.username.equals("testacc123")){
+                        System.out.println("Xoc Dia Transaction : username " + transactionXocDiaMessage.username);
+                        System.out.println("Xoc Dia Transaction : totalBetValue " + transactionXocDiaMessage.getBetResult().getTotalBetValue());
+                        System.out.println("Xoc Dia Transaction : result " + transactionXocDiaMessage.getResult());
+                        System.out.println("Xoc Dia Transaction : totalExchange " + transactionXocDiaMessage.getTotalExchange());
+                        System.out.println("Xoc Dia Transaction : betValue " + transactionXocDiaMessage.getBetResult().toString());
+                    }
                     xocDiaService.saveTransactionXocDia(transactionXocDiaMessage);
 
                 }
