@@ -1285,6 +1285,12 @@ public class XocDiaGameServer
                 long moneyBankerExchange = 0L;
 
                 for (GamePot gPot : this.potList) {
+                    System.out.println("=========XocDia============nick name"+ gPot.name);
+                    System.out.println("=========XocDia============money bet"+ gPot.getMoneyBet(gPot.name));
+                    System.out.println("=========XocDia============bet map"+ gPot.betMap);
+                    System.out.println("=========XocDia============total money"+ gPot.totalMoney);
+                    System.out.println("=========XocDia============user bet map"+ gPot.userBetMap);
+                    System.out.println("=========XocDia============bet list"+ gPot.betList);
                     String nickname;
 
                     long moneyBet;
