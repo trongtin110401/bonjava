@@ -1284,18 +1284,18 @@ public class XocDiaGameServer
                 long moneyBankerExchange = 0L;
 
 
-                Map<String, Map<String, Long>> mapMap = new HashMap<>();
+//                Map<String, Map<String, Long>> mapMap = new HashMap<>();
 
                 for (GamePot gPot : this.potList) {
 
-                    for (Map.Entry<String, Long> entry : gPot.betMap.entrySet()) {
-                        String key = entry.getKey();
-                        long value = entry.getValue();
-                        Map<String, Long> map1 = new HashMap<>();
-                        map1.put(gPot.name, value);
-                        mapMap.put(key, map1);
-                    }
-                    System.out.println("Xoc Dia mapppppppppppp" + mapMap);
+//                    for (Map.Entry<String, Long> entry : gPot.betMap.entrySet()) {
+//                        String key = entry.getKey();
+//                        long value = entry.getValue();
+//                        Map<String, Long> map1 = new HashMap<>();
+//                        map1.put(gPot.name, value);
+//                        mapMap.put(key, map1);
+//                    }
+//                    System.out.println("Xoc Dia mapppppppppppp" + mapMap);
 
 
                     String nickname;
