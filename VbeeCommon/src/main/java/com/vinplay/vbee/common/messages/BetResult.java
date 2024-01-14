@@ -60,4 +60,16 @@ public class BetResult {
     public long getTotalBetValue(){
         return zeroWhite + fourWhite + threeWhite + oneWhite + even + odd;
     }
+
+    @Override
+    public String toString() {
+        return "BetResult{" +
+                "zeroWhite=" + zeroWhite +
+                ", fourWhite=" + fourWhite +
+                ", threeWhite=" + threeWhite +
+                ", oneWhite=" + oneWhite +
+                ", even=" + even +
+                ", odd=" + odd +
+                '}';
+    }
 }

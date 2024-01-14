@@ -1333,8 +1333,6 @@ public class XocDiaGameServer
                         }
                         userToTransaction.put(username, transactionXocDiaMessages);
                     }
-                    System.out.println("Xoc Dia mapppppppppppp" + userToTransaction);
-
 
                     String nickname;
                     long moneyBet;
@@ -1392,6 +1390,12 @@ public class XocDiaGameServer
                         transactionXocDiaMessage.setTotalExchange(rewardModel.moneyWin - transactionXocDiaMessage.getBetResult().getTotalBetValue());
                     }
                     XocDiaServiceImpl xocDiaService = new XocDiaServiceImpl();
+                    System.out.println("Xoc Dia Transaction : username" + transactionXocDiaMessage.username);
+                    System.out.println("Xoc Dia Transaction : totalBetValue" + transactionXocDiaMessage.getBetResult().getTotalBetValue());
+                    System.out.println("Xoc Dia Transaction : result" + transactionXocDiaMessage.getResult());
+                    System.out.println("Xoc Dia Transaction : totalExchange" + transactionXocDiaMessage.getTotalExchange());
+                    System.out.println("Xoc Dia Transaction : betValue" + transactionXocDiaMessage.getBetResult().toString());
+
                     xocDiaService.saveTransactionXocDia(transactionXocDiaMessage);
 
                 }
