@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  org.jboss.netty.util.internal.ConcurrentHashMap
  *  org.json.JSONObject
@@ -16,19 +16,25 @@ import java.util.Map;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 
-public class GamePot   {
+public class GamePot {
+    // pot id
     public byte id;
+    // hệ số nhân nếu thắng
     public double ratio;
+    // pot name
     public String name;
+    // trong trường hợp người chơi bị giới hạn đặt cược THÌ không đợc đặt cược quá giá trị maxMoneyBet
     public long maxMoneyBet;
+    // danh sách đặt cược của user (bao gồm cả BOT) trên cửa này
     public BlockingDeque<BettingModel> betList;
+    // ánh xạ giữa username và số tiền đặt cược của user đó (bao gồm cả BOT) trên cửa này
     public Map<String, Long> betMap;
     public Map<String, Long> userBetMap;
     public Map<String, RefundModel> refundMap;
     public long moneyRefund;
     public long totalMoney;
     public boolean isWin;
-   // public boolean isLock;
+    // public boolean isLock;
     public boolean regisChangeLock;
     public long totalMoneyBotBet;
     public long totalMoneyUserBet;
@@ -64,7 +70,7 @@ public class GamePot   {
         this.totalMoney = 0L;
         this.isWin = false;
         if (this.regisChangeLock) {
-          //  this.isLock = !this.isLock;
+            //  this.isLock = !this.isLock;
         }
         this.regisChangeLock = false;
         this.totalMoneyBotBet = 0L;
@@ -106,8 +112,7 @@ public class GamePot   {
                     }
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             String content = "Xoc Dia exception: " + e.getMessage() + ", function: GamePot.bet()";
             MsgUtils.alertServer(content, false, true);
         }
@@ -171,8 +176,7 @@ public class GamePot   {
                 return json.toString();
             }
             return "{}";
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return "{}";
         }
     }
@@ -186,10 +190,31 @@ public class GamePot   {
             json.put("totalMoney", this.totalMoney);
             json.put("isWin", this.isWin);
             return json;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return null;
         }
+    }
+
+    public String getPotName() {
+        switch (name) {
+            case "Chẵn":
+                return "even";
+            case "Lẻ":
+                return "odd";
+
+            case "4 den":
+                return "zeroWhite";
+
+            case "4 trang":
+                return "fourWhite";
+
+            case "1 den":
+                return "threeWhite";
+
+            case "1 trang":
+                return "oneWhite";
+        }
+        return "";
     }
 }
 

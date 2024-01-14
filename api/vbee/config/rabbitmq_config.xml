@@ -777,5 +777,17 @@
                 </command>
             </commands>
         </queue>
+
+        <queue>
+            <name>queue_xocdia</name>
+            <threads>1</threads>
+            <commands>
+                <command>
+                    <id>1501</id>
+                    <name></name>
+                    <path>com.vinplay.vbee.rmq.minigame.processor.SaveTransactionXocDiaProcessor</path>
+                </command>
+            </commands>
+        </queue>
     </queues>
 </rabbitmq>

@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  org.json.JSONException
  */
@@ -8,9 +8,12 @@ package com.vinplay.usercore.service;
 
 import com.vinplay.gamebai.entities.BossXocDiaModel;
 import com.vinplay.gamebai.entities.XocDiaBoss;
+
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+
+import com.vinplay.vbee.common.messages.TransactionXocDiaMessage;
 import org.json.JSONException;
 
 public interface XocDiaService {
@@ -27,5 +30,7 @@ public interface XocDiaService {
     public List<String> getListSessionActive() throws SQLException;
 
     public List<BossXocDiaModel> getListRoomBoss(String var1, int var2, int var3, int var4) throws SQLException, JSONException;
+
+    public void saveTransactionXocDia(TransactionXocDiaMessage message);
 }
 
