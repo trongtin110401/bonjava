@@ -24,7 +24,7 @@ import game.modules.slot.entities.slot.AwardsOnLine;
 import game.modules.slot.entities.slot.Line;
 import game.modules.slot.entities.slot.MiniGameSlotResponse;
 import game.modules.slot.entities.slot.avengers.*;
-import game.modules.slot.utils.AvengersUtils;
+import game.modules.slot.utils.Line25Utils;
 import game.modules.slot.utils.Constant;
 import game.modules.slot.utils.SlotUtils;
 import game.util.ConfigGame;
@@ -42,7 +42,7 @@ import java.util.logging.Logger;
 public class BenleyRoom extends SlotRoom {
     private final Runnable gameLoopTask = new GameLoopTask();
     private final Runnable checkResetPotTask = new CheckResetPot();
-    private final AvengersLines lines = new AvengersLines();
+    private final Line25Lines lines = new Line25Lines();
     private long lastTimeUpdatePotToRoom = 0L;
     private long lastTimeUpdateFundToRoom = 0L;
     private final ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
@@ -56,7 +56,7 @@ public class BenleyRoom extends SlotRoom {
         this.module = module;
         this.moneyType = moneyType;
         this.gameName = Games.BENLEY.getName();
-        this.cacheFreeName = this.gameName + betValue;
+        this.cacheFreeSpinName = this.gameName + betValue;
         CacheServiceImpl cacheService = new CacheServiceImpl();
         cacheService.setValue(gameName, (int) pot);
         this.betValue = betValue;
@@ -143,7 +143,7 @@ public class BenleyRoom extends SlotRoom {
                         int countScatter;
                         int countBonus;
                         MiniGameSlotResponse miniGameSlot;
-                        ArrayList<AwardsOnLine<AvengersAward>> awardsOnLines = new ArrayList<>();
+                        ArrayList<AwardsOnLine<Line25Award>> awardsOnLines = new ArrayList<>();
                         block4:
                         while (!enoughPair) {
                             int soLanNoHu;
@@ -285,17 +285,17 @@ public class BenleyRoom extends SlotRoom {
 //                                    forceNoHu = false;
 //                                }
 //                            }
-                            AvengersItem[][] matrix = forceNoHu ? AvengersUtils.generateMatrixNoHu(lineArr) : AvengersUtils.generateMatrix();
+                            Line25Item[][] matrix = forceNoHu ? Line25Utils.generateMatrixNoHu(lineArr) : Line25Utils.generateMatrix();
 
                             // hàng
                             for (int i = 0; i < 3; ++i) {
                                 // cột
                                 for (int j = 0; j < 5; ++j) {
-                                    if (matrix[i][j] == AvengersItem.SCATTER) {
+                                    if (matrix[i][j] == Line25Item.SCATTER) {
                                         ++countScatter;
                                         continue;
                                     }
-                                    if (matrix[i][j] == AvengersItem.BONUS) {
+                                    if (matrix[i][j] == Line25Item.BONUS) {
                                         ++countBonus;
                                     }
                                 }
@@ -309,22 +309,22 @@ public class BenleyRoom extends SlotRoom {
                                 if (n2 >= tiLeAn) continue;
                             }
                             if (countBonus >= 3) {
-                                miniGameSlot = AvengersUtils.addMiniGameSlot(this.betValue, countBonus);
-                                AvengersAward award = AvengersAwards.getAward(AvengersItem.BONUS, countBonus);
-                                AwardsOnLine<AvengersAward> aol = new AwardsOnLine<>(award, miniGameSlot.getTotalPrize(), "line0");
+                                miniGameSlot = Line25Utils.buildBonusGameData(this.betValue, countBonus);
+                                Line25Award award = Line25AwardManager.getAward(Line25Item.BONUS, countBonus);
+                                AwardsOnLine<Line25Award> aol = new AwardsOnLine<>(award, miniGameSlot.getTotalPrize(), "line0");
                                 awardsOnLines.add(aol);
                                 result = 5;
                             }
-                            AvengersItem[][] matrixWild = AvengersUtils.revertMatrix(matrix);
+                            Line25Item[][] matrixWild = Line25Utils.revertMatrix(matrix);
                             for (String entry2 : lineArr) {
-                                ArrayList<AvengersAward> awardList = new ArrayList<>();
-                                Line line = AvengersUtils.getLine(this.lines, matrixWild, Integer.parseInt(entry2));
-                                AvengersUtils.calculateAward(line, awardList);
-                                for (AvengersAward award2 : awardList) {
+                                ArrayList<Line25Award> awardList = new ArrayList<>();
+                                Line line = Line25Utils.getLine(this.lines, matrixWild, Integer.parseInt(entry2));
+                                Line25Utils.calculateAward(line, awardList);
+                                for (Line25Award award2 : awardList) {
                                     long moneyOnLine = 0L;
                                     if (award2.getRatio() > 0.0f) {
                                         moneyOnLine = (long) (award2.getRatio() * (float) this.betValue);
-                                    } else if (award2 == AvengersAward.QUADAR_JACKPOT) {
+                                    } else if (award2 == Line25Award.QUADAR_JACKPOT) {
                                         if (result == 3) {
                                             moneyOnLine = this.initJackpotValues;
                                         } else {
@@ -337,14 +337,14 @@ public class BenleyRoom extends SlotRoom {
                                             result = 3;
                                         }
                                     }
-                                    AwardsOnLine<AvengersAward> aol2 = new AwardsOnLine<>(award2, moneyOnLine, line.getName());
+                                    AwardsOnLine<Line25Award> aol2 = new AwardsOnLine<>(award2, moneyOnLine, line.getName());
                                     awardsOnLines.add(aol2);
                                 }
                             }
                             StringBuilder builderLinesWin = new StringBuilder();
                             StringBuilder builderPrizesOnLine = new StringBuilder();
                             for (AwardsOnLine entry2 : awardsOnLines) {
-                                if ((entry2.getAward() == AvengersAward.PENTA_JACKPOT || entry2.getAward() == AvengersAward.QUADAR_JACKPOT || entry2.getAward() == AvengersAward.TRIPLE_JACKPOT) && !forceNoHu)
+                                if ((entry2.getAward() == Line25Award.PENTA_JACKPOT || entry2.getAward() == Line25Award.QUADAR_JACKPOT || entry2.getAward() == Line25Award.TRIPLE_JACKPOT) && !forceNoHu)
                                     continue block4;
 
 //                                if (betValue == 100)
@@ -419,7 +419,7 @@ public class BenleyRoom extends SlotRoom {
                             }
 //                            if (result == 3 ? this.fund - (totalPrizes - soTienNoHuKhongTruQuy) < 0L : this.fund - totalPrizes < this.pot * 2L && totalPrizes - totalBetValue >= 0L) continue;
                             enoughPair = true;
-                            String matrixStr = AvengersUtils.matrixToString(matrix);
+                            String matrixStr = Line25Utils.matrixToString(matrix);
                             if (totalPrizes > 0L) {
                                 if (result == 3) {
                                     if (this.huX2) {
@@ -498,7 +498,7 @@ public class BenleyRoom extends SlotRoom {
                             linesWin = builderLinesWin.toString();
                             prizesOnLine = builderPrizesOnLine.toString();
                             resultBenleyMsg.referenceId = referenceId;
-                            resultBenleyMsg.matrix = AvengersUtils.matrixToString(matrix);
+                            resultBenleyMsg.matrix = Line25Utils.matrixToString(matrix);
                             resultBenleyMsg.linesWin = linesWin;
                             resultBenleyMsg.prize = totalPrizes;
                             resultBenleyMsg.isFreeSpin = false;
@@ -554,17 +554,17 @@ public class BenleyRoom extends SlotRoom {
         switch (countFreeSpin) {
             case 3: {
                 soLuot = 8;
-                this.slotService.setLuotQuayFreeSlot(this.cacheFreeName, nickName, lines, soLuot, 1);
+                this.slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, soLuot, 1);
                 break;
             }
             case 4: {
                 soLuot = 8;
-                this.slotService.setLuotQuayFreeSlot(this.cacheFreeName, nickName, lines, soLuot, 2);
+                this.slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, soLuot, 2);
                 break;
             }
             case 5: {
                 soLuot = 8;
-                this.slotService.setLuotQuayFreeSlot(this.cacheFreeName, nickName, lines, soLuot, 3);
+                this.slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, soLuot, 3);
             }
         }
         return soLuot;

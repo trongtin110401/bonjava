@@ -357,40 +357,39 @@ public class XocDiaGameServer
         cacheService.setValue("Xocdia_Change", "ischange");
         //ArrayList<GamePot> list = new ArrayList<GamePot>(potList);
 
-        cacheService.setValue("XocDia_Pot0", getPotReport(potList.get(0),0).toJson()); // cho nay phai luu dang json vi no ko cung model va no ko serilizable dc do model no
-        cacheService.setValue("XocDia_Pot1",  getPotReport(potList.get(1),1).toJson());
-        cacheService.setValue("XocDia_Pot2",  getPotReport(potList.get(2),2).toJson());
-        cacheService.setValue("XocDia_Pot3",  getPotReport(potList.get(3),3).toJson());
-        cacheService.setValue("XocDia_Pot4",  getPotReport(potList.get(4),4).toJson());
-        cacheService.setValue("XocDia_Pot5",  getPotReport(potList.get(5),5).toJson());
+        cacheService.setValue("XocDia_Pot0", getPotReport(potList.get(0), 0).toJson()); // cho nay phai luu dang json vi no ko cung model va no ko serilizable dc do model no
+        cacheService.setValue("XocDia_Pot1", getPotReport(potList.get(1), 1).toJson());
+        cacheService.setValue("XocDia_Pot2", getPotReport(potList.get(2), 2).toJson());
+        cacheService.setValue("XocDia_Pot3", getPotReport(potList.get(3), 3).toJson());
+        cacheService.setValue("XocDia_Pot4", getPotReport(potList.get(4), 4).toJson());
+        cacheService.setValue("XocDia_Pot5", getPotReport(potList.get(5), 5).toJson());
         try {
 
             this.sendBEExcutueFlag(); // call đến api module bên kia
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     String sendBEExcutueFlag() throws IOException {
-        OkHttpClient client =  HttpCommon.getInstance().getHttpClient().newBuilder()
+        OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
                 .build();
         Request request = new Request.Builder()
                 .url(XocDiaConfig.NOTIFY_TO_BACKEND_URL)
                 .method("GET", null)
                 .build();
-      try( Response response = client.newCall(request).execute()){
-        return response.body().string();
-      }
+        try (Response response = client.newCall(request).execute()) {
+            return response.body().string();
+        }
     }
 
 
-
-    private GamePotReportModel getPotReport(GamePot gamePot ,int i){
+    private GamePotReportModel getPotReport(GamePot gamePot, int i) {
         GamePotReportModel model1 = new GamePotReportModel();
-        model1.betMap =   new HashMap<String, Long>(potList.get(i).betMap);
+        model1.betMap = new HashMap<String, Long>(potList.get(i).betMap);
         model1.totalMoney = potList.get(i).totalMoney;
         model1.totalMoneyBotBet = potList.get(i).totalMoneyBotBet;
-        model1.userBetMap =  new HashMap<String, Long>(potList.get(i).userBetMap);
+        model1.userBetMap = new HashMap<String, Long>(potList.get(i).userBetMap);
         model1.id = potList.get(i).id;
         model1.totalMoneyUserBet = potList.get(i).totalMoneyUserBet;
         return model1;
@@ -402,7 +401,7 @@ public class XocDiaGameServer
             cacheService.setValue("XocDia_Flag_Time", String.valueOf(this.getCountTime())); // get all time
             cacheService.setValue("XocDia_Flag_GameState", this.gameState); // get all time
             cacheService.setValue("XocDia_Flag_betting", String.valueOf(this.isBetting));
-            cacheService.setValue("XocDia_Flag_session", String.valueOf(this.gameId ));
+            cacheService.setValue("XocDia_Flag_session", String.valueOf(this.gameId));
 
             // get when join user or betting
             switch (this.countTime) {
@@ -570,7 +569,7 @@ public class XocDiaGameServer
                 if (NumberUtils.isDoWithRatio((double) XocDiaConfig.normalRatioBetChanLe)) {
                     potChanLe = (byte) this.rd.nextInt(2);
                     long money2 = 0L;
-                    money2 = this.moneyBet == 50000 ? (long) (this.moneyBet * NumberUtils.randomIntLimit((int) XocDiaConfig._100BetChanLeMin, (int) XocDiaConfig._100BetChanLeMax)) : (long) (this.moneyBet * NumberUtils.randomIntLimit((int)500, (int) 1000));
+                    money2 = this.moneyBet == 50000 ? (long) (this.moneyBet * NumberUtils.randomIntLimit((int) XocDiaConfig._100BetChanLeMin, (int) XocDiaConfig._100BetChanLeMax)) : (long) (this.moneyBet * NumberUtils.randomIntLimit((int) 500, (int) 1000));
                     if ((totalBet += money2) > moneyUser) {
                         money2 = moneyUser;
                         isNext = false;
@@ -578,11 +577,11 @@ public class XocDiaGameServer
                     int betStartTime2 = NumberUtils.randomIntLimit((int) 6, (int) 13);
                     this.botBettingList.add(new BotBettingModel(gp.user, potChanLe, money2, betStartTime2));
                 }
-                if (!(!isNext || potChanLe == PotType.EVEN.getId() || !NumberUtils.isDoWithRatio((double) XocDiaConfig.normalRatioBet1) )) {
+                if (!(!isNext || potChanLe == PotType.EVEN.getId() || !NumberUtils.isDoWithRatio((double) XocDiaConfig.normalRatioBet1))) {
                     byte potId = (byte) NumberUtils.randomIntLimit((int) 4, (int) 5);
 
                     money = 0L;
-                    money = this.moneyBet == 50000 ? (long) (this.moneyBet * NumberUtils.randomIntLimit((int) XocDiaConfig._100Bet1Min, (int) XocDiaConfig._100Bet1Max)) : (long) (this.moneyBet * NumberUtils.randomIntLimit((int)500, (int) 1000));
+                    money = this.moneyBet == 50000 ? (long) (this.moneyBet * NumberUtils.randomIntLimit((int) XocDiaConfig._100Bet1Min, (int) XocDiaConfig._100Bet1Max)) : (long) (this.moneyBet * NumberUtils.randomIntLimit((int) 500, (int) 1000));
                     if ((totalBet += money) > moneyUser) {
                         money = moneyUser - totalBet + money;
                         isNext = false;
@@ -666,7 +665,6 @@ public class XocDiaGameServer
     }
 
 
-
     private synchronized void startBetting() {
         try {
             Debug.trace((Object[]) new Object[]{"START BETTING", VinPlayUtils.getCurrentDateTime(), this.roomId, this.gameId});
@@ -729,7 +727,6 @@ public class XocDiaGameServer
             Debug.trace((Object) e);
         }
     }
-
 
 
     private synchronized void startReward() {
@@ -801,15 +798,15 @@ public class XocDiaGameServer
                     break;
                 }
                 case 3134: {
-                 //   this.getRevenue(user, dataCmd);
+                    //   this.getRevenue(user, dataCmd);
                     break;
                 }
-                case 3166 :{
-                    this.getCurrentBetMap(user,dataCmd);
+                case 3166: {
+                    this.getCurrentBetMap(user, dataCmd);
                     break;
                 }
-                case  3213:{
-                   this.getListCurrentUser(user);
+                case 3213: {
+                    this.getListCurrentUser(user);
                     break;
                 }
             }
@@ -824,27 +821,27 @@ public class XocDiaGameServer
         GetListUserMsg msg = new GetListUserMsg();
         msg.nickName = user.getName();
         msg.playerList = this.playerList;
-        MsgUtils.send(msg,user,true);
+        MsgUtils.send(msg, user, true);
     }
 
     private void getCurrentBetMap(User user, DataCmd dataCmd) {
         UserCurrentBetInforMsg msg = new UserCurrentBetInforMsg();
 
-        msg.chan =getMoneyBetOnPot(0,user.getName());
-        msg.le =getMoneyBetOnPot(1,user.getName());
-        msg.trang4 =getMoneyBetOnPot(2,user.getName());
-        msg.den4 =getMoneyBetOnPot(3,user.getName());
-        msg.den3 =getMoneyBetOnPot(4,user.getName());
-        msg.trang3 =getMoneyBetOnPot(5,user.getName());
+        msg.chan = getMoneyBetOnPot(0, user.getName());
+        msg.le = getMoneyBetOnPot(1, user.getName());
+        msg.trang4 = getMoneyBetOnPot(2, user.getName());
+        msg.den4 = getMoneyBetOnPot(3, user.getName());
+        msg.den3 = getMoneyBetOnPot(4, user.getName());
+        msg.trang3 = getMoneyBetOnPot(5, user.getName());
 
-        MsgUtils.send(msg, user,true);
+        MsgUtils.send(msg, user, true);
 
 
     }
 
-    long getMoneyBetOnPot(int index, String nickname){
-        if(potList.get(index).betMap.containsKey(nickname)){
-            return  potList.get(index).betMap.get(nickname);
+    long getMoneyBetOnPot(int index, String nickname) {
+        if (potList.get(index).betMap.containsKey(nickname)) {
+            return potList.get(index).betMap.get(nickname);
         }
         return 0;
     }
@@ -1002,11 +999,11 @@ public class XocDiaGameServer
 
     public void bet(User user, DataCmd dataCmd) {
         try {
-             long currentMoney = userService.getCurrentMoneyUserCache(user.getName(), "vin");
+            long currentMoney = userService.getCurrentMoneyUserCache(user.getName(), "vin");
             BetCmd cmd = new BetCmd(dataCmd);
             byte potId = cmd.pot;
             long money = cmd.money;
-            if(money > currentMoney) return;
+            if (money > currentMoney) return;
             this.uBet(user, potId, money);
         } catch (Exception e) {
             String content = "Xoc Dia exception: " + e.getMessage() + ", function: bet() " + this.roomId + " " + this.gameId;
@@ -1026,16 +1023,16 @@ public class XocDiaGameServer
             synchronized (map) {
                 GamePot gPot = this.getPot(potId);
                 GamePlayer gp = this.getPlayer(user.getName());
-                if(gp.getCurrentMoney() < money) return false; // check money can bet
+                if (gp.getCurrentMoney() < money) return false; // check money can bet
                 if (this.checkBetting(gPot, gp) && money >= (long) this.moneyBet) { // money bet phai lon hon money bet min
                     BetMsg msg = new BetMsg(user.getName());
                     msg.potId = potId;
                     MoneyResponse response = new MoneyResponse(false, "1001");
-                    response = this.userService.updateMoney(user.getName(), -money,  "vin", "XocDia", "xoc dia : \u0110\u1eb7t c\u01b0\u1ee3c", "Phi\u00ean " + this.gameId, 0L, Long.valueOf(this.gameId), TransType.START_TRANS);
-                   // MoneyResponse mnres = gp.gameMoneyInfo.updateMoney(-money, this.roomId, this.gameId, 0L, false);
+                    response = this.userService.updateMoney(user.getName(), -money, "vin", "XocDia", "xoc dia : \u0110\u1eb7t c\u01b0\u1ee3c", "Phi\u00ean " + this.gameId, 0L, Long.valueOf(this.gameId), TransType.START_TRANS);
+                    // MoneyResponse mnres = gp.gameMoneyInfo.updateMoney(-money, this.roomId, this.gameId, 0L, false);
                     if (response.isSuccess()) {
                         gp.setPlaying(this.roomId);
-                 //       long moneySub = mnres.getSubtractMoney();
+                        //       long moneySub = mnres.getSubtractMoney();
                         long mnBet = gPot.bet(user.getName(), money, false, this.moneyType, gp.isBot);
                         if (mnBet > 0L) {
                             this.setPot(potId, gPot);
@@ -1049,13 +1046,15 @@ public class XocDiaGameServer
                             MsgUtils.sendToRoom(msg, this.playerList);
                             res = true;
                         } else {
-                            msg.currentMoney =userService.getCurrentMoneyUserCache(user.getName(), "vin");;
+                            msg.currentMoney = userService.getCurrentMoneyUserCache(user.getName(), "vin");
+                            ;
                             msg.potMoney = gPot.totalMoney;
                             msg.Error = 2;
                             MsgUtils.send(msg, user, gp.revMsg);
                         }
                     } else {
-                        msg.currentMoney = userService.getCurrentMoneyUserCache(user.getName(), "vin");;
+                        msg.currentMoney = userService.getCurrentMoneyUserCache(user.getName(), "vin");
+                        ;
                         msg.potMoney = gPot.totalMoney;
                         msg.Error = 1;
                         MsgUtils.send(msg, user, gp.revMsg);
@@ -1076,7 +1075,7 @@ public class XocDiaGameServer
      */
     // todo : x2 mone
     public boolean checkBetting(GamePot gPot, GamePlayer gp) {
-        if (!(this.gameState != 2 || !this.enableBetting || gp == null || !gp.isSitting() || gPot == null )) {
+        if (!(this.gameState != 2 || !this.enableBetting || gp == null || !gp.isSitting() || gPot == null)) {
             if (gPot.checkBetLimitUser(gp.user.getName(), !this.bankerName.isEmpty())) {
                 BetMsg msg = new BetMsg(gp.user.getName());
                 msg.potId = gPot.id;
@@ -1089,7 +1088,6 @@ public class XocDiaGameServer
         }
         return false;
     }
-
 
 
     private void getTime(User user, DataCmd dataCmd) {
@@ -1113,6 +1111,7 @@ public class XocDiaGameServer
             Debug.trace((Object) e);
         }
     }
+
     /*
      * WARNING - Removed try catching itself - possible behaviour change.
      */
@@ -1248,7 +1247,7 @@ public class XocDiaGameServer
             synchronized (map) {
                 MoneyResponse mnres;
                 XocDiaResult xdResult = new XocDiaResult();
-                xdResult.generateResult2(this.rsCheat, this.checkForceResult(),this.potList);
+                xdResult.generateResult2(this.rsCheat, this.checkForceResult(), this.potList);
                 List<Integer> dinces = xdResult.getDinces();
 
                 Iterator<Integer> iterator = dinces.iterator();
@@ -1264,7 +1263,7 @@ public class XocDiaGameServer
                     this.setPot(bt.byteValue(), gPot);
                     if (bt.byteValue() == PotType.EVEN.getId()) {
                         ++this.totalEven;
-                        if(rsList.size()>=32){
+                        if (rsList.size() >= 32) {
                             this.rsList.remove(0);
                         }
                         this.rsList.add(bt);
@@ -1273,7 +1272,7 @@ public class XocDiaGameServer
                     }
                     if (bt.byteValue() != PotType.ODD.getId()) continue;
                     ++this.totalOdd;
-                    if(rsList.size()>=32){
+                    if (rsList.size() >= 32) {
                         this.rsList.remove(0);
                     }
                     this.rsList.add(bt);
@@ -1281,18 +1280,25 @@ public class XocDiaGameServer
                 ResultMsg msg = new ResultMsg();
                 msg.dinces = dinces;
                 msg.potList = this.potList;
-                HashMap<String, RewardModel> rewardMap = new HashMap<String, RewardModel>();
+                HashMap<String, RewardModel> rewardMap = new HashMap<>();
                 long moneyBankerExchange = 0L;
 
-                for (GamePot gPot : this.potList) {
-                    System.out.println("=========XocDia============nick name"+ gPot.name);
-                    System.out.println("=========XocDia============money bet"+ gPot.getMoneyBet(gPot.name));
-                    System.out.println("=========XocDia============bet map"+ gPot.betMap);
-                    System.out.println("=========XocDia============total money"+ gPot.totalMoney);
-                    System.out.println("=========XocDia============user bet map"+ gPot.userBetMap);
-                    System.out.println("=========XocDia============bet list"+ gPot.betList);
-                    String nickname;
 
+                Map<String, Map<String, Long>> mapMap = new HashMap<>();
+
+                for (GamePot gPot : this.potList) {
+
+                    for (Map.Entry<String, Long> entry : gPot.betMap.entrySet()) {
+                        String key = entry.getKey();
+                        long value = entry.getValue();
+                        Map<String, Long> map1 = new HashMap<>();
+                        map1.put(gPot.name, value);
+                        mapMap.put(key, map1);
+                    }
+                    System.out.println("Xoc Dia mapppppppppppp" + mapMap);
+
+
+                    String nickname;
                     long moneyBet;
                     if (gPot.isWin) {
                         for (Map.Entry<String, Long> entry : gPot.betMap.entrySet()) {
@@ -1320,7 +1326,7 @@ public class XocDiaGameServer
                         }
                         continue;
                     }
-                     // tra money win
+                    // tra money win
                     // hoan tien
                     for (Map.Entry<String, Long> entry : gPot.betMap.entrySet()) {
                         nickname = entry.getKey();
@@ -1348,10 +1354,12 @@ public class XocDiaGameServer
                     GamePlayer gPlayer = this.getPlayer((String) entry.getKey());
                     RewardModel model = (RewardModel) entry.getValue();
                     if (model.moneyWin > 0L) {
-                        mnres =this.userService.updateMoney(gPlayer.user.getName(),model.moneyWin,  "vin", "XocDia", "xoc dia : Tra thuong ", "Phi\u00ean " + this.gameId, 0L, Long.valueOf(this.gameId), TransType.START_TRANS);;
+                        mnres = this.userService.updateMoney(gPlayer.user.getName(), model.moneyWin, "vin", "XocDia", "xoc dia : Tra thuong ", "Phi\u00ean " + this.gameId, 0L, Long.valueOf(this.gameId), TransType.START_TRANS);
+                        ;
                         this.totalFee += model.fee;
                         this.totalReveneu += model.moneyWin;
-                        model.currentMoney = userService.getCurrentMoneyUserCache(gPlayer.user.getName(), "vin");;
+                        model.currentMoney = userService.getCurrentMoneyUserCache(gPlayer.user.getName(), "vin");
+                        ;
                         this.gameLog.append((String) entry.getKey()).append("/").append(model.moneyWin).append("/").append(mnres.getErrorCode()).append(";");
                         rewardMap.put((String) entry.getKey(), model);
                         this.setPlayer((String) entry.getKey(), gPlayer);
@@ -1625,7 +1633,7 @@ public class XocDiaGameServer
         try {
             RegisLeaveRoomMsg msg = new RegisLeaveRoomMsg(gp.user.getName());
             msg.reqLeaveRoom = gp.reqLeaveRoom;
-            MsgUtils.send(msg,gp.user, gp.revMsg);
+            MsgUtils.send(msg, gp.user, gp.revMsg);
         } catch (Exception e) {
             Debug.trace((Object) e);
         }
@@ -1634,7 +1642,7 @@ public class XocDiaGameServer
 
     private void notifyOutRoom(GamePlayer gp, byte reason) {
         try {
-            Debug.info("ban user " + gp.pInfo.nickName +" reason " + reason);
+            Debug.info("ban user " + gp.pInfo.nickName + " reason " + reason);
             LeaveRoomMsg msg = new LeaveRoomMsg();
             msg.reason = reason;
             MsgUtils.send(msg, gp.user, gp.revMsg);

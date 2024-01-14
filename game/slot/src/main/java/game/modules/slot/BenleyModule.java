@@ -31,8 +31,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class BenleyModule extends SlotModule {
+
     private long referenceId = 1L;
     private final String fullLines = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25";
+
     public BenleyModule() {
         this.gameName = Games.BENLEY.getName();
     }
@@ -82,12 +84,6 @@ public class BenleyModule extends SlotModule {
         this.ngayX2 = SlotUtils.calculateTimePokeGoX2AsString(this.gameName, SlotUtils.getX2Days(this.gameName), lastDayFinish);
         int nextX2Time = SlotUtils.calculateTimePokeGoX2(this.gameName, SlotUtils.getX2Days(this.gameName), lastDayFinish);
         Debug.trace(this.gameName + " Ngay X2: " + this.ngayX2 + ", remain time = " + nextX2Time);
-
-//        if (nextX2Time >= 0) {
-//            BitZeroServer.getInstance().getTaskScheduler().schedule(this.pokeGoX2Task, nextX2Time, TimeUnit.SECONDS);
-//        } else {
-//            this.startX2();
-//        }
 
         this.getParentExtension().addEventListener(BZEventType.USER_DISCONNECT, this);
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);

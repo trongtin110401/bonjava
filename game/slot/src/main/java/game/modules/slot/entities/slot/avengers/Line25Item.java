@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum AvengersItem {
+public enum Line25Item {
     SCATTER("SCATTER", 1, "Scatter", (byte) 0),
     BONUS("BONUS", 2, "Bonus", (byte) 1),
     WILD("WILD", 3, "Wild", (byte) 2),
@@ -23,15 +23,15 @@ public enum AvengersItem {
     private String name;
     private byte id;
 
-    private static Map<Integer, AvengersItem> map = new HashMap<>();
+    private static Map<Integer, Line25Item> map = new HashMap<>();
 
-    AvengersItem(String s, int n2, String name, byte id) {
+    Line25Item(String s, int n2, String name, byte id) {
         this.name = name;
         this.id = id;
     }
 
     static {
-        Arrays.stream(AvengersItem.values()).forEach(avengersItem -> {
+        Arrays.stream(Line25Item.values()).forEach(avengersItem -> {
             map.put((int) avengersItem.getId(), avengersItem);
         });
     }
@@ -52,12 +52,7 @@ public enum AvengersItem {
         return this.id;
     }
 
-    public static AvengersItem findItem(byte id) {
-//        for (AvengersItem entry : AvengersItem.values()) {
-//            if (entry.getId() != id) continue;
-//            return entry;
-//        }
-//        return null;
+    public static Line25Item findItem(byte id) {
         return map.get((int) id);
     }
 }

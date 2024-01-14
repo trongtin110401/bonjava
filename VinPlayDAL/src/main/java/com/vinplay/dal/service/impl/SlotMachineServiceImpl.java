@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  com.hazelcast.core.HazelcastInstance
  *  com.hazelcast.core.IMap
@@ -43,7 +43,7 @@ import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 public class SlotMachineServiceImpl
-implements SlotMachineService {
+        implements SlotMachineService {
     private SlotMachineDAO dao = new SlotMachineDAOImpl();
 
     @Override
@@ -122,7 +122,7 @@ implements SlotMachineService {
     }
 
     private void publishSlotMsg(String queueName, LogSlotMachineMessage msg, int commnad) throws IOException, TimeoutException, InterruptedException {
-        RMQApi.publishMessage((String)queueName, (BaseMessage)msg, (int)commnad);
+        RMQApi.publishMessage((String) queueName, (BaseMessage) msg, (int) commnad);
     }
 
     @Override
@@ -139,7 +139,7 @@ implements SlotMachineService {
     public void addTop(String gameName, String username, int betValue, long totalPrizes, String time, int result) throws IOException, TimeoutException, InterruptedException {
         HazelcastInstance client = HazelcastClientFactory.getInstance();
         IMap topMap = client.getMap("cacheTop");
-        TopPokeGoModel topPokeGo = (TopPokeGoModel)topMap.get((Object)gameName);
+        TopPokeGoModel topPokeGo = (TopPokeGoModel) topMap.get(gameName);
         if (topPokeGo == null) {
             topPokeGo = new TopPokeGoModel();
         }
@@ -150,7 +150,7 @@ implements SlotMachineService {
         entry.ts = time;
         entry.rs = result;
         topPokeGo.put(entry);
-        topMap.put((Object)gameName, (Object)topPokeGo);
+        topMap.put(gameName, topPokeGo);
     }
 
     @Override
@@ -163,13 +163,13 @@ implements SlotMachineService {
             if (gameName.equalsIgnoreCase(Games.KHO_BAU.getName())) {
                 pageSize = 5;
             }
-            if ((topPokeGo = (TopPokeGoModel)(topMap = (client = HazelcastClientFactory.getInstance()).getMap("cacheTop")).get((Object)gameName)) == null) {
+            if ((topPokeGo = (TopPokeGoModel) (topMap = (client = HazelcastClientFactory.getInstance()).getMap("cacheTop")).get((Object) gameName)) == null) {
                 topPokeGo = new TopPokeGoModel();
             }
             if (topPokeGo.getResults().size() == 0) {
                 List<TopPokeGo> results = this.dao.getTop(gameName, 100);
                 topPokeGo.setResults(results);
-                topMap.put((Object)gameName, (Object)topPokeGo);
+                topMap.put((Object) gameName, (Object) topPokeGo);
             }
             return topPokeGo.getResults(page, pageSize);
         }
@@ -187,14 +187,14 @@ implements SlotMachineService {
         IMap slotMap = client.getMap(this.buildKeySlot(gameName));
         int soLuotFree = 0;
         SlotFreeSpin slotModel = new SlotFreeSpin();
-        if (slotMap.containsKey((Object)username)) {
-            slotModel = (SlotFreeSpin)slotMap.get((Object)username);
+        if (slotMap.containsKey((Object) username)) {
+            slotModel = (SlotFreeSpin) slotMap.get((Object) username);
             slotModel.setNum(slotModel.getNum() - 1);
             soLuotFree = slotModel.getNum();
             if (soLuotFree <= 0) {
-                slotMap.remove((Object)username);
+                slotMap.remove((Object) username);
             } else {
-                slotMap.put((Object)username, (Object)slotModel);
+                slotMap.put((Object) username, (Object) slotModel);
             }
         }
         return slotModel;
@@ -216,21 +216,21 @@ implements SlotMachineService {
     public void setLuotQuayFreeSlot(String gameName, String nickName, String lines, int soLuot, int ratio) {
         HazelcastInstance client = HazelcastClientFactory.getInstance();
         IMap slotMap = client.getMap(this.buildKeySlot(gameName));
-        if (slotMap.containsKey((Object)nickName)) {
+        if (slotMap.containsKey(nickName)) {
             try {
-                SlotFreeSpin slotFreeModel = (SlotFreeSpin)slotMap.get((Object)nickName);
+                SlotFreeSpin slotFreeModel = (SlotFreeSpin) slotMap.get(nickName);
                 slotFreeModel.setNum(soLuot);
                 slotFreeModel.setRatio(ratio);
                 slotFreeModel.setLines(lines);
-                slotMap.put((Object)nickName, (Object)slotFreeModel);
+                slotMap.put(nickName, slotFreeModel);
+            } catch (Exception slotFreeModel) {
             }
-            catch (Exception slotFreeModel) {}
         } else {
             SlotFreeSpin slotFreeModel = new SlotFreeSpin();
             slotFreeModel.setNum(soLuot);
             slotFreeModel.setRatio(ratio);
             slotFreeModel.setLines(lines);
-            slotMap.put((Object)nickName, (Object)slotFreeModel);
+            slotMap.put(nickName, slotFreeModel);
         }
     }
 
@@ -239,11 +239,10 @@ implements SlotMachineService {
         HazelcastInstance client = HazelcastClientFactory.getInstance();
         IMap slotMap = client.getMap(this.buildKeySlot(gameName));
         SlotFreeSpin slotFreeSpin = new SlotFreeSpin();
-        if (slotMap.containsKey((Object)nickName)) {
+        if (slotMap.containsKey((Object) nickName)) {
             try {
-                slotFreeSpin = (SlotFreeSpin)slotMap.get((Object)nickName);
-            }
-            catch (Exception exception) {
+                slotFreeSpin = (SlotFreeSpin) slotMap.get((Object) nickName);
+            } catch (Exception exception) {
                 // empty catch block
             }
         }
@@ -258,13 +257,12 @@ implements SlotMachineService {
     public void setItemsWild(String gameName, String nickName, String itemsWild) {
         HazelcastInstance client = HazelcastClientFactory.getInstance();
         IMap slotMap = client.getMap(this.buildKeySlot(gameName));
-        if (slotMap.containsKey((Object)nickName)) {
+        if (slotMap.containsKey((Object) nickName)) {
             try {
-                SlotFreeSpin slotFreeSpin = (SlotFreeSpin)slotMap.get((Object)nickName);
+                SlotFreeSpin slotFreeSpin = (SlotFreeSpin) slotMap.get((Object) nickName);
                 slotFreeSpin.setItemsWild(itemsWild);
-                slotMap.put((Object)nickName, (Object)slotFreeSpin);
-            }
-            catch (Exception slotFreeSpin) {
+                slotMap.put((Object) nickName, (Object) slotFreeSpin);
+            } catch (Exception slotFreeSpin) {
                 // empty catch block
             }
         }
@@ -275,12 +273,11 @@ implements SlotMachineService {
         HazelcastInstance client = HazelcastClientFactory.getInstance();
         IMap slotMap = client.getMap(this.buildKeySlot(gameName));
         int prizes = 0;
-        if (slotMap.containsKey((Object)nickName)) {
+        if (slotMap.containsKey((Object) nickName)) {
             try {
-                SlotFreeSpin slotFreeSpin = (SlotFreeSpin)slotMap.get((Object)nickName);
+                SlotFreeSpin slotFreeSpin = (SlotFreeSpin) slotMap.get((Object) nickName);
                 prizes = slotFreeSpin.getPrizes();
-            }
-            catch (Exception slotFreeSpin) {
+            } catch (Exception slotFreeSpin) {
                 // empty catch block
             }
         }
@@ -291,13 +288,12 @@ implements SlotMachineService {
     public void addPrizes(String gameName, String nickName, int prize) {
         HazelcastInstance client = HazelcastClientFactory.getInstance();
         IMap slotMap = client.getMap(this.buildKeySlot(gameName));
-        if (slotMap.containsKey((Object)nickName)) {
+        if (slotMap.containsKey((Object) nickName)) {
             try {
-                SlotFreeSpin slotFreeSpin = (SlotFreeSpin)slotMap.get((Object)nickName);
+                SlotFreeSpin slotFreeSpin = (SlotFreeSpin) slotMap.get((Object) nickName);
                 slotFreeSpin.addPrize(prize);
-                slotMap.put((Object)nickName, (Object)slotFreeSpin);
-            }
-            catch (Exception slotFreeSpin) {
+                slotMap.put((Object) nickName, (Object) slotFreeSpin);
+            } catch (Exception slotFreeSpin) {
                 // empty catch block
             }
         }
@@ -308,8 +304,8 @@ implements SlotMachineService {
         HazelcastInstance client = HazelcastClientFactory.getInstance();
         String key = nickName + "-" + gameName + "-" + room;
         IMap slotMap = client.getMap("cacheSlotFree");
-        if (slotMap.containsKey((Object)key)) {
-            SlotFreeDaily slotModel = (SlotFreeDaily)slotMap.get((Object)key);
+        if (slotMap.containsKey((Object) key)) {
+            SlotFreeDaily slotModel = (SlotFreeDaily) slotMap.get((Object) key);
             return slotModel;
         }
         return null;
@@ -324,21 +320,19 @@ implements SlotMachineService {
         String key = nickName + "-" + gameName + "-" + room;
         IMap slotMap = client.getMap("cacheSlotFree");
         boolean success = false;
-        if (slotMap.containsKey((Object)key)) {
+        if (slotMap.containsKey((Object) key)) {
             try {
-                slotMap.lock((Object)nickName);
-                SlotFreeDaily slotModel = (SlotFreeDaily)slotMap.get((Object)key);
+                slotMap.lock((Object) nickName);
+                SlotFreeDaily slotModel = (SlotFreeDaily) slotMap.get((Object) key);
                 if (slotModel.getRotateFree() > 0) {
                     slotModel.setRotateFree(slotModel.getRotateFree() - 1);
                     success = true;
-                    slotMap.put((Object)key, (Object)slotModel);
+                    slotMap.put((Object) key, (Object) slotModel);
                     this.dao.updateSlotFreeDaily(gameName, nickName, room, slotModel.getRotateFree());
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 success = false;
-            }
-            finally {
+            } finally {
                 slotMap.unlock(nickName);
             }
         }
@@ -360,9 +354,8 @@ implements SlotMachineService {
         msg.result = result;
         msg.time = time;
         try {
-            RMQApi.publishMessage((String)"queue_log_nohu", (BaseMessage)msg, (int)140);
-        }
-        catch (IOException | InterruptedException | TimeoutException ex2) {
+            RMQApi.publishMessage((String) "queue_log_nohu", (BaseMessage) msg, (int) 140);
+        } catch (IOException | InterruptedException | TimeoutException ex2) {
             Exception e = ex2;
             e.printStackTrace();
         }
@@ -381,25 +374,20 @@ implements SlotMachineService {
 
     @Override
     public void logSlot(String gameName, long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time) throws IOException, TimeoutException, InterruptedException {
-        if(gameName.equals(Games.AUDITION.getName())){
-            this.logAudition( referenceId,  username,  betValue,  linesBetting,  linesWin,  prizesOnLine,  result,  totalPrizes,  time);
-        } else if(gameName.equals(Games.RANGE_ROVER.getName())){
-            this.logRangeRover( referenceId,  username,  betValue,  linesBetting,  linesWin,  prizesOnLine,  result,  totalPrizes,  time);
-        }
-        else if(gameName.equals(Games.MAYBACH.getName())){
-            this.logMaybach( referenceId,  username,  betValue,  linesBetting,  linesWin,  prizesOnLine,  result,  totalPrizes,  time);
-        }
-        else if(gameName.equals(Games.SPARTAN.getName())){
-            this.logSpartan( referenceId,  username,  betValue,  linesBetting,  linesWin,  prizesOnLine,  result,  totalPrizes,  time);
-        }
-        else if(gameName.equals(Games.TAMHUNG.getName())){
-            this.logTamHung( referenceId,  username,  betValue,  linesBetting,  linesWin,  prizesOnLine,  result,  totalPrizes,  time);
-        }
-        else if(gameName.equals(Games.ROLL_ROYE.getName())){
-            this.logRollRoye( referenceId,  username,  betValue,  linesBetting,  linesWin,  prizesOnLine,  result,  totalPrizes,  time);
-        }
-        else if(gameName.equals(Games.BENLEY.getName())){
-            this.logBenley( referenceId,  username,  betValue,  linesBetting,  linesWin,  prizesOnLine,  result,  totalPrizes,  time);
+        if (gameName.equals(Games.AUDITION.getName())) {
+            this.logAudition(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time);
+        } else if (gameName.equals(Games.RANGE_ROVER.getName())) {
+            this.logRangeRover(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time);
+        } else if (gameName.equals(Games.MAYBACH.getName())) {
+            this.logMaybach(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time);
+        } else if (gameName.equals(Games.SPARTAN.getName())) {
+            this.logSpartan(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time);
+        } else if (gameName.equals(Games.TAMHUNG.getName())) {
+            this.logTamHung(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time);
+        } else if (gameName.equals(Games.ROLL_ROYE.getName())) {
+            this.logRollRoye(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time);
+        } else if (gameName.equals(Games.BENLEY.getName())) {
+            this.logBenley(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time);
         }
     }
 }

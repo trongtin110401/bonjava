@@ -23,13 +23,13 @@ import game.modules.slot.entities.slot.AutoUser;
 import game.modules.slot.entities.slot.AwardsOnLine;
 import game.modules.slot.entities.slot.Line;
 import game.modules.slot.entities.slot.MiniGameSlotResponse;
-import game.modules.slot.entities.slot.avengers.AvengersAward;
-import game.modules.slot.entities.slot.avengers.AvengersAwards;
-import game.modules.slot.entities.slot.avengers.AvengersItem;
-import game.modules.slot.entities.slot.avengers.AvengersLines;
-import game.modules.slot.utils.AvengersUtils;
+import game.modules.slot.entities.slot.avengers.Line25Award;
+import game.modules.slot.entities.slot.avengers.Line25AwardManager;
+import game.modules.slot.entities.slot.avengers.Line25Item;
+import game.modules.slot.entities.slot.avengers.Line25Lines;
+import game.modules.slot.listener.SlotLogListener;
+import game.modules.slot.utils.Line25Utils;
 import game.modules.slot.utils.SlotUtils;
-import game.util.ConfigGame;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -45,12 +45,14 @@ public class Slot25BasicRoom extends SlotRoom {
     // Room Lifecycle
     private final Runnable gameLoopTask = new GameLoopTask();
     private final Runnable checkResetPotTask = new CheckResetPot();
-    private final AvengersLines lines = new AvengersLines();
+    private final Line25Lines lines = new Line25Lines();
     private long lastTimeUpdatePotToRoom = 0L;
     private long lastTimeUpdateFundToRoom = 0L;
     private final ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
-    private int countNoHu = 0;
     private static final org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger("slot");
+
+    // litener zone
+    private SlotLogListener slotLogListener;
 
     public Slot25BasicRoom(BenleyModule module, byte id, String gameName, short moneyType, long pot, long fund, int betValue, long initJackpotValue) {
 
@@ -58,8 +60,8 @@ public class Slot25BasicRoom extends SlotRoom {
 
         this.module = module;
         this.moneyType = moneyType;
-        this.gameName = Games.BENLEY.getName();
-        this.cacheFreeName = this.gameName + betValue;
+        this.gameName = gameName;
+        this.cacheFreeSpinName = this.gameName + betValue;
 
         // init jackpot value
         CacheServiceImpl cacheService = new CacheServiceImpl();
@@ -78,9 +80,7 @@ public class Slot25BasicRoom extends SlotRoom {
     @Override
     public void forceStopAutoPlay(User user) {
         super.forceStopAutoPlay(user);
-
-        Map map = this.usersAuto;
-        synchronized (map) {
+        synchronized (this.usersAuto) {
             this.usersAuto.remove(user.getName());
             ForceStopAutoPlayBenleyMsg msg = new ForceStopAutoPlayBenleyMsg();
             SlotUtils.sendMessageToUser(msg, user);
@@ -92,30 +92,42 @@ public class Slot25BasicRoom extends SlotRoom {
         return this.playNormal(username, linesStr, referenceId);
     }
 
-    public ResultBenleyMsg playNormal(String username, String linesStr, long referenceId) {
-
-        short result = 0;
+    /**
+     * @param username    tên hiển thị người chơi
+     * @param linesStr    số line được chọn
+     * @param referenceId mã tham chiếu giao dịch
+     * @return ResultBenleyMsg model kết quả
+     */
+    public synchronized ResultBenleyMsg playNormal(String username, String linesStr, long referenceId) {
+        // kết quả mặc định
+        short result = ResultSlot.MISSED;
+        // thời điểm hiện tại
         String currentTimeStr = DateTimeUtils.getCurrentTime();
-        ResultBenleyMsg resultBenleyMsg = new ResultBenleyMsg();
-
+        // response model
+        ResultBenleyMsg playResponse = new ResultBenleyMsg();
+        // số line người chơi chọn
         String[] selectedLines = linesStr.split(",");
+        // tổng cược
         long totalBetValue = (long) selectedLines.length * this.betValue;
-
+        // từ PHP admin, cài đặt cho một người chơi trúng JACKPOT
         boolean forceJackpotToUser = false;
+        // người chơi được set nổ hũ
+        String usernameForce;
+        // phòng được set nổ hũ
+        String roomForce;
 
-        // get force user jackpot
+        // Lớp dịch vụ caching
         CacheServiceImpl cacheService = new CacheServiceImpl();
-        String userForce;
-        String betValueCache;
         try {
-            userForce = cacheService.getValueStr(CACHE_NAME_USER_SPOT + gameName);
-            betValueCache = cacheService.getValueStr(CACHE_BET_VALUE_SLOT + gameName);
+            usernameForce = cacheService.getValueStr(CACHE_NAME_USER_SPOT + gameName);
+            roomForce = cacheService.getValueStr(CACHE_BET_VALUE_SLOT + gameName);
         } catch (Exception e) {
-            userForce = "";
-            betValueCache = "";
+            usernameForce = "";
+            roomForce = "";
         }
-
+        // thông tin user
         UserCacheModel u = userService.getUser(username);
+        // số dư hiện tại của user
         long currentMoney = userService.getMoneyUserCache(username, this.moneyTypeStr);
 
         // số lines được chọn > 0
@@ -133,9 +145,10 @@ public class Slot25BasicRoom extends SlotRoom {
                     } else {
                         moneyRes.setSuccess(true);
                     }
+
                     if (moneyRes != null && moneyRes.isSuccess()) {
                         // một phần trăm cho vào hũ JACKPOT
-                        long moneyToPot = totalBetValue / 100L;
+                        long moneyToPot = totalBetValue * 2 / 100L;
                         this.pot += moneyToPot;
 
                         // số tiền còn lại sau khi trừ phế và 1% POT cho vào quỹ thưởng
@@ -143,189 +156,79 @@ public class Slot25BasicRoom extends SlotRoom {
                         if (!u.isBot()) {
                             this.fund += moneyToFund;
                         }
-                        // sử dụng để check matrix data
+                        // cờ này được sử dụng để check liệu có tiếp tục vòng lặp để sinh Matrix hay không
                         boolean enoughPair = false;
-
+                        // tổng tiền thắng được tính toán trên toàn bộ Lines được chọn
                         long totalPrizes;
-                        long tienThuongX2;
-
+                        // đếm số lượt xuất hiện Scatter
                         int countScatter;
+                        // đếm số lượt bonus
                         int countBonus;
-
-                        MiniGameSlotResponse miniGameSlot;
-                        ArrayList<AwardsOnLine<AvengersAward>> awardsOnLines = new ArrayList<>();
-                        block4:
+                        // Bonus Game Info model
+                        MiniGameSlotResponse bonusGameResponse;
+                        // danh sách giải thưởng được tính toán trên toàn bộ Lines được chọn
+                        ArrayList<AwardsOnLine<Line25Award>> awardsOnLines = new ArrayList<>();
                         while (!enoughPair) {
-                            int soLanNoHu;
-                            result = 0;
+                            // khởi tạo lại các giá trị mặc định sau mỗi lần lặp
+                            result = ResultSlot.MISSED;
                             awardsOnLines.clear();
                             totalPrizes = 0L;
-                            tienThuongX2 = 0L;
-                            String linesWin;
-                            String prizesOnLine;
-                            miniGameSlot = null;
+                            bonusGameResponse = null;
                             countScatter = 0;
                             countBonus = 0;
-                            boolean forceNoHu = false;
-//                            if (lineArr.length >= 5 && (soLanNoHu = ConfigGame.getIntValue(String.valueOf(this.gameName) + "_so_lan_no_hu")) > 0 && this.fund > this.initPotValue * 2L && (n = (rd = new Random()).nextInt(soLanNoHu)) == 0) {
-//                                forceNoHu = true;
-//                            }
+                            boolean isForceJackpot = false;
+
                             if (betValue == 100) {
-                                soLanNoHu = ConfigGame.getIntValue(this.gameName + "_so_lan_no_hu_100");
-//                                if (lineArr.length >= 20 && soLanNoHu > 0 && this.fund > this.pot * 2L && (n = (rd = new Random()).nextInt(soLanNoHu)) == 0 && countNoHu >= soLanNoHu) {
-//                                    forceNoHu = true;
-//                                }
-//                                if (userForce.equals(username) && lineArr.length >= 20 && soLanNoHu > 0 && this.fund > this.pot * 2L  && countNoHu >= soLanNoHu) {
-//                                    forceNoHu = true;
-//                                    forceJackpotByUser = true;
-//                                }
-                                if (userForce.equals(username) && betValueCache.equals(String.valueOf(100))) {
-                                    forceNoHu = true;
+                                if (usernameForce.equals(username) && roomForce.equals(String.valueOf(100))) {
+                                    isForceJackpot = true;
                                     forceJackpotToUser = true;
+                                    result = ResultSlot.JACKPOT;
                                 }
                             } else if (betValue == 1000) {
-                                soLanNoHu = ConfigGame.getIntValue(this.gameName + "_so_lan_no_hu_1000");
-//                                if (lineArr.length >= 25 && soLanNoHu > 0 && this.fund > this.pot * 3L && (n = (rd = new Random()).nextInt(soLanNoHu)) == 0 && countNoHu >= soLanNoHu) {
-//                                    forceNoHu = true;
-//                                }
-//                                if (userForce.equals(username) && lineArr.length >= 25 && soLanNoHu > 0 && this.fund > this.pot * 3L  && countNoHu >= soLanNoHu) {
-//                                    forceNoHu = true;
-//                                    forceJackpotByUser = true;
-//                                }
-                                if (userForce.equals(username) && betValueCache.equals(String.valueOf(1000))) {
-                                    forceNoHu = true;
+                                if (usernameForce.equals(username) && roomForce.equals(String.valueOf(1000))) {
+                                    isForceJackpot = true;
                                     forceJackpotToUser = true;
+                                    result = ResultSlot.JACKPOT;
                                 }
                             } else {
-                                soLanNoHu = ConfigGame.getIntValue(this.gameName + "_so_lan_no_hu_10000");
-//                                if (lineArr.length >= 25 && soLanNoHu > 0 && this.fund > this.pot * 3L && (n = (rd = new Random()).nextInt(soLanNoHu)) == 0 && countNoHu >= soLanNoHu) {
-//                                    forceNoHu = true;
-//                                }
-//                                if (userForce.equals(username) && lineArr.length >= 25 && soLanNoHu > 0 && this.fund > this.pot * 3L  && countNoHu >= soLanNoHu) {
-//                                    forceNoHu = true;
-//                                    forceJackpotByUser = true;
-//                                }
-                                if (userForce.equals(username) && betValueCache.equals(String.valueOf(10000))) {
-                                    forceNoHu = true;
+                                if (usernameForce.equals(username) && roomForce.equals(String.valueOf(10000))) {
+                                    isForceJackpot = true;
                                     forceJackpotToUser = true;
+                                    result = ResultSlot.JACKPOT;
                                 }
                             }
-                            //logger.info(gn+" username: "+username + " forceNoHu:"+forceNoHu);
-                            // kiem tra neu no hu
-//                            if (forceNoHu)
-//                            {
-//                                try
-//                                {
-//                                    LogMoneyUserDao logService = new LogMoneyUserDaoImpl();
-//                                    long total_user_receive = 0;
-//                                    long total_agency_receive = 0;
-//
-//                                    AgentServiceImpl service = new AgentServiceImpl();
-//                                    List<AgentResponse> agents = service.listAgent();
-//                                    ArrayList<String> agentNames = new ArrayList<String>();
-//                                    if (agents != null && agents.size() > 0) {
-//                                        for (AgentResponse agent : agents) {
-//                                            agentNames.add(agent.nickName);
-//                                        }
-//                                    }
-//                                    List<LogUserMoneyResponse> resulReceive = logService.searchAllLogMoneyUser(username, "RECEIVE",false);
-//                                    if (resulReceive != null && resulReceive.size() > 0) {
-//                                        for (LogUserMoneyResponse trans : resulReceive) {
-//                                            boolean matchAgent = false;
-//                                            for (String s : agentNames) {
-//                                                if (trans.description.contains(s)) {
-//                                                    matchAgent = true;
-//                                                }
-//                                            }
-//                                            if (matchAgent) {
-//                                                total_agency_receive += trans.moneyExchange;
-//                                            } else {
-//                                                total_user_receive += trans.moneyExchange;
-//                                            }
-//                                        }
-//                                    }
-//
-//                                    long total_recharge_card_money = 0;//total_agency_receive - userModel.getRechargeMoney();
-//                                    List<LogUserMoneyResponse> resultCard = logService.searchAllLogMoneyUser(username, "CARD",false);
-//                                    if (resultCard != null && resultCard.size() > 0) {
-//
-//
-//                                        for (LogUserMoneyResponse trans : resultCard) {
-//                                            total_recharge_card_money += trans.moneyExchange;
-//                                        }
-//
-//                                    }
-//
-//                                    long total_deposit_bank = 0;
-//                                    long total_deposit_momo = 0;
-//
-//                                    //search total deposit bank
-//                                    List<LogUserMoneyResponse> resultBank = logService.searchAllLogMoneyUser(username, "BANK",false);
-//                                    if (resultBank != null && resultBank.size() > 0) {
-//
-//                                        for (LogUserMoneyResponse trans : resultBank) {
-//                                            total_deposit_bank += trans.moneyExchange;
-//                                        }
-//                                    }
-//                                    //search total deposit momo
-//
-//                                    List<LogUserMoneyResponse> resultMomo = logService.searchAllLogMoneyUser(username, "MOMO",false);
-//                                    if (resultMomo != null && resultMomo.size() > 0) {
-//
-//                                        for (LogUserMoneyResponse trans : resultMomo) {
-//                                            total_deposit_momo += trans.moneyExchange;
-//                                        }
-//
-//                                    }
-//
-//                                    if ((total_agency_receive == 0 && total_recharge_card_money == 0 && total_deposit_momo == 0 && total_deposit_bank == 0)
-//                                            || (total_agency_receive + total_recharge_card_money + total_deposit_momo + total_deposit_bank) < 1000000)
-//                                    {
-//                                        forceNoHu = false;
-//                                    }
-//                                }
-//                                catch (Exception ex)
-//                                {
-//                                    Debug.trace(ex.getMessage());
-//                                    StringWriter sw = new StringWriter();
-//                                    PrintWriter pw = new PrintWriter(sw);
-//                                    ex.printStackTrace(pw);
-//                                    String sStackTrace = sw.toString(); // stack trace as a string
-//                                    Debug.trace((Object)sStackTrace);
-//                                    forceNoHu = false;
-//                                }
-//                            }
 
                             // sinh Matrix
-                            AvengersItem[][] matrix = forceNoHu ? AvengersUtils.generateMatrixNoHu(selectedLines) : AvengersUtils.generateMatrix();
+                            Line25Item[][] matrix = isForceJackpot ? Line25Utils.generateMatrixNoHu(selectedLines) : Line25Utils.generateMatrix();
 
                             // Đếm số lượng BONUS và SCATTER
                             for (int i = 0; i < 3; ++i) {
                                 // cột
                                 for (int j = 0; j < 5; ++j) {
-                                    if (matrix[i][j] == AvengersItem.SCATTER) {
+                                    if (matrix[i][j] == Line25Item.SCATTER) {
                                         ++countScatter;
                                         continue;
                                     }
-                                    if (matrix[i][j] == AvengersItem.BONUS) {
+                                    if (matrix[i][j] == Line25Item.BONUS) {
                                         ++countBonus;
-                                        continue;
                                     }
                                 }
                             }
 
-                            // không cho phép xảy ra đồng thời cả bonus và free spin
+                            // không cho phép nổ hũ và (BONUS hoặc FREE SPIN) xảy ra đồng thời
+                            if (isForceJackpot && (countBonus >= 3 || countScatter >= 3)) {
+                                continue;
+                            }
+                            // không cho phép BONUS và FREE spin xảy ra đồng thời
                             if (countBonus >= 3 && countScatter >= 3) {
                                 continue;
                             }
-
-                            // sau khi Matrix được sinh
                             // trong trường hợp thỏa mãn BONUS VÀ SCATTER,
                             // ràng buộc thêm điều kiện để giảm tỷ lệ ăn BONUS và SCATTER xuống
                             // nếu không thỏa mãn điều kiện, tiếp tục vòng lặp để sinh lại Matrix
                             if (countBonus >= 3 || countScatter >= 3) {
-                                Random rd2 = new Random();
                                 int tiLeAn = selectedLines.length * 100 / 25;
+                                Random rd2 = new Random();
                                 int n2 = rd2.nextInt(100);
                                 if (n2 >= tiLeAn)
                                     continue;
@@ -333,119 +236,50 @@ public class Slot25BasicRoom extends SlotRoom {
 
                             // Tính toán phần thưởng cho BONUS GAME
                             if (countBonus >= 3) {
-                                miniGameSlot = AvengersUtils.addMiniGameSlot(this.betValue, countBonus);
-                                AvengersAward award = AvengersAwards.getAward(AvengersItem.BONUS, countBonus);
-                                AwardsOnLine<AvengersAward> aol = new AwardsOnLine<>(award, miniGameSlot.getTotalPrize(), "line0");
+                                bonusGameResponse = Line25Utils.buildBonusGameData(this.betValue, countBonus);
+                                Line25Award bonusAward = Line25AwardManager.getAward(Line25Item.BONUS, countBonus);
+                                AwardsOnLine<Line25Award> aol = new AwardsOnLine<>(bonusAward, bonusGameResponse.getTotalPrize(), "line0");
                                 awardsOnLines.add(aol);
-                                result = 5;
+                                result = ResultSlot.BONUS_GAME;
                             }
 
                             // MÃ LỆNH NÀY ÁP ỤNG CHO SLOT MACHINE 25LINE EXTENDS.
                             // Trường hợp 1 WHEEL có xuất hiện item WILD, toàn bộ WHEEL đó sẽ được thay thế bởi nó
                             // Trong trường hợp này (Slot Machine 25Line Basic thì không áp dụng)
-
                             /* AvengersItem[][] matrixWild = AvengersUtils.revertMatrix(matrix); */
-                            AvengersItem[][] matrixWild = matrix;
+
+                            Line25Item[][] matrixWild = matrix;
 
                             // Duyệt toàn bộ Lines được chọn bởi người chơi để tính toán giải thưởng trên từng Line
                             for (String selectedLine : selectedLines) {
-                                ArrayList<AvengersAward> awardList = new ArrayList<>();
-                                Line line = AvengersUtils.getLine(this.lines, matrixWild, Integer.parseInt(selectedLine));
-                                AvengersUtils.calculateAward(line, awardList);
-                                for (AvengersAward award2 : awardList) {
-                                    long moneyOnLine = 0L;
-                                    if (award2.getRatio() > 0.0f) {
-                                        moneyOnLine = (long) (award2.getRatio() * (float) this.betValue);
-                                    } else if (award2 == AvengersAward.QUADAR_JACKPOT) {
-                                        if (result == 3) {
-                                            moneyOnLine = this.initJackpotValues;
-                                        } else {
-                                            if (this.huX2) {
-                                                moneyOnLine = this.pot * 2L;
-                                                tienThuongX2 = this.pot;
-                                            } else {
-                                                moneyOnLine = this.pot;
-                                            }
-                                            result = 3;
-                                        }
-                                    }
-                                    AwardsOnLine<AvengersAward> aol2 = new AwardsOnLine<>(award2, moneyOnLine, line.getName());
+                                ArrayList<Line25Award> awardList = new ArrayList<>();
+                                int lineNumber = Integer.parseInt(selectedLine);
+                                Line line = Line25Utils.getLine(this.lines, matrixWild, lineNumber);
+                                Line25Utils.calculateMoneyAwardInLine(line, awardList);
+                                for (Line25Award award : awardList) {
+                                    long moneyOnLine = (long) (award.getRatio() * this.betValue);
+                                    AwardsOnLine<Line25Award> aol2 = new AwardsOnLine<>(award, moneyOnLine, line.getName());
                                     awardsOnLines.add(aol2);
                                 }
                             }
 
+                            // Tiếp theo, tính toán toàn bộ giải thưởng
+                            boolean isGetJackpotNaturally = false;
                             StringBuilder builderLinesWin = new StringBuilder();
                             StringBuilder builderPrizesOnLine = new StringBuilder();
-                            for (AwardsOnLine entry2 : awardsOnLines) {
-                                if ((entry2.getAward() == AvengersAward.PENTA_JACKPOT
-                                        || entry2.getAward() == AvengersAward.QUADAR_JACKPOT
-                                        || entry2.getAward() == AvengersAward.TRIPLE_JACKPOT)
-                                        && !forceNoHu)
-                                    continue block4;
+                            for (AwardsOnLine<Line25Award> award : awardsOnLines) {
+                                totalPrizes += award.getMoney();
 
-//                                if (betValue == 100)
-//                                {
-//                                    if (ConfigGame.getIntValue(this.gameName + "_cho_bot_no_hu_100") == 0) // cho cả người và bot nổ hũ
-//                                    {
-//                                        if ((entry2.getAward() == AvengersAward.PENTA_JACK_POT || entry2.getAward() == AvengersAward.QUADAR_JACK_POT || entry2.getAward() == AvengersAward.TRIPLE_JACK_POT)) continue block4;
-//                                    }
-//                                    else if (ConfigGame.getIntValue(this.gameName + "_cho_bot_no_hu_100") == 1) // chỉ cho bot nổ hũ
-//                                    {
-//                                        if ((entry2.getAward() == AvengersAward.PENTA_JACK_POT || entry2.getAward() == AvengersAward.QUADAR_JACK_POT || entry2.getAward() == AvengersAward.TRIPLE_JACK_POT) && !u.isBot()) continue block4;
-//                                    }
-//                                    else if (ConfigGame.getIntValue(this.gameName + "_cho_bot_no_hu_100") == -1) // chỉ cho người nổ hũ
-//                                    {
-//                                        if ((entry2.getAward() == AvengersAward.PENTA_JACK_POT || entry2.getAward() == AvengersAward.QUADAR_JACK_POT || entry2.getAward() == AvengersAward.TRIPLE_JACK_POT) && u.isBot()) continue block4;
-//                                    }
-//                                    else
-//                                    {
-//                                        if ((entry2.getAward() == AvengersAward.PENTA_JACK_POT || entry2.getAward() == AvengersAward.QUADAR_JACK_POT || entry2.getAward() == AvengersAward.TRIPLE_JACK_POT) && !u.isBot()) continue block4;
-//                                    }
-//                                }
-//                                else if (betValue == 1000)
-//                                {
-//                                    if (ConfigGame.getIntValue(this.gameName + "_cho_bot_no_hu_1000") == 0) // cho cả người và bot nổ hũ
-//                                    {
-//                                        if ((entry2.getAward() == AvengersAward.PENTA_JACK_POT || entry2.getAward() == AvengersAward.QUADAR_JACK_POT || entry2.getAward() == AvengersAward.TRIPLE_JACK_POT)) continue block4;
-//                                    }
-//                                    else if (ConfigGame.getIntValue(this.gameName + "_cho_bot_no_hu_1000") == 1) // chỉ cho bot nổ hũ
-//                                    {
-//                                        if ((entry2.getAward() == AvengersAward.PENTA_JACK_POT || entry2.getAward() == AvengersAward.QUADAR_JACK_POT || entry2.getAward() == AvengersAward.TRIPLE_JACK_POT) && !u.isBot()) continue block4;
-//                                    }
-//                                    else if (ConfigGame.getIntValue(this.gameName + "_cho_bot_no_hu_1000") == -1) // chỉ cho người nổ hũ
-//                                    {
-//                                        if ((entry2.getAward() == AvengersAward.PENTA_JACK_POT || entry2.getAward() == AvengersAward.QUADAR_JACK_POT || entry2.getAward() == AvengersAward.TRIPLE_JACK_POT) && u.isBot()) continue block4;
-//                                    }
-//                                    else
-//                                    {
-//                                        if ((entry2.getAward() == AvengersAward.PENTA_JACK_POT || entry2.getAward() == AvengersAward.QUADAR_JACK_POT || entry2.getAward() == AvengersAward.TRIPLE_JACK_POT) && !u.isBot()) continue block4;
-//                                    }
-//                                }
-//                                else
-//                                {
-//                                    if (ConfigGame.getIntValue(this.gameName + "_cho_bot_no_hu_10000") == 0) // cho cả người và bot nổ hũ
-//                                    {
-//                                        if ((entry2.getAward() == AvengersAward.PENTA_JACK_POT || entry2.getAward() == AvengersAward.QUADAR_JACK_POT || entry2.getAward() == AvengersAward.TRIPLE_JACK_POT)) continue block4;
-//                                    }
-//                                    else if (ConfigGame.getIntValue(this.gameName + "_cho_bot_no_hu_10000") == 1) // chỉ cho bot nổ hũ
-//                                    {
-//                                        if ((entry2.getAward() == AvengersAward.PENTA_JACK_POT || entry2.getAward() == AvengersAward.QUADAR_JACK_POT || entry2.getAward() == AvengersAward.TRIPLE_JACK_POT) && !u.isBot()) continue block4;
-//                                    }
-//                                    else if (ConfigGame.getIntValue(this.gameName + "_cho_bot_no_hu_10000") == -1) // chỉ cho người nổ hũ
-//                                    {
-//                                        if ((entry2.getAward() == AvengersAward.PENTA_JACK_POT || entry2.getAward() == AvengersAward.QUADAR_JACK_POT || entry2.getAward() == AvengersAward.TRIPLE_JACK_POT) && u.isBot()) continue block4;
-//                                    }
-//                                    else
-//                                    {
-//                                        if ((entry2.getAward() == AvengersAward.PENTA_JACK_POT || entry2.getAward() == AvengersAward.QUADAR_JACK_POT || entry2.getAward() == AvengersAward.TRIPLE_JACK_POT) && !u.isBot()) continue block4;
-//                                    }
-//                                }
-                                // bot or not if (entry2.getAward() == AvengersAward.PENTA_JACK_POT && !u.isBot()) continue block4;
-                                totalPrizes += entry2.getMoney();
                                 builderLinesWin.append(",");
-                                builderLinesWin.append(entry2.getLineId());
+                                builderLinesWin.append(award.getLineId());
+
                                 builderPrizesOnLine.append(",");
-                                builderPrizesOnLine.append(entry2.getMoney());
+                                builderPrizesOnLine.append(award.getMoney());
+
+                                if (result != ResultSlot.JACKPOT && award.getAward() == Line25Award.PENTA_JACKPOT) {
+                                    result = ResultSlot.JACKPOT;
+                                    isGetJackpotNaturally = true;
+                                }
                             }
 
                             if (builderLinesWin.length() > 0) {
@@ -454,25 +288,29 @@ public class Slot25BasicRoom extends SlotRoom {
                             if (builderPrizesOnLine.length() > 0) {
                                 builderPrizesOnLine.deleteCharAt(0);
                             }
-//                            if (result == 3 ? this.fund - (totalPrizes - soTienNoHuKhongTruQuy) < 0L : this.fund - totalPrizes < this.pot * 2L && totalPrizes - totalBetValue >= 0L) continue;
+
+                            // Kiểm tra xem giải thưởng có LỚN hay không.
+                            // Lớn quá thì sinh lại MATRIX kết quả kẻo anh em NPH vỡ nợ
+                            if (!isForceJackpot) {
+                                // Trúng nổ hũ một cách ngẫu nhiên nhưng qũy thưởng lại không đủ bù lỗ
+                                if (isGetJackpotNaturally && fund < initJackpotValues) {
+                                    continue;
+                                }
+                                // Tuy không trúng JACKPOT nhưng trúng Line to quá cũng cần sinh lại MATRIX
+                                if (!isGetJackpotNaturally) {
+                                    if ((totalPrizes - totalBetValue > 0 && totalPrizes > fund) || totalPrizes >= totalBetValue * 25)
+                                        continue;
+                                }
+                            }
 
                             enoughPair = true;
-                            String matrixStr = AvengersUtils.matrixToString(matrix);
+                            String matrixStr = Line25Utils.matrixToString(matrix);
                             if (totalPrizes > 0L) {
-                                if (result == 3) {
-                                    if (this.huX2) {
-                                        if (countNoHu < soLanNoHu * 2) continue;
-                                        result = 4;
-                                    } else {
-                                        if (countNoHu < soLanNoHu) continue;
-                                    }
-                                    countNoHu = 0;
-                                    this.noHuX2();
+                                if (result == ResultSlot.JACKPOT) {
                                     this.pot = this.initJackpotValues;
-                                    //this.fund -= totalPrizes - soTienNoHuKhongTruQuy;
-                                    this.fund = 0;
+                                    this.fund -= initJackpotValues;
 
-                                    // get usercache
+                                    // get user cache
                                     HazelcastInstance client = HazelcastClientFactory.getInstance();
                                     IMap<String, UserModel> userMap = client.getMap("users");
                                     UserModel model;
@@ -507,50 +345,54 @@ public class Slot25BasicRoom extends SlotRoom {
                                     }
                                     this.slotService.logNoHu(referenceId, this.gameName, displayName, this.betValue, linesStr, matrixStr, builderLinesWin.toString(), builderPrizesOnLine.toString(), totalPrizes, result, currentTimeStr);
                                 } else {
-                                    countNoHu++;
                                     if (!u.isBot()) {
                                         this.fund -= totalPrizes;
                                     }
-                                    if (result == 0) {
-                                        result = totalPrizes >= (this.betValue * 100L) ? (short) 2 : 1;
+                                    if (result == ResultSlot.MISSED) {
+                                        result = totalPrizes >= (this.betValue * 100L) ? ResultSlot.BIG_WIN : ResultSlot.WIN;
                                     }
                                 }
                             }
-                            resultBenleyMsg.freeSpin = 0;//(byte)this.setFreeSpin(username, linesStr, countScatter);
-                            long moneyExchange = totalPrizes - tienThuongX2;
-                            //update when x2
-                            // only save real user
-                            if (tienThuongX2 > 0L && !u.isBot()) {
-                                this.userService.updateMoney(username, tienThuongX2, this.moneyTypeStr, this.gameName, "Quay " + gameName, "Thưởng hũ X2", 0L, null, TransType.NO_VIPPOINT);
+
+                            // tính toán lượt quay miễn phí
+                            playResponse.freeSpin = (byte) this.setFreeSpin(username, linesStr, countScatter);
+                            if (playResponse.freeSpin > 0) {
+                                playResponse.isFreeSpin = true;
+                                result = ResultSlot.FREE_SPIN;
                             }
+
                             // only save real user
+                            long moneyExchange = totalPrizes;
                             if (moneyExchange != 0 && !u.isBot()) {
                                 moneyRes = this.userService.updateMoney(username, moneyExchange, this.moneyTypeStr, this.gameName, "Quay " + gameName, this.buildDescription(totalBetValue, totalPrizes, result), 0L, referenceId, TransType.END_TRANS);
                                 if (moneyRes != null && moneyRes.isSuccess()) {
                                     currentMoney = moneyRes.getCurrentMoney();
-                                    if (this.moneyType == 1 && moneyExchange - (long) this.betValue >= (long) BroadcastMessageServiceImpl.MIN_MONEY) {
-                                        this.broadcastMsgService.putMessage(Games.BENLEY.getId(), username, moneyExchange - (long) this.betValue);
+                                    if (this.moneyType == 1 && moneyExchange - this.betValue >= BroadcastMessageServiceImpl.MIN_MONEY) {
+                                        this.broadcastMsgService.putMessage(Games.findGameByName(gameName).getId(), username, moneyExchange - (long) this.betValue);
                                     }
                                 }
                             }
-                            linesWin = builderLinesWin.toString();
-                            prizesOnLine = builderPrizesOnLine.toString();
-                            resultBenleyMsg.referenceId = referenceId;
-                            resultBenleyMsg.matrix = AvengersUtils.matrixToString(matrix);
-                            resultBenleyMsg.linesWin = linesWin;
-                            resultBenleyMsg.prize = totalPrizes;
-                            resultBenleyMsg.isFreeSpin = false;
-                            if (miniGameSlot != null) {
-                                resultBenleyMsg.haiSao = miniGameSlot.getPrizes();
+                            String linesWin = builderLinesWin.toString();
+                            String prizesOnLine = builderPrizesOnLine.toString();
+                            playResponse.referenceId = referenceId;
+                            playResponse.matrix = Line25Utils.matrixToString(matrix);
+                            playResponse.linesWin = linesWin;
+                            playResponse.prize = totalPrizes;
+                            playResponse.isFreeSpin = false;
+                            if (bonusGameResponse != null) {
+                                playResponse.haiSao = bonusGameResponse.getPrizes();
                             }
                             try {
+                                // lưu lịch sử chơi
                                 if (!u.isBot()) {
-                                    this.slotService.logBenley(referenceId, username, this.betValue, linesStr, linesWin, prizesOnLine, result, totalPrizes, currentTimeStr);
+                                    this.slotLogListener.log(referenceId, username, this.betValue, linesStr, linesWin, prizesOnLine, result, totalPrizes, currentTimeStr);
                                 }
-                                if (result == 3 || result == 4) {
+                                // lưu lịch sử nổ hũ
+                                if (result == ResultSlot.JACKPOT) {
                                     this.slotService.addTop(gameName, username, this.betValue, totalPrizes, currentTimeStr, result);
                                 }
-                                if (result == 3 || result == 2 || result == 4) {
+                                // thông báo tới toàn bộ người chơi trong game (trong MODULE)
+                                if (result == ResultSlot.JACKPOT || result == ResultSlot.BIG_WIN) {
                                     BigWinBenleyMsg bigWinMsg = new BigWinBenleyMsg();
                                     bigWinMsg.username = username;
                                     bigWinMsg.type = (byte) result;
@@ -559,50 +401,52 @@ public class Slot25BasicRoom extends SlotRoom {
                                     bigWinMsg.timestamp = DateTimeUtils.getCurrentTime();
                                     this.module.sendMsgToAllUsers(bigWinMsg);
                                 }
-                            } catch (InterruptedException | TimeoutException ignored) {
-                            } catch (IOException bigWinMsg) {
+                            } catch (InterruptedException | TimeoutException | IOException ignored) {
                                 // empty catch block
                             }
+                            // lưu thông tin quỹ
                             this.saveFund();
+                            // lưu thông tin HŨ
                             this.savePot();
                         }
                     }
                 } else {
-                    result = 102;
+                    result = ResultSlot.NOT_ENOUGH_MONEY;
                 }
             } else {
-                result = 101;
+                result = ResultSlot.INVALID_BET_VALUE;
             }
         } else {
-            result = 101;
+            result = ResultSlot.INVALID_BET_VALUE;
         }
-        resultBenleyMsg.result = (byte) result;
-        resultBenleyMsg.currentMoney = currentMoney;
-        //Update cache tien hu
+        playResponse.result = (byte) result;
+        playResponse.currentMoney = currentMoney;
+
+        // update cache tien hu
         cacheService.setValue(CACHE_JACK_POT_VALUE_SLOT + "_" + this.betValue + "_" + gameName, String.valueOf(this.pot));
-        if (forceJackpotToUser) {
-            this.sendNotifyNoHu(username, (byte) 1, resultBenleyMsg.prize, "BENLEY");
+        if (result == ResultSlot.JACKPOT) {
+            this.sendNotifyNoHu(username, (byte) 1, playResponse.prize, gameName);
         }
-        // SlotUtils.logAvengers(referenceId, username, this.betValue, msg.matrix, msg.haiSao, result, handleTime, ratioTime, currentTimeStr);
-        return resultBenleyMsg;
+
+        return playResponse;
     }
 
     private int setFreeSpin(String nickName, String lines, int countFreeSpin) {
         int soLuot = 0;
         switch (countFreeSpin) {
             case 3: {
-                soLuot = 8;
-                this.slotService.setLuotQuayFreeSlot(this.cacheFreeName, nickName, lines, soLuot, 1);
+                soLuot = 4;
+                slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, soLuot, 1);
                 break;
             }
             case 4: {
                 soLuot = 8;
-                this.slotService.setLuotQuayFreeSlot(this.cacheFreeName, nickName, lines, soLuot, 2);
+                slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, soLuot, 2);
                 break;
             }
             case 5: {
-                soLuot = 8;
-                this.slotService.setLuotQuayFreeSlot(this.cacheFreeName, nickName, lines, soLuot, 3);
+                soLuot = 22;
+                slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, soLuot, 3);
             }
         }
         return soLuot;
@@ -721,7 +565,11 @@ public class Slot25BasicRoom extends SlotRoom {
         for (AutoUser user : users) {
             try {
                 short result = this.play(user.getUser(), user.getLines());
-                if (result == 3 || result == 4 || result == 101 || result == 102 || result == 100) {
+                if (result == ResultSlot.JACKPOT
+                        || result == ResultSlot.JACKPOT_X2
+                        || result == ResultSlot.INVALID_BET_VALUE
+                        || result == ResultSlot.NOT_ENOUGH_MONEY
+                        || result == ResultSlot.SYSTEM_ERROR) {
                     this.forceStopAutoPlay(user.getUser());
                     continue;
                 }
