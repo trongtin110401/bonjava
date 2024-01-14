@@ -10,8 +10,7 @@ import bitzero.server.extensions.data.BaseMsg;
 
 import java.nio.ByteBuffer;
 
-public class ResultBenleyMsg
-extends BaseMsg {
+public class ResultBenleyMsg extends BaseMsg {
     public long referenceId;
     public byte result;
     public String matrix = "";

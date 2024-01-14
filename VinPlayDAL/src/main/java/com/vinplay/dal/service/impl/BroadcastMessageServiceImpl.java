@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  com.fasterxml.jackson.core.JsonProcessingException
  *  com.fasterxml.jackson.databind.ObjectMapper
@@ -18,12 +18,11 @@ import com.hazelcast.core.IMap;
 import com.vinplay.dal.service.BroadcastMessageService;
 import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
 import com.vinplay.vbee.common.models.BroadcastMsgEntry;
+
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
-public class BroadcastMessageServiceImpl
-implements BroadcastMessageService {
+public class BroadcastMessageServiceImpl implements BroadcastMessageService {
     private static int MAX_SIZE = 20;
     public static int MIN_MONEY = 10000;
     private static final String KEY_BROADCAST = "keyBroadcast";
@@ -33,32 +32,29 @@ implements BroadcastMessageService {
      */
     @Override
     public void putMessage(int gameId, String nickname, long money) {
-        if (money >= (long)MIN_MONEY) {
+        if (money >= (long) MIN_MONEY) {
             BroadcastMsgEntry newEntry = new BroadcastMsgEntry(gameId, nickname, money);
             HazelcastInstance client = HazelcastClientFactory.getInstance();
             IMap map = client.getMap("cacheBroadcast");
-            if (map != null && map.containsKey((Object)KEY_BROADCAST)) {
-                map.lock((Object)KEY_BROADCAST);
+            if (map != null && map.containsKey(KEY_BROADCAST)) {
+                map.lock(KEY_BROADCAST);
                 try {
-                    BroadcastMsgEntry minEntry;
-                    List entries = (List)map.get((Object)KEY_BROADCAST);
+                    List entries = (List) map.get(KEY_BROADCAST);
                     if (entries.size() < MAX_SIZE) {
                         this.add(entries, newEntry);
-                    } else if (entries.size() == MAX_SIZE && (minEntry = (BroadcastMsgEntry)entries.get(entries.size() - 1)).getM() < money) {
+                    } else if (entries.size() == MAX_SIZE && ((BroadcastMsgEntry) entries.get(entries.size() - 1)).getM() < money) {
                         entries.remove(entries.size() - 1);
                         this.add(entries, newEntry);
                     }
-                    map.put((Object)KEY_BROADCAST, (Object)entries);
-                }
-                catch (Exception entries) {
-                }
-                finally {
-                    map.unlock((Object)KEY_BROADCAST);
+                    map.put(KEY_BROADCAST, entries);
+                } catch (Exception ignored) {
+                } finally {
+                    map.unlock(KEY_BROADCAST);
                 }
             } else {
                 ArrayList<BroadcastMsgEntry> entries = new ArrayList<BroadcastMsgEntry>();
                 entries.add(newEntry);
-                map.put((Object)KEY_BROADCAST, new ArrayList(entries));
+                map.put(KEY_BROADCAST, new ArrayList(entries));
             }
         }
     }
@@ -83,15 +79,14 @@ implements BroadcastMessageService {
         try {
             HazelcastInstance client = HazelcastClientFactory.getInstance();
             IMap map = client.getMap("cacheBroadcast");
-            List entries = (List)map.get((Object)KEY_BROADCAST);
+            List entries = (List) map.get((Object) KEY_BROADCAST);
             BroadcastMessageServiceImpl this$0 = new BroadcastMessageServiceImpl();
             this$0.getClass();
             BroadcastMsgModel model = this$0.new BroadcastMsgModel();
             model.setEntries(entries);
             ObjectMapper mapper = new ObjectMapper();
-            return mapper.writeValueAsString((Object)model);
-        }
-        catch (JsonProcessingException e) {
+            return mapper.writeValueAsString((Object) model);
+        } catch (JsonProcessingException e) {
             return "{\"success\":false,\"errorCode\":\"1001\"}";
         }
     }
@@ -103,17 +98,15 @@ implements BroadcastMessageService {
     public void clearMessage() {
         HazelcastInstance client = HazelcastClientFactory.getInstance();
         IMap map = client.getMap("cacheBroadcast");
-        if (map != null && map.containsKey((Object)KEY_BROADCAST)) {
-            map.lock((Object)KEY_BROADCAST);
+        if (map != null && map.containsKey((Object) KEY_BROADCAST)) {
+            map.lock((Object) KEY_BROADCAST);
             try {
-                List entries = (List)map.get((Object)KEY_BROADCAST);
+                List entries = (List) map.get((Object) KEY_BROADCAST);
                 entries.clear();
-                map.put((Object)KEY_BROADCAST, (Object)entries);
-            }
-            catch (Exception entries) {
-            }
-            finally {
-                map.unlock((Object)KEY_BROADCAST);
+                map.put((Object) KEY_BROADCAST, (Object) entries);
+            } catch (Exception entries) {
+            } finally {
+                map.unlock((Object) KEY_BROADCAST);
             }
         }
     }

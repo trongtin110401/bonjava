@@ -56,7 +56,7 @@ public class BenleyRoom extends SlotRoom {
         this.module = module;
         this.moneyType = moneyType;
         this.gameName = Games.BENLEY.getName();
-        this.cacheFreeName = this.gameName + betValue;
+        this.cacheFreeSpinName = this.gameName + betValue;
         CacheServiceImpl cacheService = new CacheServiceImpl();
         cacheService.setValue(gameName, (int) pot);
         this.betValue = betValue;
@@ -309,8 +309,8 @@ public class BenleyRoom extends SlotRoom {
                                 if (n2 >= tiLeAn) continue;
                             }
                             if (countBonus >= 3) {
-                                miniGameSlot = AvengersUtils.addMiniGameSlot(this.betValue, countBonus);
-                                AvengersAward award = AvengersAwards.getAward(AvengersItem.BONUS, countBonus);
+                                miniGameSlot = AvengersUtils.buildBonusGameData(this.betValue, countBonus);
+                                AvengersAward award = AvengersAwardManager.getAward(AvengersItem.BONUS, countBonus);
                                 AwardsOnLine<AvengersAward> aol = new AwardsOnLine<>(award, miniGameSlot.getTotalPrize(), "line0");
                                 awardsOnLines.add(aol);
                                 result = 5;
@@ -554,17 +554,17 @@ public class BenleyRoom extends SlotRoom {
         switch (countFreeSpin) {
             case 3: {
                 soLuot = 8;
-                this.slotService.setLuotQuayFreeSlot(this.cacheFreeName, nickName, lines, soLuot, 1);
+                this.slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, soLuot, 1);
                 break;
             }
             case 4: {
                 soLuot = 8;
-                this.slotService.setLuotQuayFreeSlot(this.cacheFreeName, nickName, lines, soLuot, 2);
+                this.slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, soLuot, 2);
                 break;
             }
             case 5: {
                 soLuot = 8;
-                this.slotService.setLuotQuayFreeSlot(this.cacheFreeName, nickName, lines, soLuot, 3);
+                this.slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, soLuot, 3);
             }
         }
         return soLuot;

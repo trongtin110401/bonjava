@@ -3,19 +3,15 @@
  */
 package game.modules.slot.utils;
 
+import com.vinplay.vbee.common.utils.NumberUtils;
 import game.modules.slot.entities.slot.Cell;
 import game.modules.slot.entities.slot.Line;
 import game.modules.slot.entities.slot.MiniGameSlotResponse;
-import game.modules.slot.entities.slot.avengers.AvengersAward;
-import game.modules.slot.entities.slot.avengers.AvengersAwards;
-import game.modules.slot.entities.slot.avengers.AvengersFreeSpinAward;
-import game.modules.slot.entities.slot.avengers.AvengersFreeSpinAwards;
-import game.modules.slot.entities.slot.avengers.AvengersFreeSpinItems;
-import game.modules.slot.entities.slot.avengers.AvengersItem;
-import game.modules.slot.entities.slot.avengers.AvengersItems;
-import game.modules.slot.entities.slot.avengers.AvengersLines;
+import game.modules.slot.entities.slot.avengers.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class AvengersUtils {
@@ -142,12 +138,12 @@ public class AvengersUtils {
         return line;
     }
 
-    public static MiniGameSlotResponse addMiniGameSlot(int baseBetting, int countBonus) {
+    public static MiniGameSlotResponse buildBonusGameData(int betValue, int countBonus) {
         Random rd = new Random();
         int indexRatioCol = rd.nextInt(3);
         int indexRatioRow = countBonus - 3;
         int ratio = Constant.AVENGERS_BONUS_RATIO[indexRatioRow][indexRatioCol];
-        MiniGameSlotResponse res = AvengersUtils.generateMiniGameSlot(baseBetting);
+        MiniGameSlotResponse res = AvengersUtils.generateMiniGameSlot(betValue);
         res.setTotalPrize(res.getTotalPrize() * (long) ratio);
         res.setPrizes(res.getPrizes() + "," + ratio + "," + countBonus);
         return res;
@@ -199,26 +195,61 @@ public class AvengersUtils {
 
     public static void calculateAward(Line line, List<AvengersAward> awardList) {
         int countNumItems = 0;
-        AvengersItem item = (AvengersItem) line.getCell(0).getItem();
-        if (item != AvengersItem.BONUS && item != AvengersItem.SCATTER) {
-            for (int j = 0; j < line.getCells().size(); ++j) {
-                byte itemId = ((AvengersItem) line.getCell(j).getItem()).getId();
-                if (itemId == item.getId()
-                        || item.getId() != AvengersItem.JACKPOT.getId()
+        AvengersItem firstLineItem = (AvengersItem) line.getCell(0).getItem();
+        if (firstLineItem != AvengersItem.BONUS && firstLineItem != AvengersItem.SCATTER) {
+            for (int i = 0; i < line.getCells().size(); ++i) {
+                byte itemId = ((AvengersItem) line.getCell(i).getItem()).getId();
+                if (itemId == firstLineItem.getId()
+                        || firstLineItem.getId() != AvengersItem.JACKPOT.getId()
                         && itemId == AvengersItem.WILD.getId()) {
                     ++countNumItems;
                 }
             }
 
             AvengersAward award;
-            if (countNumItems >= 3 && (award = AvengersAwards.getAward(item, countNumItems)) != null) {
+            if (countNumItems >= 3 && (award = AvengersAwardManager.getAward(firstLineItem, countNumItems)) != null) {
                 awardList.add(award);
-            } else if (countNumItems >= 2) {
-
-            } else {
-
             }
         }
+    }
+
+    /**
+     * Phương thức này được sử dụng để tính toán giải thưởng cho số lần xuất hiện của ITEM trên 1 LINE
+     * mà không bao gồm việc tính toán số lần quay miễn phí và giải thưởng cho BONUS game
+     *
+     * @param line
+     * @param awardList
+     */
+    public static void calculateMoneyAwardInLine(Line line, List<AvengersAward> awardList) {
+        // ánh xạ giữa item và số lượng xuất hiện của nó trên 1 Line
+        Map<Byte, Integer> itemId2Count = new HashMap<>();
+        // duyệt qua các cell trên 1 line để tính toán số lần xuất hiện
+        for (int cellIndex = 0; cellIndex < line.getCells().size(); cellIndex++) {
+            Cell cell = line.getCell(cellIndex);
+            AvengersItem avengersItem = (AvengersItem) cell.getItem();
+            Integer countNumberItem = itemId2Count.get(avengersItem.getId());
+            if (countNumberItem == null) {
+                countNumberItem = 1;
+            } else {
+                countNumberItem += 1;
+            }
+            itemId2Count.put(avengersItem.getId(), countNumberItem);
+        }
+        // bắt đầu tính toán giải thưởng đạt được trên 1 line
+        itemId2Count.forEach((id, countNumItem) -> {
+            // Chỉ có item có số lần xuất hiện lớn hơn hoặc bằng 2 thì mới tính toán giải thưởng
+            if (countNumItem >= 2) {
+                AvengersItem item = AvengersItem.findItem(id);
+                // Bởi vì BONUS và SCATTER không có giải thưởng tiền trên 1 LINE
+                // nên ta có thể bỏ qua mà không cần tính toán
+                if (item != AvengersItem.BONUS && item != AvengersItem.SCATTER) {
+                    AvengersAward award = AvengersAwardManager.getAward(item, countNumItem);
+                    if (award != null) {
+                        awardList.add(award);
+                    }
+                }
+            }
+        });
     }
 
     public static void calculateFreeSpinLine(Line line, List<AvengersFreeSpinAward> awardList) {
@@ -229,7 +260,7 @@ public class AvengersUtils {
             for (int j = 0; j < line.getCells().size() && (line.getCell(j).getItem() == itemSample || line.getCell(j).getItem() == AvengersItem.WILD); ++j) {
                 ++countNumItems;
             }
-            if (countNumItems >= 3 && (award = AvengersFreeSpinAwards.getAward(itemSample, countNumItems)) != null) {
+            if (countNumItems >= 3 && (award = AvengersFreeSpinAwardManager.getAward(itemSample, countNumItems)) != null) {
                 awardList.add(award);
             }
         }

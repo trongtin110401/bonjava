@@ -49,9 +49,10 @@ public abstract class SlotRoom {
     public static final String CACHE_NAME_USER_SPOT = "user_force_jackpot_";
     public static final String CACHE_BET_VALUE_SLOT = "bet_value_jackpot_";
     public static final String CACHE_JACK_POT_VALUE_SLOT = "pot_value_jackpot";
+
     protected byte id;
     protected String gameName;
-    protected String cacheFreeName;
+    protected String cacheFreeSpinName;
     protected String name;
     protected List<User> users = new ArrayList<User>();
     protected long pot;
@@ -128,12 +129,9 @@ public abstract class SlotRoom {
     }
 
     public void sendNotifyNoHu(String username, byte type, long totalPrizes, String gn) {
-
         SlotNohuObject msg = new SlotNohuObject(username, type, totalPrizes, gn);
         CacheService cacheService = new CacheServiceImpl();
         cacheService.setObject("notifyNohu", msg);
-
-
     }
 
     public void startHuX2() {
@@ -293,20 +291,23 @@ public abstract class SlotRoom {
     protected String resultToString(short result) {
         switch (result) {
             case 3: {
-                return "N\u1ed5 h\u0169";
+                return "Nổ hũ";
             }
             case 4: {
-                return "N\u1ed5 h\u0169 X2";
+                return "Nổ hũ X2";
             }
-            case 1:
+            case 1: {
+                return "Thắng";
+            }
             case 5: {
-                return "Th\u1eafng";
+                return "Bonus";
             }
             case 2: {
-                return "Th\u1eafng l\u1edbn";
+                return "Thắng lớn";
             }
+            default:
+                return "Trượt";
         }
-        return "Tr\u01b0\u1ee3t";
     }
 
     public byte getId() {
@@ -314,16 +315,17 @@ public abstract class SlotRoom {
     }
 
     public class ResultSlot {
-        public static final short LOI_HE_THONG = 100;
-        public static final short DAT_CUOC_KHONG_HOP_LE = 101;
-        public static final short KHONG_DU_TIEN = 102;
-        public static final short LUOT_QUAY_FREE_KHONG_HOP_LE = 103;
-        public static final short TRUOT = 0;
-        public static final short THANG = 1;
-        public static final short THANG_LON = 2;
-        public static final short NO_HU = 3;
-        public static final short NO_HU_X2 = 4;
-        public static final short MINIGAME_SLOT = 5;
+        public static final short SYSTEM_ERROR = 100;
+        public static final short INVALID_BET_VALUE = 101;
+        public static final short NOT_ENOUGH_MONEY = 102;
+        public static final short INVALID_FREE_SPIN = 103;
+        public static final short MISSED = 0;
+        public static final short WIN = 1;
+        public static final short BIG_WIN = 2;
+        public static final short JACKPOT = 3;
+        public static final short JACKPOT_X2 = 4;
+        public static final short BONUS_GAME = 5;
+        public static final short FREE_SPIN = 6;
     }
 
     protected final class GameLoopTask implements Runnable {
@@ -357,13 +359,12 @@ public abstract class SlotRoom {
         }
     }
 
-    protected final class PlayListAutoUserTask
-            extends Thread {
+    protected final class PlayListAutoUserTask extends Thread {
         private List<AutoUser> users;
 
-        protected PlayListAutoUserTask(List<AutoUser> users) {
+        PlayListAutoUserTask(List<AutoUser> users) {
             this.users = users;
-            this.setName(String.valueOf(SlotRoom.this.gameName) + "_" + SlotRoom.this.betValue + "_AutoPlayTask");
+            this.setName(SlotRoom.this.gameName + "_" + SlotRoom.this.betValue + "_AutoPlayTask");
         }
 
         @Override

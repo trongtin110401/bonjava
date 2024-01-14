@@ -3,39 +3,43 @@
  */
 package com.vinplay.vbee.common.enums;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
 public enum
 Games {
     MINIGAME(0, "MiniGame", "Minigame"),
     MINI_POKER(1, "MiniPoker", "Mini poker"),
-    TAI_XIU(2, "TaiXiu", "T\u00e0i x\u1ec9u"),
-    TAI_XIU_MD5(2000, "TaiXiuMd5", "T\u00e0i x\u1ec9u Md5"),
-    BAU_CUA(3, "BauCua", "B\u1ea7u cua"),
-    CAO_THAP(4, "CaoThap", "Cao th\u1ea5p"),
+    TAI_XIU(2, "TaiXiu", "Tài x?u"),
+    TAI_XIU_MD5(2000, "TaiXiuMd5", "Tài x?u Md5"),
+    BAU_CUA(3, "BauCua", "B?u cua"),
+    CAO_THAP(4, "CaoThap", "Cao th?p"),
     POKE_GO(5, "PokeGo", "Pokego"),
     CANDY(5, "CANDY", "CANDY"),
-    VQMM(7, "VQMM", "V\u00f2ng quay may m\u1eafn"),
-    SAM(8, "Sam", "S\u00e2m - S\u00e2m (Solo)"),
-    BA_CAY(9, "BaCay", "Ba c\u00e2y"),
-    BINH(10, "Binh", "M\u1eadu binh"),
+    VQMM(7, "VQMM", "Vòng quay may m?n"),
+    SAM(8, "Sam", "Sâm - Sâm (Solo)"),
+    BA_CAY(9, "BaCay", "Ba cây"),
+    BINH(10, "Binh", "M?u binh"),
     TLMN(11, "Tlmn", "TLMN - TLMN (Solo)"),
-    TA_LA(12, "TaLa", "T\u00e1 l\u1ea3"),
-    LIENG(13, "Lieng", "Li\u00eang"),
-    XI_TO(14, "XiTo", "X\u00ec t\u1ed1"),
-    XOC_DIA(15, "XocDia", "X\u00f3c \u0111\u0129a"),
-    BAI_CAO(16, "BaiCao", "B\u00e0i c\u00e0o"),
+    TA_LA(12, "TaLa", "Tá l?"),
+    LIENG(13, "Lieng", "Liêng"),
+    XI_TO(14, "XiTo", "Xì t?"),
+    XOC_DIA(15, "XocDia", "Xóc ??a"),
+    BAI_CAO(16, "BaiCao", "Bài cào"),
     POKER(17, "Poker", "Poker"),
-    AVENGERS(18, "SieuAnhHung", "Si\u00eau anh h\u00f9ng"),
-    MY_NHAN_NGU(19, "MyNhanNgu", "M\u1ef9 nh\u00e2n ng\u01b0"),
-    KHO_BAU(20, "KhoBau", "Kho b\u00e1u"),
-    NU_DIEP_VIEN(21, "NuDiepVien", "N\u1eef \u0111i\u1ec7p vi\u00ean"),
-    VUONG_QUOC_VIN(22, "VuongQuocVin", "\u0054\u0068\u1ed5 \u0044\u00e2\u006e"),
-    XI_DZACH(23, "XiDzach", "X\u00ec D\u00e1ch"),
-    CARO(25, "Caro", "C\u1edd Caro"),
-    CO_TUONG(26, "CoTuong", "C\u1edd T\u01b0\u1edbng"),
-    CO_VUA(27, "CoVua", "C\u1edd Vua"),
+    AVENGERS(18, "SieuAnhHung", "Siêu anh hùng"),
+    MY_NHAN_NGU(19, "MyNhanNgu", "M? nhân ng?"),
+    KHO_BAU(20, "KhoBau", "Kho báu"),
+    NU_DIEP_VIEN(21, "NuDiepVien", "N? ?i?p viên"),
+    VUONG_QUOC_VIN(22, "VuongQuocVin", "Th? Dân"),
+    XI_DZACH(23, "XiDzach", "Xì Dách"),
+    CARO(25, "Caro", "C? Caro"),
+    CO_TUONG(26, "CoTuong", "C? T??ng"),
+    CO_VUA(27, "CoVua", "C? Vua"),
     POKER_TOUR(28, "PokerTour", "Poker Tour"),
-    CO_UP(29, "CoUp", "C\u1edd \u00dap"),
-    HAM_CA_MAP(30, "HamCaMap", "H\u00e0m C\u00e1 M\u1eadp"),
+    CO_UP(29, "CoUp", "C? Úp"),
+    HAM_CA_MAP(30, "HamCaMap", "Hàm Cá M?p"),
     OVER_UNDER(102, "OverUnder", "Over-Under"),
     SPARTAN(120, "Spartan", "Spartan"),
     AUDITION(110, "Audition", "Audition"),
@@ -54,10 +58,21 @@ Games {
     private String name;
     private String description;
 
+    static Map<Integer, Games> id2Game = new HashMap();
+    static Map<String, Games> name2Game = new HashMap<>();
+
     private Games(int id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
+    }
+
+    static {
+        Arrays.stream(Games.values())
+                .forEach(game -> {
+                    id2Game.put(game.id, game);
+                    name2Game.put(game.getName(), game);
+                });
     }
 
     public int getId() {
@@ -85,19 +100,11 @@ Games {
     }
 
     public static Games findGameById(int id) {
-        for (Games entry : Games.values()) {
-            if (entry.getId() != id) continue;
-            return entry;
-        }
-        return null;
+        return id2Game.get(id);
     }
 
     public static Games findGameByName(String name) {
-        for (Games entry : Games.values()) {
-            if (!entry.getName().equalsIgnoreCase(name)) continue;
-            return entry;
-        }
-        return null;
+        return name2Game.get(name);
     }
 }
 

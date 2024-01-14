@@ -90,7 +90,7 @@ public class TamHungRoom
     public TamHungRoom(TamHungModule module, byte id, String name, short moneyType, long pot, long fund, int betValue, long initPotValue) {
         super(id, name, betValue, moneyType, pot, fund, initPotValue);
         this.gameName = Games.TAMHUNG.getName();
-        this.cacheFreeName = String.valueOf(this.gameName) + betValue;
+        this.cacheFreeSpinName = String.valueOf(this.gameName) + betValue;
         this.module = module;
         this.moneyTypeStr = this.moneyType == 1 ? "vin" : "xu";
         CacheServiceImpl cacheService = new CacheServiceImpl();
@@ -134,7 +134,7 @@ public class TamHungRoom
 
     public synchronized ResultSlotMsg play(String username, String linesStr) {
         long referenceId = this.module.getNewReferenceId();
-        SlotFreeSpin freeSpin = this.slotService.getLuotQuayFreeSlot(this.cacheFreeName, username);
+        SlotFreeSpin freeSpin = this.slotService.getLuotQuayFreeSlot(this.cacheFreeSpinName, username);
         int luotQuayFree = freeSpin.getNum();
         int ratioFree = freeSpin.getRatio();
         if (luotQuayFree > 0) {
@@ -568,7 +568,7 @@ public class TamHungRoom
                             if (countFreeSpin > 0) {
                                 msg.isFreeSpin = 1;
                                 msg.ratio = (byte) ratio;
-                                this.slotService.setLuotQuayFreeSlot(this.cacheFreeName, username, linesStr, countFreeSpin, ratio);
+                                this.slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, username, linesStr, countFreeSpin, ratio);
                             } else {
                                 msg.isFreeSpin = 0;
                             }
@@ -701,7 +701,7 @@ public class TamHungRoom
                             this.broadcastMsgService.putMessage(Games.TAMHUNG.getId(), username, moneyExchange - totalBetValue);
                         }
                     }
-                    this.slotService.updateLuotQuaySlotFree(this.cacheFreeName, username);
+                    this.slotService.updateLuotQuaySlotFree(this.cacheFreeSpinName, username);
                     linesWin = builderLinesWin.toString();
                     prizesOnLine = builderPrizesOnLine.toString();
                     msg.referenceId = referenceId;

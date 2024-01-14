@@ -146,7 +146,6 @@ public class AuditionModule
             room.stopAutoPlay(user);
         }
         BroadCastUserState.popBroadCast(user.getName());
-
     }
 
     @Override

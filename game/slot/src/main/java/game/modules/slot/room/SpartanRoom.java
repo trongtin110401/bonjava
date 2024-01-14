@@ -84,7 +84,7 @@ public class SpartanRoom
         this.module = module;
         this.moneyType = moneyType;
         this.gameName = Games.SPARTAN.getName();
-        this.cacheFreeName = String.valueOf(this.gameName) + betValue;
+        this.cacheFreeSpinName = String.valueOf(this.gameName) + betValue;
         CacheServiceImpl cacheService = new CacheServiceImpl();
         cacheService.setValue(name, (int) pot);
         this.betValue = betValue;
@@ -587,9 +587,9 @@ public class SpartanRoom
                 if (this.moneyType == 1 && moneyExchange >= (long) BroadcastMessageServiceImpl.MIN_MONEY) {
                     this.broadcastMsgService.putMessage(Games.SPARTAN.getId(), username, moneyExchange);
                 }
-                this.slotService.addPrizes(this.cacheFreeName, username, tmpPrizes);
+                this.slotService.addPrizes(this.cacheFreeSpinName, username, tmpPrizes);
             }
-            if ((freeSpin = this.slotService.updateLuotQuaySlotFree(this.cacheFreeName, username)).getNum() == 0) {
+            if ((freeSpin = this.slotService.updateLuotQuaySlotFree(this.cacheFreeSpinName, username)).getNum() == 0) {
                 SpartanTotalFreeSpin totalFreeSpinMsg = new SpartanTotalFreeSpin();
                 totalFreeSpinMsg.prize = freeSpin.getPrizes();
                 totalFreeSpinMsg.ratio = (byte) ratio;
@@ -605,7 +605,7 @@ public class SpartanRoom
             if (sb.length() > 0) {
                 sb.deleteCharAt(sb.length() - 1);
             }
-            this.slotService.setItemsWild(this.cacheFreeName, username, sb.toString());
+            this.slotService.setItemsWild(this.cacheFreeSpinName, username, sb.toString());
             linesWin = builderLinesWin.toString();
             prizesOnLine = builderPrizesOnLine.toString();
             msg.referenceId = referenceId;
@@ -641,17 +641,17 @@ public class SpartanRoom
         switch (countFreeSpin) {
             case 3: {
                 soLuot = 8;
-                this.slotService.setLuotQuayFreeSlot(this.cacheFreeName, nickName, lines, soLuot, 1);
+                this.slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, soLuot, 1);
                 break;
             }
             case 4: {
                 soLuot = 8;
-                this.slotService.setLuotQuayFreeSlot(this.cacheFreeName, nickName, lines, soLuot, 2);
+                this.slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, soLuot, 2);
                 break;
             }
             case 5: {
                 soLuot = 8;
-                this.slotService.setLuotQuayFreeSlot(this.cacheFreeName, nickName, lines, soLuot, 3);
+                this.slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, soLuot, 3);
             }
         }
         return soLuot;

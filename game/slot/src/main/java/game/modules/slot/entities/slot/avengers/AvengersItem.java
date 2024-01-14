@@ -53,11 +53,6 @@ public enum AvengersItem {
     }
 
     public static AvengersItem findItem(byte id) {
-//        for (AvengersItem entry : AvengersItem.values()) {
-//            if (entry.getId() != id) continue;
-//            return entry;
-//        }
-//        return null;
         return map.get((int) id);
     }
 }

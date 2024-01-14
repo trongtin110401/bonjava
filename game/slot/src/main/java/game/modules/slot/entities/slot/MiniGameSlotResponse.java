@@ -31,5 +31,10 @@ public class MiniGameSlotResponse {
     public int getRatio() {
         return this.ratio;
     }
+
+    @Override
+    public String toString() {
+        return "";
+    }
 }
 

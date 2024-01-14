@@ -5,7 +5,7 @@ package game.modules.slot.entities.slot.avengers;
 
 import java.util.*;
 
-public class AvengersFreeSpinAwards {
+public class AvengersFreeSpinAwardManager {
 
     private static List<AvengersFreeSpinAward> awards = new ArrayList<>();
     private static Map<String, AvengersFreeSpinAward> awardMap = new HashMap<>();
@@ -17,7 +17,7 @@ public class AvengersFreeSpinAwards {
         });
     }
 
-    public AvengersFreeSpinAwards() {
+    public AvengersFreeSpinAwardManager() {
         awards.addAll(Arrays.asList(AvengersFreeSpinAward.values()));
     }
 
