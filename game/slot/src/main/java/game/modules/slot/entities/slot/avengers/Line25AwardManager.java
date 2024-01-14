@@ -5,25 +5,25 @@ package game.modules.slot.entities.slot.avengers;
 
 import java.util.*;
 
-public class AvengersAwardManager {
-    private static List<AvengersAward> awards = new ArrayList<AvengersAward>();
-    private static Map<String, AvengersAward> awardMap = new HashMap<>();
+public class Line25AwardManager {
+    private static List<Line25Award> awards = new ArrayList<Line25Award>();
+    private static Map<String, Line25Award> awardMap = new HashMap<>();
 
     static {
-        Arrays.stream(AvengersAward.values())
+        Arrays.stream(Line25Award.values())
                 .forEach(avengersAward -> {
                     String key = avengersAward.getId() + "_" + avengersAward.getDuplicate();
                     awardMap.put(key, avengersAward);
                 });
     }
 
-    public AvengersAwardManager() {
-        for (AvengersAward entry : AvengersAward.values()) {
+    public Line25AwardManager() {
+        for (Line25Award entry : Line25Award.values()) {
             awards.add(entry);
         }
     }
 
-    public static AvengersAward getAward(AvengersItem item, int numItems) {
+    public static Line25Award getAward(Line25Item item, int numItems) {
         return awardMap.get(item.getId() + "_" + numItems);
     }
 }

@@ -4,14 +4,14 @@
 package game.modules.slot.entities.slot.avengers;
 
 import game.modules.slot.entities.slot.Line;
-import game.modules.slot.entities.slot.avengers.AvengersItem;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class AvengersLines {
-    private List<Line<AvengersItem>> lines = new ArrayList<Line<AvengersItem>>();
+public class Line25Lines {
+    private List<Line<Line25Item>> lines = new ArrayList<Line<Line25Item>>();
 
-    public AvengersLines() {
+    public Line25Lines() {
         this.initLines();
     }
 
@@ -69,11 +69,11 @@ public class AvengersLines {
         this.lines.add(line25);
     }
 
-    public List<Line<AvengersItem>> list() {
+    public List<Line<Line25Item>> list() {
         return this.lines;
     }
 
-    public Line<AvengersItem> get(int index) {
+    public Line<Line25Item> get(int index) {
         return this.lines.get(index);
     }
 }

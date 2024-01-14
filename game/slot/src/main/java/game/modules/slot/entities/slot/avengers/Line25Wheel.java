@@ -7,14 +7,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class AvengersWheel {
-    private List<AvengersItem> items = new ArrayList<>();
+public class Line25Wheel {
+    private List<Line25Item> items = new ArrayList<>();
 
-    public void addItem(AvengersItem item) {
+    public void addItem(Line25Item item) {
         this.items.add(item);
     }
 
-    public AvengersItem random() {
+    public Line25Item random() {
         Random rd = new Random();
         int n = rd.nextInt(this.items.size());
         return this.items.remove(n);

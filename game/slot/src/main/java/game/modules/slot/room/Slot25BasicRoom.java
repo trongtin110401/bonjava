@@ -23,12 +23,12 @@ import game.modules.slot.entities.slot.AutoUser;
 import game.modules.slot.entities.slot.AwardsOnLine;
 import game.modules.slot.entities.slot.Line;
 import game.modules.slot.entities.slot.MiniGameSlotResponse;
-import game.modules.slot.entities.slot.avengers.AvengersAward;
-import game.modules.slot.entities.slot.avengers.AvengersAwardManager;
-import game.modules.slot.entities.slot.avengers.AvengersItem;
-import game.modules.slot.entities.slot.avengers.AvengersLines;
+import game.modules.slot.entities.slot.avengers.Line25Award;
+import game.modules.slot.entities.slot.avengers.Line25AwardManager;
+import game.modules.slot.entities.slot.avengers.Line25Item;
+import game.modules.slot.entities.slot.avengers.Line25Lines;
 import game.modules.slot.listener.SlotLogListener;
-import game.modules.slot.utils.AvengersUtils;
+import game.modules.slot.utils.Line25Utils;
 import game.modules.slot.utils.SlotUtils;
 
 import java.io.IOException;
@@ -45,7 +45,7 @@ public class Slot25BasicRoom extends SlotRoom {
     // Room Lifecycle
     private final Runnable gameLoopTask = new GameLoopTask();
     private final Runnable checkResetPotTask = new CheckResetPot();
-    private final AvengersLines lines = new AvengersLines();
+    private final Line25Lines lines = new Line25Lines();
     private long lastTimeUpdatePotToRoom = 0L;
     private long lastTimeUpdateFundToRoom = 0L;
     private final ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
@@ -167,7 +167,7 @@ public class Slot25BasicRoom extends SlotRoom {
                         // Bonus Game Info model
                         MiniGameSlotResponse bonusGameResponse;
                         // danh sách giải thưởng được tính toán trên toàn bộ Lines được chọn
-                        ArrayList<AwardsOnLine<AvengersAward>> awardsOnLines = new ArrayList<>();
+                        ArrayList<AwardsOnLine<Line25Award>> awardsOnLines = new ArrayList<>();
                         while (!enoughPair) {
                             // khởi tạo lại các giá trị mặc định sau mỗi lần lặp
                             result = ResultSlot.MISSED;
@@ -199,17 +199,17 @@ public class Slot25BasicRoom extends SlotRoom {
                             }
 
                             // sinh Matrix
-                            AvengersItem[][] matrix = isForceJackpot ? AvengersUtils.generateMatrixNoHu(selectedLines) : AvengersUtils.generateMatrix();
+                            Line25Item[][] matrix = isForceJackpot ? Line25Utils.generateMatrixNoHu(selectedLines) : Line25Utils.generateMatrix();
 
                             // Đếm số lượng BONUS và SCATTER
                             for (int i = 0; i < 3; ++i) {
                                 // cột
                                 for (int j = 0; j < 5; ++j) {
-                                    if (matrix[i][j] == AvengersItem.SCATTER) {
+                                    if (matrix[i][j] == Line25Item.SCATTER) {
                                         ++countScatter;
                                         continue;
                                     }
-                                    if (matrix[i][j] == AvengersItem.BONUS) {
+                                    if (matrix[i][j] == Line25Item.BONUS) {
                                         ++countBonus;
                                     }
                                 }
@@ -236,9 +236,9 @@ public class Slot25BasicRoom extends SlotRoom {
 
                             // Tính toán phần thưởng cho BONUS GAME
                             if (countBonus >= 3) {
-                                bonusGameResponse = AvengersUtils.buildBonusGameData(this.betValue, countBonus);
-                                AvengersAward bonusAward = AvengersAwardManager.getAward(AvengersItem.BONUS, countBonus);
-                                AwardsOnLine<AvengersAward> aol = new AwardsOnLine<>(bonusAward, bonusGameResponse.getTotalPrize(), "line0");
+                                bonusGameResponse = Line25Utils.buildBonusGameData(this.betValue, countBonus);
+                                Line25Award bonusAward = Line25AwardManager.getAward(Line25Item.BONUS, countBonus);
+                                AwardsOnLine<Line25Award> aol = new AwardsOnLine<>(bonusAward, bonusGameResponse.getTotalPrize(), "line0");
                                 awardsOnLines.add(aol);
                                 result = ResultSlot.BONUS_GAME;
                             }
@@ -248,17 +248,17 @@ public class Slot25BasicRoom extends SlotRoom {
                             // Trong trường hợp này (Slot Machine 25Line Basic thì không áp dụng)
                             /* AvengersItem[][] matrixWild = AvengersUtils.revertMatrix(matrix); */
 
-                            AvengersItem[][] matrixWild = matrix;
+                            Line25Item[][] matrixWild = matrix;
 
                             // Duyệt toàn bộ Lines được chọn bởi người chơi để tính toán giải thưởng trên từng Line
                             for (String selectedLine : selectedLines) {
-                                ArrayList<AvengersAward> awardList = new ArrayList<>();
+                                ArrayList<Line25Award> awardList = new ArrayList<>();
                                 int lineNumber = Integer.parseInt(selectedLine);
-                                Line line = AvengersUtils.getLine(this.lines, matrixWild, lineNumber);
-                                AvengersUtils.calculateMoneyAwardInLine(line, awardList);
-                                for (AvengersAward award : awardList) {
+                                Line line = Line25Utils.getLine(this.lines, matrixWild, lineNumber);
+                                Line25Utils.calculateMoneyAwardInLine(line, awardList);
+                                for (Line25Award award : awardList) {
                                     long moneyOnLine = (long) (award.getRatio() * this.betValue);
-                                    AwardsOnLine<AvengersAward> aol2 = new AwardsOnLine<>(award, moneyOnLine, line.getName());
+                                    AwardsOnLine<Line25Award> aol2 = new AwardsOnLine<>(award, moneyOnLine, line.getName());
                                     awardsOnLines.add(aol2);
                                 }
                             }
@@ -267,7 +267,7 @@ public class Slot25BasicRoom extends SlotRoom {
                             boolean isGetJackpotNaturally = false;
                             StringBuilder builderLinesWin = new StringBuilder();
                             StringBuilder builderPrizesOnLine = new StringBuilder();
-                            for (AwardsOnLine<AvengersAward> award : awardsOnLines) {
+                            for (AwardsOnLine<Line25Award> award : awardsOnLines) {
                                 totalPrizes += award.getMoney();
 
                                 builderLinesWin.append(",");
@@ -276,7 +276,7 @@ public class Slot25BasicRoom extends SlotRoom {
                                 builderPrizesOnLine.append(",");
                                 builderPrizesOnLine.append(award.getMoney());
 
-                                if (result != ResultSlot.JACKPOT && award.getAward() == AvengersAward.PENTA_JACKPOT) {
+                                if (result != ResultSlot.JACKPOT && award.getAward() == Line25Award.PENTA_JACKPOT) {
                                     result = ResultSlot.JACKPOT;
                                     isGetJackpotNaturally = true;
                                 }
@@ -304,7 +304,7 @@ public class Slot25BasicRoom extends SlotRoom {
                             }
 
                             enoughPair = true;
-                            String matrixStr = AvengersUtils.matrixToString(matrix);
+                            String matrixStr = Line25Utils.matrixToString(matrix);
                             if (totalPrizes > 0L) {
                                 if (result == ResultSlot.JACKPOT) {
                                     this.pot = this.initJackpotValues;
@@ -375,7 +375,7 @@ public class Slot25BasicRoom extends SlotRoom {
                             String linesWin = builderLinesWin.toString();
                             String prizesOnLine = builderPrizesOnLine.toString();
                             playResponse.referenceId = referenceId;
-                            playResponse.matrix = AvengersUtils.matrixToString(matrix);
+                            playResponse.matrix = Line25Utils.matrixToString(matrix);
                             playResponse.linesWin = linesWin;
                             playResponse.prize = totalPrizes;
                             playResponse.isFreeSpin = false;
