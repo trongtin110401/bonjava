@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  org.json.JSONException
  */
@@ -10,13 +10,17 @@ import com.vinplay.gamebai.entities.BossXocDiaModel;
 import com.vinplay.gamebai.entities.XocDiaBoss;
 import com.vinplay.usercore.dao.impl.XocDiaDaoImpl;
 import com.vinplay.usercore.service.XocDiaService;
+
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+
+import com.vinplay.vbee.common.messages.TransactionXocDiaMessage;
+import com.vinplay.vbee.common.rmq.RMQApi;
 import org.json.JSONException;
 
 public class XocDiaServiceImpl
-implements XocDiaService {
+        implements XocDiaService {
     @Override
     public boolean saveRoomBoss(XocDiaBoss boss) throws SQLException {
         XocDiaDaoImpl dao = new XocDiaDaoImpl();
@@ -57,6 +61,15 @@ implements XocDiaService {
     public List<BossXocDiaModel> getListRoomBoss(String nickname, int roomId, int status, int moneyBet) throws SQLException, JSONException {
         XocDiaDaoImpl dao = new XocDiaDaoImpl();
         return dao.getListRoomBoss(nickname, roomId, status, moneyBet);
+    }
+
+    @Override
+    public void saveTransactionXocDia(TransactionXocDiaMessage message) {
+        try {
+            RMQApi.publishMessage("queue_xocdia", message, 1501);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
 

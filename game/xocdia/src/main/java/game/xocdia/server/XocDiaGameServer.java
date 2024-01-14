@@ -59,9 +59,14 @@ import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.usercore.service.impl.XocDiaServiceImpl;
 import com.vinplay.vbee.common.enums.FreezeInGame;
 import com.vinplay.vbee.common.exceptions.KeyNotFoundException;
+import com.vinplay.vbee.common.messages.BaseMessage;
+import com.vinplay.vbee.common.messages.BetResult;
+import com.vinplay.vbee.common.messages.TransactionXocDiaMessage;
 import com.vinplay.vbee.common.response.BauCuaTo2.SetBauCuaKetqua;
 import com.vinplay.vbee.common.response.MoneyResponse;
+import com.vinplay.vbee.common.rmq.RMQApi;
 import com.vinplay.vbee.common.statics.TransType;
+import com.vinplay.vbee.common.utils.DateTimeUtils;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
 import game.xocdia.bot.BotBettingModel;
 import game.xocdia.cmd.send.*;
@@ -102,13 +107,7 @@ import game.xocdia.utils.MsgUtils;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -196,8 +195,15 @@ public class XocDiaGameServer
     private CacheService cacheService = new CacheServiceImpl();
     private static UserService userService = new UserServiceImpl();
 
+    private long referenceId = 0;
+
+    private String timestamp = "";
+
     public void init(GameRoom room) {
         try {
+            ++referenceId;
+
+
             this.room = room;
             this.roomId = room.getId();
             this.roomType = room.setting.rule;
@@ -517,6 +523,7 @@ public class XocDiaGameServer
 
     private synchronized void startNewGame() {
         try {
+            this.timestamp = DateTimeUtils.getCurrentTime();
             this.gameId = GameRoomIdGenerator.instance().getId();
             if (this.moneyType == 1) {
                 BotXocDiaManager.instance().startNewGame(this.roomId, this.gameId);
@@ -1283,19 +1290,51 @@ public class XocDiaGameServer
                 HashMap<String, RewardModel> rewardMap = new HashMap<>();
                 long moneyBankerExchange = 0L;
 
+//                "user => (pot_id => (bet_info))"
+//                "username": "testacc123", key
+//                        "totalPrize": 6000,
+//                        "betResult": { map value
+//                    "Chẵn": 1000,
+//                            "Lẻ": 1000,
+//                            "4 den": 1000,
+//                            "4 trang": 1000,
+//                            "1 den": 1000,
+//                            "1 trang": 1000
+//                }
 
-//                Map<String, Map<String, Long>> mapMap = new HashMap<>();
+
+                // username => transaction detail
+                Map<String, TransactionXocDiaMessage> userToTransaction = new HashMap<>();
 
                 for (GamePot gPot : this.potList) {
 
-//                    for (Map.Entry<String, Long> entry : gPot.betMap.entrySet()) {
-//                        String key = entry.getKey();
-//                        long value = entry.getValue();
-//                        Map<String, Long> map1 = new HashMap<>();
-//                        map1.put(gPot.name, value);
-//                        mapMap.put(key, map1);
-//                    }
-//                    System.out.println("Xoc Dia mapppppppppppp" + mapMap);
+                    boolean isWin = gPot.isWin;
+                    double ratio = gPot.ratio;
+
+                    // statistic for each user
+                    for (Map.Entry<String, Long> entry : gPot.betMap.entrySet()) {
+                        String username = entry.getKey();
+                        TransactionXocDiaMessage transactionXocDiaMessages = userToTransaction.get(username);
+
+                        if (transactionXocDiaMessages == null) {
+                            transactionXocDiaMessages = new TransactionXocDiaMessage();
+                            transactionXocDiaMessages.setUsername(username);
+                            transactionXocDiaMessages.setReferenceId(referenceId);
+                            transactionXocDiaMessages.setTimestamp(timestamp);
+                        }
+                        long totalBetValue = entry.getValue();
+                        if (gPot.getPotName().equals("even")) {
+                            transactionXocDiaMessages.getBetResult().setEven(totalBetValue);
+                        } else if (gPot.getPotName().equals("odd")) {
+                            transactionXocDiaMessages.getBetResult().setOdd(totalBetValue);
+                        }
+                        if (gPot.isWin) {
+                            transactionXocDiaMessages.setResult(gPot.getPotName());
+                        }
+                    }
+
+
+                    System.out.println("Xoc Dia mapppppppppppp" + userToTransaction);
 
 
                     String nickname;
@@ -1333,7 +1372,7 @@ public class XocDiaGameServer
                         moneyBet = entry.getValue();
                         RewardModel model = new RewardModel();
                         if (rewardMap.containsKey(nickname)) {
-                            model = (RewardModel) rewardMap.get(nickname);
+                            model = rewardMap.get(nickname);
                             model.moneyBet += moneyBet;
                         } else {
                             model.moneyBet = moneyBet;
@@ -1341,6 +1380,24 @@ public class XocDiaGameServer
                         rewardMap.put(nickname, model);
                     }
                 }
+
+                // sau khi tính toán xong rewarđ map
+                // lặp lại map trasaction
+                // lấy thông tông rewardmap
+                for (Map.Entry<String, TransactionXocDiaMessage> entry : userToTransaction.entrySet()) {
+                    TransactionXocDiaMessage transactionXocDiaMessage = entry.getValue();
+                    RewardModel rewardModel = rewardMap.get(entry.getKey());
+                    if (rewardModel == null) {
+                        transactionXocDiaMessage.setTotalExchange(-transactionXocDiaMessage.getBetResult().getTotalBetValue());
+                    } else {
+                        transactionXocDiaMessage.setTotalExchange(rewardModel.moneyWin - transactionXocDiaMessage.getBetResult().getTotalBetValue());
+                    }
+                    XocDiaServiceImpl xocDiaService = new XocDiaServiceImpl();
+                    xocDiaService.saveTransactionXocDia(transactionXocDiaMessage);
+
+                }
+
+
                 long totalFeeUser = 0L;
                 long totalRevenueUser = 0L;
                 long moneyBankerBefore = 0L;
