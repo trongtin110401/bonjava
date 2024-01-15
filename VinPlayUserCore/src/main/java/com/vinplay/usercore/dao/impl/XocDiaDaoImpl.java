@@ -9,11 +9,18 @@
  */
 package com.vinplay.usercore.dao.impl;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.Block;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoDatabase;
+import com.vinplay.dal.entities.taixiu.BetResult;
+import com.vinplay.dal.entities.taixiu.TransactionXocDia;
 import com.vinplay.gamebai.entities.BossXocDiaModel;
 import com.vinplay.gamebai.entities.XocDiaBoss;
 import com.vinplay.usercore.dao.XocDiaDao;
 import com.vinplay.usercore.service.impl.MoneyInGameServiceImpl;
 import com.vinplay.vbee.common.models.FreezeModel;
+import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.pools.ConnectionPool;
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -24,6 +31,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.bson.Document;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -226,6 +235,40 @@ implements XocDiaDao {
             stm.close();
         }
         return bossList;
+    }
+
+    @Override
+    public List<TransactionXocDia> getLichSuXocDia(String username, int page) {
+        int skipNumber = (page - 1) * 10;
+        List<TransactionXocDia> results = new ArrayList<>();
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        FindIterable iterable;
+        Document conditions = new Document();
+        conditions.put("user_name", username);
+        BasicDBObject sortCondtions = new BasicDBObject();
+        sortCondtions.put("_id", -1);
+        iterable = db.getCollection("xoc_dia_transaction").find(conditions).sort(sortCondtions).skip(skipNumber).limit(10);
+        iterable.forEach((Block) new Block<Document>() {
+
+            public void apply(Document document) {
+                TransactionXocDia transactionXocDia = new TransactionXocDia();
+                BetResult betResult = new BetResult();
+                transactionXocDia.setUsername(document.getString("user_name"));
+                transactionXocDia.setTotalPrize(document.getLong("total_prize"));
+                transactionXocDia.setTotalExchange(document.getLong("money_exchange"));
+                betResult.setZeroWhite(document.getLong("zero_white"));
+                betResult.setFourWhite(document.getLong("four_white"));
+                betResult.setThreeWhite(document.getLong("three_white"));
+                betResult.setOneWhite(document.getLong("one_white"));
+                betResult.setEven(document.getLong("even"));
+                betResult.setOdd(document.getLong("odd"));
+                transactionXocDia.setResult(document.getString("result"));
+
+                transactionXocDia.setBetResult(betResult);
+                results.add(transactionXocDia);
+            }
+        });
+        return results;
     }
 }
 
