@@ -67,6 +67,7 @@ runPortal() {
 runWspay() {
   cd ${SCRIPT_PATH}
   currentDir="api/wspay"
+  cd $currentDir
   echo "Starting WSPay..."
   nohup java -cp "libs/*:build/libs/wspay.jar" com.vinplay.pay.server.JettyServer >/home/server/logs/wspay.log 2>&1 &
 
