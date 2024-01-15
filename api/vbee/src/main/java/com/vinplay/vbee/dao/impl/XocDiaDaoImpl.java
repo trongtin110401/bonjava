@@ -37,7 +37,7 @@ public class XocDiaDaoImpl
         Document doc = new Document();
         doc.append("reference_id", msg.referenceId);
         doc.append("user_name", msg.username);
-        doc.append("total_prize", msg.getTotalPrize());
+        doc.append("total_prize", msg.getBetResult().getTotalBetValue());
         doc.append("zero_white", msg.betResult.getZeroWhite());
         doc.append("four_white", msg.betResult.getFourWhite());
         doc.append("three_white", msg.betResult.getThreeWhite());

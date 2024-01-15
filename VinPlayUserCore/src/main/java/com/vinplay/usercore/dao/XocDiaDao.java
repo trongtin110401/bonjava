@@ -6,6 +6,7 @@
  */
 package com.vinplay.usercore.dao;
 
+import com.vinplay.dal.entities.taixiu.TransactionXocDia;
 import com.vinplay.gamebai.entities.BossXocDiaModel;
 import com.vinplay.gamebai.entities.XocDiaBoss;
 import java.sql.SQLException;
@@ -27,5 +28,7 @@ public interface XocDiaDao {
     public List<String> getListSessionActive() throws SQLException;
 
     public List<BossXocDiaModel> getListRoomBoss(String var1, int var2, int var3, int var4) throws SQLException, JSONException;
+
+    List<TransactionXocDia> getLichSuXocDia(String username, int page);
 }
 

@@ -25,10 +25,8 @@ public class SaveTransactionXocDiaProcessor
 
     public Boolean execute(Param<byte[]> param) {
         byte[] body = param.get();
-        System.out.println("byte length " + body.length);
         try {
             TransactionXocDiaMessage message = (TransactionXocDiaMessage) TransactionXocDiaMessage.fromBytes(body);
-            System.out.println("data xoc dia:   " + message.toString());
             XocDiaDaoImpl dao = new XocDiaDaoImpl();
             addTopVinhDanh(message);
             dao.saveTransactionXocDia(message);
