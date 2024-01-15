@@ -27,7 +27,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
     @Override
     public List<UserScore> receiveData(LeaderboardCriteria criteria) {
         int fromIndex = (criteria.getPageIndex() - 1) * criteria.getPageSize();
-        int endIndex = fromIndex + criteria.getPageSize();
+        int endIndex = fromIndex + criteria.getPageSize() -1;
         Collection<ScoredEntry<String>> scoredEntries =
                 leaderboardRepository.receiveData(criteria.getBoardName(), fromIndex, endIndex);
         return scoredEntries.stream()
