@@ -19,42 +19,35 @@
  */
 package com.vinplay.vbee.dao.impl;
 
-import bitzero.util.common.business.Debug;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import com.vinplay.vbee.common.messages.TransactionXocDiaMessage;
-import com.vinplay.vbee.common.pools.ConnectionPool;
+import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
+import com.vinplay.vbee.common.utils.VinPlayUtils;
 import com.vinplay.vbee.dao.XocDiaDao;
-
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.SQLException;
+import org.bson.Document;
 
 public class XocDiaDaoImpl
         implements XocDiaDao {
 
-
     @Override
-    public void saveTransactionXocDia(TransactionXocDiaMessage message) throws SQLException {
-        System.out.println("ready to save data xoc dia");
-        boolean success = false;
-        Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");
-        if (conn == null) {
-            Debug.info("Connection in saveResultTaiXiu is null");
-        }
-//        CallableStatement call = null;
-//        call = conn.prepareCall("CALL save_result_tai_xiu_md5(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-//        int param = 1;
-//
-//        try {
-//            success = call.execute();
-//        } catch (Exception ex) {
-//            Debug.info("saveResultTaiXiu error" + ex.getMessage());
-//        }
-//        if (call != null) {
-//            call.close();
-//        }
-        if (conn != null) {
-            conn.close();
-        }
+    public void saveTransactionXocDia(TransactionXocDiaMessage msg) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection col = db.getCollection("xoc_dia_transaction");
+        Document doc = new Document();
+        doc.append("reference_id", msg.referenceId);
+        doc.append("user_name", msg.username);
+        doc.append("total_prize", msg.getTotalPrize());
+        doc.append("zero_white", msg.betResult.getZeroWhite());
+        doc.append("four_white", msg.betResult.getFourWhite());
+        doc.append("three_white", msg.betResult.getThreeWhite());
+        doc.append("one_white", msg.betResult.getZeroWhite());
+        doc.append("even", msg.betResult.getZeroWhite());
+        doc.append("odd", msg.betResult.getZeroWhite());
+        doc.append("result", msg.getResult());
+        doc.append("money_exchange", msg.totalExchange);
+        doc.append("create_time", VinPlayUtils.getCurrentDateTime());
+        col.insertOne(doc);
     }
 }
 
