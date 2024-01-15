@@ -25,6 +25,7 @@ public class SaveTransactionXocDiaProcessor
 
     public Boolean execute(Param<byte[]> param) {
         byte[] body = param.get();
+        System.out.println("byte length " + body.length);
         try {
             TransactionXocDiaMessage message = (TransactionXocDiaMessage) TransactionTaiXiuMessage.fromBytes(body);
             System.out.println("data xoc dia:   " + message.toString());
@@ -36,6 +37,7 @@ public class SaveTransactionXocDiaProcessor
             logger.error("Handle save transaction error ", (Throwable) e);
         }
         return false;
+
     }
 
 
