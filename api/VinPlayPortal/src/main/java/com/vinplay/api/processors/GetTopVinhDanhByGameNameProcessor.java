@@ -55,6 +55,9 @@ public class GetTopVinhDanhByGameNameProcessor
                     .method("GET", null)
                     .build();
             Response response = client.newCall(rq).execute();
+            if (response.body() == null) {
+                return rp.toJson();
+            }
             List<TopWin> topWins = getTopWin(response.body().string());
             rp.setSuccess(true);
             rp.setErrorCode("0");
@@ -89,8 +92,12 @@ public class GetTopVinhDanhByGameNameProcessor
             JSONArray dataArray = jsonObject.getJSONArray("data");
 
             for (int i = 0; i < dataArray.length(); i++) {
-                TopWin topWin = new TopWin();
                 JSONObject dataObject = dataArray.getJSONObject(i);
+
+                if (dataObject.getInt("score") <= 0) {
+                    continue;
+                }
+                TopWin topWin = new TopWin();
                 topWin.setUsername(dataObject.getString("username"));
                 topWin.setTotalMoneyOnGame(dataObject.getInt("score"));
                 topWin.setMoney(dataObject.getInt("score"));
