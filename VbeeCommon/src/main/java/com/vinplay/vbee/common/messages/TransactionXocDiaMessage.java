@@ -4,6 +4,9 @@
 package com.vinplay.vbee.common.messages;
 
 public class TransactionXocDiaMessage extends BaseMessage{
+
+    private static final long serialVersionUID = 1L;
+
     public long referenceId;
     public String username;
     public long totalPrize = 0L;

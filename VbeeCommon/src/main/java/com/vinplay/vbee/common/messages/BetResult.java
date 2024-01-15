@@ -1,6 +1,10 @@
 package com.vinplay.vbee.common.messages;
 
-public class BetResult {
+import java.io.Serializable;
+
+public class BetResult implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private long zeroWhite;
     private long fourWhite;
     private long threeWhite;
