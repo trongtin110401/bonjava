@@ -6,7 +6,6 @@ import bitzero.server.entities.User;
 import bitzero.util.common.business.Debug;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
-import com.vinplay.dal.service.impl.BroadcastMessageServiceImpl;
 import com.vinplay.dal.service.impl.CacheServiceImpl;
 import com.vinplay.usercore.dao.impl.UserDaoImpl;
 import com.vinplay.vbee.common.enums.Games;
@@ -14,6 +13,7 @@ import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
 import com.vinplay.vbee.common.models.UserModel;
 import com.vinplay.vbee.common.models.cache.SlotFreeDaily;
 import com.vinplay.vbee.common.models.cache.UserCacheModel;
+import com.vinplay.vbee.common.models.slot.SlotFreeSpin;
 import com.vinplay.vbee.common.response.MoneyResponse;
 import com.vinplay.vbee.common.statics.TransType;
 import com.vinplay.vbee.common.utils.DateTimeUtils;
@@ -33,7 +33,10 @@ import game.modules.slot.utils.SlotUtils;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -112,10 +115,9 @@ public class Slot25BasicRoom extends SlotRoom {
         // từ PHP admin, cài đặt cho một người chơi trúng JACKPOT
         boolean forceJackpotToUser = false;
         // người chơi được set nổ hũ
-        String usernameForce;
+        String usernameForce = "";
         // phòng được set nổ hũ
-        String roomForce;
-
+        String roomForce = "";
         // Lớp dịch vụ caching
         CacheServiceImpl cacheService = new CacheServiceImpl();
         try {
@@ -129,30 +131,34 @@ public class Slot25BasicRoom extends SlotRoom {
         UserCacheModel u = userService.getUser(username);
         // số dư hiện tại của user
         long currentMoney = userService.getMoneyUserCache(username, this.moneyTypeStr);
-
+        // thông tin free spin
+        int numOfFreeSpin = getNumOfFreeSpin(username);
+        boolean isFreeSpin = numOfFreeSpin > 0;
         // số lines được chọn > 0
         if (selectedLines.length > 0 && !linesStr.isEmpty()) {
             // check tiền đặt cược hợp lệ
             if (totalBetValue > 0L) {
                 // check đủ tiền
-                if (totalBetValue <= currentMoney) {
+                if (totalBetValue <= currentMoney || isFreeSpin) {
                     // trừ phế 2%
-                    long fee = totalBetValue * 2L / 100L;
+                    long fee = !isFreeSpin ? totalBetValue * 2L / 100L : 0;
                     MoneyResponse moneyRes = new MoneyResponse(false, "1001");
                     // Không phải lả BOT => Cập nhật tiền
                     if (!u.isBot()) {
-                        moneyRes = this.userService.updateMoney(username, -totalBetValue, this.moneyTypeStr, this.gameName, "Quay " + gameName, "Đặt cược " + gameName, fee, referenceId, TransType.START_TRANS);
+                        long changeMoney = isFreeSpin ? 0 : totalBetValue;
+                        String desc = isFreeSpin ? "Lượt quay miễn phí " + gameName : "Đặt cược " + gameName;
+                        moneyRes = this.userService.updateMoney(username, -changeMoney, this.moneyTypeStr, this.gameName, "Quay " + gameName, desc, fee, referenceId, TransType.START_TRANS);
                     } else {
                         moneyRes.setSuccess(true);
                     }
 
                     if (moneyRes != null && moneyRes.isSuccess()) {
                         // một phần trăm cho vào hũ JACKPOT
-                        long moneyToPot = totalBetValue * 2 / 100L;
+                        long moneyToPot = !isFreeSpin ? totalBetValue * 2 / 100L : 0;
                         this.pot += moneyToPot;
 
                         // số tiền còn lại sau khi trừ phế và 1% POT cho vào quỹ thưởng
-                        long moneyToFund = totalBetValue - fee - moneyToPot;
+                        long moneyToFund = !isFreeSpin ? totalBetValue - fee - moneyToPot : 0;
                         if (!u.isBot()) {
                             this.fund += moneyToFund;
                         }
@@ -200,10 +206,8 @@ public class Slot25BasicRoom extends SlotRoom {
 
                             // sinh Matrix
                             Line25Item[][] matrix = isForceJackpot ? Line25Utils.generateMatrixNoHu(selectedLines) : Line25Utils.generateMatrix();
-
                             // Đếm số lượng BONUS và SCATTER
                             for (int i = 0; i < 3; ++i) {
-                                // cột
                                 for (int j = 0; j < 5; ++j) {
                                     if (matrix[i][j] == Line25Item.SCATTER) {
                                         ++countScatter;
@@ -214,7 +218,6 @@ public class Slot25BasicRoom extends SlotRoom {
                                     }
                                 }
                             }
-
                             // không cho phép nổ hũ và (BONUS hoặc FREE SPIN) xảy ra đồng thời
                             if (isForceJackpot && (countBonus >= 3 || countScatter >= 3)) {
                                 continue;
@@ -226,14 +229,17 @@ public class Slot25BasicRoom extends SlotRoom {
                             // trong trường hợp thỏa mãn BONUS VÀ SCATTER,
                             // ràng buộc thêm điều kiện để giảm tỷ lệ ăn BONUS và SCATTER xuống
                             // nếu không thỏa mãn điều kiện, tiếp tục vòng lặp để sinh lại Matrix
-                            if (countBonus >= 3 || countScatter >= 3) {
-                                int tiLeAn = selectedLines.length * 100 / 25;
-                                Random rd2 = new Random();
-                                int n2 = rd2.nextInt(100);
-                                if (n2 >= tiLeAn)
-                                    continue;
+//                            if (countBonus >= 3 || countScatter >= 3) {
+//                                int tiLeAn = selectedLines.length * 100 / 25;
+//                                Random rd2 = new Random();
+//                                int n2 = rd2.nextInt(100);
+//                                if (n2 >= tiLeAn)
+//                                    continue;
+//                            }
+                            // ở chế độ Free Spin, không cho phép trúng BONUS hoặc SCATTER
+                            if (isFreeSpin && (countScatter >= 3 || countBonus >= 3)) {
+                                continue;
                             }
-
                             // Tính toán phần thưởng cho BONUS GAME
                             if (countBonus >= 3) {
                                 bonusGameResponse = Line25Utils.buildBonusGameData(this.betValue, countBonus);
@@ -288,7 +294,6 @@ public class Slot25BasicRoom extends SlotRoom {
                             if (builderPrizesOnLine.length() > 0) {
                                 builderPrizesOnLine.deleteCharAt(0);
                             }
-
                             // Kiểm tra xem giải thưởng có LỚN hay không.
                             // Lớn quá thì sinh lại MATRIX kết quả kẻo anh em NPH vỡ nợ
                             if (!isForceJackpot) {
@@ -302,8 +307,14 @@ public class Slot25BasicRoom extends SlotRoom {
                                         continue;
                                 }
                             }
-
+                            // điều kiện trúng thưởng đã thỏa mãn, dừng vòng lặp
                             enoughPair = true;
+                            // cập nhật lượt quay miễn phí
+                            if (isFreeSpin) {
+                                slotService.updateLuotQuaySlotFree(cacheFreeSpinName, username);
+                            }
+
+                            // BẮT ĐẦU QUÁ TRÌNH LƯU TRỮ THÔNG TIN VÀ TRẢ THƯỞNG
                             String matrixStr = Line25Utils.matrixToString(matrix);
                             if (totalPrizes > 0L) {
                                 if (result == ResultSlot.JACKPOT) {
@@ -340,7 +351,7 @@ public class Slot25BasicRoom extends SlotRoom {
                                             cacheService.removeKey(CACHE_NAME_USER_SPOT + gameName);
                                             cacheService.removeKey(CACHE_BET_VALUE_SLOT + gameName);
                                         } catch (Exception e) {
-                                            logger.error(" Reset cache BenLey - Cung Hỷ Phát Tài error with : " + e.getMessage());
+                                            logger.error(" Reset cache " + gameName + " error with : " + e.getMessage());
                                         }
                                     }
                                     this.slotService.logNoHu(referenceId, this.gameName, displayName, this.betValue, linesStr, matrixStr, builderLinesWin.toString(), builderPrizesOnLine.toString(), totalPrizes, result, currentTimeStr);
@@ -349,7 +360,7 @@ public class Slot25BasicRoom extends SlotRoom {
                                         this.fund -= totalPrizes;
                                     }
                                     if (result == ResultSlot.MISSED) {
-                                        result = totalPrizes >= (this.betValue * 100L) ? ResultSlot.BIG_WIN : ResultSlot.WIN;
+                                        result = totalPrizes >= (this.betValue * 175L) ? ResultSlot.BIG_WIN : ResultSlot.WIN;
                                     }
                                 }
                             }
@@ -367,7 +378,8 @@ public class Slot25BasicRoom extends SlotRoom {
                                 moneyRes = this.userService.updateMoney(username, moneyExchange, this.moneyTypeStr, this.gameName, "Quay " + gameName, this.buildDescription(totalBetValue, totalPrizes, result), 0L, referenceId, TransType.END_TRANS);
                                 if (moneyRes != null && moneyRes.isSuccess()) {
                                     currentMoney = moneyRes.getCurrentMoney();
-                                    if (this.moneyType == 1 && moneyExchange - this.betValue >= BroadcastMessageServiceImpl.MIN_MONEY) {
+                                    // thông báo tới toàn hệ thống số tiền thắng của người chơi
+                                    if (this.moneyType == 1 && moneyExchange - this.betValue >= (totalBetValue * 1.5)) {
                                         this.broadcastMsgService.putMessage(Games.findGameByName(gameName).getId(), username, moneyExchange - (long) this.betValue);
                                     }
                                 }
@@ -383,11 +395,11 @@ public class Slot25BasicRoom extends SlotRoom {
                                 playResponse.haiSao = bonusGameResponse.getPrizes();
                             }
                             try {
-                                // lưu lịch sử chơi
+                                // lưu nhật ký chơi
                                 if (!u.isBot()) {
                                     this.slotLogListener.log(referenceId, username, this.betValue, linesStr, linesWin, prizesOnLine, result, totalPrizes, currentTimeStr);
                                 }
-                                // lưu lịch sử nổ hũ
+                                // lưu nhật ký nổ hũ
                                 if (result == ResultSlot.JACKPOT) {
                                     this.slotService.addTop(gameName, username, this.betValue, totalPrizes, currentTimeStr, result);
                                 }
@@ -429,6 +441,19 @@ public class Slot25BasicRoom extends SlotRoom {
         }
 
         return playResponse;
+    }
+
+    private int getNumOfFreeSpin(String username) {
+        SlotFreeSpin freeSpin;
+        try {
+            freeSpin = slotService.getLuotQuayFreeSlot(cacheFreeSpinName, username);
+            if (freeSpin != null) {
+                return freeSpin.getNum();
+            }
+            return 0;
+        } catch (Exception ignored) {
+            return 0;
+        }
     }
 
     private int setFreeSpin(String nickName, String lines, int countFreeSpin) {

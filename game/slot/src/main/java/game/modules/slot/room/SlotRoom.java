@@ -283,7 +283,7 @@ public abstract class SlotRoom {
 
     protected String buildDescription(long totalBet, long totalPrizes, short result) {
         if (totalBet == 0L) {
-            return String.valueOf(this.resultToString(result)) + ": " + totalPrizes;
+            return this.resultToString(result) + ": " + totalPrizes;
         }
         return "Quay: " + (totalBet == 0L ? "free" : Long.valueOf(totalBet)) + ", " + this.resultToString(result) + ": " + totalPrizes;
     }
