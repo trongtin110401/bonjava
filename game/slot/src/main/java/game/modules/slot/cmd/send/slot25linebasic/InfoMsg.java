@@ -1,16 +1,16 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  bitzero.server.extensions.data.BaseMsg
  */
-package game.modules.slot.cmd.send.benley;
+package game.modules.slot.cmd.send.slot25linebasic;
 
 import bitzero.server.extensions.data.BaseMsg;
 
 import java.nio.ByteBuffer;
 
-public class BenleyInfoMsg extends BaseMsg {
+public class InfoMsg extends BaseMsg {
 
     public String ngayX2;
     public byte remain;
@@ -18,8 +18,8 @@ public class BenleyInfoMsg extends BaseMsg {
     public byte freeSpin;
     public String lines = "";
 
-    public BenleyInfoMsg() {
-        super((short)4009);
+    public InfoMsg(short type) {
+        super(type);
     }
 
     public byte[] createData() {

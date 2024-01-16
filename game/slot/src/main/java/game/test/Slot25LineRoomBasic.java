@@ -22,7 +22,7 @@ import java.util.Random;
 public class Slot25LineRoomBasic {
 
     public static void main(String[] args) {
-        long fund = -10000;
+        long fund = 0;
         long initJackpotValues = 5000000;
         long pot = initJackpotValues;
         int betValue = 1000;
@@ -33,7 +33,7 @@ public class Slot25LineRoomBasic {
         final Line25Lines lines = new Line25Lines();
 
         String linesStr = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25";
-        for (int numberSpin = 0; numberSpin < 1000; numberSpin++) {
+        for (int numberSpin = 0; numberSpin < 100; numberSpin++) {
             short result = ResultSlot.MISSED;
             String currentTimeStr = DateTimeUtils.getCurrentTime();
             ResultBenleyMsg resultBenleyMsg = new ResultBenleyMsg();

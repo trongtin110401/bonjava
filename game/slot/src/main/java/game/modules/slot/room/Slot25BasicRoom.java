@@ -6,6 +6,7 @@ import bitzero.server.entities.User;
 import bitzero.util.common.business.Debug;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
+
 import com.vinplay.dal.service.impl.CacheServiceImpl;
 import com.vinplay.usercore.dao.impl.UserDaoImpl;
 import com.vinplay.vbee.common.enums.Games;
@@ -17,8 +18,11 @@ import com.vinplay.vbee.common.models.slot.SlotFreeSpin;
 import com.vinplay.vbee.common.response.MoneyResponse;
 import com.vinplay.vbee.common.statics.TransType;
 import com.vinplay.vbee.common.utils.DateTimeUtils;
-import game.modules.slot.BenleyModule;
-import game.modules.slot.cmd.send.benley.*;
+
+import game.modules.slot.SlotModule;
+import game.modules.slot.cmd.Slot25BasicCommandCollection;
+
+import game.modules.slot.cmd.send.slot25linebasic.*;
 import game.modules.slot.entities.slot.AutoUser;
 import game.modules.slot.entities.slot.AwardsOnLine;
 import game.modules.slot.entities.slot.Line;
@@ -52,16 +56,18 @@ public class Slot25BasicRoom extends SlotRoom {
     private long lastTimeUpdatePotToRoom = 0L;
     private long lastTimeUpdateFundToRoom = 0L;
     private final ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
+    private final Slot25BasicCommandCollection commandCollection;
     private static final org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger("slot");
 
     // litener zone
     private SlotLogListener slotLogListener;
 
-    public Slot25BasicRoom(BenleyModule module, byte id, String gameName, short moneyType, long pot, long fund, int betValue, long initJackpotValue) {
+    public Slot25BasicRoom(SlotModule module, Slot25BasicCommandCollection commandCollection, byte id, String gameName, short moneyType, long pot, long fund, int betValue, long initJackpotValue) {
 
         super(id, gameName, betValue, moneyType, pot, fund, initJackpotValue);
 
         this.module = module;
+        this.commandCollection = commandCollection;
         this.moneyType = moneyType;
         this.gameName = gameName;
         this.cacheFreeSpinName = this.gameName + betValue;
@@ -85,12 +91,12 @@ public class Slot25BasicRoom extends SlotRoom {
         super.forceStopAutoPlay(user);
         synchronized (this.usersAuto) {
             this.usersAuto.remove(user.getName());
-            ForceStopAutoPlayBenleyMsg msg = new ForceStopAutoPlayBenleyMsg();
+            ForceStopAutoPlayMsg msg = new ForceStopAutoPlayMsg(commandCollection.FORCE_AUTO_PLAY_MESSAGE);
             SlotUtils.sendMessageToUser(msg, user);
         }
     }
 
-    public ResultBenleyMsg play(String username, String linesStr) {
+    public ResultMsg play(String username, String linesStr) {
         long referenceId = this.module.getNewReferenceId();
         return this.playNormal(username, linesStr, referenceId);
     }
@@ -101,13 +107,13 @@ public class Slot25BasicRoom extends SlotRoom {
      * @param referenceId mã tham chiếu giao dịch
      * @return ResultBenleyMsg model kết quả
      */
-    public synchronized ResultBenleyMsg playNormal(String username, String linesStr, long referenceId) {
+    public synchronized ResultMsg playNormal(String username, String linesStr, long referenceId) {
         // kết quả mặc định
         short result = ResultSlot.MISSED;
         // thời điểm hiện tại
         String currentTimeStr = DateTimeUtils.getCurrentTime();
         // response model
-        ResultBenleyMsg playResponse = new ResultBenleyMsg();
+        ResultMsg playResponse = new ResultMsg(commandCollection.RESULT_MESSAGE);
         // số line người chơi chọn
         String[] selectedLines = linesStr.split(",");
         // tổng cược
@@ -252,6 +258,7 @@ public class Slot25BasicRoom extends SlotRoom {
                             // MÃ LỆNH NÀY ÁP ỤNG CHO SLOT MACHINE 25LINE EXTENDS.
                             // Trường hợp 1 WHEEL có xuất hiện item WILD, toàn bộ WHEEL đó sẽ được thay thế bởi nó
                             // Trong trường hợp này (Slot Machine 25Line Basic thì không áp dụng)
+
                             /* AvengersItem[][] matrixWild = AvengersUtils.revertMatrix(matrix); */
 
                             Line25Item[][] matrixWild = matrix;
@@ -405,7 +412,7 @@ public class Slot25BasicRoom extends SlotRoom {
                                 }
                                 // thông báo tới toàn bộ người chơi trong game (trong MODULE)
                                 if (result == ResultSlot.JACKPOT || result == ResultSlot.BIG_WIN) {
-                                    BigWinBenleyMsg bigWinMsg = new BigWinBenleyMsg();
+                                    BigWinMsg bigWinMsg = new BigWinMsg(commandCollection.BIG_WIN_MESSAGE);
                                     bigWinMsg.username = username;
                                     bigWinMsg.type = (byte) result;
                                     bigWinMsg.betValue = (short) this.betValue;
@@ -479,12 +486,12 @@ public class Slot25BasicRoom extends SlotRoom {
 
     public short play(User user, String linesStr) throws Exception {
         String username = user.getName();
-        ResultBenleyMsg msg;
-        BenleyFreeDailyMsg freeDailyMsg = new BenleyFreeDailyMsg();
+        ResultMsg msg;
+        FreeDailyMsg freeDailyMsg = new FreeDailyMsg(commandCollection.FREE_DAILY_MESSAGE);
         freeDailyMsg.remain = 0;
         msg = this.play(username, linesStr);
         if (this.isUserMinimize(user)) {
-            MinimizeResultBenleyMsg miniMsg = new MinimizeResultBenleyMsg();
+            MinimizeResultMsg miniMsg = new MinimizeResultMsg(commandCollection.MINIMIZE_RESULT_MESSAGE);
             miniMsg.prize = msg.prize;
             miniMsg.curretMoney = msg.currentMoney;
             miniMsg.result = msg.result;
@@ -517,7 +524,7 @@ public class Slot25BasicRoom extends SlotRoom {
             } catch (IOException | InterruptedException | TimeoutException e) {
                 Debug.trace(this.gameName + ": update pot error ", e.getMessage());
             }
-            UpdatePotBenleyMsg msg = new UpdatePotBenleyMsg();
+            UpdatePotMsg msg = new UpdatePotMsg(commandCollection.UPDATE_POT_MESSAGE);
             msg.value = this.pot;
             msg.x2 = (byte) (this.huX2 ? 1 : 0);
             this.sendMessageToRoom(msg);
@@ -525,7 +532,7 @@ public class Slot25BasicRoom extends SlotRoom {
     }
 
     public void updatePot(User user) {
-        UpdatePotBenleyMsg msg = new UpdatePotBenleyMsg();
+        UpdatePotMsg msg = new UpdatePotMsg(commandCollection.UPDATE_POT_MESSAGE);
         msg.value = this.pot;
         msg.x2 = (byte) (this.huX2 ? 1 : 0);
         SlotUtils.sendMessageToUser(msg, user);
@@ -618,7 +625,7 @@ public class Slot25BasicRoom extends SlotRoom {
     public boolean joinRoom(User user) {
         boolean result = super.joinRoom(user);
         SlotFreeDaily model = this.slotService.getLuotQuayFreeDaily(this.gameName, user.getName(), this.betValue);
-        BenleyFreeDailyMsg freeDailyMsg = new BenleyFreeDailyMsg();
+        FreeDailyMsg freeDailyMsg = new FreeDailyMsg(commandCollection.FREE_DAILY_MESSAGE);
         if (model != null && model.getRotateFree() > 0) {
             user.setProperty("numFreeDaily", model.getRotateFree());
             freeDailyMsg.remain = (byte) model.getRotateFree();

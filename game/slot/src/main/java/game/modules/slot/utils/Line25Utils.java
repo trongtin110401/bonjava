@@ -8,10 +8,8 @@ import game.modules.slot.entities.slot.Line;
 import game.modules.slot.entities.slot.MiniGameSlotResponse;
 import game.modules.slot.entities.slot.avengers.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Line25Utils {
 
@@ -189,7 +187,35 @@ public class Line25Utils {
 //        System.out.println("Trung binh: " + total / 1000L);
 
 
-        System.out.println(matrixToString(generateMatrix()));
+//        System.out.println(matrixToString(generateMatrix()));
+
+        Map<String, Integer> counter = new HashMap<>();
+        AtomicInteger countWild = new AtomicInteger();
+        String items = "A,A,WILD,WILD,BONUS";
+        Arrays.stream(items.split(","))
+                .forEach(item -> {
+                    Integer count = counter.get(item);
+                    if (count == null) {
+                        count = 1;
+                    } else {
+                        count += 1;
+                    }
+                    counter.put(item, count);
+
+                    // count wild
+                    if (item.equals("WILD")) {
+                        countWild.addAndGet(1);
+                    }
+                });
+        // if wild appears, increase item
+        counter.forEach((item, count) -> {
+            if (!item.equals("BONUS") && !item.equals("SCATTER") && !item.equals("WILD")) {
+                int newCount = counter.get(item) + countWild.get();
+                counter.put(item, newCount);
+            }
+        });
+
+        System.out.println(counter.toString());
     }
 
     public static void calculateAward(Line line, List<Line25Award> awardList) {
@@ -220,6 +246,8 @@ public class Line25Utils {
      * @param awardList
      */
     public static void calculateMoneyAwardInLine(Line line, List<Line25Award> awardList) {
+        // số lương wild xuất hiện trên line
+        int countWild = 0;
         // ánh xạ giữa item và số lượng xuất hiện của nó trên 1 Line
         Map<Byte, Integer> itemId2Count = new HashMap<>();
         // duyệt qua các cell trên 1 line để tính toán số lần xuất hiện
@@ -233,6 +261,22 @@ public class Line25Utils {
                 countNumberItem += 1;
             }
             itemId2Count.put(avengersItem.getId(), countNumberItem);
+
+            if (avengersItem == Line25Item.WILD) {
+                countWild += 1;
+            }
+        }
+        // WILD có thể thay thế tất cả items (trừ SCATTER, BONUS và chính nó)
+        if (countWild > 0) {
+            int finalCountWild = countWild;
+            itemId2Count.forEach((id, numOfItem) -> {
+                Line25Item item = Line25Item.findItem(id);
+                if (item != Line25Item.BONUS
+                        && item != Line25Item.SCATTER
+                        && item != Line25Item.WILD) {
+                    itemId2Count.put(id, numOfItem + finalCountWild);
+                }
+            });
         }
         // bắt đầu tính toán giải thưởng đạt được trên 1 line
         itemId2Count.forEach((id, countNumItem) -> {

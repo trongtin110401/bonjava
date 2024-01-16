@@ -51,8 +51,7 @@ public abstract class SlotModule extends BaseClientRequestHandler {
     protected String gameName;
     protected X2Task x2Task = new X2Task();
 
-    public void handleClientRequest(User user, DataCmd dataCmd) {
-    }
+    public abstract void handleClientRequest(User user, DataCmd dataCmd);
 
     protected abstract String getRoomName(short var1, long var2);
 
@@ -159,8 +158,7 @@ public abstract class SlotModule extends BaseClientRequestHandler {
         }
     }
 
-    protected final class SendMsgToAlLUsersThread
-    extends Thread {
+    protected final class SendMsgToAlLUsersThread extends Thread {
         private BaseMsg msg;
 
         protected SendMsgToAlLUsersThread(BaseMsg msg) {

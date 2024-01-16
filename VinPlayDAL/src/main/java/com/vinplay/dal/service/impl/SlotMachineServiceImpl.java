@@ -101,7 +101,7 @@ public class SlotMachineServiceImpl
 
     @Override
     public void logBenley(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time) throws IOException, TimeoutException, InterruptedException {
-        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.BENLEY.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time);
+        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.BENTLEY.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time);
         this.publishSlotMsg("queue_benley", msg, 8006);
     }
 
@@ -385,7 +385,7 @@ public class SlotMachineServiceImpl
             this.logTamHung(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time);
         } else if (gameName.equals(Games.ROLL_ROYE.getName())) {
             this.logRollRoye(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time);
-        } else if (gameName.equals(Games.BENLEY.getName())) {
+        } else if (gameName.equals(Games.BENTLEY.getName())) {
             this.logBenley(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time);
         }
     }

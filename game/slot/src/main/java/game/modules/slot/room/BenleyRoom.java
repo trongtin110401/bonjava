@@ -55,7 +55,7 @@ public class BenleyRoom extends SlotRoom {
 
         this.module = module;
         this.moneyType = moneyType;
-        this.gameName = Games.BENLEY.getName();
+        this.gameName = Games.BENTLEY.getName();
         this.cacheFreeSpinName = this.gameName + betValue;
         CacheServiceImpl cacheService = new CacheServiceImpl();
         cacheService.setValue(gameName, (int) pot);
@@ -491,7 +491,7 @@ public class BenleyRoom extends SlotRoom {
                                 if (moneyRes != null && moneyRes.isSuccess()) {
                                     currentMoney = moneyRes.getCurrentMoney();
                                     if (this.moneyType == 1 && moneyExchange - (long) this.betValue >= (long) BroadcastMessageServiceImpl.MIN_MONEY) {
-                                        this.broadcastMsgService.putMessage(Games.BENLEY.getId(), username, moneyExchange - (long) this.betValue);
+                                        this.broadcastMsgService.putMessage(Games.BENTLEY.getId(), username, moneyExchange - (long) this.betValue);
                                     }
                                 }
                             }
