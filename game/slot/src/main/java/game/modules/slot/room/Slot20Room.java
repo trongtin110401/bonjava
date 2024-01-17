@@ -30,7 +30,7 @@ import com.vinplay.vbee.common.utils.DateTimeUtils;
 import game.modules.slot.Slot20Module;
 import game.modules.slot.SlotModule;
 import game.modules.slot.cmd.Slot20CommandCollection;
-import game.modules.slot.cmd.send.audition.*;
+import game.modules.slot.cmd.send.slot20line.*;
 import game.modules.slot.entities.slot.*;
 
 import game.modules.slot.entities.slot.line20basic.Line20;
@@ -98,12 +98,12 @@ public class Slot20Room extends SlotRoom {
         Map map = this.usersAuto;
         synchronized (map) {
             this.usersAuto.remove(user.getName());
-            ForceStopAutoPlayAuditionMsg msg = new ForceStopAutoPlayAuditionMsg();
+            Slot20ForceStopAutoPlayMsg msg = new Slot20ForceStopAutoPlayMsg(commandCollection.FORCE_AUTO_PLAY_MESSAGE);
             SlotUtils.sendMessageToUser(msg, user);
         }
     }
 
-    public synchronized ResultSlotAuditionMsg play(String username, String linesStr) {
+    public synchronized SLot20ResultMsg play(String username, String linesStr) {
 
         boolean forceJackpotByUser = false;
 
@@ -117,7 +117,7 @@ public class Slot20Room extends SlotRoom {
         long currentMoney = this.userService.getMoneyUserCache(username, this.moneyTypeStr);
         UserCacheModel u = this.userService.getUser(username);
         long totalBetValue = (long) lineArr.length * this.betValue;
-        ResultSlotAuditionMsg msg = new ResultSlotAuditionMsg();
+        SLot20ResultMsg msg = new SLot20ResultMsg(commandCollection.RESULT_MESSAGE);
         CacheServiceImpl cacheService = new CacheServiceImpl();
         String userForce;
         try {
@@ -131,7 +131,7 @@ public class Slot20Room extends SlotRoom {
                     long fee = totalBetValue * 2L / 100L;
                     MoneyResponse moneyRes = new MoneyResponse(false, "1001");
                     if (!u.isBot()) {
-                        moneyRes = this.userService.updateMoney(username, -totalBetValue, this.moneyTypeStr, Games.AUDITION.getName(), "Quay " + gn, "Đăt cược " + gn, fee, referenceId, TransType.START_TRANS);
+                        moneyRes = this.userService.updateMoney(username, -totalBetValue, this.moneyTypeStr, this.gameName, "Quay " + gn, "Đăt cược " + gn, fee, referenceId, TransType.START_TRANS);
                     } else {
                         moneyRes.setSuccess(true);
                     }
@@ -442,13 +442,13 @@ public class Slot20Room extends SlotRoom {
                             }
                             long moneyExchange = totalPrizes - tienThuongX2;
                             if (tienThuongX2 > 0L && !u.isBot()) {
-                                this.userService.updateMoney(username, tienThuongX2, this.moneyTypeStr, Games.AUDITION.getName(), "Quay " + gn, "Thưởng Hũ X2", 0L, null, TransType.NO_VIPPOINT);
+                                this.userService.updateMoney(username, tienThuongX2, this.moneyTypeStr, this.gameName, "Quay " + gn, "Thưởng Hũ X2", 0L, null, TransType.NO_VIPPOINT);
                             }
                             if (totalPrizes != 0 && !u.isBot()) {
-                                if ((moneyRes = this.userService.updateMoney(username, totalPrizes, this.moneyTypeStr, Games.AUDITION.getName(), "Quay " + gn, this.buildDescription(totalBetValue, totalPrizes, result), 0L, referenceId, TransType.END_TRANS)) != null && moneyRes.isSuccess()) {
+                                if ((moneyRes = this.userService.updateMoney(username, totalPrizes, this.moneyTypeStr, this.gameName, "Quay " + gn, this.buildDescription(totalBetValue, totalPrizes, result), 0L, referenceId, TransType.END_TRANS)) != null && moneyRes.isSuccess()) {
                                     currentMoney = moneyRes.getCurrentMoney();
                                     if (this.moneyType == 1 && moneyExchange >= (long) BroadcastMessageServiceImpl.MIN_MONEY) {
-                                        this.broadcastMsgService.putMessage(Games.AUDITION.getId(), username, moneyExchange - totalBetValue);
+                                        this.broadcastMsgService.putMessage(Games.findGameByName(gameName).getId(), username, moneyExchange - totalBetValue);
                                     }
                                 }
                             }
@@ -468,7 +468,7 @@ public class Slot20Room extends SlotRoom {
                                     this.slotService.addTop(gn, username, this.betValue, totalPrizes, currentTimeStr, result);
                                 }
                                 if (result == 3 || result == 2 || result == 4) {
-                                    BigWinAuditionMsg bigWinMsg = new BigWinAuditionMsg();
+                                    Slot20BigWinMsg bigWinMsg = new Slot20BigWinMsg(commandCollection.BIG_WIN_MESSAGE);
                                     bigWinMsg.username = username;
                                     bigWinMsg.type = (byte) result;
                                     bigWinMsg.betValue = (short) this.betValue;
@@ -504,13 +504,13 @@ public class Slot20Room extends SlotRoom {
         return msg;
     }
 
-    public synchronized ResultSlotAuditionMsg playFreeDaily(String username) {
+    public synchronized SLot20ResultMsg playFreeDaily(String username) {
         String currentTimeStr = DateTimeUtils.getCurrentTime();
         long refernceId = this.module.getNewReferenceId();
         short result = 0;
         String[] lineArr = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20".split(",");
         long currentMoney = this.userService.getMoneyUserCache(username, this.moneyTypeStr);
-        ResultSlotAuditionMsg msg = new ResultSlotAuditionMsg();
+        SLot20ResultMsg msg = new SLot20ResultMsg(commandCollection.RESULT_MESSAGE);
         boolean enoughPair = false;
         ArrayList<AwardsOnLine> awardsOnLines = new ArrayList<>();
         long totalPrizes;
@@ -574,7 +574,7 @@ public class Slot20Room extends SlotRoom {
             msg.haiSao = "";
             try {
                 if (!isBot(username)) {
-                    this.slotService.logAudition(refernceId, username, this.betValue, "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20", linesWin, prizesOnLine, result, totalPrizes, currentTimeStr);
+                    slotLogListener.log(refernceId, username, this.betValue, "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20", linesWin, prizesOnLine, result, totalPrizes, currentTimeStr);
                 }
             } catch (InterruptedException | TimeoutException | IOException ignored) {
             }
@@ -646,8 +646,8 @@ public class Slot20Room extends SlotRoom {
         if (user.getProperty("numFreeDaily") != null) {
             numFree = (Integer) user.getProperty("numFreeDaily");
         }
-        ResultSlotAuditionMsg msg;
-        AuditionFreeDailyMsg freeDailyMsg = new AuditionFreeDailyMsg();
+        SLot20ResultMsg msg;
+        Slot20FreeDailyMsg freeDailyMsg = new Slot20FreeDailyMsg(commandCollection.FREE_DAILY_MESSAGE);
         if (numFree > 0) {
             msg = this.playFreeDaily(username);
             freeDailyMsg.remain = (byte) (--numFree);
@@ -660,9 +660,9 @@ public class Slot20Room extends SlotRoom {
             msg = this.play(username, linesStr);
         }
         if (this.isUserMinimize(user)) {
-            MinimizeResultAuditionMsg miniMsg = new MinimizeResultAuditionMsg();
+            Slot20MinimizeResultMsg miniMsg = new Slot20MinimizeResultMsg(commandCollection.MINIMIZE_RESULT_MESSAGE);
             miniMsg.prize = msg.prize;
-            miniMsg.curretMoney = msg.currentMoney;
+            miniMsg.currentMoney = msg.currentMoney;
             miniMsg.result = msg.result;
             SlotUtils.sendMessageToUser(miniMsg, user);
         } else {
@@ -678,7 +678,7 @@ public class Slot20Room extends SlotRoom {
             try {
                 this.miniGameService.saveFund(this.name, this.fund);
             } catch (IOException | InterruptedException | TimeoutException ex2) {
-                Debug.trace("Audition: update fund audition bau error ", ex2.getMessage());
+                Debug.trace(gameName + ": update fund " + gameName + " bau error ", ex2.getMessage());
             }
             this.lastTimeUpdateFundToRoom = currentTime;
         }
@@ -787,7 +787,7 @@ public class Slot20Room extends SlotRoom {
         SlotFreeDaily model = this.slotService.getLuotQuayFreeDaily(this.gameName, user.getName(), this.betValue);
         if (model != null && model.getRotateFree() > 0) {
             user.setProperty("numFreeDaily", model.getRotateFree());
-            AuditionFreeDailyMsg freeDailyMsg = new AuditionFreeDailyMsg();
+            Slot20FreeDailyMsg freeDailyMsg = new Slot20FreeDailyMsg(commandCollection.FREE_DAILY_MESSAGE);
             freeDailyMsg.remain = (byte) model.getRotateFree();
             SlotUtils.sendMessageToUser(freeDailyMsg, user);
         } else {

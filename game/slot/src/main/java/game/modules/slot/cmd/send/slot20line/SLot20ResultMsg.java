@@ -10,7 +10,7 @@ import bitzero.server.extensions.data.BaseMsg;
 
 import java.nio.ByteBuffer;
 
-public class SLot20ResultSlotMsg extends BaseMsg {
+public class SLot20ResultMsg extends BaseMsg {
     public long referenceId;
     public byte result;
     public String matrix = "";
@@ -19,7 +19,7 @@ public class SLot20ResultSlotMsg extends BaseMsg {
     public long prize;
     public long currentMoney;
 
-    public SLot20ResultSlotMsg(short type) {
+    public SLot20ResultMsg(short type) {
         super(type);
     }
 

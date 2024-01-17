@@ -10,30 +10,31 @@ public enum Line20Award {
     QUADRA_POUCH("QUADRA_POUCH", 2, (byte) 1, Line20Item.POUCH, (byte) 4, 40.0f),
     TRIPLE_POUCH("TRIPLE_POUCH", 3, (byte) 1, Line20Item.POUCH, (byte) 3, 5.0f),
 
-    PENTA_BOOK("PENTA_BOOK", 4, (byte) 1, Line20Item.BOOK, (byte) 5, 1000.0f),
-    QUADRA_BOOK("QUADRA_BOOK", 5, (byte) 1, Line20Item.BOOK, (byte) 4, -1.0f),
-    TRIPLE_BOOK("TRIPLE_BOOK", 6, (byte) 1, Line20Item.BOOK, (byte) 3, 4.0f),
+    PENTA_BOOK("PENTA_BOOK", 4, (byte) 1, Line20Item.BOOK, (byte) 5, 0f),
+    QUADRA_BOOK("QUADRA_BOOK", 5, (byte) 1, Line20Item.BOOK, (byte) 4, 30.0f),
+    TRIPLE_BOOK("TRIPLE_BOOK", 6, (byte) 1, Line20Item.BOOK, (byte) 3, 5.0f),
 
-    PENTA_BULLSEYE("PENTA_BULLSEYE", 7, (byte) 1, Line20Item.BULLSEYE, (byte) 5, 200.0f),
+    PENTA_BULLSEYE("PENTA_BULLSEYE", 7, (byte) 1, Line20Item.BULLSEYE, (byte) 5, 500.0f),
     QUADRA_BULLSEYE("QUADRA_BULLSEYE", 8, (byte) 1, Line20Item.BULLSEYE, (byte) 4, 20.0f),
-    TRIPLE_BULLSEYE("TRIPLE_BULLSEYE", 9, (byte) 1, Line20Item.BULLSEYE, (byte) 3, 3.0f),
+    TRIPLE_BULLSEYE("TRIPLE_BULLSEYE", 9, (byte) 1, Line20Item.BULLSEYE, (byte) 3, 4.0f),
 
-    PENTA_MAP("PENTA_MAP", 10, (byte) 1, Line20Item.MAP, (byte) 5, 55.0f),
-    QUADRA_MAP("QUADRA_MAP", 11, (byte) 1, Line20Item.MAP, (byte) 4, 8.0f),
-    TRIPLE_MAP("TRIPLE_MAP", 12, (byte) 1, Line20Item.MAP, (byte) 3, 2.0f),
+    PENTA_MAP("PENTA_MAP", 10, (byte) 1, Line20Item.MAP, (byte) 5, 200.0f),
+    QUADRA_MAP("QUADRA_MAP", 11, (byte) 1, Line20Item.MAP, (byte) 4, 16.0f),
+    TRIPLE_MAP("TRIPLE_MAP", 12, (byte) 1, Line20Item.MAP, (byte) 3, 3.0f),
 
-    PENTA_BOTTLE("PENTA_BOTTLE", 13, (byte) 1, Line20Item.BOTTLE, (byte) 5, 15.0f),
-    QUADRA_BOTTLE("QUADRA_BOTTLE", 14, (byte) 1, Line20Item.BOTTLE, (byte) 4, 4.0f),
+    PENTA_BOTTLE("PENTA_BOTTLE", 13, (byte) 1, Line20Item.BOTTLE, (byte) 5, 75.0f),
+    QUADRA_BOTTLE("QUADRA_BOTTLE", 14, (byte) 1, Line20Item.BOTTLE, (byte) 4, 10.0f),
+    TRIPPE_BOTTLE("QUADRA_BOTTLE", 15, (byte) 1, Line20Item.BOTTLE, (byte) 3, 2.0f),
 
-    PENTA_ANVIL("PENTA_ANVIL", 15, (byte) 1, Line20Item.ANVIL, (byte) 5, 8.0f),
-    QUADRA_ANVIL("QUADRA_ANVIL", 16, (byte) 1, Line20Item.ANVIL, (byte) 4, 3.0f);
+    PENTA_ANVIL("PENTA_ANVIL", 16, (byte) 1, Line20Item.ANVIL, (byte) 5, 30.0f),
+    QUADRA_ANVIL("QUADRA_ANVIL", 17, (byte) 1, Line20Item.ANVIL, (byte) 4, 5.0f);
 
     private byte id;
     private Line20Item item;
     private byte duplicate;
     private float ratio;
 
-    private Line20Award(String s, int n2, byte id, Line20Item item, byte duplicate, float ratio) {
+    Line20Award(String s, int n2, byte id, Line20Item item, byte duplicate, float ratio) {
         this.id = id;
         this.item = item;
         this.duplicate = duplicate;
