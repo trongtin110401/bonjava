@@ -111,7 +111,7 @@ public class Slot25BasicRoom extends SlotRoom {
         short result = ResultSlot.MISSED;
         // thời điểm hiện tại
         String currentTimeStr = DateTimeUtils.getCurrentTime();
-        // response model
+        // response message
         ResultMsg playResponse = new ResultMsg(commandCollection.RESULT_MESSAGE);
         // số line người chơi chọn
         String[] selectedLines = linesStr.split(",");

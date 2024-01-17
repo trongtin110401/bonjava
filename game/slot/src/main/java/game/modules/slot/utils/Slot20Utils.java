@@ -33,7 +33,7 @@ public class Slot20Utils {
                 for (int k = 0; k < lineNoHu.getCells().size(); ++k) {
                     if (i != lineNoHu.getCell(k).getRow() || j != lineNoHu.getCell(k).getCol()) continue;
                     genRandom = false;
-                    matrix[i][j] = Line20Item.POUCH;
+                    matrix[i][j] = Line20Item.JACKPOT;
                 }
                 if (!genRandom) continue;
                 matrix[i][j] = items.random();
@@ -71,7 +71,7 @@ public class Slot20Utils {
             int countNumItems = 0;
             Line20Item itemSample = line.getItem(i);
             for (int j = 0; j < line.getCells().size(); ++j) {
-                if (line.getItem(j) != itemSample && line.getItem(j) != Line20Item.BAG) continue;
+                if (line.getItem(j) != itemSample && line.getItem(j) != Line20Item.FREE_SPIN) continue;
                 ++countNumItems;
             }
             if (countNumItems < 3

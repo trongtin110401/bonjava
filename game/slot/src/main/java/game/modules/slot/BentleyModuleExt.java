@@ -3,9 +3,15 @@ package game.modules.slot;
 import bitzero.server.entities.User;
 import bitzero.server.extensions.data.DataCmd;
 import bitzero.util.common.business.Debug;
+import com.vinplay.dal.service.SlotMachineService;
+import com.vinplay.dal.service.impl.SlotMachineServiceImpl;
 import com.vinplay.vbee.common.enums.Games;
 import game.modules.slot.cmd.Slot25BasicCommandCollection;
 import game.modules.slot.cmd.SlotCMD;
+import game.modules.slot.listener.SlotLogListener;
+
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
 public class BentleyModuleExt extends Slot25BasicModule {
 
@@ -25,6 +31,18 @@ public class BentleyModuleExt extends Slot25BasicModule {
         commandCollection.INFO_MESSAGE = SlotCMD.AVENGER_INFO;
         commandCollection.MINIMIZE_RESULT_MESSAGE = SlotCMD.AVENGER_RESULT_MINIMIZE;
         return commandCollection;
+    }
+
+    @Override
+    protected SlotLogListener initLogListener() {
+        return new SlotLogListener() {
+            final SlotMachineService slotMachineService = new SlotMachineServiceImpl();
+
+            @Override
+            public void log(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time) throws IOException, TimeoutException, InterruptedException {
+                slotMachineService.logBenley(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time);
+            }
+        };
     }
 
     @Override

@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum Line25Item {
+
     SCATTER("SCATTER", 1, "Scatter", (byte) 0),
     BONUS("BONUS", 2, "Bonus", (byte) 1),
     WILD("WILD", 3, "Wild", (byte) 2),
@@ -31,8 +32,8 @@ public enum Line25Item {
     }
 
     static {
-        Arrays.stream(Line25Item.values()).forEach(avengersItem -> {
-            map.put((int) avengersItem.getId(), avengersItem);
+        Arrays.stream(Line25Item.values()).forEach(item -> {
+            map.put((int) item.getId(), item);
         });
     }
 

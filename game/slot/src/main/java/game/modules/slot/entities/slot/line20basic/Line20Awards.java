@@ -3,16 +3,23 @@
  */
 package game.modules.slot.entities.slot.line20basic;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Line20Awards {
+
     private static List<Line20Award> awards = new ArrayList<Line20Award>();
+    private static Map<String, Line20Award> awardMap = new HashMap<>();
+
+    static {
+        Arrays.stream(Line20Award.values())
+                .forEach(award -> {
+                    String key = award.getId() + "_" + award.getDuplicate();
+                    awardMap.put(key, award);
+                });
+    }
 
     public Line20Awards() {
-        for (Line20Award entry : Line20Award.values()) {
-            awards.add(entry);
-        }
+        Collections.addAll(awards, Line20Award.values());
     }
 
     public static List<Line20Award> list() {
@@ -20,11 +27,7 @@ public class Line20Awards {
     }
 
     public static Line20Award getAward(Line20Item item, int numItems) {
-        for (Line20Award entry : Line20Award.values()) {
-            if (entry.getItem() != item || entry.getDuplicate() != numItems) continue;
-            return entry;
-        }
-        return null;
+        return awardMap.get(item.getId() + "_" + numItems);
     }
 }
 

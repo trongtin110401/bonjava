@@ -18,9 +18,7 @@ public class Line25AwardManager {
     }
 
     public Line25AwardManager() {
-        for (Line25Award entry : Line25Award.values()) {
-            awards.add(entry);
-        }
+        Collections.addAll(awards, Line25Award.values());
     }
 
     public static Line25Award getAward(Line25Item item, int numItems) {

@@ -62,11 +62,11 @@ public class Slot20Room extends SlotRoom {
     private long lastTimeUpdateFundToRoom = 0L;
     private final ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
     private final List<Integer> boxValues = new ArrayList<>();
-    private String gn;
+    private final String gn;
     private int countNoHu = 0;
 
-    private SlotLogListener slotLogListener;
-    private Slot20CommandCollection commandCollection;
+    private final SlotLogListener slotLogListener;
+    private final Slot20CommandCollection commandCollection;
 
     public Slot20Room(SlotModule module, Slot20CommandCollection commandCollection, SlotLogListener slotLogListener, String gameName, byte id, String room, short moneyType, long pot, long fund, int betValue, long initPotValue) {
         super(id, room, betValue, moneyType, pot, fund, initPotValue);
@@ -95,8 +95,7 @@ public class Slot20Room extends SlotRoom {
     @Override
     public void forceStopAutoPlay(User user) {
         super.forceStopAutoPlay(user);
-        Map map = this.usersAuto;
-        synchronized (map) {
+        synchronized (usersAuto) {
             this.usersAuto.remove(user.getName());
             Slot20ForceStopAutoPlayMsg msg = new Slot20ForceStopAutoPlayMsg(commandCollection.FORCE_AUTO_PLAY_MESSAGE);
             SlotUtils.sendMessageToUser(msg, user);
@@ -104,28 +103,38 @@ public class Slot20Room extends SlotRoom {
     }
 
     public synchronized SLot20ResultMsg play(String username, String linesStr) {
-
-        boolean forceJackpotByUser = false;
-
-        long startTime = System.currentTimeMillis();
-
+//        long startTime = System.currentTimeMillis();
+        // thời điểm hiện tại
         String currentTimeStr = DateTimeUtils.getCurrentTime();
+        // mã tham chiếu giao dịch
         long referenceId = this.module.getNewReferenceId();
-
-        short result = 0;
-        String[] lineArr = linesStr.split(",");
-        long currentMoney = this.userService.getMoneyUserCache(username, this.moneyTypeStr);
-        UserCacheModel u = this.userService.getUser(username);
-        long totalBetValue = (long) lineArr.length * this.betValue;
+        // kết quả mặc định
+        short result = ResultSlot.MISSED;
+        // số line người chơi chọn
+        String[] selectedLines = linesStr.split(",");
+        // tổng cược
+        long totalBetValue = (long) selectedLines.length * this.betValue;
+        // response message
         SLot20ResultMsg msg = new SLot20ResultMsg(commandCollection.RESULT_MESSAGE);
+        // Lớp dịch vụ caching
         CacheServiceImpl cacheService = new CacheServiceImpl();
+        // từ PHP admin, cài đặt cho một người chơi trúng JACKPOT
+        boolean forceJackpotByUser = false;
+        // người chơi được set nổ hũ
         String userForce;
+        // phòng được set nổ hũ
+        String roomForce;
         try {
             userForce = cacheService.getValueStr(CACHE_NAME_USER_SPOT + this.gn);
         } catch (Exception e) {
             userForce = "";
         }
-        if (lineArr.length > 0 && !linesStr.isEmpty()) {
+        // thông tin user
+        UserCacheModel u = this.userService.getUser(username);
+        // số dư hiện tại của user
+        long currentMoney = this.userService.getMoneyUserCache(username, this.moneyTypeStr);
+        // số lines được chọn > 0
+        if (selectedLines.length > 0 && !linesStr.isEmpty()) {
             if (totalBetValue > 0L) {
                 if (totalBetValue <= currentMoney) {
                     long fee = totalBetValue * 2L / 100L;
@@ -164,31 +173,31 @@ public class Slot20Room extends SlotRoom {
 //                            }
                             if (betValue == 100) {
                                 soLanNoHu = ConfigGame.getIntValue(this.gameName + "_so_lan_no_hu_100");
-                                if (lineArr.length >= 15 && soLanNoHu > 0 && this.fund > this.pot * 2L && new Random().nextInt(soLanNoHu) == 0 && countNoHu >= soLanNoHu) {
+                                if (selectedLines.length >= 15 && soLanNoHu > 0 && this.fund > this.pot * 2L && new Random().nextInt(soLanNoHu) == 0 && countNoHu >= soLanNoHu) {
                                     forceNoHu = true;
                                 }
-                                if (userForce.equals(username) && lineArr.length >= 15 && soLanNoHu > 0 && this.fund > this.pot * 2L && countNoHu >= soLanNoHu) {
+                                if (userForce.equals(username) && selectedLines.length >= 15 && soLanNoHu > 0 && this.fund > this.pot * 2L && countNoHu >= soLanNoHu) {
                                     forceNoHu = true;
                                     forceJackpotByUser = true;
                                 }
 
                             } else if (betValue == 1000) {
                                 soLanNoHu = ConfigGame.getIntValue(this.gameName + "_so_lan_no_hu_1000");
-                                if (lineArr.length >= 20 && soLanNoHu > 0 && this.fund > this.pot * 3L && new Random().nextInt(soLanNoHu) == 0 && countNoHu >= soLanNoHu) {
+                                if (selectedLines.length >= 20 && soLanNoHu > 0 && this.fund > this.pot * 3L && new Random().nextInt(soLanNoHu) == 0 && countNoHu >= soLanNoHu) {
                                     forceNoHu = true;
 
                                 }
                                 //force user jackpot
-                                if (userForce.equals(username) && lineArr.length >= 20 && soLanNoHu > 0 && this.fund > this.pot * 3L && countNoHu >= soLanNoHu) {
+                                if (userForce.equals(username) && selectedLines.length >= 20 && soLanNoHu > 0 && this.fund > this.pot * 3L && countNoHu >= soLanNoHu) {
                                     forceNoHu = true;
                                     forceJackpotByUser = true;
                                 }
                             } else {
                                 soLanNoHu = ConfigGame.getIntValue(this.gameName + "_so_lan_no_hu_10000");
-                                if (lineArr.length >= 20 && soLanNoHu > 0 && this.fund > this.pot * 3L && new Random().nextInt(soLanNoHu) == 0 && countNoHu >= soLanNoHu) {
+                                if (selectedLines.length >= 20 && soLanNoHu > 0 && this.fund > this.pot * 3L && new Random().nextInt(soLanNoHu) == 0 && countNoHu >= soLanNoHu) {
                                     forceNoHu = true;
                                 }
-                                if (userForce.equals(username) && lineArr.length >= 20 && soLanNoHu > 0 && this.fund > this.pot * 3L && countNoHu >= soLanNoHu) {
+                                if (userForce.equals(username) && selectedLines.length >= 20 && soLanNoHu > 0 && this.fund > this.pot * 3L && countNoHu >= soLanNoHu) {
                                     forceNoHu = true;
                                     forceJackpotByUser = true;
                                 }
@@ -203,19 +212,20 @@ public class Slot20Room extends SlotRoom {
 
                                     AgentServiceImpl service = new AgentServiceImpl();
                                     List<AgentResponse> agents = service.listAgent();
-                                    ArrayList<String> agentNames = new ArrayList<String>();
-                                    if (agents != null && agents.size() > 0) {
+                                    ArrayList<String> agentNames = new ArrayList<>();
+                                    if (agents != null && !agents.isEmpty()) {
                                         for (AgentResponse agent : agents) {
                                             agentNames.add(agent.nickName);
                                         }
                                     }
                                     List<LogUserMoneyResponse> resulReceive = logService.searchAllLogMoneyUser(username, "RECEIVE", false);
-                                    if (resulReceive != null && resulReceive.size() > 0) {
+                                    if (resulReceive != null && !resulReceive.isEmpty()) {
                                         for (LogUserMoneyResponse trans : resulReceive) {
                                             boolean matchAgent = false;
                                             for (String s : agentNames) {
                                                 if (trans.description.contains(s)) {
                                                     matchAgent = true;
+                                                    break;
                                                 }
                                             }
                                             if (matchAgent) {
@@ -226,7 +236,7 @@ public class Slot20Room extends SlotRoom {
 
                                     long total_recharge_card_money = 0;//total_agency_receive - userModel.getRechargeMoney();                
                                     List<LogUserMoneyResponse> resultCard = logService.searchAllLogMoneyUser(username, "CARD", false);
-                                    if (resultCard != null && resultCard.size() > 0) {
+                                    if (resultCard != null && !resultCard.isEmpty()) {
 
 
                                         for (LogUserMoneyResponse trans : resultCard) {
@@ -235,7 +245,7 @@ public class Slot20Room extends SlotRoom {
                                     }
                                     //search total deposit bank
                                     List<LogUserMoneyResponse> resultBank = logService.searchAllLogMoneyUser(username, "BANK", false);
-                                    if (resultBank != null && resultBank.size() > 0) {
+                                    if (resultBank != null && !resultBank.isEmpty()) {
 
                                         for (LogUserMoneyResponse trans : resultBank) {
                                             total_deposit_bank += trans.moneyExchange;
@@ -244,7 +254,7 @@ public class Slot20Room extends SlotRoom {
                                     //search total deposit momo
 
                                     List<LogUserMoneyResponse> resultMomo = logService.searchAllLogMoneyUser(username, "MOMO", false);
-                                    if (resultMomo != null && resultMomo.size() > 0) {
+                                    if (resultMomo != null && !resultMomo.isEmpty()) {
 
                                         for (LogUserMoneyResponse trans : resultMomo) {
                                             total_deposit_momo += trans.moneyExchange;
@@ -269,18 +279,18 @@ public class Slot20Room extends SlotRoom {
                                 }
                             }
 
-                            Line20Item[][] matrix = forceNoHu ? Slot20Utils.generateMatrixNoHu(lineArr) : Slot20Utils.generateMatrix();
-                            for (String entry2 : lineArr) {
+                            Line20Item[][] matrix = forceNoHu ? Slot20Utils.generateMatrixNoHu(selectedLines) : Slot20Utils.generateMatrix();
+                            for (String entry2 : selectedLines) {
                                 ArrayList<Line20Award> awardList = new ArrayList<>();
                                 Line20 line = Slot20Utils.getLine(this.lines, matrix, Integer.parseInt(entry2));
                                 Slot20Utils.calculateLine(line, awardList);
                                 for (Line20Award award : awardList) {
-                                    long moneyOnLine = 0L;
+                                    long moneyOnLine;
                                     if (award.getRatio() > 0.0f) {
                                         moneyOnLine = (long) (award.getRatio() * (float) this.betValue);
-                                    } else if (award == Line20Award.PENTA_POUCH) {
+                                    } else if (award == Line20Award.PENTA_FREE_SPIN) {
                                         for (AwardsOnLine e : awardsOnLines) {
-                                            if (e.getAward() != Line20Award.PENTA_POUCH) continue;
+                                            if (e.getAward() != Line20Award.PENTA_FREE_SPIN) continue;
                                             continue block4;
                                         }
                                         if (this.huX2) {
@@ -308,59 +318,58 @@ public class Slot20Room extends SlotRoom {
                             StringBuilder builderLinesWin = new StringBuilder();
                             StringBuilder builderPrizesOnLine = new StringBuilder();
                             for (AwardsOnLine entry2 : awardsOnLines) {
-//                                if ((entry2.getAward() == KhoBauAward.PENTA_POUCH || entry2.getAward() == KhoBauAward.QUADRA_POUCH || entry2.getAward() == KhoBauAward.TRIPLE_POUCH) && !u.isBot()) continue block4;
-                                if ((entry2.getAward() == Line20Award.PENTA_POUCH || entry2.getAward() == Line20Award.QUADRA_POUCH || entry2.getAward() == Line20Award.TRIPLE_POUCH) && !forceNoHu)
+                                if ((entry2.getAward() == Line20Award.PENTA_JACKPOT || entry2.getAward() == Line20Award.QUADRA_JACKPOT || entry2.getAward() == Line20Award.TRIPLE_JACKPOT) && !forceNoHu)
                                     continue block4;
 
                                 if (betValue == 100) {
                                     if (ConfigGame.getIntValue(this.gameName + "_cho_bot_no_hu_100") == 0) // cho cả người v bot nổ hũ
                                     {
-                                        if ((entry2.getAward() == Line20Award.PENTA_POUCH || entry2.getAward() == Line20Award.QUADRA_POUCH || entry2.getAward() == Line20Award.TRIPLE_POUCH))
+                                        if ((entry2.getAward() == Line20Award.PENTA_JACKPOT || entry2.getAward() == Line20Award.QUADRA_JACKPOT || entry2.getAward() == Line20Award.TRIPLE_JACKPOT))
                                             continue block4;
                                     } else if (ConfigGame.getIntValue(this.gameName + "_cho_bot_no_hu_100") == 1) // chỉ cho bot nổ hũ
                                     {
-                                        if ((entry2.getAward() == Line20Award.PENTA_POUCH || entry2.getAward() == Line20Award.QUADRA_POUCH || entry2.getAward() == Line20Award.TRIPLE_POUCH) && !u.isBot())
+                                        if ((entry2.getAward() == Line20Award.PENTA_JACKPOT || entry2.getAward() == Line20Award.QUADRA_JACKPOT || entry2.getAward() == Line20Award.TRIPLE_JACKPOT) && !u.isBot())
                                             continue block4;
                                     } else if (ConfigGame.getIntValue(this.gameName + "_cho_bot_no_hu_100") == -1) // chỉ cho người nổ hũ
                                     {
-                                        if ((entry2.getAward() == Line20Award.PENTA_POUCH || entry2.getAward() == Line20Award.QUADRA_POUCH || entry2.getAward() == Line20Award.TRIPLE_POUCH) && u.isBot())
+                                        if ((entry2.getAward() == Line20Award.PENTA_JACKPOT || entry2.getAward() == Line20Award.QUADRA_JACKPOT || entry2.getAward() == Line20Award.TRIPLE_JACKPOT) && u.isBot())
                                             continue block4;
                                     } else {
-                                        if ((entry2.getAward() == Line20Award.PENTA_POUCH || entry2.getAward() == Line20Award.QUADRA_POUCH || entry2.getAward() == Line20Award.TRIPLE_POUCH) && !u.isBot())
+                                        if ((entry2.getAward() == Line20Award.PENTA_JACKPOT || entry2.getAward() == Line20Award.QUADRA_JACKPOT || entry2.getAward() == Line20Award.TRIPLE_JACKPOT) && !u.isBot())
                                             continue block4;
                                     }
                                 } else if (betValue == 1000) {
                                     if (ConfigGame.getIntValue(this.gameName + "_cho_bot_no_hu_1000") == 0) // cho cả người và bot nổ hũ
                                     {
-                                        if ((entry2.getAward() == Line20Award.PENTA_POUCH || entry2.getAward() == Line20Award.QUADRA_POUCH || entry2.getAward() == Line20Award.TRIPLE_POUCH))
+                                        if ((entry2.getAward() == Line20Award.PENTA_JACKPOT || entry2.getAward() == Line20Award.QUADRA_JACKPOT || entry2.getAward() == Line20Award.TRIPLE_JACKPOT))
                                             continue block4;
                                     } else if (ConfigGame.getIntValue(this.gameName + "_cho_bot_no_hu_1000") == 1) // chỉ cho bot nổ hũ
                                     {
-                                        if ((entry2.getAward() == Line20Award.PENTA_POUCH || entry2.getAward() == Line20Award.QUADRA_POUCH || entry2.getAward() == Line20Award.TRIPLE_POUCH) && !u.isBot())
+                                        if ((entry2.getAward() == Line20Award.PENTA_JACKPOT || entry2.getAward() == Line20Award.QUADRA_JACKPOT || entry2.getAward() == Line20Award.TRIPLE_JACKPOT) && !u.isBot())
                                             continue block4;
                                     } else if (ConfigGame.getIntValue(this.gameName + "_cho_bot_no_hu_1000") == -1) // chỉ cho người nổ hũ
                                     {
-                                        if ((entry2.getAward() == Line20Award.PENTA_POUCH || entry2.getAward() == Line20Award.QUADRA_POUCH || entry2.getAward() == Line20Award.TRIPLE_POUCH) && u.isBot())
+                                        if ((entry2.getAward() == Line20Award.PENTA_JACKPOT || entry2.getAward() == Line20Award.QUADRA_JACKPOT || entry2.getAward() == Line20Award.TRIPLE_JACKPOT) && u.isBot())
                                             continue block4;
                                     } else {
-                                        if ((entry2.getAward() == Line20Award.PENTA_POUCH || entry2.getAward() == Line20Award.QUADRA_POUCH || entry2.getAward() == Line20Award.TRIPLE_POUCH) && !u.isBot())
+                                        if ((entry2.getAward() == Line20Award.PENTA_JACKPOT || entry2.getAward() == Line20Award.QUADRA_JACKPOT || entry2.getAward() == Line20Award.TRIPLE_JACKPOT) && !u.isBot())
                                             continue block4;
                                     }
                                 } else {
                                     if (ConfigGame.getIntValue(this.gameName + "_cho_bot_no_hu_10000") == 0) // cho cả người và bot nổ hũ
                                     {
-                                        if ((entry2.getAward() == Line20Award.PENTA_POUCH || entry2.getAward() == Line20Award.QUADRA_POUCH || entry2.getAward() == Line20Award.TRIPLE_POUCH))
+                                        if ((entry2.getAward() == Line20Award.PENTA_JACKPOT || entry2.getAward() == Line20Award.QUADRA_JACKPOT || entry2.getAward() == Line20Award.TRIPLE_JACKPOT))
                                             continue block4;
                                     } else if (ConfigGame.getIntValue(this.gameName + "_cho_bot_no_hu_10000") == 1) // chỉ cho bot nổ hũ
                                     {
-                                        if ((entry2.getAward() == Line20Award.PENTA_POUCH || entry2.getAward() == Line20Award.QUADRA_POUCH || entry2.getAward() == Line20Award.TRIPLE_POUCH) && !u.isBot())
+                                        if ((entry2.getAward() == Line20Award.PENTA_JACKPOT || entry2.getAward() == Line20Award.QUADRA_JACKPOT || entry2.getAward() == Line20Award.TRIPLE_JACKPOT) && !u.isBot())
                                             continue block4;
                                     } else if (ConfigGame.getIntValue(this.gameName + "_cho_bot_no_hu_10000") == -1) // chỉ cho người nổ hũ
                                     {
-                                        if ((entry2.getAward() == Line20Award.PENTA_POUCH || entry2.getAward() == Line20Award.QUADRA_POUCH || entry2.getAward() == Line20Award.TRIPLE_POUCH) && u.isBot())
+                                        if ((entry2.getAward() == Line20Award.PENTA_JACKPOT || entry2.getAward() == Line20Award.QUADRA_JACKPOT || entry2.getAward() == Line20Award.TRIPLE_JACKPOT) && u.isBot())
                                             continue block4;
                                     } else {
-                                        if ((entry2.getAward() == Line20Award.PENTA_POUCH || entry2.getAward() == Line20Award.QUADRA_POUCH || entry2.getAward() == Line20Award.TRIPLE_POUCH) && !u.isBot())
+                                        if ((entry2.getAward() == Line20Award.PENTA_JACKPOT || entry2.getAward() == Line20Award.QUADRA_JACKPOT || entry2.getAward() == Line20Award.TRIPLE_JACKPOT) && !u.isBot())
                                             continue block4;
                                     }
                                 }
@@ -412,20 +421,18 @@ public class Slot20Room extends SlotRoom {
                                         UserDaoImpl dao = new UserDaoImpl();
                                         try {
                                             model = dao.getUserByNickName(username);
-                                            if (model.getClient() != null && model.getClient() != "") {
+                                            if (model.getClient() != null && !Objects.equals(model.getClient(), "")) {
                                                 displayName = "[" + model.getClient() + "] " + username;
                                             } else {
                                                 displayName = "[X] " + username;
                                             }
-                                        } catch (SQLException ex) {
-
+                                        } catch (SQLException ignored) {
                                         }
                                     }
                                     if (forceJackpotByUser) {
                                         try {
                                             cacheService.removeKey(CACHE_NAME_USER_SPOT + this.gn);
-                                        } catch (Exception e) {
-
+                                        } catch (Exception ignored) {
                                         }
                                     }
                                     this.slotService.logNoHu(referenceId, this.gameName, displayName, this.betValue, linesStr, matrixStr, builderLinesWin.toString(), builderPrizesOnLine.toString(), totalPrizes, result, currentTimeStr);
@@ -497,10 +504,10 @@ public class Slot20Room extends SlotRoom {
         }
         msg.result = (byte) result;
         msg.currentMoney = currentMoney;
-        long endTime = System.currentTimeMillis();
-        long handleTime = endTime - startTime;
-        String ratioTime = CommonUtils.getRatioTime(handleTime);
-        SlotUtils.logKhoBau(referenceId, username, this.betValue, msg.matrix, msg.haiSao, result, handleTime, ratioTime, currentTimeStr);
+//        long endTime = System.currentTimeMillis();
+//        long handleTime = endTime - startTime;
+//        String ratioTime = CommonUtils.getRatioTime(handleTime);
+//        SlotUtils.logKhoBau(referenceId, username, this.betValue, msg.matrix, msg.haiSao, result, handleTime, ratioTime, currentTimeStr);
         return msg;
     }
 
@@ -536,7 +543,7 @@ public class Slot20Room extends SlotRoom {
             StringBuilder builderLinesWin = new StringBuilder();
             StringBuilder builderPrizesOnLine = new StringBuilder();
             for (AwardsOnLine entry2 : awardsOnLines) {
-                if ((entry2.getAward() == Line20Award.PENTA_POUCH || entry2.getAward() == Line20Award.QUADRA_POUCH || entry2.getAward() == Line20Award.TRIPLE_POUCH))
+                if ((entry2.getAward() == Line20Award.PENTA_JACKPOT || entry2.getAward() == Line20Award.QUADRA_JACKPOT || entry2.getAward() == Line20Award.TRIPLE_JACKPOT))
                     continue block4;
 
                 totalPrizes += entry2.getMoney();
@@ -559,7 +566,7 @@ public class Slot20Room extends SlotRoom {
                 result = 103;
             } else {
                 if (totalPrizes > 0L) {
-                    MoneyResponse moneyRes = this.userService.updateMoney(username, totalPrizes, this.moneyTypeStr, this.gameName + "_Free", "Quay " + gn + " Free", "C\u01b0\u1ee3c: 0, Th\u1eafng: " + totalPrizes, 0L, null, TransType.NO_VIPPOINT);
+                    MoneyResponse moneyRes = this.userService.updateMoney(username, totalPrizes, this.moneyTypeStr, this.gameName + "_Free", "Quay " + gn + " Free", "Cược: 0, Thắng: " + totalPrizes, 0L, null, TransType.NO_VIPPOINT);
                     if (moneyRes != null && moneyRes.isSuccess()) {
                         currentMoney = moneyRes.getCurrentMoney();
                     }
@@ -596,7 +603,7 @@ public class Slot20Room extends SlotRoom {
     private MiniGameSlotResponse generatePickStars() {
         MiniGameSlotResponse response = new MiniGameSlotResponse();
         int totalMoney = 0;
-        ArrayList<PickStarGift> gifts = new ArrayList<PickStarGift>();
+        ArrayList<PickStarGift> gifts = new ArrayList<>();
         PickStarGifts pickStarGifts = new PickStarGifts();
         StringBuilder responsePickStars = new StringBuilder();
         int totalKeys = 1;
@@ -737,7 +744,7 @@ public class Slot20Room extends SlotRoom {
      */
     @Override
     protected void gameLoop() {
-        ArrayList<AutoUser> usersPlay = new ArrayList<AutoUser>();
+        ArrayList<AutoUser> usersPlay = new ArrayList<>();
         Map map = this.usersAuto;
         synchronized (map) {
             for (AutoUser user : this.usersAuto.values()) {
@@ -753,7 +760,7 @@ public class Slot20Room extends SlotRoom {
             if (toIndex > usersPlay.size()) {
                 toIndex = usersPlay.size();
             }
-            ArrayList<AutoUser> tmp = new ArrayList<AutoUser>(usersPlay.subList(fromIndex, toIndex));
+            ArrayList<AutoUser> tmp = new ArrayList<>(usersPlay.subList(fromIndex, toIndex));
             PlayListAutoUserTask task = new PlayListAutoUserTask(tmp);
             this.executor.execute(task);
         }
