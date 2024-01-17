@@ -1,10 +1,13 @@
 package game.modules.slot;
 
+import bitzero.server.entities.User;
+import bitzero.server.extensions.data.DataCmd;
+import bitzero.util.common.business.Debug;
 import com.vinplay.vbee.common.enums.Games;
 import game.modules.slot.cmd.Slot25BasicCommandCollection;
 import game.modules.slot.cmd.SlotCMD;
 
-public class BentleyModuleExt extends Slot25LineBasicModule {
+public class BentleyModuleExt extends Slot25BasicModule {
 
     public BentleyModuleExt() {
         super(Games.BENTLEY.getName());
@@ -22,5 +25,35 @@ public class BentleyModuleExt extends Slot25LineBasicModule {
         commandCollection.INFO_MESSAGE = SlotCMD.AVENGER_INFO;
         commandCollection.MINIMIZE_RESULT_MESSAGE = SlotCMD.AVENGER_RESULT_MINIMIZE;
         return commandCollection;
+    }
+
+    @Override
+    public void handleClientRequest(User user, DataCmd dataCmd) {
+        Debug.trace("Avenger handleClientRequest " + dataCmd.getId());
+        switch (dataCmd.getId()) {
+            case 4003: {
+                this.subScribe(user, dataCmd);
+                break;
+            }
+            case 4004: {
+                this.unSubScribe(user, dataCmd);
+                break;
+            }
+            case 4005: {
+                this.changeRoom(user, dataCmd);
+                break;
+            }
+            case 4006: {
+                this.autoPlay(user, dataCmd);
+                break;
+            }
+            case 4001: {
+                this.play(user, dataCmd);
+                break;
+            }
+            case 4013: {
+                this.minimize(user, dataCmd);
+            }
+        }
     }
 }

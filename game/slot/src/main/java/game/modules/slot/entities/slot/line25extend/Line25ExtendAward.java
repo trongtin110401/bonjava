@@ -1,0 +1,98 @@
+/*
+ * Decompiled with CFR 0.144.
+ */
+package game.modules.slot.entities.slot.line25extend;
+
+public enum Line25ExtendAward {
+
+    PENTA_SCATTER("PENTA_SCATTER", 0, (byte) 1, Line25ExtendItem.SCATTER, (byte) 5, 22f),
+    QUADAR_SCATTER("QUADAR_SCATTER", 1, (byte) 2, Line25ExtendItem.SCATTER, (byte) 4, 8f),
+
+    PENTA_BONUS("PENTA_BONUS", 3, (byte) 4, Line25ExtendItem.BONUS, (byte) 5, 0f),
+    QUADAR_BONUS("QUADAR_BONUS", 4, (byte) 5, Line25ExtendItem.BONUS, (byte) 4, 0f),
+    TRIPLE_BONUS("TRIPLE_BONUS", 5, (byte) 6, Line25ExtendItem.BONUS, (byte) 3, 0f),
+
+    TRIPLE_WILD("TRIPLE_WILD", 8, (byte) 9, Line25ExtendItem.WILD, (byte) 3, 0.0f),
+    DOUBLE_WILD("DOUBLE_WILD", 9, (byte) 10, Line25ExtendItem.WILD, (byte) 2, 0.0f),
+
+    PENTA_JACKPOT("PENTA_JACK_POT", 11, (byte) 10, Line25ExtendItem.JACKPOT, (byte) 5, 0f),
+    QUADAR_JACKPOT("QUADAR_JACK_POT", 12, (byte) 11, Line25ExtendItem.JACKPOT, (byte) 4, 200.0f),
+    TRIPLE_JACKPOT("TRIPLE_JACK_POT", 13, (byte) 12, Line25ExtendItem.JACKPOT, (byte) 3, 50.0f),
+    DOUBLE_JACKPOT("DOUBLE_JACK_POT", 14, (byte) 12, Line25ExtendItem.JACKPOT, (byte) 2, 5.0f),
+
+    PENTA_G("PENTA_G", 14, (byte) 15, Line25ExtendItem.G, (byte) 5, 200.0f),
+    QUADAR_G("QUADAR_G", 15, (byte) 16, Line25ExtendItem.G, (byte) 4, 100.0f),
+    TRIPLE_G("TRIPLE_G", 16, (byte) 17, Line25ExtendItem.G, (byte) 3, 15.0f),
+    DOUBLE_G("DOUBLE_G", 16, (byte) 17, Line25ExtendItem.G, (byte) 2, 2.0f),
+
+    PENTA_F("PENTA_F", 17, (byte) 18, Line25ExtendItem.F, (byte) 5, 150.0f),
+    QUADAR_F("QUADAR_F", 18, (byte) 19, Line25ExtendItem.F, (byte) 4, 55.0f),
+    TRIPLE_F("TRIPLE_F", 19, (byte) 20, Line25ExtendItem.F, (byte) 3, 10.0f),
+    DOUBLE_F("DOUBLE_F", 19, (byte) 20, Line25ExtendItem.F, (byte) 2, 2.0f),
+
+    PENTA_E("PENTA_E", 20, (byte) 21, Line25ExtendItem.E, (byte) 5, 100.0f),
+    QUADAR_E("QUADAR_E", 21, (byte) 22, Line25ExtendItem.E, (byte) 4, 40.0f),
+    TRIPLE_E("TRIPLE_E", 22, (byte) 23, Line25ExtendItem.E, (byte) 3, 10.0f),
+    DOUBLE_E("DOUBLE_E", 22, (byte) 23, Line25ExtendItem.E, (byte) 2, 2.0f),
+
+    PENTA_D("PENTA_D", 23, (byte) 24, Line25ExtendItem.D, (byte) 5, 70.0f),
+    QUADAR_D("QUADAR_D", 24, (byte) 25, Line25ExtendItem.D, (byte) 4, 30.0f),
+    TRIPLE_D("TRIPLE_D", 25, (byte) 26, Line25ExtendItem.D, (byte) 3, 5.0f),
+
+    PENTA_C("PENTA_C", 26, (byte) 27, Line25ExtendItem.C, (byte) 5, 55.0f),
+    QUADAR_C("QUADAR_C", 27, (byte) 28, Line25ExtendItem.C, (byte) 4, 200.0f),
+    TRIPLE_C("TRIPLE_C", 28, (byte) 29, Line25ExtendItem.C, (byte) 3, 5.0f),
+
+    PENTA_B("PENTA_B", 29, (byte) 30, Line25ExtendItem.B, (byte) 5, 40.0f),
+    QUADAR_B("QUADAR_B", 30, (byte) 31, Line25ExtendItem.B, (byte) 4, 15.0f),
+    TRIPLE_B("TRIPLE_B", 31, (byte) 32, Line25ExtendItem.B, (byte) 3, 3.0f),
+
+    PENTA_A("PENTA_A", 32, (byte) 33, Line25ExtendItem.A, (byte) 5, 30.0f),
+    QUADAR_A("QUADAR_A", 33, (byte) 34, Line25ExtendItem.A, (byte) 4, 10.0f),
+    TRIPLE_A("TRIPLE_A", 34, (byte) 35, Line25ExtendItem.A, (byte) 3, 2.0f);
+
+    private byte id;
+    private Line25ExtendItem item;
+    private byte duplicate;
+    private float ratio;
+
+    Line25ExtendAward(String name, int index, byte id, Line25ExtendItem item, byte duplicate, float ratio) {
+        this.id = id;
+        this.item = item;
+        this.duplicate = duplicate;
+        this.ratio = ratio;
+    }
+
+    public void setId(byte id) {
+        this.id = id;
+    }
+
+    public byte getId() {
+        return this.id;
+    }
+
+    public void setItem(Line25ExtendItem item) {
+        this.item = item;
+    }
+
+    public Line25ExtendItem getItem() {
+        return this.item;
+    }
+
+    public void setDuplicate(byte duplicate) {
+        this.duplicate = duplicate;
+    }
+
+    public byte getDuplicate() {
+        return this.duplicate;
+    }
+
+    public void setRatio(float ratio) {
+        this.ratio = ratio;
+    }
+
+    public float getRatio() {
+        return this.ratio;
+    }
+}
+

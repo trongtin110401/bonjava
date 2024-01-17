@@ -6,7 +6,7 @@ package game.modules.slot.utils;
 import game.modules.slot.entities.slot.Cell;
 import game.modules.slot.entities.slot.Line;
 import game.modules.slot.entities.slot.MiniGameSlotResponse;
-import game.modules.slot.entities.slot.avengers.*;
+import game.modules.slot.entities.slot.line25basic.*;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;

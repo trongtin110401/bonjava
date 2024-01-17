@@ -18,6 +18,7 @@ import game.modules.slot.cmd.rev.audition.MinimizeAuditionCmd;
 import game.modules.slot.cmd.rev.slot25linebasic.*;
 import game.modules.slot.cmd.send.slot25linebasic.InfoMsg;
 import game.modules.slot.entities.BotMinigame;
+import game.modules.slot.listener.SlotLogListener;
 import game.modules.slot.room.Slot25BasicRoom;
 import game.modules.slot.utils.SlotUtils;
 import game.util.ConfigGame;
@@ -28,12 +29,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public abstract class Slot25LineBasicModule extends SlotModule {
+public abstract class Slot25BasicModule extends SlotModule {
     private long referenceId = 1L;
     private final String fullLines = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25";
     private Slot25BasicCommandCollection commandCollection;
+    private SlotLogListener slotLogListener;
 
-    public Slot25LineBasicModule(String gameName) {
+    public Slot25BasicModule(String gameName) {
         this.gameName = gameName;
     }
 
@@ -42,6 +44,8 @@ public abstract class Slot25LineBasicModule extends SlotModule {
         super.init();
         // message command collection
         commandCollection = initMessageCommand();
+        // log listener
+        slotLogListener = initLogListener();
         // quỹ thưởng
         long[] funds = new long[3];
         //  jacpot
@@ -61,9 +65,13 @@ public abstract class Slot25LineBasicModule extends SlotModule {
             Debug.trace("Init " + this.gameName + " error ", e);
         }
 
-        this.rooms.put(this.gameName + "_vin_100", new Slot25BasicRoom(this, this.commandCollection, (byte) 0, this.gameName + "_vin_100", (short) 1, this.jackpots[0], funds[0], 100, initJackpotValues[0]));
-        this.rooms.put(this.gameName + "_vin_1000", new Slot25BasicRoom(this, this.commandCollection, (byte) 1, this.gameName + "_vin_1000", (short) 1, this.jackpots[1], funds[1], 1000, initJackpotValues[1]));
-        this.rooms.put(this.gameName + "_vin_10000", new Slot25BasicRoom(this, this.commandCollection, (byte) 2, this.gameName + "_vin_10000", (short) 1, this.jackpots[2], funds[2], 10000, initJackpotValues[2]));
+        this.rooms.put(this.gameName + "_vin_100",
+                new Slot25BasicRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 0, this.gameName + "_vin_100", (short) 1, this.jackpots[0], funds[0], 100, initJackpotValues[0]));
+        this.rooms.put(this.gameName + "_vin_1000",
+                new Slot25BasicRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 1, this.gameName + "_vin_1000", (short) 1, this.jackpots[1], funds[1], 1000, initJackpotValues[1]));
+        this.rooms.put(this.gameName + "_vin_10000",
+                new Slot25BasicRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 2, this.gameName + "_vin_10000", (short) 1, this.jackpots[2], funds[2], 10000, initJackpotValues[2]));
+
         Debug.trace("INIT " + this.gameName + " DONE");
 
         this.getParentExtension().addEventListener(BZEventType.USER_DISCONNECT, this);
@@ -88,6 +96,8 @@ public abstract class Slot25LineBasicModule extends SlotModule {
     }
 
     protected abstract Slot25BasicCommandCollection initMessageCommand();
+
+    protected abstract SlotLogListener initLogListener();
 
     @Override
     public long getBaseBetting(byte roomId) {
@@ -126,37 +136,6 @@ public abstract class Slot25LineBasicModule extends SlotModule {
         }
         BroadCastUserState.popBroadCast(user.getName());
 
-    }
-
-    @Override
-    public void handleClientRequest(User user, DataCmd dataCmd) {
-        Debug.trace("Avenger handleClientRequest " + dataCmd.getId());
-
-        switch (dataCmd.getId()) {
-            case 4003: {
-                this.subScribe(user, dataCmd);
-                break;
-            }
-            case 4004: {
-                this.unSubScribe(user, dataCmd);
-                break;
-            }
-            case 4005: {
-                this.changeRoom(user, dataCmd);
-                break;
-            }
-            case 4006: {
-                this.autoPlay(user, dataCmd);
-                break;
-            }
-            case 4001: {
-                this.play(user, dataCmd);
-                break;
-            }
-            case 4013: {
-                this.minimize(user, dataCmd);
-            }
-        }
     }
 
     @Override
@@ -233,7 +212,7 @@ public abstract class Slot25LineBasicModule extends SlotModule {
         BroadCastUserState.pushBroadCast(user.getName(), user.getName() + " play " + gameName + " " + roomJoined.getBetValue());
     }
 
-    private void play(User user, DataCmd dataCmd) {
+    protected void play(User user, DataCmd dataCmd) {
         PlayCmd cmd = new PlayCmd(dataCmd);
         Slot25BasicRoom room = (Slot25BasicRoom) user.getProperty("MGROOM_" + this.gameName + "_INFO");
         if (room != null) {
@@ -247,7 +226,7 @@ public abstract class Slot25LineBasicModule extends SlotModule {
         BroadCastUserState.pushBroadCast(user.getName(), user.getName() + " play " + gameName + " " + room.getBetValue());
     }
 
-    private void autoPlay(User user, DataCmd dataCMD) {
+    protected void autoPlay(User user, DataCmd dataCMD) {
         AutoPlayCmd cmd = new AutoPlayCmd(dataCMD);
         Slot25BasicRoom room = (Slot25BasicRoom) user.getProperty("MGROOM_" + this.gameName + "_INFO");
         if (room != null) {
@@ -260,7 +239,7 @@ public abstract class Slot25LineBasicModule extends SlotModule {
                         room.forceStopAutoPlay(user);
                     }
                 } catch (Exception ex) {
-                    Logger.getLogger(Slot25LineBasicModule.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Slot25BasicModule.class.getName()).log(Level.SEVERE, null, ex);
                 }
             } else {
                 room.stopAutoPlay(user);

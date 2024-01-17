@@ -23,7 +23,7 @@ import game.modules.slot.entities.slot.AutoUser;
 import game.modules.slot.entities.slot.AwardsOnLine;
 import game.modules.slot.entities.slot.Line;
 import game.modules.slot.entities.slot.MiniGameSlotResponse;
-import game.modules.slot.entities.slot.avengers.*;
+import game.modules.slot.entities.slot.line25basic.*;
 import game.modules.slot.utils.Line25Utils;
 import game.modules.slot.utils.Constant;
 import game.modules.slot.utils.SlotUtils;

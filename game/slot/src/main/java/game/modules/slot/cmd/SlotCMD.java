@@ -22,6 +22,7 @@ public class SlotCMD {
     public static final short KHO_BAU_FREE_DAILY = 2012;
     public static final short KHO_BAU_MINIMIZE = 2013;
     public static final short KHO_BAU_RESULT_MINIMIZE = 2014;
+    public static final short KHO_BAU_TOTAL_FREE_SPIN = 2015;
     public static final short PLAY_NU_DIEP_VIEN = 3001;
     public static final short UPDATE_POT_NU_DIEP_VIEN = 3002;
     public static final short SUBSCRIBE_NU_DIEP_VIEN = 3003;

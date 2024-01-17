@@ -10,10 +10,10 @@ import game.modules.slot.cmd.send.benley.ResultBenleyMsg;
 import game.modules.slot.entities.slot.AwardsOnLine;
 import game.modules.slot.entities.slot.Line;
 import game.modules.slot.entities.slot.MiniGameSlotResponse;
-import game.modules.slot.entities.slot.avengers.Line25Award;
-import game.modules.slot.entities.slot.avengers.Line25AwardManager;
-import game.modules.slot.entities.slot.avengers.Line25Item;
-import game.modules.slot.entities.slot.avengers.Line25Lines;
+import game.modules.slot.entities.slot.line25basic.Line25Award;
+import game.modules.slot.entities.slot.line25basic.Line25AwardManager;
+import game.modules.slot.entities.slot.line25basic.Line25Item;
+import game.modules.slot.entities.slot.line25basic.Line25Lines;
 import game.modules.slot.utils.Line25Utils;
 
 import java.util.ArrayList;

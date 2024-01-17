@@ -1,0 +1,26 @@
+/*
+ * Decompiled with CFR 0.144.
+ *
+ * Could not load the following classes:
+ *  bitzero.server.extensions.data.BaseMsg
+ */
+package game.modules.slot.cmd.send.slot20line;
+
+import bitzero.server.extensions.data.BaseMsg;
+
+import java.nio.ByteBuffer;
+
+public class Slot20X2Msg extends BaseMsg {
+    public String ngayX2;
+
+    public Slot20X2Msg(short type) {
+        super(type);
+    }
+
+    public byte[] createData() {
+        ByteBuffer bf = this.makeBuffer();
+        this.putStr(bf, this.ngayX2);
+        return this.packBuffer(bf);
+    }
+}
+

@@ -6,7 +6,6 @@ import bitzero.server.entities.User;
 import bitzero.util.common.business.Debug;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
-
 import com.vinplay.dal.service.impl.CacheServiceImpl;
 import com.vinplay.usercore.dao.impl.UserDaoImpl;
 import com.vinplay.vbee.common.enums.Games;
@@ -18,10 +17,8 @@ import com.vinplay.vbee.common.models.slot.SlotFreeSpin;
 import com.vinplay.vbee.common.response.MoneyResponse;
 import com.vinplay.vbee.common.statics.TransType;
 import com.vinplay.vbee.common.utils.DateTimeUtils;
-
 import game.modules.slot.SlotModule;
 import game.modules.slot.cmd.Slot25BasicCommandCollection;
-
 import game.modules.slot.cmd.send.slot25linebasic.*;
 import game.modules.slot.entities.slot.AutoUser;
 import game.modules.slot.entities.slot.AwardsOnLine;
@@ -48,7 +45,8 @@ import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Slot25BasicRoom extends SlotRoom {
+public class Slot25ExtendRoom extends SlotRoom {
+    // Room Lifecycle
     private final Runnable gameLoopTask = new GameLoopTask();
     private final Runnable checkResetPotTask = new CheckResetPot();
     private final Line25Lines lines = new Line25Lines();
@@ -58,22 +56,22 @@ public class Slot25BasicRoom extends SlotRoom {
     private final Slot25BasicCommandCollection commandCollection;
     private static final org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger("slot");
 
-    private SlotLogListener logListener;
+    // litener zone
+    private SlotLogListener slotLogListener;
 
-    public Slot25BasicRoom(SlotModule module, Slot25BasicCommandCollection commandCollection, SlotLogListener logListener, String gameName, byte id, String room, short moneyType, long pot, long fund, int betValue, long initJackpotValue) {
+    public Slot25ExtendRoom(SlotModule module, Slot25BasicCommandCollection commandCollection, byte id, String gameName, short moneyType, long pot, long fund, int betValue, long initJackpotValue) {
 
-        super(id, room, betValue, moneyType, pot, fund, initJackpotValue);
+        super(id, gameName, betValue, moneyType, pot, fund, initJackpotValue);
 
         this.module = module;
         this.commandCollection = commandCollection;
-        this.logListener = logListener;
         this.moneyType = moneyType;
         this.gameName = gameName;
         this.cacheFreeSpinName = this.gameName + betValue;
 
         // init jackpot value
         CacheServiceImpl cacheService = new CacheServiceImpl();
-        cacheService.setValue(room, (int) pot);
+        cacheService.setValue(gameName, (int) pot);
 
         this.betValue = betValue;
         this.initJackpotValues = initJackpotValue;
@@ -120,9 +118,9 @@ public class Slot25BasicRoom extends SlotRoom {
         // từ PHP admin, cài đặt cho một người chơi trúng JACKPOT
         boolean forceJackpotToUser = false;
         // người chơi được set nổ hũ
-        String usernameForce;
+        String usernameForce = "";
         // phòng được set nổ hũ
-        String roomForce;
+        String roomForce = "";
         // Lớp dịch vụ caching
         CacheServiceImpl cacheService = new CacheServiceImpl();
         try {
@@ -258,9 +256,9 @@ public class Slot25BasicRoom extends SlotRoom {
                             // Trường hợp 1 WHEEL có xuất hiện item WILD, toàn bộ WHEEL đó sẽ được thay thế bởi nó
                             // Trong trường hợp này (Slot Machine 25Line Basic thì không áp dụng)
 
-                            /* AvengersItem[][] matrixWild = AvengersUtils.revertMatrix(matrix); */
+                            Line25Item[][] matrixWild = Line25Utils.revertMatrix(matrix);
 
-                            Line25Item[][] matrixWild = matrix;
+//                            Line25Item[][] matrixWild = matrix;
 
                             // Duyệt toàn bộ Lines được chọn bởi người chơi để tính toán giải thưởng trên từng Line
                             for (String selectedLine : selectedLines) {
@@ -403,7 +401,7 @@ public class Slot25BasicRoom extends SlotRoom {
                             try {
                                 // lưu nhật ký chơi
                                 if (!u.isBot()) {
-                                    this.logListener.log(referenceId, username, this.betValue, linesStr, linesWin, prizesOnLine, result, totalPrizes, currentTimeStr);
+                                    this.slotLogListener.log(referenceId, username, this.betValue, linesStr, linesWin, prizesOnLine, result, totalPrizes, currentTimeStr);
                                 }
                                 // lưu nhật ký nổ hũ
                                 if (result == ResultSlot.JACKPOT) {
@@ -614,7 +612,7 @@ public class Slot25BasicRoom extends SlotRoom {
                 }
                 user.setMaxCount(8);
             } catch (Exception ex) {
-                Logger.getLogger(Slot25BasicRoom.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Slot25ExtendRoom.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         users.clear();
