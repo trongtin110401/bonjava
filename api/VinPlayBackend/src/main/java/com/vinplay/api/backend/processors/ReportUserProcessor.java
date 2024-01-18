@@ -20,6 +20,11 @@ import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 
 public class ReportUserProcessor
@@ -32,12 +37,22 @@ public class ReportUserProcessor
         String timeStart = request.getParameter("ts");
         String timeEnd = request.getParameter("te");
 
+
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        LocalDate localDateStart = LocalDate.parse(timeStart, inputFormatter);
+        LocalDate localDateEnd = LocalDate.parse(timeEnd, inputFormatter);
+
+        String ts = localDateStart.format(outputFormatter);
+        String te = localDateEnd.format(outputFormatter);
+
         UserForAdminServiceImpl service = new UserForAdminServiceImpl();
         try {
-            int totalRecord = service.countUser(timeStart, timeEnd);
-            int userPay = service.countUserPay(timeStart, timeEnd);
-            int userSecurity = service.countUserSecurity(timeStart, timeEnd);
-            int userPayAndSecurity = service.countUserPayAndSecurity(timeStart, timeEnd);
+            int totalRecord = service.countUser(ts, te);
+            int userPay = service.countUserPay(ts, te);
+            int userSecurity = service.countUserSecurity(ts, te);
+            int userPayAndSecurity = service.countUserPayAndSecurity(ts, te);
             response.setTotal(totalRecord);
             response.setUserPay(userPay);
             response.setUserSecurity(userSecurity);
@@ -45,7 +60,7 @@ public class ReportUserProcessor
             response.setSuccess(true);
             response.setErrorCode("0");
         } catch (SQLException e) {
-            logger.debug((Object) e);
+            logger.debug(e);
         }
         return response.toJson();
     }
