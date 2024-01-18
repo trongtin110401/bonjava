@@ -100,5 +100,13 @@ public interface UserDao {
 
     public boolean updateFishMoney(String nickName, long amount) throws SQLException;
     public UserFish GetUserFishByNickname(String nickName) throws SQLException;
+
+    public int countUser(String startTime, String endTime) throws SQLException;
+
+    public int countUserPay(String startTime, String endTime) throws SQLException;
+
+    public int countUserSecurity(String startTime, String endTime) throws SQLException;
+
+    public int countUserPayAndSecurity(String startTime, String endTime) throws SQLException;
 }
 

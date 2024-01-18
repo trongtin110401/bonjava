@@ -20,5 +20,13 @@ public interface UserForAdminService {
     public List<UserAdminInfo> searchUserAdmin(String var1, String var2, String var3, String var4, String var5, String var6, String var7, String var8, int var9, int var10, String var11, String var12, String var13) throws SQLException;
 
     public int countSearchUserAdmin(String var1, String var2, String var3, String var4, String var5, String var6, String var7, String var8, String var9) throws SQLException;
+
+    public int countUser(String startTime, String endTime) throws SQLException;
+    public int countUserPay(String startTime, String endTime) throws SQLException;
+
+    public int countUserSecurity(String startTime, String endTime) throws SQLException;
+
+    public int countUserPayAndSecurity(String startTime, String endTime) throws SQLException;
+
 }
 

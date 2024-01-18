@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  com.hazelcast.core.HazelcastInstance
  *  com.hazelcast.core.IMap
@@ -20,13 +20,15 @@ import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
 import com.vinplay.vbee.common.models.UserAdminInfo;
 import com.vinplay.vbee.common.models.UserModel;
 import com.vinplay.vbee.common.models.cache.UserCacheModel;
+
 import java.sql.SQLException;
 import java.util.List;
+
 import org.apache.log4j.Logger;
 
 public class UserForAdminServiceImpl
-implements UserForAdminService {
-    private static final Logger logger = Logger.getLogger((String)"user_core");
+        implements UserForAdminService {
+    private static final Logger logger = Logger.getLogger((String) "user_core");
 
     @Override
     public UserModel getUserNormalByNickName(String nickName) throws SQLException {
@@ -45,22 +47,20 @@ implements UserForAdminService {
         UserDaoImpl userDao = new UserDaoImpl();
         HazelcastInstance client = HazelcastClientFactory.getInstance();
         IMap<String, UserModel> userMap = client.getMap("users");
-        if (userMap.containsKey((Object)nickname)) {
+        if (userMap.containsKey((Object) nickname)) {
             try {
-                 userMap.lock(nickname);
-                UserCacheModel user = (UserCacheModel)userMap.get((Object)nickname);
+                userMap.lock(nickname);
+                UserCacheModel user = (UserCacheModel) userMap.get((Object) nickname);
                 if (!userDao.updateStatusDailyByNickName(nickname, status)) return res;
                 user.setDaily(status);
                 userMap.put(nickname, user);
                 res = true;
                 return res;
-            }
-            catch (Exception e) {
-                logger.debug((Object)e);
+            } catch (Exception e) {
+                logger.debug((Object) e);
                 return res;
-            }
-            finally {
-                 userMap.unlock(nickname);
+            } finally {
+                userMap.unlock(nickname);
             }
         } else {
             if (!userDao.updateStatusDailyByNickName(nickname, status)) return res;
@@ -78,6 +78,30 @@ implements UserForAdminService {
     public int countSearchUserAdmin(String userName, String nickName, String phone, String field, String sort, String daily, String timeStart, String timeEnd, String bot) throws SQLException {
         UserDaoImpl userDao = new UserDaoImpl();
         return userDao.countSearchUserAdmin(userName, nickName, phone, field, sort, daily, timeStart, timeEnd, bot);
+    }
+
+    @Override
+    public int countUser(String startTime, String endTime) throws SQLException {
+        UserDaoImpl userDao = new UserDaoImpl();
+        return userDao.countUser(startTime, endTime);
+    }
+
+    @Override
+    public int countUserPay(String startTime, String endTime) throws SQLException {
+        UserDaoImpl userDao = new UserDaoImpl();
+        return userDao.countUserPay(startTime, endTime);
+    }
+
+    @Override
+    public int countUserSecurity(String startTime, String endTime) throws SQLException {
+        UserDaoImpl userDao = new UserDaoImpl();
+        return userDao.countUserSecurity(startTime, endTime);
+    }
+
+    @Override
+    public int countUserPayAndSecurity(String startTime, String endTime) throws SQLException {
+        UserDaoImpl userDao = new UserDaoImpl();
+        return userDao.countUserPayAndSecurity(startTime, endTime);
     }
 }
 
