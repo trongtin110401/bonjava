@@ -10,19 +10,18 @@ import bitzero.server.extensions.data.BaseMsg;
 
 import java.nio.ByteBuffer;
 
-public class TotalFreeSpin extends BaseMsg {
-    public int prize;
-    public byte ratio;
+public class Slot25FreeDailyMsg
+        extends BaseMsg {
+    public byte remain = 0;
 
-    public TotalFreeSpin(short type) {
-        super(type);
+    public Slot25FreeDailyMsg(short type) {
+        super((short) type);
     }
 
     public byte[] createData() {
         ByteBuffer bf = this.makeBuffer();
-        bf.putInt(this.prize);
-        bf.put(this.ratio);
-        return super.createData();
+        bf.put(this.remain);
+        return this.packBuffer(bf);
     }
 }
 

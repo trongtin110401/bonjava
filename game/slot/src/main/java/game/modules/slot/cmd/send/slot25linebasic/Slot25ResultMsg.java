@@ -10,7 +10,7 @@ import bitzero.server.extensions.data.BaseMsg;
 
 import java.nio.ByteBuffer;
 
-public class ResultMsg extends BaseMsg {
+public class Slot25ResultMsg extends BaseMsg {
     public long referenceId;
     public byte result;
     public String matrix = "";
@@ -23,7 +23,7 @@ public class ResultMsg extends BaseMsg {
     public String itemsWild = "";
     public byte ratioFree = 0;
 
-    public ResultMsg(short type) {
+    public Slot25ResultMsg(short type) {
         super(type);
     }
 

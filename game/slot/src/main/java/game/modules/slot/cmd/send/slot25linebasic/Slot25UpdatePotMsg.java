@@ -10,11 +10,11 @@ import bitzero.server.extensions.data.BaseMsg;
 
 import java.nio.ByteBuffer;
 
-public class UpdatePotMsg extends BaseMsg {
+public class Slot25UpdatePotMsg extends BaseMsg {
     public long value;
     public byte x2 = 0;
 
-    public UpdatePotMsg(short type) {
+    public Slot25UpdatePotMsg(short type) {
         super(type);
     }
 

@@ -16,7 +16,7 @@ import com.vinplay.vbee.common.utils.CommonUtils;
 import game.modules.slot.cmd.Slot25BasicCommandCollection;
 import game.modules.slot.cmd.rev.audition.MinimizeAuditionCmd;
 import game.modules.slot.cmd.rev.slot25linebasic.*;
-import game.modules.slot.cmd.send.slot25linebasic.InfoMsg;
+import game.modules.slot.cmd.send.slot25linebasic.Slot25InfoMsg;
 import game.modules.slot.entities.BotMinigame;
 import game.modules.slot.listener.SlotLogListener;
 import game.modules.slot.room.Slot25BasicRoom;
@@ -135,7 +135,6 @@ public abstract class Slot25BasicModule extends SlotModule {
             room.stopAutoPlay(user);
         }
         BroadCastUserState.popBroadCast(user.getName());
-
     }
 
     @Override
@@ -150,15 +149,15 @@ public abstract class Slot25BasicModule extends SlotModule {
             room.joinRoom(user);
             room.userMaximize(user);
             room.updatePot(user);
-            this.updateAvengerInfo(user, room);
+            this.updateRoomInfo(user, room);
         } else {
             Debug.trace(this.gameName + " SUBSCRIBE: room " + cmd.roomId + " not found");
         }
         BroadCastUserState.popBroadCast(user.getName());
     }
 
-    private void updateAvengerInfo(User user, Slot25BasicRoom room) {
-        InfoMsg msg = new InfoMsg(commandCollection.INFO_MESSAGE);
+    private void updateRoomInfo(User user, Slot25BasicRoom room) {
+        Slot25InfoMsg msg = new Slot25InfoMsg(commandCollection.INFO_MESSAGE);
         msg.ngayX2 = this.ngayX2;
         msg.remain = 0;
         msg.currentMoney = this.userService.getMoneyUserCache(user.getName(), "vin");
@@ -191,8 +190,6 @@ public abstract class Slot25BasicModule extends SlotModule {
         } else {
             Debug.trace(this.gameName + " MINIMIZE: room " + cmd.roomId + " not found");
         }
-
-
     }
 
     protected void changeRoom(User user, DataCmd dataCmd) {
@@ -204,7 +201,7 @@ public abstract class Slot25BasicModule extends SlotModule {
             roomLeaved.quitRoom(user);
             roomJoined.joinRoom(user);
             roomJoined.updatePot(user);
-            this.updateAvengerInfo(user, roomJoined);
+            this.updateRoomInfo(user, roomJoined);
         } else {
             Debug.trace(this.gameName + ": change room error, leaved= " + cmd.roomLeavedId + ", joined= " + cmd.roomJoinedId);
         }

@@ -10,25 +10,20 @@ import bitzero.server.extensions.data.BaseMsg;
 
 import java.nio.ByteBuffer;
 
-public class InfoMsg extends BaseMsg {
+public class Slot25MinimizeResultMsg extends BaseMsg {
+    public byte result;
+    public long prize;
+    public long curretMoney;
 
-    public String ngayX2;
-    public byte remain;
-    public long currentMoney;
-    public byte freeSpin;
-    public String lines = "";
-
-    public InfoMsg(short type) {
+    public Slot25MinimizeResultMsg(short type) {
         super(type);
     }
 
     public byte[] createData() {
         ByteBuffer bf = this.makeBuffer();
-        this.putStr(bf, this.ngayX2);
-        bf.put(this.remain);
-        bf.putLong(this.currentMoney);
-        bf.put(this.freeSpin);
-        this.putStr(bf, this.lines);
+        bf.put(this.result);
+        this.putLong(bf, this.prize);
+        this.putLong(bf, this.curretMoney);
         return this.packBuffer(bf);
     }
 }

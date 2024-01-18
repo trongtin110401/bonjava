@@ -13,6 +13,7 @@ import bitzero.util.common.business.Debug;
 import com.vinplay.dal.common.BroadCastUserState;
 import com.vinplay.dal.service.impl.CacheServiceImpl;
 import com.vinplay.vbee.common.exceptions.KeyNotFoundException;
+import com.vinplay.vbee.common.models.slot.SlotFreeSpin;
 import com.vinplay.vbee.common.utils.CommonUtils;
 
 import game.modules.slot.cmd.Slot20CommandCollection;
@@ -20,10 +21,12 @@ import game.modules.slot.cmd.Slot20CommandCollection;
 import game.modules.slot.cmd.rev.slot20line.*;
 import game.modules.slot.cmd.send.slot20line.Slot20InfoMsg;
 import game.modules.slot.cmd.send.slot20line.Slot20UpdatePotMsg;
+import game.modules.slot.cmd.send.slot25linebasic.Slot25InfoMsg;
 import game.modules.slot.entities.BotMinigame;
 
 import game.modules.slot.listener.SlotLogListener;
 import game.modules.slot.room.Slot20Room;
+import game.modules.slot.room.Slot25BasicRoom;
 import game.modules.slot.utils.SlotUtils;
 import game.util.ConfigGame;
 
@@ -69,8 +72,8 @@ public abstract class Slot20Module extends SlotModule {
                 new Slot20Room(this, commandCollection, logListener, gameName, (byte) 0, this.gameName + "_vin_100", (short) 1, this.jackpots[0], funds[0], 100, initPotValues[0]));
         this.rooms.put(this.gameName + "_vin_1000",
                 new Slot20Room(this, commandCollection, logListener, gameName, (byte) 1, this.gameName + "_vin_1000", (short) 1, this.jackpots[1], funds[1], 1000, initPotValues[1]));
-        this.rooms.put(this.gameName + "_vin_5000",
-                new Slot20Room(this, commandCollection, logListener, gameName, (byte) 2, this.gameName + "_vin_5000", (short) 1, this.jackpots[2], funds[2], 5000, initPotValues[2]));
+//        this.rooms.put(this.gameName + "_vin_5000",
+//                new Slot20Room(this, commandCollection, logListener, gameName, (byte) 2, this.gameName + "_vin_5000", (short) 1, this.jackpots[2], funds[2], 5000, initPotValues[2]));
         this.rooms.put(this.gameName + "_vin_10000",
                 new Slot20Room(this, commandCollection, logListener, gameName, (byte) 3, this.gameName + "_vin_10000", (short) 1, this.jackpots[3], funds[3], 10000, initPotValues[3]));
 
@@ -175,15 +178,24 @@ public abstract class Slot20Module extends SlotModule {
             room.joinRoom(user);
             room.userMaximize(user);
             this.updatePotToUser(user);
-            Slot20InfoMsg msg = new Slot20InfoMsg(commandCollection.INFO_MESSAGE);
-            msg.ngayX2 = this.ngayX2;
-            msg.remain = 0;
-            msg.currentMoney = this.userService.getMoneyUserCache(user.getName(), "vin");
-            this.send(msg, user);
+            this.updateRoomInfo(user, room);
         } else {
             Debug.trace(this.gameName + " SUBSCRIBE: room " + cmd.roomId + " not found");
         }
         BroadCastUserState.popBroadCast(user.getName());
+    }
+
+    private void updateRoomInfo(User user, Slot20Room room) {
+        Slot20InfoMsg msg = new Slot20InfoMsg(commandCollection.INFO_MESSAGE);
+        msg.ngayX2 = this.ngayX2;
+        msg.remain = 0;
+        msg.currentMoney = this.userService.getMoneyUserCache(user.getName(), "vin");
+        SlotFreeSpin freeSpin = this.slotService.getLuotQuayFreeSlot(this.gameName + room.getBetValue(), user.getName());
+        if (freeSpin != null && freeSpin.getLines() != null) {
+            msg.freeSpin = (byte) freeSpin.getNum();
+            msg.lines = freeSpin.getLines();
+        }
+        this.send(msg, user);
     }
 
     protected void unSubScribe(User user, DataCmd dataCmd) {
@@ -196,7 +208,6 @@ public abstract class Slot20Module extends SlotModule {
             Debug.trace(this.gameName + " UNSUBSCRIBE: room " + cmd.roomId + " not found");
         }
         BroadCastUserState.popBroadCast(user.getName());
-
     }
 
     protected void minimize(User user, DataCmd dataCmd) {
@@ -219,6 +230,7 @@ public abstract class Slot20Module extends SlotModule {
             roomLeaved.quitRoom(user);
             roomJoined.joinRoom(user);
             this.updatePotToUser(user);
+            this.updateRoomInfo(user, roomJoined);
         } else {
             Debug.trace(this.gameName + ": change room error, leaved= " + cmd.roomLeavedId + ", joined= " + cmd.roomJoinedId);
         }

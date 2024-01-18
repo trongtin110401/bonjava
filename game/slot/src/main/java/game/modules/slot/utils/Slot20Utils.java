@@ -65,9 +65,9 @@ public class Slot20Utils {
         return line;
     }
 
-    public static void calculateLine(Line20 line, List<Line20Award> awardList) {
+    public static void calculateLine(Line20 line, List<Slot20Award> awardList) {
         for (int i = 0; i < line.getCells().size(); ++i) {
-            Line20Award award;
+            Slot20Award award;
             int countNumItems = 0;
             Line20Item itemSample = line.getItem(i);
             for (int j = 0; j < line.getCells().size(); ++j) {
@@ -82,8 +82,8 @@ public class Slot20Utils {
         }
     }
 
-    private static boolean checkAwardExist(List<Line20Award> awardList, Line20Award awardLine) {
-        for (Line20Award award : awardList) {
+    private static boolean checkAwardExist(List<Slot20Award> awardList, Slot20Award awardLine) {
+        for (Slot20Award award : awardList) {
             if (award != awardLine) continue;
             return true;
         }

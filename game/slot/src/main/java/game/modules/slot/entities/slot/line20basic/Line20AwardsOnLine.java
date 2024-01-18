@@ -4,21 +4,21 @@
 package game.modules.slot.entities.slot.line20basic;
 
 public class Line20AwardsOnLine {
-    private Line20Award award;
+    private Slot20Award award;
     private long money;
     private String lineName;
 
-    public Line20AwardsOnLine(Line20Award award, long money, String lineName) {
+    public Line20AwardsOnLine(Slot20Award award, long money, String lineName) {
         this.award = award;
         this.money = money;
         this.lineName = lineName;
     }
 
-    public Line20Award getAward() {
+    public Slot20Award getAward() {
         return this.award;
     }
 
-    public void setAward(Line20Award award) {
+    public void setAward(Slot20Award award) {
         this.award = award;
     }
 

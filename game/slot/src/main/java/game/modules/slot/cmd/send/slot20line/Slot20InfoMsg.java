@@ -14,6 +14,8 @@ public class Slot20InfoMsg extends BaseMsg {
     public String ngayX2;
     public byte remain;
     public long currentMoney;
+    public byte freeSpin;
+    public String lines = "";
 
     public Slot20InfoMsg(short type) {
         super(type);
@@ -24,6 +26,8 @@ public class Slot20InfoMsg extends BaseMsg {
         bf.put(this.remain);
         bf.putLong(this.currentMoney);
         this.putStr(bf, this.ngayX2);
+        bf.put(this.freeSpin);
+        this.putStr(bf, this.lines);
         return this.packBuffer(bf);
     }
 }

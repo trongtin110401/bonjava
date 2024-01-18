@@ -3,11 +3,11 @@
  */
 package game.modules.slot.entities.slot.line20basic;
 
-public enum Line20Award {
+public enum Slot20Award {
 
-    PENTA_BONUS("PENTA_BAG", 0, (byte) 1, Line20Item.FREE_SPIN, (byte) 5, 1000.0f),
-    QUADRA_BONUS("PENTA_BAG", 0, (byte) 1, Line20Item.FREE_SPIN, (byte) 5, 1000.0f),
-    TRIPLE_BONUS("PENTA_BAG", 0, (byte) 1, Line20Item.FREE_SPIN, (byte) 5, 1000.0f),
+    PENTA_BONUS("PENTA_FREE_SPIN", 0, (byte) 1, Line20Item.FREE_SPIN, (byte) 5, 22.0f),
+    QUADRA_BONUS("QUADRA_FREE_SPIN", 0, (byte) 1, Line20Item.FREE_SPIN, (byte) 4, 8.0f),
+    TRIPLE_BONUS("TRIPLE_FREE_SPIN", 0, (byte) 1, Line20Item.FREE_SPIN, (byte) 3, 4.0f),
 
     PENTA_FREE_SPIN("PENTA_JACKPOT", 1, (byte) 1, Line20Item.JACKPOT, (byte) 5, -2.0f),
     QUADRA_FREE_SPIN("QUADRA_JACKPOT", 2, (byte) 1, Line20Item.JACKPOT, (byte) 4, 40.0f),
@@ -37,7 +37,7 @@ public enum Line20Award {
     private byte duplicate;
     private float ratio;
 
-    Line20Award(String s, int n2, byte id, Line20Item item, byte duplicate, float ratio) {
+    Slot20Award(String s, int n2, byte id, Line20Item item, byte duplicate, float ratio) {
         this.id = id;
         this.item = item;
         this.duplicate = duplicate;

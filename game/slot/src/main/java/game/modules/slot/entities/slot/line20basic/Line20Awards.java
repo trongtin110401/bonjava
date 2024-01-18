@@ -7,11 +7,11 @@ import java.util.*;
 
 public class Line20Awards {
 
-    private static List<Line20Award> awards = new ArrayList<Line20Award>();
-    private static Map<String, Line20Award> awardMap = new HashMap<>();
+    private static List<Slot20Award> awards = new ArrayList<Slot20Award>();
+    private static Map<String, Slot20Award> awardMap = new HashMap<>();
 
     static {
-        Arrays.stream(Line20Award.values())
+        Arrays.stream(Slot20Award.values())
                 .forEach(award -> {
                     String key = award.getId() + "_" + award.getDuplicate();
                     awardMap.put(key, award);
@@ -19,14 +19,14 @@ public class Line20Awards {
     }
 
     public Line20Awards() {
-        Collections.addAll(awards, Line20Award.values());
+        Collections.addAll(awards, Slot20Award.values());
     }
 
-    public static List<Line20Award> list() {
+    public static List<Slot20Award> list() {
         return awards;
     }
 
-    public static Line20Award getAward(Line20Item item, int numItems) {
+    public static Slot20Award getAward(Line20Item item, int numItems) {
         return awardMap.get(item.getId() + "_" + numItems);
     }
 }

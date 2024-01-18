@@ -90,12 +90,12 @@ public class Slot25BasicRoom extends SlotRoom {
         super.forceStopAutoPlay(user);
         synchronized (this.usersAuto) {
             this.usersAuto.remove(user.getName());
-            ForceStopAutoPlayMsg msg = new ForceStopAutoPlayMsg(commandCollection.FORCE_AUTO_PLAY_MESSAGE);
+            Slot25ForceStopAutoPlayMsg msg = new Slot25ForceStopAutoPlayMsg(commandCollection.FORCE_AUTO_PLAY_MESSAGE);
             SlotUtils.sendMessageToUser(msg, user);
         }
     }
 
-    public ResultMsg play(String username, String linesStr) {
+    public Slot25ResultMsg play(String username, String linesStr) {
         long referenceId = this.module.getNewReferenceId();
         return this.playNormal(username, linesStr, referenceId);
     }
@@ -106,13 +106,13 @@ public class Slot25BasicRoom extends SlotRoom {
      * @param referenceId mã tham chiếu giao dịch
      * @return ResultBenleyMsg model kết quả
      */
-    public synchronized ResultMsg playNormal(String username, String linesStr, long referenceId) {
+    public synchronized Slot25ResultMsg playNormal(String username, String linesStr, long referenceId) {
         // kết quả mặc định
         short result = ResultSlot.MISSED;
         // thời điểm hiện tại
         String currentTimeStr = DateTimeUtils.getCurrentTime();
         // response message
-        ResultMsg playResponse = new ResultMsg(commandCollection.RESULT_MESSAGE);
+        Slot25ResultMsg playResponse = new Slot25ResultMsg(commandCollection.RESULT_MESSAGE);
         // số line người chơi chọn
         String[] selectedLines = linesStr.split(",");
         // tổng cược
@@ -158,11 +158,11 @@ public class Slot25BasicRoom extends SlotRoom {
                     }
 
                     if (moneyRes != null && moneyRes.isSuccess()) {
-                        // một phần trăm cho vào hũ JACKPOT
+                        // 2 phần trăm cho vào hũ JACKPOT
                         long moneyToPot = !isFreeSpin ? totalBetValue * 2 / 100L : 0;
                         this.pot += moneyToPot;
 
-                        // số tiền còn lại sau khi trừ phế và 1% POT cho vào quỹ thưởng
+                        // số tiền còn lại sau khi trừ phế và 2% POT cho vào quỹ thưởng
                         long moneyToFund = !isFreeSpin ? totalBetValue - fee - moneyToPot : 0;
                         if (!u.isBot()) {
                             this.fund += moneyToFund;
@@ -411,7 +411,7 @@ public class Slot25BasicRoom extends SlotRoom {
                                 }
                                 // thông báo tới toàn bộ người chơi trong game (trong MODULE)
                                 if (result == ResultSlot.JACKPOT || result == ResultSlot.BIG_WIN) {
-                                    BigWinMsg bigWinMsg = new BigWinMsg(commandCollection.BIG_WIN_MESSAGE);
+                                    Slot25BigWinMsg bigWinMsg = new Slot25BigWinMsg(commandCollection.BIG_WIN_MESSAGE);
                                     bigWinMsg.username = username;
                                     bigWinMsg.type = (byte) result;
                                     bigWinMsg.betValue = (short) this.betValue;
@@ -485,12 +485,12 @@ public class Slot25BasicRoom extends SlotRoom {
 
     public short play(User user, String linesStr) throws Exception {
         String username = user.getName();
-        ResultMsg msg;
-        FreeDailyMsg freeDailyMsg = new FreeDailyMsg(commandCollection.FREE_DAILY_MESSAGE);
+        Slot25ResultMsg msg;
+        Slot25FreeDailyMsg freeDailyMsg = new Slot25FreeDailyMsg(commandCollection.FREE_DAILY_MESSAGE);
         freeDailyMsg.remain = 0;
         msg = this.play(username, linesStr);
         if (this.isUserMinimize(user)) {
-            MinimizeResultMsg miniMsg = new MinimizeResultMsg(commandCollection.MINIMIZE_RESULT_MESSAGE);
+            Slot25MinimizeResultMsg miniMsg = new Slot25MinimizeResultMsg(commandCollection.MINIMIZE_RESULT_MESSAGE);
             miniMsg.prize = msg.prize;
             miniMsg.curretMoney = msg.currentMoney;
             miniMsg.result = msg.result;
@@ -523,7 +523,7 @@ public class Slot25BasicRoom extends SlotRoom {
             } catch (IOException | InterruptedException | TimeoutException e) {
                 Debug.trace(this.gameName + ": update pot error ", e.getMessage());
             }
-            UpdatePotMsg msg = new UpdatePotMsg(commandCollection.UPDATE_POT_MESSAGE);
+            Slot25UpdatePotMsg msg = new Slot25UpdatePotMsg(commandCollection.UPDATE_POT_MESSAGE);
             msg.value = this.pot;
             msg.x2 = (byte) (this.huX2 ? 1 : 0);
             this.sendMessageToRoom(msg);
@@ -531,7 +531,7 @@ public class Slot25BasicRoom extends SlotRoom {
     }
 
     public void updatePot(User user) {
-        UpdatePotMsg msg = new UpdatePotMsg(commandCollection.UPDATE_POT_MESSAGE);
+        Slot25UpdatePotMsg msg = new Slot25UpdatePotMsg(commandCollection.UPDATE_POT_MESSAGE);
         msg.value = this.pot;
         msg.x2 = (byte) (this.huX2 ? 1 : 0);
         SlotUtils.sendMessageToUser(msg, user);
@@ -624,7 +624,7 @@ public class Slot25BasicRoom extends SlotRoom {
     public boolean joinRoom(User user) {
         boolean result = super.joinRoom(user);
         SlotFreeDaily model = this.slotService.getLuotQuayFreeDaily(this.gameName, user.getName(), this.betValue);
-        FreeDailyMsg freeDailyMsg = new FreeDailyMsg(commandCollection.FREE_DAILY_MESSAGE);
+        Slot25FreeDailyMsg freeDailyMsg = new Slot25FreeDailyMsg(commandCollection.FREE_DAILY_MESSAGE);
         if (model != null && model.getRotateFree() > 0) {
             user.setProperty("numFreeDaily", model.getRotateFree());
             freeDailyMsg.remain = (byte) model.getRotateFree();

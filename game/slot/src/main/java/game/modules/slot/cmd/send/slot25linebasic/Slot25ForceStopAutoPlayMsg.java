@@ -8,8 +8,8 @@ package game.modules.slot.cmd.send.slot25linebasic;
 
 import bitzero.server.extensions.data.BaseMsg;
 
-public class ForceStopAutoPlayMsg extends BaseMsg {
-    public ForceStopAutoPlayMsg(short type) {
+public class Slot25ForceStopAutoPlayMsg extends BaseMsg {
+    public Slot25ForceStopAutoPlayMsg(short type) {
         super(type);
     }
 }

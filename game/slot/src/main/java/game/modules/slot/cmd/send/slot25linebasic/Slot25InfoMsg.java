@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  bitzero.server.extensions.data.BaseMsg
  */
@@ -10,24 +10,25 @@ import bitzero.server.extensions.data.BaseMsg;
 
 import java.nio.ByteBuffer;
 
-public class BigWinMsg extends BaseMsg {
-    public String username;
-    public byte type;
-    public long totalPrizes;
-    public String timestamp;
-    public short betValue;
+public class Slot25InfoMsg extends BaseMsg {
 
-    public BigWinMsg(short type) {
+    public String ngayX2;
+    public byte remain;
+    public long currentMoney;
+    public byte freeSpin;
+    public String lines = "";
+
+    public Slot25InfoMsg(short type) {
         super(type);
     }
 
     public byte[] createData() {
         ByteBuffer bf = this.makeBuffer();
-        this.putStr(bf, this.username);
-        bf.put(this.type);
-        bf.putShort(this.betValue);
-        bf.putLong(this.totalPrizes);
-        this.putStr(bf, this.timestamp);
+        this.putStr(bf, this.ngayX2);
+        bf.put(this.remain);
+        bf.putLong(this.currentMoney);
+        bf.put(this.freeSpin);
+        this.putStr(bf, this.lines);
         return this.packBuffer(bf);
     }
 }
