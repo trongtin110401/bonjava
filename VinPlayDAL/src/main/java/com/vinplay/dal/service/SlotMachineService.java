@@ -52,11 +52,11 @@ public interface SlotMachineService {
 
     public long getLastReferenceId(String var1);
 
-    public SlotFreeSpin updateLuotQuaySlotFree(String var1, String var2);
+    public SlotFreeSpin updateLuotQuaySlotFree(String gameName, String username);
 
-    public void setLuotQuayFreeSlot(String var1, String var2, String var3, int var4, int var5);
+    public void setLuotQuayFreeSlot(String gameName, String nickName, String lines, int soLuot, int ratio);
 
-    public SlotFreeSpin getLuotQuayFreeSlot(String var1, String var2);
+    public SlotFreeSpin getLuotQuayFreeSlot(String freeSpinCacheName, String nickName);
 
     public void setItemsWild(String var1, String var2, String var3);
 

@@ -36,7 +36,6 @@ import com.vinplay.vbee.common.models.minigame.pokego.TopPokeGo;
 import com.vinplay.vbee.common.models.slot.NoHuModel;
 import com.vinplay.vbee.common.models.slot.SlotFreeSpin;
 import com.vinplay.vbee.common.rmq.RMQApi;
-import jdk.nashorn.internal.runtime.Debug;
 
 import java.io.IOException;
 import java.util.List;
@@ -102,7 +101,7 @@ public class SlotMachineServiceImpl
 
     @Override
     public void logBenley(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time) throws IOException, TimeoutException, InterruptedException {
-        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.BENLEY.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time);
+        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.BENTLEY.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time);
         this.publishSlotMsg("queue_benley", msg, 8006);
     }
 
@@ -184,7 +183,7 @@ public class SlotMachineServiceImpl
     @Override
     public SlotFreeSpin updateLuotQuaySlotFree(String gameName, String username) {
         HazelcastInstance client = HazelcastClientFactory.getInstance();
-        IMap slotMap = client.getMap(this.buildKeySlot(gameName));
+        IMap slotMap = client.getMap(this.buildKeyFreeSpin(gameName));
         int soLuotFree = 0;
         SlotFreeSpin slotModel = new SlotFreeSpin();
         if (slotMap.containsKey((Object) username)) {
@@ -215,7 +214,7 @@ public class SlotMachineServiceImpl
     @Override
     public void setLuotQuayFreeSlot(String gameName, String nickName, String lines, int soLuot, int ratio) {
         HazelcastInstance client = HazelcastClientFactory.getInstance();
-        IMap slotMap = client.getMap(this.buildKeySlot(gameName));
+        IMap slotMap = client.getMap(this.buildKeyFreeSpin(gameName));
         if (slotMap.containsKey(nickName)) {
             try {
                 SlotFreeSpin slotFreeModel = (SlotFreeSpin) slotMap.get(nickName);
@@ -235,9 +234,9 @@ public class SlotMachineServiceImpl
     }
 
     @Override
-    public SlotFreeSpin getLuotQuayFreeSlot(String gameName, String nickName) {
+    public SlotFreeSpin getLuotQuayFreeSlot(String freeSpinCacheName, String nickName) {
         HazelcastInstance client = HazelcastClientFactory.getInstance();
-        IMap slotMap = client.getMap(this.buildKeySlot(gameName));
+        IMap slotMap = client.getMap(this.buildKeyFreeSpin(freeSpinCacheName));
         SlotFreeSpin slotFreeSpin = new SlotFreeSpin();
         if (slotMap.containsKey((Object) nickName)) {
             try {
@@ -249,14 +248,14 @@ public class SlotMachineServiceImpl
         return slotFreeSpin;
     }
 
-    private String buildKeySlot(String gameName) {
-        return "cache" + gameName + "FreeSpin";
+    private String buildKeyFreeSpin(String cacheName) {
+        return cacheName + "_FreeSpin";
     }
 
     @Override
     public void setItemsWild(String gameName, String nickName, String itemsWild) {
         HazelcastInstance client = HazelcastClientFactory.getInstance();
-        IMap slotMap = client.getMap(this.buildKeySlot(gameName));
+        IMap slotMap = client.getMap(this.buildKeyFreeSpin(gameName));
         if (slotMap.containsKey((Object) nickName)) {
             try {
                 SlotFreeSpin slotFreeSpin = (SlotFreeSpin) slotMap.get((Object) nickName);
@@ -271,7 +270,7 @@ public class SlotMachineServiceImpl
     @Override
     public int getPrizes(String gameName, String nickName) {
         HazelcastInstance client = HazelcastClientFactory.getInstance();
-        IMap slotMap = client.getMap(this.buildKeySlot(gameName));
+        IMap slotMap = client.getMap(this.buildKeyFreeSpin(gameName));
         int prizes = 0;
         if (slotMap.containsKey((Object) nickName)) {
             try {
@@ -287,7 +286,7 @@ public class SlotMachineServiceImpl
     @Override
     public void addPrizes(String gameName, String nickName, int prize) {
         HazelcastInstance client = HazelcastClientFactory.getInstance();
-        IMap slotMap = client.getMap(this.buildKeySlot(gameName));
+        IMap slotMap = client.getMap(this.buildKeyFreeSpin(gameName));
         if (slotMap.containsKey((Object) nickName)) {
             try {
                 SlotFreeSpin slotFreeSpin = (SlotFreeSpin) slotMap.get((Object) nickName);
@@ -386,7 +385,7 @@ public class SlotMachineServiceImpl
             this.logTamHung(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time);
         } else if (gameName.equals(Games.ROLL_ROYE.getName())) {
             this.logRollRoye(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time);
-        } else if (gameName.equals(Games.BENLEY.getName())) {
+        } else if (gameName.equals(Games.BENTLEY.getName())) {
             this.logBenley(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time);
         }
     }

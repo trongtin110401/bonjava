@@ -227,7 +227,8 @@ public abstract class SlotRoom {
         Map<String, AutoUser> map = this.usersAuto;
         synchronized (map) {
             AutoUser entry;
-            if (this.usersAuto.containsKey(user.getName()) && (entry = this.usersAuto.get(user.getName())).getUser().getUniqueId() == user.getUniqueId()) {
+            if (this.usersAuto.containsKey(user.getName())
+                    && (entry = this.usersAuto.get(user.getName())).getUser().getUniqueId() == user.getUniqueId()) {
                 this.usersAuto.remove(user.getName());
                 user.removeProperty((Object) ("auto_" + this.gameName));
             }
@@ -241,7 +242,8 @@ public abstract class SlotRoom {
         Map<String, AutoUser> map = this.usersAuto;
         synchronized (map) {
             AutoUser entry;
-            if (this.usersAuto.containsKey(user.getName()) && (entry = this.usersAuto.get(user.getName())).getUser().getUniqueId() == user.getUniqueId()) {
+            if (this.usersAuto.containsKey(user.getName())
+                    && (entry = this.usersAuto.get(user.getName())).getUser().getUniqueId() == user.getUniqueId()) {
                 entry.setMinimize(true);
             }
         }
@@ -254,7 +256,8 @@ public abstract class SlotRoom {
         Map<String, AutoUser> map = this.usersAuto;
         synchronized (map) {
             AutoUser entry;
-            if (this.usersAuto.containsKey(user.getName()) && (entry = this.usersAuto.get(user.getName())).getUser().getUniqueId() == user.getUniqueId()) {
+            if (this.usersAuto.containsKey(user.getName())
+                    && (entry = this.usersAuto.get(user.getName())).getUser().getUniqueId() == user.getUniqueId()) {
                 entry.setMinimize(false);
             }
         }
@@ -267,7 +270,8 @@ public abstract class SlotRoom {
         Map<String, AutoUser> map = this.usersAuto;
         synchronized (map) {
             AutoUser entry;
-            if (this.usersAuto.containsKey(user.getName()) && (entry = this.usersAuto.get(user.getName())).getUser().getUniqueId() == user.getUniqueId()) {
+            if (this.usersAuto.containsKey(user.getName())
+                    && (entry = this.usersAuto.get(user.getName())).getUser().getUniqueId() == user.getUniqueId()) {
                 return entry.isMinimize();
             }
         }
@@ -283,7 +287,7 @@ public abstract class SlotRoom {
 
     protected String buildDescription(long totalBet, long totalPrizes, short result) {
         if (totalBet == 0L) {
-            return String.valueOf(this.resultToString(result)) + ": " + totalPrizes;
+            return this.resultToString(result) + ": " + totalPrizes;
         }
         return "Quay: " + (totalBet == 0L ? "free" : Long.valueOf(totalBet)) + ", " + this.resultToString(result) + ": " + totalPrizes;
     }

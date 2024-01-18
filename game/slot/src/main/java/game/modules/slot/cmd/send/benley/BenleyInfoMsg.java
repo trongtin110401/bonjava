@@ -10,8 +10,8 @@ import bitzero.server.extensions.data.BaseMsg;
 
 import java.nio.ByteBuffer;
 
-public class BenleyInfoMsg
-extends BaseMsg {
+public class BenleyInfoMsg extends BaseMsg {
+
     public String ngayX2;
     public byte remain;
     public long currentMoney;

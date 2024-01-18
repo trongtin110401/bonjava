@@ -988,6 +988,94 @@ public class UserDaoImpl
         return user;
     }
 
+    @Override
+    public int countUser(String startTime, String endTime) throws SQLException {
+        int cnt = 0;
+        String sql = "";
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
+            String condition = "";
+
+            if (startTime != null && !startTime.equals("") && endTime != null && !endTime.equals("")) {
+                condition = condition + " AND create_time BETWEEN '" + startTime + "' AND '" + endTime + "'";
+            }
+            sql = "select count(*) as cnt from users where 1=1" + condition + " AND is_bot = 0";
+            PreparedStatement stm = conn.prepareStatement(sql);
+            ResultSet rs = stm.executeQuery();
+            if (rs.next()) {
+                cnt = rs.getInt("cnt");
+            }
+            rs.close();
+            stm.close();
+        }
+        return cnt;
+    }
+
+    @Override
+    public int countUserPay(String startTime, String endTime) throws SQLException {
+        int cnt = 0;
+        String sql = "";
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
+            String condition = "";
+
+            if (startTime != null && !startTime.equals("") && endTime != null && !endTime.equals("")) {
+                condition = condition + " AND create_time BETWEEN '" + startTime + "' AND '" + endTime + "'";
+            }
+            sql = "select count(*) as cnt from users where 1=1" + condition + " AND is_bot = 0 AND recharge_money > 0";
+            PreparedStatement stm = conn.prepareStatement(sql);
+            ResultSet rs = stm.executeQuery();
+            if (rs.next()) {
+                cnt = rs.getInt("cnt");
+            }
+            rs.close();
+            stm.close();
+        }
+        return cnt;
+    }
+
+    @Override
+    public int countUserSecurity(String startTime, String endTime) throws SQLException {
+        int cnt = 0;
+        String sql = "";
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
+            String condition = "";
+
+            if (startTime != null && !startTime.equals("") && endTime != null && !endTime.equals("")) {
+                condition = condition + " AND create_time BETWEEN '" + startTime + "' AND '" + endTime + "'";
+            }
+            sql = "select count(*) as cnt from users where 1=1" + condition + " AND is_bot = 0 AND security_time is not null";
+            PreparedStatement stm = conn.prepareStatement(sql);
+            ResultSet rs = stm.executeQuery();
+            if (rs.next()) {
+                cnt = rs.getInt("cnt");
+            }
+            rs.close();
+            stm.close();
+        }
+        return cnt;
+    }
+
+    @Override
+    public int countUserPayAndSecurity(String startTime, String endTime) throws SQLException {
+        int cnt = 0;
+        String sql = "";
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
+            String condition = "";
+
+            if (startTime != null && !startTime.equals("") && endTime != null && !endTime.equals("")) {
+                condition = condition + " AND create_time BETWEEN '" + startTime + "' AND '" + endTime + "'";
+            }
+            sql = "select count(*) as cnt from users where 1=1" + condition + " AND is_bot = 0 AND security_time is not null AND recharge_money > 0";
+            PreparedStatement stm = conn.prepareStatement(sql);
+            ResultSet rs = stm.executeQuery();
+            if (rs.next()) {
+                cnt = rs.getInt("cnt");
+            }
+            rs.close();
+            stm.close();
+        }
+        return cnt;
+    }
+
     public void updateDailyToUser(int userId, String nickname) throws SQLException {
         try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
             String sql = "update vinplay.users set user_daily = ? where id = ?";

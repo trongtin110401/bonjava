@@ -23,8 +23,6 @@ import game.modules.slot.utils.SlotUtils;
 import game.util.ConfigGame;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -36,7 +34,7 @@ public class BenleyModule extends SlotModule {
     private final String fullLines = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25";
 
     public BenleyModule() {
-        this.gameName = Games.BENLEY.getName();
+        this.gameName = Games.BENTLEY.getName();
     }
 
     public void init() {

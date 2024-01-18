@@ -1,7 +1,7 @@
 /*
  * Decompiled with CFR 0.144.
  */
-package game.modules.slot.entities.slot.avengers;
+package game.modules.slot.entities.slot.line25basic;
 
 public enum Line25Award {
 

@@ -8,8 +8,7 @@ package game.modules.slot.cmd.send.benley;
 
 import bitzero.server.extensions.data.BaseMsg;
 
-public class ForceStopAutoPlayBenleyMsg
-extends BaseMsg {
+public class ForceStopAutoPlayBenleyMsg extends BaseMsg {
     public ForceStopAutoPlayBenleyMsg() {
         super((short)4008);
     }

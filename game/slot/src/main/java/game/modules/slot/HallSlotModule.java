@@ -20,7 +20,6 @@ import bitzero.server.entities.User;
 import bitzero.server.extensions.BaseClientRequestHandler;
 import bitzero.server.extensions.data.BaseMsg;
 import bitzero.server.extensions.data.DataCmd;
-import bitzero.server.util.TaskScheduler;
 import bitzero.util.common.business.Debug;
 import com.vinplay.dal.service.impl.CacheServiceImpl;
 import com.vinplay.vbee.common.enums.Games;
@@ -28,7 +27,6 @@ import game.modules.slot.cmd.send.hall.ListAutoPlayInfoMsg;
 import game.modules.slot.cmd.send.hall.UpdateJackpotsMsg;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import org.json.simple.JSONObject;
 
@@ -105,7 +103,7 @@ extends BaseClientRequestHandler {
         JSONObject jsonRangeRover = this.buildGameSlotInfo(Games.RANGE_ROVER.getName());
         json.put((Object)"rangeRover", (Object)jsonRangeRover);
 
-        JSONObject jsonBenley = this.buildGameSlotInfo(Games.BENLEY.getName());
+        JSONObject jsonBenley = this.buildGameSlotInfo(Games.BENTLEY.getName());
         json.put((Object)"benley", (Object)jsonBenley);
 
         JSONObject jsonRollRoye = this.buildGameSlotInfo(Games.ROLL_ROYE.getName());

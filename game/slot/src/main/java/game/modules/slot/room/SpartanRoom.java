@@ -350,7 +350,7 @@ public class SpartanRoom
                                 if (moneyRes != null && moneyRes.isSuccess()) {
                                     currentMoney = moneyRes.getCurrentMoney();
                                     if (this.moneyType == 1 && moneyExchange - (long) this.betValue >= (long) BroadcastMessageServiceImpl.MIN_MONEY) {
-                                        this.broadcastMsgService.putMessage(Games.BENLEY.getId(), username, moneyExchange - (long) this.betValue);
+                                        this.broadcastMsgService.putMessage(Games.BENTLEY.getId(), username, moneyExchange - (long) this.betValue);
                                     }
                                 }
                             }

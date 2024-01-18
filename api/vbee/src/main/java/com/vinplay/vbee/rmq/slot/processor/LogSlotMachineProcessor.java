@@ -15,8 +15,7 @@ import com.vinplay.vbee.common.messages.BaseMessage;
 import com.vinplay.vbee.common.messages.slot.LogSlotMachineMessage;
 import com.vinplay.vbee.dao.impl.SlotDaoImpl;
 
-public class LogSlotMachineProcessor
-implements BaseProcessor<byte[], Boolean> {
+public class LogSlotMachineProcessor implements BaseProcessor<byte[], Boolean> {
     public Boolean execute(Param<byte[]> param) {
         LogSlotMachineMessage message = (LogSlotMachineMessage)BaseMessage.fromBytes((byte[])((byte[])param.get()));
         SlotDaoImpl dao = new SlotDaoImpl();

@@ -12,8 +12,8 @@ import bitzero.server.extensions.data.DataCmd;
 
 import java.nio.ByteBuffer;
 
-public class SubscribeBenleyCmd
-extends BaseCmd {
+public class SubscribeBenleyCmd extends BaseCmd {
+
     public byte roomId;
 
     public SubscribeBenleyCmd(DataCmd dataCmd) {
