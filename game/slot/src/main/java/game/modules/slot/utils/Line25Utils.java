@@ -13,9 +13,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Line25Utils {
 
-    public static Line25Item[][] generateMatrix() {
-        Line25Items items = new Line25Items();
-        Line25Item[][] matrix = new Line25Item[3][5];
+    public static SlotBasic25Item[][] generateMatrix() {
+        Slot25BasicLine items = new Slot25BasicLine();
+        SlotBasic25Item[][] matrix = new SlotBasic25Item[3][5];
         Random rd = new Random();
         int n = rd.nextInt(3);
         for (int row = 0; row < 3; ++row) {
@@ -25,14 +25,14 @@ public class Line25Utils {
             }
             for (int column = 0; column < 5; ++column) {
                 boolean isContinueGenerate = true;
-                Line25Item item = null;
+                SlotBasic25Item item = null;
                 while (isContinueGenerate) {
                     isContinueGenerate = false;
                     item = items.random(column);
                     if (!Line25Utils.isSpecialItem(item)) {
                         continue;
                     }
-                    if (item == Line25Item.WILD) {
+                    if (item == SlotBasic25Item.WILD) {
                         if (!Line25Utils.isSpecialItem(matrix[0][column])
                                 && !Line25Utils.isSpecialItem(matrix[1][column])
                                 && !Line25Utils.isSpecialItem(matrix[2][column])) {
@@ -45,9 +45,9 @@ public class Line25Utils {
                     if (matrix[0][column] != item
                             && matrix[1][column] != item
                             && matrix[2][column] != item
-                            && matrix[0][column] != Line25Item.WILD
-                            && matrix[1][column] != Line25Item.WILD
-                            && matrix[2][column] != Line25Item.WILD) {
+                            && matrix[0][column] != SlotBasic25Item.WILD
+                            && matrix[1][column] != SlotBasic25Item.WILD
+                            && matrix[2][column] != SlotBasic25Item.WILD) {
                         continue;
                     }
                     isContinueGenerate = true;
@@ -59,20 +59,20 @@ public class Line25Utils {
         return matrix;
     }
 
-    public static boolean isSpecialItem(Line25Item item) {
-        return item == Line25Item.BONUS || item == Line25Item.SCATTER || item == Line25Item.JACKPOT || item == Line25Item.WILD;
+    public static boolean isSpecialItem(SlotBasic25Item item) {
+        return item == SlotBasic25Item.BONUS || item == SlotBasic25Item.SCATTER || item == SlotBasic25Item.JACKPOT || item == SlotBasic25Item.WILD;
     }
 
-    public static Line25Item[][] generateMatrixFreeSpin(String itemsWild) {
+    public static SlotBasic25Item[][] generateMatrixFreeSpin(String itemsWild) {
         int i;
         String[] arr = itemsWild.split(",");
-        Line25FreeSpinItems items = new Line25FreeSpinItems();
-        Line25Item[][] matrix = new Line25Item[3][5];
+        Slot25BasicFreeSpinItems items = new Slot25BasicFreeSpinItems();
+        SlotBasic25Item[][] matrix = new SlotBasic25Item[3][5];
         if (arr.length > 0) {
             for (i = 0; i < arr.length - 1; i += 2) {
                 int r = Integer.parseInt(arr[i]);
                 int c = Integer.parseInt(arr[i + 1]);
-                matrix[r][c] = Line25Item.WILD;
+                matrix[r][c] = SlotBasic25Item.WILD;
             }
         }
         for (i = 0; i < 3; ++i) {
@@ -84,25 +84,25 @@ public class Line25Utils {
         return matrix;
     }
 
-    public static Line25Item[][] generateMatrixNoHu(String[] lineArr) {
-        Line25Item[][] matrix = new Line25Item[3][5];
+    public static SlotBasic25Item[][] generateMatrixNoHu(String[] lineArr) {
+        SlotBasic25Item[][] matrix = new SlotBasic25Item[3][5];
         Random rd = new Random();
         int n = rd.nextInt(lineArr.length);
         int indexLineNoHu = Integer.parseInt(lineArr[n]) - 1;
-        Line25Lines lines = new Line25Lines();
-        Line25Items items = new Line25Items();
-        Line<Line25Item> lineNoHu = lines.get(indexLineNoHu);
+        Slot25BasicLines lines = new Slot25BasicLines();
+        Slot25BasicLine items = new Slot25BasicLine();
+        Line<SlotBasic25Item> lineNoHu = lines.get(indexLineNoHu);
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 5; ++j) {
                 boolean genRandom = true;
                 for (int k = 0; k < lineNoHu.getCells().size(); ++k) {
                     if (i != lineNoHu.getCell(k).getRow() || j != lineNoHu.getCell(k).getCol()) continue;
                     genRandom = false;
-                    matrix[i][j] = Line25Item.JACKPOT;
+                    matrix[i][j] = SlotBasic25Item.JACKPOT;
                 }
                 if (!genRandom) continue;
-                Line25Item item = Line25Item.JACKPOT;
-                while (item == Line25Item.JACKPOT || item == Line25Item.WILD) {
+                SlotBasic25Item item = SlotBasic25Item.JACKPOT;
+                while (item == SlotBasic25Item.JACKPOT || item == SlotBasic25Item.WILD) {
                     item = items.random(j);
                 }
                 matrix[i][j] = item;
@@ -111,7 +111,7 @@ public class Line25Utils {
         return matrix;
     }
 
-    public static String matrixToString(Line25Item[][] matrix) {
+    public static String matrixToString(SlotBasic25Item[][] matrix) {
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 5; ++j) {
@@ -126,10 +126,10 @@ public class Line25Utils {
         return builder.toString();
     }
 
-    public static Line getLine(Line25Lines lines, Line25Item[][] matrix, int lineIndex) {
-        Line<Line25Item> line = lines.get(lineIndex - 1);
-        for (Cell<Line25Item> cell : line.getCells()) {
-            Line25Item itemInMatrix = matrix[cell.getRow()][cell.getCol()];
+    public static Line getLine(Slot25BasicLines lines, SlotBasic25Item[][] matrix, int lineIndex) {
+        Line<SlotBasic25Item> line = lines.get(lineIndex - 1);
+        for (Cell<SlotBasic25Item> cell : line.getCells()) {
+            SlotBasic25Item itemInMatrix = matrix[cell.getRow()][cell.getCol()];
             cell.setItem(itemInMatrix);
         }
         return line;
@@ -218,21 +218,21 @@ public class Line25Utils {
         System.out.println(counter.toString());
     }
 
-    public static void calculateAward(Line line, List<Line25Award> awardList) {
+    public static void calculateAward(Line line, List<Slot25BasicAward> awardList) {
         int countNumItems = 0;
-        Line25Item firstLineItem = (Line25Item) line.getCell(0).getItem();
-        if (firstLineItem != Line25Item.BONUS && firstLineItem != Line25Item.SCATTER) {
+        SlotBasic25Item firstLineItem = (SlotBasic25Item) line.getCell(0).getItem();
+        if (firstLineItem != SlotBasic25Item.BONUS && firstLineItem != SlotBasic25Item.SCATTER) {
             for (int i = 0; i < line.getCells().size(); ++i) {
-                byte itemId = ((Line25Item) line.getCell(i).getItem()).getId();
+                byte itemId = ((SlotBasic25Item) line.getCell(i).getItem()).getId();
                 if (itemId == firstLineItem.getId()
-                        || firstLineItem.getId() != Line25Item.JACKPOT.getId()
-                        && itemId == Line25Item.WILD.getId()) {
+                        || firstLineItem.getId() != SlotBasic25Item.JACKPOT.getId()
+                        && itemId == SlotBasic25Item.WILD.getId()) {
                     ++countNumItems;
                 }
             }
 
-            Line25Award award;
-            if (countNumItems >= 3 && (award = Line25AwardManager.getAward(firstLineItem, countNumItems)) != null) {
+            Slot25BasicAward award;
+            if (countNumItems >= 3 && (award = Slot25BasicAwards.getAward(firstLineItem, countNumItems)) != null) {
                 awardList.add(award);
             }
         }
@@ -245,7 +245,7 @@ public class Line25Utils {
      * @param line
      * @param awardList
      */
-    public static void calculateMoneyAwardInLine(Line line, List<Line25Award> awardList) {
+    public static void calculateMoneyAwardInLine(Line line, List<Slot25BasicAward> awardList) {
         // số lương wild xuất hiện trên line
         int countWild = 0;
         // ánh xạ giữa item và số lượng xuất hiện của nó trên 1 Line
@@ -253,7 +253,7 @@ public class Line25Utils {
         // duyệt qua các cell trên 1 line để tính toán số lần xuất hiện
         for (int cellIndex = 0; cellIndex < line.getCells().size(); cellIndex++) {
             Cell cell = line.getCell(cellIndex);
-            Line25Item avengersItem = (Line25Item) cell.getItem();
+            SlotBasic25Item avengersItem = (SlotBasic25Item) cell.getItem();
             Integer countNumberItem = itemId2Count.get(avengersItem.getId());
             if (countNumberItem == null) {
                 countNumberItem = 1;
@@ -262,7 +262,7 @@ public class Line25Utils {
             }
             itemId2Count.put(avengersItem.getId(), countNumberItem);
 
-            if (avengersItem == Line25Item.WILD) {
+            if (avengersItem == SlotBasic25Item.WILD) {
                 countWild += 1;
             }
         }
@@ -270,10 +270,10 @@ public class Line25Utils {
         if (countWild > 0) {
             int finalCountWild = countWild;
             itemId2Count.forEach((id, numOfItem) -> {
-                Line25Item item = Line25Item.findItem(id);
-                if (item != Line25Item.BONUS
-                        && item != Line25Item.SCATTER
-                        && item != Line25Item.WILD) {
+                SlotBasic25Item item = SlotBasic25Item.findItem(id);
+                if (item != SlotBasic25Item.BONUS
+                        && item != SlotBasic25Item.SCATTER
+                        && item != SlotBasic25Item.WILD) {
                     itemId2Count.put(id, numOfItem + finalCountWild);
                 }
             });
@@ -282,11 +282,11 @@ public class Line25Utils {
         itemId2Count.forEach((id, countNumItem) -> {
             // Chỉ có item có số lần xuất hiện lớn hơn hoặc bằng 2 thì mới tính toán giải thưởng
             if (countNumItem >= 2) {
-                Line25Item item = Line25Item.findItem(id);
+                SlotBasic25Item item = SlotBasic25Item.findItem(id);
                 // Bởi vì BONUS và SCATTER không có giải thưởng tiền trên 1 LINE
                 // nên ta có thể bỏ qua mà không cần tính toán
-                if (item != Line25Item.BONUS && item != Line25Item.SCATTER) {
-                    Line25Award award = Line25AwardManager.getAward(item, countNumItem);
+                if (item != SlotBasic25Item.BONUS && item != SlotBasic25Item.SCATTER) {
+                    Slot25BasicAward award = Slot25BasicAwards.getAward(item, countNumItem);
                     if (award != null) {
                         awardList.add(award);
                     }
@@ -295,32 +295,32 @@ public class Line25Utils {
         });
     }
 
-    public static void calculateFreeSpinLine(Line line, List<Line25FreeSpinAward> awardList) {
+    public static void calculateFreeSpinLine(Line line, List<Slot25BasicFreeSpinAward> awardList) {
         int countNumItems = 0;
-        Line25Item itemSample = (Line25Item) line.getCell(0).getItem();
-        if (itemSample != Line25Item.BONUS && itemSample != Line25Item.SCATTER && itemSample != Line25Item.JACKPOT) {
-            Line25FreeSpinAward award;
-            for (int j = 0; j < line.getCells().size() && (line.getCell(j).getItem() == itemSample || line.getCell(j).getItem() == Line25Item.WILD); ++j) {
+        SlotBasic25Item itemSample = (SlotBasic25Item) line.getCell(0).getItem();
+        if (itemSample != SlotBasic25Item.BONUS && itemSample != SlotBasic25Item.SCATTER && itemSample != SlotBasic25Item.JACKPOT) {
+            Slot25BasicFreeSpinAward award;
+            for (int j = 0; j < line.getCells().size() && (line.getCell(j).getItem() == itemSample || line.getCell(j).getItem() == SlotBasic25Item.WILD); ++j) {
                 ++countNumItems;
             }
-            if (countNumItems >= 3 && (award = Line25FreeSpinAwardManager.getAward(itemSample, countNumItems)) != null) {
+            if (countNumItems >= 3 && (award = Slot25BasicFreeSpinAwardManager.getAward(itemSample, countNumItems)) != null) {
                 awardList.add(award);
             }
         }
     }
 
-    public static Line25Item[][] revertMatrix(Line25Item[][] m) {
-        Line25Item[][] matrix = new Line25Item[3][5];
+    public static SlotBasic25Item[][] revertMatrix(SlotBasic25Item[][] m) {
+        SlotBasic25Item[][] matrix = new SlotBasic25Item[3][5];
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 5; ++j) {
                 if (matrix[i][j] != null) continue;
 
                 matrix[i][j] = m[i][j];
-                if (matrix[i][j] != Line25Item.WILD) continue;
+                if (matrix[i][j] != SlotBasic25Item.WILD) continue;
 
-                matrix[0][j] = Line25Item.WILD;
-                matrix[1][j] = Line25Item.WILD;
-                matrix[2][j] = Line25Item.WILD;
+                matrix[0][j] = SlotBasic25Item.WILD;
+                matrix[1][j] = SlotBasic25Item.WILD;
+                matrix[2][j] = SlotBasic25Item.WILD;
             }
         }
         return matrix;

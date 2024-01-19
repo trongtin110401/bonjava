@@ -3,13 +3,11 @@
  */
 package game.modules.slot.entities.slot.line20basic;
 
-import game.modules.slot.entities.slot.line25basic.Line25Item;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum Line20Item {
+public enum Slot20Item {
     NONE("NONE", 0, "NONE", (byte) -1),
     JACKPOT("FREE_SPIN", 1, "FREE_SPIN", (byte) 0),
     FREE_SPIN("BONUS", 2, "BONUS", (byte) 1),
@@ -22,20 +20,20 @@ public enum Line20Item {
     private String name;
     private byte id;
 
-    private static Map<Integer, Line20Item> map = new HashMap<>();
+    private static Map<Integer, Slot20Item> map = new HashMap<>();
 
-    Line20Item(String s, int n2, String name, byte id) {
+    Slot20Item(String s, int n2, String name, byte id) {
         this.name = name;
         this.id = id;
     }
 
     static {
-        Arrays.stream(Line20Item.values()).forEach(item -> {
+        Arrays.stream(Slot20Item.values()).forEach(item -> {
             map.put((int) item.getId(), item);
         });
     }
 
-    public static Line20Item findItem(byte id) {
+    public static Slot20Item findItem(byte id) {
         return map.get((int) id);
     }
 

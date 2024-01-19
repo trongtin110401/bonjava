@@ -3,12 +3,12 @@
  */
 package game.modules.slot.entities.slot.line20basic;
 
-public class Line20Cell {
+public class Slot20Cell {
     private int row;
     private int col;
-    private Line20Item item = Line20Item.NONE;
+    private Slot20Item item = Slot20Item.NONE;
 
-    public Line20Cell(int row, int col) {
+    public Slot20Cell(int row, int col) {
         this.row = row;
         this.col = col;
     }
@@ -29,11 +29,11 @@ public class Line20Cell {
         this.col = col;
     }
 
-    public Line20Item getItem() {
+    public Slot20Item getItem() {
         return this.item;
     }
 
-    public void setItem(Line20Item item) {
+    public void setItem(Slot20Item item) {
         this.item = item;
     }
 }

@@ -7,14 +7,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class Line25Wheel {
-    private List<Line25Item> items = new ArrayList<>();
+public class Slot25BasicWheel {
+    private List<SlotBasic25Item> items = new ArrayList<>();
 
-    public void addItem(Line25Item item) {
+    public void addItem(SlotBasic25Item item) {
         this.items.add(item);
     }
 
-    public Line25Item random() {
+    public SlotBasic25Item random() {
         Random rd = new Random();
         int n = rd.nextInt(this.items.size());
         return this.items.remove(n);

@@ -5,7 +5,7 @@ package game.modules.slot.entities.slot.line25basic;
 
 import java.util.Arrays;
 
-public class Line25Items {
+public class Slot25BasicLine {
 
     // Tổng có 11 loại Item với id từ 0 => 10. (Xem class AvengersItem)
     // Ma Trận này được sử dụng để cấu hình tỷ lệ % xuất hiện của Item trong Wheel
@@ -30,15 +30,15 @@ public class Line25Items {
 //                    {100, 100, 25, 30, 20, 20, 20, 25, 50, 55, 60},
 //                    {100, 100, 0, 35, 10, 15, 20, 30, 65, 75, 85}
 //            };
-    private Line25Wheel[] wheels = new Line25Wheel[5];
+    private Slot25BasicWheel[] wheels = new Slot25BasicWheel[5];
 
-    public Line25Items() {
+    public Slot25BasicLine() {
         for (int wheelIndex = 0; wheelIndex < 5; ++wheelIndex) {
-            this.wheels[wheelIndex] = new Line25Wheel();
+            this.wheels[wheelIndex] = new Slot25BasicWheel();
             for (int j = 0; j < 11; j++) {
                 int k = 0;
                 while (k < config[wheelIndex][j]) {
-                    this.wheels[wheelIndex].addItem(Line25Item.findItem((byte) j));
+                    this.wheels[wheelIndex].addItem(SlotBasic25Item.findItem((byte) j));
                     k++;
                 }
             }
@@ -46,15 +46,15 @@ public class Line25Items {
     }
 
     public static void main(String[] args) {
-        Line25Items avengersItems = new Line25Items();
+        Slot25BasicLine avengersItems = new Slot25BasicLine();
         avengersItems.print();
     }
 
-    public Line25Item random(int wheelIndex) {
+    public SlotBasic25Item random(int wheelIndex) {
         return wheels[wheelIndex].random();
     }
 
-    public void refundItem(Line25Item item, int wheelIndex) {
+    public void refundItem(SlotBasic25Item item, int wheelIndex) {
         this.wheels[wheelIndex].addItem(item);
     }
 
