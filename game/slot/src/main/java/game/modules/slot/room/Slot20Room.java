@@ -5,6 +5,7 @@ import bitzero.server.BitZeroServer;
 import bitzero.server.entities.User;
 import bitzero.util.common.business.Debug;
 
+import com.google.gson.Gson;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 
@@ -502,7 +503,7 @@ public class Slot20Room extends SlotRoom {
 //        String ratioTime = CommonUtils.getRatioTime(handleTime);
 //        SlotUtils.logKhoBau(referenceId, username, this.betValue, msg.matrix, msg.haiSao, result, handleTime, ratioTime, currentTimeStr);
         if (!u.isBot()) {
-            System.out.println(playResponse.matrix);
+            System.out.println(new Gson().toJson(playResponse));
         }
         return playResponse;
     }
