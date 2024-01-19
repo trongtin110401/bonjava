@@ -7,26 +7,19 @@ import bitzero.server.core.BZEventType;
 import bitzero.server.core.IBZEvent;
 import bitzero.server.entities.User;
 import bitzero.server.extensions.data.DataCmd;
-
 import bitzero.util.common.business.Debug;
-
 import com.vinplay.dal.common.BroadCastUserState;
 import com.vinplay.dal.service.impl.CacheServiceImpl;
 import com.vinplay.vbee.common.exceptions.KeyNotFoundException;
 import com.vinplay.vbee.common.models.slot.SlotFreeSpin;
 import com.vinplay.vbee.common.utils.CommonUtils;
-
 import game.modules.slot.cmd.Slot20CommandCollection;
-
 import game.modules.slot.cmd.rev.slot20line.*;
 import game.modules.slot.cmd.send.slot20line.Slot20InfoMsg;
 import game.modules.slot.cmd.send.slot20line.Slot20UpdatePotMsg;
-import game.modules.slot.cmd.send.slot25linebasic.Slot25InfoMsg;
 import game.modules.slot.entities.BotMinigame;
-
 import game.modules.slot.listener.SlotLogListener;
 import game.modules.slot.room.Slot20Room;
-import game.modules.slot.room.Slot25BasicRoom;
 import game.modules.slot.utils.SlotUtils;
 import game.util.ConfigGame;
 
@@ -73,8 +66,8 @@ public abstract class Slot20Module extends SlotModule {
                     new Slot20Room(this, commandCollection, logListener, gameName, (byte) 0, this.gameName + "_vin_100", (short) 1, this.jackpots[0], funds[0], 100, initPotValues[0]));
             this.rooms.put(this.gameName + "_vin_1000",
                     new Slot20Room(this, commandCollection, logListener, gameName, (byte) 1, this.gameName + "_vin_1000", (short) 1, this.jackpots[1], funds[1], 1000, initPotValues[1]));
-        this.rooms.put(this.gameName + "_vin_5000",
-                new Slot20Room(this, commandCollection, logListener, gameName, (byte) 2, this.gameName + "_vin_5000", (short) 1, this.jackpots[2], funds[2], 5000, initPotValues[2]));
+            this.rooms.put(this.gameName + "_vin_5000",
+                    new Slot20Room(this, commandCollection, logListener, gameName, (byte) 2, this.gameName + "_vin_5000", (short) 1, this.jackpots[2], funds[2], 5000, initPotValues[2]));
             this.rooms.put(this.gameName + "_vin_10000",
                     new Slot20Room(this, commandCollection, logListener, gameName, (byte) 3, this.gameName + "_vin_10000", (short) 1, this.jackpots[3], funds[3], 10000, initPotValues[3]));
 
