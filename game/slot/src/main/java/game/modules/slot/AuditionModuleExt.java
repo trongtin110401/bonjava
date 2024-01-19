@@ -28,7 +28,7 @@ public class AuditionModuleExt extends Slot20Module {
         commandCollection.RESULT_MESSAGE = SlotCMD.RANGE_ROVER_INFO;
         commandCollection.UPDATE_POT_MESSAGE = SlotCMD.UPDATE_POT_RANGE_ROVER;
         commandCollection.FORCE_AUTO_PLAY_MESSAGE = SlotCMD.FORCE_STOP_PLAY_RANGE_ROVER;
-        commandCollection.INFO_MESSAGE = SlotCMD.RANGE_ROVER_INFO
+        commandCollection.INFO_MESSAGE = SlotCMD.RANGE_ROVER_INFO;
         commandCollection.MINIMIZE_RESULT_MESSAGE = SlotCMD.RANGE_ROVER_RESULT_MINIMIZE;
         return commandCollection;
     }
