@@ -99,7 +99,7 @@ public class Slot20Utils {
         // duy?t qua các cell trên 1 line ?? tính toán s? l?n xu?t hi?n
         for (int cellIndex = 0; cellIndex < line.getCells().size(); cellIndex++) {
             Slot20Cell cell = line.getCell(cellIndex);
-            Slot20Item item = (Slot20Item) cell.getItem();
+            Slot20Item item = cell.getItem();
             Integer countNumberItem = itemId2Count.get(item.getId());
             if (countNumberItem == null) {
                 countNumberItem = 1;
