@@ -45,53 +45,57 @@ public abstract class Slot20Module extends SlotModule {
     }
 
     public void init() {
-        // super call
-        super.init();
-        // message command collection
-        commandCollection = initMessageCommand();
-        // log listener
-        logListener = initLogListener();
-        // loading funds and jackpot info
-        long[] funds = new long[4];
-        int[] initPotValues = new int[6];
         try {
-            String initPotValuesStr = ConfigGame.getValueString(this.gameName + "_init_pot_values");
-            String[] arr = initPotValuesStr.split(",");
-            for (int i = 0; i < arr.length; ++i) {
-                initPotValues[i] = Integer.parseInt(arr[i]);
+            // super call
+            super.init();
+            // message command collection
+            commandCollection = initMessageCommand();
+            // log listener
+            logListener = initLogListener();
+            // loading funds and jackpot info
+            long[] funds = new long[4];
+            int[] initPotValues = new int[6];
+            try {
+                String initPotValuesStr = ConfigGame.getValueString(this.gameName + "_init_pot_values");
+                String[] arr = initPotValuesStr.split(",");
+                for (int i = 0; i < arr.length; ++i) {
+                    initPotValues[i] = Integer.parseInt(arr[i]);
+                }
+                this.jackpots = this.service.getPots(gameName);
+                Debug.trace(this.gameName + " POTS: " + CommonUtils.arrayLongToString(this.jackpots));
+                funds = this.service.getFunds(gameName);
+                Debug.trace(this.gameName + " FUNDS: " + CommonUtils.arrayLongToString(funds));
+            } catch (Exception e) {
+                Debug.trace("Init POKE GO error ", e);
             }
-            this.jackpots = this.service.getPots(gameName);
-            Debug.trace(this.gameName + " POTS: " + CommonUtils.arrayLongToString(this.jackpots));
-            funds = this.service.getFunds(gameName);
-            Debug.trace(this.gameName + " FUNDS: " + CommonUtils.arrayLongToString(funds));
-        } catch (Exception e) {
-            Debug.trace("Init POKE GO error ", e);
-        }
-        // adding rooms
-        this.rooms.put(this.gameName + "_vin_100",
-                new Slot20Room(this, commandCollection, logListener, gameName, (byte) 0, this.gameName + "_vin_100", (short) 1, this.jackpots[0], funds[0], 100, initPotValues[0]));
-        this.rooms.put(this.gameName + "_vin_1000",
-                new Slot20Room(this, commandCollection, logListener, gameName, (byte) 1, this.gameName + "_vin_1000", (short) 1, this.jackpots[1], funds[1], 1000, initPotValues[1]));
+            // adding rooms
+            this.rooms.put(this.gameName + "_vin_100",
+                    new Slot20Room(this, commandCollection, logListener, gameName, (byte) 0, this.gameName + "_vin_100", (short) 1, this.jackpots[0], funds[0], 100, initPotValues[0]));
+            this.rooms.put(this.gameName + "_vin_1000",
+                    new Slot20Room(this, commandCollection, logListener, gameName, (byte) 1, this.gameName + "_vin_1000", (short) 1, this.jackpots[1], funds[1], 1000, initPotValues[1]));
 //        this.rooms.put(this.gameName + "_vin_5000",
 //                new Slot20Room(this, commandCollection, logListener, gameName, (byte) 2, this.gameName + "_vin_5000", (short) 1, this.jackpots[2], funds[2], 5000, initPotValues[2]));
-        this.rooms.put(this.gameName + "_vin_10000",
-                new Slot20Room(this, commandCollection, logListener, gameName, (byte) 3, this.gameName + "_vin_10000", (short) 1, this.jackpots[3], funds[3], 10000, initPotValues[3]));
+            this.rooms.put(this.gameName + "_vin_10000",
+                    new Slot20Room(this, commandCollection, logListener, gameName, (byte) 3, this.gameName + "_vin_10000", (short) 1, this.jackpots[3], funds[3], 10000, initPotValues[3]));
 
-        Debug.trace("INIT " + this.gameName + " DONE");
-        this.getParentExtension().addEventListener(BZEventType.USER_DISCONNECT, this);
-        referenceId = this.slotService.getLastReferenceId(this.gameName);
-        Debug.trace("START " + this.gameName + " REFERENCE ID= " + referenceId);
-        CacheServiceImpl sv = new CacheServiceImpl();
-        try {
-            sv.removeKey(this.gameName + "_last_day_x2");
-        } catch (KeyNotFoundException e2) {
-            Debug.trace("KEY NOT FOUND");
+            Debug.trace("INIT " + this.gameName + " DONE");
+            this.getParentExtension().addEventListener(BZEventType.USER_DISCONNECT, this);
+            referenceId = this.slotService.getLastReferenceId(this.gameName);
+            Debug.trace("START " + this.gameName + " REFERENCE ID= " + referenceId);
+            CacheServiceImpl sv = new CacheServiceImpl();
+            try {
+                sv.removeKey(this.gameName + "_last_day_x2");
+            } catch (KeyNotFoundException e2) {
+                Debug.trace("KEY NOT FOUND");
+            }
+            int lastDayFinish = SlotUtils.getLastDayX2(this.gameName);
+            this.ngayX2 = SlotUtils.calculateTimePokeGoX2AsString(this.gameName, SlotUtils.getX2Days(this.gameName), lastDayFinish);
+            int nextX2Time = SlotUtils.calculateTimePokeGoX2(this.gameName, SlotUtils.getX2Days(this.gameName), lastDayFinish);
+            Debug.trace(this.gameName + " Ngay X2: " + this.ngayX2 + ", remain time = " + nextX2Time);
+            BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
-        int lastDayFinish = SlotUtils.getLastDayX2(this.gameName);
-        this.ngayX2 = SlotUtils.calculateTimePokeGoX2AsString(this.gameName, SlotUtils.getX2Days(this.gameName), lastDayFinish);
-        int nextX2Time = SlotUtils.calculateTimePokeGoX2(this.gameName, SlotUtils.getX2Days(this.gameName), lastDayFinish);
-        Debug.trace(this.gameName + " Ngay X2: " + this.ngayX2 + ", remain time = " + nextX2Time);
-        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
     }
 
     protected abstract Slot20CommandCollection initMessageCommand();
