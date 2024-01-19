@@ -16,7 +16,7 @@ import java.util.concurrent.TimeoutException;
 public class AuditionModuleExt extends Slot20Module {
 
     public AuditionModuleExt() {
-        super(Games.AUDITION.getName());
+        super(Games.RANGE_ROVER.getName());
     }
 
     @Override
