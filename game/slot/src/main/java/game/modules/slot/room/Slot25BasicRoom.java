@@ -32,7 +32,7 @@ import game.modules.slot.entities.slot.line25basic.Slot25BasicAwards;
 import game.modules.slot.entities.slot.line25basic.SlotBasic25Item;
 import game.modules.slot.entities.slot.line25basic.Slot25BasicLines;
 import game.modules.slot.listener.SlotLogListener;
-import game.modules.slot.utils.Line25Utils;
+import game.modules.slot.utils.Slot25BasicUtil;
 import game.modules.slot.utils.SlotUtils;
 
 import java.io.IOException;
@@ -210,7 +210,7 @@ public class Slot25BasicRoom extends SlotRoom {
                             }
 
                             // sinh Matrix
-                            SlotBasic25Item[][] matrix = isForceJackpot ? Line25Utils.generateMatrixNoHu(selectedLines) : Line25Utils.generateMatrix();
+                            SlotBasic25Item[][] matrix = isForceJackpot ? Slot25BasicUtil.generateMatrixNoHu(selectedLines) : Slot25BasicUtil.generateMatrix();
                             // Đếm số lượng BONUS và SCATTER
                             for (int i = 0; i < 3; ++i) {
                                 for (int j = 0; j < 5; ++j) {
@@ -247,7 +247,7 @@ public class Slot25BasicRoom extends SlotRoom {
                             }
                             // Tính toán phần thưởng cho BONUS GAME
                             if (countBonus >= 3) {
-                                bonusGameResponse = Line25Utils.buildBonusGameData(this.betValue, countBonus);
+                                bonusGameResponse = Slot25BasicUtil.buildBonusGameData(this.betValue, countBonus);
                                 Slot25BasicAward bonusAward = Slot25BasicAwards.getAward(SlotBasic25Item.BONUS, countBonus);
                                 AwardsOnLine<Slot25BasicAward> aol = new AwardsOnLine<>(bonusAward, bonusGameResponse.getTotalPrize(), "line0");
                                 awardsOnLines.add(aol);
@@ -266,8 +266,8 @@ public class Slot25BasicRoom extends SlotRoom {
                             for (String selectedLine : selectedLines) {
                                 ArrayList<Slot25BasicAward> awardList = new ArrayList<>();
                                 int lineNumber = Integer.parseInt(selectedLine);
-                                Line line = Line25Utils.getLine(this.lines, matrixWild, lineNumber);
-                                Line25Utils.calculateMoneyAwardInLine(line, awardList);
+                                Line line = Slot25BasicUtil.getLine(this.lines, matrixWild, lineNumber);
+                                Slot25BasicUtil.calculateMoneyAwardInLine(line, awardList);
                                 for (Slot25BasicAward award : awardList) {
                                     long moneyOnLine = (long) (award.getRatio() * this.betValue);
                                     AwardsOnLine<Slot25BasicAward> aol2 = new AwardsOnLine<>(award, moneyOnLine, line.getName());
@@ -321,7 +321,7 @@ public class Slot25BasicRoom extends SlotRoom {
                             }
 
                             // BẮT ĐẦU QUÁ TRÌNH LƯU TRỮ THÔNG TIN VÀ TRẢ THƯỞNG
-                            String matrixStr = Line25Utils.matrixToString(matrix);
+                            String matrixStr = Slot25BasicUtil.matrixToString(matrix);
                             if (totalPrizes > 0L) {
                                 if (result == ResultSlot.JACKPOT) {
                                     this.pot = this.initJackpotValues;
@@ -392,10 +392,9 @@ public class Slot25BasicRoom extends SlotRoom {
                             String linesWin = builderLinesWin.toString();
                             String prizesOnLine = builderPrizesOnLine.toString();
                             playResponse.referenceId = referenceId;
-                            playResponse.matrix = Line25Utils.matrixToString(matrix);
+                            playResponse.matrix = Slot25BasicUtil.matrixToString(matrix);
                             playResponse.linesWin = linesWin;
                             playResponse.prize = totalPrizes;
-                            playResponse.isFreeSpin = false;
                             if (bonusGameResponse != null) {
                                 playResponse.haiSao = bonusGameResponse.getPrizes();
                             }
@@ -444,7 +443,9 @@ public class Slot25BasicRoom extends SlotRoom {
         if (result == ResultSlot.JACKPOT) {
             this.sendNotifyNoHu(username, (byte) 1, playResponse.prize, gameName);
         }
-
+        if (!u.isBot()) {
+            System.out.println(playResponse.matrix);
+        }
         return playResponse;
     }
 

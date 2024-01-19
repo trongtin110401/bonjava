@@ -24,7 +24,7 @@ import game.modules.slot.entities.slot.AwardsOnLine;
 import game.modules.slot.entities.slot.Line;
 import game.modules.slot.entities.slot.MiniGameSlotResponse;
 import game.modules.slot.entities.slot.line25basic.*;
-import game.modules.slot.utils.Line25Utils;
+import game.modules.slot.utils.Slot25BasicUtil;
 import game.modules.slot.utils.Constant;
 import game.modules.slot.utils.SlotUtils;
 import game.util.ConfigGame;
@@ -285,7 +285,7 @@ public class BenleyRoom extends SlotRoom {
 //                                    forceNoHu = false;
 //                                }
 //                            }
-                            SlotBasic25Item[][] matrix = forceNoHu ? Line25Utils.generateMatrixNoHu(lineArr) : Line25Utils.generateMatrix();
+                            SlotBasic25Item[][] matrix = forceNoHu ? Slot25BasicUtil.generateMatrixNoHu(lineArr) : Slot25BasicUtil.generateMatrix();
 
                             // hàng
                             for (int i = 0; i < 3; ++i) {
@@ -309,17 +309,17 @@ public class BenleyRoom extends SlotRoom {
                                 if (n2 >= tiLeAn) continue;
                             }
                             if (countBonus >= 3) {
-                                miniGameSlot = Line25Utils.buildBonusGameData(this.betValue, countBonus);
+                                miniGameSlot = Slot25BasicUtil.buildBonusGameData(this.betValue, countBonus);
                                 Slot25BasicAward award = Slot25BasicAwards.getAward(SlotBasic25Item.BONUS, countBonus);
                                 AwardsOnLine<Slot25BasicAward> aol = new AwardsOnLine<>(award, miniGameSlot.getTotalPrize(), "line0");
                                 awardsOnLines.add(aol);
                                 result = 5;
                             }
-                            SlotBasic25Item[][] matrixWild = Line25Utils.revertMatrix(matrix);
+                            SlotBasic25Item[][] matrixWild = Slot25BasicUtil.revertMatrix(matrix);
                             for (String entry2 : lineArr) {
                                 ArrayList<Slot25BasicAward> awardList = new ArrayList<>();
-                                Line line = Line25Utils.getLine(this.lines, matrixWild, Integer.parseInt(entry2));
-                                Line25Utils.calculateAward(line, awardList);
+                                Line line = Slot25BasicUtil.getLine(this.lines, matrixWild, Integer.parseInt(entry2));
+                                Slot25BasicUtil.calculateAward(line, awardList);
                                 for (Slot25BasicAward award2 : awardList) {
                                     long moneyOnLine = 0L;
                                     if (award2.getRatio() > 0.0f) {
@@ -419,7 +419,7 @@ public class BenleyRoom extends SlotRoom {
                             }
 //                            if (result == 3 ? this.fund - (totalPrizes - soTienNoHuKhongTruQuy) < 0L : this.fund - totalPrizes < this.pot * 2L && totalPrizes - totalBetValue >= 0L) continue;
                             enoughPair = true;
-                            String matrixStr = Line25Utils.matrixToString(matrix);
+                            String matrixStr = Slot25BasicUtil.matrixToString(matrix);
                             if (totalPrizes > 0L) {
                                 if (result == 3) {
                                     if (this.huX2) {
@@ -498,7 +498,7 @@ public class BenleyRoom extends SlotRoom {
                             linesWin = builderLinesWin.toString();
                             prizesOnLine = builderPrizesOnLine.toString();
                             resultBenleyMsg.referenceId = referenceId;
-                            resultBenleyMsg.matrix = Line25Utils.matrixToString(matrix);
+                            resultBenleyMsg.matrix = Slot25BasicUtil.matrixToString(matrix);
                             resultBenleyMsg.linesWin = linesWin;
                             resultBenleyMsg.prize = totalPrizes;
                             resultBenleyMsg.isFreeSpin = false;

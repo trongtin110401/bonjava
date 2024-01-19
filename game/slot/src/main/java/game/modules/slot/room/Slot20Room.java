@@ -187,17 +187,16 @@ public class Slot20Room extends SlotRoom {
                             }
                             // sinh Matrix
                             Slot20Item[][] matrix = isForceJackpot
-                                    ? Slot20Utils.generateMatrixNoHu(selectedLines)
+                                    ? Slot20Utils.generateJackpotMatrix(selectedLines)
                                     : Slot20Utils.generateMatrix();
                             // Duyệt toàn bộ Lines được chọn bởi người chơi để tính toán giải thưởng trên từng Line
                             boolean hasFreeSpinAward = false;
                             boolean hasBonusAward = false;
                             int countFreeSpin = 0;
-
                             for (String selectedLine : selectedLines) {
                                 ArrayList<Slot20Award> awardList = new ArrayList<>();
                                 Slot20Line line = Slot20Utils.getLine(this.lines, matrix, Integer.parseInt(selectedLine));
-                                Slot20Utils.calculateLine(line, awardList);
+                                Slot20Utils.calculateAwardInLine(line, awardList);
                                 for (Slot20Award award : awardList) {
                                     long moneyOnLine = 0;
                                     // Phần thưởng bình thường
@@ -249,6 +248,11 @@ public class Slot20Room extends SlotRoom {
                             if (hasFreeSpinAward && hasBonusAward) {
                                 continue;
                             }
+                            // ở chế độ Free Spin, không cho phép trúng BONUS hoặc SCATTER
+                            if (isFreeSpin && (hasFreeSpinAward || hasBonusAward)) {
+                                continue;
+                            }
+
                             // Tiếp theo, tính toán toàn bộ giải thưởng
                             boolean isGetJackpotNaturally = false;
                             StringBuilder builderLinesWin = new StringBuilder();
@@ -367,6 +371,11 @@ public class Slot20Room extends SlotRoom {
                             }
                             // điều kiện trúng thưởng đã thỏa mãn, dừng vòng lặp
                             enoughPair = true;
+                            // cập nhật lượt quay miễn phí
+                            if (isFreeSpin) {
+                                slotService.updateLuotQuaySlotFree(cacheFreeSpinName, username);
+                            }
+
                             // BẮT ĐẦU QUÁ TRÌNH LƯU TRỮ THÔNG TIN VÀ TRẢ THƯỞNG
                             String matrixStr = Slot20Utils.matrixToString(matrix);
                             if (totalPrizes > 0L) {
@@ -410,7 +419,6 @@ public class Slot20Room extends SlotRoom {
                                     if (!u.isBot()) {
                                         this.fund -= totalPrizes;
                                     }
-
                                     if (result == ResultSlot.MISSED) {
                                         result = totalPrizes >= (this.betValue * 175L) ? ResultSlot.BIG_WIN : ResultSlot.WIN;
                                     }
@@ -429,12 +437,12 @@ public class Slot20Room extends SlotRoom {
                             if (totalPrizes != 0 && !u.isBot()) {
                                 if ((moneyRes = this.userService.updateMoney(username, totalPrizes, this.moneyTypeStr, this.gameName, "Quay " + gn, this.buildDescription(totalBetValue, totalPrizes, result), 0L, referenceId, TransType.END_TRANS)) != null && moneyRes.isSuccess()) {
                                     currentMoney = moneyRes.getCurrentMoney();
+                                    // thông báo tới toàn hệ thống số tiền thắng của người chơi
                                     if (this.moneyType == 1 && moneyExchange >= (long) BroadcastMessageServiceImpl.MIN_MONEY) {
                                         this.broadcastMsgService.putMessage(Games.findGameByName(gameName).getId(), username, moneyExchange - totalBetValue);
                                     }
                                 }
                             }
-
                             linesWin = builderLinesWin.toString();
                             prizesOnLine = builderPrizesOnLine.toString();
                             playResponse.referenceId = referenceId;
@@ -482,10 +490,20 @@ public class Slot20Room extends SlotRoom {
         }
         playResponse.result = (byte) result;
         playResponse.currentMoney = currentMoney;
+
+
+        // update cache tien hu
+        cacheService.setValue(CACHE_JACK_POT_VALUE_SLOT + "_" + this.betValue + "_" + gameName, String.valueOf(this.pot));
+        if (result == ResultSlot.JACKPOT) {
+            this.sendNotifyNoHu(username, (byte) 1, playResponse.prize, gameName);
+        }
 //        long endTime = System.currentTimeMillis();
 //        long handleTime = endTime - startTime;
 //        String ratioTime = CommonUtils.getRatioTime(handleTime);
 //        SlotUtils.logKhoBau(referenceId, username, this.betValue, msg.matrix, msg.haiSao, result, handleTime, ratioTime, currentTimeStr);
+        if (!u.isBot()) {
+            System.out.println(playResponse.matrix);
+        }
         return playResponse;
     }
 

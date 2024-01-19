@@ -5,7 +5,7 @@ package game.modules.slot.entities.slot.line25basic;
 
 import java.util.Arrays;
 
-public class Slot25BasicLine {
+public class Slot25BasicItems {
 
     // Tổng có 11 loại Item với id từ 0 => 10. (Xem class AvengersItem)
     // Ma Trận này được sử dụng để cấu hình tỷ lệ % xuất hiện của Item trong Wheel
@@ -32,7 +32,7 @@ public class Slot25BasicLine {
 //            };
     private Slot25BasicWheel[] wheels = new Slot25BasicWheel[5];
 
-    public Slot25BasicLine() {
+    public Slot25BasicItems() {
         for (int wheelIndex = 0; wheelIndex < 5; ++wheelIndex) {
             this.wheels[wheelIndex] = new Slot25BasicWheel();
             for (int j = 0; j < 11; j++) {
@@ -46,7 +46,7 @@ public class Slot25BasicLine {
     }
 
     public static void main(String[] args) {
-        Slot25BasicLine avengersItems = new Slot25BasicLine();
+        Slot25BasicItems avengersItems = new Slot25BasicItems();
         avengersItems.print();
     }
 

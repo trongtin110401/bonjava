@@ -48,7 +48,8 @@ public class SlotMachineExtension
             Debug.trace("INIT MINIGAME ERROR " + e.getMessage());
         }
         this.addRequestHandler((short) 10000, HallSlotModule.class);
-        this.addRequestHandler((short) 2000, AuditionModule.class);
+//        this.addRequestHandler((short) 2000, AuditionModule.class);
+        this.addRequestHandler((short) 2000, AuditionModuleExt.class);
         this.addRequestHandler((short) 3000, MayBachModule.class);
         this.addRequestHandler((short) 4000, BenleyModule.class);
         this.addRequestHandler((short) 5000, RollRoyModule.class);

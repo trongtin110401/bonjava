@@ -11,10 +11,10 @@ import game.modules.slot.entities.slot.line25basic.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class Line25Utils {
+public class Slot25BasicUtil {
 
     public static SlotBasic25Item[][] generateMatrix() {
-        Slot25BasicLine items = new Slot25BasicLine();
+        Slot25BasicItems items = new Slot25BasicItems();
         SlotBasic25Item[][] matrix = new SlotBasic25Item[3][5];
         Random rd = new Random();
         int n = rd.nextInt(3);
@@ -29,13 +29,13 @@ public class Line25Utils {
                 while (isContinueGenerate) {
                     isContinueGenerate = false;
                     item = items.random(column);
-                    if (!Line25Utils.isSpecialItem(item)) {
+                    if (!Slot25BasicUtil.isSpecialItem(item)) {
                         continue;
                     }
                     if (item == SlotBasic25Item.WILD) {
-                        if (!Line25Utils.isSpecialItem(matrix[0][column])
-                                && !Line25Utils.isSpecialItem(matrix[1][column])
-                                && !Line25Utils.isSpecialItem(matrix[2][column])) {
+                        if (!Slot25BasicUtil.isSpecialItem(matrix[0][column])
+                                && !Slot25BasicUtil.isSpecialItem(matrix[1][column])
+                                && !Slot25BasicUtil.isSpecialItem(matrix[2][column])) {
                             continue;
                         }
                         isContinueGenerate = true;
@@ -90,7 +90,7 @@ public class Line25Utils {
         int n = rd.nextInt(lineArr.length);
         int indexLineNoHu = Integer.parseInt(lineArr[n]) - 1;
         Slot25BasicLines lines = new Slot25BasicLines();
-        Slot25BasicLine items = new Slot25BasicLine();
+        Slot25BasicItems items = new Slot25BasicItems();
         Line<SlotBasic25Item> lineNoHu = lines.get(indexLineNoHu);
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 5; ++j) {
@@ -140,7 +140,7 @@ public class Line25Utils {
         int indexRatioCol = rd.nextInt(3);
         int indexRatioRow = countBonus - 3;
         int ratio = Constant.AVENGERS_BONUS_RATIO[indexRatioRow][indexRatioCol];
-        MiniGameSlotResponse res = Line25Utils.generateMiniGameSlot(betValue);
+        MiniGameSlotResponse res = Slot25BasicUtil.generateMiniGameSlot(betValue);
         res.setTotalPrize(res.getTotalPrize() * (long) ratio);
         res.setPrizes(res.getPrizes() + "," + ratio + "," + countBonus);
         return res;
