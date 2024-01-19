@@ -108,5 +108,22 @@ public class SlotCMD {
     public static final short SAMTRUYEN_FREE_DAILY = 12012;
     public static final short SAMTRUYEN_MINIMIZE = 12013;
     public static final short SAMTRUYEN_RESULT_MINIMIZE = 12014;
+
+
+    public static final short PLAY_RANGE_ROVER= 13001;
+    public static final short UPDATE_POT_RANGE_ROVER= 13002;
+    public static final short SUBSCRIBE_RANGE_ROVER= 13003;
+    public static final short UNSUBSCRIBE_RANGE_ROVER= 13004;
+    public static final short CHANGE_ROOM_RANGE_ROVER= 13005;
+    public static final short AUTO_PLAY_RANGE_ROVER= 13006;
+    public static final short STOP_PLAY_RANGE_ROVER= 13007;
+    public static final short FORCE_STOP_PLAY_RANGE_ROVER= 13008;
+    public static final short RANGE_ROVER_X2 = 13009;
+    public static final short BIG_WIN_RANGE_ROVER= 13010;
+    public static final short RANGE_ROVER_INFO = 13011;
+    public static final short RANGE_ROVER_FREE_DAILY = 13012;
+    public static final short RANGE_ROVER_MINIMIZE = 13013;
+    public static final short RANGE_ROVER_RESULT_MINIMIZE = 13014;
+    public static final short RANGE_ROVER_TOTAL_FREE_SPIN = 13015;
 }
 
