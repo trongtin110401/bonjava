@@ -120,7 +120,7 @@ public class SlotCMD {
     public static final short FORCE_STOP_PLAY_RANGE_ROVER= 13008;
     public static final short RANGE_ROVER_X2 = 13009;
     public static final short BIG_WIN_RANGE_ROVER= 13010;
-    public static final short RANGE_ROVER_INFO = 13011;
+    public static final short RANGE_ROVER_INFO = 13001;
     public static final short RANGE_ROVER_FREE_DAILY = 13012;
     public static final short RANGE_ROVER_MINIMIZE = 13013;
     public static final short RANGE_ROVER_RESULT_MINIMIZE = 13014;
