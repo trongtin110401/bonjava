@@ -4,6 +4,7 @@ package game.modules.slot.room;
 import bitzero.server.BitZeroServer;
 import bitzero.server.entities.User;
 import bitzero.util.common.business.Debug;
+import com.google.gson.Gson;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 
@@ -444,7 +445,7 @@ public class Slot25BasicRoom extends SlotRoom {
             this.sendNotifyNoHu(username, (byte) 1, playResponse.prize, gameName);
         }
         if (!u.isBot()) {
-            System.out.println(playResponse.matrix);
+            System.out.println(new Gson().toJson(playResponse));
         }
         return playResponse;
     }
