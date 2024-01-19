@@ -8,10 +8,10 @@ import game.modules.slot.entities.slot.Line;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Line25Lines {
-    private List<Line<Line25Item>> lines = new ArrayList<Line<Line25Item>>();
+public class Slot25BasicLines {
+    private List<Line<SlotBasic25Item>> lines = new ArrayList<Line<SlotBasic25Item>>();
 
-    public Line25Lines() {
+    public Slot25BasicLines() {
         this.initLines();
     }
 
@@ -69,11 +69,11 @@ public class Line25Lines {
         this.lines.add(line25);
     }
 
-    public List<Line<Line25Item>> list() {
+    public List<Line<SlotBasic25Item>> list() {
         return this.lines;
     }
 
-    public Line<Line25Item> get(int index) {
+    public Line<SlotBasic25Item> get(int index) {
         return this.lines.get(index);
     }
 }

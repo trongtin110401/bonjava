@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum Line25Item {
+public enum SlotBasic25Item {
 
     SCATTER("SCATTER", 1, "Scatter", (byte) 0),
     BONUS("BONUS", 2, "Bonus", (byte) 1),
@@ -24,15 +24,15 @@ public enum Line25Item {
     private String name;
     private byte id;
 
-    private static Map<Integer, Line25Item> map = new HashMap<>();
+    private static Map<Integer, SlotBasic25Item> map = new HashMap<>();
 
-    Line25Item(String s, int n2, String name, byte id) {
+    SlotBasic25Item(String s, int n2, String name, byte id) {
         this.name = name;
         this.id = id;
     }
 
     static {
-        Arrays.stream(Line25Item.values()).forEach(item -> {
+        Arrays.stream(SlotBasic25Item.values()).forEach(item -> {
             map.put((int) item.getId(), item);
         });
     }
@@ -53,7 +53,7 @@ public enum Line25Item {
         return this.id;
     }
 
-    public static Line25Item findItem(byte id) {
+    public static SlotBasic25Item findItem(byte id) {
         return map.get((int) id);
     }
 }

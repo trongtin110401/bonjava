@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  bitzero.server.extensions.data.BaseMsg
  */
@@ -18,6 +18,8 @@ public class SLot20ResultMsg extends BaseMsg {
     public String haiSao = "";
     public long prize;
     public long currentMoney;
+    public boolean isFreeSpin;
+    public int freeSpin = 0;
 
     public SLot20ResultMsg(short type) {
         super(type);
@@ -32,6 +34,8 @@ public class SLot20ResultMsg extends BaseMsg {
         this.putStr(bf, this.haiSao);
         bf.putLong(this.prize);
         bf.putLong(this.currentMoney);
+        this.putBoolean(bf, isFreeSpin);
+        bf.putInt(freeSpin);
         return this.packBuffer(bf);
     }
 }

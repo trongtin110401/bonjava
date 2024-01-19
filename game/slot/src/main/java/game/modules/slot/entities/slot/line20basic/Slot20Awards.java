@@ -5,7 +5,7 @@ package game.modules.slot.entities.slot.line20basic;
 
 import java.util.*;
 
-public class Line20Awards {
+public class Slot20Awards {
 
     private static List<Slot20Award> awards = new ArrayList<Slot20Award>();
     private static Map<String, Slot20Award> awardMap = new HashMap<>();
@@ -18,7 +18,7 @@ public class Line20Awards {
                 });
     }
 
-    public Line20Awards() {
+    public Slot20Awards() {
         Collections.addAll(awards, Slot20Award.values());
     }
 
@@ -26,7 +26,7 @@ public class Line20Awards {
         return awards;
     }
 
-    public static Slot20Award getAward(Line20Item item, int numItems) {
+    public static Slot20Award getAward(Slot20Item item, int numItems) {
         return awardMap.get(item.getId() + "_" + numItems);
     }
 }

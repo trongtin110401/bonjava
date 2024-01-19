@@ -3,12 +3,12 @@
  */
 package game.modules.slot.entities.slot.line20basic;
 
-public class Line20AwardsOnLine {
+public class Slot20AwardsOnLine {
     private Slot20Award award;
     private long money;
     private String lineName;
 
-    public Line20AwardsOnLine(Slot20Award award, long money, String lineName) {
+    public Slot20AwardsOnLine(Slot20Award award, long money, String lineName) {
         this.award = award;
         this.money = money;
         this.lineName = lineName;
