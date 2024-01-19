@@ -73,8 +73,8 @@ public abstract class Slot20Module extends SlotModule {
                     new Slot20Room(this, commandCollection, logListener, gameName, (byte) 0, this.gameName + "_vin_100", (short) 1, this.jackpots[0], funds[0], 100, initPotValues[0]));
             this.rooms.put(this.gameName + "_vin_1000",
                     new Slot20Room(this, commandCollection, logListener, gameName, (byte) 1, this.gameName + "_vin_1000", (short) 1, this.jackpots[1], funds[1], 1000, initPotValues[1]));
-//        this.rooms.put(this.gameName + "_vin_5000",
-//                new Slot20Room(this, commandCollection, logListener, gameName, (byte) 2, this.gameName + "_vin_5000", (short) 1, this.jackpots[2], funds[2], 5000, initPotValues[2]));
+        this.rooms.put(this.gameName + "_vin_5000",
+                new Slot20Room(this, commandCollection, logListener, gameName, (byte) 2, this.gameName + "_vin_5000", (short) 1, this.jackpots[2], funds[2], 5000, initPotValues[2]));
             this.rooms.put(this.gameName + "_vin_10000",
                     new Slot20Room(this, commandCollection, logListener, gameName, (byte) 3, this.gameName + "_vin_10000", (short) 1, this.jackpots[3], funds[3], 10000, initPotValues[3]));
 
