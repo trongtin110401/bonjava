@@ -12,7 +12,7 @@ public class Slot25BasicAwards {
     static {
         Arrays.stream(Slot25BasicAward.values())
                 .forEach(avengersAward -> {
-                    String key = avengersAward.getId() + "_" + avengersAward.getDuplicate();
+                    String key = avengersAward.getItem().getId() + "_" + avengersAward.getDuplicate();
                     awardMap.put(key, avengersAward);
                 });
     }

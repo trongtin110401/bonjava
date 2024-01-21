@@ -9,6 +9,7 @@ public class SlotCMD {
     public static final short UPDATE_JACKPOTS = 10003;
     public static final short LIST_AUTO_PLAY_INFO = 10004;
     public static final short PLAY_KHO_BAU = 2001;
+    public static final short RESULT_KHO_BAU = 2001;
     public static final short UPDATE_POT_KHO_BAU = 2002;
     public static final short SUBSCRIBE_KHO_BAU = 2003;
     public static final short UNSUBSCRIBE_KHO_BAU = 2004;

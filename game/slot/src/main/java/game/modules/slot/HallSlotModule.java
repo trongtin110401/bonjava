@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  bitzero.server.BitZeroServer
  *  bitzero.server.entities.User
@@ -25,13 +25,15 @@ import com.vinplay.dal.service.impl.CacheServiceImpl;
 import com.vinplay.vbee.common.enums.Games;
 import game.modules.slot.cmd.send.hall.ListAutoPlayInfoMsg;
 import game.modules.slot.cmd.send.hall.UpdateJackpotsMsg;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
 import org.json.simple.JSONObject;
 
 public class HallSlotModule
-extends BaseClientRequestHandler {
+        extends BaseClientRequestHandler {
     private Set<User> usersSub = new HashSet<User>();
     private Runnable updateJackpotsTask = new UpdateJackpotsTask();
 
@@ -62,21 +64,21 @@ extends BaseClientRequestHandler {
         }
         UpdateJackpotsMsg msg = new UpdateJackpotsMsg();
         msg.json = this.buildJsonJackpots();
-        this.send((BaseMsg)msg, user);
+        this.send(msg, user);
         ListAutoPlayInfoMsg listAutoMsg = new ListAutoPlayInfoMsg();
-        if (user.getProperty((Object)("auto_" + Games.KHO_BAU.getName())) != null) {
-            listAutoMsg.autoKhoBau = auto = ((Boolean)user.getProperty((Object)("auto_" + Games.KHO_BAU.getName()))).booleanValue();
+        if (user.getProperty("auto_" + Games.KHO_BAU.getName()) != null) {
+            listAutoMsg.autoKhoBau = ((Boolean) user.getProperty("auto_" + Games.KHO_BAU.getName())).booleanValue();
         }
-        if (user.getProperty((Object)("auto_" + Games.NU_DIEP_VIEN.getName())) != null) {
-            listAutoMsg.autoNDV = auto = ((Boolean)user.getProperty((Object)("auto_" + Games.NU_DIEP_VIEN.getName()))).booleanValue();
+        if (user.getProperty("auto_" + Games.NU_DIEP_VIEN.getName()) != null) {
+            listAutoMsg.autoNDV = ((Boolean) user.getProperty("auto_" + Games.NU_DIEP_VIEN.getName())).booleanValue();
         }
-        if (user.getProperty((Object)("auto_" + Games.AVENGERS.getName())) != null) {
-            listAutoMsg.autoAvenger = auto = ((Boolean)user.getProperty((Object)("auto_" + Games.AVENGERS.getName()))).booleanValue();
+        if (user.getProperty("auto_" + Games.AVENGERS.getName()) != null) {
+            listAutoMsg.autoAvenger = ((Boolean) user.getProperty("auto_" + Games.AVENGERS.getName())).booleanValue();
         }
-        if (user.getProperty((Object)("auto_" + Games.VUONG_QUOC_VIN.getName())) != null) {
-            listAutoMsg.autoVQV = auto = ((Boolean)user.getProperty((Object)("auto_" + Games.VUONG_QUOC_VIN.getName()))).booleanValue();
+        if (user.getProperty("auto_" + Games.VUONG_QUOC_VIN.getName()) != null) {
+            listAutoMsg.autoVQV = auto = ((Boolean) user.getProperty("auto_" + Games.VUONG_QUOC_VIN.getName())).booleanValue();
         }
-        this.send((BaseMsg)listAutoMsg, user);
+        this.send(listAutoMsg, user);
     }
 
     /*
@@ -85,32 +87,32 @@ extends BaseClientRequestHandler {
     protected void unSubscribe(User user, DataCmd dataCmd) {
         Set<User> set = this.usersSub;
         synchronized (set) {
-            this.usersSub.remove((Object)user);
+            this.usersSub.remove(user);
         }
     }
 
     private String buildJsonJackpots() {
         JSONObject json = new JSONObject();
         JSONObject jsonAudition = this.buildGameSlotInfo(Games.AUDITION.getName());
-        json.put((Object)"audition", (Object)jsonAudition);
+        json.put("audition", jsonAudition);
 
         JSONObject jsonMaybach = this.buildGameSlotInfo(Games.MAYBACH.getName());
-        json.put((Object)"maybach", (Object)jsonMaybach);
+        json.put("maybach", jsonMaybach);
 
         JSONObject jsonTamhung = this.buildGameSlotInfo(Games.TAMHUNG.getName());
-        json.put((Object)"tamhung", (Object)jsonTamhung);
+        json.put("tamhung", jsonTamhung);
 
         JSONObject jsonRangeRover = this.buildGameSlotInfo(Games.RANGE_ROVER.getName());
-        json.put((Object)"rangeRover", (Object)jsonRangeRover);
+        json.put("rangeRover", jsonRangeRover);
 
         JSONObject jsonBenley = this.buildGameSlotInfo(Games.BENTLEY.getName());
-        json.put((Object)"benley", (Object)jsonBenley);
+        json.put("benley", jsonBenley);
 
         JSONObject jsonRollRoye = this.buildGameSlotInfo(Games.ROLL_ROYE.getName());
-        json.put((Object)"rollRoye", (Object)jsonRollRoye);
+        json.put("rollRoye", jsonRollRoye);
 
         JSONObject jsonSpartan = this.buildGameSlotInfo(Games.SPARTAN.getName());
-        json.put((Object)"spartan", (Object)jsonSpartan);
+        json.put("spartan", jsonSpartan);
 
         return json.toJSONString();
     }
@@ -119,14 +121,13 @@ extends BaseClientRequestHandler {
         JSONObject jsonGame = new JSONObject();
         try {
             JSONObject room100 = this.buildRoomSlotInfo(gameName, 100);
-            jsonGame.put((Object)"100", (Object)room100);
+            jsonGame.put("100", room100);
             JSONObject room101 = this.buildRoomSlotInfo(gameName, 1000);
-            jsonGame.put((Object)"1000", (Object)room101);
+            jsonGame.put("1000", room101);
             JSONObject room102 = this.buildRoomSlotInfo(gameName, 10000);
-            jsonGame.put((Object)"10000", (Object)room102);
-        }
-        catch (Exception e) {
-            Debug.trace((Object)("Hall Slot get jackpots " + gameName + " error: " + e.getMessage()));
+            jsonGame.put("10000", room102);
+        } catch (Exception e) {
+//            Debug.trace((Object) ("Hall Slot get jackpots " + gameName + " error: " + e.getMessage()));
         }
         return jsonGame;
     }
@@ -135,13 +136,12 @@ extends BaseClientRequestHandler {
         CacheServiceImpl cacheService = new CacheServiceImpl();
         JSONObject jsonValue = new JSONObject();
         try {
-            int pot = cacheService.getValueInt(String.valueOf(gameName) + "_vin_" + room);
-            jsonValue.put((Object)"p", (Object)pot);
-            int x2 = cacheService.getValueInt(String.valueOf(gameName) + "_vin_" + room + "_x2");
-            jsonValue.put((Object)"x2", (Object)x2);
-        }
-        catch (Exception e) {
-            Debug.trace((Object)("Hall Slot get jackpots " + gameName + " - " + room + " error: " + e.getMessage()));
+            int pot = cacheService.getValueInt(gameName + "_vin_" + room);
+            jsonValue.put("p", pot);
+            int x2 = cacheService.getValueInt(gameName + "_vin_" + room + "_x2");
+            jsonValue.put("x2", x2);
+        } catch (Exception e) {
+//            Debug.trace("Hall Slot get jackpots " + gameName + " - " + room + " error: " + e.getMessage());
         }
         return jsonValue;
     }
@@ -151,7 +151,7 @@ extends BaseClientRequestHandler {
     }
 
     private class UpdateJackpotsTask
-    implements Runnable {
+            implements Runnable {
         private UpdateJackpotsTask() {
         }
 
@@ -171,9 +171,8 @@ extends BaseClientRequestHandler {
                         HallSlotModule.access$2(HallSlotModule.this, msg, user);
                     }
                 }
-            }
-            catch (Exception e) {
-                Debug.trace((Object)("Update slot exception: " + e.getMessage()));
+            } catch (Exception e) {
+                Debug.trace((Object) ("Update slot exception: " + e.getMessage()));
             }
         }
     }

@@ -22,14 +22,14 @@ public class AuditionModuleExt extends Slot20Module {
     @Override
     protected Slot20CommandCollection initMessageCommand() {
         Slot20CommandCollection commandCollection = new Slot20CommandCollection();
-        commandCollection.TOTAL_FREE_SPIN_MESSAGE = SlotCMD.RANGE_ROVER_TOTAL_FREE_SPIN;
-        commandCollection.BIG_WIN_MESSAGE = SlotCMD.BIG_WIN_RANGE_ROVER;
-        commandCollection.FREE_DAILY_MESSAGE = SlotCMD.RANGE_ROVER_FREE_DAILY;
-        commandCollection.RESULT_MESSAGE = SlotCMD.RANGE_ROVER_INFO;
-        commandCollection.UPDATE_POT_MESSAGE = SlotCMD.UPDATE_POT_RANGE_ROVER;
-        commandCollection.FORCE_AUTO_PLAY_MESSAGE = SlotCMD.FORCE_STOP_PLAY_RANGE_ROVER;
-        commandCollection.INFO_MESSAGE = SlotCMD.RANGE_ROVER_INFO;
-        commandCollection.MINIMIZE_RESULT_MESSAGE = SlotCMD.RANGE_ROVER_RESULT_MINIMIZE;
+        commandCollection.TOTAL_FREE_SPIN_MESSAGE = SlotCMD.KHO_BAU_TOTAL_FREE_SPIN;
+        commandCollection.BIG_WIN_MESSAGE = SlotCMD.BIG_WIN_KHO_BAU;
+        commandCollection.FREE_DAILY_MESSAGE = SlotCMD.KHO_BAU_FREE_DAILY;
+        commandCollection.RESULT_MESSAGE = SlotCMD.RESULT_KHO_BAU;
+        commandCollection.UPDATE_POT_MESSAGE = SlotCMD.UPDATE_POT_KHO_BAU;
+        commandCollection.FORCE_AUTO_PLAY_MESSAGE = SlotCMD.FORCE_STOP_PLAY_KHO_BAU;
+        commandCollection.INFO_MESSAGE = SlotCMD.KHO_BAU_INFO;
+        commandCollection.MINIMIZE_RESULT_MESSAGE = SlotCMD.KHO_BAU_RESULT_MINIMIZE;
         return commandCollection;
     }
 
@@ -48,28 +48,28 @@ public class AuditionModuleExt extends Slot20Module {
     public void handleClientRequest(User user, DataCmd dataCmd) {
         Debug.trace("audition handleClientRequest " + dataCmd.getId());
         switch (dataCmd.getId()) {
-            case SlotCMD.SUBSCRIBE_RANGE_ROVER: {
-                subScribe(user, dataCmd);
+            case 2003: {
+                this.subScribe(user, dataCmd);
                 break;
             }
-            case SlotCMD.UNSUBSCRIBE_RANGE_ROVER: {
-                unSubScribe(user, dataCmd);
+            case 2004: {
+                this.unSubScribe(user, dataCmd);
                 break;
             }
-            case SlotCMD.CHANGE_ROOM_RANGE_ROVER: {
-                changeRoom(user, dataCmd);
+            case 2005: {
+                this.changeRoom(user, dataCmd);
                 break;
             }
-            case SlotCMD.AUTO_PLAY_RANGE_ROVER: {
-                autoPlay(user, dataCmd);
+            case 2006: {
+                this.autoPlay(user, dataCmd);
                 break;
             }
-            case SlotCMD.PLAY_RANGE_ROVER: {
-                play(user, dataCmd);
+            case 2001: {
+                this.play(user, dataCmd);
                 break;
             }
-            case SlotCMD.RANGE_ROVER_MINIMIZE: {
-                minimize(user, dataCmd);
+            case 2013: {
+                this.minimize(user, dataCmd);
             }
         }
     }
