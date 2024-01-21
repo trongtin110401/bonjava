@@ -59,7 +59,7 @@ public class Slot20Room extends SlotRoom {
 
     public Slot20Room(SlotModule module, Slot20CommandCollection commandCollection, SlotLogListener slotLogListener,
                       String gameName, byte id, String room, short moneyType, long pot, long fund, int betValue, long initPotValue) {
-        super(id, room, betValue, moneyType, pot, fund, initPotValue);
+        super(id, room, betValue, moneyType, pot, 50000000, initPotValue);
         this.commandCollection = commandCollection;
         this.slotLogListener = slotLogListener;
         this.gameName = gameName;

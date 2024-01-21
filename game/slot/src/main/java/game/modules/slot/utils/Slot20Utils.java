@@ -95,7 +95,7 @@ public class Slot20Utils {
      */
     public static void calculateAwardInLine(Slot20Line line, List<Slot20Award> awardList) {
         // ánh x? gi?a item và s? l??ng xu?t hi?n c?a nó trên 1 Line
-        Map<Byte, Integer> itemId2Count = new HashMap<>();
+         Map<Byte, Integer> itemId2Count = new HashMap<>();
         // duy?t qua các cell trên 1 line ?? tính toán s? l?n xu?t hi?n
         for (int cellIndex = 0; cellIndex < line.getCells().size(); cellIndex++) {
             Slot20Cell cell = line.getCell(cellIndex);

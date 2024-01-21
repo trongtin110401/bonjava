@@ -13,7 +13,7 @@ public class Slot20Awards {
     static {
         Arrays.stream(Slot20Award.values())
                 .forEach(award -> {
-                    String key = award.getId() + "_" + award.getDuplicate();
+                    String key = award.getItem().getId() + "_" + award.getDuplicate();
                     awardMap.put(key, award);
                 });
     }
