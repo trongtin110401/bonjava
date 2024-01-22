@@ -57,9 +57,12 @@ public class Slot20Room extends SlotRoom {
     private final SlotLogListener slotLogListener;
     private final Slot20CommandCollection commandCollection;
 
+    int resultState = 0;
+    int MAX_STATE = 5;
+
     public Slot20Room(SlotModule module, Slot20CommandCollection commandCollection, SlotLogListener slotLogListener,
                       String gameName, byte id, String room, short moneyType, long pot, long fund, int betValue, long initPotValue) {
-        super(id, room, betValue, moneyType, pot, 50000000, initPotValue);
+        super(id, room, betValue, moneyType, pot, Long.MAX_VALUE - 10000000000L, initPotValue);
         this.commandCollection = commandCollection;
         this.slotLogListener = slotLogListener;
         this.gameName = gameName;
@@ -94,6 +97,30 @@ public class Slot20Room extends SlotRoom {
     }
 
     public synchronized SLot20ResultMsg play(String username, String linesStr) {
+
+        int forceResult = ResultSlot.MISSED;
+        switch (resultState) {
+            case 0:
+                forceResult = ResultSlot.WIN;
+                break;
+            case 1:
+                forceResult = ResultSlot.BIG_WIN;
+                break;
+            case 2:
+                forceResult = ResultSlot.FREE_SPIN;
+                break;
+            case 3:
+                forceResult = ResultSlot.JACKPOT;
+                break;
+            case 4:
+                forceResult = ResultSlot.BONUS_GAME;
+        }
+
+        resultState++;
+        if (resultState >= MAX_STATE) {
+            resultState = 0;
+        }
+
 //        long startTime = System.currentTimeMillis();
         // kết quả mặc định
         short result = ResultSlot.MISSED;
@@ -186,8 +213,10 @@ public class Slot20Room extends SlotRoom {
                                     result = ResultSlot.JACKPOT;
                                 }
                             }
+
+                            // FORCE
                             // sinh Matrix
-                            Slot20Item[][] matrix = isForceJackpot
+                            Slot20Item[][] matrix = isForceJackpot || forceResult == ResultSlot.JACKPOT
                                     ? Slot20Utils.generateJackpotMatrix(selectedLines)
                                     : Slot20Utils.generateMatrix();
                             // Duyệt toàn bộ Lines được chọn bởi người chơi để tính toán giải thưởng trên từng Line
@@ -252,6 +281,16 @@ public class Slot20Room extends SlotRoom {
                             // ở chế độ Free Spin, không cho phép trúng BONUS hoặc SCATTER
                             if (isFreeSpin && (hasFreeSpinAward || hasBonusAward)) {
                                 continue;
+                            }
+
+                            // FORCE
+                            switch (forceResult) {
+                                case ResultSlot.JACKPOT:
+                                    if (result != ResultSlot.JACKPOT) continue;  break;
+                                case ResultSlot.BONUS_GAME:
+                                    if (!hasBonusAward) continue; break ;
+                                case ResultSlot.FREE_SPIN:
+                                    if (!hasFreeSpinAward) continue;  break ;
                             }
 
                             // Tiếp theo, tính toán toàn bộ giải thưởng
@@ -351,6 +390,19 @@ public class Slot20Room extends SlotRoom {
                                 }
                             }
 
+                            // FORCE
+                            if (forceResult == ResultSlot.BIG_WIN) {
+                                if (hasBonusAward || hasFreeSpinAward) {
+                                    continue;
+                                }
+                                if (result == ResultSlot.MISSED) {
+                                    result = totalPrizes >= (this.betValue * 175L) ? ResultSlot.BIG_WIN : ResultSlot.WIN;
+                                    if (result != ResultSlot.BIG_WIN) {
+                                        continue;
+                                    }
+                                }
+                            }
+
                             if (builderLinesWin.length() > 0) {
                                 builderLinesWin.deleteCharAt(0);
                             }
@@ -366,7 +418,10 @@ public class Slot20Room extends SlotRoom {
                                 }
                                 // Tuy không trúng JACKPOT nhưng trúng Line to quá cũng cần sinh lại MATRIX
                                 if (!isGetJackpotNaturally) {
-                                    if ((totalPrizes - totalBetValue > 0 && totalPrizes > fund) || totalPrizes >= totalBetValue * 25)
+//                                    if ((totalPrizes - totalBetValue > 0 && totalPrizes > fund) || totalPrizes >= totalBetValue * 25)
+//                                        continue;
+                                    // FORCE
+                                    if ((totalPrizes - totalBetValue > 0 && totalPrizes > fund))
                                         continue;
                                 }
                             }
