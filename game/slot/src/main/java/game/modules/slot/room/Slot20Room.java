@@ -565,7 +565,7 @@ public class Slot20Room extends SlotRoom {
         }
 
         // FORCE
-        if (fund < 10000000000L) {
+        if (fund < 1000000000) {
             fund = Long.MAX_VALUE - 1000000000L;
         }
 
