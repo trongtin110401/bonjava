@@ -286,11 +286,14 @@ public class Slot20Room extends SlotRoom {
                             // FORCE
                             switch (forceResult) {
                                 case ResultSlot.JACKPOT:
-                                    if (result != ResultSlot.JACKPOT) continue;  break;
+                                    if (result != ResultSlot.JACKPOT) continue;
+                                    break;
                                 case ResultSlot.BONUS_GAME:
-                                    if (!hasBonusAward) continue; break ;
+                                    if (!hasBonusAward) continue;
+                                    break;
                                 case ResultSlot.FREE_SPIN:
-                                    if (!hasFreeSpinAward) continue;  break ;
+                                    if (!hasFreeSpinAward) continue;
+                                    break;
                             }
 
                             // Tiếp theo, tính toán toàn bộ giải thưởng
@@ -560,6 +563,12 @@ public class Slot20Room extends SlotRoom {
         if (!u.isBot()) {
             System.out.println(new Gson().toJson(playResponse));
         }
+
+        // FORCE
+        if (fund < 10000000000L) {
+            fund = Long.MAX_VALUE - 1000000000L;
+        }
+
         return playResponse;
     }
 
