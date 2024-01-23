@@ -44,7 +44,7 @@ public class ServerSettings {
     public static final class WebSocketEngineSettings
     implements Serializable {
         public boolean isActive = false;
-        public String bindAddress = "192.168.1.96";
+        public String bindAddress = "10.40.112.3";
         public int tcpPort = 8888;
         public int sslPort = 8843;
         public List<String> validDomains = new ArrayList<String>();
@@ -67,7 +67,7 @@ public class ServerSettings {
     public static final class SocketAddress {
         public static final String TYPE_UDP = "UDP";
         public static final String TYPE_TCP = "TCP";
-        public volatile String address = "192.168.1.96";
+        public volatile String address = "10.40.112.3";
         public volatile int port = 9339;
         public volatile String type = "TCP";
     }
