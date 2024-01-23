@@ -213,7 +213,7 @@ public class Slot25BasicRoom extends SlotRoom {
                         ArrayList<AwardsOnLine<Slot25BasicAward>> awardsOnLines = new ArrayList<>();
                         while (!enoughPair) {
                             // khởi tạo lại các giá trị mặc định sau mỗi lần lặp
-                            result = ResultSlot.MISSED;
+                             result = ResultSlot.MISSED;
                             awardsOnLines.clear();
                             totalPrizes = 0L;
                             bonusGameResponse = null;
@@ -221,7 +221,7 @@ public class Slot25BasicRoom extends SlotRoom {
                             countBonus = 0;
                             boolean isForceJackpot = false;
 
-                            if (betValue == 100) {
+                             if (betValue == 100) {
                                 if (usernameForce.equals(username) && roomForce.equals(String.valueOf(100))) {
                                     isForceJackpot = true;
                                     forceJackpotToUser = true;
@@ -277,9 +277,15 @@ public class Slot25BasicRoom extends SlotRoom {
 //                                    continue;
 //                            }
                             // ở chế độ Free Spin, không cho phép trúng BONUS hoặc SCATTER
-                            if (isFreeSpin && (countScatter >= 3 || countBonus >= 3)) {
-                                continue;
-                            }
+//                            if (isFreeSpin && (countScatter >= 3 || countBonus >= 3)) {
+//                                continue;
+//                            }
+
+                            // FORCE
+//                            if (isFreeSpin && (countBonus >= 3)) {
+//                                continue;
+//                            }
+
 
                             // Tính toán phần thưởng cho BONUS GAME
                             if (countBonus >= 3) {
@@ -311,18 +317,6 @@ public class Slot25BasicRoom extends SlotRoom {
                                 }
                             }
 
-                            // FORCE
-                            switch (forceResult) {
-                                case ResultSlot.JACKPOT:
-                                    if (result != ResultSlot.JACKPOT) continue;
-                                    break;
-                                case ResultSlot.BONUS_GAME:
-                                    if (countBonus < 3) continue;
-                                    break;
-                                case ResultSlot.FREE_SPIN:
-                                    if (countScatter < 3) continue;
-                                    break;
-                            }
 
                             // Tiếp theo, tính toán toàn bộ giải thưởng
                             boolean isGetJackpotNaturally = false;
@@ -341,6 +335,19 @@ public class Slot25BasicRoom extends SlotRoom {
                                     result = ResultSlot.JACKPOT;
                                     isGetJackpotNaturally = true;
                                 }
+                            }
+
+                            // FORCE
+                            switch (forceResult) {
+                                case ResultSlot.JACKPOT:
+                                    if (result != ResultSlot.JACKPOT) continue;
+                                    break;
+                                case ResultSlot.BONUS_GAME:
+                                    if (countBonus < 3) continue;
+                                    break;
+                                case ResultSlot.FREE_SPIN:
+                                    if (countScatter < 3) continue;
+                                    break;
                             }
 
                             // FORCE
