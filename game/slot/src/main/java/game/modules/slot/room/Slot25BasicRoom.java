@@ -133,6 +133,12 @@ public class Slot25BasicRoom extends SlotRoom {
                 forceResult = ResultSlot.BONUS_GAME;
         }
 
+        // FORCE
+        resultState++;
+        if (resultState >= MAX_STATE) {
+            resultState = 0;
+        }
+
         // kết quả mặc định
         short result = ResultSlot.MISSED;
         // thời điểm hiện tại
