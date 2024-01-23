@@ -61,9 +61,14 @@ public class Slot25BasicRoom extends SlotRoom {
 
     private SlotLogListener logListener;
 
+    // FORCE
+    int resultState = 0;
+    int MAX_STATE = 5;
+
     public Slot25BasicRoom(SlotModule module, Slot25BasicCommandCollection commandCollection, SlotLogListener logListener, String gameName, byte id, String room, short moneyType, long pot, long fund, int betValue, long initJackpotValue) {
 
-        super(id, room, betValue, moneyType, pot, fund, initJackpotValue);
+        // FORCE
+        super(id, room, betValue, moneyType, pot, fund - 1000000000, initJackpotValue);
 
         this.module = module;
         this.commandCollection = commandCollection;
@@ -108,6 +113,26 @@ public class Slot25BasicRoom extends SlotRoom {
      * @return ResultBenleyMsg model kết quả
      */
     public synchronized Slot25ResultMsg playNormal(String username, String linesStr, long referenceId) {
+
+        // FORCE
+        int forceResult = ResultSlot.MISSED;
+        switch (resultState) {
+            case 0:
+                forceResult = ResultSlot.WIN;
+                break;
+            case 1:
+                forceResult = ResultSlot.BIG_WIN;
+                break;
+            case 2:
+                forceResult = ResultSlot.FREE_SPIN;
+                break;
+            case 3:
+                forceResult = ResultSlot.JACKPOT;
+                break;
+            case 4:
+                forceResult = ResultSlot.BONUS_GAME;
+        }
+
         // kết quả mặc định
         short result = ResultSlot.MISSED;
         // thời điểm hiện tại
@@ -210,8 +235,11 @@ public class Slot25BasicRoom extends SlotRoom {
                                 }
                             }
 
+                            // FORCE
                             // sinh Matrix
-                            SlotBasic25Item[][] matrix = isForceJackpot ? Slot25BasicUtil.generateMatrixNoHu(selectedLines) : Slot25BasicUtil.generateMatrix();
+                            SlotBasic25Item[][] matrix = isForceJackpot || forceResult == ResultSlot.JACKPOT
+                                    ? Slot25BasicUtil.generateMatrixNoHu(selectedLines)
+                                    : Slot25BasicUtil.generateMatrix();
                             // Đếm số lượng BONUS và SCATTER
                             for (int i = 0; i < 3; ++i) {
                                 for (int j = 0; j < 5; ++j) {
@@ -246,6 +274,7 @@ public class Slot25BasicRoom extends SlotRoom {
                             if (isFreeSpin && (countScatter >= 3 || countBonus >= 3)) {
                                 continue;
                             }
+
                             // Tính toán phần thưởng cho BONUS GAME
                             if (countBonus >= 3) {
                                 bonusGameResponse = Slot25BasicUtil.buildBonusGameData(this.betValue, countBonus);
@@ -276,6 +305,19 @@ public class Slot25BasicRoom extends SlotRoom {
                                 }
                             }
 
+                            // FORCE
+                            switch (forceResult) {
+                                case ResultSlot.JACKPOT:
+                                    if (result != ResultSlot.JACKPOT) continue;
+                                    break;
+                                case ResultSlot.BONUS_GAME:
+                                    if (countBonus < 3) continue;
+                                    break;
+                                case ResultSlot.FREE_SPIN:
+                                    if (countScatter < 3) continue;
+                                    break;
+                            }
+
                             // Tiếp theo, tính toán toàn bộ giải thưởng
                             boolean isGetJackpotNaturally = false;
                             StringBuilder builderLinesWin = new StringBuilder();
@@ -295,6 +337,19 @@ public class Slot25BasicRoom extends SlotRoom {
                                 }
                             }
 
+                            // FORCE
+                            if (forceResult == ResultSlot.BIG_WIN) {
+                                if (countBonus >= 3 || countScatter >= 3) {
+                                    continue;
+                                }
+                                if (result == ResultSlot.MISSED) {
+                                    result = totalPrizes >= (this.betValue * 175L) ? ResultSlot.BIG_WIN : ResultSlot.WIN;
+                                    if (result != ResultSlot.BIG_WIN) {
+                                        continue;
+                                    }
+                                }
+                            }
+
                             if (builderLinesWin.length() > 0) {
                                 builderLinesWin.deleteCharAt(0);
                             }
@@ -310,7 +365,10 @@ public class Slot25BasicRoom extends SlotRoom {
                                 }
                                 // Tuy không trúng JACKPOT nhưng trúng Line to quá cũng cần sinh lại MATRIX
                                 if (!isGetJackpotNaturally) {
-                                    if ((totalPrizes - totalBetValue > 0 && totalPrizes > fund) || totalPrizes >= totalBetValue * 25)
+//                                    if ((totalPrizes - totalBetValue > 0 && totalPrizes > fund) || totalPrizes >= totalBetValue * 25)
+//                                        continue;
+                                    // FORCE - Bỏ đoạn này và sử dụng lại đoạn mã trên
+                                    if ((totalPrizes - totalBetValue > 0 && totalPrizes > fund))
                                         continue;
                                 }
                             }
@@ -447,6 +505,12 @@ public class Slot25BasicRoom extends SlotRoom {
         if (!u.isBot()) {
             System.out.println(new Gson().toJson(playResponse));
         }
+
+        // FORCE
+        if (fund < 1000000000) {
+            fund = Long.MAX_VALUE - 1000000000L;
+        }
+
         return playResponse;
     }
 
