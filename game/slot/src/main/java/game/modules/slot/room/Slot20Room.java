@@ -119,6 +119,7 @@ public class Slot20Room extends SlotRoom {
                 forceResult = ResultSlot.BONUS_GAME;
         }
 
+        // FORCE
         resultState++;
         if (resultState >= MAX_STATE) {
             resultState = 0;
