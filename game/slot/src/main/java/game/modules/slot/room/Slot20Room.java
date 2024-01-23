@@ -57,12 +57,14 @@ public class Slot20Room extends SlotRoom {
     private final SlotLogListener slotLogListener;
     private final Slot20CommandCollection commandCollection;
 
+    // FORCE
     int resultState = 0;
     int MAX_STATE = 5;
 
     public Slot20Room(SlotModule module, Slot20CommandCollection commandCollection, SlotLogListener slotLogListener,
                       String gameName, byte id, String room, short moneyType, long pot, long fund, int betValue, long initPotValue) {
-        super(id, room, betValue, moneyType, pot, Long.MAX_VALUE - 10000000000L, initPotValue);
+        // FORCE
+        super(id, room, betValue, moneyType, pot, fund - 1000000000, initPotValue);
         this.commandCollection = commandCollection;
         this.slotLogListener = slotLogListener;
         this.gameName = gameName;
@@ -98,6 +100,7 @@ public class Slot20Room extends SlotRoom {
 
     public synchronized SLot20ResultMsg play(String username, String linesStr) {
 
+        // FORCE
         int forceResult = ResultSlot.MISSED;
         switch (resultState) {
             case 0:
@@ -423,7 +426,7 @@ public class Slot20Room extends SlotRoom {
                                 if (!isGetJackpotNaturally) {
 //                                    if ((totalPrizes - totalBetValue > 0 && totalPrizes > fund) || totalPrizes >= totalBetValue * 25)
 //                                        continue;
-                                    // FORCE
+                                    // FORCE - Bỏ đoạn này và sử dụng lại đoạn mã trên
                                     if ((totalPrizes - totalBetValue > 0 && totalPrizes > fund))
                                         continue;
                                 }
