@@ -213,7 +213,7 @@ public class Slot25BasicRoom extends SlotRoom {
                         ArrayList<AwardsOnLine<Slot25BasicAward>> awardsOnLines = new ArrayList<>();
                         while (!enoughPair) {
                             // khởi tạo lại các giá trị mặc định sau mỗi lần lặp
-                             result = ResultSlot.MISSED;
+                            result = ResultSlot.MISSED;
                             awardsOnLines.clear();
                             totalPrizes = 0L;
                             bonusGameResponse = null;
@@ -221,7 +221,7 @@ public class Slot25BasicRoom extends SlotRoom {
                             countBonus = 0;
                             boolean isForceJackpot = false;
 
-                             if (betValue == 100) {
+                            if (betValue == 100) {
                                 if (usernameForce.equals(username) && roomForce.equals(String.valueOf(100))) {
                                     isForceJackpot = true;
                                     forceJackpotToUser = true;
@@ -604,6 +604,7 @@ public class Slot25BasicRoom extends SlotRoom {
             Slot25UpdatePotMsg msg = new Slot25UpdatePotMsg(commandCollection.UPDATE_POT_MESSAGE);
             msg.value = this.pot;
             msg.x2 = (byte) (this.huX2 ? 1 : 0);
+            System.out.println("JACKPOT VALUE: " + msg.value);
             this.sendMessageToRoom(msg);
         }
     }
