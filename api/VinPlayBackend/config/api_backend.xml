@@ -1641,8 +1641,14 @@
 
         <command>
             <id>11011</id>
-            <name>update fund</name>
+            <name>Get CCU</name>
             <path>com.vinplay.api.backend.processors.GetCCUProcessor</path>
+        </command>
+
+        <command>
+            <id>11012</id>
+            <name>Get CCU Detail</name>
+            <path>com.vinplay.api.backend.processors.GetCCUDetailProcessor</path>
         </command>
     </commands>
 </backend>
