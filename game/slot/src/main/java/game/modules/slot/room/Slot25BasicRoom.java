@@ -191,7 +191,10 @@ public class Slot25BasicRoom extends SlotRoom {
 
                     if (moneyRes != null && moneyRes.isSuccess()) {
                         // 2 phần trăm cho vào hũ JACKPOT
-                        long moneyToPot = !isFreeSpin ? totalBetValue * 2 / 100L : 0;
+//                        long moneyToPot = !isFreeSpin ? totalBetValue * 2 / 100L : 0;
+
+                        // FORCE
+                        long moneyToPot = totalBetValue * 2 / 100L;
                         this.pot += moneyToPot;
 
                         // số tiền còn lại sau khi trừ phế và 2% POT cho vào quỹ thưởng
