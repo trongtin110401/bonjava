@@ -1636,7 +1636,7 @@
         <command>
             <id>11010</id>
             <name>update fund</name>
-            <path>com.vinplay.api.backend.processors.GetInfoFundProcessor</path>
+            <path>com.vinplay.api.backend.processors.UpdateFundProcessor</path>
         </command>
 
         <command>

@@ -25,8 +25,17 @@ public class UpdateFundProcessor
 
     public String execute(Param<HttpServletRequest> param) throws KeyNotFoundException {
         FundInfoResponse response = new FundInfoResponse(true, "200");
+
+        HttpServletRequest request = (HttpServletRequest) param.get();
+        int hu_tx_auto = Integer.parseInt(request.getParameter("hu_tx_auto"));
+        int hu_xd_auto = Integer.parseInt(request.getParameter("hu_xd_auto"));
+        int hu_bc_auto = Integer.parseInt(request.getParameter("hu_bc_auto"));
+
         CacheService cacheService = new CacheServiceImpl();
         try {
+            cacheService.setValue("hu_tx_auto", hu_tx_auto);
+            cacheService.setValue("hu_xd_auto", hu_xd_auto);
+            cacheService.setValue("hu_bc_auto", hu_bc_auto);
             if (cacheService.getValueStr("hu_tx_auto") != null) {
                 response.setFundTaiXiu(cacheService.getValueInt("hu_tx_auto"));
             }
@@ -42,7 +51,6 @@ public class UpdateFundProcessor
 
         } catch (Exception e) {
             e.printStackTrace();
-            response = new FundInfoResponse(false, "1001");
         }
 
         return response.toJson();
