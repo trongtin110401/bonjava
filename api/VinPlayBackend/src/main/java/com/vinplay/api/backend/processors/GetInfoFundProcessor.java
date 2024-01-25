@@ -26,7 +26,7 @@ import java.util.List;
 public class GetInfoFundProcessor
         implements BaseProcessor<HttpServletRequest, String> {
 
-    public String execute(Param<HttpServletRequest> param) throws KeyNotFoundException {
+    public String execute(Param<HttpServletRequest> param)  {
         FundInfoResponse response = new FundInfoResponse(true, "200");
         CacheService cacheService = new CacheServiceImpl();
         try {
