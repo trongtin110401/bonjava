@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 public class UpdateFundProcessor
         implements BaseProcessor<HttpServletRequest, String> {
 
-    public String execute(Param<HttpServletRequest> param) throws KeyNotFoundException {
+    public String execute(Param<HttpServletRequest> param)  {
         FundInfoResponse response = new FundInfoResponse(true, "200");
 
         HttpServletRequest request = (HttpServletRequest) param.get();
