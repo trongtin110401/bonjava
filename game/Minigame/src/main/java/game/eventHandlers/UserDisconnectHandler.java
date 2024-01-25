@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  bitzero.server.core.BZEventParam
  *  bitzero.server.core.IBZEvent
@@ -18,14 +18,17 @@ import bitzero.server.core.IBZEventParam;
 import bitzero.server.entities.User;
 import bitzero.server.exceptions.BZException;
 import bitzero.server.extensions.BaseServerEventHandler;
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.IMap;
 import com.vinplay.vbee.common.enums.Platform;
+import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
 
 public class UserDisconnectHandler
-extends BaseServerEventHandler {
+        extends BaseServerEventHandler {
     public synchronized void handleServerEvent(IBZEvent ibzevent) throws BZException {
-        User user = (User)ibzevent.getParameter((IBZEventParam)BZEventParam.USER);
-        String pf = (String)user.getProperty((Object)"pf");
-        Platform platform = Platform.find((String)pf);
+        User user = (User) ibzevent.getParameter((IBZEventParam) BZEventParam.USER);
+        String pf = (String) user.getProperty((Object) "pf");
+        Platform platform = Platform.find((String) pf);
         switch (platform) {
             case WEB: {
                 --game.BaseGameExtension.ccuWeb;
@@ -51,6 +54,10 @@ extends BaseServerEventHandler {
                 --game.BaseGameExtension.ccuDT;
             }
         }
+        // xóa user ra kh?i key
+        HazelcastInstance instance = HazelcastClientFactory.getInstance();
+        IMap userOnline = instance.getMap("USER_ONLINE");
+        userOnline.remove(user.getName());
     }
 
 }
