@@ -1630,8 +1630,19 @@
         </command>
         <command>
             <id>11009</id>
-            <name>dai ly update information</name>
-            <path>com.vinplay.api.backend.processors.ReportUserProcessor</path>
+            <name>Get info fund</name>
+            <path>com.vinplay.api.backend.processors.GetInfoFundProcessor</path>
+        </command>
+        <command>
+            <id>11010</id>
+            <name>update fund</name>
+            <path>com.vinplay.api.backend.processors.UpdateFundProcessor</path>
+        </command>
+
+        <command>
+            <id>11011</id>
+            <name>update fund</name>
+            <path>com.vinplay.api.backend.processors.GetCCUProcessor</path>
         </command>
     </commands>
 </backend>
