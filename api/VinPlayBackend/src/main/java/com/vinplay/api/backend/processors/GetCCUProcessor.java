@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  com.vinplay.dal.service.impl.ServerInfoServiceImpl
  *  com.vinplay.vbee.common.cp.BaseProcessor
@@ -10,30 +10,36 @@
  */
 package com.vinplay.api.backend.processors;
 
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.IMap;
 import com.vinplay.dal.service.impl.ServerInfoServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
+import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
+import com.vinplay.vbee.common.models.cache.UserCacheModel;
 import com.vinplay.vbee.common.response.CCUResponse;
+import com.vinplay.vbee.common.response.UserOnlineResponse;
+import com.vinplay.vbee.common.utils.VinPlayUtils;
+
+import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 public class GetCCUProcessor
-implements BaseProcessor<HttpServletRequest, String> {
+        implements BaseProcessor<HttpServletRequest, String> {
     public String execute(Param<HttpServletRequest> param) {
-        HttpServletRequest request = (HttpServletRequest)param.get();
-        CCUResponse response = new CCUResponse(false, "1001");
-        String startDate = request.getParameter("ts");
-        String endDate = request.getParameter("te");
-        List trans = null;
-        if (!startDate.isEmpty() && !endDate.isEmpty()) {
-            ServerInfoServiceImpl service = new ServerInfoServiceImpl();
-            trans = service.getLogCCU(startDate, endDate);
-            response.setTransactions(trans);
-            response.setErrorCode("0");
-            response.setSuccess(true);
-            return response.toJson();
+        UserOnlineResponse response = new UserOnlineResponse(false, "1001");
+        HazelcastInstance instance = HazelcastClientFactory.getInstance();
+        IMap userMap = instance.getMap("users");
+        List<UserCacheModel> userResponse = new ArrayList<>();
+        List<UserCacheModel> users = (List<UserCacheModel>) userMap.values();
+        for (UserCacheModel user : users) {
+            if (user.getAccessToken() == null || VinPlayUtils.sessionTimeout((long) user.getLastActive().getTime()) && !user.isBot()) {
+                userResponse.add(user);
+            }
         }
-        return "MISSING PARAMETTER";
+        response.setTransactions(userResponse);
+        return response.toJson();
     }
 }
 
