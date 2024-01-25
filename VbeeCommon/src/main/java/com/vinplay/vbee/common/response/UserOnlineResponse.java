@@ -3,25 +3,22 @@
  */
 package com.vinplay.vbee.common.response;
 
-import com.vinplay.vbee.common.models.cache.UserCacheModel;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class UserOnlineResponse
         extends BaseResponseModel {
-    private List<UserCacheModel> transactions = new ArrayList<>();
+    private List<String> users;
 
     public UserOnlineResponse(boolean success, String errorCode) {
         super(success, errorCode);
     }
 
-    public List<UserCacheModel> getTransactions() {
-        return transactions;
+    public List<String> getUsers() {
+        return users;
     }
 
-    public void setTransactions(List<UserCacheModel> transactions) {
-        this.transactions = transactions;
+    public void setUsers(List<String> users) {
+        this.users = users;
     }
 }
 
