@@ -19,6 +19,9 @@ import bitzero.server.entities.User;
 import bitzero.server.exceptions.BZException;
 import bitzero.server.extensions.BaseServerEventHandler;
 import bitzero.util.ExtensionUtility;
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.IMap;
+import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
 
 public class LoginSuccessHandler
 extends BaseServerEventHandler {
@@ -27,7 +30,12 @@ extends BaseServerEventHandler {
     }
 
     private void onLoginSuccess(User user) {
+        // thêm vào thông tin user online
         ExtensionUtility.instance().sendLoginOK(user);
+        HazelcastInstance instance = HazelcastClientFactory.getInstance();
+        IMap userOnline = instance.getMap("USER_ONLINE");
+        userOnline.set(user.getName(), user.getName());
     }
+
 }
 
