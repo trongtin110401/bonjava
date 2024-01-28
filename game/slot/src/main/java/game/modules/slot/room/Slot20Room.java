@@ -275,17 +275,19 @@ public class Slot20Room extends SlotRoom {
                                 }
                             }
                             // không cho phép nổ hũ và (BONUS hoặc FREE SPIN) xảy ra đồng thời
-                            if (isForceJackpot && (hasBonusAward || hasFreeSpinAward)) {
+                                if (isForceJackpot && (hasBonusAward || hasFreeSpinAward)) {
                                 continue;
                             }
                             // Không cho phép đồng thời cả BONUS và FREE SPIN
                             if (hasFreeSpinAward && hasBonusAward) {
                                 continue;
                             }
+
+                            // FORCE: uncomment đoạn dưới
                             // ở chế độ Free Spin, không cho phép trúng BONUS hoặc SCATTER
-                            if (isFreeSpin && (hasFreeSpinAward || hasBonusAward)) {
-                                continue;
-                            }
+//                            if (isFreeSpin && (hasFreeSpinAward || hasBonusAward)) {
+//                                continue;
+//                            }
 
                             // FORCE
                             switch (forceResult) {
@@ -434,10 +436,10 @@ public class Slot20Room extends SlotRoom {
                             }
                             // điều kiện trúng thưởng đã thỏa mãn, dừng vòng lặp
                             enoughPair = true;
-                            // cập nhật lượt quay miễn phí
-                            if (isFreeSpin) {
-                                slotService.updateLuotQuaySlotFree(cacheFreeSpinName, username);
-                            }
+//                            // cập nhật lượt quay miễn phí
+//                            if (isFreeSpin) {
+//                                slotService.updateLuotQuaySlotFree(cacheFreeSpinName, username);
+//                            }
 
                             // BẮT ĐẦU QUÁ TRÌNH LƯU TRỮ THÔNG TIN VÀ TRẢ THƯỞNG
                             String matrixStr = Slot20Utils.matrixToString(matrix);
@@ -488,9 +490,10 @@ public class Slot20Room extends SlotRoom {
                                 }
                             }
 
-                            // tính toán lượt quay miễn phí
-                            playResponse.freeSpin = countFreeSpin;
-                            if (playResponse.freeSpin > 0) {
+                            // cập nhật và tính toán lượt quay miễn phí
+                            SlotFreeSpin slotFreeSpin = slotService.updateLuotQuaySlotFree(cacheFreeSpinName, username);
+                            playResponse.freeSpin = (byte) this.setFreeSpin(username, linesStr, countFreeSpin, slotFreeSpin.getNum());
+                            if (countFreeSpin >= 3) {
                                 playResponse.isFreeSpin = true;
                                 result = ResultSlot.FREE_SPIN;
                             }
@@ -573,6 +576,7 @@ public class Slot20Room extends SlotRoom {
             fund = Long.MAX_VALUE - 1000000000L;
         }
 
+        System.out.println(new Gson().toJson(playResponse));
         return playResponse;
     }
 
@@ -587,6 +591,14 @@ public class Slot20Room extends SlotRoom {
         } catch (Exception ignored) {
             return 0;
         }
+    }
+
+    private int setFreeSpin(String nickName, String lines, int countFreeSpin, int remainAmountOfFreeSpin) {
+        if(countFreeSpin > 0) {
+            countFreeSpin = countFreeSpin + remainAmountOfFreeSpin;
+            slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, countFreeSpin, 1);
+        }
+        return countFreeSpin > 0 ? countFreeSpin + remainAmountOfFreeSpin : remainAmountOfFreeSpin;
     }
 
     public boolean isBot(String nickName) {
@@ -645,7 +657,7 @@ public class Slot20Room extends SlotRoom {
         return this.boxValues.get(n);
     }
 
-    public short play(User user, String linesStr) {
+    public synchronized short play(User user, String linesStr) {
 //        String username = user.getName();
 //        int numFree = 0;
 //        if (user.getProperty("numFreeDaily") != null) {

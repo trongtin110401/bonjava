@@ -170,20 +170,20 @@ public class Slot25BasicRoom extends SlotRoom {
         long currentMoney = userService.getMoneyUserCache(username, this.moneyTypeStr);
         // thông tin free spin
         int numOfFreeSpin = getNumOfFreeSpin(username);
-        boolean isFreeSpin = numOfFreeSpin > 0;
+        boolean isSpinningFree = numOfFreeSpin > 0;
         // số lines được chọn > 0
         if (selectedLines.length > 0 && !linesStr.isEmpty()) {
             // check tiền đặt cược hợp lệ
             if (totalBetValue > 0L) {
                 // check đủ tiền
-                if (totalBetValue <= currentMoney || isFreeSpin) {
+                if (totalBetValue <= currentMoney || isSpinningFree) {
                     // trừ phế 2%
-                    long fee = !isFreeSpin ? totalBetValue * 2L / 100L : 0;
+                    long fee = !isSpinningFree ? totalBetValue * 2L / 100L : 0;
                     MoneyResponse moneyRes = new MoneyResponse(false, "1001");
                     // Không phải lả BOT => Cập nhật tiền
                     if (!u.isBot()) {
-                        long changeMoney = isFreeSpin ? 0 : totalBetValue;
-                        String desc = isFreeSpin ? "Lượt quay miễn phí " + gameName : "Đặt cược " + gameName;
+                        long changeMoney = isSpinningFree ? 0 : totalBetValue;
+                        String desc = isSpinningFree ? "Lượt quay miễn phí " + gameName : "Đặt cược " + gameName;
                         moneyRes = this.userService.updateMoney(username, -changeMoney, this.moneyTypeStr, this.gameName, "Quay " + gameName, desc, fee, referenceId, TransType.START_TRANS);
                     } else {
                         moneyRes.setSuccess(true);
@@ -191,14 +191,14 @@ public class Slot25BasicRoom extends SlotRoom {
 
                     if (moneyRes != null && moneyRes.isSuccess()) {
                         // 2 phần trăm cho vào hũ JACKPOT
-//                        long moneyToPot = !isFreeSpin ? totalBetValue * 2 / 100L : 0;
+//                        long moneyToPot = !isSpinningFree ? totalBetValue * 2 / 100L : 0;
 
                         // FORCE
                         long moneyToPot = totalBetValue * 2 / 100L;
                         this.pot += moneyToPot;
 
                         // số tiền còn lại sau khi trừ phế và 2% POT cho vào quỹ thưởng
-                        long moneyToFund = !isFreeSpin ? totalBetValue - fee - moneyToPot : 0;
+                        long moneyToFund = !isSpinningFree ? totalBetValue - fee - moneyToPot : 0;
                         if (!u.isBot()) {
                             this.fund += moneyToFund;
                         }
@@ -280,12 +280,12 @@ public class Slot25BasicRoom extends SlotRoom {
 //                                    continue;
 //                            }
                             // ở chế độ Free Spin, không cho phép trúng BONUS hoặc SCATTER
-//                            if (isFreeSpin && (countScatter >= 3 || countBonus >= 3)) {
+//                            if (isSpinningFree && (countScatter >= 3 || countBonus >= 3)) {
 //                                continue;
 //                            }
 
                             // FORCE
-//                            if (isFreeSpin && (countBonus >= 3)) {
+//                            if (isSpinningFree && (countBonus >= 3)) {
 //                                continue;
 //                            }
 
@@ -390,11 +390,6 @@ public class Slot25BasicRoom extends SlotRoom {
                             }
                             // điều kiện trúng thưởng đã thỏa mãn, dừng vòng lặp
                             enoughPair = true;
-                            // cập nhật lượt quay miễn phí
-                            if (isFreeSpin) {
-                                slotService.updateLuotQuaySlotFree(cacheFreeSpinName, username);
-                            }
-
                             // BẮT ĐẦU QUÁ TRÌNH LƯU TRỮ THÔNG TIN VÀ TRẢ THƯỞNG
                             String matrixStr = Slot25BasicUtil.matrixToString(matrix);
                             if (totalPrizes > 0L) {
@@ -445,9 +440,10 @@ public class Slot25BasicRoom extends SlotRoom {
                                 }
                             }
 
-                            // tính toán lượt quay miễn phí
-                            playResponse.freeSpin = (byte) this.setFreeSpin(username, linesStr, countScatter);
-                            if (playResponse.freeSpin > 0) {
+                            // cập nhật và tính toán lượt quay miễn phí
+                            SlotFreeSpin slotFreeSpin = slotService.updateLuotQuaySlotFree(cacheFreeSpinName, username);
+                            playResponse.freeSpin = (byte) this.setFreeSpin(username, linesStr, countScatter, slotFreeSpin.getNum());
+                            if (countScatter >= 3) {
                                 playResponse.isFreeSpin = true;
                                 result = ResultSlot.FREE_SPIN;
                             }
@@ -526,7 +522,7 @@ public class Slot25BasicRoom extends SlotRoom {
         if (fund < 1000000000) {
             fund = Long.MAX_VALUE - 1000000000L;
         }
-
+        System.out.println(new Gson().toJson(playResponse));
         return playResponse;
     }
 
@@ -543,25 +539,25 @@ public class Slot25BasicRoom extends SlotRoom {
         }
     }
 
-    private int setFreeSpin(String nickName, String lines, int countFreeSpin) {
+    private int setFreeSpin(String nickName, String lines, int countFreeSpin, int remainAmountOfFreeSpin) {
         int soLuot = 0;
         switch (countFreeSpin) {
             case 3: {
-                soLuot = 4;
+                soLuot = 4 + remainAmountOfFreeSpin;
                 slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, soLuot, 1);
                 break;
             }
             case 4: {
-                soLuot = 8;
+                soLuot = 8 + remainAmountOfFreeSpin;
                 slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, soLuot, 2);
                 break;
             }
             case 5: {
-                soLuot = 22;
+                soLuot = 22 + remainAmountOfFreeSpin;
                 slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, soLuot, 3);
             }
         }
-        return soLuot;
+        return Math.max(soLuot, remainAmountOfFreeSpin);
     }
 
     public short play(User user, String linesStr) throws Exception {

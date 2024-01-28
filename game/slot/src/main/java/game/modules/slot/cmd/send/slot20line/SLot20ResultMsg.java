@@ -38,5 +38,77 @@ public class SLot20ResultMsg extends BaseMsg {
         bf.putInt(freeSpin);
         return this.packBuffer(bf);
     }
+
+    public long getReferenceId() {
+        return referenceId;
+    }
+
+    public void setReferenceId(long referenceId) {
+        this.referenceId = referenceId;
+    }
+
+    public byte getResult() {
+        return result;
+    }
+
+    public void setResult(byte result) {
+        this.result = result;
+    }
+
+    public String getMatrix() {
+        return matrix;
+    }
+
+    public void setMatrix(String matrix) {
+        this.matrix = matrix;
+    }
+
+    public String getLinesWin() {
+        return linesWin;
+    }
+
+    public void setLinesWin(String linesWin) {
+        this.linesWin = linesWin;
+    }
+
+    public String getHaiSao() {
+        return haiSao;
+    }
+
+    public void setHaiSao(String haiSao) {
+        this.haiSao = haiSao;
+    }
+
+    public long getPrize() {
+        return prize;
+    }
+
+    public void setPrize(long prize) {
+        this.prize = prize;
+    }
+
+    public long getCurrentMoney() {
+        return currentMoney;
+    }
+
+    public void setCurrentMoney(long currentMoney) {
+        this.currentMoney = currentMoney;
+    }
+
+    public boolean isFreeSpin() {
+        return isFreeSpin;
+    }
+
+    public void setFreeSpin(boolean freeSpin) {
+        isFreeSpin = freeSpin;
+    }
+
+    public int getFreeSpin() {
+        return freeSpin;
+    }
+
+    public void setFreeSpin(int freeSpin) {
+        this.freeSpin = freeSpin;
+    }
 }
 
