@@ -184,16 +184,16 @@ public class SlotMachineServiceImpl
     public SlotFreeSpin updateLuotQuaySlotFree(String gameName, String username) {
         HazelcastInstance client = HazelcastClientFactory.getInstance();
         IMap slotMap = client.getMap(this.buildKeyFreeSpin(gameName));
-        int soLuotFree = 0;
+        int soLuotFree;
         SlotFreeSpin slotModel = new SlotFreeSpin();
-        if (slotMap.containsKey((Object) username)) {
-            slotModel = (SlotFreeSpin) slotMap.get((Object) username);
+        if (slotMap.containsKey(username)) {
+            slotModel = (SlotFreeSpin) slotMap.get(username);
             slotModel.setNum(slotModel.getNum() - 1);
             soLuotFree = slotModel.getNum();
             if (soLuotFree <= 0) {
-                slotMap.remove((Object) username);
+                slotMap.remove(username);
             } else {
-                slotMap.put((Object) username, (Object) slotModel);
+                slotMap.put(username, slotModel);
             }
         }
         return slotModel;
