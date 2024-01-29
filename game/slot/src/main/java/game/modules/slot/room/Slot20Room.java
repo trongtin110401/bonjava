@@ -495,7 +495,9 @@ public class Slot20Room extends SlotRoom {
                             playResponse.freeSpin = (byte) this.setFreeSpin(username, linesStr, countFreeSpin, slotFreeSpin.getNum());
                             if (countFreeSpin >= 3) {
                                 playResponse.isFreeSpin = true;
-                                result = ResultSlot.FREE_SPIN;
+                                if (result != ResultSlot.BONUS_GAME && result != ResultSlot.JACKPOT) {
+                                    result = ResultSlot.FREE_SPIN;
+                                }
                             }
 
                             // only save real user
