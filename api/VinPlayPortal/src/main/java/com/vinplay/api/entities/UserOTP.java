@@ -26,6 +26,17 @@ public class UserOTP {
         this.timelog = timelog;
     }
 
+    public UserOTP(String nickname, String username, String phone, String otp, int active, long creat_time, long active_time, int turn) {
+        this.nickname = nickname;
+        this.username = username;
+        this.phone = phone;
+        this.otp = otp;
+        this.active = active;
+        this.creat_time = creat_time;
+        this.active_time = active_time;
+        this.turn = turn;
+    }
+
     public String getTimelog() {
         return timelog;
     }

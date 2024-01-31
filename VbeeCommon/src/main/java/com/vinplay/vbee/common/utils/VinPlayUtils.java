@@ -17,10 +17,7 @@ import com.vinplay.vbee.common.utils.StringUtils;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
-import java.security.InvalidKeyException;
-import java.security.Key;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.security.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -346,24 +343,24 @@ public class VinPlayUtils {
     /*
      * WARNING - Removed try catching itself - possible behaviour change.
      */
-    public static String genGiftCode(int leng) {
-        String strRandom = "1234567890QWERTYUIOPASDFGHJKLZXCVBNM";
-        StringBuilder sb = new StringBuilder();
-        Random random = new Random();
-        for (int j = 0; j < leng; ++j) {
-            sb.append("1234567890QWERTYUIOPASDFGHJKLZXCVBNM".charAt(random.nextInt("1234567890QWERTYUIOPASDFGHJKLZXCVBNM".length())));
+    public static String genGiftCode(int length) {
+
+        String characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        StringBuilder randomString = new StringBuilder();
+
+        SecureRandom secureRandom = new SecureRandom();
+        for (int i = 0; i < length; i++) {
+            int randomIndex = secureRandom.nextInt(characters.length());
+            char randomChar = characters.charAt(randomIndex);
+            randomString.append(randomChar);
         }
-        Set<String> j = generatedCode;
-        synchronized (j) {
-            if (generatedCode.contains(String.valueOf(sb))) {
-                return VinPlayUtils.genGiftCode(leng);
-            }
-            generatedCode.add(String.valueOf(sb));
-            return String.valueOf(sb);
-        }
+
+        return randomString.toString();
     }
 
-    /*
+
+
+                    /*
      * WARNING - Removed try catching itself - possible behaviour change.
      */
     public static void loadGiftcode(List<String> allGiftcode) {
