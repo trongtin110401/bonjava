@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 public class GetCCUProcessor
         implements BaseProcessor<HttpServletRequest, String> {
     public String execute(Param<HttpServletRequest> param) {
-        UserOnlineResponse response = new UserOnlineResponse(false, "1001");
+        UserOnlineResponse response = new UserOnlineResponse(true, "200");
         HazelcastInstance instance = HazelcastClientFactory.getInstance();
         IMap userOnline = instance.getMap("USER_ONLINE");
         response.setUsers((List<String>) userOnline.values());
