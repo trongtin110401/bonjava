@@ -1642,7 +1642,7 @@
         <command>
             <id>11011</id>
             <name>Get CCU</name>
-            <path>com.vinplay.api.backend.processors.GetCCUProcessor</path>
+            <path>com.vinplay.api.backend.processors.GetUserOnlineProcessor</path>
         </command>
 
         <command>
