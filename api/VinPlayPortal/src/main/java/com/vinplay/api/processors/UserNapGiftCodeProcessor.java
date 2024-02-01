@@ -36,9 +36,7 @@ public class UserNapGiftCodeProcessor
         String nickName = request.getParameter("nickName");
 
         try {
-            // get special gift_code
             ManageGiftCodeDAO dao = new ManageGiftCodeDAO();
-//            boolean exists = dao.CheckSpecialGiftCodes(code);
             boolean check_code_tt = false;
             CodeTT codex = dao.getCodeTT(code);
             if (codex != null) {
@@ -61,30 +59,8 @@ public class UserNapGiftCodeProcessor
                     dao.insertCodeTanThu(usercode);
                     MoneyResponse mnres = userService.updateMoney(nickName, codex.getMoney(), "vin", "GiftCodeTanThu", "GiftCodeTanThu", "M\u00e3: " + code, 0L, null, TransType.NO_VIPPOINT);
                 } else {
-
                     GiftCodeUpdateResponse response = gfService.updateGiftCode(nickName, code);
 
-
-//                    if (exists) {
-//                        GiftCodeUpdateResponse response = this.gfService.updateSpecialGiftCodeNew(user.getName(), cmd.giftCode);
-//                        Debug.trace("Giftcode:" + cmd.giftCode + ":" + response.getErrorCode());
-//                        if (response.isSuccess()) {
-//                            msg.currentMoneyVin = response.currentMoneyVin;
-//                            msg.currentMoneyXu = response.currentMoneyXu;
-//                            msg.moneyGiftCodeVin = response.moneyGiftCodeVin;
-//                            msg.moneyGiftCodeXu = response.moneyGiftCodeXu;
-//                        }
-//                        msg.Error = this.parseErrorCodeGiftCode(response.getErrorCode());
-//                    } else {
-//                        GiftCodeUpdateResponse response = this.gfService.updateGiftCode(user.getName(), cmd.giftCode);
-//                        if (response.isSuccess()) {
-//                            msg.currentMoneyVin = response.currentMoneyVin;
-//                            msg.currentMoneyXu = response.currentMoneyXu;
-//                            msg.moneyGiftCodeVin = response.moneyGiftCodeVin;
-//                            msg.moneyGiftCodeXu = response.moneyGiftCodeXu;
-//                        }
-//                        msg.Error = this.parseErrorCodeGiftCode(response.getErrorCode());
-//                    }
                 }
             } else {
 //                msg.Error = this.parseErrorCodeGiftCode("10003");
