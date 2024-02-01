@@ -925,13 +925,6 @@
             <name>Get top vinh danh by game name</name>
             <path>com.vinplay.api.processors.GetTopVinhDanhByGameNameProcessor</path>
         </command>
-
-        <command>
-            <id>4108</id>
-            <name>Get top vinh danh by game name</name>
-            <path>com.vinplay.api.processors.GetTopVinhDanhByGameNameProcessor</path>
-        </command>
-
         <command>
             <id>4109</id>
             <name>User nap gift code</name>
