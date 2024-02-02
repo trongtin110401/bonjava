@@ -229,5 +229,11 @@ public class GiftCodeServiceImpl
         GiftCodeDAOImpl dao = new GiftCodeDAOImpl();
         return dao.saveGiftCode(giftCodeDto);
     }
+
+    @Override
+    public GiftCodeDto findActiveByCode(String code) {
+        GiftCodeDAOImpl dao = new GiftCodeDAOImpl();
+        return dao.findActiveByCode(code);
+    }
 }
 
