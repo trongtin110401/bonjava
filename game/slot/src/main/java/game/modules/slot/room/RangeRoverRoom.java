@@ -497,7 +497,7 @@ public class RangeRoverRoom
                                 if (!u.isBot()) {
                                     if(Objects.equals(this.betValue, 5000))
                                         this.betValue = 10000;
-                                    this.slotService.logRangeRover(referenceId, username, (long) this.betValue, linesStr, linesWin, prizesOnLine, result, totalPrizes, currentTimeStr);
+                                    this.slotService.logRangeRover(referenceId, username, (long) this.betValue, linesStr, linesWin, prizesOnLine, result, totalPrizes, currentTimeStr, matrixStr);
 
                                 }
                                 if (result == 3 || result == 4) {
@@ -624,7 +624,7 @@ public class RangeRoverRoom
                 if (!isBot(username)) {
                     if(Objects.equals(this.betValue, 5000))
                         this.betValue = 10000;
-                    this.slotService.logSlot(this.gameName, refernceId, username, (long) this.betValue, "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20", linesWin, prizesOnLine, result, totalPrizes, currentTimeStr);
+                    this.slotService.logSlot(this.gameName, refernceId, username, (long) this.betValue, "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20", linesWin, prizesOnLine, result, totalPrizes, currentTimeStr, msg.matrix);
                 }
             } catch (InterruptedException moneyExchange) {
             } catch (TimeoutException moneyExchange) {

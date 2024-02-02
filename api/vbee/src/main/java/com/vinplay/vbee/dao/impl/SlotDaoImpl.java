@@ -37,7 +37,7 @@ implements SlotDao {
         doc.append("prize", (Object)message.totalPrizes);
         doc.append("result", (Object)message.result);
         doc.append("time_log", (Object)message.time);
-//        doc.append("create_time", VinPlayUtils.getCurrentDateTime());
+        doc.append("matrix", message.matrix);
         doc.append("create_time", VinPlayUtils.getCurrentDateTime());
         col.insertOne((Object)doc);
     }

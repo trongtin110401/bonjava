@@ -575,7 +575,7 @@ public class TamHungRoom
                             try {
                                 if (!u.isBot()) {
 
-                                    this.slotService.logTamHung(referenceId, username, (long) this.betValue, linesStr, linesWin, prizesOnLine, result, totalPrizes, currentTimeStr);
+                                    this.slotService.logTamHung(referenceId, username, (long) this.betValue, linesStr, linesWin, prizesOnLine, result, totalPrizes, currentTimeStr, matrixStr);
 
                                 }
                                 if (result == 3 || result == 4) {
@@ -713,7 +713,7 @@ public class TamHungRoom
                     msg.ratio = (byte) ratio;
                     try {
                         if (!isBot(username)) {
-                            this.slotService.logTamHung(referenceId, username, (long) this.betValue, linesStr, linesWin, prizesOnLine, result, totalPrizes, currentTimeStr);
+                            this.slotService.logTamHung(referenceId, username, (long) this.betValue, linesStr, linesWin, prizesOnLine, result, totalPrizes, currentTimeStr, msg.matrix);
 
                         }
                         if (result == 3 || result == 4) {
@@ -818,7 +818,7 @@ public class TamHungRoom
             msg.haiSao = "";
             try {
                 if (!checkDieuKienNo(username))
-                    this.slotService.logVQV(refernceId, username, (long) this.betValue, "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20", linesWin, prizesOnLine, result, totalPrizes, currentTimeStr);
+                    this.slotService.logVQV(refernceId, username, (long) this.betValue, "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20", linesWin, prizesOnLine, result, totalPrizes, currentTimeStr, msg.matrix);
             } catch (InterruptedException moneyExchange) {
             } catch (TimeoutException moneyExchange) {
             } catch (IOException moneyExchange) {

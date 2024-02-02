@@ -5,8 +5,7 @@ package com.vinplay.vbee.common.messages.slot;
 
 import com.vinplay.vbee.common.messages.BaseMessage;
 
-public class LogSlotMachineMessage
-extends BaseMessage {
+public class LogSlotMachineMessage extends BaseMessage {
     private static final long serialVersionUID = 1L;
     public long referenceId;
     public String gameName;
@@ -19,5 +18,6 @@ extends BaseMessage {
     public short result;
     public long totalPrizes;
     public String time;
+
 }
 

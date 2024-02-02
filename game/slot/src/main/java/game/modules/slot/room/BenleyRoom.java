@@ -507,7 +507,7 @@ public class BenleyRoom extends SlotRoom {
                             }
                             try {
                                 if (!u.isBot()) {
-                                    this.slotService.logBenley(referenceId, username, this.betValue, linesStr, linesWin, prizesOnLine, result, totalPrizes, currentTimeStr);
+                                    this.slotService.logBenley(referenceId, username, this.betValue, linesStr, linesWin, prizesOnLine, result, totalPrizes, currentTimeStr, matrixStr);
                                 }
                                 if (result == 3 || result == 4) {
                                     this.slotService.addTop(gameName, username, this.betValue, totalPrizes, currentTimeStr, result);
