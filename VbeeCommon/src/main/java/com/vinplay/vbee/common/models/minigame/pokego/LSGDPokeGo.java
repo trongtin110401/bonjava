@@ -12,5 +12,6 @@ public class LSGDPokeGo {
     public long pz;
     public String ps;
     public String ts;
+    public String matrix;
 }
 
