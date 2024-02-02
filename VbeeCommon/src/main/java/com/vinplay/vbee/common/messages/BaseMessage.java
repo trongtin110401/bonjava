@@ -19,8 +19,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 
-public abstract class BaseMessage
-implements Serializable {
+public abstract class BaseMessage implements Serializable {
     private static final long serialVersionUID = 1L;
     protected String id;
     protected String createTime = VinPlayUtils.getCurrentDateTime();

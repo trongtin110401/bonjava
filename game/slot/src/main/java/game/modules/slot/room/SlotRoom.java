@@ -61,6 +61,9 @@ public abstract class SlotRoom {
     protected int betValue;
     protected short moneyType;
     protected String moneyTypeStr;
+
+    protected String cachePercentFeeName;
+    protected int percentFee = 0;
     protected int countHu = -1;
     protected int countNoHuX2 = 0;
     protected boolean huX2 = false;

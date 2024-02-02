@@ -41,71 +41,70 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
-public class SlotMachineServiceImpl
-        implements SlotMachineService {
+public class SlotMachineServiceImpl implements SlotMachineService {
     private SlotMachineDAO dao = new SlotMachineDAOImpl();
 
     @Override
-    public void logKhoBau(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time) throws IOException, TimeoutException, InterruptedException {
-        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.KHO_BAU.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time);
+    public void logKhoBau(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) throws IOException, TimeoutException, InterruptedException {
+        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.KHO_BAU.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
         this.publishSlotMsg("queue_kho_bau", msg, 135);
     }
 
     @Override
-    public void logAvengers(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time) throws IOException, TimeoutException, InterruptedException {
-        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.AVENGERS.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time);
+    public void logAvengers(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) throws IOException, TimeoutException, InterruptedException {
+        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.AVENGERS.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
         this.publishSlotMsg("queue_avengers", msg, 136);
     }
 
     @Override
-    public void logSpartan(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time) throws IOException, TimeoutException, InterruptedException {
-        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.SPARTAN.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time);
+    public void logSpartan(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) throws IOException, TimeoutException, InterruptedException {
+        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.SPARTAN.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
         this.publishSlotMsg("queue_spartan", msg, 10136);
     }
 
     @Override
-    public void logMyNhanNgu(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time) throws IOException, TimeoutException, InterruptedException {
-        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.MY_NHAN_NGU.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time);
+    public void logMyNhanNgu(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) throws IOException, TimeoutException, InterruptedException {
+        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.MY_NHAN_NGU.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
         this.publishSlotMsg("queue_my_nhan_ngu", msg, 136);
     }
 
     @Override
-    public void logVQV(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time) throws IOException, TimeoutException, InterruptedException {
-        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.VUONG_QUOC_VIN.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time);
+    public void logVQV(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) throws IOException, TimeoutException, InterruptedException {
+        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.VUONG_QUOC_VIN.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
         this.publishSlotMsg("queue_vqv", msg, 139);
     }
 
     @Override
-    public void logRangeRover(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time) throws IOException, TimeoutException, InterruptedException {
-        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.RANGE_ROVER.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time);
+    public void logRangeRover(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) throws IOException, TimeoutException, InterruptedException {
+        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.RANGE_ROVER.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
         this.publishSlotMsg("queue_range_rover", msg, 8002);
     }
 
     @Override
-    public void logMaybach(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time) throws IOException, TimeoutException, InterruptedException {
-        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.MAYBACH.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time);
+    public void logMaybach(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) throws IOException, TimeoutException, InterruptedException {
+        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.MAYBACH.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
         this.publishSlotMsg("queue_maybach", msg, 8003);
     }
 
     @Override
-    public void logTamHung(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time) throws IOException, TimeoutException, InterruptedException {
-        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.TAMHUNG.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time);
+    public void logTamHung(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) throws IOException, TimeoutException, InterruptedException {
+        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.TAMHUNG.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
         this.publishSlotMsg("queue_tamhung", msg, 8004);
     }
 
     @Override
-    public void logRollRoye(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time) throws IOException, TimeoutException, InterruptedException {
-        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.ROLL_ROYE.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time);
+    public void logRollRoye(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) throws IOException, TimeoutException, InterruptedException {
+        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.ROLL_ROYE.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
         this.publishSlotMsg("queue_roll_roye", msg, 8005);
     }
 
     @Override
-    public void logBenley(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time) throws IOException, TimeoutException, InterruptedException {
-        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.BENTLEY.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time);
+    public void logBenley(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) throws IOException, TimeoutException, InterruptedException {
+        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.BENTLEY.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
         this.publishSlotMsg("queue_benley", msg, 8006);
     }
 
-    private LogSlotMachineMessage buildLogSlotMsg(String gameName, long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time) {
+    private LogSlotMachineMessage buildLogSlotMsg(String gameName, long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) {
         LogSlotMachineMessage message = new LogSlotMachineMessage();
         message.gameName = gameName;
         message.referenceId = referenceId;
@@ -117,6 +116,7 @@ public class SlotMachineServiceImpl
         message.result = result;
         message.totalPrizes = totalPrizes;
         message.time = time;
+        message.matrix = matrix;
         return message;
     }
 
@@ -200,14 +200,14 @@ public class SlotMachineServiceImpl
     }
 
     @Override
-    public void logNuDiepVien(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time) throws IOException, TimeoutException, InterruptedException {
-        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.NU_DIEP_VIEN.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time);
+    public void logNuDiepVien(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) throws IOException, TimeoutException, InterruptedException {
+        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.NU_DIEP_VIEN.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
         this.publishSlotMsg("queue_nu_diep_vien", msg, 138);
     }
 
     @Override
-    public void logAudition(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time) throws IOException, TimeoutException, InterruptedException {
-        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.AUDITION.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time);
+    public void logAudition(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) throws IOException, TimeoutException, InterruptedException {
+        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.AUDITION.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
         this.publishSlotMsg("queue_audition", msg, 8001);
     }
 
@@ -353,7 +353,7 @@ public class SlotMachineServiceImpl
         msg.result = result;
         msg.time = time;
         try {
-            RMQApi.publishMessage((String) "queue_log_nohu", (BaseMessage) msg, (int) 140);
+            RMQApi.publishMessage("queue_log_nohu", msg, 140);
         } catch (IOException | InterruptedException | TimeoutException ex2) {
             Exception e = ex2;
             e.printStackTrace();
@@ -366,27 +366,27 @@ public class SlotMachineServiceImpl
         return results;
     }
 
-    public void logSamTruyen(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time) throws IOException, TimeoutException, InterruptedException {
-        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.SAMTRUYEN.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time);
+    public void logSamTruyen(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) throws IOException, TimeoutException, InterruptedException {
+        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.SAMTRUYEN.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
         this.publishSlotMsg("queue_samtruyen", msg, 10236);
     }
 
     @Override
-    public void logSlot(String gameName, long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time) throws IOException, TimeoutException, InterruptedException {
+    public void logSlot(String gameName, long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) throws IOException, TimeoutException, InterruptedException {
         if (gameName.equals(Games.AUDITION.getName())) {
-            this.logAudition(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time);
+            this.logAudition(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
         } else if (gameName.equals(Games.RANGE_ROVER.getName())) {
-            this.logRangeRover(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time);
+            this.logRangeRover(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
         } else if (gameName.equals(Games.MAYBACH.getName())) {
-            this.logMaybach(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time);
+            this.logMaybach(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
         } else if (gameName.equals(Games.SPARTAN.getName())) {
-            this.logSpartan(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time);
+            this.logSpartan(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
         } else if (gameName.equals(Games.TAMHUNG.getName())) {
-            this.logTamHung(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time);
+            this.logTamHung(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
         } else if (gameName.equals(Games.ROLL_ROYE.getName())) {
-            this.logRollRoye(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time);
+            this.logRollRoye(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
         } else if (gameName.equals(Games.BENTLEY.getName())) {
-            this.logBenley(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time);
+            this.logBenley(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
         }
     }
 }
