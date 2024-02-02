@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  com.vinplay.vbee.common.models.cache.SlotFreeDaily
  *  com.vinplay.vbee.common.models.minigame.pokego.LSGDPokeGo
@@ -15,32 +15,37 @@ import com.vinplay.vbee.common.models.minigame.pokego.LSGDPokeGo;
 import com.vinplay.vbee.common.models.minigame.pokego.TopPokeGo;
 import com.vinplay.vbee.common.models.slot.NoHuModel;
 import com.vinplay.vbee.common.models.slot.SlotFreeSpin;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 public interface SlotMachineService {
-    public void logKhoBau(long var1, String var3, long var4, String var6, String var7, String var8, short var9, long var10, String var12) throws IOException, TimeoutException, InterruptedException;
 
-    public void logRangeRover(long var1, String var3, long var4, String var6, String var7, String var8, short var9, long var10, String var12) throws IOException, TimeoutException, InterruptedException;
+    public void logKhoBau(long var1, String var3, long var4, String var6, String var7, String var8, short var9, long var10, String var12, String matrix) throws IOException, TimeoutException, InterruptedException;
 
-    public void logMaybach(long var1, String var3, long var4, String var6, String var7, String var8, short var9, long var10, String var12) throws IOException, TimeoutException, InterruptedException;
-    public void logTamHung(long var1, String var3, long var4, String var6, String var7, String var8, short var9, long var10, String var12) throws IOException, TimeoutException, InterruptedException;
-    public void logRollRoye(long var1, String var3, long var4, String var6, String var7, String var8, short var9, long var10, String var12) throws IOException, TimeoutException, InterruptedException;
-    public void logBenley(long var1, String var3, long var4, String var6, String var7, String var8, short var9, long var10, String var12) throws IOException, TimeoutException, InterruptedException;
+    public void logRangeRover(long var1, String var3, long var4, String var6, String var7, String var8, short var9, long var10, String var12, String matrix) throws IOException, TimeoutException, InterruptedException;
+
+    public void logMaybach(long var1, String var3, long var4, String var6, String var7, String var8, short var9, long var10, String var12, String matrix) throws IOException, TimeoutException, InterruptedException;
+
+    public void logTamHung(long var1, String var3, long var4, String var6, String var7, String var8, short var9, long var10, String var12, String matrix) throws IOException, TimeoutException, InterruptedException;
+
+    public void logRollRoye(long var1, String var3, long var4, String var6, String var7, String var8, short var9, long var10, String var12, String matrix) throws IOException, TimeoutException, InterruptedException;
+
+    public void logBenley(long var1, String var3, long var4, String var6, String var7, String var8, short var9, long var10, String var12, String matrix) throws IOException, TimeoutException, InterruptedException;
 
 
-    public void logAvengers(long var1, String var3, long var4, String var6, String var7, String var8, short var9, long var10, String var12) throws IOException, TimeoutException, InterruptedException;
+    public void logAvengers(long var1, String var3, long var4, String var6, String var7, String var8, short var9, long var10, String var12, String matrix) throws IOException, TimeoutException, InterruptedException;
 
-    public void logSpartan(long var1, String var3, long var4, String var6, String var7, String var8, short var9, long var10, String var12) throws IOException, TimeoutException, InterruptedException;
+    public void logSpartan(long var1, String var3, long var4, String var6, String var7, String var8, short var9, long var10, String var12, String matrix) throws IOException, TimeoutException, InterruptedException;
 
-    public void logMyNhanNgu(long var1, String var3, long var4, String var6, String var7, String var8, short var9, long var10, String var12) throws IOException, TimeoutException, InterruptedException;
+    public void logMyNhanNgu(long var1, String var3, long var4, String var6, String var7, String var8, short var9, long var10, String var12, String matrix) throws IOException, TimeoutException, InterruptedException;
 
-    public void logNuDiepVien(long var1, String var3, long var4, String var6, String var7, String var8, short var9, long var10, String var12) throws IOException, TimeoutException, InterruptedException;
+    public void logNuDiepVien(long var1, String var3, long var4, String var6, String var7, String var8, short var9, long var10, String var12, String matrix) throws IOException, TimeoutException, InterruptedException;
 
-    public void logAudition(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time) throws IOException, TimeoutException, InterruptedException;
+    public void logAudition(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) throws IOException, TimeoutException, InterruptedException;
 
-    public void logVQV(long var1, String var3, long var4, String var6, String var7, String var8, short var9, long var10, String var12) throws IOException, TimeoutException, InterruptedException;
+    public void logVQV(long var1, String var3, long var4, String var6, String var7, String var8, short var9, long var10, String var12, String matrix) throws IOException, TimeoutException, InterruptedException;
 
     public int countLSDG(String var1, String var2);
 
@@ -72,9 +77,9 @@ public interface SlotMachineService {
 
     public List<NoHuModel> getLogNoHu(String var1, int var2);
 
-    public void logSamTruyen(long var1, String var3, long var4, String var6, String var7, String var8, short var9, long var10, String var12) throws IOException, TimeoutException, InterruptedException;
+    public void logSamTruyen(long var1, String var3, long var4, String var6, String var7, String var8, short var9, long var10, String var12, String matrix) throws IOException, TimeoutException, InterruptedException;
 
-    public void logSlot(String gameName, long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time) throws IOException, TimeoutException, InterruptedException;
+    public void logSlot(String gameName, long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) throws IOException, TimeoutException, InterruptedException;
 
 }
 

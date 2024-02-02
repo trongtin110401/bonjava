@@ -524,7 +524,7 @@ extends SlotRoom {
                             msg.haiSao = haiSao;
                             try {
                                 if(!u.isBot()){
-                                    this.slotService.logSlot(this.gameName, referenceId, username, (long)this.betValue, linesStr, linesWin, prizesOnLine, result, totalPrizes, currentTimeStr);
+                                    this.slotService.logSlot(this.gameName, referenceId, username, (long)this.betValue, linesStr, linesWin, prizesOnLine, result, totalPrizes, currentTimeStr, matrixStr);
 
                                 }
                                 if (result == 3 || result == 4) {
@@ -648,7 +648,7 @@ extends SlotRoom {
             msg.haiSao = "";
             try {
                 if(!isBot(username))
-                    this.slotService.logSlot(this.gameName, refernceId, username, (long)this.betValue, "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20", linesWin, prizesOnLine, result, totalPrizes, currentTimeStr);
+                    this.slotService.logSlot(this.gameName, refernceId, username, (long)this.betValue, "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20", linesWin, prizesOnLine, result, totalPrizes, currentTimeStr, msg.matrix);
             }
             catch (InterruptedException moneyExchange) {
             }

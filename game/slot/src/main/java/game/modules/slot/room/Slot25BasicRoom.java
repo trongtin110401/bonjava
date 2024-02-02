@@ -465,7 +465,7 @@ public class Slot25BasicRoom extends SlotRoom {
                             String linesWin = builderLinesWin.toString();
                             String prizesOnLine = builderPrizesOnLine.toString();
                             playResponse.referenceId = referenceId;
-                            playResponse.matrix = Slot25BasicUtil.matrixToString(matrix);
+                            playResponse.matrix = matrixStr;
                             playResponse.linesWin = linesWin;
                             playResponse.prize = totalPrizes;
                             if (bonusGameResponse != null) {
@@ -474,7 +474,7 @@ public class Slot25BasicRoom extends SlotRoom {
                             try {
                                 // lưu nhật ký chơi
                                 if (!u.isBot()) {
-                                    this.logListener.log(referenceId, username, this.betValue, linesStr, linesWin, prizesOnLine, result, totalPrizes, currentTimeStr);
+                                    this.logListener.log(referenceId, username, this.betValue, linesStr, linesWin, prizesOnLine, result, totalPrizes, currentTimeStr, matrixStr);
                                 }
                                 // lưu nhật ký nổ hũ
                                 if (result == ResultSlot.JACKPOT) {

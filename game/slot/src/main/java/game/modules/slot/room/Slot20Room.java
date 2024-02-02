@@ -275,7 +275,7 @@ public class Slot20Room extends SlotRoom {
                                 }
                             }
                             // không cho phép nổ hũ và (BONUS hoặc FREE SPIN) xảy ra đồng thời
-                                if (isForceJackpot && (hasBonusAward || hasFreeSpinAward)) {
+                            if (isForceJackpot && (hasBonusAward || hasFreeSpinAward)) {
                                 continue;
                             }
                             // Không cho phép đồng thời cả BONUS và FREE SPIN
@@ -521,7 +521,7 @@ public class Slot20Room extends SlotRoom {
                             try {
                                 // lưu nhật ký chơi
                                 if (!u.isBot()) {
-                                    slotLogListener.log(referenceId, username, this.betValue, linesStr, linesWin, prizesOnLine, result, totalPrizes, currentTimeStr);
+                                    slotLogListener.log(referenceId, username, this.betValue, linesStr, linesWin, prizesOnLine, result, totalPrizes, currentTimeStr, matrixStr);
                                 }
                                 // lưu nhật ký nổ hũ
                                 if (result == ResultSlot.JACKPOT) {
@@ -596,7 +596,7 @@ public class Slot20Room extends SlotRoom {
     }
 
     private int setFreeSpin(String nickName, String lines, int countFreeSpin, int remainAmountOfFreeSpin) {
-        if(countFreeSpin > 0) {
+        if (countFreeSpin > 0) {
             countFreeSpin = countFreeSpin + remainAmountOfFreeSpin;
             slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, countFreeSpin, 1);
         }

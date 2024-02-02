@@ -141,9 +141,9 @@ public class SpartanRoom
                 if (totalBetValue <= currentMoney) {
                     long fee = totalBetValue * 2L / 100L;
                     MoneyResponse moneyRes = new MoneyResponse(false, "1001");
-                    if(!u.isBot()){
+                    if (!u.isBot()) {
                         moneyRes = this.userService.updateMoney(username, -totalBetValue, this.moneyTypeStr, this.gameName, "Quay " + gn, "\u0110\u1eb7t c\u01b0\u1ee3c " + gn, fee, Long.valueOf(referenceId), TransType.START_TRANS);
-                    }else{
+                    } else {
                         moneyRes.setSuccess(true);
                     }
                     if (moneyRes != null && moneyRes.isSuccess()) {
@@ -160,7 +160,8 @@ public class SpartanRoom
                         int countScatter = 0;
                         int countBonus = 0;
                         MiniGameSlotResponse miniGameSlot;
-                        block4 : while (!enoughPair) {
+                        block4:
+                        while (!enoughPair) {
                             int soLanNoHu;
                             result = 0;
                             awardsOnLines.clear();
@@ -173,24 +174,19 @@ public class SpartanRoom
                             countBonus = 0;
                             boolean forceNoHu = false;
 
-                            if (betValue == 100)
-                            {
+                            if (betValue == 100) {
                                 soLanNoHu = ConfigGame.getIntValue(this.gameName + "_so_lan_no_hu_100");
 //                                if (userForce.equals(username) && betValueCache.equals(String.valueOf(100))) {
 //                                    forceNoHu = true;
 //                                    forceJackpotByUser = true;
 //                                }
-                            }
-                            else if (betValue == 1000)
-                            {
+                            } else if (betValue == 1000) {
                                 soLanNoHu = ConfigGame.getIntValue(this.gameName + "_so_lan_no_hu_1000");
 //                                if (userForce.equals(username) && betValueCache.equals(String.valueOf(1000))) {
 //                                    forceNoHu = true;
 //                                    forceJackpotByUser = true;
 //                                }
-                            }
-                            else
-                            {
+                            } else {
                                 soLanNoHu = ConfigGame.getIntValue(this.gameName + "_so_lan_no_hu_10000");
 //                                if (userForce.equals(username) && betValueCache.equals(String.valueOf(10000))) {
 //                                    forceNoHu = true;
@@ -229,7 +225,7 @@ public class SpartanRoom
                                 for (SpartanAward award2 : awardList) {
                                     long moneyOnLine = 0L;
                                     if (award2.getRatio() > 0.0f) {
-                                        moneyOnLine = (long)(award2.getRatio() * (float)this.betValue);
+                                        moneyOnLine = (long) (award2.getRatio() * (float) this.betValue);
                                     } else if (award2 == SpartanAward.PENTA_JACK_POT) {
                                         if (result == 3) {
                                             moneyOnLine = this.initJackpotValues;
@@ -271,9 +267,7 @@ public class SpartanRoom
                                     if (this.huX2) {
                                         if (countNoHu < soLanNoHu * 2) continue;
                                         result = 4;
-                                    }
-                                    else
-                                    {
+                                    } else {
                                         if (countNoHu < soLanNoHu) continue;
                                     }
                                     countNoHu = 0;
@@ -291,26 +285,18 @@ public class SpartanRoom
                                     String displayName = username;
                                     if (userMap.containsKey(username)) {
                                         model = userMap.get(displayName);
-                                        if (model.getClient() != null && !model.getClient().equals(""))
-                                        {
+                                        if (model.getClient() != null && !model.getClient().equals("")) {
                                             displayName = "[" + model.getClient() + "] " + username;
-                                        }
-                                        else
-                                        {
+                                        } else {
                                             displayName = "[X] " + username;
                                         }
-                                    }
-                                    else
-                                    {
+                                    } else {
                                         UserDaoImpl dao = new UserDaoImpl();
                                         try {
                                             model = dao.getUserByNickName(username);
-                                            if (model.getClient() != null && !model.getClient().equals(""))
-                                            {
+                                            if (model.getClient() != null && !model.getClient().equals("")) {
                                                 displayName = "[" + model.getClient() + "] " + username;
-                                            }
-                                            else
-                                            {
+                                            } else {
                                                 displayName = "[X] " + username;
                                             }
                                         } catch (SQLException ex) {
@@ -333,7 +319,7 @@ public class SpartanRoom
                                         this.fund -= totalPrizes;
                                     }
                                     if (result == 0) {
-                                        result = totalPrizes >= (this.betValue * 100L) ? (short)2 : 1;
+                                        result = totalPrizes >= (this.betValue * 100L) ? (short) 2 : 1;
                                     }
                                 }
                             }
@@ -365,8 +351,8 @@ public class SpartanRoom
                                 msg.haiSao = miniGameSlot.getPrizes();
                             }
                             try {
-                                if(!u.isBot()){
-                                    this.slotService.logSpartan(referenceId, username, this.betValue, linesStr, linesWin, prizesOnLine, result, totalPrizes, currentTimeStr);
+                                if (!u.isBot()) {
+                                    this.slotService.logSpartan(referenceId, username, this.betValue, linesStr, linesWin, prizesOnLine, result, totalPrizes, currentTimeStr, matrixStr);
 
                                 }
                                 if (result == 3 || result == 4) {
@@ -375,14 +361,13 @@ public class SpartanRoom
                                 if (result == 3 || result == 2 || result == 4) {
                                     BigWinSpartanMsg bigWinMsg = new BigWinSpartanMsg();
                                     bigWinMsg.username = username;
-                                    bigWinMsg.type = (byte)result;
-                                    bigWinMsg.betValue = (short)this.betValue;
+                                    bigWinMsg.type = (byte) result;
+                                    bigWinMsg.betValue = (short) this.betValue;
                                     bigWinMsg.totalPrizes = totalPrizes;
                                     bigWinMsg.timestamp = DateTimeUtils.getCurrentTime();
                                     this.module.sendMsgToAllUsers(bigWinMsg);
                                 }
-                            }
-                            catch (InterruptedException | IOException | TimeoutException bigException) {
+                            } catch (InterruptedException | IOException | TimeoutException bigException) {
                                 bigException.printStackTrace();
                             }
                             this.saveFund();
@@ -398,13 +383,14 @@ public class SpartanRoom
         } else {
             result = 101;
         }
-        msg.result = (byte)result;
+        msg.result = (byte) result;
         msg.currentMoney = currentMoney;
         //Update cache tien hu
-        cacheService.setValue(CACHE_JACK_POT_VALUE_SLOT + "_" + this.betValue + "_"  + this.gn , String.valueOf(this.pot));
+        cacheService.setValue(CACHE_JACK_POT_VALUE_SLOT + "_" + this.betValue + "_" + this.gn, String.valueOf(this.pot));
         if (forceJackpotByUser) {
-            this.sendNotifyNoHu(username, (byte) 1, msg.prize,this.gameName.trim().toUpperCase());
-        }return msg;
+            this.sendNotifyNoHu(username, (byte) 1, msg.prize, this.gameName.trim().toUpperCase());
+        }
+        return msg;
     }
 
     public ResultSpartanMsg playFreeDaily(String username, long referenceId) throws Exception {
@@ -491,15 +477,16 @@ public class SpartanRoom
                         currentMoney = moneyRes.getCurrentMoney();
                     }
                 }
+                String matrixStr = SpartanUtils.matrixToString(matrix);
                 linesWin = builderLinesWin.toString();
                 prizesOnLine = builderPrizesOnLine.toString();
                 msg.referenceId = referenceId;
-                msg.matrix = SpartanUtils.matrixToString(matrix);
+                msg.matrix = matrixStr;
                 msg.linesWin = linesWin;
                 msg.prize = totalPrizes;
                 msg.isFreeSpin = false;
                 try {
-                    this.slotService.logSpartan(referenceId, username, (long) this.betValue, "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25", linesWin, prizesOnLine, result, totalPrizes, currentTimeStr);
+                    this.slotService.logSpartan(referenceId, username, (long) this.betValue, "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25", linesWin, prizesOnLine, result, totalPrizes, currentTimeStr, matrixStr);
                 } catch (InterruptedException des) {
                 } catch (TimeoutException des) {
                 } catch (IOException des) {
@@ -618,7 +605,7 @@ public class SpartanRoom
             msg.itemsWild = sb.toString();
             msg.ratioFree = (byte) ratio;
             try {
-                this.slotService.logSpartan(referenceId, username, (long) this.betValue, linesStr, linesWin, prizesOnLine, result, totalPrizes, currentTimeStr);
+                this.slotService.logSpartan(referenceId, username, this.betValue, linesStr, linesWin, prizesOnLine, result, totalPrizes, currentTimeStr, msg.matrix);
             } catch (InterruptedException i) {
             } catch (TimeoutException i) {
             } catch (IOException i) {
