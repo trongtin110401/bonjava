@@ -55,16 +55,16 @@ public class Slot25ExtendRoom extends SlotRoom {
     private final ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
     private final Slot25BasicCommandCollection commandCollection;
     private static final org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger("slot");
-
     // litener zone
     private SlotLogListener slotLogListener;
 
-    public Slot25ExtendRoom(SlotModule module, Slot25BasicCommandCollection commandCollection, byte id, String gameName, short moneyType, long pot, long fund, int betValue, long initJackpotValue) {
+    public Slot25ExtendRoom(SlotModule module, Slot25BasicCommandCollection commandCollection, SlotLogListener logListener, byte id, String gameName, short moneyType, long pot, long fund, int betValue, long initJackpotValue) {
 
         super(id, gameName, betValue, moneyType, pot, fund, initJackpotValue);
 
         this.module = module;
         this.commandCollection = commandCollection;
+        this.slotLogListener = logListener;
         this.moneyType = moneyType;
         this.gameName = gameName;
         this.cacheFreeSpinName = this.gameName + betValue;
@@ -75,6 +75,14 @@ public class Slot25ExtendRoom extends SlotRoom {
 
         this.betValue = betValue;
         this.initJackpotValues = initJackpotValue;
+
+        try {
+            this.cachePercentFeeName = gameName + "PERCENT_FEE";
+            this.percentFee = cacheService.getValueInt(cachePercentFeeName);
+        } catch (Exception ex) {
+            this.percentFee = 2;
+            cacheService.setValue(cachePercentFeeName, percentFee);
+        }
 
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.checkResetPotTask, 10, 10, TimeUnit.SECONDS);
