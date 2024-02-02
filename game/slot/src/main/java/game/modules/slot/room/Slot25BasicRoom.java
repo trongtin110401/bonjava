@@ -84,6 +84,14 @@ public class Slot25BasicRoom extends SlotRoom {
         this.betValue = betValue;
         this.initJackpotValues = initJackpotValue;
 
+        try {
+            this.cachePercentFeeName = gameName + "PERCENT_FEE";
+            this.percentFee = cacheService.getValueInt(cachePercentFeeName);
+        } catch (Exception ex) {
+            this.percentFee = 2;
+            cacheService.setValue(cachePercentFeeName, percentFee);
+        }
+
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.checkResetPotTask, 10, 10, TimeUnit.SECONDS);
     }
@@ -178,7 +186,7 @@ public class Slot25BasicRoom extends SlotRoom {
                 // check đủ tiền
                 if (totalBetValue <= currentMoney || isSpinningFree) {
                     // trừ phế 2%
-                    long fee = !isSpinningFree ? totalBetValue * 2L / 100L : 0;
+                    long fee = !isSpinningFree ? totalBetValue * percentFee / 100L : 0;
                     MoneyResponse moneyRes = new MoneyResponse(false, "1001");
                     // Không phải lả BOT => Cập nhật tiền
                     if (!u.isBot()) {

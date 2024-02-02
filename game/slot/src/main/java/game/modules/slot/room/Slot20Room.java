@@ -76,6 +76,15 @@ public class Slot20Room extends SlotRoom {
         cacheService.setValue(room, (int) pot);
         this.betValue = betValue;
         this.initJackpotValues = initPotValue;
+
+        try {
+            this.cachePercentFeeName = gameName + "PERCENT_FEE";
+            this.percentFee = cacheService.getValueInt(cachePercentFeeName);
+        } catch (Exception ex) {
+            this.percentFee = 2;
+            cacheService.setValue(cachePercentFeeName, percentFee);
+        }
+
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
         this.boxValues.add(10);
         this.boxValues.add(10);
@@ -159,27 +168,27 @@ public class Slot20Room extends SlotRoom {
         long currentMoney = this.userService.getMoneyUserCache(username, this.moneyTypeStr);
         // thông tin free spin
         int numOfFreeSpin = getNumOfFreeSpin(username);
-        boolean isFreeSpin = numOfFreeSpin > 0;
+        boolean isSpinningFree = numOfFreeSpin > 0;
         // số lines được chọn > 0
         if (selectedLines.length > 0 && !linesStr.isEmpty()) {
             if (totalBetValue > 0L) {
-                if (totalBetValue <= currentMoney || isFreeSpin) {
-                    long fee = totalBetValue * 2L / 100L;
+                if (totalBetValue <= currentMoney || isSpinningFree) {
+                    long fee = !isSpinningFree ? totalBetValue * percentFee / 100L : 0;
                     MoneyResponse moneyRes = new MoneyResponse(false, "1001");
                     if (!u.isBot()) {
-                        long changeMoney = isFreeSpin ? 0 : totalBetValue;
-                        String desc = isFreeSpin ? "Lượt quay miễn phí " + gameName : "Đặt cược " + gameName;
+                        long changeMoney = isSpinningFree ? 0 : totalBetValue;
+                        String desc = isSpinningFree ? "Lượt quay miễn phí " + gameName : "Đặt cược " + gameName;
                         moneyRes = this.userService.updateMoney(username, -changeMoney, this.moneyTypeStr, this.gameName, "Quay " + gn, desc, fee, referenceId, TransType.START_TRANS);
                     } else {
                         moneyRes.setSuccess(true);
                     }
                     if (moneyRes != null && moneyRes.isSuccess()) {
                         // 2 phần trăm cho vào hũ JACKPOT
-                        long moneyToPot = !isFreeSpin ? totalBetValue * 2 / 100L : 0;
+                        long moneyToPot = !isSpinningFree ? totalBetValue * 2 / 100L : 0;
                         this.pot += moneyToPot;
 
                         // số tiền còn lại sau khi trừ phế và 2% POT cho vào quỹ thưởng
-                        long moneyToFund = !isFreeSpin ? totalBetValue - fee - moneyToPot : 0;
+                        long moneyToFund = !isSpinningFree ? totalBetValue - fee - moneyToPot : 0;
                         if (!u.isBot()) {
                             this.fund += moneyToFund;
                         }
@@ -285,7 +294,7 @@ public class Slot20Room extends SlotRoom {
 
                             // FORCE: uncomment đoạn dưới
                             // ở chế độ Free Spin, không cho phép trúng BONUS hoặc SCATTER
-//                            if (isFreeSpin && (hasFreeSpinAward || hasBonusAward)) {
+//                            if (isSpinningFree && (hasFreeSpinAward || hasBonusAward)) {
 //                                continue;
 //                            }
 
@@ -437,7 +446,7 @@ public class Slot20Room extends SlotRoom {
                             // điều kiện trúng thưởng đã thỏa mãn, dừng vòng lặp
                             enoughPair = true;
 //                            // cập nhật lượt quay miễn phí
-//                            if (isFreeSpin) {
+//                            if (isSpinningFree) {
 //                                slotService.updateLuotQuaySlotFree(cacheFreeSpinName, username);
 //                            }
 
