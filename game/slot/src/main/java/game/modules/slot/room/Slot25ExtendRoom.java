@@ -401,7 +401,7 @@ public class Slot25ExtendRoom extends SlotRoom {
                             try {
                                 // lưu nhật ký chơi
                                 if (!u.isBot()) {
-                                    this.slotLogListener.log(referenceId, username, this.betValue, linesStr, linesWin, prizesOnLine, result, totalPrizes, currentTimeStr);
+                                    this.slotLogListener.log(referenceId, username, this.betValue, linesStr, linesWin, prizesOnLine, result, totalPrizes, currentTimeStr, matrixStr);
                                 }
                                 // lưu nhật ký nổ hũ
                                 if (result == ResultSlot.JACKPOT) {
