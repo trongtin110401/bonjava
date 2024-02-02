@@ -580,6 +580,8 @@ public class GiftCodeDAOImpl
         return true;
     }
 
+
+
     @Override
     public synchronized boolean InsertSpecialGiftcode(SpecialGiftCode giftCode) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
@@ -2158,6 +2160,32 @@ public class GiftCodeDAOImpl
             }
         });
         return giftcode;
+    }
+
+    @Override
+    public GiftCodeDto findActiveByCode(String code) {
+        GiftCodeDto giftCodeDto = new GiftCodeDto();
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        HashMap<String, Object> conditions = new HashMap<>();
+
+        conditions.put("code", code);
+        conditions.put("active", true);
+
+        FindIterable iterable = db.getCollection("gift_code").find(new Document(conditions)).limit(1);
+        iterable.forEach((Block) new Block<Document>() {
+            public void apply(Document document) {
+                giftCodeDto.setType(document.getString("type"));
+                giftCodeDto.setPrice(document.getInteger("price"));
+                giftCodeDto.setQuantity(document.getInteger("quantity"));
+                giftCodeDto.setLength(document.getInteger("length"));
+                giftCodeDto.setCreatedDate(document.getString("created_time"));
+                giftCodeDto.setExpirationTime(document.getString("expiration_time"));
+                giftCodeDto.setCode(document.getString("code"));
+                giftCodeDto.setActive(true);
+                giftCodeDto.setExpirationDate(document.getInteger("expiration_date"));
+            }
+        });
+        return giftCodeDto;
     }
 
 }
