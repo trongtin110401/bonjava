@@ -18,6 +18,7 @@ package com.vinplay.usercore.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hazelcast.core.IMap;
+import com.vinplay.vbee.common.dto.GiftCodeDto;
 import com.vinplay.vbee.common.messages.GiftCodeMessage;
 import com.vinplay.vbee.common.models.UserModel;
 import com.vinplay.vbee.common.models.cache.UserCacheModel;
@@ -72,5 +73,7 @@ public interface GiftCodeService {
     public GiftCodeByNickNameResponse getUserInfoByGiftCode(String var1, IMap<String, UserCacheModel> var2, int var3, int var4);
 
     public GiftCodeDeleteResponse DeleteGiftCode(String var1, String var2, String var3, String var4);
+
+    boolean saveGiftCode(GiftCodeDto giftCodeDto);
 }
 

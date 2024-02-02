@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  com.fasterxml.jackson.core.JsonProcessingException
  *  com.fasterxml.jackson.databind.ObjectMapper
@@ -50,6 +50,7 @@ import com.vinplay.usercore.dao.GiftCodeDAO;
 import com.vinplay.usercore.dao.impl.UserDaoImpl;
 import com.vinplay.usercore.service.UserService;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
+import com.vinplay.vbee.common.dto.GiftCodeDto;
 import com.vinplay.vbee.common.messages.BaseMessage;
 import com.vinplay.vbee.common.messages.GiftCodeMessage;
 import com.vinplay.vbee.common.models.SpecialGiftCode;
@@ -70,6 +71,7 @@ import com.vinplay.vbee.common.response.giftcode.GiftcodeStatisticObj;
 import com.vinplay.vbee.common.rmq.RMQApi;
 import com.vinplay.vbee.common.statics.TransType;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -84,6 +86,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Level;
+
 import org.apache.log4j.Logger;
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -91,8 +94,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class GiftCodeDAOImpl
-implements GiftCodeDAO {
-    private static final Logger logger = Logger.getLogger((String)"backend");
+        implements GiftCodeDAO {
+    private static final Logger logger = Logger.getLogger((String) "backend");
     private long money = 0L;
     private String moneyType = null;
     private String source = null;
@@ -208,36 +211,35 @@ implements GiftCodeDAO {
         conditions.put("price", msg.getPrice());
         conditions.put("type", msg.getType());
         conditions.put("release", msg.getRelease());
-        long count = db.getCollection("gift_code_store").count((Bson)new Document(conditions));
-        if (count >= (long)msg.getQuantity()) {
-            FindIterable iterable = db.getCollection("gift_code_store").find((Bson)new Document(conditions)).limit(msg.getQuantity());
-            iterable.forEach((Block)new Block<Document>(){
+        long count = db.getCollection("gift_code_store").count((Bson) new Document(conditions));
+        if (count >= (long) msg.getQuantity()) {
+            FindIterable iterable = db.getCollection("gift_code_store").find((Bson) new Document(conditions)).limit(msg.getQuantity());
+            iterable.forEach((Block) new Block<Document>() {
 
                 public void apply(Document document) {
                     Document doc = new Document();
-                    doc.append("giftcode", (Object)document.getString((Object)"giftcode"));
-                    doc.append("price", (Object)msg.getPrice());
-                    doc.append("quantity", (Object)msg.getQuantity());
-                    doc.append("source", (Object)msg.getSource());
-                    doc.append("count_use", (Object)0);
-                    doc.append("create_time", (Object)timeLog);
-                    doc.append("money_type", (Object)msg.getMoneyType());
-                    doc.append("release", (Object)msg.getRelease());
-                    doc.append("nick_name", (Object)"");
-                    doc.append("user_name", (Object)"");
-                    doc.append("mobile", (Object)"");
-                    doc.append("block", (Object)0);
-                    doc.append("type", (Object)msg.getType());
-                    doc.append("giftcodefull", (Object)(msg.getRelease() + msg.getPrice() + msg.getSource() + document.getString((Object)"giftcode")));
-                    doc.append("update_time", (Object)"");
-                    doc.append("agent", (Object)"0");
-                    giftCodeDB.insertOne((Object)doc);
+                    doc.append("giftcode", (Object) document.getString((Object) "giftcode"));
+                    doc.append("price", (Object) msg.getPrice());
+                    doc.append("quantity", (Object) msg.getQuantity());
+                    doc.append("source", (Object) msg.getSource());
+                    doc.append("count_use", (Object) 0);
+                    doc.append("create_time", (Object) timeLog);
+                    doc.append("money_type", (Object) msg.getMoneyType());
+                    doc.append("release", (Object) msg.getRelease());
+                    doc.append("nick_name", (Object) "");
+                    doc.append("user_name", (Object) "");
+                    doc.append("mobile", (Object) "");
+                    doc.append("block", (Object) 0);
+                    doc.append("type", (Object) msg.getType());
+                    doc.append("giftcodefull", (Object) (msg.getRelease() + msg.getPrice() + msg.getSource() + document.getString((Object) "giftcode")));
+                    doc.append("update_time", (Object) "");
+                    doc.append("agent", (Object) "0");
+                    giftCodeDB.insertOne((Object) doc);
                     try {
                         GiftCodeMessage message = new GiftCodeMessage();
-                        message.setGiftCode(document.getString((Object)"giftcode"));
-                        RMQApi.publishMessage((String)"queue_gift_code", (BaseMessage)message, (int)1200);
-                    }
-                    catch (Exception e) {
+                        message.setGiftCode(document.getString((Object) "giftcode"));
+                        RMQApi.publishMessage((String) "queue_gift_code", (BaseMessage) message, (int) 1200);
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -254,19 +256,19 @@ implements GiftCodeDAO {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection col = db.getCollection("gift_code_store");
         Document doc = new Document();
-        doc.append("giftcode", (Object)msg.getGiftCode());
-        doc.append("price", (Object)msg.getPrice());
-        doc.append("quantity", (Object)msg.getQuantity());
-        doc.append("source", (Object)msg.getSource());
-        doc.append("count_use", (Object)0);
-        doc.append("create_time", (Object)timeLog);
-        doc.append("money_type", (Object)msg.getMoneyType());
-        doc.append("release", (Object)msg.getRelease());
-        doc.append("type", (Object)msg.getType());
-        col.insertOne((Object)doc);
+        doc.append("giftcode", (Object) msg.getGiftCode());
+        doc.append("price", (Object) msg.getPrice());
+        doc.append("quantity", (Object) msg.getQuantity());
+        doc.append("source", (Object) msg.getSource());
+        doc.append("count_use", (Object) 0);
+        doc.append("create_time", (Object) timeLog);
+        doc.append("money_type", (Object) msg.getMoneyType());
+        doc.append("release", (Object) msg.getRelease());
+        doc.append("type", (Object) msg.getType());
+        col.insertOne((Object) doc);
         return true;
     }
-    
+
     @Override
     public synchronized JSONObject GetGiftCode(String giftCode) {
         final JSONObject obj = new JSONObject();
@@ -274,8 +276,8 @@ implements GiftCodeDAO {
             MongoDatabase db = MongoDBConnectionFactory.getDB();
             MongoCollection col = db.getCollection("gift_code");
             HashMap<String, Object> conditions = new HashMap<String, Object>();
-            conditions.put("giftcodefull", giftCode);            
-            FindIterable iterable = db.getCollection("gift_code").find((Bson) new Document(conditions)).limit(1);            
+            conditions.put("giftcodefull", giftCode);
+            FindIterable iterable = db.getCollection("gift_code").find((Bson) new Document(conditions)).limit(1);
             obj.put("code", (Object) 1001);
             obj.put("message", (Object) "failed");
             iterable.forEach((Block) new Block<Document>() {
@@ -284,17 +286,17 @@ implements GiftCodeDAO {
                     try {
                         obj.put("code", 0);
                         obj.put("message", true);
-                        obj.put("use_count", document.getInteger("count_use"));                    
+                        obj.put("use_count", document.getInteger("count_use"));
                         obj.put("value", document.getString("price"));
                         obj.put("create_time", document.getString("create_time"));
                         obj.put("nick_name", document.getString("nick_name"));
                         obj.put("update_time", document.getString("update_time"));
                     } catch (JSONException ex) {
-                        
+
                     }
                 }
-            });        
-        } catch (JSONException ex) {        
+            });
+        } catch (JSONException ex) {
         }
         return obj;
     }
@@ -319,46 +321,46 @@ implements GiftCodeDAO {
         long currentMoneyXu = this.usermodel.getXuTotal();
         String codeGame = giftCode.substring(0, 1);
         if (codeGame.equals("G")) {
-            iterable = db.getCollection("gift_code_game").find((Bson)new Document(conditions));
-            iterable.forEach((Block)new Block<Document>(){
+            iterable = db.getCollection("gift_code_game").find((Bson) new Document(conditions));
+            iterable.forEach((Block) new Block<Document>() {
 
                 public void apply(Document document) {
-                    if (document.getInteger((Object)"money_type") == 1) {
+                    if (document.getInteger((Object) "money_type") == 1) {
                         response.moneyType = 1;
                         GiftCodeDAOImpl.this.moneyType = "vin";
-                    } else if (document.getInteger((Object)"money_type") == 0) {
+                    } else if (document.getInteger((Object) "money_type") == 0) {
                         response.moneyType = 0;
                         GiftCodeDAOImpl.this.moneyType = "xu";
                     }
-                    GiftCodeDAOImpl.this.source = document.getString((Object)"source");
-                    response.use = document.getInteger((Object)"count_use", 1);
+                    GiftCodeDAOImpl.this.source = document.getString((Object) "source");
+                    response.use = document.getInteger((Object) "count_use", 1);
                     results.add(response);
                 }
             });
         } else {
-            iterable = db.getCollection("gift_code").find((Bson)new Document(conditions));
-            iterable.forEach((Block)new Block<Document>(){
+            iterable = db.getCollection("gift_code").find((Bson) new Document(conditions));
+            iterable.forEach((Block) new Block<Document>() {
 
                 public void apply(Document document) {
-                    if (document.getInteger((Object)"money_type") == 1) {
+                    if (document.getInteger((Object) "money_type") == 1) {
                         response.moneyType = 1;
-                        response.moneyGiftCodeVin = Long.parseLong(document.getString((Object)"price")) * 1000L;
+                        response.moneyGiftCodeVin = Long.parseLong(document.getString((Object) "price")) * 1000L;
                         response.moneyGiftCodeXu = 0L;
                         response.source = document.getString("source");
                         GiftCodeDAOImpl.this.money = response.moneyGiftCodeVin;
                         GiftCodeDAOImpl.this.moneyType = "vin";
-                    } else if (document.getInteger((Object)"money_type") == 0) {
+                    } else if (document.getInteger((Object) "money_type") == 0) {
                         response.moneyType = 0;
                         response.moneyGiftCodeVin = 0L;
-                        response.moneyGiftCodeXu = Long.parseLong(document.getString((Object)"price")) * 1000000L;
+                        response.moneyGiftCodeXu = Long.parseLong(document.getString((Object) "price")) * 1000000L;
                         response.source = document.getString("source");
                         GiftCodeDAOImpl.this.money = response.moneyGiftCodeXu;
                         GiftCodeDAOImpl.this.moneyType = "xu";
                     }
-                    GiftCodeDAOImpl.this.source = document.getString((Object)"source");
-                    response.use = document.getInteger((Object)"count_use", 1);
-                    response.agent = document.getString((Object)"agent");
-                    response.type = document.getString((Object)"type");
+                    GiftCodeDAOImpl.this.source = document.getString((Object) "source");
+                    response.use = document.getInteger((Object) "count_use", 1);
+                    response.agent = document.getString((Object) "agent");
+                    response.type = document.getString((Object) "type");
                     results.add(response);
                 }
             });
@@ -369,10 +371,10 @@ implements GiftCodeDAO {
         }
         if (results.size() == 1) {
             response.setErrorCode("0");
-            GiftCodeUpdateResponse strgiftCode = (GiftCodeUpdateResponse)results.get(0);
+            GiftCodeUpdateResponse strgiftCode = (GiftCodeUpdateResponse) results.get(0);
             if (codeGame.equals("G")) {
-                BasicDBObject nickname = new BasicDBObject("nick_name", (Object)nickName);
-                BasicDBObject mobile = new BasicDBObject("mobile", (Object)this.usermodel.getMobile());
+                BasicDBObject nickname = new BasicDBObject("nick_name", (Object) nickName);
+                BasicDBObject mobile = new BasicDBObject("mobile", (Object) this.usermodel.getMobile());
                 ArrayList<BasicDBObject> myList = new ArrayList<BasicDBObject>();
                 myList.add(nickname);
                 myList.add(mobile);
@@ -380,19 +382,19 @@ implements GiftCodeDAO {
                 conditions2.put("count_use", 1);
                 conditions2.put("source", this.source);
                 conditions2.put("money_type", strgiftCode.moneyType);
-                FindIterable iterable2 = db.getCollection("gift_code_game").find((Bson)new Document(conditions2));
-                iterable2.forEach((Block)new Block<Document>(){
+                FindIterable iterable2 = db.getCollection("gift_code_game").find((Bson) new Document(conditions2));
+                iterable2.forEach((Block) new Block<Document>() {
 
                     public void apply(Document document) {
-                        if (document.getString((Object)"nick_name").equals(nickName)) {
+                        if (document.getString((Object) "nick_name").equals(nickName)) {
                             response.setErrorCode("10004");
-                        } else if (document.getString((Object)"mobile").equals(GiftCodeDAOImpl.this.usermodel.getMobile())) {
+                        } else if (document.getString((Object) "mobile").equals(GiftCodeDAOImpl.this.usermodel.getMobile())) {
                             response.setErrorCode("10004");
                         }
                     }
                 });
                 if (response.getErrorCode().equals("0")) {
-                    colgame.updateOne((Bson)new Document("giftcodefull", (Object)giftCode), (Bson)new Document("$set", (Object)new Document("nick_name", (Object)nickName).append("count_use", (Object)1).append("mobile", (Object)this.usermodel.getMobile()).append("user_name", (Object)this.usermodel.getUsername()).append("update_time", (Object)updatetime)));
+                    colgame.updateOne((Bson) new Document("giftcodefull", (Object) giftCode), (Bson) new Document("$set", (Object) new Document("nick_name", (Object) nickName).append("count_use", (Object) 1).append("mobile", (Object) this.usermodel.getMobile()).append("user_name", (Object) this.usermodel.getUsername()).append("update_time", (Object) updatetime)));
                     response.setErrorCode("0");
                     response.setSuccess(true);
                 }
@@ -403,8 +405,8 @@ implements GiftCodeDAO {
                     } else {
                         conditions2.put("price", String.valueOf(strgiftCode.moneyGiftCodeXu / 1000000L));
                     }
-                    BasicDBObject nickname = new BasicDBObject("nick_name", (Object)nickName);
-                    BasicDBObject mobile = new BasicDBObject("mobile", (Object)this.usermodel.getMobile());
+                    BasicDBObject nickname = new BasicDBObject("nick_name", (Object) nickName);
+                    BasicDBObject mobile = new BasicDBObject("mobile", (Object) this.usermodel.getMobile());
                     ArrayList<BasicDBObject> myList = new ArrayList<BasicDBObject>();
                     myList.add(nickname);
                     myList.add(mobile);
@@ -412,11 +414,11 @@ implements GiftCodeDAO {
                     conditions2.put("count_use", 1);
                     conditions2.put("source", this.source);
                     conditions2.put("money_type", strgiftCode.moneyType);
-                    FindIterable iterable2 = db.getCollection("gift_code").find((Bson)new Document(conditions2));
-                    iterable2.forEach((Block)new Block<Document>(){
+                    FindIterable iterable2 = db.getCollection("gift_code").find((Bson) new Document(conditions2));
+                    iterable2.forEach((Block) new Block<Document>() {
 
                         public void apply(Document document) {
-                            if (document.getString((Object)"nick_name").equals(nickName)) {
+                            if (document.getString((Object) "nick_name").equals(nickName)) {
                                 response.setErrorCode("10004");
                             }
 //                            } else if (document.getString((Object)"mobile").equals(GiftCodeDAOImpl.this.usermodel.getMobile())) {
@@ -429,7 +431,7 @@ implements GiftCodeDAO {
                     });
                 }
                 if (response.getErrorCode().equals("0")) {
-                    col.updateOne((Bson)new Document("giftcodefull", (Object)giftCode), (Bson)new Document("$set", (Object)new Document("nick_name", (Object)nickName).append("count_use", (Object)1).append("mobile", (Object)this.usermodel.getMobile()).append("user_name", (Object)this.usermodel.getUsername()).append("update_time", (Object)updatetime).append("block", (Object)0)));
+                    col.updateOne((Bson) new Document("giftcodefull", (Object) giftCode), (Bson) new Document("$set", (Object) new Document("nick_name", (Object) nickName).append("count_use", (Object) 1).append("mobile", (Object) this.usermodel.getMobile()).append("user_name", (Object) this.usermodel.getUsername()).append("update_time", (Object) updatetime).append("block", (Object) 0)));
                     MoneyResponse mnres = null;
                     if (strgiftCode.agent != null) {
                         if (strgiftCode.agent.equals("0")) {
@@ -437,25 +439,17 @@ implements GiftCodeDAO {
                                 mnres = userService.updateMoney(nickName, this.money, this.moneyType, "GiftCodeMKT", "GiftCode", "M\u00e3: " + giftCode, 0L, null, TransType.NO_VIPPOINT);
                             } else if (strgiftCode.type.equals("3")) {
                                 // cap nhat so tien nhan duoc    
-                                if (!strgiftCode.source.equals("XC1"))
-                                {
+                                if (!strgiftCode.source.equals("XC1")) {
                                     mnres = userService.updateMoney(nickName, this.money, this.moneyType, "GiftCodeVH", "GiftCode", "M\u00e3: " + giftCode, 0L, null, TransType.NO_VIPPOINT);
-                                }
-                                else
-                                {
+                                } else {
                                     // tinh lai so tien
-                                    if (this.money == 100000 || this.money == 200000)
-                                    {
+                                    if (this.money == 100000 || this.money == 200000) {
                                         this.money = (long) (this.money * 1.1);
                                         response.moneyGiftCodeVin = (long) (response.moneyGiftCodeVin * 1.1);
-                                    }
-                                    else if (this.money == 500000 || this.money == 1000000 || this.money == 2000000)
-                                    {
+                                    } else if (this.money == 500000 || this.money == 1000000 || this.money == 2000000) {
                                         this.money = (long) (this.money * 1.12);
                                         response.moneyGiftCodeVin = (long) (response.moneyGiftCodeVin * 1.12);
-                                    }
-                                    else
-                                    {
+                                    } else {
                                         this.money = (long) (this.money * 1);
                                     }
                                     mnres = userService.updateMoney(nickName, this.money, this.moneyType, "GiftCodeVH", "GiftCode", "M\u00e3: " + giftCode, 0L, null, TransType.NO_VIPPOINT);
@@ -504,8 +498,8 @@ implements GiftCodeDAO {
         MongoCollection col = db.getCollection("special_gift_code");
         HashMap<String, Object> conditions = new HashMap<String, Object>();
         conditions.put("status", 0);
-        iterable = db.getCollection("special_gift_code").find((Bson)new Document(conditions));
-        iterable.forEach((Block)new Block<Document>(){
+        iterable = db.getCollection("special_gift_code").find((Bson) new Document(conditions));
+        iterable.forEach((Block) new Block<Document>() {
 
             public void apply(Document document) {
                 SpecialGiftCode gc = new SpecialGiftCode();
@@ -526,33 +520,29 @@ implements GiftCodeDAO {
     }
 
     @Override
-    public synchronized List<SpecialGiftCode> GetSpecialGiftCodesByQuery(int page,int page_size, String gift_code, long amount, String nick_name, int type) {
+    public synchronized List<SpecialGiftCode> GetSpecialGiftCodesByQuery(int page, int page_size, String gift_code, long amount, String nick_name, int type) {
         final ArrayList results = new ArrayList();
         FindIterable iterable = null;
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection col = db.getCollection("special_gift_code");
         HashMap<String, Object> conditions = new HashMap<String, Object>();
-        if (gift_code != null && !"".equals(gift_code))
-        {
+        if (gift_code != null && !"".equals(gift_code)) {
             String pattern = ".*" + gift_code + ".*";
-            conditions.put("gift_code", (Object)new BasicDBObject().append("$regex", (Object)pattern).append("$options", (Object)"i"));
+            conditions.put("gift_code", (Object) new BasicDBObject().append("$regex", (Object) pattern).append("$options", (Object) "i"));
         }
-        if (amount > 0)
-        {
-            conditions.put("amount",amount);
+        if (amount > 0) {
+            conditions.put("amount", amount);
         }
-        if (nick_name != null && !nick_name.equals(""))
-        {
+        if (nick_name != null && !nick_name.equals("")) {
             String pattern = ".*" + nick_name + ".*";
-            conditions.put("nick_name", (Object)new BasicDBObject().append("$regex", (Object)pattern).append("$options", (Object)"i"));
+            conditions.put("nick_name", (Object) new BasicDBObject().append("$regex", (Object) pattern).append("$options", (Object) "i"));
         }
-        if (type > 0)
-        {
+        if (type > 0) {
             conditions.put("type", type);
         }
-        iterable = db.getCollection("special_gift_code").find((Bson)new Document(conditions)).skip((page - 1) * page_size).limit(page_size);
-        iterable.forEach((Block)new Block<Document>(){
+        iterable = db.getCollection("special_gift_code").find((Bson) new Document(conditions)).skip((page - 1) * page_size).limit(page_size);
+        iterable.forEach((Block) new Block<Document>() {
 
             public void apply(Document document) {
                 SpecialGiftCode gc = new SpecialGiftCode();
@@ -573,44 +563,59 @@ implements GiftCodeDAO {
     }
 
     @Override
-    public synchronized boolean InsertSpecialGiftcode(SpecialGiftCode giftCode)
-    {
+    public boolean saveGiftCode(GiftCodeDto giftCodeDto) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
-        MongoCollection col = db.getCollection("special_gift_code");
+        MongoCollection col = db.getCollection("gift_code");
         Document doc = new Document();
-        doc.append("gift_code",giftCode.gift_code);
-        doc.append("amount",giftCode.amount);
-        doc.append("use_count",giftCode.use_count);
-        doc.append("reuse_count",giftCode.reuse_count);
-        doc.append("status",giftCode.status);
-        doc.append("type",giftCode.type);
-        doc.append("created_time",giftCode.created_time);
-        doc.append("nick_name",giftCode.nick_name);
+        doc.append("code", giftCodeDto.getCode());
+        doc.append("price", giftCodeDto.getPrice());
+        doc.append("quantity", giftCodeDto.getQuantity());
+        doc.append("active", giftCodeDto.isActive());
+        doc.append("type", giftCodeDto.getType());
+        doc.append("length", giftCodeDto.getLength());
+        doc.append("created_time", giftCodeDto.getCreatedDate());
+        doc.append("expiration_date", giftCodeDto.getExpirationDate());
+        doc.append("expiration_time", giftCodeDto.getExpirationTime());
         col.insertOne(doc);
         return true;
     }
 
     @Override
-    public synchronized boolean UpdateSpecialGiftcode(SpecialGiftCode giftCode)
-    {
+    public synchronized boolean InsertSpecialGiftcode(SpecialGiftCode giftCode) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection col = db.getCollection("special_gift_code");
         Document doc = new Document();
-        doc.append("amount",giftCode.amount);
-        doc.append("use_count",giftCode.use_count);
-        doc.append("reuse_count",giftCode.reuse_count);
-        doc.append("status",giftCode.status);
-        doc.append("type",giftCode.type);
-        doc.append("nick_name",giftCode.nick_name);
-        HashMap<String, Object> conditions = new HashMap<String, Object>();
-        conditions.put("gift_code", giftCode.gift_code);
-        col.findOneAndUpdate(new Document(conditions),doc);
+        doc.append("gift_code", giftCode.gift_code);
+        doc.append("amount", giftCode.amount);
+        doc.append("use_count", giftCode.use_count);
+        doc.append("reuse_count", giftCode.reuse_count);
+        doc.append("status", giftCode.status);
+        doc.append("type", giftCode.type);
+        doc.append("created_time", giftCode.created_time);
+        doc.append("nick_name", giftCode.nick_name);
+        col.insertOne(doc);
         return true;
     }
 
     @Override
-    public synchronized boolean DeleteSpecialGiftcode(String gift_code)
-    {
+    public synchronized boolean UpdateSpecialGiftcode(SpecialGiftCode giftCode) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection col = db.getCollection("special_gift_code");
+        Document doc = new Document();
+        doc.append("amount", giftCode.amount);
+        doc.append("use_count", giftCode.use_count);
+        doc.append("reuse_count", giftCode.reuse_count);
+        doc.append("status", giftCode.status);
+        doc.append("type", giftCode.type);
+        doc.append("nick_name", giftCode.nick_name);
+        HashMap<String, Object> conditions = new HashMap<String, Object>();
+        conditions.put("gift_code", giftCode.gift_code);
+        col.findOneAndUpdate(new Document(conditions), doc);
+        return true;
+    }
+
+    @Override
+    public synchronized boolean DeleteSpecialGiftcode(String gift_code) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection col = db.getCollection("special_gift_code");
         HashMap<String, Object> conditions = new HashMap<String, Object>();
@@ -623,31 +628,28 @@ implements GiftCodeDAO {
     }
 
     @Override
-    public String GetGiftCodeByTypeNN(int type, String nick_name)
-    {
+    public String GetGiftCodeByTypeNN(int type, String nick_name) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection col = db.getCollection("special_gift_code");
         if (type == 1) {
             HashMap<String, Object> conditions = new HashMap<String, Object>();
             conditions.put("type", type);
-            FindIterable iterable = db.getCollection("special_gift_code").find((Bson)new Document(conditions));
+            FindIterable iterable = db.getCollection("special_gift_code").find((Bson) new Document(conditions));
             SpecialGiftCode giftCode = new SpecialGiftCode();
-            iterable.forEach((Block)new Block<Document>(){
+            iterable.forEach((Block) new Block<Document>() {
 
                 public void apply(Document document) {
                     giftCode.gift_code = document.getString("gift_code");
                 }
             });
             return giftCode.gift_code;
-        }
-        else
-        {
+        } else {
             HashMap<String, Object> conditions = new HashMap<String, Object>();
             conditions.put("type", type);
             conditions.put("nick_name", nick_name);
-            FindIterable iterable = db.getCollection("special_gift_code").find((Bson)new Document(conditions));
+            FindIterable iterable = db.getCollection("special_gift_code").find((Bson) new Document(conditions));
             SpecialGiftCode giftCode = new SpecialGiftCode();
-            iterable.forEach((Block)new Block<Document>(){
+            iterable.forEach((Block) new Block<Document>() {
 
                 public void apply(Document document) {
                     giftCode.gift_code = document.getString("gift_code");
@@ -686,9 +688,9 @@ implements GiftCodeDAO {
         // check code exists
         HashMap<String, Object> existsCondition = new HashMap<String, Object>();
         existsCondition.put("gift_code", giftCode);
-        iterable = specialCol.find((Bson)new Document(existsCondition)).skip(0).limit(1);
+        iterable = specialCol.find((Bson) new Document(existsCondition)).skip(0).limit(1);
         SpecialGiftCode specialGiftCode = new SpecialGiftCode();
-        iterable.forEach((Block)new Block<Document>(){
+        iterable.forEach((Block) new Block<Document>() {
 
             public void apply(Document document) {
                 specialGiftCode.gift_code = document.getString("gift_code");
@@ -705,32 +707,23 @@ implements GiftCodeDAO {
         });
         if (specialGiftCode.gift_code != null && specialGiftCode.status == 0) {
             // check nick name
-            if (specialGiftCode.nick_name != null && !"".equals(specialGiftCode.nick_name))
-            {
-                if (specialGiftCode.nick_name.indexOf(",") > 0)
-                {
+            if (specialGiftCode.nick_name != null && !"".equals(specialGiftCode.nick_name)) {
+                if (specialGiftCode.nick_name.indexOf(",") > 0) {
                     String[] nickNames = specialGiftCode.nick_name.split(",");
-                    if (nickNames != null && nickNames.length > 0)
-                    {
+                    if (nickNames != null && nickNames.length > 0) {
                         boolean isContain = false;
-                        for (String nn : nickNames)
-                        {
-                            if (nn.equals(usermodel.getNickname()))
-                            {
+                        for (String nn : nickNames) {
+                            if (nn.equals(usermodel.getNickname())) {
                                 isContain = true;
                             }
                         }
-                        if (!isContain)
-                        {
+                        if (!isContain) {
                             response.setErrorCode("10101");
                             return response;
                         }
                     }
-                }
-                else
-                {
-                    if (!specialGiftCode.nick_name.equals(usermodel.getNickname()))
-                    {
+                } else {
+                    if (!specialGiftCode.nick_name.equals(usermodel.getNickname())) {
                         response.setErrorCode("10101");
                         return response;
                     }
@@ -760,8 +753,7 @@ implements GiftCodeDAO {
             conditions.put("type", 10);
             // count used count by nick name
             long usedCount = col.count((Bson) new Document(conditions));
-            if (usedCount >= specialGiftCode.reuse_count)
-            {
+            if (usedCount >= specialGiftCode.reuse_count) {
                 response.setErrorCode("10103");
                 return response;
             }
@@ -827,9 +819,7 @@ implements GiftCodeDAO {
             }
             response.setErrorCode("10401");
             return response;
-        }
-        else
-        {
+        } else {
             response.setErrorCode("10112");
             return response;
         }
@@ -858,14 +848,14 @@ implements GiftCodeDAO {
             conditions.put("block", Integer.parseInt(block));
         }
         if (timeType.equals("1") && timeStart != null && !timeStart.equals("") && timeEnd != null && !timeEnd.equals("")) {
-            obj.put("$gte", (Object)timeStart);
-            obj.put("$lte", (Object)timeEnd);
-            conditions.put("create_time", (Object)obj);
+            obj.put("$gte", (Object) timeStart);
+            obj.put("$lte", (Object) timeEnd);
+            conditions.put("create_time", (Object) obj);
         }
         if (timeType.equals("2") && timeStart != null && !timeStart.equals("") && timeEnd != null && !timeEnd.equals("")) {
-            obj.put("$gte", (Object)timeStart);
-            obj.put("$lte", (Object)timeEnd);
-            conditions.put("update_time", (Object)obj);
+            obj.put("$gte", (Object) timeStart);
+            obj.put("$lte", (Object) timeEnd);
+            conditions.put("update_time", (Object) obj);
         }
         if (usegift != null && !usegift.equals("")) {
             conditions.put("count_use", Integer.parseInt(usegift));
@@ -879,21 +869,21 @@ implements GiftCodeDAO {
         if (giftcode != null && !giftcode.equals("")) {
             conditions.put("giftcodefull", giftcode);
         }
-        FindIterable iterable = db.getCollection("gift_code").find((Bson)new Document(conditions)).skip(num_start).limit(totalRecord).sort((Bson)objsort);
-        iterable.forEach((Block)new Block<Document>(){
+        FindIterable iterable = db.getCollection("gift_code").find((Bson) new Document(conditions)).skip(num_start).limit(totalRecord).sort((Bson) objsort);
+        iterable.forEach((Block) new Block<Document>() {
 
             public void apply(Document document) {
                 GiftCodeResponse giftcode = new GiftCodeResponse();
-                giftcode.price = document.getString((Object)"price");
-                giftcode.source = document.getString((Object)"source");
-                giftcode.quantity = document.getInteger((Object)"quantity").intValue();
-                giftcode.giftCode = document.getString((Object)"giftcodefull");
-                giftcode.createTime = document.getString((Object)"create_time");
-                giftcode.updateTime = document.getString((Object)"update_time");
-                giftcode.useGiftCode = document.getInteger((Object)"count_use");
-                giftcode.nickName = document.getString((Object)"nick_name");
-                giftcode.userName = document.getString((Object)"user_name");
-                giftcode.block = document.getInteger((Object)"block");
+                giftcode.price = document.getString((Object) "price");
+                giftcode.source = document.getString((Object) "source");
+                giftcode.quantity = document.getInteger((Object) "quantity").intValue();
+                giftcode.giftCode = document.getString((Object) "giftcodefull");
+                giftcode.createTime = document.getString((Object) "create_time");
+                giftcode.updateTime = document.getString((Object) "update_time");
+                giftcode.useGiftCode = document.getInteger((Object) "count_use");
+                giftcode.nickName = document.getString((Object) "nick_name");
+                giftcode.userName = document.getString((Object) "user_name");
+                giftcode.block = document.getInteger((Object) "block");
                 results.add(giftcode);
             }
         });
@@ -905,10 +895,10 @@ implements GiftCodeDAO {
         final ArrayList<String> results = new ArrayList<String>();
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         FindIterable iterable = db.getCollection("gift_code_store").find();
-        iterable.forEach((Block)new Block<Document>(){
+        iterable.forEach((Block) new Block<Document>() {
 
             public void apply(Document document) {
-                results.add(document.getString((Object)"giftcode"));
+                results.add(document.getString((Object) "giftcode"));
             }
         });
         return results;
@@ -929,9 +919,9 @@ implements GiftCodeDAO {
             conditions.put("block", Integer.parseInt(block));
         }
         if (timeStart != null && !timeStart.equals("") && timeEnd != null && !timeEnd.equals("")) {
-            obj.put("$gte", (Object)timeStart);
-            obj.put("$lte", (Object)timeEnd);
-            conditions.put("create_time", (Object)obj);
+            obj.put("$gte", (Object) timeStart);
+            obj.put("$lte", (Object) timeEnd);
+            conditions.put("create_time", (Object) obj);
         }
         if (usegift != null && !usegift.equals("")) {
             conditions.put("count_use", Integer.parseInt(usegift));
@@ -939,18 +929,18 @@ implements GiftCodeDAO {
         if (source != null && !source.equals("")) {
             conditions.put("source", source);
         }
-        FindIterable iterable = db.getCollection("gift_code_store").find((Bson)new Document(conditions)).skip(num_start).limit(totalRecord);
-        iterable.forEach((Block)new Block<Document>(){
+        FindIterable iterable = db.getCollection("gift_code_store").find((Bson) new Document(conditions)).skip(num_start).limit(totalRecord);
+        iterable.forEach((Block) new Block<Document>() {
 
             public void apply(Document document) {
                 GiftCodeResponse giftcode = new GiftCodeResponse();
-                giftcode.price = document.getString((Object)"price");
-                giftcode.source = document.getString((Object)"source");
-                giftcode.quantity = document.getInteger((Object)"quantity").intValue();
-                giftcode.giftCode = document.getString((Object)"giftcode");
-                giftcode.createTime = document.getString((Object)"create_time");
-                giftcode.updateTime = document.getString((Object)"update_time");
-                giftcode.useGiftCode = document.getInteger((Object)"count_use");
+                giftcode.price = document.getString((Object) "price");
+                giftcode.source = document.getString((Object) "source");
+                giftcode.quantity = document.getInteger((Object) "quantity").intValue();
+                giftcode.giftCode = document.getString((Object) "giftcode");
+                giftcode.createTime = document.getString((Object) "create_time");
+                giftcode.updateTime = document.getString((Object) "update_time");
+                giftcode.useGiftCode = document.getInteger((Object) "count_use");
                 results.add(giftcode);
             }
         });
@@ -972,12 +962,12 @@ implements GiftCodeDAO {
             conditions.put("block", Integer.parseInt(block));
         }
         if (timeStart != null && !timeStart.equals("") && timeEnd != null && !timeEnd.equals("")) {
-            obj.put("$gte", (Object)timeStart);
-            obj.put("$lte", (Object)timeEnd);
+            obj.put("$gte", (Object) timeStart);
+            obj.put("$lte", (Object) timeEnd);
             if (timeType.equals("1")) {
-                conditions.put("create_time", (Object)obj);
+                conditions.put("create_time", (Object) obj);
             } else {
-                conditions.put("update_time", (Object)obj);
+                conditions.put("update_time", (Object) obj);
             }
         }
         if (source != null && !source.equals("")) {
@@ -986,9 +976,9 @@ implements GiftCodeDAO {
         if (type != null && !type.equals("")) {
             conditions.put("type", type);
         }
-        long quantity = db.getCollection("gift_code").count((Bson)new Document(conditions));
-        long giftcodeuse = db.getCollection("gift_code").count((Bson)new Document(conditions).append("count_use", (Object)1));
-        long giftcodeblock = db.getCollection("gift_code").count((Bson)new Document(conditions).append("block", (Object)1));
+        long quantity = db.getCollection("gift_code").count((Bson) new Document(conditions));
+        long giftcodeuse = db.getCollection("gift_code").count((Bson) new Document(conditions).append("count_use", (Object) 1));
+        long giftcodeblock = db.getCollection("gift_code").count((Bson) new Document(conditions).append("block", (Object) 1));
         long remain = quantity - giftcodeuse;
         GiftCodeCountResponse response = new GiftCodeCountResponse();
         response.giftCodeUse = giftcodeuse;
@@ -1105,84 +1095,85 @@ implements GiftCodeDAO {
         this.DLUsed10M = 0;
         this.DLLock10M = 0;
         if (moneyType != null && !moneyType.equals("")) {
-            conditions.put("money_type", (Object)Integer.parseInt(moneyType));
+            conditions.put("money_type", (Object) Integer.parseInt(moneyType));
         }
         if (!(timeStart == null || timeStart.equals("") || timeEnd == null || timeEnd.equals("") || timeType == null || timeType.equals(""))) {
-            obj.put("$gte", (Object)timeStart);
-            obj.put("$lte", (Object)timeEnd);
+            obj.put("$gte", (Object) timeStart);
+            obj.put("$lte", (Object) timeEnd);
             if (timeType.equals("1")) {
-                conditions.put("create_time", (Object)obj);
+                conditions.put("create_time", (Object) obj);
             } else {
-                conditions.put("update_time", (Object)obj);
+                conditions.put("update_time", (Object) obj);
             }
         }
         if (source != null && !source.equals("")) {
-            conditions.put("source", (Object)source);
+            conditions.put("source", (Object) source);
         }
         objsort.put("_id", -1);
         FindIterable iterable = null;
-        iterable = db.getCollection("gift_code").find((Bson)new Document((Map)conditions)).sort((Bson)objsort);
-        iterable.forEach((Block)new Block<Document>(){
+        iterable = db.getCollection("gift_code").find((Bson) new Document((Map) conditions)).sort((Bson) objsort);
+        iterable.forEach((Block) new Block<Document>() {
 
             public void apply(Document document) {
-                block0 : switch (document.getInteger((Object)"money_type")) {
+                block0:
+                switch (document.getInteger((Object) "money_type")) {
                     case 1: {
                         String string;
-                        switch (string = document.getString((Object)"type")) {
+                        switch (string = document.getString((Object) "type")) {
                             case "1": {
                                 String string2;
-                                switch (string2 = document.getString((Object)"price")) {
+                                switch (string2 = document.getString((Object) "price")) {
                                     case "10": {
                                         GiftCodeDAOImpl.this.DLQuantity10K++;
-                                        if (document.getInteger((Object)"count_use") == 1) {
+                                        if (document.getInteger((Object) "count_use") == 1) {
                                             GiftCodeDAOImpl.this.DLUsed10K++;
                                         }
-                                        if (document.getInteger((Object)"block") != 1) break;
+                                        if (document.getInteger((Object) "block") != 1) break;
                                         GiftCodeDAOImpl.this.DLLock10K++;
                                         break block0;
                                     }
                                     case "20": {
                                         GiftCodeDAOImpl.this.DLQuantity20K++;
-                                        if (document.getInteger((Object)"count_use") == 1) {
+                                        if (document.getInteger((Object) "count_use") == 1) {
                                             GiftCodeDAOImpl.this.DLUsed20K++;
                                         }
-                                        if (document.getInteger((Object)"block") != 1) break;
+                                        if (document.getInteger((Object) "block") != 1) break;
                                         GiftCodeDAOImpl.this.DLLock20K++;
                                         break block0;
                                     }
                                     case "50": {
                                         GiftCodeDAOImpl.this.DLQuantity50K++;
-                                        if (document.getInteger((Object)"count_use") == 1) {
+                                        if (document.getInteger((Object) "count_use") == 1) {
                                             GiftCodeDAOImpl.this.DLUsed50K++;
                                         }
-                                        if (document.getInteger((Object)"block") != 1) break;
+                                        if (document.getInteger((Object) "block") != 1) break;
                                         GiftCodeDAOImpl.this.DLLock50K++;
                                         break block0;
                                     }
                                     case "100": {
                                         GiftCodeDAOImpl.this.DLQuantity100K++;
-                                        if (document.getInteger((Object)"count_use") == 1) {
+                                        if (document.getInteger((Object) "count_use") == 1) {
                                             GiftCodeDAOImpl.this.DLUsed100K++;
                                         }
-                                        if (document.getInteger((Object)"block") != 1) break;
+                                        if (document.getInteger((Object) "block") != 1) break;
                                         GiftCodeDAOImpl.this.DLLock100K++;
                                         break block0;
                                     }
                                     case "200": {
                                         GiftCodeDAOImpl.this.DLQuantity200K++;
-                                        if (document.getInteger((Object)"count_use") == 1) {
+                                        if (document.getInteger((Object) "count_use") == 1) {
                                             GiftCodeDAOImpl.this.DLUsed200K++;
                                         }
-                                        if (document.getInteger((Object)"block") != 1) break;
+                                        if (document.getInteger((Object) "block") != 1) break;
                                         GiftCodeDAOImpl.this.DLLock200K++;
                                         break block0;
                                     }
                                     case "500": {
                                         GiftCodeDAOImpl.this.DLQuantity500K++;
-                                        if (document.getInteger((Object)"count_use") == 1) {
+                                        if (document.getInteger((Object) "count_use") == 1) {
                                             GiftCodeDAOImpl.this.DLUsed500K++;
                                         }
-                                        if (document.getInteger((Object)"block") != 1) break;
+                                        if (document.getInteger((Object) "block") != 1) break;
                                         GiftCodeDAOImpl.this.DLLock500K++;
                                     }
                                 }
@@ -1190,58 +1181,58 @@ implements GiftCodeDAO {
                             }
                             case "2": {
                                 String string3;
-                                switch (string3 = document.getString((Object)"price")) {
+                                switch (string3 = document.getString((Object) "price")) {
                                     case "10": {
                                         GiftCodeDAOImpl.this.MKTQuantity10K++;
-                                        if (document.getInteger((Object)"count_use") == 1) {
+                                        if (document.getInteger((Object) "count_use") == 1) {
                                             GiftCodeDAOImpl.this.MKTUsed10K++;
                                         }
-                                        if (document.getInteger((Object)"block") != 1) break;
+                                        if (document.getInteger((Object) "block") != 1) break;
                                         GiftCodeDAOImpl.this.MKTLock10K++;
                                         break block0;
                                     }
                                     case "20": {
                                         GiftCodeDAOImpl.this.MKTQuantity20K++;
-                                        if (document.getInteger((Object)"count_use") == 1) {
+                                        if (document.getInteger((Object) "count_use") == 1) {
                                             GiftCodeDAOImpl.this.MKTUsed20K++;
                                         }
-                                        if (document.getInteger((Object)"block") != 1) break;
+                                        if (document.getInteger((Object) "block") != 1) break;
                                         GiftCodeDAOImpl.this.MKTLock20K++;
                                         break block0;
                                     }
                                     case "50": {
                                         GiftCodeDAOImpl.this.MKTQuantity50K++;
-                                        if (document.getInteger((Object)"count_use") == 1) {
+                                        if (document.getInteger((Object) "count_use") == 1) {
                                             GiftCodeDAOImpl.this.MKTUsed50K++;
                                         }
-                                        if (document.getInteger((Object)"block") != 1) break;
+                                        if (document.getInteger((Object) "block") != 1) break;
                                         GiftCodeDAOImpl.this.MKTLock50K++;
                                         break block0;
                                     }
                                     case "100": {
                                         GiftCodeDAOImpl.this.MKTQuantity100K++;
-                                        if (document.getInteger((Object)"count_use") == 1) {
+                                        if (document.getInteger((Object) "count_use") == 1) {
                                             GiftCodeDAOImpl.this.MKTUsed100K++;
                                         }
-                                        if (document.getInteger((Object)"block") != 1) break;
+                                        if (document.getInteger((Object) "block") != 1) break;
                                         GiftCodeDAOImpl.this.MKTLock100K++;
                                         break block0;
                                     }
                                     case "200": {
                                         GiftCodeDAOImpl.this.MKTQuantity200K++;
-                                        if (document.getInteger((Object)"count_use") == 1) {
+                                        if (document.getInteger((Object) "count_use") == 1) {
                                             GiftCodeDAOImpl.this.MKTUsed200K++;
                                         }
-                                        if (document.getInteger((Object)"block") != 1) break;
+                                        if (document.getInteger((Object) "block") != 1) break;
                                         GiftCodeDAOImpl.this.MKTLock200K++;
                                         break block0;
                                     }
                                     case "500": {
                                         GiftCodeDAOImpl.this.MKTQuantity500K++;
-                                        if (document.getInteger((Object)"count_use") == 1) {
+                                        if (document.getInteger((Object) "count_use") == 1) {
                                             GiftCodeDAOImpl.this.MKTUsed500K++;
                                         }
-                                        if (document.getInteger((Object)"block") != 1) break;
+                                        if (document.getInteger((Object) "block") != 1) break;
                                         GiftCodeDAOImpl.this.MKTLock500K++;
                                     }
                                 }
@@ -1249,58 +1240,58 @@ implements GiftCodeDAO {
                             }
                             case "3": {
                                 String string4;
-                                switch (string4 = document.getString((Object)"price")) {
+                                switch (string4 = document.getString((Object) "price")) {
                                     case "10": {
                                         GiftCodeDAOImpl.this.VHQuantity10K++;
-                                        if (document.getInteger((Object)"count_use") == 1) {
+                                        if (document.getInteger((Object) "count_use") == 1) {
                                             GiftCodeDAOImpl.this.VHUsed10K++;
                                         }
-                                        if (document.getInteger((Object)"block") != 1) break;
+                                        if (document.getInteger((Object) "block") != 1) break;
                                         GiftCodeDAOImpl.this.VHLock10K++;
                                         break block0;
                                     }
                                     case "20": {
                                         GiftCodeDAOImpl.this.VHQuantity20K++;
-                                        if (document.getInteger((Object)"count_use") == 1) {
+                                        if (document.getInteger((Object) "count_use") == 1) {
                                             GiftCodeDAOImpl.this.VHUsed20K++;
                                         }
-                                        if (document.getInteger((Object)"block") != 1) break;
+                                        if (document.getInteger((Object) "block") != 1) break;
                                         GiftCodeDAOImpl.this.VHLock20K++;
                                         break block0;
                                     }
                                     case "50": {
                                         GiftCodeDAOImpl.this.VHQuantity50K++;
-                                        if (document.getInteger((Object)"count_use") == 1) {
+                                        if (document.getInteger((Object) "count_use") == 1) {
                                             GiftCodeDAOImpl.this.VHUsed50K++;
                                         }
-                                        if (document.getInteger((Object)"block") != 1) break;
+                                        if (document.getInteger((Object) "block") != 1) break;
                                         GiftCodeDAOImpl.this.VHLock50K++;
                                         break block0;
                                     }
                                     case "100": {
                                         GiftCodeDAOImpl.this.VHQuantity100K++;
-                                        if (document.getInteger((Object)"count_use") == 1) {
+                                        if (document.getInteger((Object) "count_use") == 1) {
                                             GiftCodeDAOImpl.this.VHUsed100K++;
                                         }
-                                        if (document.getInteger((Object)"block") != 1) break;
+                                        if (document.getInteger((Object) "block") != 1) break;
                                         GiftCodeDAOImpl.this.VHLock100K++;
                                         break block0;
                                     }
                                     case "200": {
                                         GiftCodeDAOImpl.this.VHQuantity200K++;
-                                        if (document.getInteger((Object)"count_use") == 1) {
+                                        if (document.getInteger((Object) "count_use") == 1) {
                                             GiftCodeDAOImpl.this.VHUsed200K++;
                                         }
-                                        if (document.getInteger((Object)"block") != 1) break;
+                                        if (document.getInteger((Object) "block") != 1) break;
                                         GiftCodeDAOImpl.this.VHLock200K++;
                                         break block0;
                                     }
                                     case "500": {
                                         GiftCodeDAOImpl.this.VHQuantity500K++;
-                                        if (document.getInteger((Object)"count_use") == 1) {
+                                        if (document.getInteger((Object) "count_use") == 1) {
                                             GiftCodeDAOImpl.this.VHUsed500K++;
                                         }
-                                        if (document.getInteger((Object)"block") != 1) break;
+                                        if (document.getInteger((Object) "block") != 1) break;
                                         GiftCodeDAOImpl.this.VHLock500K++;
                                     }
                                 }
@@ -1311,52 +1302,52 @@ implements GiftCodeDAO {
                     }
                     case 0: {
                         String string5;
-                        switch (string5 = document.getString((Object)"type")) {
+                        switch (string5 = document.getString((Object) "type")) {
                             case "1": {
                                 String string6;
-                                switch (string6 = document.getString((Object)"price")) {
+                                switch (string6 = document.getString((Object) "price")) {
                                     case "1": {
                                         GiftCodeDAOImpl.this.DLQuantity1M++;
-                                        if (document.getInteger((Object)"count_use") == 1) {
+                                        if (document.getInteger((Object) "count_use") == 1) {
                                             GiftCodeDAOImpl.this.DLUsed1M++;
                                         }
-                                        if (document.getInteger((Object)"block") != 1) break;
+                                        if (document.getInteger((Object) "block") != 1) break;
                                         GiftCodeDAOImpl.this.DLLock1M++;
                                         break block0;
                                     }
                                     case "3": {
                                         GiftCodeDAOImpl.this.DLQuantity3M++;
-                                        if (document.getInteger((Object)"count_use") == 1) {
+                                        if (document.getInteger((Object) "count_use") == 1) {
                                             GiftCodeDAOImpl.this.DLUsed3M++;
                                         }
-                                        if (document.getInteger((Object)"block") != 1) break;
+                                        if (document.getInteger((Object) "block") != 1) break;
                                         GiftCodeDAOImpl.this.DLLock3M++;
                                         break block0;
                                     }
                                     case "5": {
                                         GiftCodeDAOImpl.this.DLQuantity5M++;
-                                        if (document.getInteger((Object)"count_use") == 1) {
+                                        if (document.getInteger((Object) "count_use") == 1) {
                                             GiftCodeDAOImpl.this.DLUsed5M++;
                                         }
-                                        if (document.getInteger((Object)"block") != 1) break;
+                                        if (document.getInteger((Object) "block") != 1) break;
                                         GiftCodeDAOImpl.this.DLLock5M++;
                                         break block0;
                                     }
                                     case "9": {
                                         GiftCodeDAOImpl.this.DLQuantity9M++;
-                                        if (document.getInteger((Object)"count_use") == 1) {
+                                        if (document.getInteger((Object) "count_use") == 1) {
                                             GiftCodeDAOImpl.this.DLUsed9M++;
                                         }
-                                        if (document.getInteger((Object)"block") != 1) break;
+                                        if (document.getInteger((Object) "block") != 1) break;
                                         GiftCodeDAOImpl.this.DLLock9M++;
                                         break block0;
                                     }
                                     case "10": {
                                         GiftCodeDAOImpl.this.DLQuantity10M++;
-                                        if (document.getInteger((Object)"count_use") == 1) {
+                                        if (document.getInteger((Object) "count_use") == 1) {
                                             GiftCodeDAOImpl.this.DLUsed10M++;
                                         }
-                                        if (document.getInteger((Object)"block") != 1) break;
+                                        if (document.getInteger((Object) "block") != 1) break;
                                         GiftCodeDAOImpl.this.DLLock10M++;
                                     }
                                 }
@@ -1364,49 +1355,49 @@ implements GiftCodeDAO {
                             }
                             case "2": {
                                 String string7;
-                                switch (string7 = document.getString((Object)"price")) {
+                                switch (string7 = document.getString((Object) "price")) {
                                     case "1": {
                                         GiftCodeDAOImpl.this.MKTQuantity1M++;
-                                        if (document.getInteger((Object)"count_use") == 1) {
+                                        if (document.getInteger((Object) "count_use") == 1) {
                                             GiftCodeDAOImpl.this.MKTUsed1M++;
                                         }
-                                        if (document.getInteger((Object)"block") != 1) break;
+                                        if (document.getInteger((Object) "block") != 1) break;
                                         GiftCodeDAOImpl.this.MKTLock1M++;
                                         break block0;
                                     }
                                     case "3": {
                                         GiftCodeDAOImpl.this.MKTQuantity3M++;
-                                        if (document.getInteger((Object)"count_use") == 1) {
+                                        if (document.getInteger((Object) "count_use") == 1) {
                                             GiftCodeDAOImpl.this.MKTUsed3M++;
                                         }
-                                        if (document.getInteger((Object)"block") != 1) break;
+                                        if (document.getInteger((Object) "block") != 1) break;
                                         GiftCodeDAOImpl.this.MKTLock3M++;
                                         break block0;
                                     }
                                     case "5": {
                                         GiftCodeDAOImpl.this.MKTQuantity5M++;
-                                        if (document.getInteger((Object)"count_use") == 1) {
+                                        if (document.getInteger((Object) "count_use") == 1) {
                                             GiftCodeDAOImpl.this.MKTUsed5M++;
                                         }
-                                        if (document.getInteger((Object)"block") != 1) break;
+                                        if (document.getInteger((Object) "block") != 1) break;
                                         GiftCodeDAOImpl.this.MKTLock5M++;
                                         break block0;
                                     }
                                     case "9": {
                                         GiftCodeDAOImpl.this.MKTQuantity9M++;
-                                        if (document.getInteger((Object)"count_use") == 1) {
+                                        if (document.getInteger((Object) "count_use") == 1) {
                                             GiftCodeDAOImpl.this.MKTUsed9M++;
                                         }
-                                        if (document.getInteger((Object)"block") != 1) break;
+                                        if (document.getInteger((Object) "block") != 1) break;
                                         GiftCodeDAOImpl.this.MKTLock9M++;
                                         break block0;
                                     }
                                     case "10": {
                                         GiftCodeDAOImpl.this.MKTQuantity10M++;
-                                        if (document.getInteger((Object)"count_use") == 1) {
+                                        if (document.getInteger((Object) "count_use") == 1) {
                                             GiftCodeDAOImpl.this.MKTUsed10M++;
                                         }
-                                        if (document.getInteger((Object)"block") != 1) break;
+                                        if (document.getInteger((Object) "block") != 1) break;
                                         GiftCodeDAOImpl.this.MKTLock10M++;
                                     }
                                 }
@@ -1414,49 +1405,49 @@ implements GiftCodeDAO {
                             }
                             case "3": {
                                 String string8;
-                                switch (string8 = document.getString((Object)"price")) {
+                                switch (string8 = document.getString((Object) "price")) {
                                     case "1": {
                                         GiftCodeDAOImpl.this.VHQuantity1M++;
-                                        if (document.getInteger((Object)"count_use") == 1) {
+                                        if (document.getInteger((Object) "count_use") == 1) {
                                             GiftCodeDAOImpl.this.VHUsed1M++;
                                         }
-                                        if (document.getInteger((Object)"block") != 1) break;
+                                        if (document.getInteger((Object) "block") != 1) break;
                                         GiftCodeDAOImpl.this.VHLock1M++;
                                         break block0;
                                     }
                                     case "3": {
                                         GiftCodeDAOImpl.this.VHQuantity3M++;
-                                        if (document.getInteger((Object)"count_use") == 1) {
+                                        if (document.getInteger((Object) "count_use") == 1) {
                                             GiftCodeDAOImpl.this.VHUsed3M++;
                                         }
-                                        if (document.getInteger((Object)"block") != 1) break;
+                                        if (document.getInteger((Object) "block") != 1) break;
                                         GiftCodeDAOImpl.this.VHLock3M++;
                                         break block0;
                                     }
                                     case "5": {
                                         GiftCodeDAOImpl.this.VHQuantity5M++;
-                                        if (document.getInteger((Object)"count_use") == 1) {
+                                        if (document.getInteger((Object) "count_use") == 1) {
                                             GiftCodeDAOImpl.this.VHUsed5M++;
                                         }
-                                        if (document.getInteger((Object)"block") != 1) break;
+                                        if (document.getInteger((Object) "block") != 1) break;
                                         GiftCodeDAOImpl.this.VHLock5M++;
                                         break block0;
                                     }
                                     case "9": {
                                         GiftCodeDAOImpl.this.VHQuantity9M++;
-                                        if (document.getInteger((Object)"count_use") == 1) {
+                                        if (document.getInteger((Object) "count_use") == 1) {
                                             GiftCodeDAOImpl.this.VHUsed9M++;
                                         }
-                                        if (document.getInteger((Object)"block") != 1) break;
+                                        if (document.getInteger((Object) "block") != 1) break;
                                         GiftCodeDAOImpl.this.VHLock9M++;
                                         break block0;
                                     }
                                     case "10": {
                                         GiftCodeDAOImpl.this.VHQuantity10M++;
-                                        if (document.getInteger((Object)"count_use") == 1) {
+                                        if (document.getInteger((Object) "count_use") == 1) {
                                             GiftCodeDAOImpl.this.VHUsed10M++;
                                         }
-                                        if (document.getInteger((Object)"block") != 1) break;
+                                        if (document.getInteger((Object) "block") != 1) break;
                                         GiftCodeDAOImpl.this.VHLock10M++;
                                     }
                                 }
@@ -1719,23 +1710,23 @@ implements GiftCodeDAO {
             conditions.put("source", source);
         }
         if (timeStart != null && !timeStart.equals("") && timeEnd != null && !timeEnd.equals("")) {
-            obj.put("$gte", (Object)timeStart);
-            obj.put("$lte", (Object)timeEnd);
+            obj.put("$gte", (Object) timeStart);
+            obj.put("$lte", (Object) timeEnd);
             if (timeType.equals("1")) {
-                conditions.put("create_time", (Object)obj);
+                conditions.put("create_time", (Object) obj);
             } else {
-                conditions.put("update_time", (Object)obj);
+                conditions.put("update_time", (Object) obj);
             }
         }
         conditions.put("money_type", Integer.parseInt(moneyType));
         FindIterable iterable = null;
-        iterable = db.getCollection("gift_code").find((Bson)new Document(conditions));
-        iterable.forEach((Block)new Block<Document>(){
+        iterable = db.getCollection("gift_code").find((Bson) new Document(conditions));
+        iterable.forEach((Block) new Block<Document>() {
 
             public void apply(Document document) {
                 GiftCodeResponse giftcode = new GiftCodeResponse();
-                giftcode.giftCode = document.getString((Object)"giftcodefull");
-                giftcode.source = document.getString((Object)"source");
+                giftcode.giftCode = document.getString((Object) "giftcodefull");
+                giftcode.source = document.getString((Object) "source");
                 giftcoderes.add(giftcode);
             }
         });
@@ -1760,28 +1751,28 @@ implements GiftCodeDAO {
             if (i == 0) {
                 cal1.add(5, i);
                 dateEnd = format.format(cal1.getTime());
-                obj2.put("$gte", (Object)stime);
-                obj2.put("$lte", (Object)dateEnd);
+                obj2.put("$gte", (Object) stime);
+                obj2.put("$lte", (Object) dateEnd);
                 conditions2.put("time_login", obj2);
-                count = db.getCollection("login_daily_marketing").count((Bson)new Document(conditions2));
+                count = db.getCollection("login_daily_marketing").count((Bson) new Document(conditions2));
                 cntlogin.add(count);
             }
             if (i == 5) {
                 cal1.add(5, i);
                 dateEnd = format.format(cal1.getTime());
-                obj2.put("$gte", (Object)stime);
-                obj2.put("$lte", (Object)dateEnd);
+                obj2.put("$gte", (Object) stime);
+                obj2.put("$lte", (Object) dateEnd);
                 conditions2.put("time_login", obj2);
-                count = db.getCollection("login_daily_marketing").count((Bson)new Document(conditions2));
+                count = db.getCollection("login_daily_marketing").count((Bson) new Document(conditions2));
                 cntlogin.add(count);
             }
             if (i != 30) continue;
             cal1.add(5, i);
             dateEnd = format.format(cal1.getTime());
-            obj2.put("$gte", (Object)stime);
-            obj2.put("$lte", (Object)dateEnd);
+            obj2.put("$gte", (Object) stime);
+            obj2.put("$lte", (Object) dateEnd);
             conditions2.put("time_login", obj2);
-            count = db.getCollection("login_daily_marketing").count((Bson)new Document(conditions2));
+            count = db.getCollection("login_daily_marketing").count((Bson) new Document(conditions2));
             cntlogin.add(count);
         }
         UserServiceImpl service = new UserServiceImpl();
@@ -1809,7 +1800,7 @@ implements GiftCodeDAO {
     @Override
     public List<String> ListAllPrice(int moneyType) throws SQLException {
         ArrayList<String> lstprice = new ArrayList<String>();
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_admin");){
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_admin");) {
             String sql = "SELECT price FROM price_giftcode where money_type = ?";
             PreparedStatement stmt = conn.prepareStatement("SELECT price FROM price_giftcode where money_type = ?");
             stmt.setInt(1, moneyType);
@@ -1841,12 +1832,12 @@ implements GiftCodeDAO {
             conditions.put("type", type);
         }
         if (timeStart != null && !timeStart.equals("") && timeEnd != null && !timeEnd.equals("")) {
-            obj.put("$gte", (Object)timeStart);
-            obj.put("$lte", (Object)timeEnd);
-            conditions.put("create_time", (Object)obj);
+            obj.put("$gte", (Object) timeStart);
+            obj.put("$lte", (Object) timeEnd);
+            conditions.put("create_time", (Object) obj);
         }
-        long quantity = db.getCollection("gift_code_store").count((Bson)new Document(conditions));
-        long giftcodeuse = db.getCollection("gift_code_store").count((Bson)new Document(conditions).append("count_use", (Object)1));
+        long quantity = db.getCollection("gift_code_store").count((Bson) new Document(conditions));
+        long giftcodeuse = db.getCollection("gift_code_store").count((Bson) new Document(conditions).append("count_use", (Object) 1));
         long remain = quantity - giftcodeuse;
         GiftCodeCountResponse response = new GiftCodeCountResponse();
         response.giftCodeUse = giftcodeuse;
@@ -1875,12 +1866,12 @@ implements GiftCodeDAO {
             conditions.put("release", release);
         }
         if (timeStart != null && !timeStart.equals("") && timeEnd != null && !timeEnd.equals("")) {
-            obj.put("$gte", (Object)timeStart);
-            obj.put("$lte", (Object)timeEnd);
+            obj.put("$gte", (Object) timeStart);
+            obj.put("$lte", (Object) timeEnd);
             if (timeType.equals("1")) {
-                conditions.put("create_time", (Object)obj);
+                conditions.put("create_time", (Object) obj);
             } else {
-                conditions.put("update_time", (Object)obj);
+                conditions.put("update_time", (Object) obj);
             }
         }
         if (usegift != null && !usegift.equals("")) {
@@ -1895,7 +1886,7 @@ implements GiftCodeDAO {
         if (giftcode != null && !giftcode.equals("")) {
             conditions.put("giftcode", giftcode);
         }
-        return db.getCollection("gift_code").count((Bson)new Document(conditions));
+        return db.getCollection("gift_code").count((Bson) new Document(conditions));
     }
 
     @Override
@@ -1914,14 +1905,14 @@ implements GiftCodeDAO {
             conditions.put("count_use", Integer.parseInt(usegift));
         }
         if (timeStart != null && !timeStart.equals("") && timeEnd != null && !timeEnd.equals("")) {
-            obj.put("$gte", (Object)timeStart);
-            obj.put("$lte", (Object)timeEnd);
-            conditions.put("create_time", (Object)obj);
+            obj.put("$gte", (Object) timeStart);
+            obj.put("$lte", (Object) timeEnd);
+            conditions.put("create_time", (Object) obj);
         }
         if (source != null && !source.equals("")) {
             conditions.put("source", source);
         }
-        return db.getCollection("gift_code_store").count((Bson)new Document(conditions));
+        return db.getCollection("gift_code_store").count((Bson) new Document(conditions));
     }
 
     @Override
@@ -1944,24 +1935,24 @@ implements GiftCodeDAO {
             conditions.put("block", Integer.parseInt(block));
         }
         if (timeStart != null && !timeStart.equals("") && timeEnd != null && !timeEnd.equals("")) {
-            obj.put("$gte", (Object)timeStart);
-            obj.put("$lte", (Object)timeEnd);
+            obj.put("$gte", (Object) timeStart);
+            obj.put("$lte", (Object) timeEnd);
             if (timeType.equals("1")) {
-                conditions.put("create_time", (Object)obj);
+                conditions.put("create_time", (Object) obj);
             } else {
-                conditions.put("update_time", (Object)obj);
+                conditions.put("update_time", (Object) obj);
             }
         }
         conditions.put("money_type", Integer.parseInt(moneyType));
         conditions.put("count_use", 1);
-        iterable = db.getCollection("gift_code").find((Bson)new Document(conditions)).skip(num_start).limit(50);
-        iterable.forEach((Block)new Block<Document>(){
+        iterable = db.getCollection("gift_code").find((Bson) new Document(conditions)).skip(num_start).limit(50);
+        iterable.forEach((Block) new Block<Document>() {
 
             public void apply(Document document) {
                 GiftCodeResponse giftcode = new GiftCodeResponse();
-                giftcode.giftCode = document.getString((Object)"giftcodefull");
-                giftcode.source = document.getString((Object)"source");
-                giftcode.nickName = document.getString((Object)"nick_name");
+                giftcode.giftCode = document.getString((Object) "giftcodefull");
+                giftcode.source = document.getString((Object) "source");
+                giftcode.nickName = document.getString((Object) "nick_name");
                 giftcoderes.add(giftcode);
             }
         });
@@ -2016,9 +2007,8 @@ implements GiftCodeDAO {
                 if (xu <= 0L) continue;
                 userService.updateMoneyFromAdmin(nickName, xu, "xu", "GiftCode", "", "T\u1eb7ng gift code" + xu + " xu");
             }
-        }
-        catch (SQLException e) {
-            logger.debug((Object)e);
+        } catch (SQLException e) {
+            logger.debug((Object) e);
         }
         return "success";
     }
@@ -2033,19 +2023,18 @@ implements GiftCodeDAO {
             HashMap<String, Object> conditions = new HashMap<String, Object>();
             conditions.put("giftcodefull", giftcode);
             conditions.put("count_use", 0);
-            if (db.getCollection("gift_code").count((Bson)new Document(conditions)) > 0L) {
+            if (db.getCollection("gift_code").count((Bson) new Document(conditions)) > 0L) {
                 isSuccess = true;
             }
-            FindIterable iterable = db.getCollection("gift_code").find((Bson)new Document(conditions));
-            iterable.forEach((Block)new Block<Document>(){
+            FindIterable iterable = db.getCollection("gift_code").find((Bson) new Document(conditions));
+            iterable.forEach((Block) new Block<Document>() {
 
                 public void apply(Document document) {
                     try {
                         GiftCodeMessage message = new GiftCodeMessage();
-                        message.setGiftCode(document.getString((Object)"giftcode"));
-                        RMQApi.publishMessage((String)"queue_gift_code", (BaseMessage)message, (int)1201);
-                    }
-                    catch (Exception e) {
+                        message.setGiftCode(document.getString((Object) "giftcode"));
+                        RMQApi.publishMessage((String) "queue_gift_code", (BaseMessage) message, (int) 1201);
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -2067,19 +2056,19 @@ implements GiftCodeDAO {
         if (nickName != null && !nickName.equals("")) {
             conditions.put("nick_name", nickName);
         }
-        FindIterable iterable = db.getCollection("gift_code").find((Bson)new Document(conditions)).skip(num_start).limit(50).sort((Bson)objsort);
-        iterable.forEach((Block)new Block<Document>(){
+        FindIterable iterable = db.getCollection("gift_code").find((Bson) new Document(conditions)).skip(num_start).limit(50).sort((Bson) objsort);
+        iterable.forEach((Block) new Block<Document>() {
 
             public void apply(Document document) {
                 GiftCodeResponse giftcode = new GiftCodeResponse();
-                giftcode.price = document.getString((Object)"price");
-                giftcode.source = document.getString((Object)"source");
-                giftcode.quantity = document.getInteger((Object)"quantity").intValue();
-                giftcode.giftCode = document.getString((Object)"giftcodefull");
-                giftcode.createTime = document.getString((Object)"create_time");
-                giftcode.updateTime = document.getString((Object)"update_time");
-                giftcode.useGiftCode = document.getInteger((Object)"count_use");
-                giftcode.nickName = document.getString((Object)"nick_name");
+                giftcode.price = document.getString((Object) "price");
+                giftcode.source = document.getString((Object) "source");
+                giftcode.quantity = document.getInteger((Object) "quantity").intValue();
+                giftcode.giftCode = document.getString((Object) "giftcodefull");
+                giftcode.createTime = document.getString((Object) "create_time");
+                giftcode.updateTime = document.getString((Object) "update_time");
+                giftcode.useGiftCode = document.getInteger((Object) "count_use");
+                giftcode.nickName = document.getString((Object) "nick_name");
                 results.add(giftcode);
             }
         });
@@ -2094,7 +2083,7 @@ implements GiftCodeDAO {
         if (nickName != null && !nickName.equals("")) {
             conditions.put("nick_name", nickName);
         }
-        long record = db.getCollection("gift_code").count((Bson)new Document(conditions));
+        long record = db.getCollection("gift_code").count((Bson) new Document(conditions));
         return record;
     }
 
@@ -2110,13 +2099,13 @@ implements GiftCodeDAO {
         objsort.put("_id", -1);
         if (giftCode != null && !giftCode.equals("")) {
             conditions.put("giftcodefull", giftCode);
-            FindIterable iterable = db.getCollection("gift_code").find((Bson)new Document(conditions)).skip(num_start).limit(totalRecord).sort((Bson)objsort);
-            iterable.forEach((Block)new Block<Document>(){
+            FindIterable iterable = db.getCollection("gift_code").find((Bson) new Document(conditions)).skip(num_start).limit(totalRecord).sort((Bson) objsort);
+            iterable.forEach((Block) new Block<Document>() {
 
                 public void apply(Document document) {
                     String nickName;
                     result.giftcode = giftCode;
-                    result.nickName = nickName = document.getString((Object)"nick_name");
+                    result.nickName = nickName = document.getString((Object) "nick_name");
                     try {
                         if (nickName != null && !nickName.equals("")) {
                             UserModel users = service.getUserByNickName(nickName);
@@ -2126,8 +2115,7 @@ implements GiftCodeDAO {
                         } else {
                             result.nickName = null;
                         }
-                    }
-                    catch (SQLException e) {
+                    } catch (SQLException e) {
                         e.printStackTrace();
                     }
                 }
@@ -2145,9 +2133,9 @@ implements GiftCodeDAO {
         conditions.put("agent", "0");
         conditions.put("count_use", 0);
         if (timeStart != null && !timeStart.equals("") && timeEnd != null && !timeEnd.equals("")) {
-            obj.put("$gte", (Object)timeStart);
-            obj.put("$lte", (Object)timeEnd);
-            conditions.put("create_time", (Object)obj);
+            obj.put("$gte", (Object) timeStart);
+            obj.put("$lte", (Object) timeEnd);
+            conditions.put("create_time", (Object) obj);
         }
         if (source != null && !source.equals("")) {
             conditions.put("source", source);
@@ -2155,17 +2143,16 @@ implements GiftCodeDAO {
         if (price != null && !price.equals("")) {
             conditions.put("price", price);
         }
-        giftcode.countGiftCode = db.getCollection("gift_code").count((Bson)new Document(conditions));
-        FindIterable iterable = db.getCollection("gift_code").find((Bson)new Document(conditions));
-        iterable.forEach((Block)new Block<Document>(){
+        giftcode.countGiftCode = db.getCollection("gift_code").count((Bson) new Document(conditions));
+        FindIterable iterable = db.getCollection("gift_code").find((Bson) new Document(conditions));
+        iterable.forEach((Block) new Block<Document>() {
 
             public void apply(Document document) {
                 try {
                     GiftCodeMessage message = new GiftCodeMessage();
-                    message.setGiftCode(document.getString((Object)"giftcode"));
-                    RMQApi.publishMessage((String)"queue_gift_code", (BaseMessage)message, (int)1201);
-                }
-                catch (Exception e) {
+                    message.setGiftCode(document.getString((Object) "giftcode"));
+                    RMQApi.publishMessage((String) "queue_gift_code", (BaseMessage) message, (int) 1201);
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }

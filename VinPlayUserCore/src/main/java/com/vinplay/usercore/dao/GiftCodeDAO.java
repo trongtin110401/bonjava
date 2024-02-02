@@ -18,6 +18,7 @@ package com.vinplay.usercore.dao;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hazelcast.core.IMap;
+import com.vinplay.vbee.common.dto.GiftCodeDto;
 import com.vinplay.vbee.common.messages.GiftCodeMessage;
 import com.vinplay.vbee.common.models.SpecialGiftCode;
 import com.vinplay.vbee.common.models.UserModel;
@@ -32,6 +33,8 @@ import com.vinplay.vbee.common.response.giftcode.GiftcodeStatisticObj;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.List;
+
+import org.apache.commons.lang3.text.translate.CodePointTranslator;
 import org.bson.Document;
 import org.json.JSONObject;
 
@@ -89,5 +92,8 @@ public interface GiftCodeDAO {
     public boolean DeleteSpecialGiftcode(String gift_code);
     public String GetGiftCodeByTypeNN(int type, String nick_name);
     public List<SpecialGiftCode> GetSpecialGiftCodesByQuery(int page,int page_size, String gift_code, long amount, String nick_name, int type);
+
+    boolean saveGiftCode(GiftCodeDto giftCodeDto);
+
 }
 

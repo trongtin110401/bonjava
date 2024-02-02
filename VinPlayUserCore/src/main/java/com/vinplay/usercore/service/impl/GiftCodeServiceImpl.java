@@ -23,6 +23,7 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.vinplay.usercore.dao.impl.GiftCodeDAOImpl;
 import com.vinplay.usercore.service.GiftCodeService;
+import com.vinplay.vbee.common.dto.GiftCodeDto;
 import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
 import com.vinplay.vbee.common.messages.GiftCodeMessage;
 import com.vinplay.vbee.common.models.UserModel;
@@ -221,6 +222,12 @@ public class GiftCodeServiceImpl
     public GiftCodeDeleteResponse DeleteGiftCode(String startDate, String endDate, String source, String price) {
         GiftCodeDAOImpl dao = new GiftCodeDAOImpl();
         return dao.DeleteGiftCode(startDate, endDate, source, price);
+    }
+
+    @Override
+    public boolean saveGiftCode(GiftCodeDto giftCodeDto) {
+        GiftCodeDAOImpl dao = new GiftCodeDAOImpl();
+        return dao.saveGiftCode(giftCodeDto);
     }
 }
 
