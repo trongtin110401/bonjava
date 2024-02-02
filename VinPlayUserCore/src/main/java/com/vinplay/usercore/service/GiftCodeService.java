@@ -75,5 +75,7 @@ public interface GiftCodeService {
     public GiftCodeDeleteResponse DeleteGiftCode(String var1, String var2, String var3, String var4);
 
     boolean saveGiftCode(GiftCodeDto giftCodeDto);
+
+    GiftCodeDto findActiveByCode(String code);
 }
 
