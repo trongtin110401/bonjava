@@ -7,6 +7,7 @@ import com.vinplay.usercore.service.impl.GiftCodeServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.dto.GiftCodeDto;
+import com.vinplay.vbee.common.dto.UseGiftCodeDto;
 import com.vinplay.vbee.common.response.GiftCodeUpdateResponse;
 import com.vinplay.vbee.common.statics.TransType;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
@@ -34,6 +35,11 @@ public class UserNapGiftCodeProcessor
             if (giftCodeDto.getCode() == null) {
                 return response.toJson();
             }
+
+            if (service.checkUserUseGiftCode(nickName, giftCodeDto.getType())) {
+                return response.toJson();
+            }
+
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             Date expirationDate = dateFormat.parse(giftCodeDto.getExpirationTime());
             Date currentDate = new Date();
@@ -46,9 +52,16 @@ public class UserNapGiftCodeProcessor
             if (usotp.getActive() != 1) {
                 return response.toJson();
             }
-            String timelog = VinPlayUtils.getCurrentDateTime();
-            UseCode usercode = new UseCode(nickName, giftCodeDto.getCode(), 1, timelog, usotp.getUsername(), usotp.getPhone(), usotp.getActive());
-//            dao.insertCodeTanThu(usercode);
+            UseGiftCodeDto userGiftCode = new UseGiftCodeDto();
+
+            userGiftCode.setCode(code);
+            userGiftCode.setActive(true);
+            userGiftCode.setPrice(giftCodeDto.getPrice());
+            userGiftCode.setNickname(nickName);
+            userGiftCode.setTimelog(VinPlayUtils.getCurrentDateTime());
+            userGiftCode.setType(giftCodeDto.getType());
+            service.saveUserUseGiftCode(userGiftCode);
+
             userService.updateMoney(nickName, giftCodeDto.getPrice(), "vin", giftCodeDto.getType(), giftCodeDto.getType(), "M\u00e3: " + code, 0L, null, TransType.NO_VIPPOINT);
 
         } catch (Exception ex) {
