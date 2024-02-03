@@ -65,20 +65,20 @@ public abstract class Slot25BasicModule extends SlotModule {
             Debug.trace("Init " + this.gameName + " error ", e);
         }
 
-//        this.rooms.put(this.gameName + "_vin_100",
-//                new Slot25BasicRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 0, this.gameName + "_vin_100", (short) 1, this.jackpots[0], funds[0], 100, initJackpotValues[0]));
-//        this.rooms.put(this.gameName + "_vin_1000",
-//                new Slot25BasicRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 1, this.gameName + "_vin_1000", (short) 1, this.jackpots[1], funds[1], 1000, initJackpotValues[1]));
-//        this.rooms.put(this.gameName + "_vin_10000",
-//                new Slot25BasicRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 2, this.gameName + "_vin_10000", (short) 1, this.jackpots[2], funds[2], 10000, initJackpotValues[2]));
-
-        // FORCE
         this.rooms.put(this.gameName + "_vin_100",
-                new Slot25BasicRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 0, this.gameName + "_vin_100", (short) 1, this.jackpots[0], Long.MAX_VALUE - 1000000000, 100, initJackpotValues[0]));
+                new Slot25BasicRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 0, this.gameName + "_vin_100", (short) 1, this.jackpots[0], funds[0], 100, initJackpotValues[0]));
         this.rooms.put(this.gameName + "_vin_1000",
-                new Slot25BasicRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 1, this.gameName + "_vin_1000", (short) 1, this.jackpots[1], Long.MAX_VALUE - 1000000000, 1000, initJackpotValues[1]));
+                new Slot25BasicRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 1, this.gameName + "_vin_1000", (short) 1, this.jackpots[1], funds[1], 1000, initJackpotValues[1]));
         this.rooms.put(this.gameName + "_vin_10000",
-                new Slot25BasicRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 2, this.gameName + "_vin_10000", (short) 1, this.jackpots[2], Long.MAX_VALUE - 1000000000, 10000, initJackpotValues[2]));
+                new Slot25BasicRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 2, this.gameName + "_vin_10000", (short) 1, this.jackpots[2], funds[2], 10000, initJackpotValues[2]));
+
+        // FORCE - R
+//        this.rooms.put(this.gameName + "_vin_100",
+//                new Slot25BasicRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 0, this.gameName + "_vin_100", (short) 1, this.jackpots[0], Long.MAX_VALUE - 1000000000, 100, initJackpotValues[0]));
+//        this.rooms.put(this.gameName + "_vin_1000",
+//                new Slot25BasicRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 1, this.gameName + "_vin_1000", (short) 1, this.jackpots[1], Long.MAX_VALUE - 1000000000, 1000, initJackpotValues[1]));
+//        this.rooms.put(this.gameName + "_vin_10000",
+//                new Slot25BasicRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 2, this.gameName + "_vin_10000", (short) 1, this.jackpots[2], Long.MAX_VALUE - 1000000000, 10000, initJackpotValues[2]));
 
         Debug.trace("INIT " + this.gameName + " DONE");
 
@@ -265,49 +265,49 @@ public abstract class Slot25BasicModule extends SlotModule {
 
     @Override
     protected void gameLoop() {
-        // FORCE
+        // FORCE - R
 
-//        List<String> bots;
-//        Slot25BasicRoom room;
-//        ++this.countBot100;
-//        if (this.countBot100 >= this.getCountTimeBot(this.gameName + "_bot_100")) {
-//            if (this.countBot100 == this.getCountTimeBot(this.gameName + "_bot_100")) {
-//                bots = BotMinigame.getBots(ConfigGame.getIntValue(this.gameName + "_num_bot_100"), "vin");
-//                for (String bot : bots) {
-//                    if (bot == null) continue;
-//                    room = (Slot25BasicRoom) this.rooms.get(this.gameName + "_vin_100");
-//                    long referenceId = getNewReferenceId();
-//                    room.playNormal(bot, this.fullLines, referenceId);
-//                }
-//            }
-//            this.countBot100 = 0;
-//        }
-//        ++this.countBot1000;
-//        if (this.countBot1000 >= this.getCountTimeBot(this.gameName + "_bot_1000")) {
-//            if (this.countBot1000 == this.getCountTimeBot(this.gameName + "_bot_1000")) {
-//                bots = BotMinigame.getBots(ConfigGame.getIntValue(this.gameName + "_num_bot_1000"), "vin");
-//                for (String bot : bots) {
-//                    if (bot == null) continue;
-//                    room = (Slot25BasicRoom) this.rooms.get(this.gameName + "_vin_1000");
-//                    long referenceId = getNewReferenceId();
-//                    room.playNormal(bot, this.fullLines, referenceId);
-//                }
-//            }
-//            this.countBot1000 = 0;
-//        }
-//        ++this.countBot10000;
-//        if (this.countBot10000 >= this.getCountTimeBot(this.gameName + "_bot_10000")) {
-//            if (this.countBot10000 == this.getCountTimeBot(this.gameName + "_bot_10000")) {
-//                bots = BotMinigame.getBots(ConfigGame.getIntValue(this.gameName + "_num_bot_10000"), "vin");
-//                for (String bot : bots) {
-//                    if (bot == null) continue;
-//                    room = (Slot25BasicRoom) this.rooms.get(this.gameName + "_vin_10000");
-//                    long referenceId = getNewReferenceId();
-//                    room.playNormal(bot, this.fullLines, referenceId);
-//                }
-//            }
-//            this.countBot10000 = 0;
-//        }
+        List<String> bots;
+        Slot25BasicRoom room;
+        ++this.countBot100;
+        if (this.countBot100 >= this.getCountTimeBot(this.gameName + "_bot_100")) {
+            if (this.countBot100 == this.getCountTimeBot(this.gameName + "_bot_100")) {
+                bots = BotMinigame.getBots(ConfigGame.getIntValue(this.gameName + "_num_bot_100"), "vin");
+                for (String bot : bots) {
+                    if (bot == null) continue;
+                    room = (Slot25BasicRoom) this.rooms.get(this.gameName + "_vin_100");
+                    long referenceId = getNewReferenceId();
+                    room.playNormal(bot, this.fullLines, referenceId);
+                }
+            }
+            this.countBot100 = 0;
+        }
+        ++this.countBot1000;
+        if (this.countBot1000 >= this.getCountTimeBot(this.gameName + "_bot_1000")) {
+            if (this.countBot1000 == this.getCountTimeBot(this.gameName + "_bot_1000")) {
+                bots = BotMinigame.getBots(ConfigGame.getIntValue(this.gameName + "_num_bot_1000"), "vin");
+                for (String bot : bots) {
+                    if (bot == null) continue;
+                    room = (Slot25BasicRoom) this.rooms.get(this.gameName + "_vin_1000");
+                    long referenceId = getNewReferenceId();
+                    room.playNormal(bot, this.fullLines, referenceId);
+                }
+            }
+            this.countBot1000 = 0;
+        }
+        ++this.countBot10000;
+        if (this.countBot10000 >= this.getCountTimeBot(this.gameName + "_bot_10000")) {
+            if (this.countBot10000 == this.getCountTimeBot(this.gameName + "_bot_10000")) {
+                bots = BotMinigame.getBots(ConfigGame.getIntValue(this.gameName + "_num_bot_10000"), "vin");
+                for (String bot : bots) {
+                    if (bot == null) continue;
+                    room = (Slot25BasicRoom) this.rooms.get(this.gameName + "_vin_10000");
+                    long referenceId = getNewReferenceId();
+                    room.playNormal(bot, this.fullLines, referenceId);
+                }
+            }
+            this.countBot10000 = 0;
+        }
     }
 }
 
