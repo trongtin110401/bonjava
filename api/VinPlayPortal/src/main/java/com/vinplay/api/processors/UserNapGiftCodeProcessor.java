@@ -1,75 +1,62 @@
 package com.vinplay.api.processors;
 
-import bitzero.util.common.business.Debug;
 import com.vinplay.api.dao.ManageGiftCodeDAO;
-import com.vinplay.api.entities.CodeTT;
 import com.vinplay.api.entities.UseCode;
 import com.vinplay.api.entities.UserOTP;
-import com.vinplay.api.processors.minigame.response.TopVinhDanhResponse;
-import com.vinplay.usercore.dao.GiftCodeDAO;
-import com.vinplay.usercore.dao.impl.GiftCodeDAOImpl;
-import com.vinplay.usercore.service.GiftCodeService;
-import com.vinplay.usercore.service.UserService;
 import com.vinplay.usercore.service.impl.GiftCodeServiceImpl;
-import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
+import com.vinplay.vbee.common.dto.GiftCodeDto;
 import com.vinplay.vbee.common.response.GiftCodeUpdateResponse;
-import com.vinplay.vbee.common.response.MoneyResponse;
 import com.vinplay.vbee.common.statics.TransType;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
-import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static game.modules.gameRoom.entities.GameMoneyInfo.userService;
 
 public class UserNapGiftCodeProcessor
         implements BaseProcessor<HttpServletRequest, String> {
 
-    private GiftCodeService gfService = new GiftCodeServiceImpl();
-    private static final Logger logger = Logger.getLogger("api");
 
     public String execute(Param<HttpServletRequest> param) {
+        GiftCodeUpdateResponse response = new GiftCodeUpdateResponse(false, "1001");
         HttpServletRequest request = param.get();
         String code = request.getParameter("code");
         String nickName = request.getParameter("nickName");
+        GiftCodeServiceImpl service = new GiftCodeServiceImpl();
 
         try {
             ManageGiftCodeDAO dao = new ManageGiftCodeDAO();
-            boolean check_code_tt = false;
-            CodeTT codex = dao.getCodeTT(code);
-            if (codex != null) {
-                check_code_tt = true;
+            GiftCodeDto giftCodeDto = service.findActiveByCode(code);
+            if (giftCodeDto.getCode() == null) {
+                return response.toJson();
             }
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Date expirationDate = dateFormat.parse(giftCodeDto.getExpirationTime());
+            Date currentDate = new Date();
+
+            if (expirationDate.before(currentDate)) {
+                return response.toJson();
+            }
+
             UserOTP usotp = dao.getUserActiveOTP(nickName);
-            boolean check_use_code_tanthu = dao.checkUseCode(nickName);
-            boolean check_user_active_otp;
-            if (usotp.getActive() == 1) {
-                check_user_active_otp = true;
-            } else {
-                check_user_active_otp = false;
+            if (usotp.getActive() != 1) {
+                return response.toJson();
             }
-
-
-            if (check_user_active_otp) {
-                if (!check_use_code_tanthu && check_code_tt) {
-                    String timelog = VinPlayUtils.getCurrentDateTime();
-                    UseCode usercode = new UseCode(nickName, codex.getCode(), 1, timelog, usotp.getUsername(), usotp.getPhone(), usotp.getActive());
-                    dao.insertCodeTanThu(usercode);
-                    MoneyResponse mnres = userService.updateMoney(nickName, codex.getMoney(), "vin", "GiftCodeTanThu", "GiftCodeTanThu", "M\u00e3: " + code, 0L, null, TransType.NO_VIPPOINT);
-                } else {
-                    GiftCodeUpdateResponse response = gfService.updateGiftCode(nickName, code);
-
-                }
-            } else {
-//                msg.Error = this.parseErrorCodeGiftCode("10003");
-            }
+            String timelog = VinPlayUtils.getCurrentDateTime();
+            UseCode usercode = new UseCode(nickName, giftCodeDto.getCode(), 1, timelog, usotp.getUsername(), usotp.getPhone(), usotp.getActive());
+//            dao.insertCodeTanThu(usercode);
+            userService.updateMoney(nickName, giftCodeDto.getPrice(), "vin", giftCodeDto.getType(), giftCodeDto.getType(), "M\u00e3: " + code, 0L, null, TransType.NO_VIPPOINT);
 
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
-        return null;
+        response.setErrorCode("200");
+        response.setSuccess(true);
+        return response.toJson();
     }
 }
 

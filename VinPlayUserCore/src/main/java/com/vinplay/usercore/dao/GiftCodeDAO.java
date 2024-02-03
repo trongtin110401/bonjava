@@ -95,5 +95,7 @@ public interface GiftCodeDAO {
 
     boolean saveGiftCode(GiftCodeDto giftCodeDto);
 
+    GiftCodeDto findActiveByCode(String code);
+
 }
 
