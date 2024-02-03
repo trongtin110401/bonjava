@@ -61,14 +61,15 @@ public class Slot25BasicRoom extends SlotRoom {
 
     private SlotLogListener logListener;
 
-    // FORCE
+    // FORCE - R
     int resultState = 0;
     int MAX_STATE = 5;
 
     public Slot25BasicRoom(SlotModule module, Slot25BasicCommandCollection commandCollection, SlotLogListener logListener, String gameName, byte id, String room, short moneyType, long pot, long fund, int betValue, long initJackpotValue) {
 
-        // FORCE
-        super(id, room, betValue, moneyType, pot, fund - 1000000000, initJackpotValue);
+        // FORCE - R
+//        super(id, room, betValue, moneyType, pot, fund - 1000000000, initJackpotValue);
+        super(id, room, betValue, moneyType, pot, fund, initJackpotValue);
 
         this.module = module;
         this.commandCollection = commandCollection;
@@ -122,30 +123,30 @@ public class Slot25BasicRoom extends SlotRoom {
      */
     public synchronized Slot25ResultMsg playNormal(String username, String linesStr, long referenceId) {
 
-        // FORCE
-        int forceResult = ResultSlot.MISSED;
-        switch (resultState) {
-            case 0:
-                forceResult = ResultSlot.WIN;
-                break;
-            case 1:
-                forceResult = ResultSlot.BIG_WIN;
-                break;
-            case 2:
-                forceResult = ResultSlot.FREE_SPIN;
-                break;
-            case 3:
-                forceResult = ResultSlot.JACKPOT;
-                break;
-            case 4:
-                forceResult = ResultSlot.BONUS_GAME;
-        }
+        // FORCE - R
+//        int forceResult = ResultSlot.MISSED;
+//        switch (resultState) {
+//            case 0:
+//                forceResult = ResultSlot.WIN;
+//                break;
+//            case 1:
+//                forceResult = ResultSlot.BIG_WIN;
+//                break;
+//            case 2:
+//                forceResult = ResultSlot.FREE_SPIN;
+//                break;
+//            case 3:
+//                forceResult = ResultSlot.JACKPOT;
+//                break;
+//            case 4:
+//                forceResult = ResultSlot.BONUS_GAME;
+//        }
 
-        // FORCE
-        resultState++;
-        if (resultState >= MAX_STATE) {
-            resultState = 0;
-        }
+        // FORCE - R
+//        resultState++;
+//        if (resultState >= MAX_STATE) {
+//            resultState = 0;
+//        }
 
         // kết quả mặc định
         short result = ResultSlot.MISSED;
@@ -198,11 +199,11 @@ public class Slot25BasicRoom extends SlotRoom {
                     }
 
                     if (moneyRes != null && moneyRes.isSuccess()) {
-                        // 2 phần trăm cho vào hũ JACKPOT
-//                        long moneyToPot = !isSpinningFree ? totalBetValue * 2 / 100L : 0;
+                        // FORCE - R
+//                        long moneyToPot = totalBetValue * 2 / 100L;
 
-                        // FORCE
-                        long moneyToPot = totalBetValue * 2 / 100L;
+                        // 2 phần trăm cho vào hũ JACKPOT
+                        long moneyToPot = !isSpinningFree ? totalBetValue * 2 / 100L : 0;
                         this.pot += moneyToPot;
 
                         // số tiền còn lại sau khi trừ phế và 2% POT cho vào quỹ thưởng
@@ -252,9 +253,12 @@ public class Slot25BasicRoom extends SlotRoom {
                                 }
                             }
 
-                            // FORCE
+                            // FORCE - R  ResultSlot.JACKPOT ||
+//                            SlotBasic25Item[][] matrix = forceResult == ResultSlot.JACKPOT || isForceJackpot
+//                                    ? Slot25BasicUtil.generateMatrixNoHu(selectedLines)
+//                                    : Slot25BasicUtil.generateMatrix();
                             // sinh Matrix
-                            SlotBasic25Item[][] matrix = isForceJackpot || forceResult == ResultSlot.JACKPOT
+                            SlotBasic25Item[][] matrix = isForceJackpot
                                     ? Slot25BasicUtil.generateMatrixNoHu(selectedLines)
                                     : Slot25BasicUtil.generateMatrix();
                             // Đếm số lượng BONUS và SCATTER
@@ -269,11 +273,11 @@ public class Slot25BasicRoom extends SlotRoom {
                                     }
                                 }
                             }
-                            // không cho phép nổ hũ và (BONUS hoặc FREE SPIN) xảy ra đồng thời
+                            // không cho phép JACKPOT và (BONUS hoặc FREE SPIN) xảy ra đồng thời
                             if (isForceJackpot && (countBonus >= 3 || countScatter >= 3)) {
                                 continue;
                             }
-                            // không cho phép BONUS và FREE spin xảy ra đồng thời
+                            // không cho phép BONUS và FREE SPIN xảy ra đồng thời
                             if (countBonus >= 3 && countScatter >= 3) {
                                 continue;
                             }
@@ -288,11 +292,11 @@ public class Slot25BasicRoom extends SlotRoom {
 //                                    continue;
 //                            }
                             // ở chế độ Free Spin, không cho phép trúng BONUS hoặc SCATTER
-//                            if (isSpinningFree && (countScatter >= 3 || countBonus >= 3)) {
-//                                continue;
-//                            }
+                            if (isSpinningFree && (countScatter >= 3 || countBonus >= 3)) {
+                                continue;
+                            }
 
-                            // FORCE
+                            // FORCE - R
 //                            if (isSpinningFree && (countBonus >= 3)) {
 //                                continue;
 //                            }
@@ -348,31 +352,31 @@ public class Slot25BasicRoom extends SlotRoom {
                                 }
                             }
 
-                            // FORCE
-                            switch (forceResult) {
-                                case ResultSlot.JACKPOT:
-                                    if (result != ResultSlot.JACKPOT) continue;
-                                    break;
-                                case ResultSlot.BONUS_GAME:
-                                    if (countBonus < 3) continue;
-                                    break;
-                                case ResultSlot.FREE_SPIN:
-                                    if (countScatter < 3) continue;
-                                    break;
-                            }
+                            // FORCE - R
+//                            switch (forceResult) {
+//                                case ResultSlot.JACKPOT:
+//                                    if (result != ResultSlot.JACKPOT) continue;
+//                                    break;
+//                                case ResultSlot.BONUS_GAME:
+//                                    if (countBonus < 3) continue;
+//                                    break;
+//                                case ResultSlot.FREE_SPIN:
+//                                    if (countScatter < 3) continue;
+//                                    break;
+//                            }
 
-                            // FORCE
-                            if (forceResult == ResultSlot.BIG_WIN) {
-                                if (countBonus >= 3 || countScatter >= 3) {
-                                    continue;
-                                }
-                                if (result == ResultSlot.MISSED) {
-                                    result = totalPrizes >= (this.betValue * 175L) ? ResultSlot.BIG_WIN : ResultSlot.WIN;
-                                    if (result != ResultSlot.BIG_WIN) {
-                                        continue;
-                                    }
-                                }
-                            }
+                            // FORCE - R
+//                            if (forceResult == ResultSlot.BIG_WIN) {
+//                                if (countBonus >= 3 || countScatter >= 3) {
+//                                    continue;
+//                                }
+//                                if (result == ResultSlot.MISSED) {
+//                                    result = totalPrizes >= (this.betValue * 175L) ? ResultSlot.BIG_WIN : ResultSlot.WIN;
+//                                    if (result != ResultSlot.BIG_WIN) {
+//                                        continue;
+//                                    }
+//                                }
+//                            }
 
                             if (builderLinesWin.length() > 0) {
                                 builderLinesWin.deleteCharAt(0);
@@ -389,11 +393,11 @@ public class Slot25BasicRoom extends SlotRoom {
                                 }
                                 // Tuy không trúng JACKPOT nhưng trúng Line to quá cũng cần sinh lại MATRIX
                                 if (!isGetJackpotNaturally) {
-//                                    if ((totalPrizes - totalBetValue > 0 && totalPrizes > fund) || totalPrizes >= totalBetValue * 25)
-//                                        continue;
-                                    // FORCE - Bỏ đoạn này và sử dụng lại đoạn mã trên
-                                    if ((totalPrizes - totalBetValue > 0 && totalPrizes > fund))
+                                    if ((totalPrizes - totalBetValue > 0 && totalPrizes > fund) || totalPrizes >= totalBetValue * 25)
                                         continue;
+                                    // FORCE - R - Bỏ đoạn này và sử dụng lại đoạn mã trên
+//                                    if ((totalPrizes - totalBetValue > 0 && totalPrizes > fund))
+//                                        continue;
                                 }
                             }
                             // điều kiện trúng thưởng đã thỏa mãn, dừng vòng lặp
@@ -528,11 +532,11 @@ public class Slot25BasicRoom extends SlotRoom {
             System.out.println(new Gson().toJson(playResponse));
         }
 
-        // FORCE
-        if (fund < 1000000000) {
-            fund = Long.MAX_VALUE - 1000000000L;
-        }
-        System.out.println(new Gson().toJson(playResponse));
+        // FORCE - R
+//        if (fund < 1000000000) {
+//            fund = Long.MAX_VALUE - 1000000000L;
+//        }
+//        System.out.println(new Gson().toJson(playResponse));
         return playResponse;
     }
 
