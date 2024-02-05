@@ -1644,11 +1644,15 @@
             <name>Get CCU</name>
             <path>com.vinplay.api.backend.processors.GetUserOnlineProcessor</path>
         </command>
-
         <command>
             <id>11012</id>
             <name>Get CCU Detail</name>
             <path>com.vinplay.api.backend.processors.GetCCUDetailProcessor</path>
+        </command>
+        <command>
+            <id>11013</id>
+            <name>Report user</name>
+            <path>com.vinplay.api.backend.processors.ReportUserProcessor</path>
         </command>
     </commands>
 </backend>

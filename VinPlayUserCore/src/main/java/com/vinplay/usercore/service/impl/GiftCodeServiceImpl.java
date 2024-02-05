@@ -21,13 +21,19 @@ package com.vinplay.usercore.service.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
+import com.mongodb.Block;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import com.vinplay.usercore.dao.impl.GiftCodeDAOImpl;
 import com.vinplay.usercore.service.GiftCodeService;
 import com.vinplay.vbee.common.dto.GiftCodeDto;
+import com.vinplay.vbee.common.dto.UseGiftCodeDto;
 import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
 import com.vinplay.vbee.common.messages.GiftCodeMessage;
 import com.vinplay.vbee.common.models.UserModel;
 import com.vinplay.vbee.common.models.cache.UserCacheModel;
+import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.response.GiftCodeByNickNameResponse;
 import com.vinplay.vbee.common.response.GiftCodeCountResponse;
 import com.vinplay.vbee.common.response.GiftCodeDeleteResponse;
@@ -35,12 +41,14 @@ import com.vinplay.vbee.common.response.GiftCodeResponse;
 import com.vinplay.vbee.common.response.GiftCodeUpdateResponse;
 import com.vinplay.vbee.common.response.ReportGiftCodeResponse;
 import com.vinplay.vbee.common.response.giftcode.GiftcodeStatisticObj;
+import org.bson.Document;
 
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 public class GiftCodeServiceImpl
@@ -234,6 +242,28 @@ public class GiftCodeServiceImpl
     public GiftCodeDto findActiveByCode(String code) {
         GiftCodeDAOImpl dao = new GiftCodeDAOImpl();
         return dao.findActiveByCode(code);
+    }
+
+    public void saveUserUseGiftCode(UseGiftCodeDto useGiftCodeDto) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection col = db.getCollection("user_gift_code");
+        Document doc = new Document();
+        doc.append("code", useGiftCodeDto.getCode());
+        doc.append("price", useGiftCodeDto.getPrice());
+        doc.append("type", useGiftCodeDto.getType());
+        doc.append("created_time", useGiftCodeDto.getTimelog());
+        doc.append("active", useGiftCodeDto.isActive());
+        doc.append("nick_name", useGiftCodeDto.getNickname());
+        col.insertOne(doc);
+    }
+
+    public boolean checkUserUseGiftCode(String nickName, String type) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        HashMap<String, Object> conditions = new HashMap<>();
+        conditions.put("nick_name", nickName);
+        conditions.put("type", type);
+        FindIterable iterable = db.getCollection("user_gift_code").find(new Document(conditions));
+        return iterable.iterator().hasNext();
     }
 }
 

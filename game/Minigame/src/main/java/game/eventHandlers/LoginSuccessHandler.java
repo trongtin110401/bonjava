@@ -34,7 +34,7 @@ extends BaseServerEventHandler {
         ExtensionUtility.instance().sendLoginOK(user);
         HazelcastInstance instance = HazelcastClientFactory.getInstance();
         IMap userOnline = instance.getMap("USER_ONLINE");
-        userOnline.set(user.getName(), user.getName());
+        userOnline.set(user.getName(),user);
     }
 
 }
