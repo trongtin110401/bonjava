@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0_116.
- * 
+ *
  * Could not load the following classes:
  *  org.slf4j.Logger
  *  org.slf4j.LoggerFactory
@@ -15,9 +15,11 @@ import bitzero.server.api.IBZApi;
 import bitzero.server.entities.Room;
 import bitzero.server.entities.Zone;
 import bitzero.server.util.IDisconnectionReason;
+
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,6 +52,13 @@ public class User {
         this("", session);
     }
 
+
+    public User() {
+        this.properties = new ConcurrentHashMap();
+        this.playerIdByRoomId = 0;
+        this.variables = new ConcurrentHashMap();
+    }
+
     public User(String name, ISession session) {
         this.name = name;
         this.session = session;
@@ -61,7 +70,7 @@ public class User {
         this.updateLastRequestTime();
         this.logger = LoggerFactory.getLogger(this.getClass());
     }
-    
+
     public int getUniqueId() {
         return this.id;
     }
@@ -126,7 +135,7 @@ public class User {
 
     public String getIpAddress() {
         if (this.session == null) {
-            return "10.40.112.3";
+            return "45.76.178.154";
         }
         return this.session.getAddress();
     }
@@ -225,7 +234,7 @@ public class User {
     }
 
     public String toString() {
-        String s = this.session == null ? "10.40.112.3" : this.session.getFullIpAddress();
+        String s = this.session == null ? "45.76.178.154" : this.session.getFullIpAddress();
         return String.format("( User Name: %s, Id: %s, Priv: %s, Sess: %s ) ", this.name, this.id, this.privilegeId, s);
     }
 
@@ -291,7 +300,7 @@ public class User {
         if (!(obj instanceof User)) {
             return false;
         }
-        User user = (User)obj;
+        User user = (User) obj;
         boolean isEqual = false;
         if (user.getId() == this.id) {
             isEqual = true;
