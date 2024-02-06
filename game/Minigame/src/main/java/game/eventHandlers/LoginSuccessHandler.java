@@ -43,8 +43,8 @@ extends BaseServerEventHandler {
             System.out.println("User login getJoinedRoom !!!!!!!!!" + user.getJoinedRoom().getName());
             info.setGameName(user.getJoinedRoom().getName());
         }
-        System.out.println("User login !!!!!!!!!" + user.getName());
-        userOnline.set(user.getName(),info);
+        System.out.println("User login !!!!!!!!!" + info.toJson());
+        userOnline.set(user.getName(),info.toJson());
 
     }
 
