@@ -256,6 +256,7 @@ implements XocDiaDao {
                 transactionXocDia.setUsername(document.getString("user_name"));
                 transactionXocDia.setTotalPrize(document.getLong("total_prize"));
                 transactionXocDia.setTotalExchange(document.getLong("money_exchange"));
+                transactionXocDia.setTimestamp(document.getString("create_time"));
                 betResult.setZeroWhite(document.getLong("zero_white"));
                 betResult.setFourWhite(document.getLong("four_white"));
                 betResult.setThreeWhite(document.getLong("three_white"));
