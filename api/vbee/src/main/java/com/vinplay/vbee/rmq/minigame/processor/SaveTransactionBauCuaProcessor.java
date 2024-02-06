@@ -9,12 +9,17 @@
  */
 package com.vinplay.vbee.rmq.minigame.processor;
 
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.IMap;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.enums.Games;
+import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
 import com.vinplay.vbee.common.messages.BaseMessage;
 import com.vinplay.vbee.common.messages.minigame.TransactionTaiXiuMessage;
 import com.vinplay.vbee.common.messages.minigame.baucua.TransactionBauCuaMsg;
+import com.vinplay.vbee.common.models.UserModel;
+import com.vinplay.vbee.common.models.cache.UserCacheModel;
 import com.vinplay.vbee.dao.impl.BauCuaDaoImpl;
 import com.vinplay.vbee.dto.TopVinhDanhDto;
 import com.vinplay.vbee.rmq.report.processor.TopVinhDanhProcessor;
@@ -26,6 +31,12 @@ public class SaveTransactionBauCuaProcessor
         TransactionBauCuaMsg message = (TransactionBauCuaMsg) BaseMessage.fromBytes((byte[]) body);
         if (message.moneyType == 1) {
             addTopVinhDanh(message);
+        }
+        HazelcastInstance client = HazelcastClientFactory.getInstance();
+        IMap<String, UserModel> userMap = client.getMap("users");
+        UserCacheModel user = (UserCacheModel)   userMap.get(message.username);
+        if(user.isBot()){
+            return true;
         }
         BauCuaDaoImpl dao = new BauCuaDaoImpl();
         dao.saveTransactionBauCua(message);

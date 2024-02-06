@@ -16,6 +16,7 @@ import bitzero.server.core.BZEventParam;
 import bitzero.server.core.IBZEvent;
 import bitzero.server.core.IBZEventParam;
 import bitzero.server.entities.User;
+import bitzero.server.entities.UserInfo;
 import bitzero.server.exceptions.BZException;
 import bitzero.server.extensions.BaseServerEventHandler;
 import bitzero.util.ExtensionUtility;
@@ -33,8 +34,16 @@ extends BaseServerEventHandler {
         // thêm vào thông tin user online
         ExtensionUtility.instance().sendLoginOK(user);
         HazelcastInstance instance = HazelcastClientFactory.getInstance();
+
         IMap userOnline = instance.getMap("USER_ONLINE");
-        userOnline.set(user.getName(),user);
+        UserInfo info = new UserInfo();
+
+        info.setLastLoginTime(user.getLastLoginTime());
+        info.setGameName(user.getJoinedRoom().getName());
+
+        System.out.println("User login !!!!!!!!!" + user.getName());
+        userOnline.set(user.getName(),user.getName());
+
     }
 
 }
