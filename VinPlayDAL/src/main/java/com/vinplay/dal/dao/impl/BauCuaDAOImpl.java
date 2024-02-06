@@ -47,17 +47,15 @@ public class BauCuaDAOImpl
         implements BauCuaDAO {
     @Override
     public List<TransactionBauCua> getLSGDBauCua(String username, int page, byte moneyType) {
-        int pageSize = 10;
         int skipNumber = (page - 1) * 10;
-        final ArrayList<TransactionBauCua> results = new ArrayList<TransactionBauCua>();
+        final ArrayList<TransactionBauCua> results = new ArrayList<>();
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         FindIterable iterable = null;
         Document conditions = new Document();
-        conditions.put("user_name", (Object) username);
-        conditions.put("money_type", (Object) moneyType);
+        conditions.put("user_name", username);
         BasicDBObject sortCondtions = new BasicDBObject();
         sortCondtions.put("_id", -1);
-        iterable = db.getCollection("bau_cua_transaction").find((Bson) conditions).sort((Bson) sortCondtions).skip(skipNumber).limit(10);
+        iterable = db.getCollection("bau_cua_transaction").find(conditions).sort(sortCondtions).skip(skipNumber).limit(10);
         iterable.forEach((Block) new Block<Document>() {
 
             public void apply(Document document) {
@@ -79,9 +77,8 @@ public class BauCuaDAOImpl
     public int countLSGDBauCua(String username, byte moneyType) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         Document conditions = new Document();
-        conditions.put("user_name", (Object) username);
-        conditions.put("money_type", (Object) moneyType);
-        long totalRows = db.getCollection("bau_cua_transaction").count((Bson) conditions);
+        conditions.put("user_name", username);
+        long totalRows = db.getCollection("bau_cua_transaction").count(conditions);
         return (int) totalRows;
     }
 
