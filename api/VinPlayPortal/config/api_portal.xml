@@ -912,7 +912,7 @@
         </command>
         <command>
             <id>4106</id>
-            <name>get top vinh danh by game</name>
+            <name>get lich su xoc dia</name>
             <path>com.vinplay.api.processors.minigame.GetLichSuXocDiaProcessor</path>
         </command>
         <command>
