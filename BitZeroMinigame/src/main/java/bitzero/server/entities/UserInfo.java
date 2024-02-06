@@ -8,6 +8,9 @@
 package bitzero.server.entities;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.Serializable;
 
 public class UserInfo implements Serializable {
@@ -31,6 +34,15 @@ public class UserInfo implements Serializable {
 
     public void setLastLoginTime(long lastLoginTime) {
         this.lastLoginTime = lastLoginTime;
+    }
+
+    public String toJson() {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.writeValueAsString((Object) this);
+        } catch (JsonProcessingException mapper) {
+            return "{\"success\":false,\"errorCode\":\"1001\"}";
+        }
     }
 }
 
