@@ -40,9 +40,8 @@ extends BaseServerEventHandler {
 
         info.setLastLoginTime(user.getLastLoginTime());
         info.setGameName(user.getJoinedRoom().getName());
-
         System.out.println("User login !!!!!!!!!" + user.getName());
-        userOnline.set(user.getName(),user.getName());
+        userOnline.set(user.getName(),info);
 
     }
 
