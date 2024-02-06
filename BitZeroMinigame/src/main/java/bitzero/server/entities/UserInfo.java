@@ -7,7 +7,13 @@
  */
 package bitzero.server.entities;
 
-public class UserInfo {
+import com.sun.org.apache.xml.internal.serializer.utils.SerializerMessages_zh_CN;
+
+import java.io.Serializable;
+
+public class UserInfo implements Serializable {
+
+    private static final long serialVersionUID = 503536543992946422L;
     private String gameName;
     private volatile long lastLoginTime = 0;
 
