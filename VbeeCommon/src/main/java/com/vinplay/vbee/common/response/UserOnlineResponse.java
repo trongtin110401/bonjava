@@ -7,17 +7,18 @@ import java.util.List;
 
 public class UserOnlineResponse
         extends BaseResponseModel {
-    private List<String> users;
+
+    private List<UserCCUResponse> users;
 
     public UserOnlineResponse(boolean success, String errorCode) {
         super(success, errorCode);
     }
 
-    public List<String> getUsers() {
+    public List<UserCCUResponse> getUsers() {
         return users;
     }
 
-    public void setUsers(List<String> users) {
+    public void setUsers(List<UserCCUResponse> users) {
         this.users = users;
     }
 }
