@@ -41,9 +41,9 @@ public class XocDiaDaoImpl
         doc.append("zero_white", msg.betResult.getZeroWhite());
         doc.append("four_white", msg.betResult.getFourWhite());
         doc.append("three_white", msg.betResult.getThreeWhite());
-        doc.append("one_white", msg.betResult.getZeroWhite());
-        doc.append("even", msg.betResult.getZeroWhite());
-        doc.append("odd", msg.betResult.getZeroWhite());
+        doc.append("one_white", msg.betResult.getOneWhite());
+        doc.append("even", msg.betResult.getEven());
+        doc.append("odd", msg.betResult.getOdd());
         doc.append("result", msg.getResult());
         doc.append("money_exchange", msg.totalExchange);
         doc.append("create_time", VinPlayUtils.getCurrentDateTime());
