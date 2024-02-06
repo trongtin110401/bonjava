@@ -7,7 +7,6 @@
  */
 package bitzero.server.entities;
 
-import com.sun.org.apache.xml.internal.serializer.utils.SerializerMessages_zh_CN;
 
 import java.io.Serializable;
 
