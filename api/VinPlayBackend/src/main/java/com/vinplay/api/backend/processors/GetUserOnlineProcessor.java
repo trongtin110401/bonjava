@@ -15,6 +15,8 @@ import com.hazelcast.core.IMap;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
+import com.vinplay.vbee.common.models.UserModel;
+import com.vinplay.vbee.common.models.cache.UserCacheModel;
 import com.vinplay.vbee.common.response.UserOnlineResponse;
 import bitzero.server.entities.User;
 
@@ -27,8 +29,16 @@ public class GetUserOnlineProcessor
         UserOnlineResponse response = new UserOnlineResponse(true, "200");
         HazelcastInstance instance = HazelcastClientFactory.getInstance();
         IMap userOnline = instance.getMap("USER_ONLINE");
-        User user = new User();
+
         response.setUsers((List<String>) userOnline.values());
+//
+//        for (Object key : userOnline.keySet()){
+//            User user = new User();
+//            HazelcastInstance client = HazelcastClientFactory.getInstance();
+//            IMap<String, UserModel> userMap = client.getMap("users");
+//            UserCacheModel userCacheModelr = (UserCacheModel)   userMap.get(message.username);
+//        }
+//        userMap.get(user.getName());
         return response.toJson();
     }
 }
