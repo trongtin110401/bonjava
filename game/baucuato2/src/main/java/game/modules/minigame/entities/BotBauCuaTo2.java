@@ -30,11 +30,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class BotBauCuaTo2 {
     private static List<String> bots = new ArrayList<String>();
@@ -61,6 +57,7 @@ public class BotBauCuaTo2 {
                     Debug.trace((Object[]) new Object[]{"Load bot " + botName + " error: ", e});
                 }
             }
+            Collections.shuffle(bots);
             br22.close();
         } catch (FileNotFoundException e) {
         } catch (IOException e) {
@@ -77,6 +74,7 @@ public class BotBauCuaTo2 {
                     Debug.trace((Object[]) new Object[]{"Load vip bot " + botName + " error: ", e});
                 }
             }
+            Collections.shuffle(botsVip);
             br22.close();
         } catch (FileNotFoundException e) {
         } catch (IOException e) {
@@ -219,15 +217,11 @@ public class BotBauCuaTo2 {
 
     private static long getBaseBettingBC(int roomId) {
         switch (roomId) {
-            case 0: {
-                return 1000L;
-            }
+            case 0:
             case 1: {
                 return 1000L;
             }
-            case 2: {
-                return 10000L;
-            }
+            case 2:
             case 3: {
                 return 10000L;
             }
