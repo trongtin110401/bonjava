@@ -529,11 +529,12 @@ public class Slot25ExtendRoom extends SlotRoom {
             } catch (IOException | InterruptedException | TimeoutException e) {
                 Debug.trace(this.gameName + ": update pot error ", e.getMessage());
             }
-            Slot25UpdatePotMsg msg = new Slot25UpdatePotMsg(commandCollection.UPDATE_POT_MESSAGE);
-            msg.value = this.pot;
-            msg.x2 = (byte) (this.huX2 ? 1 : 0);
-            this.sendMessageToRoom(msg);
         }
+
+        Slot25UpdatePotMsg msg = new Slot25UpdatePotMsg(commandCollection.UPDATE_POT_MESSAGE);
+        msg.value = this.pot;
+        msg.x2 = (byte) (this.huX2 ? 1 : 0);
+        this.sendMessageToRoom(msg);
     }
 
     public void updatePot(User user) {
