@@ -138,12 +138,12 @@ public abstract class Slot20Module extends SlotModule {
         this.jackpots[id] = value;
         this.x2Arr[id] = x2;
         long currentTime = System.currentTimeMillis();
-        if (currentTime - this.lastTimeUpdatePotToRoom >= 3000L) {
+//        if (currentTime - this.lastTimeUpdatePotToRoom >= 3000L) {
             Slot20UpdatePotMsg msg = this.getPotsInfo();
             this.lastTimeUpdatePotToRoom = System.currentTimeMillis();
             SendMsgToAlLUsersThread t = new SendMsgToAlLUsersThread(msg);
             t.start();
-        }
+//        }
     }
 
     public Slot20UpdatePotMsg getPotsInfo() {

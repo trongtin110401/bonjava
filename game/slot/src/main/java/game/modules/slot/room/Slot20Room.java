@@ -752,9 +752,10 @@ public class Slot20Room extends SlotRoom {
             } catch (IOException | InterruptedException | TimeoutException ex2) {
                 Debug.trace(this.gameName + ": update pot poker error ", ex2.getMessage());
             }
-            byte x2 = (byte) (this.huX2 ? 1 : 0);
-            ((Slot20Module) this.module).updatePot(this.id, this.pot, x2);
         }
+
+        byte x2 = (byte) (this.huX2 ? 1 : 0);
+        ((Slot20Module) this.module).updatePot(this.id, this.pot, x2);
     }
 
     private boolean checkDieuKienNo(String username) {
