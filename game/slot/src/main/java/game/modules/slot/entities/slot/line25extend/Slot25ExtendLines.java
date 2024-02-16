@@ -8,10 +8,10 @@ import game.modules.slot.entities.slot.Line;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Line25ExtendLines {
-    private List<Line<Line25ExtendItem>> lines = new ArrayList<Line<Line25ExtendItem>>();
+public class Slot25ExtendLines {
+    private List<Line<Slot25ExtendItem>> lines = new ArrayList<Line<Slot25ExtendItem>>();
 
-    public Line25ExtendLines() {
+    public Slot25ExtendLines() {
         this.initLines();
     }
 
@@ -69,11 +69,11 @@ public class Line25ExtendLines {
         this.lines.add(line25);
     }
 
-    public List<Line<Line25ExtendItem>> list() {
+    public List<Line<Slot25ExtendItem>> list() {
         return this.lines;
     }
 
-    public Line<Line25ExtendItem> get(int index) {
+    public Line<Slot25ExtendItem> get(int index) {
         return this.lines.get(index);
     }
 }
