@@ -15,9 +15,7 @@ export ELASTICSEARCH_URL="http://localhost:9200"
 export TZ="Asia/Ho_Chi_Minh"
 
 # make log server
-mkdir /home/server/logs/
-# Absolute path to this script, e.g. /home/user/bin/foo.sh
-SCRIPT=$(readlink -f "$0")
+mkdir -p /home/server/logs/
 # Absolute path this script is in, thus /home/user/bin
 SCRIPT_PATH=$(pwd)
 
@@ -197,6 +195,7 @@ runAllApi() {
   runWspay
   runWsReport
   runBackend
+  runBoardService
 }
 
 main() {
@@ -212,12 +211,9 @@ main() {
   runXocDia
   runSlot
 
-  # clearSource
-
   runTienLen
   runBacay
   runBaiCao
-
   runSam
   runBinh
   runPoker
