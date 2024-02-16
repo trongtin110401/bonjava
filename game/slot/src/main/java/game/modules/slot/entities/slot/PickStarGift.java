@@ -3,8 +3,6 @@
  */
 package game.modules.slot.entities.slot;
 
-import game.modules.slot.entities.slot.PickStarGiftItem;
-
 public class PickStarGift {
     private PickStarGiftItem item;
     private int value;
