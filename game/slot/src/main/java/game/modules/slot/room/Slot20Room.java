@@ -556,6 +556,8 @@ public class Slot20Room extends SlotRoom {
                             this.saveFund();
                             // lưu thông tin HŨ
                             this.savePot();
+
+                            System.out.println("Total Prize: " + totalPrizes + " - Fun: " + fund);
                         }
                     } else {
                         result = ResultSlot.NOT_ENOUGH_MONEY;
