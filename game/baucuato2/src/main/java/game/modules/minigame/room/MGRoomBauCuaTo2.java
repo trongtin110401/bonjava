@@ -466,7 +466,7 @@ public class MGRoomBauCuaTo2
                 if (this.moneyType == 1) {
                     totalVinPay += totalPrize;
                 }
-                if (!isBot(tran.username) && (response = this.userService.updateMoney(tran.username, totalPrize, this.moneyTypeStr, GAME_NAME, "B\u1ea7u cua: Tr\u1eadn th\u1eafng", "Phi\u00ean " + this.referenceId, 0L, Long.valueOf(this.referenceId), TransType.END_TRANS)) != null && response.isSuccess()) {
+                if (!isBot(tran.username) && (response = this.userService.updateMoney(tran.username, totalPrize, this.moneyTypeStr, GAME_NAME, "Bầu cua: Trận thắng", "Phiên " + this.referenceId, 0L, this.referenceId, TransType.END_TRANS)) != null && response.isSuccess()) {
                     UpdateBauCuaPrizeMsg msg = new UpdateBauCuaPrizeMsg();
                     msg.prize = totalPrize;
                     msg.pizeNohu = totalHuPrize;
@@ -483,7 +483,7 @@ public class MGRoomBauCuaTo2
             }
             try {
                 tran.totalExchange = totalPrize - totalBetValues;
-                tran.dices = CommonUtils.arrayByteToString((byte[]) this.resultBC.dices);
+                tran.dices = CommonUtils.arrayByteToString(this.resultBC.dices);
                 this.bcService.saveTransactionBauCua(tran);
 
             } catch (IOException | InterruptedException | TimeoutException response) {

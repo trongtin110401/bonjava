@@ -565,7 +565,7 @@ extends SlotRoom {
                             if (countFreeSpin > 0) {
                                 msg.isFreeSpin = 1;
                                 msg.ratio = (byte)ratio;
-                                this.slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, username, linesStr, countFreeSpin, ratio);
+                                this.slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, username, linesStr, countFreeSpin, ratio, betValue);
                             } else {
                                 msg.isFreeSpin = 0;
                             }

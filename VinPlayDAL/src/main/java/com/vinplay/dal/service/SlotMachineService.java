@@ -59,7 +59,7 @@ public interface SlotMachineService {
 
     public SlotFreeSpin updateLuotQuaySlotFree(String gameName, String username);
 
-    public void setLuotQuayFreeSlot(String gameName, String nickName, String lines, int soLuot, int ratio);
+    public void setLuotQuayFreeSlot(String gameName, String nickName, String lines, int soLuot, int ratio, int betValue);
 
     public SlotFreeSpin getLuotQuayFreeSlot(String freeSpinCacheName, String nickName);
 

@@ -212,7 +212,7 @@ public class SlotMachineServiceImpl implements SlotMachineService {
     }
 
     @Override
-    public void setLuotQuayFreeSlot(String gameName, String nickName, String lines, int soLuot, int ratio) {
+    public void setLuotQuayFreeSlot(String gameName, String nickName, String lines, int soLuot, int ratio, int betValue) {
         HazelcastInstance client = HazelcastClientFactory.getInstance();
         IMap slotMap = client.getMap(this.buildKeyFreeSpin(gameName));
         if (slotMap.containsKey(nickName)) {
@@ -221,6 +221,7 @@ public class SlotMachineServiceImpl implements SlotMachineService {
                 slotFreeModel.setNum(soLuot);
                 slotFreeModel.setRatio(ratio);
                 slotFreeModel.setLines(lines);
+                slotFreeModel.setBetValue(betValue);
                 slotMap.put(nickName, slotFreeModel);
             } catch (Exception slotFreeModel) {
             }
@@ -229,6 +230,7 @@ public class SlotMachineServiceImpl implements SlotMachineService {
             slotFreeModel.setNum(soLuot);
             slotFreeModel.setRatio(ratio);
             slotFreeModel.setLines(lines);
+            slotFreeModel.setBetValue(betValue);
             slotMap.put(nickName, slotFreeModel);
         }
     }
@@ -238,9 +240,9 @@ public class SlotMachineServiceImpl implements SlotMachineService {
         HazelcastInstance client = HazelcastClientFactory.getInstance();
         IMap slotMap = client.getMap(this.buildKeyFreeSpin(freeSpinCacheName));
         SlotFreeSpin slotFreeSpin = new SlotFreeSpin();
-        if (slotMap.containsKey((Object) nickName)) {
+        if (slotMap.containsKey(nickName)) {
             try {
-                slotFreeSpin = (SlotFreeSpin) slotMap.get((Object) nickName);
+                return (SlotFreeSpin) slotMap.get(nickName);
             } catch (Exception exception) {
                 // empty catch block
             }

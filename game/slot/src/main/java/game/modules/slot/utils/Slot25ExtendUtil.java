@@ -128,10 +128,34 @@ public class Slot25ExtendUtil {
         return builder.toString();
     }
 
+    public static String matrixToString(Slot25ExtendFreeSpinItem[][] matrix) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < 3; ++i) {
+            for (int j = 0; j < 5; ++j) {
+                builder.append(",");
+                builder.append(matrix[i][j].getId());
+            }
+        }
+        // xóa ký tự "," đầu tiên
+        if (builder.length() > 0) {
+            builder.deleteCharAt(0);
+        }
+        return builder.toString();
+    }
+
     public static Line getLine(Slot25ExtendLines lines, Slot25ExtendItem[][] matrix, int lineIndex) {
         Line<Slot25ExtendItem> line = lines.get(lineIndex - 1);
         for (Cell<Slot25ExtendItem> cell : line.getCells()) {
             Slot25ExtendItem itemInMatrix = matrix[cell.getRow()][cell.getCol()];
+            cell.setItem(itemInMatrix);
+        }
+        return line;
+    }
+
+    public static Line getLine(Slot25ExtendLines lines, Slot25ExtendFreeSpinItem[][] matrix, int lineIndex) {
+        Line<Slot25ExtendFreeSpinItem> line = lines.get(lineIndex - 1);
+        for (Cell<Slot25ExtendFreeSpinItem> cell : line.getCells()) {
+            Slot25ExtendFreeSpinItem itemInMatrix = matrix[cell.getRow()][cell.getCol()];
             cell.setItem(itemInMatrix);
         }
         return line;

@@ -10,8 +10,7 @@ import bitzero.server.extensions.data.BaseMsg;
 
 import java.nio.ByteBuffer;
 
-public class Slot25FreeDailyMsg
-        extends BaseMsg {
+public class Slot25FreeDailyMsg extends BaseMsg {
     public byte remain = 0;
 
     public Slot25FreeDailyMsg(short type) {

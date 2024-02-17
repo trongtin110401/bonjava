@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Slot25ExtendLines {
-    private List<Line<Slot25ExtendItem>> lines = new ArrayList<Line<Slot25ExtendItem>>();
+    private List<Line> lines = new ArrayList<Line>();
 
     public Slot25ExtendLines() {
         this.initLines();
@@ -69,11 +69,11 @@ public class Slot25ExtendLines {
         this.lines.add(line25);
     }
 
-    public List<Line<Slot25ExtendItem>> list() {
+    public List<Line> list() {
         return this.lines;
     }
 
-    public Line<Slot25ExtendItem> get(int index) {
+    public Line get(int index) {
         return this.lines.get(index);
     }
 }

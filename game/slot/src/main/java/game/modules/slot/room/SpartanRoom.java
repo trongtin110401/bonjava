@@ -628,17 +628,17 @@ public class SpartanRoom
         switch (countFreeSpin) {
             case 3: {
                 soLuot = 8;
-                this.slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, soLuot, 1);
+                this.slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, soLuot, 1, betValue);
                 break;
             }
             case 4: {
                 soLuot = 8;
-                this.slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, soLuot, 2);
+                this.slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, soLuot, 2, betValue);
                 break;
             }
             case 5: {
                 soLuot = 8;
-                this.slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, soLuot, 3);
+                this.slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, soLuot, 3, betValue);
             }
         }
         return soLuot;
