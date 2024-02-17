@@ -5,8 +5,7 @@ package com.vinplay.vbee.common.models.slot;
 
 import java.io.Serializable;
 
-public class SlotFreeSpin
-implements Serializable {
+public class SlotFreeSpin implements Serializable {
     private static final long serialVersionUID = 1L;
     private String nickName;
     private String lines;
@@ -14,17 +13,19 @@ implements Serializable {
     private int ratio;
     private String itemsWild = "";
     private int totalPrizes;
+    private int betValue;
 
     public SlotFreeSpin() {
         this.num = 0;
         this.ratio = 0;
     }
 
-    public SlotFreeSpin(String nickName, String lines, int num, int ratio) {
+    public SlotFreeSpin(String nickName, String lines, int num, int ratio, int betValue) {
         this.nickName = nickName;
         this.lines = lines;
         this.num = num;
         this.ratio = ratio;
+        this.betValue = betValue;
     }
 
     public void clear() {
@@ -32,6 +33,7 @@ implements Serializable {
         this.num = 0;
         this.ratio = 0;
         this.itemsWild = "";
+        this.betValue = 0;
     }
 
     public String getNickName() {
@@ -91,6 +93,14 @@ implements Serializable {
 
     public void addPrize(int prize) {
         this.totalPrizes += prize;
+    }
+
+    public int getBetValue() {
+        return betValue;
+    }
+
+    public void setBetValue(int betValue) {
+        this.betValue = betValue;
     }
 }
 

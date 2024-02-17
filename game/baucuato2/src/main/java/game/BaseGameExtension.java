@@ -106,8 +106,6 @@ public class BaseGameExtension
             this.addRequestHandler((short) 3000, BongDaModule.class);
             this.addRequestHandler((short) 18000, ChatModule.class);
             this.addRequestHandler((short) 19000, AdminModule.class);
-
-
         } else {
             this.addRequestHandler((short) 3000, GameRoomModule.class);
         }

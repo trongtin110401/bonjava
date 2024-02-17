@@ -595,23 +595,10 @@ public class Slot20Room extends SlotRoom {
         return playResponse;
     }
 
-    private int getNumOfFreeSpin(String username) {
-        SlotFreeSpin freeSpin;
-        try {
-            freeSpin = slotService.getLuotQuayFreeSlot(cacheFreeSpinName, username);
-            if (freeSpin != null) {
-                return freeSpin.getNum();
-            }
-            return 0;
-        } catch (Exception ignored) {
-            return 0;
-        }
-    }
-
     private int setFreeSpin(String nickName, String lines, int countFreeSpin, int remainAmountOfFreeSpin) {
         if (countFreeSpin > 0) {
             countFreeSpin = countFreeSpin + remainAmountOfFreeSpin;
-            slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, countFreeSpin, 1);
+            slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, countFreeSpin, 1, betValue);
         }
         return countFreeSpin > 0 ? countFreeSpin + remainAmountOfFreeSpin : remainAmountOfFreeSpin;
     }

@@ -5,7 +5,7 @@ package game.modules.slot.entities.slot.line25extend;
 
 import java.util.Arrays;
 
-public class Line25ExtendItems {
+public class Slot25ExtendItems {
 
     // Tổng có 11 loại Item với id từ 0 => 10. (Xem class AvengersItem)
     // Ma Trận này được sử dụng để cấu hình tỷ lệ % xuất hiện của Item trong Wheel
@@ -22,23 +22,15 @@ public class Line25ExtendItems {
                     {8, 8, 0, 35, 10, 15, 20, 30, 65, 75, 85}
             };
 
-//    private static int[][] config = new int[][]
-//            {
-//                    {100, 100, 0, 35, 10, 10, 12, 25, 75, 80, 85},
-//                    {100, 100, 50, 25, 10, 15, 20, 25, 50, 60, 65},
-//                    {100, 100, 30, 35, 10, 15, 20, 25, 50, 60, 65},
-//                    {100, 100, 25, 30, 20, 20, 20, 25, 50, 55, 60},
-//                    {100, 100, 0, 35, 10, 15, 20, 30, 65, 75, 85}
-//            };
-    private Line25ExtendWheel[] wheels = new Line25ExtendWheel[5];
+    private Slot25ExtendWheel[] wheels = new Slot25ExtendWheel[5];
 
-    public Line25ExtendItems() {
+    public Slot25ExtendItems() {
         for (int wheelIndex = 0; wheelIndex < 5; ++wheelIndex) {
-            this.wheels[wheelIndex] = new Line25ExtendWheel();
+            this.wheels[wheelIndex] = new Slot25ExtendWheel();
             for (int j = 0; j < 11; j++) {
                 int k = 0;
                 while (k < config[wheelIndex][j]) {
-                    this.wheels[wheelIndex].addItem(Line25ExtendItem.findItem((byte) j));
+                    this.wheels[wheelIndex].addItem(Slot25ExtendItem.findItem((byte) j));
                     k++;
                 }
             }
@@ -46,15 +38,15 @@ public class Line25ExtendItems {
     }
 
     public static void main(String[] args) {
-        Line25ExtendItems avengersItems = new Line25ExtendItems();
+        Slot25ExtendItems avengersItems = new Slot25ExtendItems();
         avengersItems.print();
     }
 
-    public Line25ExtendItem random(int wheelIndex) {
+    public Slot25ExtendItem random(int wheelIndex) {
         return wheels[wheelIndex].random();
     }
 
-    public void refundItem(Line25ExtendItem item, int wheelIndex) {
+    public void refundItem(Slot25ExtendItem item, int wheelIndex) {
         this.wheels[wheelIndex].addItem(item);
     }
 

@@ -233,6 +233,7 @@ public class Slot25BasicRoom extends SlotRoom {
                             countBonus = 0;
                             boolean isForceJackpot = false;
 
+                            // kiểm tra force nổ hũ
                             if (betValue == 100) {
                                 if (usernameForce.equals(username) && roomForce.equals(String.valueOf(100))) {
                                     isForceJackpot = true;
@@ -300,7 +301,6 @@ public class Slot25BasicRoom extends SlotRoom {
 //                            if (isSpinningFree && (countBonus >= 3)) {
 //                                continue;
 //                            }
-
 
                             // Tính toán phần thưởng cho BONUS GAME
                             if (countBonus >= 3) {
@@ -540,35 +540,22 @@ public class Slot25BasicRoom extends SlotRoom {
         return playResponse;
     }
 
-    private int getNumOfFreeSpin(String username) {
-        SlotFreeSpin freeSpin;
-        try {
-            freeSpin = slotService.getLuotQuayFreeSlot(cacheFreeSpinName, username);
-            if (freeSpin != null) {
-                return freeSpin.getNum();
-            }
-            return 0;
-        } catch (Exception ignored) {
-            return 0;
-        }
-    }
-
     private int setFreeSpin(String nickName, String lines, int countFreeSpin, int remainAmountOfFreeSpin) {
         int soLuot = 0;
         switch (countFreeSpin) {
             case 3: {
                 soLuot = 4 + remainAmountOfFreeSpin;
-                slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, soLuot, 1);
+                slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, soLuot, 1, betValue);
                 break;
             }
             case 4: {
                 soLuot = 8 + remainAmountOfFreeSpin;
-                slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, soLuot, 2);
+                slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, soLuot, 2, betValue);
                 break;
             }
             case 5: {
                 soLuot = 22 + remainAmountOfFreeSpin;
-                slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, soLuot, 3);
+                slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, soLuot, 3, betValue);
             }
         }
         return Math.max(soLuot, remainAmountOfFreeSpin);

@@ -5,8 +5,7 @@ package com.vinplay.vbee.common.response;
 
 import com.vinplay.vbee.common.response.BaseResponseModel;
 
-public class MoneyResponse
-extends BaseResponseModel {
+public class MoneyResponse extends BaseResponseModel {
     private long currentMoney;
     private long currentMoneyXu;
     private long subtractMoney;

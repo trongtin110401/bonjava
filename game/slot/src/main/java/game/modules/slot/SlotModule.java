@@ -171,8 +171,8 @@ public abstract class SlotModule extends BaseClientRequestHandler {
         }
     }
 
-    protected final class GameLoopTask
-    implements Runnable {
+    protected final class GameLoopTask implements Runnable {
+
         protected GameLoopTask() {
         }
 

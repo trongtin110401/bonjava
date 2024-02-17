@@ -7,7 +7,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum Line25ExtendItem {
+public enum Slot25ExtendItem {
+
     SCATTER("SCATTER", 1, "Scatter", (byte) 0),
     BONUS("BONUS", 2, "Bonus", (byte) 1),
     WILD("WILD", 3, "Wild", (byte) 2),
@@ -23,16 +24,16 @@ public enum Line25ExtendItem {
     private String name;
     private byte id;
 
-    private static Map<Integer, Line25ExtendItem> map = new HashMap<>();
+    private static Map<Integer, Slot25ExtendItem> map = new HashMap<>();
 
-    Line25ExtendItem(String s, int n2, String name, byte id) {
+    Slot25ExtendItem(String s, int n2, String name, byte id) {
         this.name = name;
         this.id = id;
     }
 
     static {
-        Arrays.stream(Line25ExtendItem.values()).forEach(avengersItem -> {
-            map.put((int) avengersItem.getId(), avengersItem);
+        Arrays.stream(Slot25ExtendItem.values()).forEach(item -> {
+            map.put((int) item.getId(), item);
         });
     }
 
@@ -52,7 +53,7 @@ public enum Line25ExtendItem {
         return this.id;
     }
 
-    public static Line25ExtendItem findItem(byte id) {
+    public static Slot25ExtendItem findItem(byte id) {
         return map.get((int) id);
     }
 }

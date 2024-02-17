@@ -37,6 +37,7 @@ import com.vinplay.usercore.service.UserService;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.utils.SlotNohuObject;
 import com.vinplay.vbee.common.exceptions.KeyNotFoundException;
+import com.vinplay.vbee.common.models.slot.SlotFreeSpin;
 import game.modules.slot.SlotModule;
 import game.modules.slot.entities.slot.AutoUser;
 
@@ -380,5 +381,16 @@ public abstract class SlotRoom {
         }
     }
 
+    protected int getNumOfFreeSpin(String username) {
+        return getFreeSpinInfo(username).getNum();
+    }
+
+    protected SlotFreeSpin getFreeSpinInfo(String username) {
+        try {
+            return slotService.getLuotQuayFreeSlot(cacheFreeSpinName, username);
+        } catch (Exception ex) {
+            return new SlotFreeSpin();
+        }
+    }
 }
 
