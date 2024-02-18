@@ -257,6 +257,22 @@ public class GiftCodeServiceImpl
         col.insertOne(doc);
     }
 
+    public void updateGiftCode(GiftCodeDto giftCodeDto) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection col = db.getCollection("gift_code");
+        Document query = new Document("code", giftCodeDto.getCode());
+        Document update = new Document("$set", new Document()
+                .append("price", giftCodeDto.getPrice())
+                .append("quantity", giftCodeDto.getQuantity())
+                .append("type", giftCodeDto.getType())
+                .append("length", giftCodeDto.getLength())
+                .append("expirationTime", giftCodeDto.getExpirationTime())
+                .append("active", giftCodeDto.isActive())
+                .append("nickName", giftCodeDto.getNickName())
+                .append("usedTime", giftCodeDto.getUsedTime()));
+        col.updateOne(query,update);
+    }
+
     public boolean checkUserUseGiftCode(String nickName, String type) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         HashMap<String, Object> conditions = new HashMap<>();

@@ -3,8 +3,6 @@
  */
 package com.vinplay.vbee.common.dto;
 
-import com.vinplay.vbee.common.messages.BaseMessage;
-
 public class GiftCodeDto {
     private String code;
     private int price;
@@ -17,6 +15,10 @@ public class GiftCodeDto {
     private int expirationDate;
 
     private boolean active;
+
+    private String nickName;
+
+    private String usedTime;
 
     public int getPrice() {
         return price;
@@ -88,6 +90,22 @@ public class GiftCodeDto {
 
     public void setExpirationDate(int expirationDate) {
         this.expirationDate = expirationDate;
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
+    }
+
+    public String getUsedTime() {
+        return usedTime;
+    }
+
+    public void setUsedTime(String usedTime) {
+        this.usedTime = usedTime;
     }
 }
 
