@@ -1264,6 +1264,7 @@ public class XocDiaGameServer
                 }
                 this.gameLog.append(">").append("XDTT<");
                 List<Byte> potsWin = xdResult.getPotsWin();
+                String result = "";
                 for (Byte bt : potsWin) {
                     GamePot gPot = this.getPot(bt.byteValue());
                     gPot.isWin = true;
@@ -1283,24 +1284,28 @@ public class XocDiaGameServer
                         this.rsList.remove(0);
                     }
                     this.rsList.add(bt);
+                    if(bt == 0){
+                        result = "zeroWhite";
+                    }
+                    if(bt == 1){
+                        result = "oneWhite";
+                    }
+                    if(bt == 2){
+                        result = "even";
+                    }
+                    if(bt == 3){
+                        result = "threeWhite";
+                    }
+                    if(bt == 4){
+                        result = "fourWhite";
+                    }
                 }
+
                 ResultMsg msg = new ResultMsg();
                 msg.dinces = dinces;
                 msg.potList = this.potList;
                 HashMap<String, RewardModel> rewardMap = new HashMap<>();
                 long moneyBankerExchange = 0L;
-
-//                "user => (pot_id => (bet_info))"
-//                "username": "testacc123", key
-//                        "totalPrize": 6000,
-//                        "betResult": { map value
-//                    "Chẵn": 1000,
-//                            "Lẻ": 1000,
-//                            "4 den": 1000,
-//                            "4 trang": 1000,
-//                            "1 den": 1000,
-//                            "1 trang": 1000
-//                }
 
 
                 // username => transaction detail
@@ -1340,9 +1345,7 @@ public class XocDiaGameServer
                         else if (gPot.getPotName().equals("oneWhite")) {
                             transactionXocDiaMessages.getBetResult().setOneWhite(totalBetValue);
                         }
-                        if (gPot.isWin) {
-                            transactionXocDiaMessages.setResult(gPot.getPotName());
-                        }
+                        transactionXocDiaMessages.setResult(result);
                         userToTransaction.put(username, transactionXocDiaMessages);
                     }
 
