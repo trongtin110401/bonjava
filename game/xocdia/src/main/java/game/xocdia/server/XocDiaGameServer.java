@@ -1264,7 +1264,7 @@ public class XocDiaGameServer
                 }
                 this.gameLog.append(">").append("XDTT<");
                 List<Byte> potsWin = xdResult.getPotsWin();
-                String result = "";
+                String result = xdResult.getResult();
                 for (Byte bt : potsWin) {
                     GamePot gPot = this.getPot(bt.byteValue());
                     gPot.isWin = true;
@@ -1284,28 +1284,10 @@ public class XocDiaGameServer
                         this.rsList.remove(0);
                     }
                     this.rsList.add(bt);
-                    if(bt == 0){
-                        System.out.println("xoc diaaaaaaaaaa result zeroWhite");
-                        result = "zeroWhite";
-                    }
-                    if(bt == 1){
-                        System.out.println("xoc diaaaaaaaaaa result oneWhite");
-                        result = "oneWhite";
-                    }
-                    if(bt == 2){
-                        System.out.println("xoc diaaaaaaaaaa result even");
-                        result = "even";
-                    }
-                    if(bt == 3){
-                        System.out.println("xoc diaaaaaaaaaa result threeWhite");
-                        result = "threeWhite";
-                    }
-                    if(bt == 4){
-                        System.out.println("xoc diaaaaaaaaaa result fourWhite");
-                        result = "fourWhite";
-                    }
-                    System.out.println("xoc diaaaaaaaaaa pos win" + bt);
+
                 }
+
+                System.out.println("!!!!!!!!!!!!XOCDIA!!!!!!!! Result " + result);
 
                 ResultMsg msg = new ResultMsg();
                 msg.dinces = dinces;

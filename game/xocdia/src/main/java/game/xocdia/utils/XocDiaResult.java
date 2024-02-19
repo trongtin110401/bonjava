@@ -363,5 +363,32 @@ public class XocDiaResult {
         }
         return potsId;
     }
+
+    public String getResult() {
+        String result = "";
+        switch (this.count) {
+            case 0: {
+                result = "zeroWhite";
+                break;
+            }
+            case 1: {
+                result = "oneWhite";
+                break;
+            }
+            case 2: {
+                result = "even";
+                break;
+            }
+            case 3: {
+                result = "threeWhite";
+                break;
+            }
+            case 4: {
+                result = "fourWhite";
+                break;
+            }
+        }
+        return result;
+    }
 }
 
