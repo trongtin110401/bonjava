@@ -1285,20 +1285,26 @@ public class XocDiaGameServer
                     }
                     this.rsList.add(bt);
                     if(bt == 0){
+                        System.out.println("xoc diaaaaaaaaaa result zeroWhite");
                         result = "zeroWhite";
                     }
                     if(bt == 1){
+                        System.out.println("xoc diaaaaaaaaaa result oneWhite");
                         result = "oneWhite";
                     }
                     if(bt == 2){
+                        System.out.println("xoc diaaaaaaaaaa result even");
                         result = "even";
                     }
                     if(bt == 3){
+                        System.out.println("xoc diaaaaaaaaaa result threeWhite");
                         result = "threeWhite";
                     }
                     if(bt == 4){
+                        System.out.println("xoc diaaaaaaaaaa result fourWhite");
                         result = "fourWhite";
                     }
+                    System.out.println("xoc diaaaaaaaaaa pos win" + bt);
                 }
 
                 ResultMsg msg = new ResultMsg();
