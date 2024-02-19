@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  bitzero.server.api.IBZApi
  *  bitzero.server.extensions.data.BaseMsg
@@ -29,10 +29,13 @@ import com.vinplay.cardlib.models.Deck;
 import com.vinplay.cardlib.models.Rank;
 import com.vinplay.dal.entities.caothap.TopCaoThap;
 import com.vinplay.dal.service.impl.CaoThapServiceImpl;
+import com.vinplay.usercore.service.GameConfigService;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.vbee.common.response.MoneyResponse;
 import com.vinplay.vbee.common.statics.TransType;
+import game.modules.gameRoom.config.GameRoomConfig;
 import game.modules.minigame.cmd.send.UpdateUserInfoMsg;
+
 import java.io.PrintStream;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -40,6 +43,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
+import game.utils.ConfigGame;
 import org.apache.log4j.Logger;
 import scala.util.Random;
 
@@ -49,7 +54,7 @@ public class CaoThapUtils {
     public static final double RATIO = 98.0;
     public static final double MIN_RATIO = 1.01;
     private static long[] prizes = new long[]{500000L, 200000L, 100000L};
-    private static Logger logger = Logger.getLogger((String)"csvCaoThapPrize");
+    private static Logger logger = Logger.getLogger((String) "csvCaoThapPrize");
     private static final String FORMAT_SAN_BAI_DEP = "%s,\t%d,\t%s,\t%d,\t%s,\t%d,\t%d,\t%s";
     public static final double RATIO_NO_HU = 30.0;
 
@@ -68,10 +73,10 @@ public class CaoThapUtils {
             int dkSize = 0;
             for (Card cd : deck.getHand()) {
                 if (cd.getRank().getRank() > card.getRank().getRank()) {
-                    cdUp = (short)(cdUp + 1);
-                    dkSize = (short)(dkSize + 1);
+                    cdUp = (short) (cdUp + 1);
+                    dkSize = (short) (dkSize + 1);
                     continue;
-                }else if (cd.getRank().getRank() < card.getRank().getRank()) {
+                } else if (cd.getRank().getRank() < card.getRank().getRank()) {
                     cdDown = (short) (cdDown + 1);
                     dkSize = (short) (dkSize + 1);
                 }
@@ -83,11 +88,11 @@ public class CaoThapUtils {
                 ratioUp = 1.0D;
                 ratioDown = 0.0D;
             } else {
-                ratioUp = (double)Math.round(98.0 * (double)dkSize / (double)cdUp) / 100.0;
+                ratioUp = (double) Math.round(98.0 * (double) dkSize / (double) cdUp) / 100.0;
                 if (ratioUp <= 1.0) {
                     ratioUp = 1.01D;
                 }
-                ratioDown = (double)Math.round(98.0 * (double)dkSize / (double)cdDown) / 100.0;
+                ratioDown = (double) Math.round(98.0 * (double) dkSize / (double) cdDown) / 100.0;
                 if (ratioDown <= 1.0D) {
                     ratioDown = 1.01D;
                 }
@@ -117,8 +122,31 @@ public class CaoThapUtils {
                 }
                 ++numDown;
             }
-            while ((cardThua = (dk = new Deck(deck.getDeck(), deck.getCount())).deal()).getRank().getRank() > card.getRank().getRank() && choose == 1 && numDown > 0 || cardThua.getRank().getRank() < card.getRank().getRank() && choose == 0 && numUp > 0) {
+            //
+            int tiLeThang = 50;
+            try {
+                tiLeThang = ConfigGame.getIntValue(ConfigGame.CAO_THAP_TI_LE_THANG);
+            } catch (Exception e) {
             }
+
+
+            int random = new java.util.Random().nextInt(100);
+
+            // nguoi choi thang
+            if (random <= tiLeThang) {
+                // ep thang
+                while ((cardThua = new Deck(deck.getDeck(), deck.getCount()).deal()).getRank().getRank() < card.getRank().getRank()
+                        && choose == 1 && numDown > 0 || cardThua.getRank().getRank() > card.getRank().getRank() && choose == 0 && numUp > 0) {
+                }
+            } else {
+                // nguoi choi thua
+                // ep thua
+                while ((cardThua = new Deck(deck.getDeck(), deck.getCount()).deal()).getRank().getRank() > card.getRank().getRank()
+
+                        && choose == 1 && numDown > 0 || cardThua.getRank().getRank() < card.getRank().getRank() && choose == 0 && numUp > 0) {
+                }
+            }
+
         }
         return cardThua;
     }
@@ -155,10 +183,9 @@ public class CaoThapUtils {
             cal.add(5, -1);
             String startTime = startTimeFormat.format(cal.getTime());
             String endTime = endTimeFormat.format(cal.getTime());
-            Debug.trace((Object)("Tra thuong cao thap " + startTime + " - " + endTime));
+            Debug.trace((Object) ("Tra thuong cao thap " + startTime + " - " + endTime));
             CaoThapUtils.rewardCaoThap(startTime, endTime);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -172,21 +199,21 @@ public class CaoThapUtils {
         Debug.trace("So user duoc Cao Thap tra thuong su kien thung pha sanh: " + results.size());
         int rank = 0;
         if (results.size() > 0) {
-            entry = (TopCaoThap)results.get(rank);
+            entry = (TopCaoThap) results.get(rank);
             Debug.trace("Cao thap tra thuong: " + entry.nickname + ", " + prizes[rank]);
             moneyAfterUpdated = CaoThapUtils.rewardCaoThapToUser(entry, prizes[rank], actionName);
             CaoThapUtils.log(entry.nickname, rank + 1, entry.hand, entry.money, entry.timestamp, prizes[rank], moneyAfterUpdated);
             ++rank;
         }
         if (results.size() > 1) {
-            entry = (TopCaoThap)results.get(rank);
-            Debug.trace((Object)("Cao thap tra thuong: " + entry.nickname + ", " + prizes[rank]));
+            entry = (TopCaoThap) results.get(rank);
+            Debug.trace((Object) ("Cao thap tra thuong: " + entry.nickname + ", " + prizes[rank]));
             moneyAfterUpdated = CaoThapUtils.rewardCaoThapToUser(entry, prizes[rank], actionName);
             CaoThapUtils.log(entry.nickname, rank + 1, entry.hand, entry.money, entry.timestamp, prizes[rank], moneyAfterUpdated);
             ++rank;
         }
         if (results.size() > 2) {
-            entry = (TopCaoThap)results.get(rank);
+            entry = (TopCaoThap) results.get(rank);
             Debug.trace("Cao thap tra thuong: " + entry.nickname + ", " + prizes[rank]);
             moneyAfterUpdated = CaoThapUtils.rewardCaoThapToUser(entry, prizes[rank], actionName);
             CaoThapUtils.log(entry.nickname, rank + 1, entry.hand, entry.money, entry.timestamp, prizes[rank], moneyAfterUpdated);

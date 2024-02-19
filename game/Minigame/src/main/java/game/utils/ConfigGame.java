@@ -108,6 +108,8 @@ public class ConfigGame {
     public static final String SPECIAL_GIFT_CODE_USE_COUNT = "special_gift_code_use_count";
     public static final String SPECIAL_GIFT_CODE_BLOCK = "special_gift_code_block";
     public static final String TaiXiuForceResult = "tx_force_result";
+
+    public static final String CAO_THAP_TI_LE_THANG = "cao_thap_ti_le_thang";
     //private static Properties prop = new Properties();
     private static JSONObject json = new JSONObject();
 
