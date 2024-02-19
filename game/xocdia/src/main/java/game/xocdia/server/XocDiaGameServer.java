@@ -47,6 +47,8 @@ import bitzero.server.entities.User;
 import bitzero.server.extensions.data.DataCmd;
 import bitzero.util.common.business.Debug;
 import com.vinplay.common.HttpCommon;
+import com.vinplay.dal.service.MiniGameService;
+import com.vinplay.dal.service.impl.MiniGameServiceImpl;
 import com.vinplay.gamebai.entities.XocDiaBoss;
 import com.vinplay.usercore.logger.MoneyLogger;
 import com.vinplay.usercore.service.CacheService;
@@ -57,14 +59,9 @@ import com.vinplay.usercore.service.impl.CacheServiceImpl;
 import com.vinplay.usercore.service.impl.MoneyInGameServiceImpl;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.usercore.service.impl.XocDiaServiceImpl;
-import com.vinplay.vbee.common.enums.FreezeInGame;
-import com.vinplay.vbee.common.exceptions.KeyNotFoundException;
-import com.vinplay.vbee.common.messages.BaseMessage;
-import com.vinplay.vbee.common.messages.BetResult;
+import com.vinplay.vbee.common.enums.Games;
 import com.vinplay.vbee.common.messages.TransactionXocDiaMessage;
-import com.vinplay.vbee.common.response.BauCuaTo2.SetBauCuaKetqua;
 import com.vinplay.vbee.common.response.MoneyResponse;
-import com.vinplay.vbee.common.rmq.RMQApi;
 import com.vinplay.vbee.common.statics.TransType;
 import com.vinplay.vbee.common.utils.DateTimeUtils;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
@@ -73,7 +70,6 @@ import game.xocdia.cmd.send.*;
 import game.xocdia.entities.*;
 import game.xocdia.utils.XocDiaResult;
 import game.entities.PlayerInfo;
-import game.entities.UserScore;
 import game.modules.bot.BotXocDiaManager;
 import game.modules.gameRoom.entities.BanUserManager;
 import game.modules.gameRoom.entities.BossManager;
@@ -90,15 +86,8 @@ import game.xocdia.bot.BotPurchaseModel;
 import game.xocdia.bot.BotRejectModel;
 import game.xocdia.bot.BotRequestBankerModel;
 import game.xocdia.bot.BotSellPotModel;
-import game.xocdia.cmd.rev.AllInCmd;
 import game.xocdia.cmd.rev.BetCmd;
-import game.xocdia.cmd.rev.BuyPotCmd;
 import game.xocdia.cmd.rev.ChatCmd;
-import game.xocdia.cmd.rev.CheatCmd;
-import game.xocdia.cmd.rev.RegisChangeLockPotCmd;
-import game.xocdia.cmd.rev.RejectCmd;
-import game.xocdia.cmd.rev.ReqKickRoomCmd;
-import game.xocdia.cmd.rev.SellPotCmd;
 import game.xocdia.conf.XocDiaBetBotModel;
 import game.xocdia.conf.XocDiaConfig;
 import game.xocdia.conf.XocDiaForceResult;
@@ -107,6 +96,7 @@ import game.xocdia.utils.MsgUtils;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.ConcurrentHashMap;
@@ -132,6 +122,8 @@ public class XocDiaGameServer
     private MoneyInGameService service = new MoneyInGameServiceImpl();
     private XocDiaService xdService = new XocDiaServiceImpl();
     private Random rd = new Random();
+
+    private MiniGameService mgService = new MiniGameServiceImpl();
 
     private GameRoom room;
     private int roomId;
@@ -201,9 +193,7 @@ public class XocDiaGameServer
 
     public void init(GameRoom room) {
         try {
-            ++referenceId;
-
-
+             referenceId = mgService.getReferenceId(Games.XOC_DIA.getId());
             this.room = room;
             this.roomId = room.getId();
             this.roomType = room.setting.rule;
@@ -520,9 +510,18 @@ public class XocDiaGameServer
             Debug.trace((Object) e);
         }
     }
-
+    private void increaseAndSaveReferent() {
+        try {
+            referenceId ++;
+            this.mgService.saveReferenceId(this.referenceId, Games.XOC_DIA.getId());
+        } catch (SQLException e) {
+            Debug.trace((Object) ("Save reference error " + e.getMessage()));
+        }
+    }
     private synchronized void startNewGame() {
         try {
+            increaseAndSaveReferent();
+
             this.timestamp = DateTimeUtils.getCurrentTime();
             this.gameId = GameRoomIdGenerator.instance().getId();
             if (this.moneyType == 1) {
