@@ -2047,10 +2047,9 @@ public class GiftCodeDAOImpl
 
     @Override
     public List<GiftCodeResponse> searchAllGiftCodeByNickName(String nickName, int page) {
-        final ArrayList<GiftCodeResponse> results = new ArrayList<GiftCodeResponse>();
+        final ArrayList<GiftCodeResponse> results = new ArrayList<>();
         MongoDatabase db = MongoDBConnectionFactory.getDB();
-        HashMap<String, Object> conditions = new HashMap<String, Object>();
-//        HashMap<String, String> conditions = new HashMap<String, String>();
+        HashMap<String, Object> conditions = new HashMap<>();
         BasicDBObject objsort = new BasicDBObject();
         int num_start = (page - 1) * 50;
         int num_end = 50;
@@ -2058,7 +2057,7 @@ public class GiftCodeDAOImpl
         if (nickName != null && !nickName.equals("")) {
             conditions.put("nick_name", nickName);
         }
-        FindIterable iterable = db.getCollection("gift_code").find((Bson) new Document(conditions)).skip(num_start).limit(50).sort((Bson) objsort);
+        FindIterable iterable = db.getCollection("gift_code").find(new Document(conditions)).skip(num_start).limit(50).sort(objsort);
         iterable.forEach((Block) new Block<Document>() {
 
             public void apply(Document document) {

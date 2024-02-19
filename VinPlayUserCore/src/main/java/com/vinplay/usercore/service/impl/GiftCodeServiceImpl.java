@@ -21,12 +21,14 @@ package com.vinplay.usercore.service.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
-import com.mongodb.Block;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.vinplay.usercore.dao.impl.GiftCodeDAOImpl;
 import com.vinplay.usercore.service.GiftCodeService;
+import com.vinplay.vbee.common.dto.FindAllGiftCodeDto;
+import com.vinplay.vbee.common.dto.FindGiftCodeUsedByUserDto;
 import com.vinplay.vbee.common.dto.GiftCodeDto;
 import com.vinplay.vbee.common.dto.UseGiftCodeDto;
 import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
@@ -214,6 +216,86 @@ public class GiftCodeServiceImpl
         return dao.searchAllGiftCodeByNickName(nickName, page);
     }
 
+    public FindGiftCodeUsedByUserDto findGiftCodeByNickName(String nickName, int pageIndex, int pageSize) {
+        FindGiftCodeUsedByUserDto results = new FindGiftCodeUsedByUserDto(false, "1001");
+        List<UseGiftCodeDto> transactions = new ArrayList<>();
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+
+        int skip = (pageIndex - 1) * pageSize;
+
+        MongoCollection<Document> collection = db.getCollection("user_gift_code");
+        Document query = new Document("nick_name", nickName);
+        MongoCursor<Document> cursor = collection.find(query).skip(skip).limit(pageSize).iterator();
+
+        while (cursor.hasNext()) {
+            Document document = cursor.next();
+            UseGiftCodeDto giftCodeDto = new UseGiftCodeDto();
+            giftCodeDto.setCode(document.getString("code"));
+            giftCodeDto.setPrice(document.getInteger("price"));
+            giftCodeDto.setActive(document.getBoolean("active"));
+            giftCodeDto.setType(document.getString("type"));
+            giftCodeDto.setTimelog(document.getString("created_time"));
+            giftCodeDto.setNickname(document.getString("nick_name"));
+            transactions.add(giftCodeDto);
+        }
+        results.setErrorCode("0");
+        results.setSuccess(true);
+        results.setPageIndex(pageIndex);
+        results.setPageSize(pageSize);
+        results.setTransactions(transactions);
+        return results;
+    }
+
+    public FindAllGiftCodeDto findAllGiftCode(String nickName, String code, int price, boolean active,
+                                              String type, String createdTime, int pageIndex, int pageSize) {
+        FindAllGiftCodeDto results = new FindAllGiftCodeDto(false, "1001");
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        int skip = (pageIndex - 1) * pageSize;
+
+        MongoCollection<Document> collection = db.getCollection("gift_code");
+        Document query = new Document();
+        if (nickName != null && !nickName.isEmpty()) {
+            query.append("nickName", nickName);
+        }
+        if (code != null && !code.isEmpty()) {
+            query.append("code", code);
+        }
+        if (price > 0) {
+            query.append("price", price);
+        }
+        query.append("active", active);
+        if (type != null && !type.isEmpty()) {
+            query.append("type", type);
+        }
+        if (createdTime != null && !createdTime.isEmpty()) {
+            query.append("created_time", new Document("$gte", createdTime));
+        }
+        MongoCursor<Document> cursor = collection.find(query).skip(skip).limit(pageSize).iterator();
+
+        List<GiftCodeDto> transactions = new ArrayList<>();
+        while (cursor.hasNext()) {
+            Document document = cursor.next();
+            GiftCodeDto giftCodeDto = new GiftCodeDto();
+            giftCodeDto.setCode(document.getString("code"));
+            giftCodeDto.setPrice(document.getInteger("price"));
+            giftCodeDto.setQuantity(document.getInteger("quantity"));
+            giftCodeDto.setActive(document.getBoolean("active"));
+            giftCodeDto.setType(document.getString("type"));
+            giftCodeDto.setExpirationDate(document.getInteger("expiration_date"));
+            giftCodeDto.setExpirationTime(document.getString("expiration_time"));
+            giftCodeDto.setNickName(document.getString("nick_name"));
+            giftCodeDto.setUsedTime(document.getString("used_time"));
+            giftCodeDto.setCreatedDate(document.getString("created_time"));
+            transactions.add(giftCodeDto);
+        }
+        results.setErrorCode("0");
+        results.setSuccess(true);
+        results.setPageIndex(pageIndex);
+        results.setPageSize(pageSize);
+        results.setTransactions(transactions);
+        return results;
+    }
+
     @Override
     public long countAllGiftCodeByNickName(String nickName) {
         GiftCodeDAOImpl dao = new GiftCodeDAOImpl();
@@ -255,6 +337,22 @@ public class GiftCodeServiceImpl
         doc.append("active", useGiftCodeDto.isActive());
         doc.append("nick_name", useGiftCodeDto.getNickname());
         col.insertOne(doc);
+    }
+
+    public void updateGiftCode(GiftCodeDto giftCodeDto) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection col = db.getCollection("gift_code");
+        Document query = new Document("code", giftCodeDto.getCode());
+        Document update = new Document("$set", new Document()
+                .append("price", giftCodeDto.getPrice())
+                .append("quantity", giftCodeDto.getQuantity())
+                .append("type", giftCodeDto.getType())
+                .append("length", giftCodeDto.getLength())
+                .append("expiration_time", giftCodeDto.getExpirationTime())
+                .append("active", giftCodeDto.isActive())
+                .append("nick_name", giftCodeDto.getNickName())
+                .append("used_time", giftCodeDto.getUsedTime()));
+        col.updateOne(query,update);
     }
 
     public boolean checkUserUseGiftCode(String nickName, String type) {

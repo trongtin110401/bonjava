@@ -1,7 +1,6 @@
 package com.vinplay.api.processors;
 
 import com.vinplay.api.dao.ManageGiftCodeDAO;
-import com.vinplay.api.entities.UseCode;
 import com.vinplay.api.entities.UserOTP;
 import com.vinplay.usercore.service.impl.GiftCodeServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
@@ -20,6 +19,10 @@ import static game.modules.gameRoom.entities.GameMoneyInfo.userService;
 
 public class UserNapGiftCodeProcessor
         implements BaseProcessor<HttpServletRequest, String> {
+
+    private final String CODE_TAN_THU = "1";
+
+    private final String CODE_VIP = "2";
 
 
     public String execute(Param<HttpServletRequest> param) {
@@ -49,9 +52,15 @@ public class UserNapGiftCodeProcessor
             }
 
             UserOTP usotp = dao.getUserActiveOTP(nickName);
-            if (usotp.getActive() != 1) {
+            if (usotp.getActive() != 1 && !giftCodeDto.getType().equals(CODE_TAN_THU)) {
                 return response.toJson();
             }
+            giftCodeDto.setNickName(nickName);
+            giftCodeDto.setUsedTime(VinPlayUtils.getCurrentDateTime());
+            giftCodeDto.setActive(false);
+
+
+
             UseGiftCodeDto userGiftCode = new UseGiftCodeDto();
 
             userGiftCode.setCode(code);
@@ -61,6 +70,7 @@ public class UserNapGiftCodeProcessor
             userGiftCode.setTimelog(VinPlayUtils.getCurrentDateTime());
             userGiftCode.setType(giftCodeDto.getType());
             service.saveUserUseGiftCode(userGiftCode);
+            service.updateGiftCode(giftCodeDto);
 
             userService.updateMoney(nickName, giftCodeDto.getPrice(), "vin", giftCodeDto.getType(), giftCodeDto.getType(), "M\u00e3: " + code, 0L, null, TransType.NO_VIPPOINT);
 
