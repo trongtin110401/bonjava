@@ -930,6 +930,17 @@
             <name>User nap gift code</name>
             <path>com.vinplay.api.processors.UserNapGiftCodeProcessor</path>
         </command>
+        <command>
+            <id>4110</id>
+            <name>User nap gift code</name>
+            <path>com.vinplay.api.processors.UserBankInfoProcessor</path>
+        </command>
+
+        <command>
+            <id>4111</id>
+            <name>User nap gift code</name>
+            <path>com.vinplay.api.processors.GetUserBankInfoProcessor</path>
+        </command>
 
     </commands>
 </portal>
