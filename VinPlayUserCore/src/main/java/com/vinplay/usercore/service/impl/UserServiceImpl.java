@@ -39,7 +39,11 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.hazelcast.transaction.TransactionContext;
 import com.hazelcast.transaction.TransactionOptions;
+import com.mongodb.BasicDBObject;
+import com.mongodb.Block;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.vinplay.common.notification.NotificationAdminObj;
 import com.vinplay.common.notification.SendToWS;
@@ -68,6 +72,8 @@ import com.vinplay.usercore.utils.UserMakertingUtil;
 import com.vinplay.usercore.utils.VippointUtils;
 import com.vinplay.utils.TelegramAlert;
 import com.vinplay.utils.TelegramUtil;
+import com.vinplay.vbee.common.dto.GiftCodeDto;
+import com.vinplay.vbee.common.dto.UserBankInfoDto;
 import com.vinplay.vbee.common.enums.Games;
 import com.vinplay.vbee.common.enums.StatusGames;
 import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
@@ -358,7 +364,7 @@ public class UserServiceImpl
                     } else { // nếu ko thì trả về ko đủ tiền
                         response.setErrorCode("1002");
                         MoneyLogger.log(nickname, gameName, money, fee, moneyType, serviceName, "1002", "khong du tien");
-                        response.setErrorCode("1002 - user = "+user.toJson()+" - moneyUser = "+moneyUser+" - currentMoney"+currentMoney);
+                        response.setErrorCode("1002 - user = " + user.toJson() + " - moneyUser = " + moneyUser + " - currentMoney" + currentMoney);
                     }
                 } else {
                     if (moneyType.equals("vin") && transId != null && type.getId() == TransType.END_TRANS.getId()) {
@@ -907,7 +913,7 @@ public class UserServiceImpl
                                                         RMQApi.publishMessagePayment((BaseMessage) messageReceive, (int) 16);
                                                         RMQApi.publishMessageLogMoney((LogMoneyUserMessage) messageLogReceive);
                                                         historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "CK Người Chơi",
-                                                                "Chuyển Khoản", String.valueOf(vin), "Thành Công",nicknameReceive, nicknameSend, HistoryTransConst.GAMER, transactionId));
+                                                                "Chuyển Khoản", String.valueOf(vin), "Thành Công", nicknameReceive, nicknameSend, HistoryTransConst.GAMER, transactionId));
                                                         historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "CK Người Chơi",
                                                                 "Nhận Tiền", String.valueOf(vin), "Thành Công", nicknameSend, nicknameReceive, HistoryTransConst.GAMER, transactionId));
 
@@ -1090,7 +1096,7 @@ public class UserServiceImpl
                                                         RMQApi.publishMessagePayment((BaseMessage) messageReceive2, (int) 16);
                                                         RMQApi.publishMessageLogMoney((LogMoneyUserMessage) messageLogReceive3);
                                                         historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "CK Người Chơi",
-                                                                "Chuyển Khoản", String.valueOf(vin), "Thành Công",nicknameReceive, nicknameSend, HistoryTransConst.GAMER, transactionId));
+                                                                "Chuyển Khoản", String.valueOf(vin), "Thành Công", nicknameReceive, nicknameSend, HistoryTransConst.GAMER, transactionId));
                                                         historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "CK Người Chơi",
                                                                 "Nhận Tiền", String.valueOf(vin), "Thành Công", nicknameSend, nicknameReceive, HistoryTransConst.GAMER, transactionId));
 
@@ -1239,7 +1245,8 @@ public class UserServiceImpl
     @Override
     public TransferMoneyResponse transferMoneyToAnUser(String nicknameSend, String nicknameReceive, long vin, String description, boolean check) {
         long moneyReceive;
-        TransferMoneyResponse   res = new TransferMoneyResponse((byte) 1, 0L, 0L);;
+        TransferMoneyResponse res = new TransferMoneyResponse((byte) 1, 0L, 0L);
+        ;
         int status;
         if (nicknameSend == null || nicknameReceive == null || description == null || nicknameSend.equals(nicknameReceive)) {
             logger.debug("Missing param");
@@ -1251,7 +1258,7 @@ public class UserServiceImpl
         {
             try {
                 if (GameCommon.getValueInt("IS_TRANSFER_MONEY") == 1) {
-                    logger.debug( "Khoa chuyen tien");
+                    logger.debug("Khoa chuyen tien");
                     return res;
                 }
                 userReceive = this.getUserByNickName(nicknameReceive);
@@ -1309,12 +1316,12 @@ public class UserServiceImpl
                                                 LogMoneyUserMessage messageLogReceive = new LogMoneyUserMessage(userCacheReceive.getId(), nicknameReceive, "TransferMoney", "Chuy\u1ec3n kho\u1ea3n", currentMoneyReceive, moneyReceive, "vin", desReceive, 0L, false, userCacheReceive.isBot());
                                                 this.updateMoneyUser(messageSend);
                                                 //RMQApi.publishMessagePayment( messageSend,  16);
-                                                RMQApi.publishMessageLogMoney( messageLogSend);
+                                                RMQApi.publishMessageLogMoney(messageLogSend);
                                                 //RMQApi.publishMessagePayment(messageReceive, 16);
                                                 this.updateMoneyUser(messageReceive);
-                                                RMQApi.publishMessageLogMoney( messageLogReceive);
+                                                RMQApi.publishMessageLogMoney(messageLogReceive);
                                                 historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "CK Người Chơi",
-                                                        "Chuyển Khoản", String.valueOf(vin), "Thành Công",nicknameReceive, nicknameSend, HistoryTransConst.GAMER, transactionId));
+                                                        "Chuyển Khoản", String.valueOf(vin), "Thành Công", nicknameReceive, nicknameSend, HistoryTransConst.GAMER, transactionId));
                                                 historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "CK Người Chơi",
                                                         "Nhận Tiền", String.valueOf(vin), "Thành Công", nicknameSend, nicknameReceive, HistoryTransConst.GAMER, transactionId));
                                                 userMap.put(nicknameSend, userSend);
@@ -1347,9 +1354,9 @@ public class UserServiceImpl
                                             MoneyMessageInMinigame messageSend2 = new MoneyMessageInMinigame(VinPlayUtils.genMessageId(), userSend.getId(), nicknameSend, "TransferMoney", moneyUser, currentMoney, -vin, "vin", fee2, 0, 0);
                                             String desSend2 = "Chuy\u1ec3n t\u1edbi " + nicknameReceive + ": " + description;
                                             LogMoneyUserMessage messageLogSend2 = new LogMoneyUserMessage(userSend.getId(), nicknameSend, "TransferMoney", "Chuy\u1ec3n kho\u1ea3n", currentMoney, -vin, "vin", desSend2, fee2, false, userSend.isBot());
-                                           // RMQApi.publishMessagePayment( messageSend2, 16);
+                                            // RMQApi.publishMessagePayment( messageSend2, 16);
                                             this.updateMoneyUser(messageSend2);
-                                            RMQApi.publishMessageLogMoney( messageLogSend2);
+                                            RMQApi.publishMessageLogMoney(messageLogSend2);
 
                                             userMap.put(nicknameSend, userSend);
                                             context.commitTransaction();
@@ -1397,119 +1404,119 @@ public class UserServiceImpl
                             if (userSend2 == null) break block71;
                             long moneyUser2 = userSend2.getVin();
                             long currentMoney2 = userSend2.getVinTotal();
-                                    res.setMoneyUse(moneyUser2);
-                                    res.setCurrentMoney(currentMoney2);
-                                    if (!userSend2.isBanTransferMoney()) {
-                                        if (userSend2.getMobile() != null && !userSend2.getMobile().isEmpty() && userSend2.isHasMobileSecurity()) {
-                                            if (moneyUser2 >= vin) {
-                                                if (check) {
-                                                    res.setCode((byte) 0);
-                                                    break block71;
-                                                }
-                                                TransactionContext context2 = client.newTransactionContext(new TransactionOptions().setTransactionType(TransactionOptions.TransactionType.ONE_PHASE));
-                                                if (userMap.containsKey((Object) nicknameReceive)) {
-                                                    try {
-                                                        context2.beginTransaction();
-                                                        userMap.lock(nicknameReceive);
-                                                        UserCacheModel userCacheReceive2 = (UserCacheModel) userMap.get((Object) nicknameReceive);
-                                                        status = this.getStatusChuyenTienDaiLy(userSend2.getDaily(), userCacheReceive2.getDaily());
-                                                        long fee2 = Math.round((double) vin * this.getFeeTransfer(status));
-                                                        moneyReceive = vin - fee2;
-                                                        res.setMoneyReceive(moneyReceive);
-                                                        long moneyUserReceive2 = userCacheReceive2.getVin();
-                                                        long currentMoneyReceive3 = userCacheReceive2.getVinTotal();
-                                                        userSend2.setVin(moneyUser2 -= vin);
-                                                        userSend2.setVinTotal(currentMoney2 -= vin);
-                                                        userCacheReceive2.setVin(moneyUserReceive2 += moneyReceive);
-                                                        userCacheReceive2.setVinTotal(currentMoneyReceive3 += moneyReceive);
-                                                        MoneyMessageInMinigame messageSend3 = new MoneyMessageInMinigame(VinPlayUtils.genMessageId(), userSend2.getId(), nicknameSend, "TransferMoney", moneyUser2, currentMoney2, -vin, "vin", fee2, 0, 0);
-                                                        String desSend3 = "Chuy\u1ec3n t\u1edbi " + nicknameReceive + ": " + description;
-                                                        LogMoneyUserMessage messageLogSend3 = new LogMoneyUserMessage(userSend2.getId(), nicknameSend, "TransferMoney", "Chuy\u1ec3n kho\u1ea3n", currentMoney2, -vin, "vin", desSend3, fee2, false, userSend2.isBot());
-                                                        int recharge2 = 0;
-                                                        if (status == 3 || status == 6) {
-                                                            recharge2 = -1;
-                                                            userCacheReceive2.setRechargeMoney(userCacheReceive2.getRechargeMoney() + moneyReceive);
-                                                        }
-                                                        MoneyMessageInMinigame messageReceive2 = new MoneyMessageInMinigame(VinPlayUtils.genMessageId(), userCacheReceive2.getId(), nicknameReceive, "TransferMoney", moneyUserReceive2, currentMoneyReceive3, moneyReceive, "vin", 0L, recharge2, 0);
-                                                        String desReceive3 = "Nh\u1eadn t\u1eeb " + nicknameSend + ": " + description;
-                                                        LogMoneyUserMessage messageLogReceive3 = new LogMoneyUserMessage(userCacheReceive2.getId(), nicknameReceive, "TransferMoney", "Chuy\u1ec3n kho\u1ea3n", currentMoneyReceive3, moneyReceive, "vin", desReceive3, 0L, false, userCacheReceive2.isBot());
-                                                        //RMQApi.publishMessagePayment((BaseMessage) messageSend3, (int) 16);
-                                                        this.updateMoneyUser(messageSend3);
-                                                        RMQApi.publishMessageLogMoney((LogMoneyUserMessage) messageLogSend3);
-                                                        //RMQApi.publishMessagePayment((BaseMessage) messageReceive2, (int) 16);
-                                                        this.updateMoneyUser(messageReceive2);
-                                                        RMQApi.publishMessageLogMoney((LogMoneyUserMessage) messageLogReceive3);
-                                                        historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "CK Người Chơi",
-                                                                "Chuyển Khoản", String.valueOf(vin), "Thành Công",nicknameReceive, nicknameSend, HistoryTransConst.GAMER, transactionId));
-                                                        historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "CK Người Chơi",
-                                                                "Nhận Tiền", String.valueOf(vin), "Thành Công", nicknameSend, nicknameReceive, HistoryTransConst.GAMER, transactionId));
-                                                        userMap.put(nicknameSend, userSend2);
-                                                        userMap.put(nicknameReceive, userCacheReceive2);
-                                                        context2.commitTransaction();
-                                                        res.setCode((byte) 24);
-                                                        res.setMoneyUse(moneyUser2);
-                                                        res.setCurrentMoney(currentMoney2);
-                                                        res.setCurrentMoneyReceive(currentMoneyReceive3);
-                                                        break block71;
-                                                    } catch (Exception e5) {
-                                                        logger.debug((Object) e5);
-                                                        MoneyLogger.log(nicknameSend, "TransferMoney", vin, 0L, "vin", "chuyen khoan", "1001", e5.getMessage());
-                                                        context2.rollbackTransaction();
-                                                        break block71;
-                                                    } finally {
-                                                        userMap.unlock(nicknameReceive);
-                                                    }
-                                                }
-                                                try {
-                                                    context2.beginTransaction();
-                                                    long currentMoneyReceive4 = userReceive.getVinTotal();
-                                                    status = this.getStatusChuyenTienDaiLy(userSend2.getDaily(), userReceive.getDaily());
-                                                    long fee3 = Math.round((double) vin * this.getFeeTransfer(status));
-                                                    moneyReceive = vin - fee3;
-                                                    res.setMoneyReceive(moneyReceive);
-                                                    currentMoneyReceive4 += moneyReceive;
-                                                    userSend2.setVin(moneyUser2 -= vin);
-                                                    userSend2.setVinTotal(currentMoney2 -= vin);
-                                                    MoneyMessageInMinigame messageSend4 = new MoneyMessageInMinigame(VinPlayUtils.genMessageId(), userSend2.getId(), nicknameSend, "TransferMoney", moneyUser2, currentMoney2, -vin, "vin", fee3, 0, 0);
-                                                    String desSend4 = "Chuy\u1ec3n t\u1edbi " + nicknameReceive + ": " + description;
-                                                    LogMoneyUserMessage messageLogSend4 = new LogMoneyUserMessage(userSend2.getId(), nicknameSend, "TransferMoney", "Chuy\u1ec3n kho\u1ea3n", currentMoney2, -vin, "vin", desSend4, fee3, false, userSend2.isBot());
-                                                    //RMQApi.publishMessagePayment((BaseMessage) messageSend4, (int) 16);
-                                                    this.updateMoneyUser(messageSend4);
-                                                    RMQApi.publishMessageLogMoney((LogMoneyUserMessage) messageLogSend4);
-                                                    userMap.put(nicknameSend, userSend2);
-                                                    context2.commitTransaction();
-                                                    res.setCode((byte) 24);
-                                                    res.setMoneyUse(moneyUser2);
-                                                    res.setCurrentMoney(currentMoney2);
-                                                    UserDaoImpl dao2 = new UserDaoImpl();
-                                                    if (!dao2.updateMoney(userReceive.getId(), moneyReceive, "vin"))
-                                                        break block71;
-                                                    if (status == 3 || status == 6) {
-                                                        try {
-                                                            dao2.updateRechargeMoney(userReceive.getId(), moneyReceive);
-                                                        } catch (Exception e6) {
-                                                            logger.debug((Object) e6);
-                                                        }
-                                                    }
-                                                    res.setCurrentMoneyReceive(currentMoneyReceive4);
-                                                    String desReceive4 = "Nh\u1eadn t\u1eeb " + nicknameSend + ": " + description;
-                                                    LogMoneyUserMessage messageLogReceive4 = new LogMoneyUserMessage(userReceive.getId(), nicknameReceive, "TransferMoney", "Chuy\u1ec3n kho\u1ea3n", currentMoneyReceive4, moneyReceive, "vin", desReceive4, 0L, false, userReceive.isBot());
-                                                    RMQApi.publishMessageLogMoney((LogMoneyUserMessage) messageLogReceive4);
-                                                    break block71;
-                                                } catch (Exception e5) {
-                                                    logger.debug((Object) e5);
-                                                    MoneyLogger.log(nicknameSend, "TransferMoney", vin, 0L, "vin", "chuyen khoan", "1001", e5.getMessage());
-                                                    context2.rollbackTransaction();
-                                                }
-                                                break block71;
-                                            }
-                                            res.setCode((byte) 4);
+                            res.setMoneyUse(moneyUser2);
+                            res.setCurrentMoney(currentMoney2);
+                            if (!userSend2.isBanTransferMoney()) {
+                                if (userSend2.getMobile() != null && !userSend2.getMobile().isEmpty() && userSend2.isHasMobileSecurity()) {
+                                    if (moneyUser2 >= vin) {
+                                        if (check) {
+                                            res.setCode((byte) 0);
                                             break block71;
                                         }
-                                        res.setCode((byte) 3);
+                                        TransactionContext context2 = client.newTransactionContext(new TransactionOptions().setTransactionType(TransactionOptions.TransactionType.ONE_PHASE));
+                                        if (userMap.containsKey((Object) nicknameReceive)) {
+                                            try {
+                                                context2.beginTransaction();
+                                                userMap.lock(nicknameReceive);
+                                                UserCacheModel userCacheReceive2 = (UserCacheModel) userMap.get((Object) nicknameReceive);
+                                                status = this.getStatusChuyenTienDaiLy(userSend2.getDaily(), userCacheReceive2.getDaily());
+                                                long fee2 = Math.round((double) vin * this.getFeeTransfer(status));
+                                                moneyReceive = vin - fee2;
+                                                res.setMoneyReceive(moneyReceive);
+                                                long moneyUserReceive2 = userCacheReceive2.getVin();
+                                                long currentMoneyReceive3 = userCacheReceive2.getVinTotal();
+                                                userSend2.setVin(moneyUser2 -= vin);
+                                                userSend2.setVinTotal(currentMoney2 -= vin);
+                                                userCacheReceive2.setVin(moneyUserReceive2 += moneyReceive);
+                                                userCacheReceive2.setVinTotal(currentMoneyReceive3 += moneyReceive);
+                                                MoneyMessageInMinigame messageSend3 = new MoneyMessageInMinigame(VinPlayUtils.genMessageId(), userSend2.getId(), nicknameSend, "TransferMoney", moneyUser2, currentMoney2, -vin, "vin", fee2, 0, 0);
+                                                String desSend3 = "Chuy\u1ec3n t\u1edbi " + nicknameReceive + ": " + description;
+                                                LogMoneyUserMessage messageLogSend3 = new LogMoneyUserMessage(userSend2.getId(), nicknameSend, "TransferMoney", "Chuy\u1ec3n kho\u1ea3n", currentMoney2, -vin, "vin", desSend3, fee2, false, userSend2.isBot());
+                                                int recharge2 = 0;
+                                                if (status == 3 || status == 6) {
+                                                    recharge2 = -1;
+                                                    userCacheReceive2.setRechargeMoney(userCacheReceive2.getRechargeMoney() + moneyReceive);
+                                                }
+                                                MoneyMessageInMinigame messageReceive2 = new MoneyMessageInMinigame(VinPlayUtils.genMessageId(), userCacheReceive2.getId(), nicknameReceive, "TransferMoney", moneyUserReceive2, currentMoneyReceive3, moneyReceive, "vin", 0L, recharge2, 0);
+                                                String desReceive3 = "Nh\u1eadn t\u1eeb " + nicknameSend + ": " + description;
+                                                LogMoneyUserMessage messageLogReceive3 = new LogMoneyUserMessage(userCacheReceive2.getId(), nicknameReceive, "TransferMoney", "Chuy\u1ec3n kho\u1ea3n", currentMoneyReceive3, moneyReceive, "vin", desReceive3, 0L, false, userCacheReceive2.isBot());
+                                                //RMQApi.publishMessagePayment((BaseMessage) messageSend3, (int) 16);
+                                                this.updateMoneyUser(messageSend3);
+                                                RMQApi.publishMessageLogMoney((LogMoneyUserMessage) messageLogSend3);
+                                                //RMQApi.publishMessagePayment((BaseMessage) messageReceive2, (int) 16);
+                                                this.updateMoneyUser(messageReceive2);
+                                                RMQApi.publishMessageLogMoney((LogMoneyUserMessage) messageLogReceive3);
+                                                historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "CK Người Chơi",
+                                                        "Chuyển Khoản", String.valueOf(vin), "Thành Công", nicknameReceive, nicknameSend, HistoryTransConst.GAMER, transactionId));
+                                                historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "CK Người Chơi",
+                                                        "Nhận Tiền", String.valueOf(vin), "Thành Công", nicknameSend, nicknameReceive, HistoryTransConst.GAMER, transactionId));
+                                                userMap.put(nicknameSend, userSend2);
+                                                userMap.put(nicknameReceive, userCacheReceive2);
+                                                context2.commitTransaction();
+                                                res.setCode((byte) 24);
+                                                res.setMoneyUse(moneyUser2);
+                                                res.setCurrentMoney(currentMoney2);
+                                                res.setCurrentMoneyReceive(currentMoneyReceive3);
+                                                break block71;
+                                            } catch (Exception e5) {
+                                                logger.debug((Object) e5);
+                                                MoneyLogger.log(nicknameSend, "TransferMoney", vin, 0L, "vin", "chuyen khoan", "1001", e5.getMessage());
+                                                context2.rollbackTransaction();
+                                                break block71;
+                                            } finally {
+                                                userMap.unlock(nicknameReceive);
+                                            }
+                                        }
+                                        try {
+                                            context2.beginTransaction();
+                                            long currentMoneyReceive4 = userReceive.getVinTotal();
+                                            status = this.getStatusChuyenTienDaiLy(userSend2.getDaily(), userReceive.getDaily());
+                                            long fee3 = Math.round((double) vin * this.getFeeTransfer(status));
+                                            moneyReceive = vin - fee3;
+                                            res.setMoneyReceive(moneyReceive);
+                                            currentMoneyReceive4 += moneyReceive;
+                                            userSend2.setVin(moneyUser2 -= vin);
+                                            userSend2.setVinTotal(currentMoney2 -= vin);
+                                            MoneyMessageInMinigame messageSend4 = new MoneyMessageInMinigame(VinPlayUtils.genMessageId(), userSend2.getId(), nicknameSend, "TransferMoney", moneyUser2, currentMoney2, -vin, "vin", fee3, 0, 0);
+                                            String desSend4 = "Chuy\u1ec3n t\u1edbi " + nicknameReceive + ": " + description;
+                                            LogMoneyUserMessage messageLogSend4 = new LogMoneyUserMessage(userSend2.getId(), nicknameSend, "TransferMoney", "Chuy\u1ec3n kho\u1ea3n", currentMoney2, -vin, "vin", desSend4, fee3, false, userSend2.isBot());
+                                            //RMQApi.publishMessagePayment((BaseMessage) messageSend4, (int) 16);
+                                            this.updateMoneyUser(messageSend4);
+                                            RMQApi.publishMessageLogMoney((LogMoneyUserMessage) messageLogSend4);
+                                            userMap.put(nicknameSend, userSend2);
+                                            context2.commitTransaction();
+                                            res.setCode((byte) 24);
+                                            res.setMoneyUse(moneyUser2);
+                                            res.setCurrentMoney(currentMoney2);
+                                            UserDaoImpl dao2 = new UserDaoImpl();
+                                            if (!dao2.updateMoney(userReceive.getId(), moneyReceive, "vin"))
+                                                break block71;
+                                            if (status == 3 || status == 6) {
+                                                try {
+                                                    dao2.updateRechargeMoney(userReceive.getId(), moneyReceive);
+                                                } catch (Exception e6) {
+                                                    logger.debug((Object) e6);
+                                                }
+                                            }
+                                            res.setCurrentMoneyReceive(currentMoneyReceive4);
+                                            String desReceive4 = "Nh\u1eadn t\u1eeb " + nicknameSend + ": " + description;
+                                            LogMoneyUserMessage messageLogReceive4 = new LogMoneyUserMessage(userReceive.getId(), nicknameReceive, "TransferMoney", "Chuy\u1ec3n kho\u1ea3n", currentMoneyReceive4, moneyReceive, "vin", desReceive4, 0L, false, userReceive.isBot());
+                                            RMQApi.publishMessageLogMoney((LogMoneyUserMessage) messageLogReceive4);
+                                            break block71;
+                                        } catch (Exception e5) {
+                                            logger.debug((Object) e5);
+                                            MoneyLogger.log(nicknameSend, "TransferMoney", vin, 0L, "vin", "chuyen khoan", "1001", e5.getMessage());
+                                            context2.rollbackTransaction();
+                                        }
                                         break block71;
                                     }
-                                    res.setCode((byte) 5);
+                                    res.setCode((byte) 4);
+                                    break block71;
+                                }
+                                res.setCode((byte) 3);
+                                break block71;
+                            }
+                            res.setCode((byte) 5);
                         } catch (Exception e4) {
                             logger.debug((Object) e4);
                             MoneyLogger.log(nicknameSend, "TransferMoney", vin, 0L, "vin", "chuyen khoan", "1001", e4.getMessage());
@@ -1526,7 +1533,7 @@ public class UserServiceImpl
             }
         }
 
-        if(res.getCode() == 24 && userReceive != null && (userReceive.getDaily() == 1 || userReceive.getDaily() ==2)){
+        if (res.getCode() == 24 && userReceive != null && (userReceive.getDaily() == 1 || userReceive.getDaily() == 2)) {
             new TelegramUtil().senMessToDaily(nicknameReceive, "Nhận tiền từ : " + nicknameSend, vin, description);
         }
         logger.debug((Object) ("Response transferMoney: " + res.getCode()));
@@ -1536,14 +1543,15 @@ public class UserServiceImpl
     public Boolean updateMoneyUser(MoneyMessageInMinigame message) {
         try {
             boolean updateTimeOut;
-            block20 : {
+            block20:
+            {
                 String nickname = message.getNickname();
                 IMap userMap = HazelcastUtils.getActiveMap(nickname);
                 updateTimeOut = true;
                 if (userMap.containsKey(nickname)) {
                     try {
                         userMap.lock(nickname);
-                        UserActiveModel model = (UserActiveModel)userMap.get(nickname);
+                        UserActiveModel model = (UserActiveModel) userMap.get(nickname);
                         if (Long.parseLong(message.getId()) < model.getLastMessageId() || model.isBot()) {
                             return true;
                         }
@@ -1568,17 +1576,15 @@ public class UserServiceImpl
                         }
                         model.setUpdateMySQL(updateTimeOut);
                         userMap.put(nickname, model);
-                    }
-                    catch (Exception e) {
+                    } catch (Exception e) {
                         logger.error(e);
                         break block20;
                     }
                     try {
                         userMap.unlock(nickname);
-                    }
-                    catch (Exception e) {
+                    } catch (Exception e) {
                         // empty catch block
-                        logger.error( e.getStackTrace());
+                        logger.error(e.getStackTrace());
                     }
                 }
             }
@@ -1600,8 +1606,7 @@ public class UserServiceImpl
             UserDaoImpl userDao = new UserDaoImpl();
             userDao.updateMoney(message, type);
             return true;
-        }
-        catch (Exception e2) {
+        } catch (Exception e2) {
             e2.printStackTrace();
             logger.error("UpdateMoneyProcessor error with" + e2.getStackTrace());
             return false;
@@ -2370,13 +2375,13 @@ public class UserServiceImpl
             String tmp = userWithdraw.UpdatedAt;
             RutBanhXuLy rutbankxl = new RutBanhXuLy();
             InfoBankEnity infobank = rutbankxl.GetRutBankSTK(userWithdraw.Username);
-            if(infobank == null){
-                tmp = tmp + "|"+null+"|"+null+"|"+null;
-            }else{
+            if (infobank == null) {
+                tmp = tmp + "|" + null + "|" + null + "|" + null;
+            } else {
                 String bankname = infobank.getBankname();
                 String banknumber = infobank.getBanknumber();
                 bankbran = infobank.getBankbran();
-                tmp = tmp + "|"+bankbran+"|"+bankname+"|"+banknumber;
+                tmp = tmp + "|" + bankbran + "|" + bankname + "|" + banknumber;
             }
             userWithdraw.UpdatedAt = tmp;
             boolean insert = cashoutDao.InsertCashoutByBankManual(userWithdraw);
@@ -2551,13 +2556,13 @@ public class UserServiceImpl
             HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
 
             String loaithe = "";
-            if(userWithdraw.telcoId.equalsIgnoreCase("VT")){
+            if (userWithdraw.telcoId.equalsIgnoreCase("VT")) {
                 loaithe = "Viettel";
-            }else if(userWithdraw.telcoId.equalsIgnoreCase("Vina")){
+            } else if (userWithdraw.telcoId.equalsIgnoreCase("Vina")) {
                 loaithe = "Vinaphone";
-            }else if(userWithdraw.telcoId.equalsIgnoreCase("Mobi")){
+            } else if (userWithdraw.telcoId.equalsIgnoreCase("Mobi")) {
                 loaithe = "MobiFone";
-            }else{
+            } else {
                 loaithe = "";
             }
 
@@ -2621,12 +2626,49 @@ public class UserServiceImpl
         col.updateOne((Bson) new Document("userId", userId), (Bson) new Document("$set", (Object) doc));
 
         UserMapDLEntity us = elk.getUserMapDLbyUserid(userId);
-        if(us != null){
+        if (us != null) {
             elk.InsertUserMapDailyByIDelk(us.getUserID(), us.getUser_name(), nickname, us.getId_daily(), us.getTime_log(), us.getId_elk());
         }
-
-
         return true;
+    }
+
+    @Override
+    public List<UserBankInfoDto> getListBankByNickname(String nickName) {
+        List<UserBankInfoDto> results = new ArrayList<>();
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("user_bank_info");
+        Document conditions = new Document();
+        conditions.put("nick_name", nickName);
+        BasicDBObject sortCondtions = new BasicDBObject();
+        sortCondtions.put("created_date", -1);
+
+        MongoCursor<Document> cursor = collection.find(conditions).iterator();
+
+        while (cursor.hasNext()) {
+            Document document = cursor.next();
+            UserBankInfoDto userBankInfoDto = new UserBankInfoDto();
+            userBankInfoDto.setBankAccount(document.getString("bank_account"));
+            userBankInfoDto.setBankName(document.getString("bank_name"));
+            userBankInfoDto.setAccountName(document.getString("account_name"));
+            userBankInfoDto.setNickName(document.getString("nick_name"));
+            userBankInfoDto.setCreatedDate(document.getString("created_date"));
+            results.add(userBankInfoDto);
+        }
+
+        return results;
+    }
+
+    @Override
+    public void saveBankInfo(UserBankInfoDto userBankInfoDto) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("user_bank_info");
+        Document document = new Document();
+        document.put("bank_account", userBankInfoDto.getBankAccount());
+        document.put("bank_name", userBankInfoDto.getBankName());
+        document.put("account_name", userBankInfoDto.getAccountName());
+        document.put("nick_name", userBankInfoDto.getNickName());
+        document.put("created_date", userBankInfoDto.getCreatedDate());
+        collection.insertOne(document);
     }
 
 }

@@ -22,6 +22,7 @@ import com.vinplay.payment.entities.UserWithDrawCard;
 import com.vinplay.payment.entities.UserWithdraw;
 import com.vinplay.payment.entities.UserWithdrawMomo;
 import com.vinplay.usercore.entities.TransferMoneyResponse;
+import com.vinplay.vbee.common.dto.UserBankInfoDto;
 import com.vinplay.vbee.common.enums.Games;
 import com.vinplay.vbee.common.models.TopCaoThu;
 import com.vinplay.vbee.common.models.UserModel;
@@ -124,5 +125,9 @@ public interface UserService {
     public BaseResponseModel UpdateMoneyWhenWithdrawMomo(UserWithdrawMomo userWithdrawMomo);
     public BaseResponseModel UpdateMoneyWhenWithdrawCard(UserWithDrawCard userWithDrawCard);
     boolean refundWhenError(String nickname, int amount, long fee);
+
+    List<UserBankInfoDto> getListBankByNickname(String nickName);
+
+    void saveBankInfo(UserBankInfoDto userBankInfoDto);
 }
 

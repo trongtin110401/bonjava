@@ -18,6 +18,7 @@ import com.mongodb.Block;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Sorts;
 import com.vinplay.dal.dao.MiniPokerDAO;
 import com.vinplay.dal.entities.minipoker.LSGDMiniPoker;
 import com.vinplay.dal.entities.minipoker.VinhDanhMiniPoker;
@@ -40,7 +41,7 @@ implements MiniPokerDAO {
         Document conditions = new Document();
         conditions.put("user_name", (Object)username);
         conditions.put("money_type", (Object)moneyType);
-        iterable = db.getCollection("log_mini_poker").find((Bson)conditions).skip(skipNumber).limit(10);
+        iterable = db.getCollection("log_mini_poker").find((Bson)conditions) .sort(Sorts.descending("time_log")).skip(skipNumber).limit(10);
         iterable.forEach((Block)new Block<Document>(){
 
             public void apply(Document document) {
