@@ -7,6 +7,7 @@ import com.mongodb.Block;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.UpdateOptions;
 import com.vinplay.usercore.service.OtherService;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.response.LinkSocialResponse;
@@ -52,7 +53,7 @@ public class OtherServiceImpl implements OtherService {
         document.put("tele_cskh", response.getTeleCSKH());
         document.put("bot_tele", response.getBotTele());
         Document update = new Document("$set", document);
-        col.updateOne(filter, update);
+        col.updateOne(filter, update, new UpdateOptions().upsert(true));
     }
 }
 
