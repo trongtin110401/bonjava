@@ -18,6 +18,8 @@ public class UpdateLinkSocialProcessor
         String botTele = request.getParameter("botTele");
         String groupTele = request.getParameter("groupTele");
         String liveChat = request.getParameter("liveChat");
+        String linkDownload = request.getParameter("linkDownload");
+        String home = request.getParameter("home");
         LinkSocialResponse linkSocialResponse = new LinkSocialResponse(true, "1001");
         linkSocialResponse.setFanPage(fanPage);
         linkSocialResponse.setGroupFacebook(groupFacebook);
@@ -25,6 +27,8 @@ public class UpdateLinkSocialProcessor
         linkSocialResponse.setBotTele(botTele);
         linkSocialResponse.setGroupTele(groupTele);
         linkSocialResponse.setLiveChat(liveChat);
+        linkSocialResponse.setLinkDownload(linkDownload);
+        linkSocialResponse.setHome(home);
         OtherServiceImpl otherService = new OtherServiceImpl();
         otherService.updateLinkSocial(linkSocialResponse);
         return otherService.getLinkSocial().toJson();

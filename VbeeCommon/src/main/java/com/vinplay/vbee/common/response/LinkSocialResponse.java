@@ -22,6 +22,10 @@ public class LinkSocialResponse
 
     private String liveChat;
 
+    private String linkDownload;
+
+    private String home;
+
     public String getFanPage() {
         return fanPage;
     }
@@ -76,6 +80,22 @@ public class LinkSocialResponse
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getLinkDownload() {
+        return linkDownload;
+    }
+
+    public void setLinkDownload(String linkDownload) {
+        this.linkDownload = linkDownload;
+    }
+
+    public String getHome() {
+        return home;
+    }
+
+    public void setHome(String home) {
+        this.home = home;
     }
 }
 
