@@ -36,12 +36,7 @@ import com.vinplay.vbee.common.messages.GiftCodeMessage;
 import com.vinplay.vbee.common.models.UserModel;
 import com.vinplay.vbee.common.models.cache.UserCacheModel;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
-import com.vinplay.vbee.common.response.GiftCodeByNickNameResponse;
-import com.vinplay.vbee.common.response.GiftCodeCountResponse;
-import com.vinplay.vbee.common.response.GiftCodeDeleteResponse;
-import com.vinplay.vbee.common.response.GiftCodeResponse;
-import com.vinplay.vbee.common.response.GiftCodeUpdateResponse;
-import com.vinplay.vbee.common.response.ReportGiftCodeResponse;
+import com.vinplay.vbee.common.response.*;
 import com.vinplay.vbee.common.response.giftcode.GiftcodeStatisticObj;
 import org.bson.Document;
 
@@ -352,7 +347,7 @@ public class GiftCodeServiceImpl
                 .append("active", giftCodeDto.isActive())
                 .append("nick_name", giftCodeDto.getNickName())
                 .append("used_time", giftCodeDto.getUsedTime()));
-        col.updateOne(query,update);
+        col.updateOne(query, update);
     }
 
     public boolean checkUserUseGiftCode(String nickName, String type) {
@@ -362,6 +357,33 @@ public class GiftCodeServiceImpl
         conditions.put("type", type);
         FindIterable iterable = db.getCollection("user_gift_code").find(new Document(conditions));
         return iterable.iterator().hasNext();
+    }
+
+    public void insertCampaignName(String campaignName) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("campaign_gift_code");
+        Document maxIdDoc = collection.find().sort(new Document("_id", -1)).limit(1).first();
+        int maxId = (maxIdDoc != null) ? maxIdDoc.getInteger("_id", 0) : 0;
+        Document newDocument = new Document("_id", maxId + 1)
+                .append("name", campaignName);
+        collection.insertOne(newDocument);
+    }
+
+    public List<CampaignName> getAllCampaign() {
+        List<CampaignName> campaignNames = new ArrayList<>();
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("campaign_gift_code");
+        Document sortCriteria = new Document("_id", 1);
+        try (MongoCursor<Document> cursor = collection.find().sort(sortCriteria).iterator()) {
+            while (cursor.hasNext()) {
+                Document document = cursor.next();
+                CampaignName campaignName = new CampaignName();
+                campaignName.setId(document.getInteger("_id"));
+                campaignName.setCampaignName(document.getString("name"));
+                campaignNames.add(campaignName);
+            }
+        }
+        return campaignNames;
     }
 }
 

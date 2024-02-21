@@ -1679,5 +1679,17 @@
             <path>com.vinplay.api.backend.processors.UpdateLinkSocialProcessor</path>
         </command>
 
+        <command>
+            <id>11018</id>
+            <name>Create campaign giftcode</name>
+            <path>com.vinplay.api.backend.processors.CreateCampaignNameProcessor</path>
+        </command>
+
+        <command>
+            <id>11019</id>
+            <name>Get all campaign giftcode</name>
+            <path>com.vinplay.api.backend.processors.GetAllCampaignProcessor</path>
+        </command>
+
     </commands>
 </backend>
