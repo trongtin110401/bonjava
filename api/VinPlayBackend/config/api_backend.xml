@@ -1660,5 +1660,24 @@
             <name>Report user</name>
             <path>com.vinplay.api.backend.processors.FindAllGiftCodeProcessor</path>
         </command>
+
+        <command>
+            <id>11015</id>
+            <name>Get user bank info</name>
+            <path>com.vinplay.api.backend.processors.GetUserBankInfoProcessor</path>
+        </command>
+
+        <command>
+            <id>11016</id>
+            <name>Get user bank info</name>
+            <path>com.vinplay.api.backend.processors.GetLinkSocialProcessor</path>
+        </command>
+
+        <command>
+            <id>11017</id>
+            <name>Update link social</name>
+            <path>com.vinplay.api.backend.processors.UpdateLinkSocialProcessor</path>
+        </command>
+
     </commands>
 </backend>
