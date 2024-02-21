@@ -263,6 +263,7 @@ implements XocDiaDao {
                 betResult.setOneWhite(document.getLong("one_white"));
                 betResult.setEven(document.getLong("even"));
                 betResult.setOdd(document.getLong("odd"));
+                transactionXocDia.setReferenceId(document.getLong("reference_id"));
                 transactionXocDia.setResult(document.getString("result"));
 
                 transactionXocDia.setBetResult(betResult);
