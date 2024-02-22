@@ -1691,5 +1691,17 @@
             <path>com.vinplay.api.backend.processors.GetAllCampaignProcessor</path>
         </command>
 
+        <command>
+            <id>11020</id>
+            <name>recall giftcode</name>
+            <path>com.vinplay.api.backend.processors.RecallGiftCodeProcessor</path>
+        </command>
+
+        <command>
+            <id>11021</id>
+            <name>get all user giftcode deposit</name>
+            <path>com.vinplay.api.backend.processors.GetAllUserUsedGiftCodeAndDepositProcessor</path>
+        </command>
+
     </commands>
 </backend>
