@@ -28,8 +28,6 @@ public class AuditionModule
         extends SlotModule {
     private static long referenceId = 1L;
     private final String fullLines = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20";
-    //    private Runnable x2Task = new X2Task(this);
-    private final Runnable x2Task = new X2Task();
     private final byte[] x2Arr = new byte[4];
 
     public AuditionModule() {
@@ -68,15 +66,7 @@ public class AuditionModule
         } catch (KeyNotFoundException e2) {
             Debug.trace("KEY NOT FOUND");
         }
-        int lastDayFinish = SlotUtils.getLastDayX2(this.gameName);
-        this.ngayX2 = SlotUtils.calculateTimePokeGoX2AsString(this.gameName, SlotUtils.getX2Days(this.gameName), lastDayFinish);
-        int nextX2Time = SlotUtils.calculateTimePokeGoX2(this.gameName, SlotUtils.getX2Days(this.gameName), lastDayFinish);
-        Debug.trace(this.gameName + " Ngay X2: " + this.ngayX2 + ", remain time = " + nextX2Time);
-        /*if (nextX2Time >= 0) {
-            BitZeroServer.getInstance().getTaskScheduler().schedule(this.x2Task, nextX2Time, TimeUnit.SECONDS);
-        } else {
-            this.startX2();
-        }*/
+
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
     }
 
@@ -193,7 +183,7 @@ public class AuditionModule
             room.userMaximize(user);
             this.updatePotToUser(user);
             AuditionInfoMsg msg = new AuditionInfoMsg();
-            msg.ngayX2 = this.ngayX2;
+            msg.ngayX2 = "";
             msg.remain = 0;
             msg.currentMoney = this.userService.getMoneyUserCache(user.getName(), "vin");
             this.send(msg, user);
@@ -239,7 +229,10 @@ public class AuditionModule
         } else {
             Debug.trace(this.gameName + ": change room error, leaved= " + cmd.roomLeavedId + ", joined= " + cmd.roomJoinedId);
         }
-        BroadCastUserState.pushBroadCast(user.getName(), user.getName() + " play " + gameName + " " + roomJoined.getBetValue());
+
+        if (roomJoined != null) {
+            BroadCastUserState.pushBroadCast(user.getName(), user.getName() + " play " + gameName + " " + roomJoined.getBetValue());
+        }
     }
 
     private void playAudition(User user, DataCmd dataCmd) {
@@ -247,8 +240,8 @@ public class AuditionModule
         AuditionRoom room = (AuditionRoom) user.getProperty("MGROOM_" + this.gameName + "_INFO");
         if (room != null) {
             room.play(user, cmd.lines);
+            BroadCastUserState.pushBroadCast(user.getName(), user.getName() + " play " + gameName + " " + room.getBetValue());
         }
-        BroadCastUserState.pushBroadCast(user.getName(), user.getName() + " play " + gameName + " " + room.getBetValue());
     }
 
     private void autoPlay(User user, DataCmd dataCMD) {
@@ -265,8 +258,8 @@ public class AuditionModule
             } else {
                 room.stopAutoPlay(user);
             }
+            BroadCastUserState.pushBroadCast(user.getName(), user.getName() + " play " + gameName + " " + room.getBetValue());
         }
-        BroadCastUserState.pushBroadCast(user.getName(), user.getName() + " play " + gameName + " " + room.getBetValue());
     }
 
     @Override

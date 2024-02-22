@@ -51,7 +51,7 @@ public class SlotMachineExtension
 //        this.addRequestHandler((short) 2000, AuditionModule.class);
         this.addRequestHandler((short) 2000, AuditionModuleExt.class);
         this.addRequestHandler((short) 3000, MayBachModule.class);
-        this.addRequestHandler((short) 4000, BentleyModuleExt.class);
+        this.addRequestHandler((short) 4000, CowboyModule.class);
         this.addRequestHandler((short) 5000, RollRoyModule.class);
         this.addRequestHandler((short) 12000, SpartanModule.class);
 //        this.addRequestHandler((short) 13000, RangeRoverModule.class);

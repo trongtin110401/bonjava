@@ -6,22 +6,22 @@ import bitzero.util.common.business.Debug;
 import com.vinplay.dal.service.SlotMachineService;
 import com.vinplay.dal.service.impl.SlotMachineServiceImpl;
 import com.vinplay.vbee.common.enums.Games;
-import game.modules.slot.cmd.Slot25BasicCommandCollection;
+import game.modules.slot.cmd.Slot25CommandCollection;
 import game.modules.slot.cmd.SlotCMD;
 import game.modules.slot.listener.SlotLogListener;
 
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
-public class BentleyModuleExt extends Slot25BasicModule {
+public class FastAndFurousModule extends Slot25BasicModule {
 
-    public BentleyModuleExt() {
+    public FastAndFurousModule() {
         super(Games.BENTLEY.getName());
     }
 
     @Override
-    protected Slot25BasicCommandCollection initMessageCommand() {
-        Slot25BasicCommandCollection commandCollection = new Slot25BasicCommandCollection();
+    protected Slot25CommandCollection initMessageCommand() {
+        Slot25CommandCollection commandCollection = new Slot25CommandCollection();
         commandCollection.TOTAL_FREE_SPIN_MESSAGE = SlotCMD.AVENGERS_TOTAL_FREE_SPIN;
         commandCollection.BIG_WIN_MESSAGE = SlotCMD.BIG_WIN_AVENGER;
         commandCollection.FREE_DAILY_MESSAGE = SlotCMD.AVENGER_FREE_DAILY;

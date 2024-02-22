@@ -34,7 +34,7 @@ import org.json.simple.JSONObject;
 
 public class HallSlotModule
         extends BaseClientRequestHandler {
-    private Set<User> usersSub = new HashSet<User>();
+    private Set<User> usersSub = new HashSet<>();
     private Runnable updateJackpotsTask = new UpdateJackpotsTask();
 
     public HallSlotModule() {
@@ -67,16 +67,16 @@ public class HallSlotModule
         this.send(msg, user);
         ListAutoPlayInfoMsg listAutoMsg = new ListAutoPlayInfoMsg();
         if (user.getProperty("auto_" + Games.KHO_BAU.getName()) != null) {
-            listAutoMsg.autoKhoBau = ((Boolean) user.getProperty("auto_" + Games.KHO_BAU.getName())).booleanValue();
+            listAutoMsg.autoKhoBau = (Boolean) user.getProperty("auto_" + Games.KHO_BAU.getName());
         }
         if (user.getProperty("auto_" + Games.NU_DIEP_VIEN.getName()) != null) {
-            listAutoMsg.autoNDV = ((Boolean) user.getProperty("auto_" + Games.NU_DIEP_VIEN.getName())).booleanValue();
+            listAutoMsg.autoNDV = (Boolean) user.getProperty("auto_" + Games.NU_DIEP_VIEN.getName());
         }
         if (user.getProperty("auto_" + Games.AVENGERS.getName()) != null) {
-            listAutoMsg.autoAvenger = ((Boolean) user.getProperty("auto_" + Games.AVENGERS.getName())).booleanValue();
+            listAutoMsg.autoAvenger = (Boolean) user.getProperty("auto_" + Games.AVENGERS.getName());
         }
         if (user.getProperty("auto_" + Games.VUONG_QUOC_VIN.getName()) != null) {
-            listAutoMsg.autoVQV = auto = ((Boolean) user.getProperty("auto_" + Games.VUONG_QUOC_VIN.getName())).booleanValue();
+            listAutoMsg.autoVQV = auto = (Boolean) user.getProperty("auto_" + Games.VUONG_QUOC_VIN.getName());
         }
         this.send(listAutoMsg, user);
     }

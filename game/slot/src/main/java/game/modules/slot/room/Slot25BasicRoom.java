@@ -21,7 +21,7 @@ import com.vinplay.vbee.common.statics.TransType;
 import com.vinplay.vbee.common.utils.DateTimeUtils;
 
 import game.modules.slot.SlotModule;
-import game.modules.slot.cmd.Slot25BasicCommandCollection;
+import game.modules.slot.cmd.Slot25CommandCollection;
 
 import game.modules.slot.cmd.send.slot25linebasic.*;
 import game.modules.slot.entities.slot.AutoUser;
@@ -56,7 +56,7 @@ public class Slot25BasicRoom extends SlotRoom {
     private long lastTimeUpdatePotToRoom = 0L;
     private long lastTimeUpdateFundToRoom = 0L;
     private final ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
-    private final Slot25BasicCommandCollection commandCollection;
+    private final Slot25CommandCollection commandCollection;
     private static final org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger("slot");
 
     private SlotLogListener logListener;
@@ -65,7 +65,7 @@ public class Slot25BasicRoom extends SlotRoom {
     int resultState = 0;
     int MAX_STATE = 5;
 
-    public Slot25BasicRoom(SlotModule module, Slot25BasicCommandCollection commandCollection, SlotLogListener logListener, String gameName, byte id, String room, short moneyType, long pot, long fund, int betValue, long initJackpotValue) {
+    public Slot25BasicRoom(SlotModule module, Slot25CommandCollection commandCollection, SlotLogListener logListener, String gameName, byte id, String room, short moneyType, long pot, long fund, int betValue, long initJackpotValue) {
 
         // FORCE - R
 //        super(id, room, betValue, moneyType, pot, fund - 1000000000, initJackpotValue);
