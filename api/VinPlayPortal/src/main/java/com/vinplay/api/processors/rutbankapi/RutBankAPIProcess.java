@@ -13,6 +13,7 @@ import com.vinplay.usercore.service.UserExtraService;
 import com.vinplay.usercore.service.UserService;
 import com.vinplay.usercore.service.impl.UserExtraServiceImpl;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
+import com.vinplay.utils.TelegramUtil;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.response.BaseResponseModel;
@@ -52,7 +53,7 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
             NapRutGame nrg = new NapRutGame();
             boolean check_onoff = nrg.OnOffAutoRut();
             if (tiennap >= 0) {
-                if (check_onoff == true && yeu_cau_rut < 10000000  && tiennap >= 20000) {
+                if (check_onoff == true && yeu_cau_rut < 10000000 && tiennap >= 20000) {
                     //Auto rut tien bank
                     String ACCESS_TOKEN_bank2 = "";
                     String ACCESS_TOKEN_bank3 = "";
@@ -119,7 +120,7 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
                             } else {
                                 int xx = 2;
                             }
-                            sendMessage("903923040", "yeu cau rut: \nbankname" + bankname + "\n banknum:: " + banknum + "\nsotien: " + amount);
+                            sendMessage("yeu cau rut: \nbankname" + bankname + "\n banknum:: " + banknum + "\nsotien: " + amount);
                             return "{\"error\":200,\"currentMoney\":" + sodu + "}";
                         }
 
@@ -135,7 +136,7 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
                     long xinloc = checknap.xinloc(nickname);
                     long tongadmin = ntmp.getNapadmin();
                     checknap.Notify(nickname, tiennap, yeu_cau_rut, tienrut, tienthe, xinloc, tongadmin, sodu, tongx, taixi);
-                    sendMessage("903923040", "yeu cau rut: \nbankname" + bankname + "\n banknum:: " + banknum + "\nsotien: " + amount);
+                    sendMessage("yeu cau rut: \nbankname" + bankname + "\n banknum:: " + banknum + "\nsotien: " + amount);
                     return "{\"error\":200,\"currentMoney\":" + sodu + "}";
                 }
             } else {
@@ -154,19 +155,11 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
         return userExtraService.getModelFromToken(accessToken).getNickname();
     }
 
-    public void sendMessage(String idChat, String message) {
+    public void sendMessage(String message) {
         try {
-            OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
-                    .build();
             String messageEncode = URLEncoder.encode(message);
-            String url = "https://api.telegram.org/bot6075009933:AAGJCEwIiJKhU7m9biU17h-huXBMQJYOIxg/sendMessage?chat_id=-" + idChat + "&text=" + messageEncode;
-            Request request = new Request.Builder()
-                    .url(url)
-                    .method("GET", null)
-                    .build();
-            Response response = client.newCall(request).execute();
-            String output = response.body().string();
-            System.out.println(output);
+            TelegramUtil telegramUtil = new TelegramUtil();
+            telegramUtil.sendMessageNapRut(messageEncode);
         } catch (Exception e) {
             e.printStackTrace();
         }
