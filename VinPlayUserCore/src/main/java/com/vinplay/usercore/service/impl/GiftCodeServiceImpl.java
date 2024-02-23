@@ -27,10 +27,7 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.vinplay.usercore.dao.impl.GiftCodeDAOImpl;
 import com.vinplay.usercore.service.GiftCodeService;
-import com.vinplay.vbee.common.dto.FindAllGiftCodeDto;
-import com.vinplay.vbee.common.dto.FindGiftCodeUsedByUserDto;
-import com.vinplay.vbee.common.dto.GiftCodeDto;
-import com.vinplay.vbee.common.dto.UseGiftCodeDto;
+import com.vinplay.vbee.common.dto.*;
 import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
 import com.vinplay.vbee.common.messages.GiftCodeMessage;
 import com.vinplay.vbee.common.models.UserModel;
@@ -384,6 +381,64 @@ public class GiftCodeServiceImpl
             }
         }
         return campaignNames;
+    }
+
+    public void recallGiftCode(String type, String code) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("gift_code");
+        Document query = new Document();
+
+        if (code != null && !code.isEmpty()) {
+            query.append("code", code);
+        }
+        if (type != null && !type.isEmpty()) {
+            query.append("type", type);
+        }
+        Document update = new Document("$set", new Document("active", false));
+        collection.updateMany(query, update);
+    }
+
+    public List<UserUsedGiftCodeAndDepositDto> getAllUserUsedGiftCodeAndDeposit(String type, int pageIndex, int pageSize) {
+        List<UserUsedGiftCodeAndDepositDto> response = new ArrayList<>();
+        MongoDatabase database = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> userGiftCodeCollection = database.getCollection("user_gift_code");
+        MongoCollection<Document> userDeposit = database.getCollection("log_money_user_nap_vin");
+
+        Document query = new Document();
+        if (type != null && !type.isEmpty()) {
+            query.append("type", type);
+        }
+        int skip = (pageIndex - 1) * pageSize;
+
+        List<Document> userGiftCodeData = userGiftCodeCollection.find(query)
+                .projection(new Document("nick_name", 1).append("created_time", 1).append("code", 1))
+                .skip(skip)
+                .limit(pageSize)
+                .into(new ArrayList<>());
+
+        for (Document userGiftCode : userGiftCodeData) {
+            UserUsedGiftCodeAndDepositDto dto = new UserUsedGiftCodeAndDepositDto();
+            String nickname = userGiftCode.getString("nick_name");
+            String createdTime = userGiftCode.getString("created_time");
+            String code = userGiftCode.getString("code");
+
+            Document userDepositQuery = new Document("nick_name", nickname)
+                    .append("create_time", new Document("$gte", createdTime));
+            List<Document> userDepositResult = userDeposit.find(userDepositQuery).into(new ArrayList<>());
+            if (userDepositResult.isEmpty()) {
+                continue;
+            }
+            long money = 0;
+            for (Document document : userDepositResult) {
+                money += document.getLong("money_exchange");
+            }
+            dto.setNickName(nickname);
+            dto.setDayUsedGiftCode(createdTime);
+            dto.setMoney(money);
+            dto.setCode(code);
+            response.add(dto);
+        }
+        return response;
     }
 }
 
