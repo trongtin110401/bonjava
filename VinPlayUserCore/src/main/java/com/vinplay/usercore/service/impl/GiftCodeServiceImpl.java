@@ -239,7 +239,7 @@ public class GiftCodeServiceImpl
     }
 
     public FindAllGiftCodeDto findAllGiftCode(String nickName, String code, int price, boolean active,
-                                              String type, String createdTime, int pageIndex, int pageSize) {
+                                              String type, String startTime, String endTime, int pageIndex, int pageSize) {
         FindAllGiftCodeDto results = new FindAllGiftCodeDto(false, "1001");
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         int skip = (pageIndex - 1) * pageSize;
@@ -259,9 +259,13 @@ public class GiftCodeServiceImpl
         if (type != null && !type.isEmpty()) {
             query.append("type", type);
         }
-        if (createdTime != null && !createdTime.isEmpty()) {
-            query.append("created_time", new Document("$gte", createdTime));
+        if (startTime != null && !startTime.isEmpty()) {
+            query.append("created_time", new Document("$gte", startTime));
         }
+        if (endTime != null && !endTime.isEmpty()) {
+            query.append("created_time", new Document("$lte", endTime));
+        }
+
         MongoCursor<Document> cursor = collection.find(query).skip(skip).limit(pageSize).iterator();
 
         List<GiftCodeDto> transactions = new ArrayList<>();

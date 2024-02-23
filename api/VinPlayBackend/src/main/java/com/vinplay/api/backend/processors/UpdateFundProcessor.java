@@ -13,29 +13,48 @@ package com.vinplay.api.backend.processors;
 
 import com.vinplay.dal.service.CacheService;
 import com.vinplay.dal.service.impl.CacheServiceImpl;
+import com.vinplay.usercore.service.OtherService;
+import com.vinplay.usercore.service.impl.OtherServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.exceptions.KeyNotFoundException;
 import com.vinplay.vbee.common.response.FundInfoResponse;
+import com.vinplay.vbee.common.utils.VinPlayUtils;
+import org.bson.Document;
 
 import javax.servlet.http.HttpServletRequest;
 
 public class UpdateFundProcessor
         implements BaseProcessor<HttpServletRequest, String> {
 
-    public String execute(Param<HttpServletRequest> param)  {
+    private final static String DEPOSIT = "deposit";
+
+    private final static String WITHDRAW = "withdraw";
+
+    public String execute(Param<HttpServletRequest> param) {
         FundInfoResponse response = new FundInfoResponse(true, "200");
 
-        HttpServletRequest request = (HttpServletRequest) param.get();
-        int hu_tx_auto = Integer.parseInt(request.getParameter("hu_tx_auto"));
-        int hu_xd_auto = Integer.parseInt(request.getParameter("hu_xd_auto"));
-        int hu_bc_auto = Integer.parseInt(request.getParameter("hu_bc_auto"));
+        HttpServletRequest request = param.get();
+
+        String fundName = request.getParameter("fundName");
+        int amount = Integer.parseInt(request.getParameter("amount"));
+        String type = request.getParameter("type");
 
         CacheService cacheService = new CacheServiceImpl();
         try {
-            cacheService.setValue("hu_tx_auto", hu_tx_auto);
-            cacheService.setValue("hu_xd_auto", hu_xd_auto);
-            cacheService.setValue("hu_bc_auto", hu_bc_auto);
+
+            if (cacheService.getValueStr(fundName) != null) {
+                long fund = cacheService.getValueInt(fundName);
+
+                if (type.equals(DEPOSIT)) {
+                    fund += amount;
+                }
+                if (type.equals(WITHDRAW)) {
+                    fund -= amount;
+                }
+                cacheService.setValue(fundName, (int) fund);
+            }
+
             if (cacheService.getValueStr("hu_tx_auto") != null) {
                 response.setFundTaiXiu(cacheService.getValueInt("hu_tx_auto"));
             }
@@ -48,6 +67,14 @@ public class UpdateFundProcessor
             if (cacheService.getValueStr("hu_bc_auto") != null) {
                 response.setFundBauCua(cacheService.getValueInt("hu_bc_auto"));
             }
+
+            Document document = new Document();
+            document.put("fund_name", fundName);
+            document.put("amount", amount);
+            document.put("type", type);
+            document.put("time_log", VinPlayUtils.getCurrentDateTime());
+            OtherService otherService = new OtherServiceImpl();
+            otherService.saveTransactionUpdateFund(document);
 
         } catch (Exception e) {
             e.printStackTrace();
