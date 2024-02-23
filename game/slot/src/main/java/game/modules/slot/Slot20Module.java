@@ -9,8 +9,6 @@ import bitzero.server.entities.User;
 import bitzero.server.extensions.data.DataCmd;
 import bitzero.util.common.business.Debug;
 import com.vinplay.dal.common.BroadCastUserState;
-import com.vinplay.dal.service.impl.CacheServiceImpl;
-import com.vinplay.vbee.common.exceptions.KeyNotFoundException;
 import com.vinplay.vbee.common.models.slot.SlotFreeSpin;
 import com.vinplay.vbee.common.utils.CommonUtils;
 import game.modules.slot.cmd.Slot20CommandCollection;
@@ -82,20 +80,12 @@ public abstract class Slot20Module extends SlotModule {
 //                    new Slot20Room(this, commandCollection, logListener, gameName, (byte) 3, this.gameName + "_vin_10000", (short) 1, this.jackpots[3], Long.MAX_VALUE - 10000000000L, 10000, initPotValues[3]));
 
             Debug.trace("INIT " + this.gameName + " DONE");
-            this.getParentExtension().addEventListener(BZEventType.USER_DISCONNECT, this);
             referenceId = this.slotService.getLastReferenceId(this.gameName);
             Debug.trace("START " + this.gameName + " REFERENCE ID= " + referenceId);
-            CacheServiceImpl sv = new CacheServiceImpl();
-            try {
-                sv.removeKey(this.gameName + "_last_day_x2");
-            } catch (KeyNotFoundException e2) {
-                Debug.trace("KEY NOT FOUND");
-            }
-            int lastDayFinish = SlotUtils.getLastDayX2(this.gameName);
-            this.ngayX2 = SlotUtils.calculateTimePokeGoX2AsString(this.gameName, SlotUtils.getX2Days(this.gameName), lastDayFinish);
-            int nextX2Time = SlotUtils.calculateTimePokeGoX2(this.gameName, SlotUtils.getX2Days(this.gameName), lastDayFinish);
-            Debug.trace(this.gameName + " Ngay X2: " + this.ngayX2 + ", remain time = " + nextX2Time);
+
+            this.getParentExtension().addEventListener(BZEventType.USER_DISCONNECT, this);
             BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
+
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -139,10 +129,10 @@ public abstract class Slot20Module extends SlotModule {
         this.x2Arr[id] = x2;
         long currentTime = System.currentTimeMillis();
 //        if (currentTime - this.lastTimeUpdatePotToRoom >= 3000L) {
-            Slot20UpdatePotMsg msg = this.getPotsInfo();
-            this.lastTimeUpdatePotToRoom = System.currentTimeMillis();
-            SendMsgToAlLUsersThread t = new SendMsgToAlLUsersThread(msg);
-            t.start();
+        Slot20UpdatePotMsg msg = this.getPotsInfo();
+        this.lastTimeUpdatePotToRoom = System.currentTimeMillis();
+        SendMsgToAlLUsersThread t = new SendMsgToAlLUsersThread(msg);
+        t.start();
 //        }
     }
 
@@ -194,7 +184,7 @@ public abstract class Slot20Module extends SlotModule {
 
     private void updateRoomInfo(User user, Slot20Room room) {
         Slot20InfoMsg msg = new Slot20InfoMsg(commandCollection.INFO_MESSAGE);
-        msg.ngayX2 = this.ngayX2;
+        msg.ngayX2 = "";
         msg.remain = 0;
         msg.currentMoney = this.userService.getMoneyUserCache(user.getName(), "vin");
         SlotFreeSpin freeSpin = this.slotService.getLuotQuayFreeSlot(this.gameName + room.getBetValue(), user.getName());
@@ -241,7 +231,10 @@ public abstract class Slot20Module extends SlotModule {
         } else {
             Debug.trace(this.gameName + ": change room error, leaved= " + cmd.roomLeavedId + ", joined= " + cmd.roomJoinedId);
         }
-        BroadCastUserState.pushBroadCast(user.getName(), user.getName() + " play " + gameName + " " + roomJoined.getBetValue());
+
+        if (roomJoined != null) {
+            BroadCastUserState.pushBroadCast(user.getName(), user.getName() + " play " + gameName + " " + roomJoined.getBetValue());
+        }
     }
 
     protected void play(User user, DataCmd dataCmd) {
@@ -249,8 +242,8 @@ public abstract class Slot20Module extends SlotModule {
         Slot20Room room = (Slot20Room) user.getProperty("MGROOM_" + this.gameName + "_INFO");
         if (room != null) {
             room.play(user, cmd.lines);
+            BroadCastUserState.pushBroadCast(user.getName(), user.getName() + " play " + gameName + " " + room.getBetValue());
         }
-        BroadCastUserState.pushBroadCast(user.getName(), user.getName() + " play " + gameName + " " + room.getBetValue());
     }
 
     protected void autoPlay(User user, DataCmd dataCMD) {
@@ -267,8 +260,8 @@ public abstract class Slot20Module extends SlotModule {
             } else {
                 room.stopAutoPlay(user);
             }
+            BroadCastUserState.pushBroadCast(user.getName(), user.getName() + " play " + gameName + " " + room.getBetValue());
         }
-        BroadCastUserState.pushBroadCast(user.getName(), user.getName() + " play " + gameName + " " + room.getBetValue());
     }
 
     @Override

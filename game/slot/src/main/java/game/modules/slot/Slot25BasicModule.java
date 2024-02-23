@@ -13,14 +13,13 @@ import com.vinplay.dal.service.impl.CacheServiceImpl;
 import com.vinplay.vbee.common.exceptions.KeyNotFoundException;
 import com.vinplay.vbee.common.models.slot.SlotFreeSpin;
 import com.vinplay.vbee.common.utils.CommonUtils;
-import game.modules.slot.cmd.Slot25BasicCommandCollection;
+import game.modules.slot.cmd.Slot25CommandCollection;
 import game.modules.slot.cmd.rev.audition.MinimizeAuditionCmd;
 import game.modules.slot.cmd.rev.slot25linebasic.*;
 import game.modules.slot.cmd.send.slot25linebasic.Slot25InfoMsg;
 import game.modules.slot.entities.BotMinigame;
 import game.modules.slot.listener.SlotLogListener;
 import game.modules.slot.room.Slot25BasicRoom;
-import game.modules.slot.utils.SlotUtils;
 import game.util.ConfigGame;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -32,7 +31,7 @@ import java.util.logging.Logger;
 public abstract class Slot25BasicModule extends SlotModule {
     private long referenceId = 1L;
     private final String fullLines = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25";
-    private Slot25BasicCommandCollection commandCollection;
+    private Slot25CommandCollection commandCollection;
     private SlotLogListener slotLogListener;
 
     public Slot25BasicModule(String gameName) {
@@ -82,8 +81,6 @@ public abstract class Slot25BasicModule extends SlotModule {
 
         Debug.trace("INIT " + this.gameName + " DONE");
 
-        this.getParentExtension().addEventListener(BZEventType.USER_DISCONNECT, this);
-
         this.referenceId = this.slotService.getLastReferenceId(this.gameName);
         Debug.trace("START " + this.gameName + " REFERENCE ID= " + this.referenceId);
 
@@ -94,16 +91,11 @@ public abstract class Slot25BasicModule extends SlotModule {
             Debug.trace("KEY NOT FOUND");
         }
 
-        int lastDayFinish = SlotUtils.getLastDayX2(this.gameName);
-        this.ngayX2 = SlotUtils.calculateTimePokeGoX2AsString(this.gameName, SlotUtils.getX2Days(this.gameName), lastDayFinish);
-        int nextX2Time = SlotUtils.calculateTimePokeGoX2(this.gameName, SlotUtils.getX2Days(this.gameName), lastDayFinish);
-        Debug.trace(this.gameName + " Ngay X2: " + this.ngayX2 + ", remain time = " + nextX2Time);
-
         this.getParentExtension().addEventListener(BZEventType.USER_DISCONNECT, this);
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
     }
 
-    protected abstract Slot25BasicCommandCollection initMessageCommand();
+    protected abstract Slot25CommandCollection initMessageCommand();
 
     protected abstract SlotLogListener initLogListener();
 
@@ -166,7 +158,7 @@ public abstract class Slot25BasicModule extends SlotModule {
 
     private void updateRoomInfo(User user, Slot25BasicRoom room) {
         Slot25InfoMsg msg = new Slot25InfoMsg(commandCollection.INFO_MESSAGE);
-        msg.ngayX2 = this.ngayX2;
+        msg.ngayX2 = "";
         msg.remain = 0;
         msg.currentMoney = this.userService.getMoneyUserCache(user.getName(), "vin");
         SlotFreeSpin freeSpin = this.slotService.getLuotQuayFreeSlot(this.gameName + room.getBetValue(), user.getName());

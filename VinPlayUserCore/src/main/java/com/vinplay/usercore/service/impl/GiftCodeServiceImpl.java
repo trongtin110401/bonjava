@@ -27,21 +27,13 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.vinplay.usercore.dao.impl.GiftCodeDAOImpl;
 import com.vinplay.usercore.service.GiftCodeService;
-import com.vinplay.vbee.common.dto.FindAllGiftCodeDto;
-import com.vinplay.vbee.common.dto.FindGiftCodeUsedByUserDto;
-import com.vinplay.vbee.common.dto.GiftCodeDto;
-import com.vinplay.vbee.common.dto.UseGiftCodeDto;
+import com.vinplay.vbee.common.dto.*;
 import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
 import com.vinplay.vbee.common.messages.GiftCodeMessage;
 import com.vinplay.vbee.common.models.UserModel;
 import com.vinplay.vbee.common.models.cache.UserCacheModel;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
-import com.vinplay.vbee.common.response.GiftCodeByNickNameResponse;
-import com.vinplay.vbee.common.response.GiftCodeCountResponse;
-import com.vinplay.vbee.common.response.GiftCodeDeleteResponse;
-import com.vinplay.vbee.common.response.GiftCodeResponse;
-import com.vinplay.vbee.common.response.GiftCodeUpdateResponse;
-import com.vinplay.vbee.common.response.ReportGiftCodeResponse;
+import com.vinplay.vbee.common.response.*;
 import com.vinplay.vbee.common.response.giftcode.GiftcodeStatisticObj;
 import org.bson.Document;
 
@@ -352,7 +344,7 @@ public class GiftCodeServiceImpl
                 .append("active", giftCodeDto.isActive())
                 .append("nick_name", giftCodeDto.getNickName())
                 .append("used_time", giftCodeDto.getUsedTime()));
-        col.updateOne(query,update);
+        col.updateOne(query, update);
     }
 
     public boolean checkUserUseGiftCode(String nickName, String type) {
@@ -362,6 +354,91 @@ public class GiftCodeServiceImpl
         conditions.put("type", type);
         FindIterable iterable = db.getCollection("user_gift_code").find(new Document(conditions));
         return iterable.iterator().hasNext();
+    }
+
+    public void insertCampaignName(String campaignName) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("campaign_gift_code");
+        Document maxIdDoc = collection.find().sort(new Document("_id", -1)).limit(1).first();
+        int maxId = (maxIdDoc != null) ? maxIdDoc.getInteger("_id", 0) : 0;
+        Document newDocument = new Document("_id", maxId + 1)
+                .append("name", campaignName);
+        collection.insertOne(newDocument);
+    }
+
+    public List<CampaignName> getAllCampaign() {
+        List<CampaignName> campaignNames = new ArrayList<>();
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("campaign_gift_code");
+        Document sortCriteria = new Document("_id", 1);
+        try (MongoCursor<Document> cursor = collection.find().sort(sortCriteria).iterator()) {
+            while (cursor.hasNext()) {
+                Document document = cursor.next();
+                CampaignName campaignName = new CampaignName();
+                campaignName.setId(document.getInteger("_id"));
+                campaignName.setCampaignName(document.getString("name"));
+                campaignNames.add(campaignName);
+            }
+        }
+        return campaignNames;
+    }
+
+    public void recallGiftCode(String type, String code) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("gift_code");
+        Document query = new Document();
+
+        if (code != null && !code.isEmpty()) {
+            query.append("code", code);
+        }
+        if (type != null && !type.isEmpty()) {
+            query.append("type", type);
+        }
+        Document update = new Document("$set", new Document("active", false));
+        collection.updateMany(query, update);
+    }
+
+    public List<UserUsedGiftCodeAndDepositDto> getAllUserUsedGiftCodeAndDeposit(String type, int pageIndex, int pageSize) {
+        List<UserUsedGiftCodeAndDepositDto> response = new ArrayList<>();
+        MongoDatabase database = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> userGiftCodeCollection = database.getCollection("user_gift_code");
+        MongoCollection<Document> userDeposit = database.getCollection("log_money_user_nap_vin");
+
+        Document query = new Document();
+        if (type != null && !type.isEmpty()) {
+            query.append("type", type);
+        }
+        int skip = (pageIndex - 1) * pageSize;
+
+        List<Document> userGiftCodeData = userGiftCodeCollection.find(query)
+                .projection(new Document("nick_name", 1).append("created_time", 1).append("code", 1))
+                .skip(skip)
+                .limit(pageSize)
+                .into(new ArrayList<>());
+
+        for (Document userGiftCode : userGiftCodeData) {
+            UserUsedGiftCodeAndDepositDto dto = new UserUsedGiftCodeAndDepositDto();
+            String nickname = userGiftCode.getString("nick_name");
+            String createdTime = userGiftCode.getString("created_time");
+            String code = userGiftCode.getString("code");
+
+            Document userDepositQuery = new Document("nick_name", nickname)
+                    .append("create_time", new Document("$gte", createdTime));
+            List<Document> userDepositResult = userDeposit.find(userDepositQuery).into(new ArrayList<>());
+            if (userDepositResult.isEmpty()) {
+                continue;
+            }
+            long money = 0;
+            for (Document document : userDepositResult) {
+                money += document.getLong("money_exchange");
+            }
+            dto.setNickName(nickname);
+            dto.setDayUsedGiftCode(createdTime);
+            dto.setMoney(money);
+            dto.setCode(code);
+            response.add(dto);
+        }
+        return response;
     }
 }
 

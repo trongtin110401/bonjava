@@ -37,6 +37,7 @@ public class OtherServiceImpl implements OtherService {
                 linkSocialResponse.setBotTele(document.getString("bot_tele"));
                 linkSocialResponse.setLinkDownload(document.getString("link_download"));
                 linkSocialResponse.setHome(document.getString("home"));
+                linkSocialResponse.setChatId(document.getString("chat_id"));
             }
         });
         return linkSocialResponse;
@@ -56,6 +57,7 @@ public class OtherServiceImpl implements OtherService {
         document.put("bot_tele", response.getBotTele());
         document.put("link_download", response.getLinkDownload());
         document.put("home", response.getHome());
+        document.put("chat_id", response.getChatId());
         Document update = new Document("$set", document);
         col.updateOne(filter, update, new UpdateOptions().upsert(true));
     }

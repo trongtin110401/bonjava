@@ -1,6 +1,6 @@
 package game.modules.slot.cmd;
 
-public class Slot25BasicCommandCollection {
+public class Slot25CommandCollection {
 
     public short FREE_DAILY_MESSAGE;
     public short INFO_MESSAGE;

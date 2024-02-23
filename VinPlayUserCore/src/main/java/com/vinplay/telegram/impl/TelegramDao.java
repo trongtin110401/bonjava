@@ -3,7 +3,6 @@ package com.vinplay.telegram.impl;
 import com.google.gson.Gson;
 import com.mongodb.client.MongoDatabase;
 import com.vinplay.dichvuthe.dao.impl.RechargeDaoImpl;
-import com.vinplay.lognaprut.entities.HistoryTransModel;
 import com.vinplay.telegram.AlertTeleGramDaily;
 import com.vinplay.telegram.TeleGramDao;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
@@ -30,6 +29,16 @@ public class TelegramDao implements TeleGramDao {
             RechargeDaoImpl.logger.error(e);
             return null;
         }
+
+    }
+
+    public Document getInfoBotNapRut() {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        Document document = db.getCollection("link_social").find().first();
+        if (document == null)
+            return null;
+
+        return document;
 
     }
 }

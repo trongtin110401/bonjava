@@ -19,16 +19,14 @@ import com.vinplay.vbee.common.response.MoneyResponse;
 import com.vinplay.vbee.common.statics.TransType;
 import com.vinplay.vbee.common.utils.DateTimeUtils;
 import game.modules.slot.SlotModule;
-import game.modules.slot.cmd.Slot25BasicCommandCollection;
+import game.modules.slot.cmd.Slot25CommandCollection;
 import game.modules.slot.cmd.send.slot25linebasic.*;
 import game.modules.slot.entities.slot.AutoUser;
 import game.modules.slot.entities.slot.AwardsOnLine;
 import game.modules.slot.entities.slot.Line;
 import game.modules.slot.entities.slot.MiniGameSlotResponse;
-import game.modules.slot.entities.slot.line25basic.Slot25BasicAward;
 import game.modules.slot.entities.slot.line25extend.*;
 import game.modules.slot.listener.SlotLogListener;
-import game.modules.slot.utils.Slot25BasicUtil;
 import game.modules.slot.utils.Slot25ExtendUtil;
 import game.modules.slot.utils.SlotUtils;
 
@@ -36,7 +34,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -52,7 +49,7 @@ public class Slot25ExtendRoom extends SlotRoom {
     private long lastTimeUpdatePotToRoom = 0L;
     private long lastTimeUpdateFundToRoom = 0L;
     private final ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
-    private final Slot25BasicCommandCollection commandCollection;
+    private final Slot25CommandCollection commandCollection;
     private static final org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger("slot");
 
     private SlotLogListener logListener;
@@ -63,7 +60,7 @@ public class Slot25ExtendRoom extends SlotRoom {
     int ROW = 3;
     int COLUMN = 5;
 
-    public Slot25ExtendRoom(SlotModule module, Slot25BasicCommandCollection commandCollection, SlotLogListener logListener, String gameName, byte id, String room, short moneyType, long pot, long fund, int betValue, long initJackpotValue) {
+    public Slot25ExtendRoom(SlotModule module, Slot25CommandCollection commandCollection, SlotLogListener logListener, String gameName, byte id, String room, short moneyType, long pot, long fund, int betValue, long initJackpotValue) {
 
         // FORCE - R
 //        super(id, room, betValue, moneyType, pot, fund - 1000000000, initJackpotValue);
@@ -762,8 +759,7 @@ public class Slot25ExtendRoom extends SlotRoom {
     @Override
     protected void gameLoop() {
         ArrayList<AutoUser> usersPlay = new ArrayList<>();
-        Map map = this.usersAuto;
-        synchronized (map) {
+        synchronized (this.usersAuto) {
             for (AutoUser user : this.usersAuto.values()) {
                 boolean play = user.incCount();
                 if (!play) continue;

@@ -17,7 +17,7 @@ import com.vinplay.vbee.common.models.cache.UserCacheModel;
 import com.vinplay.vbee.common.response.MoneyResponse;
 import com.vinplay.vbee.common.statics.TransType;
 import com.vinplay.vbee.common.utils.DateTimeUtils;
-import game.modules.slot.BenleyModule;
+import game.modules.slot.BentleyModule;
 import game.modules.slot.cmd.send.benley.*;
 import game.modules.slot.entities.slot.AutoUser;
 import game.modules.slot.entities.slot.AwardsOnLine;
@@ -49,13 +49,13 @@ public class BenleyRoom extends SlotRoom {
     private int countNoHu = 0;
     private static final org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger("slot");
 
-    public BenleyRoom(BenleyModule module, byte id, String gameName, short moneyType, long pot, long fund, int betValue, long initJackpotValue) {
+    public BenleyRoom(BentleyModule module, byte id, String gameName, short moneyType, long pot, long fund, int betValue, long initJackpotValue) {
 
         super(id, gameName, betValue, moneyType, pot, fund, initJackpotValue);
 
         this.module = module;
         this.moneyType = moneyType;
-        this.gameName = Games.BENTLEY.getName();
+        this.gameName = Games.COWBOY.getName();
         this.cacheFreeSpinName = this.gameName + betValue;
         CacheServiceImpl cacheService = new CacheServiceImpl();
         cacheService.setValue(gameName, (int) pot);
@@ -491,7 +491,7 @@ public class BenleyRoom extends SlotRoom {
                                 if (moneyRes != null && moneyRes.isSuccess()) {
                                     currentMoney = moneyRes.getCurrentMoney();
                                     if (this.moneyType == 1 && moneyExchange - (long) this.betValue >= (long) BroadcastMessageServiceImpl.MIN_MONEY) {
-                                        this.broadcastMsgService.putMessage(Games.BENTLEY.getId(), username, moneyExchange - (long) this.betValue);
+                                        this.broadcastMsgService.putMessage(Games.COWBOY.getId(), username, moneyExchange - (long) this.betValue);
                                     }
                                 }
                             }

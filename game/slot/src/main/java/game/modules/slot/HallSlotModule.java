@@ -23,6 +23,7 @@ import bitzero.server.extensions.data.DataCmd;
 import bitzero.util.common.business.Debug;
 import com.vinplay.dal.service.impl.CacheServiceImpl;
 import com.vinplay.vbee.common.enums.Games;
+import game.modules.slot.cmd.SlotCMD;
 import game.modules.slot.cmd.send.hall.ListAutoPlayInfoMsg;
 import game.modules.slot.cmd.send.hall.UpdateJackpotsMsg;
 
@@ -32,9 +33,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.json.simple.JSONObject;
 
-public class HallSlotModule
-        extends BaseClientRequestHandler {
-    private Set<User> usersSub = new HashSet<User>();
+public class HallSlotModule extends BaseClientRequestHandler {
+
+    private Set<User> usersSub = new HashSet<>();
     private Runnable updateJackpotsTask = new UpdateJackpotsTask();
 
     public HallSlotModule() {
@@ -43,11 +44,11 @@ public class HallSlotModule
 
     public void handleClientRequest(User user, DataCmd dataCmd) {
         switch (dataCmd.getId()) {
-            case 10001: {
+            case SlotCMD.SUBSCRIBE_HALL: {
                 this.subScribe(user, dataCmd);
                 break;
             }
-            case 10002: {
+            case SlotCMD.UNSUBSCRIBE_HALL: {
                 this.unSubscribe(user, dataCmd);
             }
         }
@@ -67,16 +68,16 @@ public class HallSlotModule
         this.send(msg, user);
         ListAutoPlayInfoMsg listAutoMsg = new ListAutoPlayInfoMsg();
         if (user.getProperty("auto_" + Games.KHO_BAU.getName()) != null) {
-            listAutoMsg.autoKhoBau = ((Boolean) user.getProperty("auto_" + Games.KHO_BAU.getName())).booleanValue();
+            listAutoMsg.autoKhoBau = (Boolean) user.getProperty("auto_" + Games.KHO_BAU.getName());
         }
         if (user.getProperty("auto_" + Games.NU_DIEP_VIEN.getName()) != null) {
-            listAutoMsg.autoNDV = ((Boolean) user.getProperty("auto_" + Games.NU_DIEP_VIEN.getName())).booleanValue();
+            listAutoMsg.autoNDV = (Boolean) user.getProperty("auto_" + Games.NU_DIEP_VIEN.getName());
         }
         if (user.getProperty("auto_" + Games.AVENGERS.getName()) != null) {
-            listAutoMsg.autoAvenger = ((Boolean) user.getProperty("auto_" + Games.AVENGERS.getName())).booleanValue();
+            listAutoMsg.autoAvenger = (Boolean) user.getProperty("auto_" + Games.AVENGERS.getName());
         }
         if (user.getProperty("auto_" + Games.VUONG_QUOC_VIN.getName()) != null) {
-            listAutoMsg.autoVQV = auto = ((Boolean) user.getProperty("auto_" + Games.VUONG_QUOC_VIN.getName())).booleanValue();
+            listAutoMsg.autoVQV = (Boolean) user.getProperty("auto_" + Games.VUONG_QUOC_VIN.getName());
         }
         this.send(listAutoMsg, user);
     }
@@ -93,7 +94,7 @@ public class HallSlotModule
 
     private String buildJsonJackpots() {
         JSONObject json = new JSONObject();
-        JSONObject jsonAudition = this.buildGameSlotInfo(Games.AUDITION.getName());
+        JSONObject jsonAudition = this.buildGameSlotInfo(Games.LIEN_MINH.getName());
         json.put("audition", jsonAudition);
 
         JSONObject jsonMaybach = this.buildGameSlotInfo(Games.MAYBACH.getName());
@@ -105,10 +106,10 @@ public class HallSlotModule
         JSONObject jsonRangeRover = this.buildGameSlotInfo(Games.RANGE_ROVER.getName());
         json.put("rangeRover", jsonRangeRover);
 
-        JSONObject jsonBenley = this.buildGameSlotInfo(Games.BENTLEY.getName());
+        JSONObject jsonBenley = this.buildGameSlotInfo(Games.COWBOY.getName());
         json.put("benley", jsonBenley);
 
-        JSONObject jsonRollRoye = this.buildGameSlotInfo(Games.ROLL_ROYE.getName());
+        JSONObject jsonRollRoye = this.buildGameSlotInfo(Games.FAST_AND_FURIOUS.getName());
         json.put("rollRoye", jsonRollRoye);
 
         JSONObject jsonSpartan = this.buildGameSlotInfo(Games.SPARTAN.getName());
@@ -150,8 +151,7 @@ public class HallSlotModule
         hallSlotModule.send(baseMsg, user);
     }
 
-    private class UpdateJackpotsTask
-            implements Runnable {
+    private class UpdateJackpotsTask implements Runnable {
         private UpdateJackpotsTask() {
         }
 

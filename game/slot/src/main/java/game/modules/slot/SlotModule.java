@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  bitzero.server.BitZeroServer
  *  bitzero.server.entities.User
@@ -27,7 +27,6 @@ import com.vinplay.dal.service.impl.MiniGameServiceImpl;
 import com.vinplay.dal.service.impl.SlotMachineServiceImpl;
 import com.vinplay.usercore.service.UserService;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
-//import game.modules.slot.cmd.send.khobau.PokeGoX2Msg;
 import game.modules.slot.room.SlotRoom;
 import game.util.ConfigGame;
 
@@ -35,21 +34,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class SlotModule extends BaseClientRequestHandler {
-    protected Map<String, SlotRoom> rooms = new HashMap<String, SlotRoom>();
-    protected MiniGameService service = new MiniGameServiceImpl();
-    protected SlotMachineService slotService = new SlotMachineServiceImpl();
-    protected UserService userService = new UserServiceImpl();
-    protected boolean eventX2 = false;
-    protected String ngayX2;
+
+    protected String gameName;
     protected long[] jackpots = new long[4];
     protected long lastTimeUpdatePotToRoom = 0L;
     protected int countBot100;
     protected int countBot1000;
     protected int countBot5000;
     protected int countBot10000;
+
+    protected Map<String, SlotRoom> rooms = new HashMap<>();
     protected GameLoopTask gameLoopTask = new GameLoopTask();
-    protected String gameName;
-    protected X2Task x2Task = new X2Task();
+
+    protected MiniGameService service = new MiniGameServiceImpl();
+    protected SlotMachineService slotService = new SlotMachineServiceImpl();
+    protected UserService userService = new UserServiceImpl();
 
     public abstract void handleClientRequest(User user, DataCmd dataCmd);
 
@@ -59,48 +58,19 @@ public abstract class SlotModule extends BaseClientRequestHandler {
 
     public abstract long getNewReferenceId();
 
-    public void startX2() {
-        this.eventX2 = true;
-        this.ngayX2 = "";
-    }
-
-    public void stopX2() {
-        /*this.eventX2 = false;
-        this.ngayX2 = SlotUtils.calculateTimePokeGoX2AsString(this.gameName, SlotUtils.getX2Days(this.gameName), SlotUtils.getLastDayX2(this.gameName));
-        PokeGoX2Msg msg = new PokeGoX2Msg();
-        msg.ngayX2 = this.ngayX2;
-        for (SlotRoom room : this.rooms.values()) {
-            room.sendMessageToRoom(msg);
-        }
-        Calendar cal = Calendar.getInstance();
-        int today = cal.get(7);
-        SlotUtils.saveLastDayX2(this.gameName, today);
-        int lastDayX2 = SlotUtils.getLastDayX2(this.gameName);
-        int nextX2Time = SlotUtils.calculateTimePokeGoX2(this.gameName, SlotUtils.getX2Days(this.gameName), lastDayX2);
-        BitZeroServer.getInstance().getTaskScheduler().schedule((Runnable)this.x2Task, nextX2Time, TimeUnit.SECONDS);*/
-    }
-
     protected int getCountTimeBot(String name) {
-        int n = ConfigGame.getIntValue(name, 0);
-        if (n == 0) {
-            return 0;
-        }
-//        if (BotMinigame.isNight()) {
-//            n *= 3;
-//        }
-        return n;
+        return ConfigGame.getIntValue(name, 0);
     }
 
     protected SlotRoom getRoom(byte roomId) {
         short moneyType = this.getMoneyTypeFromRoomId(roomId);
         long baseBetting = this.getBaseBetting(roomId);
         String roomName = this.getRoomName(moneyType, baseBetting);
-        SlotRoom room = this.rooms.get(roomName);
-        return room;
+        return this.rooms.get(roomName);
     }
 
     protected short getMoneyTypeFromRoomId(byte roomId) {
-        if(roomId >= 0 && roomId < 4)
+        if (roomId >= 0 && roomId < 4)
             return 1;
         return 0;
     }
@@ -110,18 +80,14 @@ public abstract class SlotModule extends BaseClientRequestHandler {
             case 0: {
                 return 100L;
             }
-            case 1: {
+            case 1:
+            case 4: {
                 return 1000L;
             }
             case 2: {
                 return 5000L;
             }
-            case 3: {
-                return 10000L;
-            }
-            case 4: {
-                return 1000L;
-            }
+            case 3:
             case 5: {
                 return 10000L;
             }
@@ -141,21 +107,6 @@ public abstract class SlotModule extends BaseClientRequestHandler {
     public void sendMsgToAllUsers(BaseMsg msg) {
         SendMsgToAlLUsersThread t = new SendMsgToAlLUsersThread(msg);
         t.start();
-    }
-
-    protected final class X2Task
-    implements Runnable {
-        protected X2Task() {
-        }
-
-        @Override
-        public void run() {
-            SlotModule.this.startX2();
-            SlotRoom room100 = SlotModule.this.rooms.get(String.valueOf(SlotModule.this.gameName) + "_vin_100");
-            room100.startHuX2();
-            SlotRoom room101 = SlotModule.this.rooms.get(String.valueOf(SlotModule.this.gameName) + "_vin_1000");
-            room101.startHuX2();
-        }
     }
 
     protected final class SendMsgToAlLUsersThread extends Thread {

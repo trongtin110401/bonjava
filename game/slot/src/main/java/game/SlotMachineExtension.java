@@ -25,12 +25,12 @@ import game.util.GameUtils;
 
 import java.util.concurrent.TimeUnit;
 
-public class SlotMachineExtension
-        extends BZExtension {
+public class SlotMachineExtension extends BZExtension {
     private int countReloadConfig = 0;
     private final Runnable gameLoopTask = new GameLoopTask();
 
     public void init() {
+
         try {
             RMQApi.start("config/rmq.properties");
             HazelcastLoader.start();
@@ -47,20 +47,18 @@ public class SlotMachineExtension
         } catch (Exception e) {
             Debug.trace("INIT MINIGAME ERROR " + e.getMessage());
         }
-        this.addRequestHandler((short) 10000, HallSlotModule.class);
-//        this.addRequestHandler((short) 2000, AuditionModule.class);
-        this.addRequestHandler((short) 2000, AuditionModuleExt.class);
-        this.addRequestHandler((short) 3000, MayBachModule.class);
-        this.addRequestHandler((short) 4000, BentleyModuleExt.class);
-        this.addRequestHandler((short) 5000, RollRoyModule.class);
-        this.addRequestHandler((short) 12000, SpartanModule.class);
-//        this.addRequestHandler((short) 13000, RangeRoverModule.class);
-//        this.addRequestHandler((short) 13000, AuditionModuleExt.class);
-        this.addRequestHandler((short) 14000, TamHungModule.class);
 
+        this.addRequestHandler((short) 10000, HallSlotModule.class);
+        this.addRequestHandler((short) 2000, LienMinhModule.class);
+        this.addRequestHandler((short) 3000, FastAndFuriousModule.class);
+        this.addRequestHandler((short) 4000, CowboyModule.class);
+//        this.addRequestHandler((short) 5000, RollRoyModule.class);
+//        this.addRequestHandler((short) 12000, SpartanModule.class);
+//        this.addRequestHandler((short) 14000, TamHungModule.class);
 
         this.addEventHandler(BZEventType.USER_LOGIN, LoginSuccessHandler.class);
         this.addEventHandler(BZEventType.USER_DISCONNECT, LoginSuccessHandler.class);
+
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
     }
 

@@ -9,9 +9,7 @@ import bitzero.server.entities.User;
 import bitzero.server.extensions.data.DataCmd;
 import bitzero.util.common.business.Debug;
 import com.vinplay.dal.common.BroadCastUserState;
-import com.vinplay.dal.service.impl.CacheServiceImpl;
 import com.vinplay.vbee.common.enums.Games;
-import com.vinplay.vbee.common.exceptions.KeyNotFoundException;
 import com.vinplay.vbee.common.models.slot.SlotFreeSpin;
 import com.vinplay.vbee.common.utils.CommonUtils;
 import game.modules.slot.cmd.rev.audition.MinimizeAuditionCmd;
@@ -19,7 +17,6 @@ import game.modules.slot.cmd.rev.benley.*;
 import game.modules.slot.cmd.send.benley.BenleyInfoMsg;
 import game.modules.slot.entities.BotMinigame;
 import game.modules.slot.room.BenleyRoom;
-import game.modules.slot.utils.SlotUtils;
 import game.util.ConfigGame;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -28,13 +25,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class BenleyModule extends SlotModule {
+public class BentleyModule extends SlotModule {
 
     private long referenceId = 1L;
     private final String fullLines = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25";
 
-    public BenleyModule() {
-        this.gameName = Games.BENTLEY.getName();
+    public BentleyModule() {
+        this.gameName = Games.COWBOY.getName();
     }
 
     public void init() {
@@ -43,7 +40,7 @@ public class BenleyModule extends SlotModule {
 
         // quỹ thưởng
         long[] funds = new long[3];
-        //  jacpot
+        //  jackpot
         int[] initJackpotValues = new int[6];
         try {
 
@@ -70,18 +67,6 @@ public class BenleyModule extends SlotModule {
 
         this.referenceId = this.slotService.getLastReferenceId(this.gameName);
         Debug.trace("START " + this.gameName + " REFERENCE ID= " + this.referenceId);
-
-        try {
-            CacheServiceImpl sv = new CacheServiceImpl();
-            sv.removeKey(this.gameName + "_last_day_x2");
-        } catch (KeyNotFoundException e2) {
-            Debug.trace("KEY NOT FOUND");
-        }
-
-        int lastDayFinish = SlotUtils.getLastDayX2(this.gameName);
-        this.ngayX2 = SlotUtils.calculateTimePokeGoX2AsString(this.gameName, SlotUtils.getX2Days(this.gameName), lastDayFinish);
-        int nextX2Time = SlotUtils.calculateTimePokeGoX2(this.gameName, SlotUtils.getX2Days(this.gameName), lastDayFinish);
-        Debug.trace(this.gameName + " Ngay X2: " + this.ngayX2 + ", remain time = " + nextX2Time);
 
         this.getParentExtension().addEventListener(BZEventType.USER_DISCONNECT, this);
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
@@ -179,7 +164,7 @@ public class BenleyModule extends SlotModule {
 
     private void updateAvengerInfo(User user, BenleyRoom room) {
         BenleyInfoMsg msg = new BenleyInfoMsg();
-        msg.ngayX2 = this.ngayX2;
+        msg.ngayX2 = "";
         msg.remain = 0;
         msg.currentMoney = this.userService.getMoneyUserCache(user.getName(), "vin");
         SlotFreeSpin freeSpin = this.slotService.getLuotQuayFreeSlot(String.valueOf(this.gameName) + room.getBetValue(), user.getName());
@@ -259,7 +244,7 @@ public class BenleyModule extends SlotModule {
                         room.forceStopAutoPlay(user);
                     }
                 } catch (Exception ex) {
-                    Logger.getLogger(BenleyModule.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(BentleyModule.class.getName()).log(Level.SEVERE, null, ex);
                 }
             } else {
                 room.stopAutoPlay(user);

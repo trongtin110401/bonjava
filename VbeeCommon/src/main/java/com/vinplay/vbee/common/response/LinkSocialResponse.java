@@ -26,6 +26,8 @@ public class LinkSocialResponse
 
     private String home;
 
+    private String chatId;
+
     public String getFanPage() {
         return fanPage;
     }
@@ -96,6 +98,14 @@ public class LinkSocialResponse
 
     public void setHome(String home) {
         this.home = home;
+    }
+
+    public String getChatId() {
+        return chatId;
+    }
+
+    public void setChatId(String chatId) {
+        this.chatId = chatId;
     }
 }
 
