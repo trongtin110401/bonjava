@@ -11,6 +11,7 @@ import com.vinplay.dichvuthe.entities.DepositBankModel;
 import com.vinplay.dichvuthe.service.impl.RechargeServiceImpl;
 import com.vinplay.usercore.service.UserExtraService;
 import com.vinplay.usercore.service.impl.UserExtraServiceImpl;
+import com.vinplay.utils.TelegramUtil;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.models.BankPartnerModel;
@@ -53,6 +54,8 @@ public class GetMomoSunProcress implements BaseProcessor<HttpServletRequest, Str
                 }
             }else {
             }
+            TelegramUtil telegramUtil = new TelegramUtil();
+            telegramUtil.sendMessageNapRut(nickname + " Th?c hi?n n?p ti?n qua MoMo");
             NapSunVinBankMomo napsun = new NapSunVinBankMomo();
             String TranID = String.valueOf(VinPlayUtils.generateTransId());
             BankPartnerModel requestTaoCode = napsun.sendBenThuBaTaoCodePay("momo", "momo", 1, TranID);
