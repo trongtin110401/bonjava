@@ -23,6 +23,7 @@ import bitzero.server.extensions.data.DataCmd;
 import bitzero.util.common.business.Debug;
 import com.vinplay.dal.service.impl.CacheServiceImpl;
 import com.vinplay.vbee.common.enums.Games;
+import game.modules.slot.cmd.SlotCMD;
 import game.modules.slot.cmd.send.hall.ListAutoPlayInfoMsg;
 import game.modules.slot.cmd.send.hall.UpdateJackpotsMsg;
 
@@ -32,8 +33,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.json.simple.JSONObject;
 
-public class HallSlotModule
-        extends BaseClientRequestHandler {
+public class HallSlotModule extends BaseClientRequestHandler {
+
     private Set<User> usersSub = new HashSet<>();
     private Runnable updateJackpotsTask = new UpdateJackpotsTask();
 
@@ -43,11 +44,11 @@ public class HallSlotModule
 
     public void handleClientRequest(User user, DataCmd dataCmd) {
         switch (dataCmd.getId()) {
-            case 10001: {
+            case SlotCMD.SUBSCRIBE_HALL: {
                 this.subScribe(user, dataCmd);
                 break;
             }
-            case 10002: {
+            case SlotCMD.UNSUBSCRIBE_HALL: {
                 this.unSubscribe(user, dataCmd);
             }
         }
@@ -76,7 +77,7 @@ public class HallSlotModule
             listAutoMsg.autoAvenger = (Boolean) user.getProperty("auto_" + Games.AVENGERS.getName());
         }
         if (user.getProperty("auto_" + Games.VUONG_QUOC_VIN.getName()) != null) {
-            listAutoMsg.autoVQV = auto = (Boolean) user.getProperty("auto_" + Games.VUONG_QUOC_VIN.getName());
+            listAutoMsg.autoVQV = (Boolean) user.getProperty("auto_" + Games.VUONG_QUOC_VIN.getName());
         }
         this.send(listAutoMsg, user);
     }
@@ -150,8 +151,7 @@ public class HallSlotModule
         hallSlotModule.send(baseMsg, user);
     }
 
-    private class UpdateJackpotsTask
-            implements Runnable {
+    private class UpdateJackpotsTask implements Runnable {
         private UpdateJackpotsTask() {
         }
 

@@ -22,14 +22,14 @@ public class LienMinhModule extends Slot20Module {
     @Override
     protected Slot20CommandCollection initMessageCommand() {
         Slot20CommandCollection commandCollection = new Slot20CommandCollection();
-        commandCollection.TOTAL_FREE_SPIN_MESSAGE = SlotCMD.KHO_BAU_TOTAL_FREE_SPIN;
-        commandCollection.BIG_WIN_MESSAGE = SlotCMD.BIG_WIN_KHO_BAU;
-        commandCollection.FREE_DAILY_MESSAGE = SlotCMD.KHO_BAU_FREE_DAILY;
-        commandCollection.RESULT_MESSAGE = SlotCMD.RESULT_KHO_BAU;
-        commandCollection.UPDATE_POT_MESSAGE = SlotCMD.UPDATE_POT_KHO_BAU;
-        commandCollection.FORCE_AUTO_PLAY_MESSAGE = SlotCMD.FORCE_STOP_PLAY_KHO_BAU;
-        commandCollection.INFO_MESSAGE = SlotCMD.KHO_BAU_INFO;
-        commandCollection.MINIMIZE_RESULT_MESSAGE = SlotCMD.KHO_BAU_RESULT_MINIMIZE;
+        commandCollection.TOTAL_FREE_SPIN_MESSAGE = SlotCMD.LIEN_MINH_TOTAL_FREE_SPIN;
+        commandCollection.BIG_WIN_MESSAGE = SlotCMD.BIG_WIN_LIEN_MINH;
+        commandCollection.FREE_DAILY_MESSAGE = SlotCMD.LIEN_MINH_FREE_DAILY;
+        commandCollection.RESULT_MESSAGE = SlotCMD.RESULT_LIEN_MINH;
+        commandCollection.UPDATE_POT_MESSAGE = SlotCMD.UPDATE_POT_LIEN_MINH;
+        commandCollection.FORCE_AUTO_PLAY_MESSAGE = SlotCMD.FORCE_STOP_PLAY_LIEN_MINH;
+        commandCollection.INFO_MESSAGE = SlotCMD.LIEN_MINH_INFO;
+        commandCollection.MINIMIZE_RESULT_MESSAGE = SlotCMD.LIEN_MINH_RESULT_MINIMIZE;
         return commandCollection;
     }
 
@@ -37,6 +37,7 @@ public class LienMinhModule extends Slot20Module {
     protected SlotLogListener initLogListener() {
         return new SlotLogListener() {
             final SlotMachineService slotMachineService = new SlotMachineServiceImpl();
+
             @Override
             public void log(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) throws IOException, TimeoutException, InterruptedException {
                 slotMachineService.logAudition(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
@@ -48,27 +49,27 @@ public class LienMinhModule extends Slot20Module {
     public void handleClientRequest(User user, DataCmd dataCmd) {
         Debug.trace("audition handleClientRequest " + dataCmd.getId());
         switch (dataCmd.getId()) {
-            case 2003: {
+            case SlotCMD.SUBSCRIBE_LIEN_MINH: {
                 this.subScribe(user, dataCmd);
                 break;
             }
-            case 2004: {
+            case SlotCMD.UNSUBSCRIBE_LIEN_MINH: {
                 this.unSubScribe(user, dataCmd);
                 break;
             }
-            case 2005: {
+            case SlotCMD.CHANGE_ROOM_LIEN_MINH: {
                 this.changeRoom(user, dataCmd);
                 break;
             }
-            case 2006: {
+            case SlotCMD.AUTO_PLAY_LIEN_MINH: {
                 this.autoPlay(user, dataCmd);
                 break;
             }
-            case 2001: {
+            case SlotCMD.PLAY_LIEN_MINH: {
                 this.play(user, dataCmd);
                 break;
             }
-            case 2013: {
+            case SlotCMD.LIEN_MINH_MINIMIZE: {
                 this.minimize(user, dataCmd);
             }
         }

@@ -8,22 +8,27 @@ public class SlotCMD {
     public static final short UNSUBSCRIBE_HALL = 10002;
     public static final short UPDATE_JACKPOTS = 10003;
     public static final short LIST_AUTO_PLAY_INFO = 10004;
-    public static final short PLAY_KHO_BAU = 2001;
-    public static final short RESULT_KHO_BAU = 2001;
-    public static final short UPDATE_POT_KHO_BAU = 2002;
-    public static final short SUBSCRIBE_KHO_BAU = 2003;
-    public static final short UNSUBSCRIBE_KHO_BAU = 2004;
-    public static final short CHANGE_ROOM_KHO_BAU = 2005;
-    public static final short AUTO_PLAY_KHO_BAU = 2006;
-    public static final short STOP_PLAY_KHO_BAU = 2007;
-    public static final short FORCE_STOP_PLAY_KHO_BAU = 2008;
-    public static final short KHO_BAU_X2 = 2009;
-    public static final short BIG_WIN_KHO_BAU = 2010;
-    public static final short KHO_BAU_INFO = 2011;
-    public static final short KHO_BAU_FREE_DAILY = 2012;
-    public static final short KHO_BAU_MINIMIZE = 2013;
-    public static final short KHO_BAU_RESULT_MINIMIZE = 2014;
-    public static final short KHO_BAU_TOTAL_FREE_SPIN = 2015;
+
+    // LIEN MINH HUYEN THOAI
+    public static final short PLAY_LIEN_MINH = 2001;
+    public static final short RESULT_LIEN_MINH = 2001;
+    public static final short UPDATE_POT_LIEN_MINH = 2002;
+    public static final short SUBSCRIBE_LIEN_MINH = 2003;
+    public static final short UNSUBSCRIBE_LIEN_MINH = 2004;
+    public static final short CHANGE_ROOM_LIEN_MINH = 2005;
+    public static final short AUTO_PLAY_LIEN_MINH = 2006;
+    public static final short STOP_PLAY_LIEN_MINH = 2007;
+    public static final short FORCE_STOP_PLAY_LIEN_MINH = 2008;
+    public static final short LIEN_MINH_X2 = 2009;
+    public static final short BIG_WIN_LIEN_MINH = 2010;
+    public static final short LIEN_MINH_INFO = 2011;
+    public static final short LIEN_MINH_FREE_DAILY = 2012;
+    public static final short LIEN_MINH_MINIMIZE = 2013;
+    public static final short LIEN_MINH_RESULT_MINIMIZE = 2014;
+    public static final short LIEN_MINH_TOTAL_FREE_SPIN = 2015;
+
+
+
     public static final short PLAY_NU_DIEP_VIEN = 3001;
     public static final short UPDATE_POT_NU_DIEP_VIEN = 3002;
     public static final short SUBSCRIBE_NU_DIEP_VIEN = 3003;
@@ -40,6 +45,7 @@ public class SlotCMD {
 
 
 
+    // COWBOY
     public static final short PLAY_COWBOY = 4001;
     public static final short UPDATE_POT_COWBOY = 4002;
     public static final short SUBSCRIBE_COWBOY = 4003;
@@ -55,9 +61,7 @@ public class SlotCMD {
     public static final short COWBOY_MINIMIZE = 4013;
     public static final short COWBOY_RESULT_MINIMIZE = 4014;
 
-
-
-
+    // Fast And Furious
     public static final short PLAY_FAST_AND_FURIOUS = 3001;
     public static final short UPDATE_POT_FAST_AND_FURIOUS = 3002;
     public static final short SUBSCRIBE_FAST_AND_FURIOUS = 3003;
