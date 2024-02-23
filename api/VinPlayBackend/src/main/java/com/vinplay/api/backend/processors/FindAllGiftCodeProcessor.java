@@ -35,7 +35,12 @@ public class FindAllGiftCodeProcessor
             String code = request.getParameter("code");
             int price = 0;
             if ((request.getParameter("price") != null)){
-                price = Integer.parseInt(request.getParameter("price"));
+                try {
+                    price = Integer.parseInt(request.getParameter("price"));
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
             }
             boolean active = true;
             if (request.getParameter("active") != null){
