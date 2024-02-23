@@ -61,5 +61,12 @@ public class OtherServiceImpl implements OtherService {
         Document update = new Document("$set", document);
         col.updateOne(filter, update, new UpdateOptions().upsert(true));
     }
+
+    @Override
+    public void saveTransactionUpdateFund(Document document) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection col = db.getCollection("fund_transaction");
+        col.insertOne(document);
+    }
 }
 
