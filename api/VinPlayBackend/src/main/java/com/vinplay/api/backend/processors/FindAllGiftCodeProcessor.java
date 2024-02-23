@@ -42,13 +42,14 @@ public class FindAllGiftCodeProcessor
                 active = Boolean.parseBoolean(request.getParameter("active"));
             }
             String type = request.getParameter("type");
-            String createdTime = request.getParameter("createdTime");
+            String startTime = request.getParameter("startTime");
+            String endTime = request.getParameter("endTime");
             if (pageIndex < 0 || pageSize <= 0) {
                 return response.toJson();
             }
 
             GiftCodeServiceImpl service = new GiftCodeServiceImpl();
-            response = service.findAllGiftCode(nickName, code, price,active, type, createdTime, pageIndex, pageSize);
+            response = service.findAllGiftCode(nickName, code, price,active, type, startTime,endTime, pageIndex, pageSize);
 
         } catch (Exception e) {
             logger.debug((Object) e);
