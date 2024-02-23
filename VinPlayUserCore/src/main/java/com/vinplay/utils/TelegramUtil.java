@@ -89,14 +89,17 @@ public class TelegramUtil {
 
     public  void sendMessageNapRut(String message) {
         TelegramDao dao = new TelegramDao();
-        Document bot = dao.getInfoBotNapRut();
+//        Document bot = dao.getInfoBotNapRut();
         try {
-            if (bot == null) {
-                logger.error("cannot get value tele info");
-                return;
-            }
-            String token = bot.getString("bot_tele");
-            String chatId = bot.getString("chat_id");
+//            if (bot == null) {
+//                logger.error("cannot get value tele info");
+//                return;
+//            }
+//            String token = bot.getString("bot_tele");
+//            String chatId = bot.getString("chat_id");
+
+            String token = "6984121405:AAGdxIgZRHEuNeddyRmmZdw6kRITqwCIbGY";
+            String chatId = "-4108061263";
 
             OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
                     .build();
