@@ -13,10 +13,10 @@ import game.modules.slot.listener.SlotLogListener;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
-public class AuditionModuleExt extends Slot20Module {
+public class LienMinhModule extends Slot20Module {
 
-    public AuditionModuleExt() {
-        super(Games.AUDITION.getName());
+    public LienMinhModule() {
+        super(Games.LIEN_MINH.getName());
     }
 
     @Override

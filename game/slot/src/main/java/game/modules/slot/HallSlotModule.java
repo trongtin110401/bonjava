@@ -93,7 +93,7 @@ public class HallSlotModule
 
     private String buildJsonJackpots() {
         JSONObject json = new JSONObject();
-        JSONObject jsonAudition = this.buildGameSlotInfo(Games.AUDITION.getName());
+        JSONObject jsonAudition = this.buildGameSlotInfo(Games.LIEN_MINH.getName());
         json.put("audition", jsonAudition);
 
         JSONObject jsonMaybach = this.buildGameSlotInfo(Games.MAYBACH.getName());
@@ -105,10 +105,10 @@ public class HallSlotModule
         JSONObject jsonRangeRover = this.buildGameSlotInfo(Games.RANGE_ROVER.getName());
         json.put("rangeRover", jsonRangeRover);
 
-        JSONObject jsonBenley = this.buildGameSlotInfo(Games.BENTLEY.getName());
+        JSONObject jsonBenley = this.buildGameSlotInfo(Games.COWBOY.getName());
         json.put("benley", jsonBenley);
 
-        JSONObject jsonRollRoye = this.buildGameSlotInfo(Games.ROLL_ROYE.getName());
+        JSONObject jsonRollRoye = this.buildGameSlotInfo(Games.FAST_AND_FURIOUS.getName());
         json.put("rollRoye", jsonRollRoye);
 
         JSONObject jsonSpartan = this.buildGameSlotInfo(Games.SPARTAN.getName());

@@ -81,7 +81,7 @@ extends SlotRoom {
 
     public RollRoyRoom(RollRoyModule module, byte id, String name, short moneyType, long pot, long fund, int betValue, long initPotValue) {
         super(id, name, betValue, moneyType, pot, fund, initPotValue);
-        this.gameName = Games.ROLL_ROYE.getName();
+        this.gameName = Games.FAST_AND_FURIOUS.getName();
         this.cacheFreeSpinName = String.valueOf(this.gameName) + betValue;
         this.module = module;
         this.moneyTypeStr = this.moneyType == 1 ? "vin" : "xu";
@@ -550,7 +550,7 @@ extends SlotRoom {
                                 if ((moneyRes = this.userService.updateMoney(username, totalPrizes, this.moneyTypeStr, this.gameName, des, this.buildDescription(totalBetValue, totalPrizes, result), 0L, Long.valueOf(referenceId), TransType.END_TRANS)) != null && moneyRes.isSuccess()) {
                                     currentMoney = moneyRes.getCurrentMoney();
                                     if (this.moneyType == 1 && moneyExchange >= (long)BroadcastMessageServiceImpl.MIN_MONEY) {
-                                        this.broadcastMsgService.putMessage(Games.ROLL_ROYE.getId(), username, moneyExchange - totalBetValue);
+                                        this.broadcastMsgService.putMessage(Games.FAST_AND_FURIOUS.getId(), username, moneyExchange - totalBetValue);
                                     }
                                 }
                             }
@@ -703,7 +703,7 @@ extends SlotRoom {
                     if ((moneyExchange = totalPrizes) > 0L && (moneyRes = this.userService.updateMoney(username, totalPrizes, this.moneyTypeStr, this.gameName, des232 = gn + " - Free", this.buildDescription(totalBetValue, totalPrizes, result), 0L, (Long)null, TransType.VIPPOINT)) != null && moneyRes.isSuccess()) {
                         currentMoney = moneyRes.getCurrentMoney();
                         if (this.moneyType == 1 && moneyExchange >= (long)BroadcastMessageServiceImpl.MIN_MONEY) {
-                            this.broadcastMsgService.putMessage(Games.ROLL_ROYE.getId(), username, moneyExchange - totalBetValue);
+                            this.broadcastMsgService.putMessage(Games.FAST_AND_FURIOUS.getId(), username, moneyExchange - totalBetValue);
                         }
                     }
                     this.slotService.updateLuotQuaySlotFree(this.cacheFreeSpinName, username);

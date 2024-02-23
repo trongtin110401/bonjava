@@ -62,7 +62,7 @@ public class RollRoyModule extends SlotModule {
     private int countUpdateJackpot = 0;
 
     public RollRoyModule() {
-        this.gameName = Games.ROLL_ROYE.getName();
+        this.gameName = Games.FAST_AND_FURIOUS.getName();
     }
 
     public void init() {

@@ -37,20 +37,45 @@ public class SlotCMD {
     public static final short NDV_FREE_DAILY = 3012;
     public static final short NDV_MINIMIZE = 3013;
     public static final short NDV_RESULT_MINIMIZE = 3014;
-    public static final short PLAY_AVENGER = 4001;
-    public static final short UPDATE_POT_AVENGER = 4002;
-    public static final short SUBSCRIBE_AVENGER = 4003;
-    public static final short UNSUBSCRIBE_AVENGER = 4004;
-    public static final short CHANGE_ROOM_AVENGER = 4005;
-    public static final short AUTO_PLAY_AVENGER = 4006;
-    public static final short STOP_PLAY_AVENGER = 4007;
-    public static final short FORCE_STOP_PLAY_AVENGER = 4008;
-    public static final short AVENGER_INFO = 4009;
-    public static final short BIG_WIN_AVENGER = 4010;
-    public static final short AVENGERS_TOTAL_FREE_SPIN = 4011;
-    public static final short AVENGER_FREE_DAILY = 4012;
-    public static final short AVENGER_MINIMIZE = 4013;
-    public static final short AVENGER_RESULT_MINIMIZE = 4014;
+
+
+
+    public static final short PLAY_COWBOY = 4001;
+    public static final short UPDATE_POT_COWBOY = 4002;
+    public static final short SUBSCRIBE_COWBOY = 4003;
+    public static final short UNSUBSCRIBE_COWBOY = 4004;
+    public static final short CHANGE_ROOM_COWBOY = 4005;
+    public static final short AUTO_PLAY_COWBOY = 4006;
+    public static final short STOP_PLAY_COWBOY = 4007;
+    public static final short FORCE_STOP_PLAY_COWBOY = 4008;
+    public static final short COWBOY_INFO = 4009;
+    public static final short BIG_WIN_COWBOY = 4010;
+    public static final short COWBOYS_TOTAL_FREE_SPIN = 4011;
+    public static final short COWBOY_FREE_DAILY = 4012;
+    public static final short COWBOY_MINIMIZE = 4013;
+    public static final short COWBOY_RESULT_MINIMIZE = 4014;
+
+
+
+
+    public static final short PLAY_FAST_AND_FURIOUS = 3001;
+    public static final short UPDATE_POT_FAST_AND_FURIOUS = 3002;
+    public static final short SUBSCRIBE_FAST_AND_FURIOUS = 3003;
+    public static final short UNSUBSCRIBE_FAST_AND_FURIOUS = 3004;
+    public static final short CHANGE_ROOM_FAST_AND_FURIOUS = 3005;
+    public static final short AUTO_PLAY_FAST_AND_FURIOUS = 3006;
+    public static final short STOP_PLAY_FAST_AND_FURIOUS = 3007;
+    public static final short FORCE_STOP_PLAY_FAST_AND_FURIOUS = 3008;
+    public static final short FAST_AND_FURIOUS_INFO = 3009;
+    public static final short BIG_WIN_FAST_AND_FURIOUS = 3010;
+    public static final short FAST_AND_FURIOUS_TOTAL_FREE_SPIN = 3011;
+    public static final short FAST_AND_FURIOUS_FREE_DAILY = 3012;
+    public static final short FAST_AND_FURIOUS_MINIMIZE = 3013;
+    public static final short FAST_AND_FURIOUS_RESULT_MINIMIZE = 3014;
+
+
+
+
     public static final short PLAY_VQV = 5001;
     public static final short UPDATE_POT_VQV = 5002;
     public static final short SUBSCRIBE_VQV = 5003;

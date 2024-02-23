@@ -34,7 +34,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -760,8 +759,7 @@ public class Slot25ExtendRoom extends SlotRoom {
     @Override
     protected void gameLoop() {
         ArrayList<AutoUser> usersPlay = new ArrayList<>();
-        Map map = this.usersAuto;
-        synchronized (map) {
+        synchronized (this.usersAuto) {
             for (AutoUser user : this.usersAuto.values()) {
                 boolean play = user.incCount();
                 if (!play) continue;

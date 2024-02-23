@@ -13,23 +13,23 @@ import game.modules.slot.listener.SlotLogListener;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
-public class FastAndFurousModule extends Slot25BasicModule {
+public class FastAndFuriousModule extends Slot25ExtendModule {
 
-    public FastAndFurousModule() {
-        super(Games.BENTLEY.getName());
+    public FastAndFuriousModule() {
+        super(Games.FAST_AND_FURIOUS.getName());
     }
 
     @Override
     protected Slot25CommandCollection initMessageCommand() {
         Slot25CommandCollection commandCollection = new Slot25CommandCollection();
-        commandCollection.TOTAL_FREE_SPIN_MESSAGE = SlotCMD.AVENGERS_TOTAL_FREE_SPIN;
-        commandCollection.BIG_WIN_MESSAGE = SlotCMD.BIG_WIN_AVENGER;
-        commandCollection.FREE_DAILY_MESSAGE = SlotCMD.AVENGER_FREE_DAILY;
-        commandCollection.RESULT_MESSAGE = SlotCMD.PLAY_AVENGER;
-        commandCollection.UPDATE_POT_MESSAGE = SlotCMD.UPDATE_POT_AVENGER;
-        commandCollection.FORCE_AUTO_PLAY_MESSAGE = SlotCMD.FORCE_STOP_PLAY_AVENGER;
-        commandCollection.INFO_MESSAGE = SlotCMD.AVENGER_INFO;
-        commandCollection.MINIMIZE_RESULT_MESSAGE = SlotCMD.AVENGER_RESULT_MINIMIZE;
+        commandCollection.TOTAL_FREE_SPIN_MESSAGE = SlotCMD.FAST_AND_FURIOUS_TOTAL_FREE_SPIN;
+        commandCollection.BIG_WIN_MESSAGE = SlotCMD.BIG_WIN_FAST_AND_FURIOUS;
+        commandCollection.FREE_DAILY_MESSAGE = SlotCMD.FAST_AND_FURIOUS_FREE_DAILY;
+        commandCollection.RESULT_MESSAGE = SlotCMD.PLAY_FAST_AND_FURIOUS;
+        commandCollection.UPDATE_POT_MESSAGE = SlotCMD.UPDATE_POT_FAST_AND_FURIOUS;
+        commandCollection.FORCE_AUTO_PLAY_MESSAGE = SlotCMD.FORCE_STOP_PLAY_FAST_AND_FURIOUS;
+        commandCollection.INFO_MESSAGE = SlotCMD.FAST_AND_FURIOUS_INFO;
+        commandCollection.MINIMIZE_RESULT_MESSAGE = SlotCMD.FAST_AND_FURIOUS_RESULT_MINIMIZE;
         return commandCollection;
     }
 
@@ -47,29 +47,29 @@ public class FastAndFurousModule extends Slot25BasicModule {
 
     @Override
     public void handleClientRequest(User user, DataCmd dataCmd) {
-        Debug.trace("Avenger handleClientRequest " + dataCmd.getId());
+        Debug.trace("FastAndFurious handleClientRequest " + dataCmd.getId());
         switch (dataCmd.getId()) {
-            case 4003: {
+            case SlotCMD.SUBSCRIBE_FAST_AND_FURIOUS: {
                 this.subScribe(user, dataCmd);
                 break;
             }
-            case 4004: {
+            case SlotCMD.UNSUBSCRIBE_FAST_AND_FURIOUS: {
                 this.unSubScribe(user, dataCmd);
                 break;
             }
-            case 4005: {
+            case SlotCMD.CHANGE_ROOM_FAST_AND_FURIOUS: {
                 this.changeRoom(user, dataCmd);
                 break;
             }
-            case 4006: {
+            case SlotCMD.AUTO_PLAY_FAST_AND_FURIOUS: {
                 this.autoPlay(user, dataCmd);
                 break;
             }
-            case 4001: {
+            case SlotCMD.PLAY_FAST_AND_FURIOUS: {
                 this.play(user, dataCmd);
                 break;
             }
-            case 4013: {
+            case SlotCMD.FAST_AND_FURIOUS_MINIMIZE: {
                 this.minimize(user, dataCmd);
             }
         }
