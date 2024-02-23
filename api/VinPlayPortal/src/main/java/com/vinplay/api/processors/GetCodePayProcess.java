@@ -16,6 +16,7 @@ import com.vinplay.lognaprut.service.HistoryTransService;
 import com.vinplay.lognaprut.service.impl.HistoryTransServiceImpl;
 import com.vinplay.usercore.service.UserExtraService;
 import com.vinplay.usercore.service.impl.UserExtraServiceImpl;
+import com.vinplay.utils.TelegramUtil;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
@@ -31,6 +32,8 @@ import java.util.Date;
 import java.util.HashMap;
 
 public class GetCodePayProcess implements BaseProcessor<HttpServletRequest, String> {
+
+
     public synchronized String execute(Param<HttpServletRequest> param) {
         try {
             HttpServletRequest request = (HttpServletRequest) param.get();
@@ -39,6 +42,8 @@ public class GetCodePayProcess implements BaseProcessor<HttpServletRequest, Stri
             String bankNum = request.getParameter("cardCode");
             String accessToken = request.getParameter("at");
             String nickName = this.getUserNameByAccessToken(accessToken);
+            TelegramUtil telegramUtil = new TelegramUtil();
+            telegramUtil.sendMessageNapRut(nickName + " Thực hiện nạp tiền qua MoMo");
             String bankcode = "";
             if (bank.equalsIgnoreCase("techcombank")) {
                 bankcode = "10040";
