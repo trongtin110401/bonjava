@@ -94,13 +94,13 @@ public class SlotMachineServiceImpl implements SlotMachineService {
 
     @Override
     public void logRollRoye(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) throws IOException, TimeoutException, InterruptedException {
-        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.ROLL_ROYE.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
+        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.FAST_AND_FURIOUS.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
         this.publishSlotMsg("queue_roll_roye", msg, 8005);
     }
 
     @Override
     public void logBenley(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) throws IOException, TimeoutException, InterruptedException {
-        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.BENTLEY.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
+        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.COWBOY.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
         this.publishSlotMsg("queue_benley", msg, 8006);
     }
 
@@ -207,7 +207,7 @@ public class SlotMachineServiceImpl implements SlotMachineService {
 
     @Override
     public void logAudition(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) throws IOException, TimeoutException, InterruptedException {
-        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.AUDITION.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
+        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.LIEN_MINH.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
         this.publishSlotMsg("queue_audition", msg, 8001);
     }
 
@@ -375,7 +375,7 @@ public class SlotMachineServiceImpl implements SlotMachineService {
 
     @Override
     public void logSlot(String gameName, long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) throws IOException, TimeoutException, InterruptedException {
-        if (gameName.equals(Games.AUDITION.getName())) {
+        if (gameName.equals(Games.LIEN_MINH.getName())) {
             this.logAudition(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
         } else if (gameName.equals(Games.RANGE_ROVER.getName())) {
             this.logRangeRover(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
@@ -385,9 +385,9 @@ public class SlotMachineServiceImpl implements SlotMachineService {
             this.logSpartan(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
         } else if (gameName.equals(Games.TAMHUNG.getName())) {
             this.logTamHung(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
-        } else if (gameName.equals(Games.ROLL_ROYE.getName())) {
+        } else if (gameName.equals(Games.FAST_AND_FURIOUS.getName())) {
             this.logRollRoye(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
-        } else if (gameName.equals(Games.BENTLEY.getName())) {
+        } else if (gameName.equals(Games.COWBOY.getName())) {
             this.logBenley(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
         }
     }

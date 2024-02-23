@@ -58,7 +58,7 @@ public class AuditionRoom
 
     public AuditionRoom(AuditionModule module, byte id, String name, short moneyType, long pot, long fund, int betValue, long initPotValue) {
         super(id, name, betValue, moneyType, pot, fund, initPotValue);
-        this.gameName = Games.AUDITION.getName();
+        this.gameName = Games.LIEN_MINH.getName();
         this.module = module;
         this.moneyTypeStr = this.moneyType == 1 ? "vin" : "xu";
         CacheServiceImpl cacheService = new CacheServiceImpl();
@@ -71,7 +71,7 @@ public class AuditionRoom
         this.boxValues.add(10);
         this.boxValues.add(15);
         this.boxValues.add(20);
-        gn = Games.AUDITION.name();
+        gn = Games.LIEN_MINH.name();
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.checkResetPotTask, 10, 10, TimeUnit.SECONDS);
 
     }
@@ -118,7 +118,7 @@ public class AuditionRoom
                     long fee = totalBetValue * 2L / 100L;
                     MoneyResponse moneyRes = new MoneyResponse(false, "1001");
                     if (!u.isBot()) {
-                        moneyRes = this.userService.updateMoney(username, -totalBetValue, this.moneyTypeStr, Games.AUDITION.getName(), "Quay " + gn, "\u0110\u1eb7t c\u01b0\u1ee3c " + gn, fee, referenceId, TransType.START_TRANS);
+                        moneyRes = this.userService.updateMoney(username, -totalBetValue, this.moneyTypeStr, Games.LIEN_MINH.getName(), "Quay " + gn, "\u0110\u1eb7t c\u01b0\u1ee3c " + gn, fee, referenceId, TransType.START_TRANS);
                     } else {
                         moneyRes.setSuccess(true);
                     }
@@ -431,13 +431,13 @@ public class AuditionRoom
                             }
                             long moneyExchange = totalPrizes - tienThuongX2;
                             if (tienThuongX2 > 0L && !u.isBot()) {
-                                this.userService.updateMoney(username, tienThuongX2, this.moneyTypeStr, Games.AUDITION.getName(), "Quay " + gn, "Th\u01b0\u1edfng h\u0169 X2", 0L, null, TransType.NO_VIPPOINT);
+                                this.userService.updateMoney(username, tienThuongX2, this.moneyTypeStr, Games.LIEN_MINH.getName(), "Quay " + gn, "Th\u01b0\u1edfng h\u0169 X2", 0L, null, TransType.NO_VIPPOINT);
                             }
                             if (totalPrizes != 0 && !u.isBot()) {
-                                if ((moneyRes = this.userService.updateMoney(username, totalPrizes, this.moneyTypeStr, Games.AUDITION.getName(), "Quay " + gn, this.buildDescription(totalBetValue, totalPrizes, result), 0L, referenceId, TransType.END_TRANS)) != null && moneyRes.isSuccess()) {
+                                if ((moneyRes = this.userService.updateMoney(username, totalPrizes, this.moneyTypeStr, Games.LIEN_MINH.getName(), "Quay " + gn, this.buildDescription(totalBetValue, totalPrizes, result), 0L, referenceId, TransType.END_TRANS)) != null && moneyRes.isSuccess()) {
                                     currentMoney = moneyRes.getCurrentMoney();
                                     if (this.moneyType == 1 && moneyExchange >= (long) BroadcastMessageServiceImpl.MIN_MONEY) {
-                                        this.broadcastMsgService.putMessage(Games.AUDITION.getId(), username, moneyExchange - totalBetValue);
+                                        this.broadcastMsgService.putMessage(Games.LIEN_MINH.getId(), username, moneyExchange - totalBetValue);
                                     }
                                 }
                             }

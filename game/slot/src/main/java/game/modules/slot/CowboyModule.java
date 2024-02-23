@@ -16,20 +16,20 @@ import java.util.concurrent.TimeoutException;
 public class CowboyModule extends Slot25BasicModule {
 
     public CowboyModule() {
-        super(Games.BENTLEY.getName());
+        super(Games.COWBOY.getName());
     }
 
     @Override
     protected Slot25CommandCollection initMessageCommand() {
         Slot25CommandCollection commandCollection = new Slot25CommandCollection();
-        commandCollection.TOTAL_FREE_SPIN_MESSAGE = SlotCMD.AVENGERS_TOTAL_FREE_SPIN;
-        commandCollection.BIG_WIN_MESSAGE = SlotCMD.BIG_WIN_AVENGER;
-        commandCollection.FREE_DAILY_MESSAGE = SlotCMD.AVENGER_FREE_DAILY;
-        commandCollection.RESULT_MESSAGE = SlotCMD.PLAY_AVENGER;
-        commandCollection.UPDATE_POT_MESSAGE = SlotCMD.UPDATE_POT_AVENGER;
-        commandCollection.FORCE_AUTO_PLAY_MESSAGE = SlotCMD.FORCE_STOP_PLAY_AVENGER;
-        commandCollection.INFO_MESSAGE = SlotCMD.AVENGER_INFO;
-        commandCollection.MINIMIZE_RESULT_MESSAGE = SlotCMD.AVENGER_RESULT_MINIMIZE;
+        commandCollection.TOTAL_FREE_SPIN_MESSAGE = SlotCMD.COWBOYS_TOTAL_FREE_SPIN;
+        commandCollection.BIG_WIN_MESSAGE = SlotCMD.BIG_WIN_COWBOY;
+        commandCollection.FREE_DAILY_MESSAGE = SlotCMD.COWBOY_FREE_DAILY;
+        commandCollection.RESULT_MESSAGE = SlotCMD.PLAY_COWBOY;
+        commandCollection.UPDATE_POT_MESSAGE = SlotCMD.UPDATE_POT_COWBOY;
+        commandCollection.FORCE_AUTO_PLAY_MESSAGE = SlotCMD.FORCE_STOP_PLAY_COWBOY;
+        commandCollection.INFO_MESSAGE = SlotCMD.COWBOY_INFO;
+        commandCollection.MINIMIZE_RESULT_MESSAGE = SlotCMD.COWBOY_RESULT_MINIMIZE;
         return commandCollection;
     }
 
@@ -47,30 +47,31 @@ public class CowboyModule extends Slot25BasicModule {
 
     @Override
     public void handleClientRequest(User user, DataCmd dataCmd) {
-        Debug.trace("Avenger handleClientRequest " + dataCmd.getId());
+        Debug.trace("COWBOY handleClientRequest " + dataCmd.getId());
         switch (dataCmd.getId()) {
-            case 4003: {
+            case SlotCMD.SUBSCRIBE_COWBOY: {
                 this.subScribe(user, dataCmd);
                 break;
             }
-            case 4004: {
+            case SlotCMD.UNSUBSCRIBE_COWBOY: {
                 this.unSubScribe(user, dataCmd);
                 break;
             }
-            case 4005: {
+            case SlotCMD.CHANGE_ROOM_COWBOY: {
                 this.changeRoom(user, dataCmd);
                 break;
             }
-            case 4006: {
+            case SlotCMD.AUTO_PLAY_COWBOY: {
                 this.autoPlay(user, dataCmd);
                 break;
             }
-            case 4001: {
+            case SlotCMD.PLAY_COWBOY: {
                 this.play(user, dataCmd);
                 break;
             }
-            case 4013: {
+            case SlotCMD.COWBOY_MINIMIZE: {
                 this.minimize(user, dataCmd);
+                break;
             }
         }
     }

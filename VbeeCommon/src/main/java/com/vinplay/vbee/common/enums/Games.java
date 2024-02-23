@@ -42,17 +42,17 @@ Games {
     HAM_CA_MAP(30, "HamCaMap", "Hàm Cá M?p"),
     OVER_UNDER(102, "OverUnder", "Over-Under"),
     SPARTAN(120, "Spartan", "Spartan"),
-    AUDITION(110, "Audition", "Audition"),
+    LIEN_MINH(110, "LienMinh", "Liên Minh Huy?n Tho?i"),
     SAMTRUYEN(130, "SamTruyen", "SamTruyen"),
     RANGE_ROVER(140, "RANGE_ROVER", "RANGE_ROVER"),
     MAYBACH(150, "MAYBACH", "MAYBACH"),
     TAMHUNG(160, "TAMHUNG", "TAMHUNG"),
-    BENTLEY(170, "BENLEY", "BENLEY"),
-    ROLL_ROYE(180, "ROLL_ROYE", "ROLL_ROYE"),
+    COWBOY(170, "Cowboy", "Cowboy"),
+    FAST_AND_FURIOUS(180, "FastAndFurious", "Fast And Furious"),
     TAI_XIU_VINH_DANH_BY_DAY(181, "tx_vinh_danh_day", "TAI XIU VINH DANH THEO NGAY"),
     TAI_XIU_VINH_DANH_BY_MONTH(182, "tx_vinh_danh_month", "TAI XIU VINH DANH THEO THANG"),
     TAI_XIU_MD5_VINH_DANH_BY_DAY(181, "tx_md5_vinh_danh_day", "TAI XIU MD5 VINH DANH THEO NGAY"),
-    TAI_XIU_MD5_VINH_DANH_BY_MONTH(182, "tx_md5_vinh_danh_month", "TAI XIU MD5 VINH DANH THEO THANG");
+    TAI_XIU_MD5_VINH_DANH_BY_MONTH(182, "tx_md5_vinh_danh_month", "TAI XIU MD5 VINH DANH THEO THANG"),;
 
     private int id;
     private String name;

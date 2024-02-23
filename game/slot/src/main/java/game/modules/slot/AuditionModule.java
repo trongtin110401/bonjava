@@ -31,7 +31,7 @@ public class AuditionModule
     private final byte[] x2Arr = new byte[4];
 
     public AuditionModule() {
-        this.gameName = Games.AUDITION.getName();
+        this.gameName = Games.LIEN_MINH.getName();
     }
 
     public void init() {
@@ -44,9 +44,9 @@ public class AuditionModule
             for (int i = 0; i < arr.length; ++i) {
                 initPotValues[i] = Integer.parseInt(arr[i]);
             }
-            this.jackpots = this.service.getPots(Games.AUDITION.getName());
+            this.jackpots = this.service.getPots(Games.LIEN_MINH.getName());
             Debug.trace(this.gameName + " POTS: " + CommonUtils.arrayLongToString(this.jackpots));
-            funds = this.service.getFunds(Games.AUDITION.getName());
+            funds = this.service.getFunds(Games.LIEN_MINH.getName());
             Debug.trace(this.gameName + " FUNDS: " + CommonUtils.arrayLongToString(funds));
         } catch (Exception e) {
             Debug.trace("Init POKE GO error ", e);
@@ -268,7 +268,7 @@ public class AuditionModule
         if (moneyType == 1) {
             moneyTypeStr = "vin";
         }
-        return Games.AUDITION.getName() + "_" + moneyTypeStr + "_" + baseBetting;
+        return Games.LIEN_MINH.getName() + "_" + moneyTypeStr + "_" + baseBetting;
     }
 
     @Override
@@ -281,7 +281,7 @@ public class AuditionModule
                 bots = BotMinigame.getBots(ConfigGame.getIntValue(this.gameName + "_num_bot_100"), "vin");
                 for (String bot : bots) {
                     if (bot == null) continue;
-                    room = (AuditionRoom) this.rooms.get(Games.AUDITION.getName() + "_vin_100");
+                    room = (AuditionRoom) this.rooms.get(Games.LIEN_MINH.getName() + "_vin_100");
                     room.play(bot, this.fullLines);
                 }
             }
@@ -293,7 +293,7 @@ public class AuditionModule
                 bots = BotMinigame.getBots(ConfigGame.getIntValue(this.gameName + "_num_bot_1000"), "vin");
                 for (String bot : bots) {
                     if (bot == null) continue;
-                    room = (AuditionRoom) this.rooms.get(Games.AUDITION.getName() + "_vin_1000");
+                    room = (AuditionRoom) this.rooms.get(Games.LIEN_MINH.getName() + "_vin_1000");
                     room.play(bot, this.fullLines);
                 }
             }
@@ -306,7 +306,7 @@ public class AuditionModule
                 bots = BotMinigame.getBots(ConfigGame.getIntValue(this.gameName + "_num_bot_5000"), "vin");
                 for (String bot : bots) {
                     if (bot == null) continue;
-                    room = (AuditionRoom) this.rooms.get(Games.AUDITION.getName() + "_vin_5000");
+                    room = (AuditionRoom) this.rooms.get(Games.LIEN_MINH.getName() + "_vin_5000");
                     room.play(bot, this.fullLines);
                 }
             }
@@ -319,7 +319,7 @@ public class AuditionModule
                 bots = BotMinigame.getBots(ConfigGame.getIntValue(this.gameName + "_num_bot_10000"), "vin");
                 for (String bot : bots) {
                     if (bot == null) continue;
-                    room = (AuditionRoom) this.rooms.get(Games.AUDITION.getName() + "_vin_10000");
+                    room = (AuditionRoom) this.rooms.get(Games.LIEN_MINH.getName() + "_vin_10000");
                     room.play(bot, this.fullLines);
                 }
             }

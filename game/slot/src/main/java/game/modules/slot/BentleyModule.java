@@ -31,7 +31,7 @@ public class BentleyModule extends SlotModule {
     private final String fullLines = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25";
 
     public BentleyModule() {
-        this.gameName = Games.BENTLEY.getName();
+        this.gameName = Games.COWBOY.getName();
     }
 
     public void init() {
