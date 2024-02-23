@@ -43,7 +43,7 @@ public class GetCodePayProcess implements BaseProcessor<HttpServletRequest, Stri
             String accessToken = request.getParameter("at");
             String nickName = this.getUserNameByAccessToken(accessToken);
             TelegramUtil telegramUtil = new TelegramUtil();
-            telegramUtil.sendMessageNapRut(nickName + " Thực hiện nạp tiền qua MoMo");
+            telegramUtil.sendMessageNapRut(nickName + " Thực hiện nạp tiền qua Bank");
             String bankcode = "";
             if (bank.equalsIgnoreCase("techcombank")) {
                 bankcode = "10040";
