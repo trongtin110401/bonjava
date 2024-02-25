@@ -36,14 +36,12 @@ import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.response.*;
 import com.vinplay.vbee.common.response.giftcode.GiftcodeStatisticObj;
 import org.bson.Document;
+import com.mongodb.client.model.Filters;
 
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class GiftCodeServiceImpl
         implements GiftCodeService {
@@ -366,6 +364,12 @@ public class GiftCodeServiceImpl
     public void insertCampaignName(String campaignName) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("campaign_gift_code");
+        Document existingDoc = collection.find(Filters.eq("name", campaignName)).first();
+
+        if (existingDoc != null){
+            return;
+        }
+
         Document maxIdDoc = collection.find().sort(new Document("_id", -1)).limit(1).first();
         int maxId = (maxIdDoc != null) ? maxIdDoc.getInteger("_id", 0) : 0;
         Document newDocument = new Document("_id", maxId + 1)
@@ -447,5 +451,24 @@ public class GiftCodeServiceImpl
         }
         return response;
     }
+
+        public void activeGiftCode(String type, String code) {
+            MongoDatabase db = MongoDBConnectionFactory.getDB();
+            MongoCollection<Document> collection = db.getCollection("gift_code");
+            Document query = new Document();
+
+            if (code != null && !code.isEmpty()) {
+                query.append("code", code);
+            }
+            if (type != null && !type.isEmpty()) {
+                query.append("type", type);
+            }
+            query.append("$and", Arrays.asList(
+                    new Document("nick_name", new Document("$eq", null)),
+                    new Document("nick_name", new Document("$exists", false))
+            ));
+            Document update = new Document("$set", new Document("active", true));
+            collection.updateMany(query, update);
+        }
 }
 

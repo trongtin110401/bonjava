@@ -1702,7 +1702,11 @@
             <name>get all user giftcode deposit</name>
             <path>com.vinplay.api.backend.processors.GetAllUserUsedGiftCodeAndDepositProcessor</path>
         </command>
-
+        <command>
+            <id>11022</id>
+            <name>get all user giftcode deposit</name>
+            <path>com.vinplay.api.backend.processors.ActiveGiftCodeProcessor</path>
+        </command>
 
     </commands>
 </backend>
