@@ -36,6 +36,7 @@ import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.response.*;
 import com.vinplay.vbee.common.response.giftcode.GiftcodeStatisticObj;
 import org.bson.Document;
+import com.mongodb.client.model.Filters;
 
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -366,6 +367,12 @@ public class GiftCodeServiceImpl
     public void insertCampaignName(String campaignName) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("campaign_gift_code");
+        Document existingDoc = collection.find(Filters.eq("name", campaignName)).first();
+
+        if (existingDoc != null){
+            return;
+        }
+
         Document maxIdDoc = collection.find().sort(new Document("_id", -1)).limit(1).first();
         int maxId = (maxIdDoc != null) ? maxIdDoc.getInteger("_id", 0) : 0;
         Document newDocument = new Document("_id", maxId + 1)
