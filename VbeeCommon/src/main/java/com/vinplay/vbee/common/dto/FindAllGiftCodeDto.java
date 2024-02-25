@@ -14,6 +14,8 @@ public class FindAllGiftCodeDto extends BaseResponseModel {
 
     private int pageSize;
 
+    private long total;
+
     private List<GiftCodeDto> transactions;
 
     public int getPageIndex() {
@@ -38,5 +40,13 @@ public class FindAllGiftCodeDto extends BaseResponseModel {
 
     public void setTransactions(List<GiftCodeDto> transactions) {
         this.transactions = transactions;
+    }
+
+    public long getTotal() {
+        return total;
+    }
+
+    public void setTotal(long total) {
+        this.total = total;
     }
 }

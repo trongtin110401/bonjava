@@ -268,6 +268,8 @@ public class GiftCodeServiceImpl
 
         MongoCursor<Document> cursor = collection.find(query).skip(skip).limit(pageSize).iterator();
 
+        long totalCount = collection.count(query);
+
         List<GiftCodeDto> transactions = new ArrayList<>();
         while (cursor.hasNext()) {
             Document document = cursor.next();
@@ -284,6 +286,7 @@ public class GiftCodeServiceImpl
             giftCodeDto.setCreatedDate(document.getString("created_time"));
             transactions.add(giftCodeDto);
         }
+        results.setTotal(totalCount);
         results.setErrorCode("0");
         results.setSuccess(true);
         results.setPageIndex(pageIndex);
