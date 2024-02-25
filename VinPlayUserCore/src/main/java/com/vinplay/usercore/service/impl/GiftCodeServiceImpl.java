@@ -257,11 +257,9 @@ public class GiftCodeServiceImpl
         if (type != null && !type.isEmpty()) {
             query.append("type", type);
         }
-        if (startTime != null && !startTime.isEmpty()) {
-            query.append("created_time", new Document("$gte", startTime));
-        }
-        if (endTime != null && !endTime.isEmpty()) {
-            query.append("created_time", new Document("$lte", endTime));
+        if ((startTime != null && !startTime.isEmpty()) && (endTime != null && !endTime.isEmpty())) {
+            // Nếu cả startTime và endTime đều được cung cấp
+            query.append("created_time", new Document("$gte", startTime).append("$lte", endTime));
         }
 
         MongoCursor<Document> cursor = collection.find(query).skip(skip).limit(pageSize).iterator();
