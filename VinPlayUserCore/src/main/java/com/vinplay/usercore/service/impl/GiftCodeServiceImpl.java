@@ -41,10 +41,7 @@ import com.mongodb.client.model.Filters;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class GiftCodeServiceImpl
         implements GiftCodeService {
@@ -454,5 +451,24 @@ public class GiftCodeServiceImpl
         }
         return response;
     }
+
+        public void activeGiftCode(String type, String code) {
+            MongoDatabase db = MongoDBConnectionFactory.getDB();
+            MongoCollection<Document> collection = db.getCollection("gift_code");
+            Document query = new Document();
+
+            if (code != null && !code.isEmpty()) {
+                query.append("code", code);
+            }
+            if (type != null && !type.isEmpty()) {
+                query.append("type", type);
+            }
+            query.append("$and", Arrays.asList(
+                    new Document("nick_name", new Document("$eq", null)),
+                    new Document("nick_name", new Document("$exists", false))
+            ));
+            Document update = new Document("$set", new Document("active", true));
+            collection.updateMany(query, update);
+        }
 }
 
