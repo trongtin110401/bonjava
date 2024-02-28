@@ -236,7 +236,7 @@ public class GiftCodeServiceImpl
         return results;
     }
 
-    public FindAllGiftCodeDto findAllGiftCode(String nickName, String code, int price, boolean active,
+    public FindAllGiftCodeDto findAllGiftCode(String nickName, String code, int price, Boolean active,
                                               String type, String startTime, String endTime, int pageIndex, int pageSize) {
         FindAllGiftCodeDto results = new FindAllGiftCodeDto(false, "1001");
         MongoDatabase db = MongoDBConnectionFactory.getDB();
@@ -253,12 +253,14 @@ public class GiftCodeServiceImpl
         if (price > 0) {
             query.append("price", price);
         }
-        query.append("active", active);
+
+        if (active != null){
+            query.append("active", active);
+        }
         if (type != null && !type.isEmpty()) {
             query.append("type", type);
         }
         if ((startTime != null && !startTime.isEmpty()) && (endTime != null && !endTime.isEmpty())) {
-            // Nếu cả startTime và endTime đều được cung cấp
             query.append("created_time", new Document("$gte", startTime).append("$lte", endTime));
         }
 

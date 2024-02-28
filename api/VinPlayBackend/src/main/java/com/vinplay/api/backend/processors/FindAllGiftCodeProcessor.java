@@ -34,17 +34,16 @@ public class FindAllGiftCodeProcessor
             String nickName = request.getParameter("nickName");
             String code = request.getParameter("code");
             int price = 0;
-            if ((request.getParameter("price") != null)){
+            if ((request.getParameter("price") != null)) {
                 try {
                     price = Integer.parseInt(request.getParameter("price"));
-                }
-                catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-            boolean active = true;
-            if (request.getParameter("active") != null){
-                active = Boolean.parseBoolean(request.getParameter("active"));
+            Boolean active = null;
+            if (request.getParameter("active") != null) {
+                 active = Boolean.parseBoolean(request.getParameter("active"));
             }
             String type = request.getParameter("type");
             String startTime = request.getParameter("startTime");
@@ -54,7 +53,7 @@ public class FindAllGiftCodeProcessor
             }
 
             GiftCodeServiceImpl service = new GiftCodeServiceImpl();
-            response = service.findAllGiftCode(nickName, code, price,active, type, startTime,endTime, pageIndex, pageSize);
+            response = service.findAllGiftCode(nickName, code, price, active, type, startTime, endTime, pageIndex, pageSize);
 
         } catch (Exception e) {
             logger.debug((Object) e);
