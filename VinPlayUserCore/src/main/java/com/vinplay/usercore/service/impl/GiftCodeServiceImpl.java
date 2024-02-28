@@ -37,6 +37,8 @@ import com.vinplay.vbee.common.response.*;
 import com.vinplay.vbee.common.response.giftcode.GiftcodeStatisticObj;
 import org.bson.Document;
 import com.mongodb.client.model.Filters;
+import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
 
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -254,7 +256,7 @@ public class GiftCodeServiceImpl
             query.append("price", price);
         }
 
-        if (active != null){
+        if (active != null) {
             query.append("active", active);
         }
         if (type != null && !type.isEmpty()) {
@@ -366,7 +368,7 @@ public class GiftCodeServiceImpl
         MongoCollection<Document> collection = db.getCollection("campaign_gift_code");
         Document existingDoc = collection.find(Filters.eq("name", campaignName)).first();
 
-        if (existingDoc != null){
+        if (existingDoc != null) {
             return;
         }
 
@@ -388,6 +390,15 @@ public class GiftCodeServiceImpl
                 CampaignName campaignName = new CampaignName();
                 campaignName.setId(document.getInteger("_id"));
                 campaignName.setCampaignName(document.getString("name"));
+
+                MongoCollection<Document> giftCode = db.getCollection("gift_code");
+
+                Bson query = Filters.and(
+                        Filters.eq("type", String.valueOf(document.getInteger("_id"))),
+                        Filters.eq("active", true)
+                );
+                long count = giftCode.count(query);
+                campaignName.setQuantityActiveCode(count);
                 campaignNames.add(campaignName);
             }
         }
@@ -452,23 +463,44 @@ public class GiftCodeServiceImpl
         return response;
     }
 
-        public void activeGiftCode(String type, String code) {
-            MongoDatabase db = MongoDBConnectionFactory.getDB();
-            MongoCollection<Document> collection = db.getCollection("gift_code");
-            Document query = new Document();
+    public void activeGiftCode(String type, String code) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("gift_code");
+        Document query = new Document();
 
-            if (code != null && !code.isEmpty()) {
-                query.append("code", code);
-            }
-            if (type != null && !type.isEmpty()) {
-                query.append("type", type);
-            }
-            query.append("$and", Arrays.asList(
-                    new Document("nick_name", new Document("$eq", null)),
-                    new Document("nick_name", new Document("$exists", false))
-            ));
-            Document update = new Document("$set", new Document("active", true));
-            collection.updateMany(query, update);
+        if (code != null && !code.isEmpty()) {
+            query.append("code", code);
         }
+        if (type != null && !type.isEmpty()) {
+            query.append("type", type);
+        }
+        query.append("$and", Arrays.asList(
+                new Document("nick_name", new Document("$eq", null)),
+                new Document("nick_name", new Document("$exists", false))
+        ));
+        Document update = new Document("$set", new Document("active", true));
+        collection.updateMany(query, update);
+    }
+
+    public boolean deleteCampaign(int id) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> giftCode = db.getCollection("gift_code");
+
+        Bson query = Filters.and(
+                Filters.eq("type", String.valueOf(id)),
+                Filters.eq("active", true)
+        );
+
+        FindIterable<Document> result = giftCode.find(query);
+        Document firstDocument = result.first();
+
+        if (firstDocument != null) {
+            return false;
+        } else {
+            MongoCollection<Document> campaign = db.getCollection("campaign_gift_code");
+            campaign.deleteOne(Filters.eq("_id", id));
+            return true;
+        }
+    }
 }
 
