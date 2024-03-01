@@ -6,15 +6,19 @@ package com.vinplay.usercore.service.impl;
 import com.mongodb.Block;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.UpdateOptions;
 import com.vinplay.usercore.service.OtherService;
+import com.vinplay.vbee.common.dto.GiftCodeDto;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.response.LinkSocialResponse;
+import com.vinplay.vbee.common.response.TransactionFundResponse;
 import org.bson.Document;
-import org.bson.conversions.Bson;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class OtherServiceImpl implements OtherService {
     @Override
@@ -67,6 +71,47 @@ public class OtherServiceImpl implements OtherService {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection col = db.getCollection("fund_transaction");
         col.insertOne(document);
+    }
+
+    @Override
+    public TransactionFundResponse getTransactionFund(int pageIndex, int pageSize, String type, String startTime, String endTime, String fundName) {
+        TransactionFundResponse response = new TransactionFundResponse(true, "0");
+
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection col = db.getCollection("fund_transaction");
+
+        Document query = new Document();
+        int skip = (pageIndex - 1) * pageSize;
+        if ((startTime != null && !startTime.isEmpty()) && (endTime != null && !endTime.isEmpty())) {
+            query.append("time_log", new Document("$gte", startTime).append("$lte", endTime));
+        }
+        if (type != null && !type.isEmpty()) {
+            query.append("type", type);
+        }
+        if (fundName != null && !fundName.isEmpty()) {
+            query.append("fund_name", fundName);
+        }
+
+        MongoCursor<Document> cursor = col.find(query).skip(skip).limit(pageSize).iterator();
+
+        long totalCount = col.count(query);
+
+        List<Document> transactions = new ArrayList<>();
+        while (cursor.hasNext()) {
+            Document document = cursor.next();
+            Document fund = new Document();
+            fund.put("fundName", document.getString("fund_name"));
+            fund.put("amount", document.getInteger("amount"));
+            fund.put("type", document.getString("type"));
+            fund.put("createdTime", document.getString("time_log"));
+            transactions.add(fund);
+        }
+        response.setTransactions(transactions);
+        response.setTotal((int) totalCount);
+        response.setPageIndex(pageIndex);
+        response.setPageSize(pageSize);
+
+        return response;
     }
 }
 
