@@ -9,9 +9,9 @@ import java.util.Map;
 
 public enum Slot20Item {
     NONE("NONE", 0, "NONE", (byte) -1),
-    JACKPOT("FREE_SPIN", 1, "FREE_SPIN", (byte) 0),
-    FREE_SPIN("BONUS", 2, "BONUS", (byte) 1),
-    BONUS("JACKPOT", 3, "JACKPOT", (byte) 2),
+    JACKPOT("JACKPOT", 1, "FREE_SPIN", (byte) 0),
+    FREE_SPIN("FREE_SPIN", 2, "BONUS", (byte) 1),
+    BONUS("BONUS", 3, "JACKPOT", (byte) 2),
     D("D", 4, "D", (byte) 3),
     C("C", 5, "C", (byte) 4),
     B("B", 6, "B", (byte) 5),

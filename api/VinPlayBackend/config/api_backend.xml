@@ -1712,6 +1712,11 @@
             <name>get all user giftcode deposit</name>
             <path>com.vinplay.api.backend.processors.DeleteCampaignProcessor</path>
         </command>
+        <command>
+            <id>11024</id>
+            <name>report admin transfer money</name>
+            <path>com.vinplay.api.backend.processors.money.AdminTransferMoneyProcessor</path>
+        </command>
 
     </commands>
 </backend>
