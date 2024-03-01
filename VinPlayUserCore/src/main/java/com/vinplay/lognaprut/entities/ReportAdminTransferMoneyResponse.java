@@ -14,6 +14,8 @@ public class ReportAdminTransferMoneyResponse
 
     private long subtractMoney;
 
+    private long totalMoneyGiftCode;
+
     public long getAddMoney() {
         return addMoney;
     }
@@ -28,6 +30,14 @@ public class ReportAdminTransferMoneyResponse
 
     public void setSubtractMoney(long subtractMoney) {
         this.subtractMoney = subtractMoney;
+    }
+
+    public long getTotalMoneyGiftCode() {
+        return totalMoneyGiftCode;
+    }
+
+    public void setTotalMoneyGiftCode(long totalMoneyGiftCode) {
+        this.totalMoneyGiftCode = totalMoneyGiftCode;
     }
 
     public ReportAdminTransferMoneyResponse(boolean success, String errorCode) {
