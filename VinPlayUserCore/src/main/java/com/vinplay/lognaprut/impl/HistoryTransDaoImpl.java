@@ -10,6 +10,7 @@ import com.vinplay.dichvuthe.dao.impl.RechargeDaoImpl;
 import com.vinplay.lognaprut.HistoryTransDao;
 import com.vinplay.lognaprut.entities.HistoryTransModel;
 import com.vinplay.lognaprut.entities.HistoryTransResponse;
+import com.vinplay.lognaprut.entities.ReportAdminTransferMoneyResponse;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
 import org.bson.Document;
@@ -75,10 +76,10 @@ public class HistoryTransDaoImpl implements HistoryTransDao {
             Document conditions = new Document();
             List<HistoryTransModel> results = new ArrayList<>();
             String pattern = ".*" + codepay;
-            conditions.put("giaodich", (Object)new BasicDBObject().append("$regex", (Object)pattern).append("$options", (Object)"i"));
+            conditions.put("giaodich", (Object) new BasicDBObject().append("$regex", (Object) pattern).append("$options", (Object) "i"));
             FindIterable iterable = null;
-            iterable = db.getCollection("History_User_transaction").find((Bson)new Document(conditions)).limit(50);
-            iterable.forEach((Block)new Block<Document>(){
+            iterable = db.getCollection("History_User_transaction").find((Bson) new Document(conditions)).limit(50);
+            iterable.forEach((Block) new Block<Document>() {
 
                 public void apply(Document document) {
                     String giaodich = document.getString("giaodich");
@@ -149,7 +150,7 @@ public class HistoryTransDaoImpl implements HistoryTransDao {
             }
 
 
-            FindIterable iterable = col.find( new Document(conditions)).sort( objsort).skip(numStart).limit(maxItem);
+            FindIterable iterable = col.find(new Document(conditions)).sort(objsort).skip(numStart).limit(maxItem);
             iterable.forEach((Block<Document>) document -> {
                 Gson gson = new Gson();
                 HistoryTransModel model = gson.fromJson(document.toJson(), HistoryTransModel.class);
@@ -200,7 +201,7 @@ public class HistoryTransDaoImpl implements HistoryTransDao {
             }
 
 
-            FindIterable iterable = col.find( new Document(conditions)).sort( objsort).skip(numStart).limit(maxItem);
+            FindIterable iterable = col.find(new Document(conditions)).sort(objsort).skip(numStart).limit(maxItem);
             iterable.forEach((Block<Document>) document -> {
                 Gson gson = new Gson();
                 HistoryTransModel model = gson.fromJson(document.toJson(), HistoryTransModel.class);
@@ -251,7 +252,7 @@ public class HistoryTransDaoImpl implements HistoryTransDao {
             }
 
 
-            FindIterable iterable = col.find( new Document(conditions)).sort( objsort).skip(numStart).limit(maxItem);
+            FindIterable iterable = col.find(new Document(conditions)).sort(objsort).skip(numStart).limit(maxItem);
             iterable.forEach((Block<Document>) document -> {
                 Gson gson = new Gson();
                 HistoryTransModel model = gson.fromJson(document.toJson(), HistoryTransModel.class);
@@ -302,7 +303,7 @@ public class HistoryTransDaoImpl implements HistoryTransDao {
             }
 
 
-            FindIterable iterable = col.find( new Document(conditions)).sort( objsort).skip(numStart).limit(maxItem);
+            FindIterable iterable = col.find(new Document(conditions)).sort(objsort).skip(numStart).limit(maxItem);
             iterable.forEach((Block<Document>) document -> {
                 Gson gson = new Gson();
                 HistoryTransModel model = gson.fromJson(document.toJson(), HistoryTransModel.class);
@@ -362,7 +363,7 @@ public class HistoryTransDaoImpl implements HistoryTransDao {
                 conditions.put("nickName", nickName);
             }
 
-            FindIterable iterable = col.find( new Document(conditions)).sort( objsort);
+            FindIterable iterable = col.find(new Document(conditions)).sort(objsort);
             iterable.forEach((Block) new Block<Document>() {
                 public void apply(Document document) {
                     Gson gson = new Gson();
@@ -381,4 +382,35 @@ public class HistoryTransDaoImpl implements HistoryTransDao {
         }
 
     }
+
+    @Override
+    public ReportAdminTransferMoneyResponse getTotalAdminTransferByDay(String startTime, String endTime) {
+        ReportAdminTransferMoneyResponse response = new ReportAdminTransferMoneyResponse(true, "0");
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection col = db.getCollection("History_User_transaction");
+        HashMap<String, Object> conditions = new HashMap<>();
+
+        if (!startTime.isEmpty() && !endTime.isEmpty()) {
+            BasicDBObject obj = new BasicDBObject();
+            obj.put("$gte", startTime);
+            obj.put("$lte", endTime);
+            conditions.put("createAt", obj);
+        }
+        conditions.put("congGiaoDich", "Admin");
+
+        FindIterable iterable = col.find(new Document(conditions));
+        iterable.forEach((Block) new Block<Document>() {
+            public void apply(Document document) {
+                long money = Long.parseLong(document.getString("sotien"));
+                if (money > 0) {
+                    response.setAddMoney(response.getAddMoney() + money);
+                } else {
+                    response.setSubtractMoney(response.getSubtractMoney() + money);
+                }
+            }
+        });
+
+        return response;
+    }
+
 }

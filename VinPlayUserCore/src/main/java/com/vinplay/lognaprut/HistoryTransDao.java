@@ -2,6 +2,7 @@ package com.vinplay.lognaprut;
 
 import com.vinplay.lognaprut.entities.HistoryTransModel;
 import com.vinplay.lognaprut.entities.HistoryTransResponse;
+import com.vinplay.lognaprut.entities.ReportAdminTransferMoneyResponse;
 
 import java.util.List;
 
@@ -18,6 +19,5 @@ public interface HistoryTransDao {
     HistoryTransResponse getListTransRutTheByName(String nickName, int page, int maxItem);
     HistoryTransResponse getListTransRutBankByName(String nickName, int page, int maxItem);
 
-
-
+    ReportAdminTransferMoneyResponse getTotalAdminTransferByDay(String startTime, String endTime);
 }
