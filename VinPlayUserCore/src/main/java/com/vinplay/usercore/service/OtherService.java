@@ -4,6 +4,7 @@
 package com.vinplay.usercore.service;
 
 import com.vinplay.vbee.common.response.LinkSocialResponse;
+import com.vinplay.vbee.common.response.TransactionFundResponse;
 import org.bson.Document;
 
 public interface OtherService {
@@ -13,5 +14,7 @@ public interface OtherService {
     void updateLinkSocial(LinkSocialResponse response);
 
     void saveTransactionUpdateFund(Document document);
+
+    TransactionFundResponse getTransactionFund(int pageIndex, int pageSize, String type, String startTime, String endTime, String fundName);
 }
 

@@ -1717,6 +1717,11 @@
             <name>report admin transfer money</name>
             <path>com.vinplay.api.backend.processors.money.AdminTransferMoneyProcessor</path>
         </command>
+        <command>
+            <id>11025</id>
+            <name>report admin transfer money</name>
+            <path>com.vinplay.api.backend.processors.FindAllTransactionFundProcessor</path>
+        </command>
 
     </commands>
 </backend>
