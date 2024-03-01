@@ -36,14 +36,14 @@ import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.response.*;
 import com.vinplay.vbee.common.response.giftcode.GiftcodeStatisticObj;
 import org.bson.Document;
+import com.mongodb.client.model.Filters;
+import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
 
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class GiftCodeServiceImpl
         implements GiftCodeService {
@@ -238,8 +238,8 @@ public class GiftCodeServiceImpl
         return results;
     }
 
-    public FindAllGiftCodeDto findAllGiftCode(String nickName, String code, int price, boolean active,
-                                              String type, String createdTime, int pageIndex, int pageSize) {
+    public FindAllGiftCodeDto findAllGiftCode(String nickName, String code, int price, Boolean active,
+                                              String type, String startTime, String endTime, int pageIndex, int pageSize) {
         FindAllGiftCodeDto results = new FindAllGiftCodeDto(false, "1001");
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         int skip = (pageIndex - 1) * pageSize;
@@ -255,14 +255,20 @@ public class GiftCodeServiceImpl
         if (price > 0) {
             query.append("price", price);
         }
-        query.append("active", active);
+
+        if (active != null) {
+            query.append("active", active);
+        }
         if (type != null && !type.isEmpty()) {
             query.append("type", type);
         }
-        if (createdTime != null && !createdTime.isEmpty()) {
-            query.append("created_time", new Document("$gte", createdTime));
+        if ((startTime != null && !startTime.isEmpty()) && (endTime != null && !endTime.isEmpty())) {
+            query.append("created_time", new Document("$gte", startTime).append("$lte", endTime));
         }
+
         MongoCursor<Document> cursor = collection.find(query).skip(skip).limit(pageSize).iterator();
+
+        long totalCount = collection.count(query);
 
         List<GiftCodeDto> transactions = new ArrayList<>();
         while (cursor.hasNext()) {
@@ -280,6 +286,7 @@ public class GiftCodeServiceImpl
             giftCodeDto.setCreatedDate(document.getString("created_time"));
             transactions.add(giftCodeDto);
         }
+        results.setTotal(totalCount);
         results.setErrorCode("0");
         results.setSuccess(true);
         results.setPageIndex(pageIndex);
@@ -359,6 +366,12 @@ public class GiftCodeServiceImpl
     public void insertCampaignName(String campaignName) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("campaign_gift_code");
+        Document existingDoc = collection.find(Filters.eq("name", campaignName)).first();
+
+        if (existingDoc != null) {
+            return;
+        }
+
         Document maxIdDoc = collection.find().sort(new Document("_id", -1)).limit(1).first();
         int maxId = (maxIdDoc != null) ? maxIdDoc.getInteger("_id", 0) : 0;
         Document newDocument = new Document("_id", maxId + 1)
@@ -377,6 +390,15 @@ public class GiftCodeServiceImpl
                 CampaignName campaignName = new CampaignName();
                 campaignName.setId(document.getInteger("_id"));
                 campaignName.setCampaignName(document.getString("name"));
+
+                MongoCollection<Document> giftCode = db.getCollection("gift_code");
+
+                Bson query = Filters.and(
+                        Filters.eq("type", String.valueOf(document.getInteger("_id"))),
+                        Filters.eq("active", true)
+                );
+                long count = giftCode.count(query);
+                campaignName.setQuantityActiveCode(count);
                 campaignNames.add(campaignName);
             }
         }
@@ -439,6 +461,46 @@ public class GiftCodeServiceImpl
             response.add(dto);
         }
         return response;
+    }
+
+    public void activeGiftCode(String type, String code) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("gift_code");
+        Document query = new Document();
+
+        if (code != null && !code.isEmpty()) {
+            query.append("code", code);
+        }
+        if (type != null && !type.isEmpty()) {
+            query.append("type", type);
+        }
+        query.append("$and", Arrays.asList(
+                new Document("nick_name", new Document("$eq", null)),
+                new Document("nick_name", new Document("$exists", false))
+        ));
+        Document update = new Document("$set", new Document("active", true));
+        collection.updateMany(query, update);
+    }
+
+    public boolean deleteCampaign(int id) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> giftCode = db.getCollection("gift_code");
+
+        Bson query = Filters.and(
+                Filters.eq("type", String.valueOf(id)),
+                Filters.eq("active", true)
+        );
+
+        FindIterable<Document> result = giftCode.find(query);
+        Document firstDocument = result.first();
+
+        if (firstDocument != null) {
+            return false;
+        } else {
+            MongoCollection<Document> campaign = db.getCollection("campaign_gift_code");
+            campaign.deleteOne(Filters.eq("_id", id));
+            return true;
+        }
     }
 }
 

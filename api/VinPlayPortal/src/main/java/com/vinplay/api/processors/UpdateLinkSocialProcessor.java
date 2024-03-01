@@ -20,6 +20,7 @@ public class UpdateLinkSocialProcessor
         String liveChat = request.getParameter("liveChat");
         String linkDownload = request.getParameter("linkDownload");
         String home = request.getParameter("home");
+        String chatId = request.getParameter("chatId");
         LinkSocialResponse linkSocialResponse = new LinkSocialResponse(true, "1001");
         linkSocialResponse.setFanPage(fanPage);
         linkSocialResponse.setGroupFacebook(groupFacebook);
@@ -29,6 +30,7 @@ public class UpdateLinkSocialProcessor
         linkSocialResponse.setLiveChat(liveChat);
         linkSocialResponse.setLinkDownload(linkDownload);
         linkSocialResponse.setHome(home);
+        linkSocialResponse.setChatId(chatId);
         OtherServiceImpl otherService = new OtherServiceImpl();
         otherService.updateLinkSocial(linkSocialResponse);
         return otherService.getLinkSocial().toJson();
