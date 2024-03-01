@@ -410,6 +410,27 @@ public class HistoryTransDaoImpl implements HistoryTransDao {
             }
         });
 
+        MongoCollection collection = db.getCollection("user_gift_code");
+
+
+        HashMap<String, Object> conditionsGiftCode = new HashMap<>();
+
+        if (!startTime.isEmpty() && !endTime.isEmpty()) {
+            BasicDBObject obj = new BasicDBObject();
+            obj.put("$gte", startTime);
+            obj.put("$lte", endTime);
+            conditions.put("created_time", obj);
+        }
+
+        FindIterable findIterable = collection.find(new Document(conditionsGiftCode));
+
+        findIterable.forEach((Block) new Block<Document>() {
+            public void apply(Document document) {
+                long money = document.getInteger("price");
+                response.setTotalMoneyGiftCode(response.getTotalMoneyGiftCode() + money);
+            }
+        });
+
         return response;
     }
 
