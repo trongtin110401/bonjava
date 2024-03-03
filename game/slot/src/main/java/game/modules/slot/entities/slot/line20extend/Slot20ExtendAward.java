@@ -5,9 +5,15 @@ package game.modules.slot.entities.slot.line20extend;
 
 public enum Slot20ExtendAward {
 
+    PENTA_JACKPOT("PENTA_JACKPOT", 0, (byte) 1, Slot20ExtendItem.SCATTER, (byte) 5, 0f),
+
     PENTA_SCATTER("PENTA_SCATTER", 0, (byte) 1, Slot20ExtendItem.SCATTER, (byte) 5, 200f),
     QUADAR_SCATTER("QUADAR_SCATTER", 1, (byte) 2, Slot20ExtendItem.SCATTER, (byte) 4, 100f),
     TRIPLE_SCATTER("TRIPLE_SCATTER", 1, (byte) 2, Slot20ExtendItem.SCATTER, (byte) 4, 40f),
+
+    PENTA_BONUS("PENTA_SCATTER", 0, (byte) 1, Slot20ExtendItem.BONUS, (byte) 5, 0f),
+    QUADAR_BONUS("QUADAR_SCATTER", 1, (byte) 2, Slot20ExtendItem.BONUS, (byte) 4, 0f),
+    TRIPLE_BONUS("TRIPLE_SCATTER", 1, (byte) 2, Slot20ExtendItem.BONUS, (byte) 4, 0f),
 
     PENTA_F("PENTA_F", 17, (byte) 18, Slot20ExtendItem.F, (byte) 5, 1000.0f),
     QUADAR_F("QUADAR_F", 18, (byte) 19, Slot20ExtendItem.F, (byte) 4, 200.0f),

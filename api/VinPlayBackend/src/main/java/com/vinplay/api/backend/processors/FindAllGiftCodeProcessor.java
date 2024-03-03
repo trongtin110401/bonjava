@@ -42,7 +42,7 @@ public class FindAllGiftCodeProcessor
                 }
             }
             Boolean active = null;
-            if (request.getParameter("active") != null) {
+            if (request.getParameter("active") != null || request.getParameter("active").isEmpty()) {
                  active = Boolean.parseBoolean(request.getParameter("active"));
             }
             String type = request.getParameter("type");
