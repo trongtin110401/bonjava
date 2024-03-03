@@ -41,6 +41,8 @@ public abstract class Slot25ExtendModule extends SlotModule {
         this.gameName = gameName;
     }
 
+
+
     public void init() {
         // super call
         super.init();
