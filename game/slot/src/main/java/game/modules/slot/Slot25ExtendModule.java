@@ -14,7 +14,8 @@ import com.vinplay.vbee.common.utils.CommonUtils;
 import game.modules.slot.cmd.Slot25CommandCollection;
 import game.modules.slot.cmd.rev.audition.MinimizeAuditionCmd;
 import game.modules.slot.cmd.rev.slot25extend.*;
-import game.modules.slot.cmd.send.slot25extend.*;
+import game.modules.slot.cmd.send.slot25extend.Slot25InfoMsg;
+import game.modules.slot.cmd.send.slot25extend.Slot25UpdatePotMsg;
 import game.modules.slot.entities.BotMinigame;
 import game.modules.slot.listener.SlotLogListener;
 import game.modules.slot.room.Slot25ExtendRoom;
@@ -30,6 +31,9 @@ import java.util.logging.Logger;
 public abstract class Slot25ExtendModule extends SlotModule {
     private long referenceId = 1L;
     private final String fullLines = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25";
+
+    private final byte[] x2Arr = new byte[4];
+
     private Slot25CommandCollection commandCollection;
     private SlotLogListener slotLogListener;
 
@@ -286,7 +290,6 @@ public abstract class Slot25ExtendModule extends SlotModule {
         }
     }
 
-    private final byte[] x2Arr = new byte[4];
     public void updatePot(byte id, long value, byte x2) {
         this.jackpots[id] = value;
         this.x2Arr[id] = x2;
