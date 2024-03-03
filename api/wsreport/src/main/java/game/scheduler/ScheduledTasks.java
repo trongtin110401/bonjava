@@ -190,6 +190,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             cacheService.removeKey(USER_TAI_XIU);
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println(e.getMessage());
             System.out.println("Loi senTXAdmin CU");
 
         }
@@ -231,6 +232,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Loi senTXMD5Admin MOI");
+            System.out.println(e.getMessage());
 
         }
     }
@@ -498,27 +500,27 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
      *
      * @return
      */
-    @Scheduled(fixedRate = 500)
-    public void sendNotificationAdmin() {
-        try {
-            NotificationAdminObj obj = MapperUtils.mapper.readValue(cacheService.getValueStr(NOTIFY_ADMIN), NotificationAdminObj.class);
-            NotifyReportResponse oResponse = new NotifyReportResponse("2", obj);
-            String json = MapperUtils.mapper.writeValueAsString(oResponse);
-            this.sendMessNotificationToAdmin(json);
-            cacheService.removeKey(NOTIFY_ADMIN);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Loi sendNotificationAdmin");
+//    @Scheduled(fixedRate = 500)
+//    public void sendNotificationAdmin() {
+//        try {
+//            NotificationAdminObj obj = MapperUtils.mapper.readValue(cacheService.getValueStr(NOTIFY_ADMIN), NotificationAdminObj.class);
+//            NotifyReportResponse oResponse = new NotifyReportResponse("2", obj);
+//            String json = MapperUtils.mapper.writeValueAsString(oResponse);
+//            this.sendMessNotificationToAdmin(json);
+//            cacheService.removeKey(NOTIFY_ADMIN);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            System.out.println("Loi sendNotificationAdmin");
+//
+//        }
+//    }
 
-        }
-    }
-
-    private void sendMessNotificationToAdmin(String mess) {
-        for (Session session : ServerNotifyGame.sessions) {
-            session.sendText(mess);
-        }
-        //todo : update lại cache
-    }
+//    private void sendMessNotificationToAdmin(String mess) {
+//        for (Session session : ServerNotifyGame.sessions) {
+//            session.sendText(mess);
+//        }
+//        //todo : update lại cache
+//    }
 
     /**
      * Send thông tin Eventaction sang admin php
