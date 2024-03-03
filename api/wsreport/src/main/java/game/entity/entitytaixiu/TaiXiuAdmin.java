@@ -56,4 +56,14 @@ public class TaiXiuAdmin implements Serializable {
   public void setReportMoneyToday(long reportMoneyToday) {
     this.reportMoneyToday = reportMoneyToday;
   }
+
+  @Override
+  public String toString() {
+    return "TaiXiuAdmin{" +
+            "username='" + username + '\'' +
+            ", cuaDat=" + cuaDat +
+            ", money=" + money +
+            ", reportMoneyToday=" + reportMoneyToday +
+            '}';
+  }
 }

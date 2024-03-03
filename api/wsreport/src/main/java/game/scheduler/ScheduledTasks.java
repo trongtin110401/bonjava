@@ -527,19 +527,19 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
      *
      * @return
      */
-    @Scheduled(fixedRate = 1000)
-    public void sendEventactionAdmin() {
-        try {
-            EventactionAdminObj obj = MapperUtils.mapper.readValue(cacheService.getValueStr(EVENTACTION_ADMIN), EventactionAdminObj.class);
-            EventactionResponse oResponse = new EventactionResponse("2", obj);
-            String json = MapperUtils.mapper.writeValueAsString(oResponse);
-            this.sendMessEventactionToAdmin(json);
-            cacheService.removeKey(EVENTACTION_ADMIN);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Loi sendNotificationAdmin");
-        }
-    }
+//    @Scheduled(fixedRate = 1000)
+//    public void sendEventactionAdmin() {
+//        try {
+//            EventactionAdminObj obj = MapperUtils.mapper.readValue(cacheService.getValueStr(EVENTACTION_ADMIN), EventactionAdminObj.class);
+//            EventactionResponse oResponse = new EventactionResponse("2", obj);
+//            String json = MapperUtils.mapper.writeValueAsString(oResponse);
+//            this.sendMessEventactionToAdmin(json);
+//            cacheService.removeKey(EVENTACTION_ADMIN);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            System.out.println("Loi sendNotificationAdmin");
+//        }
+//    }
 
     private void sendMessEventactionToAdmin(String mess) {
         for (Session session : ServerEventactionGame.sessions) {
@@ -579,7 +579,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             e.printStackTrace();
         }
 
-        System.out.println("=============== List report TX" + userList);
+        System.out.println("=============== List report TX " + userList);
         return userList;
     }
 
@@ -588,6 +588,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
     }
 
     public List<TopWin> getTopWin(String response) {
+        System.out.println("=============== List response " + response);
         List<TopWin> topWins = new ArrayList<>();
         try {
             JSONObject jsonObject = new JSONObject(response);
