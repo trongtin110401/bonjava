@@ -42,7 +42,6 @@ public abstract class Slot25ExtendModule extends SlotModule {
     }
 
 
-
     public void init() {
         // super call
         super.init();
@@ -311,6 +310,7 @@ public abstract class Slot25ExtendModule extends SlotModule {
     }
 
     public void updatePotToUser(User user) {
+        System.out.println("update pot to user: " + jackpots[0] + "-" + jackpots[1] + "-" + jackpots[2]);
         Slot25UpdatePotMsg msg = this.getPotsInfo();
         SlotUtils.sendMessageToUser(msg, user);
     }
