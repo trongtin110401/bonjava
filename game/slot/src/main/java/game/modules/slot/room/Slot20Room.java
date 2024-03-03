@@ -255,7 +255,7 @@ public class Slot20Room extends SlotRoom {
                                     // phần thưởng cho JACKPOT
                                     else if (award == Slot20Award.PENTA_JACKPOT) {
                                         // đảm bảo chỉ duy nhất 1 dòng trúng JACKPOT
-                                        // nếu trùng lặp, đầu lại dòng vòng lặp while (continue block4)
+                                        // nếu trùng lặp, bắt đầu lại dòng vòng lặp while (continue block4)
                                         for (AwardsOnLine e : awardsOnLines) {
                                             if (e.getAward() != Slot20Award.PENTA_JACKPOT) {
                                                 continue;
