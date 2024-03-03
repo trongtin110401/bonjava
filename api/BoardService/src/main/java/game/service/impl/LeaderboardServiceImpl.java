@@ -3,6 +3,7 @@ package game.service.impl;
 import game.dto.data.UserScore;
 import game.dto.request.LeaderboardCriteria;
 import game.dto.request.LeaderboardParam;
+import game.dto.request.UserRequestDto;
 import game.repository.LeaderboardRepository;
 import game.service.LeaderboardService;
 import org.redisson.client.protocol.ScoredEntry;
@@ -33,5 +34,10 @@ public class LeaderboardServiceImpl implements LeaderboardService {
         return scoredEntries.stream()
                 .map(entry -> new UserScore(entry.getValue(), entry.getScore().longValue()))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UserScore> getByNicknameAndGameName(UserRequestDto userRequestDto) {
+        return leaderboardRepository.getByNickNameAndGameName(userRequestDto.getBoardName(), userRequestDto.getUsers());
     }
 }
