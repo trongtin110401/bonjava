@@ -1,7 +1,6 @@
 package game.repository;
 
 import game.dto.data.UserScore;
-import game.dto.response.UserTopScoreResponse;
 import org.redisson.api.RScoredSortedSet;
 import org.redisson.api.RedissonClient;
 import org.redisson.client.protocol.ScoredEntry;
