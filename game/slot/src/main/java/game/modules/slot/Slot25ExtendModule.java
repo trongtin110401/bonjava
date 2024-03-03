@@ -209,8 +209,10 @@ public abstract class Slot25ExtendModule extends SlotModule {
         } else {
             Debug.trace(this.gameName + ": change room error, leaved= " + cmd.roomLeavedId + ", joined= " + cmd.roomJoinedId);
         }
-        assert roomJoined != null;
-        BroadCastUserState.pushBroadCast(user.getName(), user.getName() + " play " + gameName + " " + roomJoined.getBetValue());
+
+        if (roomJoined != null) {
+            BroadCastUserState.pushBroadCast(user.getName(), user.getName() + " play " + gameName + " " + roomJoined.getBetValue());
+        }
     }
 
     protected void play(User user, DataCmd dataCmd) {
