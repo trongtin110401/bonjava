@@ -617,6 +617,9 @@ public class TaiXiuModule
         long chenhLechTien = Math.abs(totalRealBetTai-totalRealBetXiu);
         Debug.info("xxxxx " + totalRealBetTai+"  vvvvvv"+ totalRealBetXiu);
         if("auto".equals(keyBeCang)) {
+
+            System.out.println("TX keyBeCang " + keyBeCang);
+            System.out.println("chenhLechTien " + chenhLechTien);
             try {
                 //tin duoc tien chenh lech
                 String min_hu = cacheService.getValueStr("min_hu_tx_auto");
