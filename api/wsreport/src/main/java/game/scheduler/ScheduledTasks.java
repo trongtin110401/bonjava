@@ -577,6 +577,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             e.printStackTrace();
         }
 
+        System.out.println("=============== List report TX" + userList);
         return userList;
     }
 
@@ -603,4 +604,15 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
         }
         return topWins;
     }
+
+    public static void main(String[] args) {
+        List<TaiXiuAdmin> list = new ArrayList<>();
+        TaiXiuAdmin taiXiuAdmin = new TaiXiuAdmin("baztdinh",0,0,0);
+        TaiXiuAdmin taiXiuAdmin1 = new TaiXiuAdmin("testacc123",0,0,0);
+        list.add(taiXiuAdmin);
+        list.add(taiXiuAdmin1);
+        ScheduledTasks scheduledTasks = new ScheduledTasks();
+        scheduledTasks.getUserTX(list, "TaiXiu");
+    }
+
 }
