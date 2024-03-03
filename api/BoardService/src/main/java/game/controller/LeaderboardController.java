@@ -3,6 +3,7 @@ package game.controller;
 import game.dto.data.UserScore;
 import game.dto.request.LeaderboardCriteria;
 import game.dto.request.LeaderboardParam;
+import game.dto.request.UserRequestDto;
 import game.dto.response.Response;
 import game.service.LeaderboardService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,16 @@ public class LeaderboardController {
         return new ResponseEntity(Response.builder()
                 .message("success")
                 .status(0)
+                .build(), HttpStatus.OK);
+    }
+
+    @GetMapping("/get_by_name")
+    public ResponseEntity getByUsernameAndGameName(@ModelAttribute UserRequestDto criteria) {
+        List<UserScore> results = leaderboardService.getByNicknameAndGameName(criteria);
+        return new ResponseEntity(Response.builder()
+                .message("success")
+                .status(0)
+                .data(results)
                 .build(), HttpStatus.OK);
     }
 }
