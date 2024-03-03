@@ -734,7 +734,7 @@ public class Slot20Room extends SlotRoom {
 
     private void savePot() {
         long currentTime = System.currentTimeMillis();
-        if (currentTime - this.lastTimeUpdatePotToRoom >= 3000L) {
+        if (currentTime - this.lastTimeUpdatePotToRoom >= 1000L) {
             this.lastTimeUpdatePotToRoom = currentTime;
             try {
                 this.miniGameService.savePot(this.name, this.pot, this.huX2);
