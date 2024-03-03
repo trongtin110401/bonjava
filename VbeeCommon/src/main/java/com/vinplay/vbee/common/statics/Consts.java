@@ -146,6 +146,7 @@ public class Consts {
     public static final String VQMM = "VQMM";
     public static final String VQVIP = "VQVIP";
     public static final String TAI_XIU = "TaiXiu";
+    public static final String TAI_XIU_MD5 = "TaiXiuMd5";
     public static final String BAU_CUA = "BauCua";
     public static final String MINI_POKER = "MiniPoker";
     public static final String CAO_THAP = "CaoThap";
@@ -209,10 +210,10 @@ public class Consts {
     public static final List<String> VIN_IN_USER = Arrays.asList("RechargeByCard", "RechargeByVinCard", "RechargeByMegaCard",
             "RechargeByBank", "RechargeByIAP", "RechargeBySMS", "TopupVTCPay", "RechargeByMomo");
     public static final List<String> VIN_IN_EVENT = Arrays.asList("NhiemVu", "GiftCode", "GiftCodeMKT", "GiftCodeVH", "GcAgentImport", "RefundFee", "BonusTopDS", "CashoutByVP", "EventVPBonus", "EventVP", "VQMM", "VQVIP", "KhoBauVqFree", "NuDiepVienVqFree", "SieuAnhHungVqFree", "VuongQuocVinVqFree");
-    public static final List<String> VIN_OUT_USER = Arrays.asList("CashOutByCard", "CashOutByTopUp",CASH_OUT_BY_MOMO,CASH_OUT_BY_BANK, REFUND_RECHARGE_ERROR);
+    public static final List<String> VIN_OUT_USER = Arrays.asList("CashOutByCard", "CashOutByTopUp",CASH_OUT_BY_MOMO,CASH_OUT_BY_BANK, REFUND_RECHARGE_ERROR, "Admin");
     public static final List<String> VIN_OTHER = Arrays.asList("NapXu", "ChargeSMS", "Admin", "GcAgent", "GcAgentExport", "PktTicket");
     // list game slot
-    public static final List<String> GAMES_SLOT = Arrays.asList(TAI_XIU, BAU_CUA, MINI_POKER,
+    public static final List<String> GAMES_SLOT = Arrays.asList(TAI_XIU, BAU_CUA, MINI_POKER,TAI_XIU_MD5,
             CAO_THAP, CANDY, AUDITION, MAYBACH, BENLEY, RANGE_ROVER, Spartan, TAMHUNG, ROLL_ROYE,
             AUDITION_FREE, MAYBACH_FREE, BENLEY_FREE, RANGE_ROVER_FREE, Spartan_FREE, TAMHUNG_FREE, TAMHUNG_FREE, ROLL_ROYE_FREE);
 
