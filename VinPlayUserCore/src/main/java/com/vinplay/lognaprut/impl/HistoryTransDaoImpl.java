@@ -419,7 +419,7 @@ public class HistoryTransDaoImpl implements HistoryTransDao {
             BasicDBObject obj = new BasicDBObject();
             obj.put("$gte", startTime);
             obj.put("$lte", endTime);
-            conditions.put("created_time", obj);
+            conditionsGiftCode.put("created_time", obj);
         }
 
         FindIterable findIterable = collection.find(new Document(conditionsGiftCode));
