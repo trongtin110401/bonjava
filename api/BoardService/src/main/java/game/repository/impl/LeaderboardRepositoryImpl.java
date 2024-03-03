@@ -1,7 +1,6 @@
 package game.repository.impl;
 
 import game.dto.data.UserScore;
-import game.dto.response.UserTopScoreResponse;
 import game.repository.LeaderboardRepository;
 import org.redisson.Redisson;
 import org.redisson.api.RScoredSortedSet;
