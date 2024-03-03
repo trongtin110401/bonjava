@@ -60,6 +60,14 @@ public abstract class Slot25ExtendModule extends SlotModule {
             }
 
             this.jackpots = this.service.getPots(this.gameName);
+            if (jackpots == null || jackpots.length == 0) {
+                jackpots = new long[4];
+                jackpots[0] = 500000;
+                jackpots[1] = 5000000;
+                jackpots[2] = 5000000;
+                jackpots[3] = 0;
+            }
+
             Debug.trace(this.gameName + " POTS: " + CommonUtils.arrayLongToString(this.jackpots));
             funds = this.service.getFunds(this.gameName);
             Debug.trace(this.gameName + ": " + CommonUtils.arrayLongToString(funds));
@@ -309,8 +317,8 @@ public abstract class Slot25ExtendModule extends SlotModule {
         Slot25UpdatePotMsg msg = new Slot25UpdatePotMsg(commandCollection.UPDATE_POT_MESSAGE);
         msg.value100 = this.jackpots[0];
         msg.value1000 = this.jackpots[1];
-        msg.value5000 = this.jackpots[2];
-        msg.value10000 = this.jackpots[3];
+        msg.value5000 = 0;
+        msg.value10000 = this.jackpots[2];
         msg.x2Room100 = this.x2Arr[0];
         msg.x2Room1000 = this.x2Arr[1];
         return msg;
