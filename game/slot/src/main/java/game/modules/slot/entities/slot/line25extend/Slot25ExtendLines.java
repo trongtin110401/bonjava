@@ -23,9 +23,9 @@ public class Slot25ExtendLines {
         this.lines.add(line2);
         Line line3 = new Line("line3", 2, 0, 2, 1, 2, 2, 2, 3, 2, 4);
         this.lines.add(line3);
-        Line line4 = new Line("line4", 0, 0, 1, 1, 2, 2, 1, 3, 0, 4);
+        Line line4 = new Line("line4", 2, 0, 1, 1, 0, 2, 1, 3, 2, 4);
         this.lines.add(line4);
-        Line line5 = new Line("line5", 2, 0, 1, 1, 0, 2, 1, 3, 2, 4);
+        Line line5 = new Line("line5", 0, 0, 1, 1, 2, 2, 1, 3, 0, 4);
         this.lines.add(line5);
         Line line6 = new Line("line6", 1, 0, 0, 1, 0, 2, 0, 3, 1, 4);
         this.lines.add(line6);
@@ -59,9 +59,9 @@ public class Slot25ExtendLines {
         this.lines.add(line20);
         Line line21 = new Line("line21", 2, 0, 0, 1, 0, 2, 0, 3, 2, 4);
         this.lines.add(line21);
-        Line line22 = new Line("line22", 1, 0, 2, 1, 0, 2, 2, 3, 1, 4);
+        Line line22 = new Line("line22", 1, 0, 0, 1, 2, 2, 1, 3, 0, 4);
         this.lines.add(line22);
-        Line line23 = new Line("line23", 1, 0, 0, 1, 2, 2, 0, 3, 1, 4);
+        Line line23 = new Line("line23", 1, 0, 2, 1, 0, 2, 2, 3, 1, 4);
         this.lines.add(line23);
         Line line24 = new Line("line24", 0, 0, 2, 1, 0, 2, 2, 3, 0, 4);
         this.lines.add(line24);
