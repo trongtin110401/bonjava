@@ -13,11 +13,13 @@ import com.vinplay.vbee.common.models.slot.SlotFreeSpin;
 import com.vinplay.vbee.common.utils.CommonUtils;
 import game.modules.slot.cmd.Slot25CommandCollection;
 import game.modules.slot.cmd.rev.audition.MinimizeAuditionCmd;
-import game.modules.slot.cmd.rev.slot25linebasic.*;
-import game.modules.slot.cmd.send.slot25linebasic.Slot25InfoMsg;
+import game.modules.slot.cmd.rev.slot25extend.*;
+import game.modules.slot.cmd.send.slot25extend.Slot25InfoMsg;
+import game.modules.slot.cmd.send.slot25extend.Slot25UpdatePotMsg;
 import game.modules.slot.entities.BotMinigame;
 import game.modules.slot.listener.SlotLogListener;
-import game.modules.slot.room.Slot25BasicRoom;
+import game.modules.slot.room.Slot25ExtendRoom;
+import game.modules.slot.utils.SlotUtils;
 import game.util.ConfigGame;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -29,6 +31,9 @@ import java.util.logging.Logger;
 public abstract class Slot25ExtendModule extends SlotModule {
     private long referenceId = 1L;
     private final String fullLines = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25";
+
+    private final byte[] x2Arr = new byte[4];
+
     private Slot25CommandCollection commandCollection;
     private SlotLogListener slotLogListener;
 
@@ -63,19 +68,11 @@ public abstract class Slot25ExtendModule extends SlotModule {
         }
 
         this.rooms.put(this.gameName + "_vin_100",
-                new Slot25BasicRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 0, this.gameName + "_vin_100", (short) 1, this.jackpots[0], funds[0], 100, initJackpotValues[0]));
+                new Slot25ExtendRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 0, this.gameName + "_vin_100", (short) 1, this.jackpots[0], funds[0], 100, initJackpotValues[0]));
         this.rooms.put(this.gameName + "_vin_1000",
-                new Slot25BasicRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 1, this.gameName + "_vin_1000", (short) 1, this.jackpots[1], funds[1], 1000, initJackpotValues[1]));
+                new Slot25ExtendRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 1, this.gameName + "_vin_1000", (short) 1, this.jackpots[1], funds[1], 1000, initJackpotValues[1]));
         this.rooms.put(this.gameName + "_vin_10000",
-                new Slot25BasicRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 2, this.gameName + "_vin_10000", (short) 1, this.jackpots[2], funds[2], 10000, initJackpotValues[2]));
-
-        // FORCE - R
-//        this.rooms.put(this.gameName + "_vin_100",
-//                new Slot25BasicRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 0, this.gameName + "_vin_100", (short) 1, this.jackpots[0], Long.MAX_VALUE - 1000000000, 100, initJackpotValues[0]));
-//        this.rooms.put(this.gameName + "_vin_1000",
-//                new Slot25BasicRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 1, this.gameName + "_vin_1000", (short) 1, this.jackpots[1], Long.MAX_VALUE - 1000000000, 1000, initJackpotValues[1]));
-//        this.rooms.put(this.gameName + "_vin_10000",
-//                new Slot25BasicRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 2, this.gameName + "_vin_10000", (short) 1, this.jackpots[2], Long.MAX_VALUE - 1000000000, 10000, initJackpotValues[2]));
+                new Slot25ExtendRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 2, this.gameName + "_vin_10000", (short) 1, this.jackpots[2], funds[2], 10000, initJackpotValues[2]));
 
         Debug.trace("INIT " + this.gameName + " DONE");
 
@@ -120,7 +117,7 @@ public abstract class Slot25ExtendModule extends SlotModule {
     }
 
     private void userDis(User user) {
-        Slot25BasicRoom room = (Slot25BasicRoom) user.getProperty("MGROOM_" + this.gameName + "_INFO");
+        Slot25ExtendRoom room = (Slot25ExtendRoom) user.getProperty("MGROOM_" + this.gameName + "_INFO");
         if (room != null) {
             room.quitRoom(user);
             room.stopAutoPlay(user);
@@ -135,11 +132,11 @@ public abstract class Slot25ExtendModule extends SlotModule {
 
     protected void subScribe(User user, DataCmd dataCmd) {
         SubscribeCmd cmd = new SubscribeCmd(dataCmd);
-        Slot25BasicRoom room = (Slot25BasicRoom) this.getRoom(cmd.roomId);
+        Slot25ExtendRoom room = (Slot25ExtendRoom) this.getRoom(cmd.roomId);
         if (room != null) {
             room.joinRoom(user);
             room.userMaximize(user);
-            room.updatePot(user);
+            this.updatePotToUser(user);
             this.updateRoomInfo(user, room);
         } else {
             Debug.trace(this.gameName + " SUBSCRIBE: room " + cmd.roomId + " not found");
@@ -147,7 +144,7 @@ public abstract class Slot25ExtendModule extends SlotModule {
         BroadCastUserState.popBroadCast(user.getName());
     }
 
-    private void updateRoomInfo(User user, Slot25BasicRoom room) {
+    private void updateRoomInfo(User user, Slot25ExtendRoom room) {
         Slot25InfoMsg msg = new Slot25InfoMsg(commandCollection.INFO_MESSAGE);
         msg.ngayX2 = "";
         msg.remain = 0;
@@ -162,7 +159,7 @@ public abstract class Slot25ExtendModule extends SlotModule {
 
     protected void unSubScribe(User user, DataCmd dataCmd) {
         UnSubscribeCmd cmd = new UnSubscribeCmd(dataCmd);
-        Slot25BasicRoom room = (Slot25BasicRoom) this.getRoom(cmd.roomId);
+        Slot25ExtendRoom room = (Slot25ExtendRoom) this.getRoom(cmd.roomId);
         if (room != null) {
             room.stopAutoPlay(user);
             room.quitRoom(user);
@@ -174,7 +171,7 @@ public abstract class Slot25ExtendModule extends SlotModule {
 
     protected void minimize(User user, DataCmd dataCmd) {
         MinimizeAuditionCmd cmd = new MinimizeAuditionCmd(dataCmd);
-        Slot25BasicRoom room = (Slot25BasicRoom) this.getRoom(cmd.roomId);
+        Slot25ExtendRoom room = (Slot25ExtendRoom) this.getRoom(cmd.roomId);
         if (room != null) {
             room.quitRoom(user);
             room.userMinimize(user);
@@ -185,13 +182,13 @@ public abstract class Slot25ExtendModule extends SlotModule {
 
     protected void changeRoom(User user, DataCmd dataCmd) {
         ChangeRoomCmd cmd = new ChangeRoomCmd(dataCmd);
-        Slot25BasicRoom roomLeaved = (Slot25BasicRoom) this.getRoom(cmd.roomLeavedId);
-        Slot25BasicRoom roomJoined = (Slot25BasicRoom) this.getRoom(cmd.roomJoinedId);
+        Slot25ExtendRoom roomLeaved = (Slot25ExtendRoom) this.getRoom(cmd.roomLeavedId);
+        Slot25ExtendRoom roomJoined = (Slot25ExtendRoom) this.getRoom(cmd.roomJoinedId);
         if (roomLeaved != null && roomJoined != null) {
             roomLeaved.stopAutoPlay(user);
             roomLeaved.quitRoom(user);
             roomJoined.joinRoom(user);
-            roomJoined.updatePot(user);
+            this.updatePotToUser(user);
             this.updateRoomInfo(user, roomJoined);
         } else {
             Debug.trace(this.gameName + ": change room error, leaved= " + cmd.roomLeavedId + ", joined= " + cmd.roomJoinedId);
@@ -202,7 +199,7 @@ public abstract class Slot25ExtendModule extends SlotModule {
 
     protected void play(User user, DataCmd dataCmd) {
         PlayCmd cmd = new PlayCmd(dataCmd);
-        Slot25BasicRoom room = (Slot25BasicRoom) user.getProperty("MGROOM_" + this.gameName + "_INFO");
+        Slot25ExtendRoom room = (Slot25ExtendRoom) user.getProperty("MGROOM_" + this.gameName + "_INFO");
         if (room != null) {
             try {
                 room.play(user, cmd.lines);
@@ -216,7 +213,7 @@ public abstract class Slot25ExtendModule extends SlotModule {
 
     protected void autoPlay(User user, DataCmd dataCMD) {
         AutoPlayCmd cmd = new AutoPlayCmd(dataCMD);
-        Slot25BasicRoom room = (Slot25BasicRoom) user.getProperty("MGROOM_" + this.gameName + "_INFO");
+        Slot25ExtendRoom room = (Slot25ExtendRoom) user.getProperty("MGROOM_" + this.gameName + "_INFO");
         if (room != null) {
             if (cmd.autoPlay == 1) {
                 try {
@@ -251,14 +248,14 @@ public abstract class Slot25ExtendModule extends SlotModule {
         // FORCE - R
 
         List<String> bots;
-        Slot25BasicRoom room;
+        Slot25ExtendRoom room;
         ++this.countBot100;
         if (this.countBot100 >= this.getCountTimeBot(this.gameName + "_bot_100")) {
             if (this.countBot100 == this.getCountTimeBot(this.gameName + "_bot_100")) {
                 bots = BotMinigame.getBots(ConfigGame.getIntValue(this.gameName + "_num_bot_100"), "vin");
                 for (String bot : bots) {
                     if (bot == null) continue;
-                    room = (Slot25BasicRoom) this.rooms.get(this.gameName + "_vin_100");
+                    room = (Slot25ExtendRoom) this.rooms.get(this.gameName + "_vin_100");
                     long referenceId = getNewReferenceId();
                     room.playNormal(bot, this.fullLines, referenceId);
                 }
@@ -271,7 +268,7 @@ public abstract class Slot25ExtendModule extends SlotModule {
                 bots = BotMinigame.getBots(ConfigGame.getIntValue(this.gameName + "_num_bot_1000"), "vin");
                 for (String bot : bots) {
                     if (bot == null) continue;
-                    room = (Slot25BasicRoom) this.rooms.get(this.gameName + "_vin_1000");
+                    room = (Slot25ExtendRoom) this.rooms.get(this.gameName + "_vin_1000");
                     long referenceId = getNewReferenceId();
                     room.playNormal(bot, this.fullLines, referenceId);
                 }
@@ -284,13 +281,39 @@ public abstract class Slot25ExtendModule extends SlotModule {
                 bots = BotMinigame.getBots(ConfigGame.getIntValue(this.gameName + "_num_bot_10000"), "vin");
                 for (String bot : bots) {
                     if (bot == null) continue;
-                    room = (Slot25BasicRoom) this.rooms.get(this.gameName + "_vin_10000");
+                    room = (Slot25ExtendRoom) this.rooms.get(this.gameName + "_vin_10000");
                     long referenceId = getNewReferenceId();
                     room.playNormal(bot, this.fullLines, referenceId);
                 }
             }
             this.countBot10000 = 0;
         }
+    }
+
+    public void updatePot(byte id, long value, byte x2) {
+        this.jackpots[id] = value;
+        this.x2Arr[id] = x2;
+        long currentTime = System.currentTimeMillis();
+        Slot25UpdatePotMsg msg = this.getPotsInfo();
+        this.lastTimeUpdatePotToRoom = System.currentTimeMillis();
+        SendMsgToAlLUsersThread t = new SendMsgToAlLUsersThread(msg);
+        t.start();
+    }
+
+    public void updatePotToUser(User user) {
+        Slot25UpdatePotMsg msg = this.getPotsInfo();
+        SlotUtils.sendMessageToUser(msg, user);
+    }
+
+    public Slot25UpdatePotMsg getPotsInfo() {
+        Slot25UpdatePotMsg msg = new Slot25UpdatePotMsg(commandCollection.UPDATE_POT_MESSAGE);
+        msg.value100 = this.jackpots[0];
+        msg.value1000 = this.jackpots[1];
+        msg.value5000 = this.jackpots[2];
+        msg.value10000 = this.jackpots[3];
+        msg.x2Room100 = this.x2Arr[0];
+        msg.x2Room1000 = this.x2Arr[1];
+        return msg;
     }
 }
 

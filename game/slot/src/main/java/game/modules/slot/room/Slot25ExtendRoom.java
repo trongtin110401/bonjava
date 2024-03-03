@@ -18,9 +18,12 @@ import com.vinplay.vbee.common.models.slot.SlotFreeSpin;
 import com.vinplay.vbee.common.response.MoneyResponse;
 import com.vinplay.vbee.common.statics.TransType;
 import com.vinplay.vbee.common.utils.DateTimeUtils;
+import game.modules.slot.Slot20Module;
+import game.modules.slot.Slot25ExtendModule;
 import game.modules.slot.SlotModule;
 import game.modules.slot.cmd.Slot25CommandCollection;
-import game.modules.slot.cmd.send.slot25linebasic.*;
+import game.modules.slot.cmd.send.slot20line.Slot20UpdatePotMsg;
+import game.modules.slot.cmd.send.slot25extend.*;
 import game.modules.slot.entities.slot.AutoUser;
 import game.modules.slot.entities.slot.AwardsOnLine;
 import game.modules.slot.entities.slot.Line;
@@ -54,9 +57,6 @@ public class Slot25ExtendRoom extends SlotRoom {
 
     private SlotLogListener logListener;
 
-    // FORCE - R
-    int resultState = 0;
-    int MAX_STATE = 5;
     int ROW = 3;
     int COLUMN = 5;
 
@@ -117,31 +117,6 @@ public class Slot25ExtendRoom extends SlotRoom {
      * @return ResultBenleyMsg model kết quả
      */
     public synchronized Slot25ResultMsg playNormal(String username, String linesStr, long referenceId) {
-
-        // FORCE - R
-//        int forceResult = ResultSlot.MISSED;
-//        switch (resultState) {
-//            case 0:
-//                forceResult = ResultSlot.WIN;
-//                break;
-//            case 1:
-//                forceResult = ResultSlot.BIG_WIN;
-//                break;
-//            case 2:
-//                forceResult = ResultSlot.FREE_SPIN;
-//                break;
-//            case 3:
-//                forceResult = ResultSlot.JACKPOT;
-//                break;
-//            case 4:
-//                forceResult = ResultSlot.BONUS_GAME;
-//        }
-
-        // FORCE - R
-//        resultState++;
-//        if (resultState >= MAX_STATE) {
-//            resultState = 0;
-//        }
 
         // kết quả mặc định
         short result = ResultSlot.MISSED;
@@ -249,11 +224,6 @@ public class Slot25ExtendRoom extends SlotRoom {
                                 }
                             }
 
-                            // FORCE - R  ResultSlot.JACKPOT ||
-//                            SlotBasic25Item[][] matrix = forceResult == ResultSlot.JACKPOT || isForceJackpot
-//                                    ? Slot25BasicUtil.generateMatrixNoHu(selectedLines)
-//                                    : Slot25BasicUtil.generateMatrix();
-
 
                             // sinh Matrix
                             Slot25ExtendItem[][] matrix = isForceJackpot
@@ -285,26 +255,6 @@ public class Slot25ExtendRoom extends SlotRoom {
                             if (countBonus >= 3 && countScatter >= 3) {
                                 continue;
                             }
-                            // trong trường hợp thỏa mãn BONUS VÀ SCATTER,
-                            // ràng buộc thêm điều kiện để giảm tỷ lệ ăn BONUS và SCATTER xuống
-                            // nếu không thỏa mãn điều kiện, tiếp tục vòng lặp để sinh lại Matrix
-//                            if (countBonus >= 3 || countScatter >= 3) {
-//                                int tiLeAn = selectedLines.length * 100 / 25;
-//                                Random rd2 = new Random();
-//                                int n2 = rd2.nextInt(100);
-//                                if (n2 >= tiLeAn)
-//                                    continue;
-//                            }
-                            // ở chế độ Free Spin, không cho phép trúng BONUS hoặc SCATTER
-//                            if (isSpinningFree && (countScatter >= 3 || countBonus >= 3)) {
-//                                continue;
-//                            }
-
-                            // FORCE - R
-//                            if (isSpinningFree && (countBonus >= 3)) {
-//                                continue;
-//                            }
-
 
                             // Tính toán phần thưởng cho BONUS GAME
                             if (countBonus >= 3) {
@@ -315,12 +265,10 @@ public class Slot25ExtendRoom extends SlotRoom {
                                 result = ResultSlot.BONUS_GAME;
                             }
 
-
                             // MÃ LỆNH NÀY ÁP ỤNG CHO SLOT MACHINE 25LINE EXTENDS.
                             // Trường hợp 1 WHEEL có xuất hiện item WILD, toàn bộ WHEEL đó sẽ được thay thế bởi nó
                             // Trong trường hợp này (Slot Machine 25Line Basic thì không áp dụng)
                             Slot25ExtendItem[][] matrixWild = Slot25ExtendUtil.revertMatrix(matrix);
-
 
                             // Duyệt toàn bộ Lines được chọn bởi người chơi để tính toán giải thưởng trên từng Line
                             for (String selectedLine : selectedLines) {
@@ -355,32 +303,6 @@ public class Slot25ExtendRoom extends SlotRoom {
                                 }
                             }
 
-                            // FORCE - R
-//                            switch (forceResult) {
-//                                case ResultSlot.JACKPOT:
-//                                    if (result != ResultSlot.JACKPOT) continue;
-//                                    break;
-//                                case ResultSlot.BONUS_GAME:
-//                                    if (countBonus < 3) continue;
-//                                    break;
-//                                case ResultSlot.FREE_SPIN:
-//                                    if (countScatter < 3) continue;
-//                                    break;
-//                            }
-
-                            // FORCE - R
-//                            if (forceResult == ResultSlot.BIG_WIN) {
-//                                if (countBonus >= 3 || countScatter >= 3) {
-//                                    continue;
-//                                }
-//                                if (result == ResultSlot.MISSED) {
-//                                    result = totalPrizes >= (this.betValue * 175L) ? ResultSlot.BIG_WIN : ResultSlot.WIN;
-//                                    if (result != ResultSlot.BIG_WIN) {
-//                                        continue;
-//                                    }
-//                                }
-//                            }
-
                             if (builderLinesWin.length() > 0) {
                                 builderLinesWin.deleteCharAt(0);
                             }
@@ -400,9 +322,6 @@ public class Slot25ExtendRoom extends SlotRoom {
                                 if (!isGetJackpotNaturally) {
                                     if ((totalPrizes - totalBetValue > 0 && totalPrizes > fund) || totalPrizes >= totalBetValue * 25)
                                         continue;
-                                    // FORCE - R - Bỏ đoạn này và sử dụng lại đoạn mã trên
-//                                    if ((totalPrizes - totalBetValue > 0 && totalPrizes > fund))
-//                                        continue;
                                 }
                             }
 
@@ -699,11 +618,21 @@ public class Slot25ExtendRoom extends SlotRoom {
     }
 
     public short play(User user, String linesStr) throws Exception {
+
         String username = user.getName();
         Slot25ResultMsg msg;
         Slot25FreeDailyMsg freeDailyMsg = new Slot25FreeDailyMsg(commandCollection.FREE_DAILY_MESSAGE);
         freeDailyMsg.remain = 0;
-        msg = this.play(username, linesStr);
+
+
+        SlotFreeSpin slotFreeSpin = getFreeSpinInfo(username);
+        if (slotFreeSpin != null && slotFreeSpin.getNum() == 0) {
+            msg = this.play(username, linesStr);
+        } else {
+            long referenceId = this.module.getNewReferenceId();
+            msg = this.playFreeSpin(username, linesStr, referenceId);
+        }
+
         if (this.isUserMinimize(user)) {
             Slot25MinimizeResultMsg miniMsg = new Slot25MinimizeResultMsg(commandCollection.MINIMIZE_RESULT_MESSAGE);
             miniMsg.prize = msg.prize;
@@ -731,7 +660,7 @@ public class Slot25ExtendRoom extends SlotRoom {
 
     private void savePot() {
         long currentTime = System.currentTimeMillis();
-        if (currentTime - this.lastTimeUpdatePotToRoom >= 3000L) {
+        if (currentTime - this.lastTimeUpdatePotToRoom >= 1000L) {
             this.lastTimeUpdatePotToRoom = currentTime;
             try {
                 this.miniGameService.savePot(this.name, this.pot, this.huX2);
@@ -740,17 +669,8 @@ public class Slot25ExtendRoom extends SlotRoom {
             }
         }
 
-        Slot25UpdatePotMsg msg = new Slot25UpdatePotMsg(commandCollection.UPDATE_POT_MESSAGE);
-        msg.value = this.pot;
-        msg.x2 = (byte) (this.huX2 ? 1 : 0);
-        this.sendMessageToRoom(msg);
-    }
-
-    public void updatePot(User user) {
-        Slot25UpdatePotMsg msg = new Slot25UpdatePotMsg(commandCollection.UPDATE_POT_MESSAGE);
-        msg.value = this.pot;
-        msg.x2 = (byte) (this.huX2 ? 1 : 0);
-        SlotUtils.sendMessageToUser(msg, user);
+        byte x2 = (byte) (this.huX2 ? 1 : 0);
+        ((Slot25ExtendModule) this.module).updatePot(this.id, this.pot, x2);
     }
 
     /*
