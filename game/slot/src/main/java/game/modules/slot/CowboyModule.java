@@ -40,7 +40,7 @@ public class CowboyModule extends Slot25BasicModule {
 
             @Override
             public void log(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) throws IOException, TimeoutException, InterruptedException {
-                slotMachineService.logBenley(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
+                slotMachineService.logCowboy(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
             }
         };
     }

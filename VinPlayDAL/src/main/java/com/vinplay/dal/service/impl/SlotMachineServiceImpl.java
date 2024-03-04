@@ -99,8 +99,14 @@ public class SlotMachineServiceImpl implements SlotMachineService {
     }
 
     @Override
-    public void logBenley(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) throws IOException, TimeoutException, InterruptedException {
+    public void logCowboy(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) throws IOException, TimeoutException, InterruptedException {
         LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.COWBOY.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
+        this.publishSlotMsg("queue_benley", msg, 8006);
+    }
+
+    @Override
+    public void logFastAndFurious(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) throws IOException, TimeoutException, InterruptedException {
+        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.FAST_AND_FURIOUS.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
         this.publishSlotMsg("queue_benley", msg, 8006);
     }
 
@@ -206,7 +212,7 @@ public class SlotMachineServiceImpl implements SlotMachineService {
     }
 
     @Override
-    public void logAudition(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) throws IOException, TimeoutException, InterruptedException {
+    public void logLienMinh(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) throws IOException, TimeoutException, InterruptedException {
         LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.LIEN_MINH.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
         this.publishSlotMsg("queue_audition", msg, 8001);
     }
@@ -376,7 +382,7 @@ public class SlotMachineServiceImpl implements SlotMachineService {
     @Override
     public void logSlot(String gameName, long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) throws IOException, TimeoutException, InterruptedException {
         if (gameName.equals(Games.LIEN_MINH.getName())) {
-            this.logAudition(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
+            this.logLienMinh(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
         } else if (gameName.equals(Games.RANGE_ROVER.getName())) {
             this.logRangeRover(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
         } else if (gameName.equals(Games.MAYBACH.getName())) {
@@ -388,7 +394,7 @@ public class SlotMachineServiceImpl implements SlotMachineService {
         } else if (gameName.equals(Games.FAST_AND_FURIOUS.getName())) {
             this.logRollRoye(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
         } else if (gameName.equals(Games.COWBOY.getName())) {
-            this.logBenley(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
+            this.logCowboy(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
         }
     }
 }

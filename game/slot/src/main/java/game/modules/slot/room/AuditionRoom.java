@@ -451,7 +451,7 @@ public class AuditionRoom
                             msg.haiSao = haiSao;
                             try {
                                 if (!u.isBot()) {
-                                    this.slotService.logAudition(referenceId, username, this.betValue, linesStr, linesWin, prizesOnLine, result, totalPrizes, currentTimeStr, matrixStr);
+                                    this.slotService.logLienMinh(referenceId, username, this.betValue, linesStr, linesWin, prizesOnLine, result, totalPrizes, currentTimeStr, matrixStr);
 
                                 }
                                 if (result == 3 || result == 4) {
@@ -564,7 +564,7 @@ public class AuditionRoom
             msg.haiSao = "";
             try {
                 if (!isBot(username)) {
-                    this.slotService.logAudition(refernceId, username, this.betValue, "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20", linesWin, prizesOnLine, result, totalPrizes, currentTimeStr, msg.matrix);
+                    this.slotService.logLienMinh(refernceId, username, this.betValue, "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20", linesWin, prizesOnLine, result, totalPrizes, currentTimeStr, msg.matrix);
                 }
             } catch (InterruptedException | TimeoutException | IOException ignored) {
             }

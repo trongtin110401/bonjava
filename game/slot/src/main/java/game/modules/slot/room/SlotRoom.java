@@ -334,6 +334,7 @@ public abstract class SlotRoom {
         public static final short JACKPOT_X2 = 4;
         public static final short BONUS_GAME = 5;
         public static final short FREE_SPIN = 6;
+        public static final short LOG_FREE_SPIN = 7;
     }
 
     protected final class GameLoopTask implements Runnable {
