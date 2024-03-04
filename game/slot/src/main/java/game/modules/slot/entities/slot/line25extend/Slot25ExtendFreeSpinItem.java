@@ -9,8 +9,8 @@ import java.util.Map;
 
 public enum Slot25ExtendFreeSpinItem {
 
-    WILD("WILD", 5, "G", (byte) 1),
-    H("G", 5, "G", (byte) 2),
+    WILD("WILD", 5, "WILD", (byte) 2),
+    H("H", 5, "H", (byte) 1),
     G("G", 5, "G", (byte) 3),
     F("F", 6, "F", (byte) 4),
     E("E", 7, "E", (byte) 5),
