@@ -246,13 +246,13 @@ public class Slot25ExtendRoom extends SlotRoom {
 
 
                             // không cho phép JACKPOT và (BONUS hoặc FREE SPIN) xảy ra đồng thời
-                            if (isForceJackpot && (countBonus >= 3 || countScatter >= 3)) {
+                            if (isForceJackpot && (countBonus >= 3 || countScatter >= 4)) {
                                 continue;
                             }
 
 
                             // không cho phép BONUS và FREE SPIN xảy ra đồng thời
-                            if (countBonus >= 3 && countScatter >= 3) {
+                            if (countBonus >= 3 && countScatter >= 4) {
                                 continue;
                             }
 
@@ -559,6 +559,10 @@ public class Slot25ExtendRoom extends SlotRoom {
             // cập nhật và tính toán lượt quay miễn phí
             SlotFreeSpin slotFreeSpin = slotService.updateLuotQuaySlotFree(cacheFreeSpinName, username);
             playResponse.freeSpin = (byte) slotFreeSpin.getNum();
+            if (slotFreeSpin.getNum() > 0) {
+                playResponse.isFreeSpin = true;
+                playResponse.result = ResultSlot.FREE_SPIN;
+            }
 
             // only save real user
             long moneyExchange = totalPrizes;
