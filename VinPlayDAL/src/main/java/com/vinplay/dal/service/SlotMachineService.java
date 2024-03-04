@@ -32,7 +32,7 @@ public interface SlotMachineService {
 
     public void logRollRoye(long var1, String var3, long var4, String var6, String var7, String var8, short var9, long var10, String var12, String matrix) throws IOException, TimeoutException, InterruptedException;
 
-    public void logBenley(long var1, String var3, long var4, String var6, String var7, String var8, short var9, long var10, String var12, String matrix) throws IOException, TimeoutException, InterruptedException;
+    public void logCowboy(long var1, String var3, long var4, String var6, String var7, String var8, short var9, long var10, String var12, String matrix) throws IOException, TimeoutException, InterruptedException;
 
 
     public void logAvengers(long var1, String var3, long var4, String var6, String var7, String var8, short var9, long var10, String var12, String matrix) throws IOException, TimeoutException, InterruptedException;
@@ -43,9 +43,11 @@ public interface SlotMachineService {
 
     public void logNuDiepVien(long var1, String var3, long var4, String var6, String var7, String var8, short var9, long var10, String var12, String matrix) throws IOException, TimeoutException, InterruptedException;
 
-    public void logAudition(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) throws IOException, TimeoutException, InterruptedException;
+    public void logLienMinh(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) throws IOException, TimeoutException, InterruptedException;
 
     public void logVQV(long var1, String var3, long var4, String var6, String var7, String var8, short var9, long var10, String var12, String matrix) throws IOException, TimeoutException, InterruptedException;
+
+    void logFastAndFurious(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) throws IOException, TimeoutException, InterruptedException;
 
     public int countLSDG(String var1, String var2);
 

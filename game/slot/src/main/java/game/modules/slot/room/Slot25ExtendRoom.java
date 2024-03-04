@@ -587,7 +587,7 @@ public class Slot25ExtendRoom extends SlotRoom {
             try {
                 // lưu nhật ký chơi
                 if (!u.isBot()) {
-                    this.logListener.log(referenceId, username, this.betValue, linesStr, linesWin, prizesOnLine, result, totalPrizes, currentTimeStr, matrixStr);
+                    this.logListener.log(referenceId, username, this.betValue, linesStr, linesWin, prizesOnLine, ResultSlot.LOG_FREE_SPIN, totalPrizes, currentTimeStr, matrixStr);
                 }
             } catch (InterruptedException | TimeoutException | IOException ignored) {
                 // empty catch block

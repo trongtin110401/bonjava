@@ -25,58 +25,46 @@ public class Slot20ExtendUtil {
             if (r > 2) {
                 r -= 3;
             }
-            for (int column = 0; column < 5; ++column) {
+            for (int col = 0; col < 5; ++col) {
                 boolean isContinueGenerate = true;
                 Slot20ExtendItem item = null;
                 while (isContinueGenerate) {
                     isContinueGenerate = false;
-                    item = items.random(column);
-                    if (Slot20ExtendUtil.isSpecialItem(item)) {
+                    item = items.random(col);
+                    if (!Slot20ExtendUtil.isSpecialItem(item)) {
                         continue;
                     }
                     if (item == Slot20ExtendItem.WILD) {
-                        if (Slot20ExtendUtil.isSpecialItem(matrix[0][column])
-                                && Slot20ExtendUtil.isSpecialItem(matrix[1][column])
-                                && Slot20ExtendUtil.isSpecialItem(matrix[2][column])) {
+                        if (!Slot20ExtendUtil.isSpecialItem(matrix[0][col])
+                                && !Slot20ExtendUtil.isSpecialItem(matrix[1][col])
+                                && !Slot20ExtendUtil.isSpecialItem(matrix[2][col])) {
                             continue;
                         }
                         isContinueGenerate = true;
-                        items.refundItem(item, column);
+                        items.refundItem(item, col);
                         continue;
                     }
-                    if (matrix[0][column] != item
-                            && matrix[1][column] != item
-                            && matrix[2][column] != item
-                            && matrix[0][column] != Slot20ExtendItem.WILD
-                            && matrix[1][column] != Slot20ExtendItem.WILD
-                            && matrix[2][column] != Slot20ExtendItem.WILD) {
+                    if (matrix[0][col] != item
+                            && matrix[1][col] != item
+                            && matrix[2][col] != item
+                            && matrix[0][col] != Slot20ExtendItem.WILD
+                            && matrix[1][col] != Slot20ExtendItem.WILD
+                            && matrix[2][col] != Slot20ExtendItem.WILD) {
                         continue;
                     }
                     isContinueGenerate = true;
-                    items.refundItem(item, column);
+                    items.refundItem(item, col);
                 }
-                matrix[r][column] = item;
+                matrix[r][col] = item;
             }
         }
         return matrix;
     }
 
     public static boolean isSpecialItem(Slot20ExtendItem item) {
-        return item != Slot20ExtendItem.BONUS
-                && item != Slot20ExtendItem.SCATTER
-                && item != Slot20ExtendItem.JACKPOT
-                && item != Slot20ExtendItem.WILD;
+        return item == Slot20ExtendItem.BONUS || item == Slot20ExtendItem.SCATTER || item == Slot20ExtendItem.JACKPOT || item == Slot20ExtendItem.WILD;
     }
 
-
-    /**
-     * Điều kiện trúng JACKPOT:
-     *      Trên 1 LINE được chọn
-     *          JACKPOT item xuất hiện tại cột 1 3 5
-     *          WILD item xuất hiện tại cột 2 và 4
-     * @param lineArr
-     * @return
-     */
     public static Slot20ExtendItem[][] generateMatrixNoHu(String[] lineArr) {
         Slot20ExtendItem[][] matrix = new Slot20ExtendItem[3][5];
         Random rd = new Random();
@@ -88,13 +76,12 @@ public class Slot20ExtendUtil {
         for (int row = 0; row < 3; ++row) {
             for (int col = 0; col < 5; ++col) {
                 boolean genRandom = true;
-                for (int cell = 0; cell < lineNoHu.getCells().size(); ++cell) {
-                    if (row != lineNoHu.getCell(cell).getRow() || col != lineNoHu.getCell(cell).getCol()) continue;
+                for (int celIndex = 0; celIndex < lineNoHu.getCells().size(); ++celIndex) {
+                    if (row != lineNoHu.getCell(celIndex).getRow() || col != lineNoHu.getCell(celIndex).getCol())
+                        continue;
                     genRandom = false;
-                    // JACKPOT item xuất hiện ở cột 1, 3 và 5
-                    if (col == 0 || col == 2 || col == 4)
+                    if (col == 0 || col == 3 || col == 4)
                         matrix[row][col] = Slot20ExtendItem.JACKPOT;
-                    // WILD xuất hiện ở cột 2 và 4
                     else
                         matrix[row][col] = Slot20ExtendItem.WILD;
                 }
@@ -123,6 +110,7 @@ public class Slot20ExtendUtil {
         }
         return builder.toString();
     }
+
 
     public static Line getLine(Slot20ExtendLines lines, Slot20ExtendItem[][] matrix, int lineIndex) {
         Line<Slot20ExtendItem> line = lines.get(lineIndex - 1);
