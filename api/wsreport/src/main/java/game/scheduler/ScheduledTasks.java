@@ -5,8 +5,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import game.bean.MapperUtils;
-import game.entity.entitiesxocdia.GamePotReportModel;
+import game.config.HttpCommon;
 import game.entity.entitynotification.NotificationAdminObj;
+import game.entity.entitytaixiu.TaiXiuAdmin;
 import game.entity.entitytaixiu.TaiXiuAdminReportObj;
 import game.entity.entitytaixiu.TaiXiuAdminReportResponse;
 import game.entity.report.*;
@@ -15,18 +16,27 @@ import game.exceptions.KeyNotFoundException;
 import game.models.baucuato2.BauCuaListUserResponse;
 import game.models.baucuato2.BauCuaToReportResponse;
 import game.models.baucuato2.BauCuaUserInfomation;
+import game.models.minigame.TopWin;
 import game.service.CacheService;
 import game.ws.*;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.yeauty.pojo.Session;
 
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -74,36 +84,14 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
     }
 
     //   @Scheduled(fixedRate = 1000)
-    public void getCacheXocReportDia() {
-        try {
-            String flag = (String) cacheService.getValueStr("Xocdia_Change");
 
-
-            ArrayList<GamePotReportModel> gamePotReportModels = new ArrayList<GamePotReportModel>();
-            for (int i = 0; i < 6; i++) {
-                GamePotReportModel gamePotReportModel = MapperUtils.mapper.readValue(cacheService.getValueStr("XocDia_Pot" + i), GamePotReportModel.class);
-                gamePotReportModels.add(gamePotReportModel);
-            }
-            XocDiaReportResponse xocDiaReportResponse = new XocDiaReportResponse("2", gamePotReportModels);
-
-            String json = MapperUtils.mapper.writeValueAsString(xocDiaReportResponse);
-            this.sendMessToAdmin(json);
-
-            cacheService.removeKey("Xocdia_Change");
-
-        } catch (KeyNotFoundException | JsonProcessingException e) {
-            e.printStackTrace();
-            System.out.println("lloi duoi");
-
-        }
-    }
     @Scheduled(fixedRate = 800)
     public void sendStateUser() {
         try {
 
-            HashMap<String,String> mapState = (HashMap<String, String>) cacheService.getObject("List_UserState_Slot");
+            HashMap<String, String> mapState = (HashMap<String, String>) cacheService.getObject("List_UserState_Slot");
             ArrayList<String> listState = new ArrayList<>(mapState.values());
-            StateGameResponse response = new StateGameResponse("2",listState);
+            StateGameResponse response = new StateGameResponse("2", listState);
             String json = MapperUtils.mapper.writeValueAsString(response);
             this.sendStateToAdmin(json);
 
@@ -114,11 +102,12 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
         }
     }
 
-    private void  sendStateToAdmin(String mess){
+    private void sendStateToAdmin(String mess) {
         for (Session session : ServerStateGame.sessions) {
             session.sendText(mess);
         }
     }
+
     @Scheduled(fixedRate = 900)
     public void executeBauCuaInfo() {
         try {
@@ -186,7 +175,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             response.setMoneyTaiFull(obj.getMoneyTaiFull());
             response.setMoneyXiuFull(obj.getMoneyXiuFull());
             response.setPhienId(obj.getPhienId());
-            response.setContributors(obj.getContributors());
+            response.setContributors(getUserTX(obj.getContributors(),"TaiXiu"));
             response.setNumberUserAndBotBetTai(obj.getNumberUserAndBotBetTai());
             response.setNumberUserAndBotBetXiu(obj.getNumberUserAndBotBetXiu());
             response.setRealTime(obj.getRealTime());
@@ -201,6 +190,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             cacheService.removeKey(USER_TAI_XIU);
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println(e.getMessage());
             System.out.println("Loi senTXAdmin CU");
 
         }
@@ -224,7 +214,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             response.setMoneyTaiFull(obj.getMoneyTaiFull());
             response.setMoneyXiuFull(obj.getMoneyXiuFull());
             response.setPhienId(obj.getPhienId());
-            response.setContributors(obj.getContributors());
+            response.setContributors(getUserTX(obj.getContributors(),"TaiXiuMd5"));
             response.setNumberUserAndBotBetTai(obj.getNumberUserAndBotBetTai());
             response.setNumberUserAndBotBetXiu(obj.getNumberUserAndBotBetXiu());
             response.setRealTime(obj.getRealTime());
@@ -242,6 +232,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Loi senTXMD5Admin MOI");
+            System.out.println(e.getMessage());
 
         }
     }
@@ -506,47 +497,49 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
 
     /**
      * Send thông tin Notification sang admin php
+     *
      * @return
      */
-    @Scheduled(fixedRate = 500)
-    public void sendNotificationAdmin() {
-        try {
-            NotificationAdminObj obj =  MapperUtils.mapper.readValue(cacheService.getValueStr(NOTIFY_ADMIN), NotificationAdminObj.class);
-            NotifyReportResponse oResponse = new NotifyReportResponse("2", obj);
-            String json = MapperUtils.mapper.writeValueAsString(oResponse);
-            this.sendMessNotificationToAdmin(json);
-            cacheService.removeKey(NOTIFY_ADMIN);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Loi sendNotificationAdmin");
+//    @Scheduled(fixedRate = 500)
+//    public void sendNotificationAdmin() {
+//        try {
+//            NotificationAdminObj obj = MapperUtils.mapper.readValue(cacheService.getValueStr(NOTIFY_ADMIN), NotificationAdminObj.class);
+//            NotifyReportResponse oResponse = new NotifyReportResponse("2", obj);
+//            String json = MapperUtils.mapper.writeValueAsString(oResponse);
+//            this.sendMessNotificationToAdmin(json);
+//            cacheService.removeKey(NOTIFY_ADMIN);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            System.out.println("Loi sendNotificationAdmin");
+//
+//        }
+//    }
 
-        }
-    }
-
-    private void sendMessNotificationToAdmin(String mess) {
-        for (Session session : ServerNotifyGame.sessions) {
-            session.sendText(mess);
-        }
-        //todo : update lại cache
-    }
+//    private void sendMessNotificationToAdmin(String mess) {
+//        for (Session session : ServerNotifyGame.sessions) {
+//            session.sendText(mess);
+//        }
+//        //todo : update lại cache
+//    }
 
     /**
      * Send thông tin Eventaction sang admin php
+     *
      * @return
      */
-    @Scheduled(fixedRate = 1000)
-    public void sendEventactionAdmin() {
-        try {
-            EventactionAdminObj obj =  MapperUtils.mapper.readValue(cacheService.getValueStr(EVENTACTION_ADMIN), EventactionAdminObj.class);
-            EventactionResponse oResponse = new EventactionResponse("2", obj);
-            String json = MapperUtils.mapper.writeValueAsString(oResponse);
-            this.sendMessEventactionToAdmin(json);
-            cacheService.removeKey(EVENTACTION_ADMIN);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Loi sendNotificationAdmin");
-        }
-    }
+//    @Scheduled(fixedRate = 1000)
+//    public void sendEventactionAdmin() {
+//        try {
+//            EventactionAdminObj obj = MapperUtils.mapper.readValue(cacheService.getValueStr(EVENTACTION_ADMIN), EventactionAdminObj.class);
+//            EventactionResponse oResponse = new EventactionResponse("2", obj);
+//            String json = MapperUtils.mapper.writeValueAsString(oResponse);
+//            this.sendMessEventactionToAdmin(json);
+//            cacheService.removeKey(EVENTACTION_ADMIN);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            System.out.println("Loi sendNotificationAdmin");
+//        }
+//    }
 
     private void sendMessEventactionToAdmin(String mess) {
         for (Session session : ServerEventactionGame.sessions) {
@@ -555,5 +548,74 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
         //todo : update lại cache
     }
 
+    public List<TaiXiuAdmin> getUserTX(List<TaiXiuAdmin> userList, String boardName) {
+        if (userList.isEmpty()) {
+            return userList;
+        }
+        final String BASE_URL = "http://localhost:8087/leaderboard/get_by_name";
+        try {
+            String users = convertListToString(userList.stream().map(TaiXiuAdmin::getUsername).collect(Collectors.toList()));
+            String typeDate = "DAY_" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+            String url = String.format("%s?boardName=%s_%s&users=%s", BASE_URL, boardName, typeDate, users);
+
+            OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder().build();
+            Request request = new Request.Builder()
+                    .url(url)
+                    .method("GET", null)
+                    .build();
+
+            Response response = client.newCall(request).execute();
+            if (response.body() != null) {
+                List<TopWin> topWins = getTopWin(response.body().string());
+
+                for (TopWin topWin : topWins) {
+                    userList.stream()
+                            .filter(taiXiuAdmin -> taiXiuAdmin.getUsername().equals(topWin.getUsername()))
+                            .findFirst()
+                            .ifPresent(taiXiuAdmin -> taiXiuAdmin.setReportMoneyToday(topWin.getMoney()));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("=============== List report TX " + userList);
+        return userList;
+    }
+
+    private static String convertListToString(List<String> userList) {
+        return String.join(",", userList);
+    }
+
+    public List<TopWin> getTopWin(String response) {
+        System.out.println("=============== List response " + response);
+        List<TopWin> topWins = new ArrayList<>();
+        try {
+            JSONObject jsonObject = new JSONObject(response);
+            JSONArray dataArray = jsonObject.getJSONArray("data");
+
+            for (int i = 0; i < dataArray.length(); i++) {
+                JSONObject dataObject = dataArray.getJSONObject(i);
+                TopWin topWin = new TopWin();
+                topWin.setUsername(dataObject.getString("username"));
+                topWin.setTotalMoneyOnGame(dataObject.getInt("score"));
+                topWin.setMoney(dataObject.getInt("score"));
+                topWins.add(topWin);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return topWins;
+    }
+
+    public static void main(String[] args) {
+        List<TaiXiuAdmin> list = new ArrayList<>();
+        TaiXiuAdmin taiXiuAdmin = new TaiXiuAdmin("baztdinh",0,0,0);
+        TaiXiuAdmin taiXiuAdmin1 = new TaiXiuAdmin("testacc123",0,0,0);
+        list.add(taiXiuAdmin);
+        list.add(taiXiuAdmin1);
+        ScheduledTasks scheduledTasks = new ScheduledTasks();
+        scheduledTasks.getUserTX(list, "TaiXiu");
+    }
 
 }

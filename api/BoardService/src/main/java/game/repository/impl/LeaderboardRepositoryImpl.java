@@ -1,5 +1,6 @@
 package game.repository.impl;
 
+import game.dto.data.UserScore;
 import game.repository.LeaderboardRepository;
 import org.redisson.Redisson;
 import org.redisson.api.RScoredSortedSet;
@@ -11,7 +12,9 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Repository
 public class LeaderboardRepositoryImpl implements LeaderboardRepository {
@@ -48,5 +51,23 @@ public class LeaderboardRepositoryImpl implements LeaderboardRepository {
     @Override
     public RedissonClient getRedissonClient() {
         return redissonClient;
+    }
+
+    @Override
+    public List<UserScore> getByNickNameAndGameName(String boardName, List<String> nicknames) {
+        List<UserScore> response = new ArrayList<>();
+        RScoredSortedSet<String> board = getBoard(boardName);
+        for (String nickname : nicknames) {
+            UserScore userTopScoreResponse = new UserScore();
+            userTopScoreResponse.setUsername(nickname);
+            Double score = board.getScore(nickname);
+            if (score == null) {
+                score = 0d;
+            }
+            userTopScoreResponse.setScore(score.longValue());
+            response.add(userTopScoreResponse);
+
+        }
+        return response;
     }
 }

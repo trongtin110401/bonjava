@@ -3,6 +3,7 @@ package game.service;
 import game.dto.data.UserScore;
 import game.dto.request.LeaderboardCriteria;
 import game.dto.request.LeaderboardParam;
+import game.dto.request.UserRequestDto;
 
 import java.util.List;
 
@@ -18,4 +19,6 @@ public interface LeaderboardService {
      * @return
      */
     List<UserScore> receiveData(LeaderboardCriteria criteria);
+
+    List<UserScore> getByNicknameAndGameName(UserRequestDto userRequestDto);
 }

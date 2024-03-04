@@ -266,7 +266,8 @@ public class GiftCodeServiceImpl
             query.append("created_time", new Document("$gte", startTime).append("$lte", endTime));
         }
 
-        MongoCursor<Document> cursor = collection.find(query).skip(skip).limit(pageSize).iterator();
+        Document sort = new Document("created_time", -1);
+        MongoCursor<Document> cursor = collection.find(query).sort(sort).skip(skip).limit(pageSize).iterator();
 
         long totalCount = collection.count(query);
 

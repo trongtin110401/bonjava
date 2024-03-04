@@ -7,10 +7,19 @@ public class TaiXiuAdmin implements Serializable {
   int cuaDat;
   long money;
 
+  long reportMoneyToday;
+
   public TaiXiuAdmin(String username, int cuaDat, long money) {
     this.username = username;
     this.cuaDat = cuaDat;
     this.money = money;
+  }
+
+  public TaiXiuAdmin(String username, int cuaDat, long money, long reportMoneyToday) {
+    this.username = username;
+    this.cuaDat = cuaDat;
+    this.money = money;
+    this.reportMoneyToday = reportMoneyToday;
   }
 
   public TaiXiuAdmin() {
@@ -38,5 +47,23 @@ public class TaiXiuAdmin implements Serializable {
 
   public void setCuaDat(int cuaDat) {
     this.cuaDat = cuaDat;
+  }
+
+  public long getReportMoneyToday() {
+    return reportMoneyToday;
+  }
+
+  public void setReportMoneyToday(long reportMoneyToday) {
+    this.reportMoneyToday = reportMoneyToday;
+  }
+
+  @Override
+  public String toString() {
+    return "TaiXiuAdmin{" +
+            "username='" + username + '\'' +
+            ", cuaDat=" + cuaDat +
+            ", money=" + money +
+            ", reportMoneyToday=" + reportMoneyToday +
+            '}';
   }
 }

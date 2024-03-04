@@ -618,7 +618,7 @@ public class TaiXiuModule
                 long minHu = Long.parseLong(min_hu);
                 long maxHu = Long.parseLong(max_hu);
                 long huTx = Long.parseLong(hu_tx);
-                if(maxHu > minHu && chenhLechTien > 0) {
+                if(chenhLechTien > 0) {
                     //neu ma hu am
                     if(huTx - chenhLechTien < minHu) {
                         // hu dang bi am tien hanh be nguoc nguoi choiif
@@ -627,16 +627,6 @@ public class TaiXiuModule
                         }else {
                             keyBeCang = "tai";
                         }
-                    }else if(huTx+ chenhLechTien > maxHu) {
-                        if(totalRealBetTai > totalRealBetXiu) {
-                            keyBeCang = "tai";
-                        }else {
-                            keyBeCang = "xiu";
-                        }
-                        // hu dang duogn qua nhieu nha tien cho ngoi choi
-                    }else {
-                        //auto khong ta dong gi ca
-
                     }
                 }
             }catch (Exception e) {
