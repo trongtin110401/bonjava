@@ -11,9 +11,9 @@ public class Slot25ExtendFreeSpinAwards {
     private static Map<String, Slot25ExtendFreeSpinAward> awardMap = new HashMap<>();
 
     static {
-        Arrays.stream(Slot25ExtendFreeSpinAward.values()).forEach(avengersAward -> {
-            String key = avengersAward.getId() + "_" + avengersAward.getDuplicate();
-            awardMap.put(key, avengersAward);
+        Arrays.stream(Slot25ExtendFreeSpinAward.values()).forEach(award -> {
+            String key = award.getItem().getId() + "_" + award.getDuplicate();
+            awardMap.put(key, award);
         });
     }
 

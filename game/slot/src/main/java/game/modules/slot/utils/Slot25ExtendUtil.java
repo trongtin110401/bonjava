@@ -66,21 +66,21 @@ public class Slot25ExtendUtil {
     }
 
     public static Slot25ExtendFreeSpinItem[][] generateMatrixFreeSpin(String itemsWild) {
-        int i;
+        int row;
         String[] arr = itemsWild.split(",");
         Slot25ExtendFreeSpinItems items = new Slot25ExtendFreeSpinItems();
         Slot25ExtendFreeSpinItem[][] matrix = new Slot25ExtendFreeSpinItem[3][5];
         if (arr.length > 0) {
-            for (i = 0; i < arr.length - 1; i += 2) {
-                int r = Integer.parseInt(arr[i]);
-                int c = Integer.parseInt(arr[i + 1]);
+            for (row = 0; row < arr.length - 1; row += 2) {
+                int r = Integer.parseInt(arr[row]);
+                int c = Integer.parseInt(arr[row + 1]);
                 matrix[r][c] = Slot25ExtendFreeSpinItem.WILD;
             }
         }
-        for (i = 0; i < 3; ++i) {
-            for (int j = 0; j < 5; ++j) {
-                if (matrix[i][j] != null) continue;
-                matrix[i][j] = items.random(j);
+        for (row = 0; row < 3; ++row) {
+            for (int col = 0; col < 5; ++col) {
+                if (matrix[row][col] != null) continue;
+                matrix[row][col] = items.random(col);
             }
         }
         return matrix;

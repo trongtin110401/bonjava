@@ -22,7 +22,7 @@ public enum Slot25ExtendFreeSpinItem {
     private String name;
     private byte id;
 
-    private static Map<Integer, Slot25ExtendFreeSpinItem> map = new HashMap<>();
+    private static final Map<Integer, Slot25ExtendFreeSpinItem> id2Item = new HashMap<>();
 
     Slot25ExtendFreeSpinItem(String s, int n2, String name, byte id) {
         this.name = name;
@@ -31,7 +31,7 @@ public enum Slot25ExtendFreeSpinItem {
 
     static {
         Arrays.stream(Slot25ExtendFreeSpinItem.values()).forEach(item -> {
-            map.put((int) item.getId(), item);
+            id2Item.put((int) item.getId(), item);
         });
     }
 
@@ -52,7 +52,7 @@ public enum Slot25ExtendFreeSpinItem {
     }
 
     public static Slot25ExtendFreeSpinItem findItem(byte id) {
-        return map.get((int) id);
+        return id2Item.get((int) id);
     }
 }
 
