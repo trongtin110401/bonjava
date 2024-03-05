@@ -438,6 +438,8 @@ public class Slot25ExtendRoom extends SlotRoom {
                             this.saveFund();
                             // lưu thông tin HŨ
                             this.savePot();
+
+                            System.out.println("Total Prize: " + totalPrizes + " - Fun: " + fund);
                         }
                     }
                 } else {
@@ -457,15 +459,13 @@ public class Slot25ExtendRoom extends SlotRoom {
         if (result == ResultSlot.JACKPOT) {
             this.sendNotifyNoHu(username, (byte) 1, playResponse.prize, gameName);
         }
-        if (!u.isBot()) {
-            System.out.println(new Gson().toJson(playResponse));
-        }
-
         // FORCE - R
 //        if (fund < 1000000000) {
 //            fund = Long.MAX_VALUE - 1000000000L;
 //        }
-//        System.out.println(new Gson().toJson(playResponse));
+        if (!u.isBot()) {
+            System.out.println(new Gson().toJson(playResponse));
+        }
         return playResponse;
     }
 
@@ -596,6 +596,8 @@ public class Slot25ExtendRoom extends SlotRoom {
             this.saveFund();
             // lưu thông tin HŨ
             this.savePot();
+
+            System.out.println("Total Prize: " + totalPrizes + " - Fun: " + fund);
         }
 
 
@@ -604,6 +606,10 @@ public class Slot25ExtendRoom extends SlotRoom {
 
         // update cache tien hu
         cacheService.setValue(CACHE_JACK_POT_VALUE_SLOT + "_" + this.betValue + "_" + gameName, String.valueOf(this.pot));
+
+        if (!u.isBot()) {
+            System.out.println(new Gson().toJson(playResponse));
+        }
         return playResponse;
     }
 
