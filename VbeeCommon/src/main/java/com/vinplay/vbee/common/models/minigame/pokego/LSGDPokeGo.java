@@ -13,5 +13,6 @@ public class LSGDPokeGo {
     public String ps;
     public String ts;
     public String matrix;
+    public short rs;
 }
 

@@ -111,6 +111,7 @@ public class SlotMachineDAOImpl
                 entry.lw = document.getString((Object) "lines_win");
                 entry.ps = document.getString((Object) "prizes_on_line");
                 entry.ts = document.getString((Object) "time_log");
+                entry.rs = (short) document.get((Object)"result");
                 if (document.getString("matrix") != null) {
                     entry.matrix = document.getString("matrix");
                 }
