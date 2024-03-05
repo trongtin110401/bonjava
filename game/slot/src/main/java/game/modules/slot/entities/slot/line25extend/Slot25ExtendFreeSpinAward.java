@@ -6,8 +6,8 @@ package game.modules.slot.entities.slot.line25extend;
 public enum Slot25ExtendFreeSpinAward {
 
     PENTA_H("PENTA_H", 14, (byte) 15, Slot25ExtendFreeSpinItem.H, (byte) 5, 5000.0f),
-    QUADAR_H("QUADAR_H", 15, (byte) 16, Slot25ExtendFreeSpinItem.G, (byte) 4, 500.0f),
-    TRIPLE_H("TRIPLE_H", 16, (byte) 17, Slot25ExtendFreeSpinItem.G, (byte) 3, 300.0f),
+    QUADAR_H("QUADAR_H", 15, (byte) 16, Slot25ExtendFreeSpinItem.H, (byte) 4, 500.0f),
+    TRIPLE_H("TRIPLE_H", 16, (byte) 17, Slot25ExtendFreeSpinItem.H, (byte) 3, 300.0f),
 
     PENTA_G("PENTA_G", 14, (byte) 15, Slot25ExtendFreeSpinItem.G, (byte) 5, 300.0f),
     QUADAR_G("QUADAR_G", 15, (byte) 16, Slot25ExtendFreeSpinItem.G, (byte) 4, 250.0f),
