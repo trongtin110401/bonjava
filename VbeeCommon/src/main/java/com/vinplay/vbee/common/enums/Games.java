@@ -41,7 +41,7 @@ Games {
     CO_UP(29, "CoUp", "C? Úp"),
     HAM_CA_MAP(30, "HamCaMap", "Hàm Cá M?p"),
     OVER_UNDER(102, "OverUnder", "Over-Under"),
-    SPARTAN(120, "Spartan", "Spartan"),
+    LADY_NIGHT(120, "LadyNight", "Lady Night"),
     LIEN_MINH(110, "LienMinh", "Liên Minh Huy?n Tho?i"),
     SAMTRUYEN(130, "SamTruyen", "SamTruyen"),
     RANGE_ROVER(140, "RANGE_ROVER", "RANGE_ROVER"),

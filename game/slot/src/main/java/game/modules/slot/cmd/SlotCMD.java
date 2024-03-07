@@ -28,21 +28,21 @@ public class SlotCMD {
     public static final short LIEN_MINH_TOTAL_FREE_SPIN = 2015;
 
 
-
-    public static final short PLAY_NU_DIEP_VIEN = 3001;
-    public static final short UPDATE_POT_NU_DIEP_VIEN = 3002;
-    public static final short SUBSCRIBE_NU_DIEP_VIEN = 3003;
-    public static final short UNSUBSCRIBE_NU_DIEP_VIEN = 3004;
-    public static final short CHANGE_ROOM_NU_DIEP_VIEN = 3005;
-    public static final short AUTO_PLAY_NU_DIEP_VIEN = 3006;
-    public static final short STOP_PLAY_NU_DIEP_VIEN = 3007;
-    public static final short FORCE_STOP_PLAY_NU_DIEP_VIEN = 3008;
-    public static final short NU_DIEP_VIEN_INFO = 3009;
-    public static final short BIG_WIN_NU_DIEP_VIEN = 3010;
-    public static final short NDV_FREE_DAILY = 3012;
-    public static final short NDV_MINIMIZE = 3013;
-    public static final short NDV_RESULT_MINIMIZE = 3014;
-
+    // Fast And Furious
+    public static final short PLAY_FAST_AND_FURIOUS = 3001;
+    public static final short UPDATE_POT_FAST_AND_FURIOUS = 3002;
+    public static final short SUBSCRIBE_FAST_AND_FURIOUS = 3003;
+    public static final short UNSUBSCRIBE_FAST_AND_FURIOUS = 3004;
+    public static final short CHANGE_ROOM_FAST_AND_FURIOUS = 3005;
+    public static final short AUTO_PLAY_FAST_AND_FURIOUS = 3006;
+    public static final short STOP_PLAY_FAST_AND_FURIOUS = 3007;
+    public static final short FORCE_STOP_PLAY_FAST_AND_FURIOUS = 3008;
+    public static final short FAST_AND_FURIOUS_INFO = 3009;
+    public static final short BIG_WIN_FAST_AND_FURIOUS = 3010;
+    public static final short FAST_AND_FURIOUS_TOTAL_FREE_SPIN = 3011;
+    public static final short FAST_AND_FURIOUS_FREE_DAILY = 3012;
+    public static final short FAST_AND_FURIOUS_MINIMIZE = 3013;
+    public static final short FAST_AND_FURIOUS_RESULT_MINIMIZE = 3014;
 
 
     // COWBOY
@@ -61,22 +61,23 @@ public class SlotCMD {
     public static final short COWBOY_MINIMIZE = 4013;
     public static final short COWBOY_RESULT_MINIMIZE = 4014;
 
-    // Fast And Furious
-    public static final short PLAY_FAST_AND_FURIOUS = 3001;
-    public static final short UPDATE_POT_FAST_AND_FURIOUS = 3002;
-    public static final short SUBSCRIBE_FAST_AND_FURIOUS = 3003;
-    public static final short UNSUBSCRIBE_FAST_AND_FURIOUS = 3004;
-    public static final short CHANGE_ROOM_FAST_AND_FURIOUS = 3005;
-    public static final short AUTO_PLAY_FAST_AND_FURIOUS = 3006;
-    public static final short STOP_PLAY_FAST_AND_FURIOUS = 3007;
-    public static final short FORCE_STOP_PLAY_FAST_AND_FURIOUS = 3008;
-    public static final short FAST_AND_FURIOUS_INFO = 3009;
-    public static final short BIG_WIN_FAST_AND_FURIOUS = 3010;
-    public static final short FAST_AND_FURIOUS_TOTAL_FREE_SPIN = 3011;
-    public static final short FAST_AND_FURIOUS_FREE_DAILY = 3012;
-    public static final short FAST_AND_FURIOUS_MINIMIZE = 3013;
-    public static final short FAST_AND_FURIOUS_RESULT_MINIMIZE = 3014;
 
+
+    // LADY NIGHT
+    public static final short PLAY_LADY_NIGHT = 5001;
+    public static final short UPDATE_POT_LADY_NIGHT = 5002;
+    public static final short SUBSCRIBE_LADY_NIGHT = 5003;
+    public static final short UNSUBSCRIBE_LADY_NIGHT = 5004;
+    public static final short CHANGE_ROOM_LADY_NIGHT = 5005;
+    public static final short AUTO_PLAY_LADY_NIGHT = 5006;
+    public static final short STOP_PLAY_LADY_NIGHT = 5007;
+    public static final short FORCE_STOP_PLAY_LADY_NIGHT = 5008;
+    public static final short LADY_NIGHT_INFO = 5009;
+    public static final short BIG_WIN_LADY_NIGHT = 5010;
+    public static final short LADY_NIGHT_TOTAL_FREE_SPIN = 5011;
+    public static final short LADY_NIGHT_FREE_DAILY = 5012;
+    public static final short LADY_NIGHT_MINIMIZE = 5013;
+    public static final short LADY_NIGHT_RESULT_MINIMIZE = 5014;
 
 
 

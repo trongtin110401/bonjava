@@ -21,7 +21,6 @@ package com.vinplay.dal.dao.impl;
 import com.mongodb.BasicDBObject;
 import com.mongodb.Block;
 import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.vinplay.dal.dao.SlotMachineDAO;
 import com.vinplay.vbee.common.enums.Games;
@@ -38,7 +37,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -87,7 +85,7 @@ public class SlotMachineDAOImpl
     @Override
     public List<LSGDPokeGo> getLSGD(String gameName, String username, int pageNumber) {
         int pageSize = 10;
-        if (gameName.equalsIgnoreCase(Games.KHO_BAU.getName()) || gameName.equalsIgnoreCase(Games.SPARTAN.getName())) {
+        if (gameName.equalsIgnoreCase(Games.KHO_BAU.getName()) || gameName.equalsIgnoreCase(Games.LADY_NIGHT.getName())) {
             pageSize = 5;
         }
         int skipNumber = (pageNumber - 1) * pageSize;

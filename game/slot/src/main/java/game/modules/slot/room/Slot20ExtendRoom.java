@@ -17,6 +17,8 @@ import com.vinplay.vbee.common.models.cache.UserCacheModel;
 import com.vinplay.vbee.common.response.MoneyResponse;
 import com.vinplay.vbee.common.statics.TransType;
 import com.vinplay.vbee.common.utils.DateTimeUtils;
+import game.modules.slot.Slot20ExtendModule;
+import game.modules.slot.Slot25ExtendModule;
 import game.modules.slot.SlotModule;
 import game.modules.slot.cmd.Slot25CommandCollection;
 import game.modules.slot.cmd.send.slot20extend.*;
@@ -222,6 +224,11 @@ public class Slot20ExtendRoom extends SlotRoom {
                                     ? Slot20ExtendUtil.generateMatrixNoHu(selectedLines)
                                     : Slot20ExtendUtil.generateMatrix();
 
+                            // MÃ LỆNH NÀY ÁP ỤNG CHO SLOT MACHINE 20LINE EXTENDS.
+                            // Trường hợp 1 WHEEL có xuất hiện item WILD, toàn bộ WHEEL đó sẽ được thay thế bởi nó
+                            // Trong trường hợp này (Slot Machine 25Line Basic thì không áp dụng)
+                            Slot20ExtendItem[][] matrixWild = Slot20ExtendUtil.revertMatrix(matrix);
+
 
                             // Đếm số lượng BONUS và SCATTER
                             for (int i = 0; i < ROW; ++i) {
@@ -235,7 +242,6 @@ public class Slot20ExtendRoom extends SlotRoom {
                                     }
                                 }
                             }
-
 
                             // không cho phép JACKPOT và (BONUS hoặc FREE SPIN) xảy ra đồng thời
                             if (isForceJackpot && (countBonus >= 3 || countScatter >= 3)) {
@@ -262,13 +268,6 @@ public class Slot20ExtendRoom extends SlotRoom {
                                 result = ResultSlot.BONUS_GAME;
                             }
 
-
-                            // MÃ LỆNH NÀY ÁP ỤNG CHO SLOT MACHINE 25LINE EXTENDS.
-                            // Trường hợp 1 WHEEL có xuất hiện item WILD, toàn bộ WHEEL đó sẽ được thay thế bởi nó
-                            // Trong trường hợp này (Slot Machine 25Line Basic thì không áp dụng)
-                            Slot20ExtendItem[][] matrixWild = Slot20ExtendUtil.revertMatrix(matrix);
-
-
                             // Duyệt toàn bộ Lines được chọn bởi người chơi để tính toán giải thưởng trên từng Line
                             for (String selectedLine : selectedLines) {
                                 ArrayList<Slot20ExtendAward> awardList = new ArrayList<>();
@@ -281,6 +280,8 @@ public class Slot20ExtendRoom extends SlotRoom {
                                     awardsOnLines.add(aol2);
                                 }
                             }
+
+
                             // Tiếp theo, tính toán toàn bộ giải thưởng
                             boolean isGetJackpotNaturally = false;
                             StringBuilder builderLinesWin = new StringBuilder();
@@ -324,6 +325,7 @@ public class Slot20ExtendRoom extends SlotRoom {
 
                             // điều kiện trúng thưởng đã thỏa mãn, dừng vòng lặp
                             enoughPair = true;
+
                             // BẮT ĐẦU QUÁ TRÌNH LƯU TRỮ THÔNG TIN VÀ TRẢ THƯỞNG
                             String matrixStr = Slot20ExtendUtil.matrixToString(matrix);
                             if (totalPrizes > 0L) {
@@ -461,13 +463,17 @@ public class Slot20ExtendRoom extends SlotRoom {
 
     private int setFreeSpin(String nickName, String lines, int countFreeSpin) {
         switch (countFreeSpin) {
+            case 3: {
+                slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, 5, 1, betValue);
+                return 5;
+            }
             case 4: {
-                slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, 8, 1, betValue);
-                return 8;
+                slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, 10, 2, betValue);
+                return 10;
             }
             case 5: {
-                slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, 8, 2, betValue);
-                return 8;
+                slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, 20, 3, betValue);
+                return 20;
             }
         }
         return 0;
@@ -506,7 +512,7 @@ public class Slot20ExtendRoom extends SlotRoom {
 
     private void savePot() {
         long currentTime = System.currentTimeMillis();
-        if (currentTime - this.lastTimeUpdatePotToRoom >= 3000L) {
+        if (currentTime - this.lastTimeUpdatePotToRoom >= 1000L) {
             this.lastTimeUpdatePotToRoom = currentTime;
             try {
                 this.miniGameService.savePot(this.name, this.pot, this.huX2);
@@ -515,17 +521,8 @@ public class Slot20ExtendRoom extends SlotRoom {
             }
         }
 
-        Slot20ExtendUpdatePotMsg msg = new Slot20ExtendUpdatePotMsg(commandCollection.UPDATE_POT_MESSAGE);
-        msg.value = this.pot;
-        msg.x2 = (byte) (this.huX2 ? 1 : 0);
-        this.sendMessageToRoom(msg);
-    }
-
-    public void updatePot(User user) {
-        Slot20ExtendUpdatePotMsg msg = new Slot20ExtendUpdatePotMsg(commandCollection.UPDATE_POT_MESSAGE);
-        msg.value = this.pot;
-        msg.x2 = (byte) (this.huX2 ? 1 : 0);
-        SlotUtils.sendMessageToUser(msg, user);
+        byte x2 = (byte) (this.huX2 ? 1 : 0);
+        ((Slot20ExtendModule) this.module).updatePot(this.id, this.pot, x2);
     }
 
     /*

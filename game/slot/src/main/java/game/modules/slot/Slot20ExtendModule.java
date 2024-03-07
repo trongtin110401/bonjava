@@ -15,9 +15,13 @@ import game.modules.slot.cmd.Slot25CommandCollection;
 import game.modules.slot.cmd.rev.audition.MinimizeAuditionCmd;
 import game.modules.slot.cmd.rev.slot20extend.*;
 import game.modules.slot.cmd.send.slot20extend.Slot20ExtendInfoMsg;
+import game.modules.slot.cmd.send.slot20line.Slot20UpdatePotMsg;
+import game.modules.slot.cmd.send.slot25extend.Slot25UpdatePotMsg;
 import game.modules.slot.entities.BotMinigame;
 import game.modules.slot.listener.SlotLogListener;
+import game.modules.slot.room.Slot20ExtendRoom;
 import game.modules.slot.room.Slot25BasicRoom;
+import game.modules.slot.utils.SlotUtils;
 import game.util.ConfigGame;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -29,6 +33,9 @@ import java.util.logging.Logger;
 public abstract class Slot20ExtendModule extends SlotModule {
     private long referenceId = 1L;
     private final String fullLines = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20";
+
+    private final byte[] x2Arr = new byte[4];
+
     private Slot25CommandCollection commandCollection;
     private SlotLogListener slotLogListener;
 
@@ -55,6 +62,14 @@ public abstract class Slot20ExtendModule extends SlotModule {
             }
 
             this.jackpots = this.service.getPots(this.gameName);
+            if (jackpots == null || jackpots.length == 0) {
+                jackpots = new long[4];
+                jackpots[0] = 5000000;
+                jackpots[1] = 50000000;
+                jackpots[2] = 500000000;
+                jackpots[3] = 0;
+            }
+
             Debug.trace(this.gameName + " POTS: " + CommonUtils.arrayLongToString(this.jackpots));
             funds = this.service.getFunds(this.gameName);
             Debug.trace(this.gameName + ": " + CommonUtils.arrayLongToString(funds));
@@ -62,12 +77,19 @@ public abstract class Slot20ExtendModule extends SlotModule {
             Debug.trace("Init " + this.gameName + " error ", e);
         }
 
+//        this.rooms.put(this.gameName + "_vin_100",
+//                new Slot20ExtendRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 0, this.gameName + "_vin_100", (short) 1, this.jackpots[0], funds[0], 100, initJackpotValues[0]));
+//        this.rooms.put(this.gameName + "_vin_1000",
+//                new Slot20ExtendRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 1, this.gameName + "_vin_1000", (short) 1, this.jackpots[1], funds[1], 1000, initJackpotValues[1]));
+//        this.rooms.put(this.gameName + "_vin_10000",
+//                new Slot20ExtendRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 2, this.gameName + "_vin_10000", (short) 1, this.jackpots[2], funds[2], 10000, initJackpotValues[2]));
+
         this.rooms.put(this.gameName + "_vin_100",
-                new Slot25BasicRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 0, this.gameName + "_vin_100", (short) 1, this.jackpots[0], funds[0], 100, initJackpotValues[0]));
+                new Slot20ExtendRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 0, this.gameName + "_vin_100", (short) 1, this.jackpots[0], 10000000000L, 100, initJackpotValues[0]));
         this.rooms.put(this.gameName + "_vin_1000",
-                new Slot25BasicRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 1, this.gameName + "_vin_1000", (short) 1, this.jackpots[1], funds[1], 1000, initJackpotValues[1]));
+                new Slot20ExtendRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 1, this.gameName + "_vin_1000", (short) 1, this.jackpots[1], 10000000000L, 1000, initJackpotValues[1]));
         this.rooms.put(this.gameName + "_vin_10000",
-                new Slot25BasicRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 2, this.gameName + "_vin_10000", (short) 1, this.jackpots[2], funds[2], 10000, initJackpotValues[2]));
+                new Slot20ExtendRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 2, this.gameName + "_vin_10000", (short) 1, this.jackpots[2], 10000000000L, 10000, initJackpotValues[2]));
 
         Debug.trace("INIT " + this.gameName + " DONE");
 
@@ -131,7 +153,7 @@ public abstract class Slot20ExtendModule extends SlotModule {
         if (room != null) {
             room.joinRoom(user);
             room.userMaximize(user);
-            room.updatePot(user);
+            this.updatePotToUser(user);
             this.updateRoomInfo(user, room);
         } else {
             Debug.trace(this.gameName + " SUBSCRIBE: room " + cmd.roomId + " not found");
@@ -183,7 +205,7 @@ public abstract class Slot20ExtendModule extends SlotModule {
             roomLeaved.stopAutoPlay(user);
             roomLeaved.quitRoom(user);
             roomJoined.joinRoom(user);
-            roomJoined.updatePot(user);
+            this.updatePotToUser(user);
             this.updateRoomInfo(user, roomJoined);
         } else {
             Debug.trace(this.gameName + ": change room error, leaved= " + cmd.roomLeavedId + ", joined= " + cmd.roomJoinedId);
@@ -283,6 +305,32 @@ public abstract class Slot20ExtendModule extends SlotModule {
             }
             this.countBot10000 = 0;
         }
+    }
+
+    public void updatePot(byte id, long value, byte x2) {
+        this.jackpots[id] = value;
+        this.x2Arr[id] = x2;
+        long currentTime = System.currentTimeMillis();
+        Slot20UpdatePotMsg msg = this.getPotsInfo();
+        this.lastTimeUpdatePotToRoom = System.currentTimeMillis();
+        SendMsgToAlLUsersThread t = new SendMsgToAlLUsersThread(msg);
+        t.start();
+    }
+
+    public void updatePotToUser(User user) {
+        Slot20UpdatePotMsg msg = this.getPotsInfo();
+        SlotUtils.sendMessageToUser(msg, user);
+    }
+
+    public Slot20UpdatePotMsg getPotsInfo() {
+        Slot20UpdatePotMsg msg = new Slot20UpdatePotMsg(commandCollection.UPDATE_POT_MESSAGE);
+        msg.value100 = this.jackpots[0];
+        msg.value1000 = this.jackpots[1];
+        msg.value5000 = 0;
+        msg.value10000 = this.jackpots[2];
+        msg.x2Room100 = this.x2Arr[0];
+        msg.x2Room1000 = this.x2Arr[1];
+        return msg;
     }
 }
 
