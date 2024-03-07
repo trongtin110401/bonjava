@@ -49,27 +49,27 @@ public class LadyNightModule extends Slot20ExtendModule {
     public void handleClientRequest(User user, DataCmd dataCmd) {
         Debug.trace("LadyNight handleClientRequest " + dataCmd.getId());
         switch (dataCmd.getId()) {
-            case SlotCMD.SUBSCRIBE_FAST_AND_FURIOUS: {
+            case SlotCMD.SUBSCRIBE_LADY_NIGHT: {
                 this.subScribe(user, dataCmd);
                 break;
             }
-            case SlotCMD.UNSUBSCRIBE_FAST_AND_FURIOUS: {
+            case SlotCMD.UNSUBSCRIBE_LADY_NIGHT: {
                 this.unSubScribe(user, dataCmd);
                 break;
             }
-            case SlotCMD.CHANGE_ROOM_FAST_AND_FURIOUS: {
+            case SlotCMD.CHANGE_ROOM_LADY_NIGHT: {
                 this.changeRoom(user, dataCmd);
                 break;
             }
-            case SlotCMD.AUTO_PLAY_FAST_AND_FURIOUS: {
+            case SlotCMD.AUTO_PLAY_LADY_NIGHT: {
                 this.autoPlay(user, dataCmd);
                 break;
             }
-            case SlotCMD.PLAY_FAST_AND_FURIOUS: {
+            case SlotCMD.PLAY_LADY_NIGHT: {
                 this.play(user, dataCmd);
                 break;
             }
-            case SlotCMD.FAST_AND_FURIOUS_MINIMIZE: {
+            case SlotCMD.LADY_NIGHT_MINIMIZE: {
                 this.minimize(user, dataCmd);
             }
         }
