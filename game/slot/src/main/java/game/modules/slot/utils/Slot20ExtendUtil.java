@@ -8,10 +8,7 @@ import game.modules.slot.entities.slot.Line;
 import game.modules.slot.entities.slot.MiniGameSlotResponse;
 import game.modules.slot.entities.slot.line20extend.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class Slot20ExtendUtil {
 
@@ -62,7 +59,10 @@ public class Slot20ExtendUtil {
     }
 
     public static boolean isSpecialItem(Slot20ExtendItem item) {
-        return item == Slot20ExtendItem.BONUS || item == Slot20ExtendItem.SCATTER || item == Slot20ExtendItem.JACKPOT || item == Slot20ExtendItem.WILD;
+        return item == Slot20ExtendItem.BONUS
+                || item == Slot20ExtendItem.SCATTER
+                || item == Slot20ExtendItem.JACKPOT
+                || item == Slot20ExtendItem.WILD;
     }
 
     public static Slot20ExtendItem[][] generateMatrixNoHu(String[] lineArr) {
@@ -121,51 +121,34 @@ public class Slot20ExtendUtil {
         return line;
     }
 
-    public static MiniGameSlotResponse buildBonusGameData(int betValue, int countBonus) {
-        Random rd = new Random();
-        int indexRatioCol = rd.nextInt(3);
-        int indexRatioRow = countBonus - 3;
-        int ratio = Constant.SLOT25_BONUS_RATIO[indexRatioRow][indexRatioCol];
-        MiniGameSlotResponse res = Slot20ExtendUtil.generateMiniGameSlot(betValue);
-        res.setTotalPrize(res.getTotalPrize() * (long) ratio);
-        res.setPrizes(res.getPrizes() + "," + ratio + "," + countBonus);
-        return res;
+    public static int randomInt(int min, int max) {
+        Random random = new Random();
+        return random.ints(min, max)
+                .findFirst()
+                .getAsInt();
     }
 
-    /**
-     * Sinh dữ liệu game BONUS
-     *
-     * @param baseBetting
-     * @return
-     */
-    private static MiniGameSlotResponse generateMiniGameSlot(int baseBetting) {
-        MiniGameSlotResponse response = new MiniGameSlotResponse();
-        int step = 0;
-        long tongGiai = 0L;
-        boolean chonTiep;
-        Random rd = new Random();
-        StringBuilder sb = new StringBuilder();
-        do {
-            if (rd.nextInt(100) + 1 > Constant.SLOT25_TANK_TI_LE_TRUOT[step]) {
-                int indexCol = rd.nextInt(15);
-                int prize = Constant.SLOT25_TANK_PRIZES[step][indexCol] * baseBetting;
-                sb.append(prize);
-                sb.append(",");
-                tongGiai += prize;
-                chonTiep = true;
+    public static MiniGameSlotResponse buildBonusGameData(int betValue, int countBonus) {
+        int[] prices = new int[3];
+        for (int i = 0; i < 3; i++) {
+            int ratio = 0;
+            if (countBonus == 3) {
+                ratio = randomInt(20, 100);
+            } else if (countBonus == 4) {
+                ratio = randomInt(20, 200);
             } else {
-                chonTiep = false;
+                ratio = randomInt(20, 500);
             }
-            ++step;
-        } while (chonTiep);
-
-        if (sb.length() > 0) {
-            sb.deleteCharAt(sb.length() - 1);
+            prices[i] = betValue * ratio;
         }
-
-        response.setPrizes(sb.toString());
-        response.setTotalPrize(tongGiai);
-        return response;
+        MiniGameSlotResponse miniGameSlotResponse = new MiniGameSlotResponse();
+        miniGameSlotResponse.setTotalPrize(Arrays.stream(prices).sum());
+        miniGameSlotResponse.setPrizes(Arrays.stream(prices)
+                .mapToObj(String::valueOf)
+                .reduce((s1, s2) -> s1 + "," + s2)
+                .orElse(""));
+        miniGameSlotResponse.setRatio(0);
+        return miniGameSlotResponse;
     }
 
     /**
@@ -203,8 +186,7 @@ public class Slot20ExtendUtil {
                 Slot20ExtendItem item = Slot20ExtendItem.findItem(id);
                 if (item != Slot20ExtendItem.BONUS
                         && item != Slot20ExtendItem.SCATTER
-                        && item != Slot20ExtendItem.WILD
-                        && item != Slot20ExtendItem.JACKPOT) {
+                        && item != Slot20ExtendItem.WILD) {
                     itemId2Count.put(id, numOfItem + finalCountWild);
                 }
             });
@@ -214,9 +196,9 @@ public class Slot20ExtendUtil {
             // Chỉ có item có số lần xuất hiện lớn hơn hoặc bằng 2 thì mới tính toán giải thưởng
             if (countNumItem >= 2) {
                 Slot20ExtendItem item = Slot20ExtendItem.findItem(id);
-                // Bởi vì BONUS và SCATTER không có giải thưởng tiền trên 1 LINE
+                // Bởi vì BONUS không có giải thưởng tiền trên 1 LINE
                 // nên ta có thể bỏ qua mà không cần tính toán
-                if (item != Slot20ExtendItem.BONUS && item != Slot20ExtendItem.SCATTER) {
+                if (item != Slot20ExtendItem.BONUS) {
                     Slot20ExtendAward award = Slot20ExtendAwards.getAward(item, countNumItem);
                     if (award != null) {
                         awardList.add(award);

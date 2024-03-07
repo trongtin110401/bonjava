@@ -295,20 +295,6 @@ public class Slot25BasicUtil {
         });
     }
 
-    public static void calculateFreeSpinLine(Line line, List<Slot25BasicFreeSpinAward> awardList) {
-        int countNumItems = 0;
-        SlotBasic25Item itemSample = (SlotBasic25Item) line.getCell(0).getItem();
-        if (itemSample != SlotBasic25Item.BONUS && itemSample != SlotBasic25Item.SCATTER && itemSample != SlotBasic25Item.JACKPOT) {
-            Slot25BasicFreeSpinAward award;
-            for (int j = 0; j < line.getCells().size() && (line.getCell(j).getItem() == itemSample || line.getCell(j).getItem() == SlotBasic25Item.WILD); ++j) {
-                ++countNumItems;
-            }
-            if (countNumItems >= 3 && (award = Slot25BasicFreeSpinAwardManager.getAward(itemSample, countNumItems)) != null) {
-                awardList.add(award);
-            }
-        }
-    }
-
     public static SlotBasic25Item[][] revertMatrix(SlotBasic25Item[][] m) {
         SlotBasic25Item[][] matrix = new SlotBasic25Item[3][5];
         for (int i = 0; i < 3; ++i) {

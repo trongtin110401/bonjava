@@ -58,7 +58,7 @@ public class SlotMachineServiceImpl implements SlotMachineService {
 
     @Override
     public void logSpartan(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) throws IOException, TimeoutException, InterruptedException {
-        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.SPARTAN.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
+        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.LADY_NIGHT.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
         this.publishSlotMsg("queue_spartan", msg, 10136);
     }
 
@@ -107,6 +107,12 @@ public class SlotMachineServiceImpl implements SlotMachineService {
     @Override
     public void logFastAndFurious(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) throws IOException, TimeoutException, InterruptedException {
         LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.FAST_AND_FURIOUS.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
+        this.publishSlotMsg("queue_benley", msg, 8006);
+    }
+
+    @Override
+    public void logLadyNight(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) throws IOException, TimeoutException, InterruptedException {
+        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.LADY_NIGHT.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
         this.publishSlotMsg("queue_benley", msg, 8006);
     }
 
@@ -387,7 +393,7 @@ public class SlotMachineServiceImpl implements SlotMachineService {
             this.logRangeRover(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
         } else if (gameName.equals(Games.MAYBACH.getName())) {
             this.logMaybach(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
-        } else if (gameName.equals(Games.SPARTAN.getName())) {
+        } else if (gameName.equals(Games.LADY_NIGHT.getName())) {
             this.logSpartan(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
         } else if (gameName.equals(Games.TAMHUNG.getName())) {
             this.logTamHung(referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);

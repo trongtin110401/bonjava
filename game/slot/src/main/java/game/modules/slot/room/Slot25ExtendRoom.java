@@ -230,6 +230,10 @@ public class Slot25ExtendRoom extends SlotRoom {
                                     ? Slot25ExtendUtil.generateMatrixNoHu(selectedLines)
                                     : Slot25ExtendUtil.generateMatrix();
 
+                            // MÃ LỆNH NÀY ÁP ỤNG CHO SLOT MACHINE 25LINE EXTENDS.
+                            // Trường hợp 1 WHEEL có xuất hiện item WILD, toàn bộ WHEEL đó sẽ được thay thế bởi nó
+                            // Trong trường hợp này (Slot Machine 25Line Basic thì không áp dụng)
+                            Slot25ExtendItem[][] matrixWild = Slot25ExtendUtil.revertMatrix(matrix);
 
                             // Đếm số lượng BONUS và SCATTER
                             for (int i = 0; i < ROW; ++i) {
@@ -264,11 +268,6 @@ public class Slot25ExtendRoom extends SlotRoom {
                                 awardsOnLines.add(aol);
                                 result = ResultSlot.BONUS_GAME;
                             }
-
-                            // MÃ LỆNH NÀY ÁP ỤNG CHO SLOT MACHINE 25LINE EXTENDS.
-                            // Trường hợp 1 WHEEL có xuất hiện item WILD, toàn bộ WHEEL đó sẽ được thay thế bởi nó
-                            // Trong trường hợp này (Slot Machine 25Line Basic thì không áp dụng)
-                            Slot25ExtendItem[][] matrixWild = Slot25ExtendUtil.revertMatrix(matrix);
 
                             // Duyệt toàn bộ Lines được chọn bởi người chơi để tính toán giải thưởng trên từng Line
                             for (String selectedLine : selectedLines) {

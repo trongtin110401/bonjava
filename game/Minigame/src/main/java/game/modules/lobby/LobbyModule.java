@@ -135,10 +135,8 @@ import com.vinplay.vbee.common.models.UserModel;
 import com.vinplay.vbee.common.models.cache.UserCacheModel;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.response.*;
-import com.vinplay.vbee.common.statics.Consts;
 import com.vinplay.vbee.common.statics.TransType;
 import com.vinplay.vbee.common.utils.DateTimeUtils;
-import com.vinplay.vbee.common.utils.StringUtils;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
 import game.entities.QuotaResponse;
 import game.modules.lobby.cmd.rev.*;
@@ -2668,10 +2666,10 @@ public class LobbyModule
 
             //spartan game
 
-            int spartan100 = cacheService.getValueInt(Games.SPARTAN.getName() + "_vin_100");
-            int spartan1000 = cacheService.getValueInt(Games.SPARTAN.getName() + "_vin_1000");
-            int spartan5000 = cacheService.getValueInt(Games.SPARTAN.getName() + "_vin_5000");
-            int spartan10000 = cacheService.getValueInt(Games.SPARTAN.getName() + "_vin_10000");
+            int spartan100 = cacheService.getValueInt(Games.LADY_NIGHT.getName() + "_vin_100");
+            int spartan1000 = cacheService.getValueInt(Games.LADY_NIGHT.getName() + "_vin_1000");
+            int spartan5000 = cacheService.getValueInt(Games.LADY_NIGHT.getName() + "_vin_5000");
+            int spartan10000 = cacheService.getValueInt(Games.LADY_NIGHT.getName() + "_vin_10000");
             int baucauto = 500000;
             try {
                 ///

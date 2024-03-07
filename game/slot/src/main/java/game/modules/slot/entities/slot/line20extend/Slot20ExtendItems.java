@@ -37,11 +37,6 @@ public class Slot20ExtendItems {
         }
     }
 
-    public static void main(String[] args) {
-        Slot20ExtendItems avengersItems = new Slot20ExtendItems();
-        avengersItems.print();
-    }
-
     public Slot20ExtendItem random(int wheelIndex) {
         return wheels[wheelIndex].random();
     }

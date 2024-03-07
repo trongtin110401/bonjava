@@ -72,11 +72,9 @@ import bitzero.server.core.IBZEventParam;
 import bitzero.server.core.IBZEventType;
 import bitzero.server.entities.User;
 import bitzero.server.exceptions.BZException;
-import bitzero.server.extensions.BZExtension;
 import bitzero.server.extensions.BaseClientRequestHandler;
 import bitzero.server.extensions.data.BaseMsg;
 import bitzero.server.extensions.data.DataCmd;
-import bitzero.server.util.TaskScheduler;
 import bitzero.util.ExtensionUtility;
 import bitzero.util.common.business.Debug;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -127,8 +125,6 @@ import com.vinplay.vbee.common.enums.PhoneCardType;
 import com.vinplay.vbee.common.enums.Platform;
 import com.vinplay.vbee.common.enums.ProviderType;
 import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
-import com.vinplay.vbee.common.models.OtpModel;
-import com.vinplay.vbee.common.models.SpecialGiftCode;
 import com.vinplay.vbee.common.models.UserModel;
 import com.vinplay.vbee.common.models.cache.UserCacheModel;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
@@ -143,8 +139,7 @@ import game.modules.minigame.utils.MiniGameUtils;
 import game.utils.ConfigGame;
 import game.utils.HuVangConfig;
 import game.utils.ServerUtil;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+
 import java.io.StringWriter;
 import java.io.PrintWriter;
 import java.sql.SQLException;
@@ -155,21 +150,11 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.TimeZone;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.log4j.Logger;
 import org.bson.Document;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 public class LobbyModule
 extends BaseClientRequestHandler {
@@ -1735,10 +1720,10 @@ extends BaseClientRequestHandler {
 
             //spartan game
 
-            int spartan100 = cacheService.getValueInt(Games.SPARTAN.getName() + "_vin_100");
-            int spartan1000 = cacheService.getValueInt(Games.SPARTAN.getName() + "_vin_1000");
-            int spartan5000 = cacheService.getValueInt(Games.SPARTAN.getName() + "_vin_5000");
-            int spartan10000 = cacheService.getValueInt(Games.SPARTAN.getName() + "_vin_10000");
+            int spartan100 = cacheService.getValueInt(Games.LADY_NIGHT.getName() + "_vin_100");
+            int spartan1000 = cacheService.getValueInt(Games.LADY_NIGHT.getName() + "_vin_1000");
+            int spartan5000 = cacheService.getValueInt(Games.LADY_NIGHT.getName() + "_vin_5000");
+            int spartan10000 = cacheService.getValueInt(Games.LADY_NIGHT.getName() + "_vin_10000");
 
             UpdateJackpotMsg msg = new UpdateJackpotMsg();
             msg.potMiniPoker100 = miniPoker100;

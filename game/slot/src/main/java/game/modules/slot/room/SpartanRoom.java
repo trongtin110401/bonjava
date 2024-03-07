@@ -83,7 +83,7 @@ public class SpartanRoom
         super(id, name, betValue, moneyType, pot, fund, initPotValue);
         this.module = module;
         this.moneyType = moneyType;
-        this.gameName = Games.SPARTAN.getName();
+        this.gameName = Games.LADY_NIGHT.getName();
         this.cacheFreeSpinName = String.valueOf(this.gameName) + betValue;
         CacheServiceImpl cacheService = new CacheServiceImpl();
         cacheService.setValue(name, (int) pot);
@@ -572,7 +572,7 @@ public class SpartanRoom
             if (moneyRes != null && moneyRes.isSuccess()) {
                 currentMoney = moneyRes.getCurrentMoney();
                 if (this.moneyType == 1 && moneyExchange >= (long) BroadcastMessageServiceImpl.MIN_MONEY) {
-                    this.broadcastMsgService.putMessage(Games.SPARTAN.getId(), username, moneyExchange);
+                    this.broadcastMsgService.putMessage(Games.LADY_NIGHT.getId(), username, moneyExchange);
                 }
                 this.slotService.addPrizes(this.cacheFreeSpinName, username, tmpPrizes);
             }

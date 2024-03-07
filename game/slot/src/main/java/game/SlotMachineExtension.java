@@ -52,6 +52,9 @@ public class SlotMachineExtension extends BZExtension {
         this.addRequestHandler((short) 2000, LienMinhModule.class);
         this.addRequestHandler((short) 3000, FastAndFuriousModule.class);
         this.addRequestHandler((short) 4000, CowboyModule.class);
+        this.addRequestHandler((short) 5000, LadyNightModule.class);
+
+
 //        this.addRequestHandler((short) 5000, RollRoyModule.class);
 //        this.addRequestHandler((short) 12000, SpartanModule.class);
 //        this.addRequestHandler((short) 14000, TamHungModule.class);
