@@ -15,11 +15,11 @@ public class Slot20ExtendItems {
     //      + Chạy hàm main() để hiểu rõ hơn
     private static final int[][] config = new int[][]
             {
-                    {8, 8, 0, 35, 10, 10, 12, 25, 75, 80},
-                    {8, 8, 50, 0, 10, 15, 20, 25, 50, 60},
-                    {8, 8, 0, 35, 10, 15, 20, 25, 50, 60},
-                    {8, 8, 50, 0, 20, 20, 20, 25, 50, 55},
-                    {8, 8, 0, 35, 10, 15, 20, 30, 65, 75}
+                    {8, 8, 0, 35, 10, 10, 10, 12, 12, 25, 75, 75, 80, 80},
+                    {8, 8, 50, 0, 10, 15, 10, 20, 12, 25, 50, 75, 60, 60},
+                    {8, 8, 0, 35, 10, 15, 15, 20, 12, 25, 50, 75, 60, 60},
+                    {8, 8, 50, 0, 20, 20, 20, 20, 12, 25, 50, 75, 55, 55},
+                    {8, 8, 0, 35, 10, 15, 15, 20, 12, 30, 65, 75, 75, 75}
             };
 
     private final Slot20ExtendWheel[] wheels = new Slot20ExtendWheel[5];
@@ -27,7 +27,7 @@ public class Slot20ExtendItems {
     public Slot20ExtendItems() {
         for (int wheelIndex = 0; wheelIndex < 5; ++wheelIndex) {
             this.wheels[wheelIndex] = new Slot20ExtendWheel();
-            for (int j = 0; j < 11; j++) {
+            for (int j = 0; j < 14; j++) {
                 int k = 0;
                 while (k < config[wheelIndex][j]) {
                     this.wheels[wheelIndex].addItem(Slot20ExtendItem.findItem((byte) j));
