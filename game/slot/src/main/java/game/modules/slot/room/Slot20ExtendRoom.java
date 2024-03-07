@@ -30,6 +30,7 @@ import game.modules.slot.entities.slot.line20extend.*;
 import game.modules.slot.listener.SlotLogListener;
 import game.modules.slot.utils.Slot20ExtendUtil;
 import game.modules.slot.utils.SlotUtils;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.io.IOException;
 import java.sql.SQLException;

@@ -191,6 +191,8 @@ public class Slot20ExtendUtil {
                 }
             });
         }
+
+
         // bắt đầu tính toán giải thưởng đạt được trên 1 line
         itemId2Count.forEach((id, countNumItem) -> {
             // Chỉ có item có số lần xuất hiện lớn hơn hoặc bằng 2 thì mới tính toán giải thưởng
