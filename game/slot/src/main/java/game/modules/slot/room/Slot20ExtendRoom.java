@@ -170,6 +170,7 @@ public class Slot20ExtendRoom extends SlotRoom {
                         // 2 phần trăm cho vào hũ JACKPOT
                         long moneyToPot = !isSpinningFree ? totalBetValue * 2 / 100L : 0;
                         this.pot += moneyToPot;
+                        System.out.println("POT: " + pot);
 
                         // số tiền còn lại sau khi trừ phế và 2% POT cho vào quỹ thưởng
                         long moneyToFund = !isSpinningFree ? totalBetValue - fee - moneyToPot : 0;
