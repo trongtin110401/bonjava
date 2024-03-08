@@ -262,7 +262,7 @@ public class Slot20ExtendUtil {
             // So sánh item hiện tại với item tiếp theo
             for (int j = i + 1; j < line.getCells().size(); j++) {
                 Slot20ExtendItem nextItem = (Slot20ExtendItem) line.getCell(j).getItem();
-                if (currentItem.getId() == nextItem.getId()) {
+                if (currentItem == nextItem) {
                     count += 1;
                 } else if (nextItem == Slot20ExtendItem.WILD || nextItem == Slot20ExtendItem.JACKPOT) {
                     count += 1;
@@ -271,7 +271,14 @@ public class Slot20ExtendUtil {
                 }
             }
             if (count > 1) {
-                item2Count.put(currentItem.getId(), count);
+                int finalCount = count;
+                item2Count.compute(currentItem.getId(), (key, oldValue) -> {
+                    if (oldValue == null) {
+                        return finalCount;
+                    } else {
+                        return Math.max(finalCount, oldValue);
+                    }
+                });
             }
         }
 
