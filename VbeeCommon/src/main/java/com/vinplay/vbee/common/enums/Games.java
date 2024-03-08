@@ -41,18 +41,27 @@ Games {
     CO_UP(29, "CoUp", "C? Úp"),
     HAM_CA_MAP(30, "HamCaMap", "Hàm Cá M?p"),
     OVER_UNDER(102, "OverUnder", "Over-Under"),
-    LADY_NIGHT(120, "LadyNight", "Lady Night"),
-    LIEN_MINH(110, "LienMinh", "Liên Minh Huy?n Tho?i"),
     SAMTRUYEN(130, "SamTruyen", "SamTruyen"),
     RANGE_ROVER(140, "RANGE_ROVER", "RANGE_ROVER"),
     MAYBACH(150, "MAYBACH", "MAYBACH"),
     TAMHUNG(160, "TAMHUNG", "TAMHUNG"),
+    // Start slot new
     COWBOY(170, "Cowboy", "Cowboy"),
     FAST_AND_FURIOUS(180, "FastAndFurious", "Fast And Furious"),
+    LADY_NIGHT(120, "LadyNight", "Lady Night"),
+    CARIBE(190, "Caribe", "C??p Bi?n Caribe"),
+    BONG_LAI_CAC(200, "BongLaiCac", "B?ng Lai Các"),
+    HALLOWEEN(210, "Halloween", "Halloween"),
+    LAS_VEGAS(220, "LasVegas", "Th?n Bài Las Vegas"),
+    SEXY_DANCE(230, "SexyDance", "Sexy Dance"),
+    LIEN_MINH(110, "LienMinh", "Liên Minh Huy?n Tho?i"),
+
+    // End slot new
     TAI_XIU_VINH_DANH_BY_DAY(181, "tx_vinh_danh_day", "TAI XIU VINH DANH THEO NGAY"),
     TAI_XIU_VINH_DANH_BY_MONTH(182, "tx_vinh_danh_month", "TAI XIU VINH DANH THEO THANG"),
     TAI_XIU_MD5_VINH_DANH_BY_DAY(181, "tx_md5_vinh_danh_day", "TAI XIU MD5 VINH DANH THEO NGAY"),
-    TAI_XIU_MD5_VINH_DANH_BY_MONTH(182, "tx_md5_vinh_danh_month", "TAI XIU MD5 VINH DANH THEO THANG"),;
+    TAI_XIU_MD5_VINH_DANH_BY_MONTH(182, "tx_md5_vinh_danh_month", "TAI XIU MD5 VINH DANH THEO THANG"),
+    ;
 
     private int id;
     private String name;

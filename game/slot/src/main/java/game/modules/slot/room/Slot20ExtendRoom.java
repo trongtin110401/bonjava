@@ -27,6 +27,7 @@ import game.modules.slot.entities.slot.AwardsOnLine;
 import game.modules.slot.entities.slot.Line;
 import game.modules.slot.entities.slot.MiniGameSlotResponse;
 import game.modules.slot.entities.slot.line20extend.*;
+import game.modules.slot.entities.slot.line25extend.Slot25ExtendAward;
 import game.modules.slot.listener.SlotLogListener;
 import game.modules.slot.utils.Slot20ExtendUtil;
 import game.modules.slot.utils.SlotUtils;
@@ -296,7 +297,7 @@ public class Slot20ExtendRoom extends SlotRoom {
                                 builderPrizesOnLine.append(",");
                                 builderPrizesOnLine.append(award.getMoney());
 
-                                if (result != ResultSlot.JACKPOT) {
+                                if (result != ResultSlot.JACKPOT && award.getAward() == Slot20ExtendAward.JACKPOT) {
                                     result = ResultSlot.JACKPOT;
                                     isGetJackpotNaturally = true;
                                 }
