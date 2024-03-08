@@ -62,7 +62,10 @@ public class Slot25ExtendUtil {
     }
 
     public static boolean isSpecialItem(Slot25ExtendItem item) {
-        return item == Slot25ExtendItem.BONUS || item == Slot25ExtendItem.SCATTER || item == Slot25ExtendItem.JACKPOT || item == Slot25ExtendItem.WILD;
+        return item == Slot25ExtendItem.BONUS
+                || item == Slot25ExtendItem.SCATTER
+                || item == Slot25ExtendItem.JACKPOT
+                || item == Slot25ExtendItem.WILD;
     }
 
     public static Slot25ExtendFreeSpinItem[][] generateMatrixFreeSpin(String itemsWild) {
