@@ -247,19 +247,23 @@ public class Slot20ExtendUtil {
             return;
         }
 
-        // Không phải trúng phần thưởng JACKPOT
         // Duyệt mảng từ trái sang phải
         Map<Slot20ExtendItem, Integer> item2Count = new HashMap<>();
         for (int i = 0; i < line.getCells().size(); i++) {
             int count = 1; // Biến đếm số lượng trùng lặp
             Slot20ExtendItem currentItem = (Slot20ExtendItem) line.getCell(i).getItem(); // item hiện tại
+            // Bỏ qua không đếm do các items này không có phần thưởng hệ số
+            if (currentItem == Slot20ExtendItem.WILD
+                    || currentItem == Slot20ExtendItem.BONUS
+                    || currentItem == Slot20ExtendItem.JACKPOT) {
+                continue;
+            }
             // So sánh item hiện tại với item tiếp theo
             for (int j = i + 1; j < line.getCells().size(); j++) {
                 Slot20ExtendItem nextItem = (Slot20ExtendItem) line.getCell(j).getItem();
                 if (currentItem == nextItem) {
                     count += 1;
-                } else if ((currentItem == Slot20ExtendItem.WILD || currentItem == Slot20ExtendItem.JACKPOT)
-                        && (nextItem != Slot20ExtendItem.SCATTER && nextItem != Slot20ExtendItem.BONUS)) {
+                } else if (nextItem == Slot20ExtendItem.WILD || nextItem == Slot20ExtendItem.JACKPOT) {
                     count += 1;
                 } else {
                     break;
