@@ -80,7 +80,7 @@ public class Slot20ExtendUtil {
                     if (row != lineNoHu.getCell(celIndex).getRow() || col != lineNoHu.getCell(celIndex).getCol())
                         continue;
                     genRandom = false;
-                    if (col == 0 || col == 3 || col == 4)
+                    if (col == 0 || col == 2 || col == 4)
                         matrix[row][col] = Slot20ExtendItem.JACKPOT;
                     else
                         matrix[row][col] = Slot20ExtendItem.WILD;
@@ -161,6 +161,7 @@ public class Slot20ExtendUtil {
     public static void calculateMoneyAwardInLine(Line line, List<Slot20ExtendAward> awardList) {
         // số lương wild xuất hiện trên line
         int countWild = 0;
+        int countJackpot = 0;
         // ánh xạ giữa item và số lượng xuất hiện của nó trên 1 Line
         Map<Byte, Integer> itemId2Count = new HashMap<>();
         // duyệt qua các cell trên 1 line để tính toán số lần xuất hiện
@@ -178,6 +179,10 @@ public class Slot20ExtendUtil {
             if (avengersItem == Slot20ExtendItem.WILD) {
                 countWild += 1;
             }
+
+            if (avengersItem == Slot20ExtendItem.JACKPOT) {
+                countJackpot += 1;
+            }
         }
         // WILD có thể thay thế tất cả items (trừ SCATTER, BONUS và chính nó)
         if (countWild > 0) {
@@ -188,6 +193,19 @@ public class Slot20ExtendUtil {
                         && item != Slot20ExtendItem.SCATTER
                         && item != Slot20ExtendItem.WILD) {
                     itemId2Count.put(id, numOfItem + finalCountWild);
+                }
+            });
+        }
+
+        // JACKPOT có thể thay thế tất cả items (trừ SCATTER, BONUS và chính nó)
+        if (countJackpot > 0) {
+            int finalCountJackpot = countJackpot;
+            itemId2Count.forEach((id, numOfItem) -> {
+                Slot20ExtendItem item = Slot20ExtendItem.findItem(id);
+                if (item != Slot20ExtendItem.BONUS
+                        && item != Slot20ExtendItem.SCATTER
+                        && item != Slot20ExtendItem.JACKPOT) {
+                    itemId2Count.put(id, numOfItem + finalCountJackpot);
                 }
             });
         }
