@@ -7,6 +7,7 @@ import game.modules.slot.entities.slot.Cell;
 import game.modules.slot.entities.slot.Line;
 import game.modules.slot.entities.slot.MiniGameSlotResponse;
 import game.modules.slot.entities.slot.line20extend.*;
+import game.modules.slot.entities.slot.line25extend.Slot25ExtendItem;
 
 import java.util.*;
 
@@ -248,7 +249,7 @@ public class Slot20ExtendUtil {
         }
 
         // Duyệt mảng từ trái sang phải
-        Map<Slot20ExtendItem, Integer> item2Count = new HashMap<>();
+        Map<Byte, Integer> item2Count = new HashMap<>();
         for (int i = 0; i < line.getCells().size(); i++) {
             int count = 1; // Biến đếm số lượng trùng lặp
             Slot20ExtendItem currentItem = (Slot20ExtendItem) line.getCell(i).getItem(); // item hiện tại
@@ -270,14 +271,15 @@ public class Slot20ExtendUtil {
                 }
             }
             if (count > 1) {
-                item2Count.put(currentItem, count);
+                item2Count.put(currentItem.getId(), count);
             }
         }
 
         // bắt đầu tính toán giải thưởng đạt được trên 1 line
-        item2Count.forEach((item, countNumItem) -> {
+        item2Count.forEach((id, countNumItem) -> {
             // Bởi vì BONUS không có giải thưởng tiền trên 1 LINE
             // nên ta có thể bỏ qua mà không cần tính toán
+            Slot20ExtendItem item = Slot20ExtendItem.findItem(id);
             Slot20ExtendAward award = Slot20ExtendAwards.getAward(item, countNumItem);
             if (award != null) {
                 awardList.add(award);
