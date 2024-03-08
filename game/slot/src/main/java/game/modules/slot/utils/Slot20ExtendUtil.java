@@ -158,72 +158,125 @@ public class Slot20ExtendUtil {
      * @param line
      * @param awardList
      */
+//    public static void calculateMoneyAwardInLine(Line line, List<Slot20ExtendAward> awardList) {
+//        // số lương wild xuất hiện trên line
+//        int countWild = 0;
+//        int countJackpot = 0;
+//        // ánh xạ giữa item và số lượng xuất hiện của nó trên 1 Line
+//        Map<Byte, Integer> itemId2Count = new HashMap<>();
+//        // duyệt qua các cell trên 1 line để tính toán số lần xuất hiện
+//        for (int cellIndex = 0; cellIndex < line.getCells().size(); cellIndex++) {
+//            Cell cell = line.getCell(cellIndex);
+//            Slot20ExtendItem avengersItem = (Slot20ExtendItem) cell.getItem();
+//            Integer countNumberItem = itemId2Count.get(avengersItem.getId());
+//            if (countNumberItem == null) {
+//                countNumberItem = 1;
+//            } else {
+//                countNumberItem += 1;
+//            }
+//            itemId2Count.put(avengersItem.getId(), countNumberItem);
+//
+//            if (avengersItem == Slot20ExtendItem.WILD) {
+//                countWild += 1;
+//            }
+//
+//            if (avengersItem == Slot20ExtendItem.JACKPOT) {
+//                countJackpot += 1;
+//            }
+//        }
+//        // WILD có thể thay thế tất cả items (trừ SCATTER, BONUS và chính nó)
+//        if (countWild > 0) {
+//            int finalCountWild = countWild;
+//            itemId2Count.forEach((id, numOfItem) -> {
+//                Slot20ExtendItem item = Slot20ExtendItem.findItem(id);
+//                if (item != Slot20ExtendItem.BONUS
+//                        && item != Slot20ExtendItem.SCATTER
+//                        && item != Slot20ExtendItem.WILD) {
+//                    itemId2Count.put(id, numOfItem + finalCountWild);
+//                }
+//            });
+//        }
+//
+//        // JACKPOT có thể thay thế tất cả items (trừ SCATTER, BONUS và chính nó)
+//        if (countJackpot > 0) {
+//            int finalCountJackpot = countJackpot;
+//            itemId2Count.forEach((id, numOfItem) -> {
+//                Slot20ExtendItem item = Slot20ExtendItem.findItem(id);
+//                if (item != Slot20ExtendItem.BONUS
+//                        && item != Slot20ExtendItem.SCATTER
+//                        && item != Slot20ExtendItem.JACKPOT) {
+//                    itemId2Count.put(id, numOfItem + finalCountJackpot);
+//                }
+//            });
+//        }
+//
+//
+//        // bắt đầu tính toán giải thưởng đạt được trên 1 line
+//        itemId2Count.forEach((id, countNumItem) -> {
+//            // Chỉ có item có số lần xuất hiện lớn hơn hoặc bằng 2 thì mới tính toán giải thưởng
+//            if (countNumItem >= 2) {
+//                Slot20ExtendItem item = Slot20ExtendItem.findItem(id);
+//                // Bởi vì BONUS không có giải thưởng tiền trên 1 LINE
+//                // nên ta có thể bỏ qua mà không cần tính toán
+//                if (item != Slot20ExtendItem.BONUS) {
+//                    Slot20ExtendAward award = Slot20ExtendAwards.getAward(item, countNumItem);
+//                    if (award != null) {
+//                        awardList.add(award);
+//                    }
+//                }
+//            }
+//        });
+//    }
+
+    /**
+     * Phương thức này được sử dụng để tính toán giải thưởng cho số lần xuất hiện của ITEM trên 1 LINE
+     * mà không bao gồm việc tính toán số lần quay miễn phí và giải thưởng cho BONUS game
+     *
+     * @param line
+     * @param awardList
+     */
     public static void calculateMoneyAwardInLine(Line line, List<Slot20ExtendAward> awardList) {
-        // số lương wild xuất hiện trên line
-        int countWild = 0;
-        int countJackpot = 0;
-        // ánh xạ giữa item và số lượng xuất hiện của nó trên 1 Line
-        Map<Byte, Integer> itemId2Count = new HashMap<>();
-        // duyệt qua các cell trên 1 line để tính toán số lần xuất hiện
-        for (int cellIndex = 0; cellIndex < line.getCells().size(); cellIndex++) {
-            Cell cell = line.getCell(cellIndex);
-            Slot20ExtendItem avengersItem = (Slot20ExtendItem) cell.getItem();
-            Integer countNumberItem = itemId2Count.get(avengersItem.getId());
-            if (countNumberItem == null) {
-                countNumberItem = 1;
-            } else {
-                countNumberItem += 1;
-            }
-            itemId2Count.put(avengersItem.getId(), countNumberItem);
-
-            if (avengersItem == Slot20ExtendItem.WILD) {
-                countWild += 1;
-            }
-
-            if (avengersItem == Slot20ExtendItem.JACKPOT) {
-                countJackpot += 1;
-            }
+        // kiểm tra jackpot trước
+        List cels = line.getCells();
+        if (cels.get(0) == Slot20ExtendItem.JACKPOT
+                && cels.get(0) == Slot20ExtendItem.WILD
+                && cels.get(0) == Slot20ExtendItem.JACKPOT
+                && cels.get(0) == Slot20ExtendItem.WILD
+                && cels.get(0) == Slot20ExtendItem.JACKPOT) {
+            awardList.add(Slot20ExtendAward.JACKPOT);
+            return;
         }
-        // WILD có thể thay thế tất cả items (trừ SCATTER, BONUS và chính nó)
-        if (countWild > 0) {
-            int finalCountWild = countWild;
-            itemId2Count.forEach((id, numOfItem) -> {
-                Slot20ExtendItem item = Slot20ExtendItem.findItem(id);
-                if (item != Slot20ExtendItem.BONUS
-                        && item != Slot20ExtendItem.SCATTER
-                        && item != Slot20ExtendItem.WILD) {
-                    itemId2Count.put(id, numOfItem + finalCountWild);
+
+        // Không phải trúng phần thưởng JACKPOT
+        // Duyệt mảng từ trái sang phải
+        Map<Slot20ExtendItem, Integer> item2Count = new HashMap<>();
+        for (int i = 0; i < line.getCells().size(); i++) {
+            int count = 1; // Biến đếm số lượng trùng lặp
+            Slot20ExtendItem currentItem = (Slot20ExtendItem) line.getCell(i).getItem(); // item hiện tại
+            // So sánh item hiện tại với item tiếp theo
+            for (int j = i + 1; j < line.getCells().size(); j++) {
+                Slot20ExtendItem nextItem = (Slot20ExtendItem) line.getCell(j).getItem();
+                if (currentItem == nextItem) {
+                    count += 1;
+                } else if ((currentItem == Slot20ExtendItem.WILD || currentItem == Slot20ExtendItem.JACKPOT)
+                        && (nextItem != Slot20ExtendItem.SCATTER && nextItem != Slot20ExtendItem.BONUS)) {
+                    count += 1;
+                } else {
+                    break;
                 }
-            });
+            }
+            if (count > 1) {
+                item2Count.put(currentItem, count);
+            }
         }
-
-        // JACKPOT có thể thay thế tất cả items (trừ SCATTER, BONUS và chính nó)
-        if (countJackpot > 0) {
-            int finalCountJackpot = countJackpot;
-            itemId2Count.forEach((id, numOfItem) -> {
-                Slot20ExtendItem item = Slot20ExtendItem.findItem(id);
-                if (item != Slot20ExtendItem.BONUS
-                        && item != Slot20ExtendItem.SCATTER
-                        && item != Slot20ExtendItem.JACKPOT) {
-                    itemId2Count.put(id, numOfItem + finalCountJackpot);
-                }
-            });
-        }
-
 
         // bắt đầu tính toán giải thưởng đạt được trên 1 line
-        itemId2Count.forEach((id, countNumItem) -> {
-            // Chỉ có item có số lần xuất hiện lớn hơn hoặc bằng 2 thì mới tính toán giải thưởng
-            if (countNumItem >= 2) {
-                Slot20ExtendItem item = Slot20ExtendItem.findItem(id);
-                // Bởi vì BONUS không có giải thưởng tiền trên 1 LINE
-                // nên ta có thể bỏ qua mà không cần tính toán
-                if (item != Slot20ExtendItem.BONUS) {
-                    Slot20ExtendAward award = Slot20ExtendAwards.getAward(item, countNumItem);
-                    if (award != null) {
-                        awardList.add(award);
-                    }
-                }
+        item2Count.forEach((item, countNumItem) -> {
+            // Bởi vì BONUS không có giải thưởng tiền trên 1 LINE
+            // nên ta có thể bỏ qua mà không cần tính toán
+            Slot20ExtendAward award = Slot20ExtendAwards.getAward(item, countNumItem);
+            if (award != null) {
+                awardList.add(award);
             }
         });
     }
