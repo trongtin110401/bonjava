@@ -1722,6 +1722,15 @@
             <name>report admin transfer money</name>
             <path>com.vinplay.api.backend.processors.FindAllTransactionFundProcessor</path>
         </command>
-
+        <command>
+            <id>11026</id>
+            <name>update slot fee</name>
+            <path>com.vinplay.api.backend.processors.UpdateSlotFeeProcessor</path>
+        </command>
+        <command>
+            <id>11027</id>
+            <name>get slot fee</name>
+            <path>com.vinplay.api.backend.processors.GetAllSlotFeeProcessor</path>
+        </command>
     </commands>
 </backend>
