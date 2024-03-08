@@ -239,10 +239,10 @@ public class Slot20ExtendUtil {
         // kiểm tra jackpot trước
         List cels = line.getCells();
         if (cels.get(0) == Slot20ExtendItem.JACKPOT
-                && cels.get(0) == Slot20ExtendItem.WILD
-                && cels.get(0) == Slot20ExtendItem.JACKPOT
-                && cels.get(0) == Slot20ExtendItem.WILD
-                && cels.get(0) == Slot20ExtendItem.JACKPOT) {
+                && cels.get(1) == Slot20ExtendItem.WILD
+                && cels.get(2) == Slot20ExtendItem.JACKPOT
+                && cels.get(3) == Slot20ExtendItem.WILD
+                && cels.get(4) == Slot20ExtendItem.JACKPOT) {
             awardList.add(Slot20ExtendAward.JACKPOT);
             return;
         }
