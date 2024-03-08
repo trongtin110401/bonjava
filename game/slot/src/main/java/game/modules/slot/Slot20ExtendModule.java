@@ -23,6 +23,7 @@ import game.modules.slot.utils.SlotUtils;
 import game.util.ConfigGame;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -328,6 +329,12 @@ public abstract class Slot20ExtendModule extends SlotModule {
         msg.value10000 = this.jackpots[2];
         msg.x2Room100 = this.x2Arr[0];
         msg.x2Room1000 = this.x2Arr[1];
+
+        System.out.println(
+                Arrays.stream(jackpots)
+                        .mapToObj(String::valueOf)
+                        .reduce((o, o2) -> o + "," + o2)
+                        .get());
         return msg;
     }
 }
