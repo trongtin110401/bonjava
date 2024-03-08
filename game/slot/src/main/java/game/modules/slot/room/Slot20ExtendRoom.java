@@ -383,7 +383,7 @@ public class Slot20ExtendRoom extends SlotRoom {
 
                             // cập nhật và tính toán lượt quay miễn phí
                             SlotFreeSpin slotFreeSpin = slotService.updateLuotQuaySlotFree(cacheFreeSpinName, username);
-                            playResponse.freeSpin = (byte) this.setFreeSpin(username, linesStr, countScatter);
+                            playResponse.freeSpin = (byte) this.setFreeSpin(username, linesStr, countScatter, slotFreeSpin.getNum());
                             if (countScatter >= 3) {
                                 playResponse.isFreeSpin = true;
                                 if (result != ResultSlot.BONUS_GAME && result != ResultSlot.JACKPOT) {
@@ -466,23 +466,28 @@ public class Slot20ExtendRoom extends SlotRoom {
         return playResponse;
     }
 
-    private int setFreeSpin(String nickName, String lines, int countFreeSpin) {
+    private int setFreeSpin(String nickName, String lines, int countFreeSpin, int remainAmountOfFreeSpin) {
+        int soLuot = 0;
         switch (countFreeSpin) {
             case 3: {
+                soLuot = 5 + remainAmountOfFreeSpin;
                 slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, 5, 1, betValue);
-                return 5;
+                break;
             }
             case 4: {
+                soLuot = 10 + remainAmountOfFreeSpin;
                 slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, 10, 2, betValue);
-                return 10;
+                break;
             }
             case 5: {
+                soLuot = 20 + remainAmountOfFreeSpin;
                 slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, 20, 3, betValue);
-                return 20;
+                break;
             }
         }
-        return 0;
+        return Math.max(soLuot, remainAmountOfFreeSpin);
     }
+
 
     public short play(User user, String linesStr) throws Exception {
         String username = user.getName();
