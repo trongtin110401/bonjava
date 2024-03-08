@@ -14,6 +14,7 @@ import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
 import com.vinplay.vbee.common.models.UserModel;
 import com.vinplay.vbee.common.models.cache.SlotFreeDaily;
 import com.vinplay.vbee.common.models.cache.UserCacheModel;
+import com.vinplay.vbee.common.models.slot.SlotFreeSpin;
 import com.vinplay.vbee.common.response.MoneyResponse;
 import com.vinplay.vbee.common.statics.TransType;
 import com.vinplay.vbee.common.utils.DateTimeUtils;
@@ -381,6 +382,7 @@ public class Slot20ExtendRoom extends SlotRoom {
 
 
                             // cập nhật và tính toán lượt quay miễn phí
+                            SlotFreeSpin slotFreeSpin = slotService.updateLuotQuaySlotFree(cacheFreeSpinName, username);
                             playResponse.freeSpin = (byte) this.setFreeSpin(username, linesStr, countScatter);
                             if (countScatter >= 3) {
                                 playResponse.isFreeSpin = true;
