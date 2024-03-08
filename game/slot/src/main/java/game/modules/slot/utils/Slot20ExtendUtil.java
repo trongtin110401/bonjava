@@ -261,7 +261,7 @@ public class Slot20ExtendUtil {
             // So sánh item hiện tại với item tiếp theo
             for (int j = i + 1; j < line.getCells().size(); j++) {
                 Slot20ExtendItem nextItem = (Slot20ExtendItem) line.getCell(j).getItem();
-                if (currentItem == nextItem) {
+                if (currentItem.getId() == nextItem.getId()) {
                     count += 1;
                 } else if (nextItem == Slot20ExtendItem.WILD || nextItem == Slot20ExtendItem.JACKPOT) {
                     count += 1;
