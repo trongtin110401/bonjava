@@ -382,7 +382,7 @@ public class Slot20ExtendRoom extends SlotRoom {
 
                             // cập nhật và tính toán lượt quay miễn phí
                             playResponse.freeSpin = (byte) this.setFreeSpin(username, linesStr, countScatter);
-                            if (countScatter >= 4) {
+                            if (countScatter >= 3) {
                                 playResponse.isFreeSpin = true;
                                 if (result != ResultSlot.BONUS_GAME && result != ResultSlot.JACKPOT) {
                                     result = ResultSlot.FREE_SPIN;
