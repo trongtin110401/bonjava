@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  com.vinplay.vbee.common.messages.BaseMessage
  *  com.vinplay.vbee.common.messages.minigame.UpdateFundMessage
@@ -19,13 +19,14 @@ import com.vinplay.vbee.common.messages.minigame.UpdateFundMessage;
 import com.vinplay.vbee.common.messages.minigame.UpdatePotMessage;
 import com.vinplay.vbee.common.response.BonusFundResponse;
 import com.vinplay.vbee.common.rmq.RMQApi;
+
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 public class MiniGameServiceImpl
-implements MiniGameService {
+        implements MiniGameService {
     MiniGameDAO dao = new MiniGameDAOImpl();
 
     @Override
@@ -54,7 +55,7 @@ implements MiniGameService {
         UpdateFundMessage msg = new UpdateFundMessage();
         msg.fundName = fundName;
         msg.newValue = value;
-        RMQApi.publishMessage((String)"queue_fund", (BaseMessage)msg, (int)110);
+        RMQApi.publishMessage((String) "queue_fund", (BaseMessage) msg, (int) 110);
     }
 
     @Override
@@ -77,9 +78,9 @@ implements MiniGameService {
         UpdatePotMessage message = new UpdatePotMessage();
         message.potName = potName;
         message.newValue = value;
-        RMQApi.publishMessage((String)"queue_pot", (BaseMessage)message, (int)106);
+        RMQApi.publishMessage("queue_pot", message, 106);
         CacheServiceImpl cacheService = new CacheServiceImpl();
-        cacheService.setValue(potName, (int)value);
+        cacheService.setValue(potName, (int) value);
         cacheService.setValue(potName + "_x2", x2 ? 1 : 0);
     }
 

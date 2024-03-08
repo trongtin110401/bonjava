@@ -19,7 +19,7 @@ import java.sql.SQLException;
 public class UpdatePotProcessor
 implements BaseProcessor<byte[], Boolean> {
     public Boolean execute(Param<byte[]> param) {
-        UpdatePotMessage message = (UpdatePotMessage)BaseMessage.fromBytes((byte[])((byte[])param.get()));
+        UpdatePotMessage message = (UpdatePotMessage)BaseMessage.fromBytes(param.get());
         TaiXiuDaoImpl dao = new TaiXiuDaoImpl();
         boolean success = false;
         try {
