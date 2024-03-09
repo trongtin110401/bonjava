@@ -3,6 +3,7 @@
  */
 package com.vinplay.api.backend.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.vinplay.vbee.common.response.BaseResponseModel;
 
 public class SlotFeeResponse extends BaseResponseModel {
@@ -20,72 +21,84 @@ public class SlotFeeResponse extends BaseResponseModel {
         super(success, errorCode);
     }
 
+    // Constructors, getters, and setters...
+
+    @JsonProperty("Cowboy")
     public int getCowboy() {
         return Cowboy;
     }
 
-    public void setCowboy(int cowboy) {
-        Cowboy = cowboy;
-    }
-
+    @JsonProperty("FastAndFurious")
     public int getFastAndFurious() {
         return FastAndFurious;
+    }
+
+    @JsonProperty("LadyNight")
+    public int getLadyNight() {
+        return LadyNight;
+    }
+
+    @JsonProperty("Caribe")
+    public int getCaribe() {
+        return Caribe;
+    }
+
+    @JsonProperty("BongLaiCac")
+    public int getBongLaiCac() {
+        return BongLaiCac;
+    }
+
+    @JsonProperty("Halloween")
+    public int getHalloween() {
+        return Halloween;
+    }
+
+    @JsonProperty("LasVegas")
+    public int getLasVegas() {
+        return LasVegas;
+    }
+
+    @JsonProperty("SexyDance")
+    public int getSexyDance() {
+        return SexyDance;
+    }
+
+    @JsonProperty("LienMinh")
+    public int getLienMinh() {
+        return LienMinh;
+    }
+
+
+    public void setCowboy(int cowboy) {
+        Cowboy = cowboy;
     }
 
     public void setFastAndFurious(int fastAndFurious) {
         FastAndFurious = fastAndFurious;
     }
 
-    public int getLadyNight() {
-        return LadyNight;
-    }
-
     public void setLadyNight(int ladyNight) {
         LadyNight = ladyNight;
-    }
-
-    public int getCaribe() {
-        return Caribe;
     }
 
     public void setCaribe(int caribe) {
         Caribe = caribe;
     }
 
-    public int getBongLaiCac() {
-        return BongLaiCac;
-    }
-
     public void setBongLaiCac(int bongLaiCac) {
         BongLaiCac = bongLaiCac;
-    }
-
-    public int getHalloween() {
-        return Halloween;
     }
 
     public void setHalloween(int halloween) {
         Halloween = halloween;
     }
 
-    public int getLasVegas() {
-        return LasVegas;
-    }
-
     public void setLasVegas(int lasVegas) {
         LasVegas = lasVegas;
     }
 
-    public int getSexyDance() {
-        return SexyDance;
-    }
-
     public void setSexyDance(int sexyDance) {
         SexyDance = sexyDance;
-    }
-
-    public int getLienMinh() {
-        return LienMinh;
     }
 
     public void setLienMinh(int lienMinh) {
