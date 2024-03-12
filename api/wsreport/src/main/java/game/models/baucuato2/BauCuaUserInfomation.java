@@ -6,6 +6,7 @@ public class BauCuaUserInfomation implements Serializable {
     private String username;
     private long totalBet;
     private long totalCurrentMoney;
+    private  long reportMoneyToday;
 
     public BauCuaUserInfomation(String username, long totalBet, long totalCurrentMoney) {
         this.username = username;
@@ -46,6 +47,15 @@ public class BauCuaUserInfomation implements Serializable {
                 "username='" + username + '\'' +
                 ", totalBet=" + totalBet +
                 ", totalCurrentMoney=" + totalCurrentMoney +
+                ", reportMoneyToday=" + reportMoneyToday +
                 '}';
+    }
+
+    public long getReportMoneyToday() {
+        return reportMoneyToday;
+    }
+
+    public void setReportMoneyToday(long reportMoneyToday) {
+        this.reportMoneyToday = reportMoneyToday;
     }
 }
