@@ -141,10 +141,10 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
 
         BauCuaListUserResponse response = new BauCuaListUserResponse(true, "1");
         try {
-            ArrayList<BauCuaUserInfomation> list = (ArrayList<BauCuaUserInfomation>) MapperUtils.mapper.readValue(cacheService.getValueStr("baucualist"), new TypeReference<ArrayList<BauCuaUserInfomation>>() {
+            ArrayList<BauCuaUserInfomation> list = MapperUtils.mapper.readValue(cacheService.getValueStr("baucualist"), new TypeReference<ArrayList<BauCuaUserInfomation>>() {
             });
 
-            response.setListBauCuaInformation(list);
+            response.setListBauCuaInformation(getUserBauCua(list,"BauCua"));
             this.sendMessToAdminBauCua(response.toJson());
 
         } catch (KeyNotFoundException e) {
@@ -175,7 +175,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             response.setMoneyTaiFull(obj.getMoneyTaiFull());
             response.setMoneyXiuFull(obj.getMoneyXiuFull());
             response.setPhienId(obj.getPhienId());
-            response.setContributors(getUserTX(obj.getContributors(),"TaiXiu"));
+            response.setContributors(getUserTX(obj.getContributors(), "TaiXiu"));
             response.setNumberUserAndBotBetTai(obj.getNumberUserAndBotBetTai());
             response.setNumberUserAndBotBetXiu(obj.getNumberUserAndBotBetXiu());
             response.setRealTime(obj.getRealTime());
@@ -214,7 +214,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             response.setMoneyTaiFull(obj.getMoneyTaiFull());
             response.setMoneyXiuFull(obj.getMoneyXiuFull());
             response.setPhienId(obj.getPhienId());
-            response.setContributors(getUserTX(obj.getContributors(),"TaiXiuMd5"));
+            response.setContributors(getUserTX(obj.getContributors(), "TaiXiuMd5"));
             response.setNumberUserAndBotBetTai(obj.getNumberUserAndBotBetTai());
             response.setNumberUserAndBotBetXiu(obj.getNumberUserAndBotBetXiu());
             response.setRealTime(obj.getRealTime());
@@ -540,7 +540,6 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
 //            System.out.println("Loi sendNotificationAdmin");
 //        }
 //    }
-
     private void sendMessEventactionToAdmin(String mess) {
         for (Session session : ServerEventactionGame.sessions) {
             session.sendText(mess);
@@ -583,6 +582,41 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
         return userList;
     }
 
+    public List<BauCuaUserInfomation> getUserBauCua(List<BauCuaUserInfomation> userList, String boardName) {
+        if (userList.isEmpty()) {
+            return userList;
+        }
+        final String BASE_URL = "http://localhost:8087/leaderboard/get_by_name";
+        try {
+            String users = convertListToString(userList.stream().map(BauCuaUserInfomation::getUsername).collect(Collectors.toList()));
+            String typeDate = "DAY_" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+            String url = String.format("%s?boardName=%s_%s&users=%s", BASE_URL, boardName, typeDate, users);
+
+            OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder().build();
+            Request request = new Request.Builder()
+                    .url(url)
+                    .method("GET", null)
+                    .build();
+
+            Response response = client.newCall(request).execute();
+            if (response.body() != null) {
+                List<TopWin> topWins = getTopWin(response.body().string());
+
+                for (TopWin topWin : topWins) {
+                    userList.stream()
+                            .filter(taiXiuAdmin -> taiXiuAdmin.getUsername().equals(topWin.getUsername()))
+                            .findFirst()
+                            .ifPresent(taiXiuAdmin -> taiXiuAdmin.setReportMoneyToday(topWin.getMoney()));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("=============== List report BauCua " + userList);
+        return userList;
+    }
+
     private static String convertListToString(List<String> userList) {
         return String.join(",", userList);
     }
@@ -609,13 +643,13 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
     }
 
     public static void main(String[] args) {
-        List<TaiXiuAdmin> list = new ArrayList<>();
-        TaiXiuAdmin taiXiuAdmin = new TaiXiuAdmin("baztdinh",0,0,0);
-        TaiXiuAdmin taiXiuAdmin1 = new TaiXiuAdmin("testacc123",0,0,0);
-        list.add(taiXiuAdmin);
-        list.add(taiXiuAdmin1);
+        List<BauCuaUserInfomation> list = new ArrayList<>();
+        BauCuaUserInfomation a = new BauCuaUserInfomation("testacc123", 1, 1);
+        BauCuaUserInfomation b = new BauCuaUserInfomation("Ngapvuvo", 1, 1);
         ScheduledTasks scheduledTasks = new ScheduledTasks();
-        scheduledTasks.getUserTX(list, "TaiXiu");
+        list.add(a);
+        list.add(b);
+        scheduledTasks.getUserBauCua(list, "BauCua");
     }
 
 }
