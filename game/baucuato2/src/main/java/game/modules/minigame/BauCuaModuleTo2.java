@@ -83,8 +83,8 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
         super.init();
         this.loadData();
         this.rooms.put("BauCuaTo_vin_1000", new MGRoomBauCuaTo2("BauCuaTo_vin_1000", 100, (byte) 1, (byte) 0, this.funds[0],jackPot[0]));
-        this.rooms.put("BauCuaTo_vin_10000", new MGRoomBauCuaTo2("BauCuaTo_vin_10000", 1000, (byte) 1, (byte) 1, this.funds[1],jackPot[1]));
-        this.rooms.put("BauCuaTo_vin_100000", new MGRoomBauCuaTo2("BauCuaTo_vin_100000", 10000, (byte) 1, (byte) 2, this.funds[2],jackPot[2]));
+//        this.rooms.put("BauCuaTo_vin_10000", new MGRoomBauCuaTo2("BauCuaTo_vin_10000", 1000, (byte) 1, (byte) 1, this.funds[1],jackPot[1]));
+//        this.rooms.put("BauCuaTo_vin_100000", new MGRoomBauCuaTo2("BauCuaTo_vin_100000", 10000, (byte) 1, (byte) 2, this.funds[2],jackPot[2]));
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
         BitZeroServer.getInstance().getTaskScheduler().schedule(this.serverReadyTask, 10, TimeUnit.SECONDS);
         this.getParentExtension().addEventListener((IBZEventType) BZEventType.USER_DISCONNECT, (IBZEventListener) this);
