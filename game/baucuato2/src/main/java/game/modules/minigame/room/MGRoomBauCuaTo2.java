@@ -505,7 +505,7 @@ public class MGRoomBauCuaTo2
 //            }
 
             if (!isBot(tran.username)) {
-                fund += totalPrize;
+                fund -= totalPrize;
             }
         }
 
@@ -522,12 +522,14 @@ public class MGRoomBauCuaTo2
                 this.jackPot = 500000;
             }
 
-        } else {
-            long profit = totalUserBetInRoom - totalPrizesUser;
-            if (profit > 0) { // nếu là bot thì không tính vào hũ
-                this.jackPot += profit * RATE_NO_HU;
-            }
         }
+
+//        else {
+//            long profit = totalUserBetInRoom - totalPrizesUser;
+//            if (profit > 0) { // nếu là bot thì không tính vào hũ
+//                this.jackPot += profit * RATE_NO_HU;
+//            }
+//        }
 
 
         try {
