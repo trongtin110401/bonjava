@@ -458,6 +458,7 @@ public class MGRoomBauCuaTo2
                 }
 
                 totalBetValues += tran.betValues[i];
+                this.jackPot += totalBetValues / 100;
                 arrl = totalBetValuesInRoom;
                 n = i;
                 arrl[n] = arrl[n] + tran.betValues[i];
@@ -505,12 +506,11 @@ public class MGRoomBauCuaTo2
 //            }
 
             if (!isBot(tran.username)) {
-                fund -= totalPrize;
+                fund += tran.totalExchange;
             }
         }
 
         // update fund BauCua
-        this.jackPot += totalPrizesUser / 100;
 
         if (isNohu) {
             list50WinHu.add(new HuBauCuaWinTransaction(this.referenceId, Base64.getEncoder().encodeToString(VinPlayUtils.getCurrentDateTime().getBytes()), (potIdNohu), this.jackPot, userWinHuBauCuaList));
