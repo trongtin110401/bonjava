@@ -580,7 +580,9 @@ public class MGRoomBauCuaTo2
         long totalValues = 0L;
         for (TransactionBauCua tran : this.transactionsMap.values()) {
             for (int i = 0; i < 6; ++i) {
-                totalValues += tran.betValues[i] * (long) tiLe[i] + tran.betValues[i];
+                if (!this.isBot(tran.username)) {
+                    totalValues += tran.betValues[i] * (long) tiLe[i] + tran.betValues[i];
+                }
             }
         }
         return totalValues;
