@@ -66,7 +66,9 @@ public class MGRoomBauCuaTo2
         extends MGRoom {
     private static final double RATE_NO_HU = 0.3;
     public byte id;
-    public long jackpotValue;
+    public long fund;
+
+    private long jackPot;
     private List<PotBauCua> pots = new ArrayList<PotBauCua>();
     private List<PotBauCua> potsUser = new ArrayList<PotBauCua>();
     private byte moneyType;
@@ -103,10 +105,11 @@ public class MGRoomBauCuaTo2
     private ObjectMapper objectMapper = new ObjectMapper();
     private ReentrantLock lock = new ReentrantLock();
 
-    public MGRoomBauCuaTo2(String name, int minBetValue, byte moneyType, byte id, long jackpot) {
+    public MGRoomBauCuaTo2(String name, int minBetValue, byte moneyType, byte id, long fund, long jackPot) {
         super(name);
         this.id = id;
-        this.jackpotValue = jackpot;
+        this.fund = fund;
+        this.jackPot = jackPot;
         this.moneyType = moneyType;
         if (moneyType == 1) {
             this.moneyTypeStr = "vin";
@@ -147,7 +150,7 @@ public class MGRoomBauCuaTo2
         msg.xValue = this.resultBC.xValue;
         msg.room = this.id;
         msg.userRoomInfoList = userRoomInfoList;
-        msg.funds = this.jackpotValue;
+        msg.funds = this.fund;
         msg.isNohu = false;
         msg.allTransaction = allTransactionsMapRealtime;
         cacheService.setValue("BauCuareferenceId", (int) this.referenceId);
@@ -412,8 +415,6 @@ public class MGRoomBauCuaTo2
 
         long totalVinPay = 0L;
         long totalPrizesUser = 0L;
-        long totalPrizesBot = 0L;
-        long totalBotBetInRoom = 0L;
         long totalUserBetInRoom = 0L;
         long[] totalBetValuesInRoom = new long[6];
         long[] totalPrizesInRoom = new long[6];
@@ -431,15 +432,15 @@ public class MGRoomBauCuaTo2
                         long bet = tran.betValues[i];
                         long win = bet * tiLe[i];
                         long fee = (long) (win * (tax / 100));
-                        long prize = (long) (bet * ((double) (this.jackpotValue) / pots.get(i).getTotalValue()) + (win - fee));
+                        long prize = (long) (bet * ((double) (this.jackPot) / pots.get(i).getTotalValue()) + (win - fee));
                         totalPrize += prize;
                         tran.prizes[i] = prize;
 
-                        totalHuPrize += (long) (bet * ((double) (this.jackpotValue) / pots.get(i).getTotalValue()));
+                        totalHuPrize += (long) (bet * ((double) (this.jackPot) / pots.get(i).getTotalValue()));
 
                         arrl = totalPrizesInRoom;
                         n = i;
-                        arrl[n] = arrl[n] + (tran.betValues[i] * ((this.jackpotValue) / pots.get(i).getTotalValue())) + (tran.betValues[i] * (long) tiLe[i] + tran.betValues[i]);
+                        arrl[n] = arrl[n] + (tran.betValues[i] * ((this.jackPot) / pots.get(i).getTotalValue())) + (tran.betValues[i] * (long) tiLe[i] + tran.betValues[i]);
                     } else {
                         long bet = tran.betValues[i];
                         long win = bet * tiLe[i];
@@ -460,6 +461,7 @@ public class MGRoomBauCuaTo2
                 arrl = totalBetValuesInRoom;
                 n = i;
                 arrl[n] = arrl[n] + tran.betValues[i];
+
             }
             if (totalPrize > 0L) {
                 MoneyResponse response;
@@ -502,27 +504,35 @@ public class MGRoomBauCuaTo2
 //                totalPrizesBot += totalPrize;
 //            }
 
+            if (!isBot(tran.username)) {
+                fund += totalPrize;
+            }
         }
 
+        // update fund BauCua
+        this.jackPot += totalPrizesUser / 100;
+
         if (isNohu) {
-            list50WinHu.add(new HuBauCuaWinTransaction(this.referenceId, Base64.getEncoder().encodeToString(VinPlayUtils.getCurrentDateTime().getBytes()), (potIdNohu), this.jackpotValue, userWinHuBauCuaList));
+            list50WinHu.add(new HuBauCuaWinTransaction(this.referenceId, Base64.getEncoder().encodeToString(VinPlayUtils.getCurrentDateTime().getBytes()), (potIdNohu), this.jackPot, userWinHuBauCuaList));
             if (list50WinHu.size() >= 50) {
                 list50WinHu.remove(0);
             }
-            this.jackpotValue -= (totalPrizesUser); // tru di tong giai trong game
-            if (this.jackpotValue < 500000) {
-                this.jackpotValue = 500000;
+            this.jackPot -= (totalPrizesUser); // tru di tong giai trong game
+            if (this.jackPot < 500000) {
+                this.jackPot = 500000;
             }
 
         } else {
             long profit = totalUserBetInRoom - totalPrizesUser;
             if (profit > 0) { // nếu là bot thì không tính vào hũ
-
-                this.jackpotValue += profit * RATE_NO_HU;
+                this.jackPot += profit * RATE_NO_HU;
             }
         }
+
+
         try {
-            this.mgService.saveFund(this.name, this.jackpotValue);
+            this.mgService.saveFund(this.name, this.fund);
+            this.mgService.savePot(this.name, jackPot, false);
         } catch (IOException | InterruptedException | TimeoutException response) {
         }
 
@@ -538,10 +548,10 @@ public class MGRoomBauCuaTo2
         } catch (IOException | InterruptedException | TimeoutException list) {
             // empty catch block
         }
-        cacheService.setValue("Hu_Bau_cua_to2" + this.id, (int) this.jackpotValue);
+        cacheService.setValue("Hu_Bau_cua_to2" + this.id, (int) this.jackPot);
         UpdateBauCuaWinEffect msg = new UpdateBauCuaWinEffect();
         msg.listWinUser = listWin;
-        msg.funds = this.jackpotValue;
+        msg.funds = this.jackPot;
         msg.isNohu = isNohu;
         this.sendMessageToRoom(msg);
         return totalVinPay;
@@ -680,7 +690,7 @@ public class MGRoomBauCuaTo2
                     return generateDices();
                 }
                 long totalPrizes = this.tryCalculatePrizes(tiLe);
-                if (this.jackpotValue - totalPrizes > 0L) break block1;
+                if (this.jackPot - totalPrizes > 0L) break block1;
             } while (++num <= 3);
             return this.traGiaiBeNhat();
         }
