@@ -677,26 +677,45 @@ public class MGRoomBauCuaTo2
         return this.moneyType;
     }
 
+    //    private byte[] generateDices() {
+//        byte[] dices;
+//        block1:
+//        {
+//            int num = 0;
+//            do {
+//                Random rd = new Random();
+//                dices = new byte[]{(byte) rd.nextInt(6), (byte) rd.nextInt(6), (byte) rd.nextInt(6)};
+//                this.xPot = 1;
+//                this.xValue = 1;
+//                int[] tiLe = this.calculateTiLe(dices);
+//                if (checkNohu(tiLe)) {
+//                    return generateDices();
+//                }
+//                long totalPrizes = this.tryCalculatePrizes(tiLe);
+//                if (this.jackPot - totalPrizes > 0L) break block1;
+//            } while (++num <= 3);
+//            return this.traGiaiBeNhat();
+//        }
+//        return dices;
+//    }
     private byte[] generateDices() {
         byte[] dices;
-        block1:
-        {
-            int num = 0;
-            do {
-                Random rd = new Random();
-                dices = new byte[]{(byte) rd.nextInt(6), (byte) rd.nextInt(6), (byte) rd.nextInt(6)};
-                this.xPot = 1;
-                this.xValue = 1;
-                int[] tiLe = this.calculateTiLe(dices);
-                if (checkNohu(tiLe)) {
-                    return generateDices();
-                }
-                long totalPrizes = this.tryCalculatePrizes(tiLe);
-                if (this.jackPot - totalPrizes > 0L) break block1;
-            } while (++num <= 3);
-            return this.traGiaiBeNhat();
-        }
-        return dices;
+        int num = 0;
+        do {
+            Random rd = new Random();
+            dices = new byte[]{(byte) rd.nextInt(6), (byte) rd.nextInt(6), (byte) rd.nextInt(6)};
+            this.xPot = 1;
+            this.xValue = 1;
+            int[] tiLe = this.calculateTiLe(dices);
+            if (checkNohu(tiLe)) {
+                return generateDices();
+            }
+            long totalPrizes = this.tryCalculatePrizes(tiLe);
+            if (this.fund - totalPrizes > 0L) {
+                return dices;
+            }
+        } while (++num <= 3);
+        return this.traGiaiBeNhat();
     }
 
     boolean checkNohu(int[] tile) {
