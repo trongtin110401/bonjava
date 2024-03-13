@@ -150,7 +150,7 @@ public class MGRoomBauCuaTo2
         msg.xValue = this.resultBC.xValue;
         msg.room = this.id;
         msg.userRoomInfoList = userRoomInfoList;
-        msg.funds = this.fund;
+        msg.funds = this.jackPot;
         msg.isNohu = false;
         msg.allTransaction = allTransactionsMapRealtime;
         cacheService.setValue("BauCuareferenceId", (int) this.referenceId);
@@ -506,7 +506,7 @@ public class MGRoomBauCuaTo2
 //            }
 
             if (!isBot(tran.username)) {
-                fund += tran.totalExchange;
+                fund -= tran.totalExchange;
             }
         }
 
