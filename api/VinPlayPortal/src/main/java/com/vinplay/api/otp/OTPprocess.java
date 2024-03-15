@@ -105,7 +105,7 @@ public class OTPprocess {
         stm.setString(1, nickname);
         ResultSet rs = stm.executeQuery();
         while (rs.next()) {
-            uotp = new UserOTP(rs.getString("nickname"), rs.getString("username"), rs.getString("phone"), rs.getString("otp"), rs.getInt("active"), rs.getLong("creat_time"), rs.getLong("active_time"), rs.getInt("turn"), rs.getString("timelog"));
+            uotp = new UserOTP(rs.getString("nickname"), rs.getString("username"), rs.getString("phone"), rs.getString("otp"), rs.getInt("active"), rs.getLong("create_time"), rs.getLong("active_time"), rs.getInt("turn"), rs.getString("timelog"));
         }
         rs.close();
         stm.close();
