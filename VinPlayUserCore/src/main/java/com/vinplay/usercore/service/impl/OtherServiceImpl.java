@@ -53,18 +53,36 @@ public class OtherServiceImpl implements OtherService {
         MongoCollection col = db.getCollection("link_social");
         Document filter = new Document("id", 1);
         Document document = new Document();
-        document.put("bot_tele", response.getBotTele());
-        document.put("fan_page", response.getFanPage());
-        document.put("group_facebook", response.getGroupFacebook());
-        document.put("live_chat", response.getLiveChat());
-        document.put("tele_cskh", response.getTeleCSKH());
-        document.put("bot_tele", response.getBotTele());
-        document.put("link_download", response.getLinkDownload());
-        document.put("home", response.getHome());
-        document.put("chat_id", response.getChatId());
+
+        if (response.getBotTele() != null && !response.getBotTele().trim().isEmpty()) {
+            document.put("bot_tele", response.getBotTele());
+        }
+        if (response.getFanPage() != null && !response.getFanPage().trim().isEmpty()) {
+            document.put("fan_page", response.getFanPage());
+        }
+        if (response.getGroupFacebook() != null && !response.getGroupFacebook().trim().isEmpty()) {
+            document.put("group_facebook", response.getGroupFacebook());
+        }
+        if (response.getLiveChat() != null && !response.getLiveChat().trim().isEmpty()) {
+            document.put("live_chat", response.getLiveChat());
+        }
+        if (response.getTeleCSKH() != null && !response.getTeleCSKH().trim().isEmpty()) {
+            document.put("tele_cskh", response.getTeleCSKH());
+        }
+        if (response.getLinkDownload() != null && !response.getLinkDownload().trim().isEmpty()) {
+            document.put("link_download", response.getLinkDownload());
+        }
+        if (response.getHome() != null && !response.getHome().trim().isEmpty()) {
+            document.put("home", response.getHome());
+        }
+        if (response.getChatId() != null && !response.getChatId().trim().isEmpty()) {
+            document.put("chat_id", response.getChatId());
+        }
+
         Document update = new Document("$set", document);
         col.updateOne(filter, update, new UpdateOptions().upsert(true));
-    }
+}
+
 
     @Override
     public void saveTransactionUpdateFund(Document document) {
