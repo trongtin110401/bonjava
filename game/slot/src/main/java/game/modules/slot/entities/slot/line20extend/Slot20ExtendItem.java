@@ -22,7 +22,8 @@ public enum Slot20ExtendItem {
     B1("B2", 10, "B2", (byte) 10),
     B2("B1", 10, "B1", (byte) 11),
     A2("A2", 11, "A2", (byte) 12),
-    A1("A1", 11, "A1", (byte) 13);
+    A1("A1", 11, "A1", (byte) 13),
+    WILD2("WILD2", 11, "WILD2", (byte) 14);
 
     private String name;
     private byte id;
