@@ -9,15 +9,15 @@ import java.util.Map;
 
 public enum Slot25ExtendFreeSpinItem {
 
+    H("H", 5, "H", (byte) 0),
+    G("G", 5, "G", (byte) 1),
     WILD("WILD", 5, "WILD", (byte) 2),
-    H("H", 5, "H", (byte) 1),
-    G("G", 5, "G", (byte) 3),
-    F("F", 6, "F", (byte) 4),
-    E("E", 7, "E", (byte) 5),
-    D("D", 8, "D", (byte) 6),
-    C("C", 9, "C", (byte) 7),
-    B("B", 10, "B", (byte) 8),
-    A("A", 11, "A", (byte) 9);
+    F("F", 6, "F", (byte) 3),
+    E("E", 7, "E", (byte) 4),
+    D("D", 8, "D", (byte) 5),
+    C("C", 9, "C", (byte) 6),
+    B("B", 10, "B", (byte) 7),
+    A("A", 11, "A", (byte) 8);
 
     private String name;
     private byte id;
