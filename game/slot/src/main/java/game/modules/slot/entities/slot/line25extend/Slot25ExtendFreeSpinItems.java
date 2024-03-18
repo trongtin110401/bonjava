@@ -16,11 +16,11 @@ public class Slot25ExtendFreeSpinItems {
     private Slot25ExtendFreeSpinWheel[] wheels = new Slot25ExtendFreeSpinWheel[5];
 
     public Slot25ExtendFreeSpinItems() {
-        for (int i = 0; i < 5; ++i) {
-            this.wheels[i] = new Slot25ExtendFreeSpinWheel();
+        for (int col = 0; col < 5; ++col) {
+            this.wheels[col] = new Slot25ExtendFreeSpinWheel();
             for (int j = 0; j < 9; ++j) {
-                for (int k = 0; k < config[i][j]; ++k) {
-                    this.wheels[i].addItem(Slot25ExtendFreeSpinItem.findItem((byte) j));
+                for (int k = 0; k < config[col][j]; ++k) {
+                    this.wheels[col].addItem(Slot25ExtendFreeSpinItem.findItem((byte) j));
                 }
             }
         }
