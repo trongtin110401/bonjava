@@ -61,14 +61,8 @@ public class Slot25BasicRoom extends SlotRoom {
 
     private SlotLogListener logListener;
 
-    // FORCE - R
-    int resultState = 0;
-    int MAX_STATE = 5;
-
     public Slot25BasicRoom(SlotModule module, Slot25CommandCollection commandCollection, SlotLogListener logListener, String gameName, byte id, String room, short moneyType, long pot, long fund, int betValue, long initJackpotValue) {
 
-        // FORCE - R
-//        super(id, room, betValue, moneyType, pot, fund - 1000000000, initJackpotValue);
         super(id, room, betValue, moneyType, pot, fund, initJackpotValue);
 
         this.module = module;
@@ -112,8 +106,13 @@ public class Slot25BasicRoom extends SlotRoom {
 
     public Slot25ResultMsg play(String username, String linesStr) {
         long referenceId = this.module.getNewReferenceId();
-        return this.playNormal(username, linesStr, referenceId);
+        Slot25ResultMsg msg = this.playNormal(username, linesStr, referenceId);
+
+        afterPlay(msg);
+
+        return msg;
     }
+
 
     /**
      * @param username    tên hiển thị người chơi
@@ -455,7 +454,7 @@ public class Slot25BasicRoom extends SlotRoom {
         return playResponse;
     }
 
-    private int setFreeSpin(String nickName, String lines, int countFreeSpin, int remainAmountOfFreeSpin) {
+    protected int setFreeSpin(String nickName, String lines, int countFreeSpin, int remainAmountOfFreeSpin) {
         int soLuot = 0;
         switch (countFreeSpin) {
             case 3: {
@@ -586,7 +585,7 @@ public class Slot25BasicRoom extends SlotRoom {
     }
 
     @Override
-    protected void playListAuto(List<AutoUser> users) {
+    public void playListAuto(List<AutoUser> users) {
         for (AutoUser user : users) {
             try {
                 short result = this.play(user.getUser(), user.getLines());
@@ -630,6 +629,10 @@ public class Slot25BasicRoom extends SlotRoom {
             user.setProperty("MGROOM_" + this.gameName + "_INFO", this);
         }
         return result;
+    }
+
+    protected void afterPlay(Slot25ResultMsg msg) {
+        // do nothing by default
     }
 }
 
