@@ -12,7 +12,7 @@ public enum SlotBasic25Item {
     SCATTER("SCATTER", 1, "Scatter", (byte) 0),
     BONUS("BONUS", 2, "Bonus", (byte) 1),
     WILD("WILD", 3, "Wild", (byte) 2),
-    JACKPOT("JACK_POT", 4, "Jackpot", (byte) 3),
+    JACKPOT("JACKPOT", 4, "Jackpot", (byte) 3),
     G("G", 5, "G", (byte) 4),
     F("F", 6, "F", (byte) 5),
     E("E", 7, "E", (byte) 6),

@@ -209,7 +209,7 @@ public abstract class Slot25BasicModule extends SlotModule {
         BroadCastUserState.pushBroadCast(user.getName(), user.getName() + " play " + gameName + " " + roomJoined.getBetValue());
     }
 
-    protected void play(User user, DataCmd dataCmd) {
+    public void play(User user, DataCmd dataCmd) {
         PlayCmd cmd = new PlayCmd(dataCmd);
         Slot25BasicRoom room = (Slot25BasicRoom) user.getProperty("MGROOM_" + this.gameName + "_INFO");
         if (room != null) {
@@ -218,12 +218,11 @@ public abstract class Slot25BasicModule extends SlotModule {
             } catch (Exception ex) {
                 Debug.trace(ExceptionUtils.getStackTrace(ex));
             }
+            BroadCastUserState.pushBroadCast(user.getName(), user.getName() + " play " + gameName + " " + room.getBetValue());
         }
-        assert room != null;
-        BroadCastUserState.pushBroadCast(user.getName(), user.getName() + " play " + gameName + " " + room.getBetValue());
     }
 
-    protected void autoPlay(User user, DataCmd dataCMD) {
+    public void autoPlay(User user, DataCmd dataCMD) {
         AutoPlayCmd cmd = new AutoPlayCmd(dataCMD);
         Slot25BasicRoom room = (Slot25BasicRoom) user.getProperty("MGROOM_" + this.gameName + "_INFO");
         if (room != null) {
