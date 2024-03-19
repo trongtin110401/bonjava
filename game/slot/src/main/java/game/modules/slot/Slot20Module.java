@@ -53,6 +53,14 @@ public abstract class Slot20Module extends SlotModule {
                     initPotValues[i] = Integer.parseInt(arr[i]);
                 }
                 this.jackpots = this.service.getPots(gameName);
+                if (jackpots == null || jackpots.length == 0) {
+                    jackpots = new long[4];
+                    jackpots[0] = 5000000;
+                    jackpots[1] = 50000000;
+                    jackpots[2] = 500000000;
+                    jackpots[3] = 0;
+                }
+
                 Debug.trace(this.gameName + " POTS: " + CommonUtils.arrayLongToString(this.jackpots));
                 funds = this.service.getFunds(gameName);
                 Debug.trace(this.gameName + " FUNDS: " + CommonUtils.arrayLongToString(funds));
@@ -60,24 +68,21 @@ public abstract class Slot20Module extends SlotModule {
                 Debug.trace("Init POKE GO error ", e);
             }
             // adding rooms
-            this.rooms.put(this.gameName + "_vin_100",
-                    new Slot20Room(this, commandCollection, logListener, gameName, (byte) 0, this.gameName + "_vin_100", (short) 1, this.jackpots[0], funds[0], 100, initPotValues[0]));
-            this.rooms.put(this.gameName + "_vin_1000",
-                    new Slot20Room(this, commandCollection, logListener, gameName, (byte) 1, this.gameName + "_vin_1000", (short) 1, this.jackpots[1], funds[1], 1000, initPotValues[1]));
-//            this.rooms.put(this.gameName + "_vin_5000",
-//                    new Slot20Room(this, commandCollection, logListener, gameName, (byte) 2, this.gameName + "_vin_5000", (short) 1, this.jackpots[2], funds[2], 5000, initPotValues[2]));
-            this.rooms.put(this.gameName + "_vin_10000",
-                    new Slot20Room(this, commandCollection, logListener, gameName, (byte) 3, this.gameName + "_vin_10000", (short) 1, this.jackpots[3], funds[3], 10000, initPotValues[3]));
+//            this.rooms.put(this.gameName + "_vin_100",
+//                    new Slot20Room(this, commandCollection, logListener, gameName, (byte) 0, this.gameName + "_vin_100", (short) 1, this.jackpots[0], funds[0], 100, initPotValues[0]));
+//            this.rooms.put(this.gameName + "_vin_1000",
+//                    new Slot20Room(this, commandCollection, logListener, gameName, (byte) 1, this.gameName + "_vin_1000", (short) 1, this.jackpots[1], funds[1], 1000, initPotValues[1]));
+//            this.rooms.put(this.gameName + "_vin_10000",
+//                    new Slot20Room(this, commandCollection, logListener, gameName, (byte) 3, this.gameName + "_vin_10000", (short) 1, this.jackpots[3], funds[3], 10000, initPotValues[3]));
 
             // FORCE - R
-//            this.rooms.put(this.gameName + "_vin_100",
-//                    new Slot20Room(this, commandCollection, logListener, gameName, (byte) 0, this.gameName + "_vin_100", (short) 1, this.jackpots[0], Long.MAX_VALUE - 10000000000L, 100, initPotValues[0]));
-//            this.rooms.put(this.gameName + "_vin_1000",
-//                    new Slot20Room(this, commandCollection, logListener, gameName, (byte) 1, this.gameName + "_vin_1000", (short) 1, this.jackpots[1], Long.MAX_VALUE - 10000000000L, 1000, initPotValues[1]));
-//            this.rooms.put(this.gameName + "_vin_5000",
-//                    new Slot20Room(this, commandCollection, logListener, gameName, (byte) 2, this.gameName + "_vin_5000", (short) 1, this.jackpots[2], Long.MAX_VALUE - 10000000000L, 5000, initPotValues[2]));
-//            this.rooms.put(this.gameName + "_vin_10000",
-//                    new Slot20Room(this, commandCollection, logListener, gameName, (byte) 3, this.gameName + "_vin_10000", (short) 1, this.jackpots[3], Long.MAX_VALUE - 10000000000L, 10000, initPotValues[3]));
+            this.rooms.put(this.gameName + "_vin_100",
+                    new Slot20Room(this, commandCollection, logListener, gameName, (byte) 0, this.gameName + "_vin_100", (short) 1, this.jackpots[0], 10000000000L, 100, initPotValues[0]));
+            this.rooms.put(this.gameName + "_vin_1000",
+                    new Slot20Room(this, commandCollection, logListener, gameName, (byte) 1, this.gameName + "_vin_1000", (short) 1, this.jackpots[1], 10000000000L, 1000, initPotValues[1]));
+            this.rooms.put(this.gameName + "_vin_10000",
+                    new Slot20Room(this, commandCollection, logListener, gameName, (byte) 3, this.gameName + "_vin_10000", (short) 1, this.jackpots[3], 10000000000L, 10000, initPotValues[3]));
+
 
             Debug.trace("INIT " + this.gameName + " DONE");
             referenceId = this.slotService.getLastReferenceId(this.gameName);

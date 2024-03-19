@@ -57,6 +57,14 @@ public abstract class Slot25BasicModule extends SlotModule {
             }
 
             this.jackpots = this.service.getPots(this.gameName);
+            if (jackpots == null || jackpots.length == 0) {
+                jackpots = new long[4];
+                jackpots[0] = 5000000;
+                jackpots[1] = 50000000;
+                jackpots[2] = 500000000;
+                jackpots[3] = 0;
+            }
+
             Debug.trace(this.gameName + " POTS: " + CommonUtils.arrayLongToString(this.jackpots));
             funds = this.service.getFunds(this.gameName);
             Debug.trace(this.gameName + ": " + CommonUtils.arrayLongToString(funds));
@@ -64,20 +72,20 @@ public abstract class Slot25BasicModule extends SlotModule {
             Debug.trace("Init " + this.gameName + " error ", e);
         }
 
-        this.rooms.put(this.gameName + "_vin_100",
-                new Slot25BasicRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 0, this.gameName + "_vin_100", (short) 1, this.jackpots[0], funds[0], 100, initJackpotValues[0]));
-        this.rooms.put(this.gameName + "_vin_1000",
-                new Slot25BasicRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 1, this.gameName + "_vin_1000", (short) 1, this.jackpots[1], funds[1], 1000, initJackpotValues[1]));
-        this.rooms.put(this.gameName + "_vin_10000",
-                new Slot25BasicRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 2, this.gameName + "_vin_10000", (short) 1, this.jackpots[2], funds[2], 10000, initJackpotValues[2]));
+//        this.rooms.put(this.gameName + "_vin_100",
+//                new Slot25BasicRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 0, this.gameName + "_vin_100", (short) 1, this.jackpots[0], funds[0], 100, initJackpotValues[0]));
+//        this.rooms.put(this.gameName + "_vin_1000",
+//                new Slot25BasicRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 1, this.gameName + "_vin_1000", (short) 1, this.jackpots[1], funds[1], 1000, initJackpotValues[1]));
+//        this.rooms.put(this.gameName + "_vin_10000",
+//                new Slot25BasicRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 2, this.gameName + "_vin_10000", (short) 1, this.jackpots[2], funds[2], 10000, initJackpotValues[2]));
 
         // FORCE - R
-//        this.rooms.put(this.gameName + "_vin_100",
-//                new Slot25BasicRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 0, this.gameName + "_vin_100", (short) 1, this.jackpots[0], Long.MAX_VALUE - 1000000000, 100, initJackpotValues[0]));
-//        this.rooms.put(this.gameName + "_vin_1000",
-//                new Slot25BasicRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 1, this.gameName + "_vin_1000", (short) 1, this.jackpots[1], Long.MAX_VALUE - 1000000000, 1000, initJackpotValues[1]));
-//        this.rooms.put(this.gameName + "_vin_10000",
-//                new Slot25BasicRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 2, this.gameName + "_vin_10000", (short) 1, this.jackpots[2], Long.MAX_VALUE - 1000000000, 10000, initJackpotValues[2]));
+        this.rooms.put(this.gameName + "_vin_100",
+                new Slot25BasicRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 0, this.gameName + "_vin_100", (short) 1, this.jackpots[0], 10000000000L, 100, initJackpotValues[0]));
+        this.rooms.put(this.gameName + "_vin_1000",
+                new Slot25BasicRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 1, this.gameName + "_vin_1000", (short) 1, this.jackpots[1], 10000000000L, 1000, initJackpotValues[1]));
+        this.rooms.put(this.gameName + "_vin_10000",
+                new Slot25BasicRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 2, this.gameName + "_vin_10000", (short) 1, this.jackpots[2], 10000000000L, 10000, initJackpotValues[2]));
 
         Debug.trace("INIT " + this.gameName + " DONE");
 
