@@ -18,7 +18,7 @@ public class Slot25ExtendFreeSpinItems {
     public Slot25ExtendFreeSpinItems() {
         for (int col = 0; col < 5; ++col) {
             this.wheels[col] = new Slot25ExtendFreeSpinWheel();
-            for (int j = 0; j < 9; ++j) {
+            for (int j = 0; j < config[0].length; ++j) {
                 for (int k = 0; k < config[col][j]; ++k) {
                     this.wheels[col].addItem(Slot25ExtendFreeSpinItem.findItem((byte) j));
                 }

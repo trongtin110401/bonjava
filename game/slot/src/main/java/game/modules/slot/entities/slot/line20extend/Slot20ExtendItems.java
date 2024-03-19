@@ -47,7 +47,7 @@ public class Slot20ExtendItems {
     public Slot20ExtendItems() {
         for (int wheelIndex = 0; wheelIndex < 5; ++wheelIndex) {
             this.wheels[wheelIndex] = new Slot20ExtendWheel();
-            for (int j = 0; j < 14; j++) {
+            for (int j = 0; j < config[0].length; j++) {
                 int k = 0;
                 while (k < config[wheelIndex][j]) {
                     this.wheels[wheelIndex].addItem(Slot20ExtendItem.findItem((byte) j));
