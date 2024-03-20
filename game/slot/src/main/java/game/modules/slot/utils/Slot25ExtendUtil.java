@@ -168,7 +168,7 @@ public class Slot25ExtendUtil {
         Random rd = new Random();
         int indexRatioCol = rd.nextInt(3);
         int indexRatioRow = countBonus - 3;
-        int ratio = Constant.SLOT25_BONUS_RATIO[indexRatioRow][indexRatioCol];
+        int ratio = Constant.SLOT25EXTEND_BONUS_RATIO[indexRatioRow][indexRatioCol];
         MiniGameSlotResponse res = Slot25ExtendUtil.generateMiniGameSlot(betValue);
         res.setTotalPrize(res.getTotalPrize() * (long) ratio);
         res.setPrizes(res.getPrizes() + "," + ratio + "," + countBonus);
