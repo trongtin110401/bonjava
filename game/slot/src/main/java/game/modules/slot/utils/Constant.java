@@ -18,11 +18,18 @@ public class Constant {
     public static final int SLOT_MAX_COL = 5;
     public static final int MAX_PRIZE_SLOT_FREE = 5000;
     public static final String NUM_FREE_DAILY = "numFreeDaily";
-    public static final int[][] SLOT25_BONUS_RATIO = new int[][]
+    public static final int[][] SLOT25EXTEND_BONUS_RATIO = new int[][]
             {
                     {1, 2, 3},
                     {2, 3, 4},
                     {3, 4, 5}
+            };
+
+    public static final int[][] SLOT25_BONUS_RATIO = new int[][]
+            {
+                    {1, 2, 3},
+                    {4, 5, 6},
+                    {7, 8, 9}
             };
     public static final int[] SLOT25_TANK_TI_LE_TRUOT = new int[]{0, 1, 10, 20, 30, 50, 60, 70, 85, 90, 95, 100};
     public static final int[][] SLOT25_TANK_PRIZES = new int[][]
