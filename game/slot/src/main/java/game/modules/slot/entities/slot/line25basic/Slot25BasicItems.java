@@ -24,11 +24,11 @@ public class Slot25BasicItems {
 
     private static int[][] config = new int[][]
             {
-                    {40, 40, 0, 35, 10, 10, 12, 25, 75, 80, 85},
-                    {40, 40, 50, 35, 10, 15, 20, 25, 50, 60, 65},
-                    {40, 40, 50, 35, 10, 15, 20, 25, 50, 60, 65},
-                    {40, 40, 50, 35, 20, 20, 20, 25, 50, 55, 60},
-                    {40, 40, 0, 35, 10, 15, 20, 30, 65, 75, 85}
+                    {20, 40, 0, 35, 10, 10, 12, 25, 75, 80, 85},
+                    {10, 40, 50, 35, 10, 15, 20, 25, 50, 60, 65},
+                    {10, 40, 50, 35, 10, 15, 20, 25, 50, 60, 65},
+                    {10, 40, 50, 35, 20, 20, 20, 25, 50, 55, 60},
+                    {20, 40, 0, 35, 10, 15, 20, 30, 65, 75, 85}
             };
 
     private Slot25BasicWheel[] wheels = new Slot25BasicWheel[5];
@@ -36,7 +36,7 @@ public class Slot25BasicItems {
     public Slot25BasicItems() {
         for (int wheelIndex = 0; wheelIndex < 5; ++wheelIndex) {
             this.wheels[wheelIndex] = new Slot25BasicWheel();
-            for (int j = 0; j < 11; j++) {
+            for (int j = 0; j < config[0].length; j++) {
                 int k = 0;
                 while (k < config[wheelIndex][j]) {
                     this.wheels[wheelIndex].addItem(SlotBasic25Item.findItem((byte) j));
