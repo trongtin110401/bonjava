@@ -295,8 +295,6 @@ public class Slot25BasicUtil {
 
         // bắt đầu tính toán giải thưởng đạt được trên 1 line
         item2Count.forEach((id, countNumItem) -> {
-            // Bởi vì BONUS không có giải thưởng tiền trên 1 LINE
-            // nên ta có thể bỏ qua mà không cần tính toán
             SlotBasic25Item item = SlotBasic25Item.findItem(id);
             Slot25BasicAward award = Slot25BasicAwards.getAward(item, countNumItem);
             if (award != null) {
