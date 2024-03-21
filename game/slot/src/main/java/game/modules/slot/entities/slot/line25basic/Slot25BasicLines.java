@@ -59,9 +59,9 @@ public class Slot25BasicLines {
         this.lines.add(line20);
         Line line21 = new Line("line21", 2, 0, 0, 1, 0, 2, 0, 3, 2, 4);
         this.lines.add(line21);
-        Line line22 = new Line("line22", 1, 0, 2, 1, 0, 2, 2, 3, 1, 4);
+        Line line22 = new Line("line23", 1, 0, 0, 1, 2, 2, 0, 3, 1, 4);
         this.lines.add(line22);
-        Line line23 = new Line("line23", 1, 0, 0, 1, 2, 2, 0, 3, 1, 4);
+        Line line23 = new Line("line22", 1, 0, 2, 1, 0, 2, 2, 3, 1, 4);
         this.lines.add(line23);
         Line line24 = new Line("line24", 0, 0, 2, 1, 0, 2, 2, 3, 0, 4);
         this.lines.add(line24);
