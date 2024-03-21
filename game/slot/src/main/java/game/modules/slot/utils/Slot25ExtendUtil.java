@@ -6,6 +6,9 @@ package game.modules.slot.utils;
 import game.modules.slot.entities.slot.Cell;
 import game.modules.slot.entities.slot.Line;
 import game.modules.slot.entities.slot.MiniGameSlotResponse;
+import game.modules.slot.entities.slot.line20extend.Slot20ExtendAward;
+import game.modules.slot.entities.slot.line20extend.Slot20ExtendAwards;
+import game.modules.slot.entities.slot.line20extend.Slot20ExtendItem;
 import game.modules.slot.entities.slot.line25extend.*;
 
 import java.util.HashMap;
@@ -219,55 +222,110 @@ public class Slot25ExtendUtil {
      * @param awardList
      */
     public static void calculateMoneyAwardInLine(Line line, List<Slot25ExtendAward> awardList) {
-        // số lương wild xuất hiện trên line
-        int countWild = 0;
-        // ánh xạ giữa item và số lượng xuất hiện của nó trên 1 Line
-        Map<Byte, Integer> itemId2Count = new HashMap<>();
-        // duyệt qua các cell trên 1 line để tính toán số lần xuất hiện
-        for (int cellIndex = 0; cellIndex < line.getCells().size(); cellIndex++) {
-            Cell cell = line.getCell(cellIndex);
-            Slot25ExtendItem avengersItem = (Slot25ExtendItem) cell.getItem();
-            Integer countNumberItem = itemId2Count.get(avengersItem.getId());
-            if (countNumberItem == null) {
-                countNumberItem = 1;
-            } else {
-                countNumberItem += 1;
-            }
-            itemId2Count.put(avengersItem.getId(), countNumberItem);
+        // kiểm tra jackpot trước
+        List cels = line.getCells();
+        if (cels.get(0) == Slot20ExtendItem.JACKPOT
+                && (cels.get(1) == Slot25ExtendItem.JACKPOT)
+                && cels.get(2) == Slot25ExtendItem.JACKPOT
+                && cels.get(3) == Slot25ExtendItem.JACKPOT
+                && cels.get(4) == Slot25ExtendItem.JACKPOT) {
+            awardList.add(Slot25ExtendAward.PENTA_JACKPOT);
+            return;
+        }
 
-            if (avengersItem == Slot25ExtendItem.WILD) {
-                countWild += 1;
+        // Duyệt mảng từ trái sang phải
+        Map<Byte, Integer> item2Count = new HashMap<>();
+        for (int i = 0; i < line.getCells().size(); i++) {
+            int count = 1; // Biến đếm số lượng trùng lặp
+            Slot25ExtendItem currentItem = (Slot25ExtendItem) line.getCell(i).getItem(); // item hiện tại
+            // Bỏ qua không đếm do các items này không có phần thưởng hệ số
+            if (currentItem == Slot25ExtendItem.WILD
+                    || currentItem == Slot25ExtendItem.SCATTER
+                    || currentItem == Slot25ExtendItem.BONUS) {
+                continue;
+            }
+            // So sánh item hiện tại với item tiếp theo
+            for (int j = i + 1; j < line.getCells().size(); j++) {
+                Slot25ExtendItem nextItem = (Slot25ExtendItem) line.getCell(j).getItem();
+                if (currentItem == nextItem) {
+                    count += 1;
+                } else if (nextItem == Slot25ExtendItem.WILD && currentItem != Slot25ExtendItem.JACKPOT) {
+                    count += 1;
+                } else {
+                    break;
+                }
+            }
+            if (count > 1) {
+                int finalCount = count;
+                item2Count.compute(currentItem.getId(), (key, oldValue) -> {
+                    if (oldValue == null) {
+                        return finalCount;
+                    } else {
+                        return Math.max(finalCount, oldValue);
+                    }
+                });
             }
         }
-        // WILD có thể thay thế tất cả items (trừ SCATTER, BONUS và chính nó)
-        if (countWild > 0) {
-            int finalCountWild = countWild;
-            itemId2Count.forEach((id, numOfItem) -> {
-                Slot25ExtendItem item = Slot25ExtendItem.findItem(id);
-                if (item != Slot25ExtendItem.BONUS
-                        && item != Slot25ExtendItem.SCATTER
-                        && item != Slot25ExtendItem.WILD
-                        && item != Slot25ExtendItem.JACKPOT) {
-                    itemId2Count.put(id, numOfItem + finalCountWild);
-                }
-            });
-        }
+
         // bắt đầu tính toán giải thưởng đạt được trên 1 line
-        itemId2Count.forEach((id, countNumItem) -> {
-            // Chỉ có item có số lần xuất hiện lớn hơn hoặc bằng 2 thì mới tính toán giải thưởng
-            if (countNumItem >= 2) {
-                Slot25ExtendItem item = Slot25ExtendItem.findItem(id);
-                // Bởi vì BONUS và SCATTER không có giải thưởng tiền trên 1 LINE
-                // nên ta có thể bỏ qua mà không cần tính toán
-                if (item != Slot25ExtendItem.BONUS && item != Slot25ExtendItem.SCATTER) {
-                    Slot25ExtendAward award = Slot25ExtendAwards.getAward(item, countNumItem);
-                    if (award != null) {
-                        awardList.add(award);
-                    }
-                }
+        item2Count.forEach((id, countNumItem) -> {
+            Slot25ExtendItem item = Slot25ExtendItem.findItem(id);
+            Slot25ExtendAward award = Slot25ExtendAwards.getAward(item, countNumItem);
+            if (award != null) {
+                awardList.add(award);
             }
         });
     }
+//    public static void calculateMoneyAwardInLine(Line line, List<Slot25ExtendAward> awardList) {
+//        // số lương wild xuất hiện trên line
+//        int countWild = 0;
+//        // ánh xạ giữa item và số lượng xuất hiện của nó trên 1 Line
+//        Map<Byte, Integer> itemId2Count = new HashMap<>();
+//        // duyệt qua các cell trên 1 line để tính toán số lần xuất hiện
+//        for (int cellIndex = 0; cellIndex < line.getCells().size(); cellIndex++) {
+//            Cell cell = line.getCell(cellIndex);
+//            Slot25ExtendItem avengersItem = (Slot25ExtendItem) cell.getItem();
+//            Integer countNumberItem = itemId2Count.get(avengersItem.getId());
+//            if (countNumberItem == null) {
+//                countNumberItem = 1;
+//            } else {
+//                countNumberItem += 1;
+//            }
+//            itemId2Count.put(avengersItem.getId(), countNumberItem);
+//
+//            if (avengersItem == Slot25ExtendItem.WILD) {
+//                countWild += 1;
+//            }
+//        }
+//        // WILD có thể thay thế tất cả items (trừ SCATTER, BONUS và chính nó)
+//        if (countWild > 0) {
+//            int finalCountWild = countWild;
+//            itemId2Count.forEach((id, numOfItem) -> {
+//                Slot25ExtendItem item = Slot25ExtendItem.findItem(id);
+//                if (item != Slot25ExtendItem.BONUS
+//                        && item != Slot25ExtendItem.SCATTER
+//                        && item != Slot25ExtendItem.WILD
+//                        && item != Slot25ExtendItem.JACKPOT) {
+//                    itemId2Count.put(id, numOfItem + finalCountWild);
+//                }
+//            });
+//        }
+//        // bắt đầu tính toán giải thưởng đạt được trên 1 line
+//        itemId2Count.forEach((id, countNumItem) -> {
+//            // Chỉ có item có số lần xuất hiện lớn hơn hoặc bằng 2 thì mới tính toán giải thưởng
+//            if (countNumItem >= 2) {
+//                Slot25ExtendItem item = Slot25ExtendItem.findItem(id);
+//                // Bởi vì BONUS và SCATTER không có giải thưởng tiền trên 1 LINE
+//                // nên ta có thể bỏ qua mà không cần tính toán
+//                if (item != Slot25ExtendItem.BONUS && item != Slot25ExtendItem.SCATTER) {
+//                    Slot25ExtendAward award = Slot25ExtendAwards.getAward(item, countNumItem);
+//                    if (award != null) {
+//                        awardList.add(award);
+//                    }
+//                }
+//            }
+//        });
+//    }
 
     /**
      * tính toán giải thưởng trên 1 line ở chế độ FREE SPIN
@@ -276,32 +334,70 @@ public class Slot25ExtendUtil {
      * @param awardList
      */
     public static void calculateFreeSpinAwardInLine(Line line, List<Slot25ExtendFreeSpinAward> awardList) {
-        // ánh xạ giữa item và số lượng xuất hiện của nó trên 1 Line
-        Map<Byte, Integer> itemId2Count = new HashMap<>();
-        // duyệt qua các cell trên 1 line để tính toán số lần xuất hiện
-        for (int cellIndex = 0; cellIndex < line.getCells().size(); cellIndex++) {
-            Cell cell = line.getCell(cellIndex);
-            Slot25ExtendFreeSpinItem item = (Slot25ExtendFreeSpinItem) cell.getItem();
-            Integer countNumberItem = itemId2Count.get(item.getId());
-            if (countNumberItem == null) {
-                countNumberItem = 1;
-            } else {
-                countNumberItem += 1;
-            }
-            itemId2Count.put(item.getId(), countNumberItem);
-        }
-        // bắt đầu tính toán giải thưởng đạt được trên 1 line
-        itemId2Count.forEach((id, countNumItem) -> {
-            // Chỉ có item có số lần xuất hiện lớn hơn hoặc bằng 3 thì mới tính toán giải thưởng
-            if (countNumItem >= 3) {
-                Slot25ExtendFreeSpinItem item = Slot25ExtendFreeSpinItem.findItem(id);
-                Slot25ExtendFreeSpinAward award = Slot25ExtendFreeSpinAwards.getAward(item, countNumItem);
-                if (award != null) {
-                    awardList.add(award);
+        // kiểm tra jackpot trước
+        List cels = line.getCells();
+        // Duyệt mảng từ trái sang phải
+        Map<Byte, Integer> item2Count = new HashMap<>();
+        for (int i = 0; i < line.getCells().size(); i++) {
+            int count = 1; // Biến đếm số lượng trùng lặp
+            Slot25ExtendFreeSpinItem currentItem = (Slot25ExtendFreeSpinItem) line.getCell(i).getItem(); // item hiện tại
+            // So sánh item hiện tại với item tiếp theo
+            for (int j = i + 1; j < line.getCells().size(); j++) {
+                Slot25ExtendFreeSpinItem nextItem = (Slot25ExtendFreeSpinItem) line.getCell(j).getItem();
+                if (currentItem == nextItem) {
+                    count += 1;
+                } else {
+                    break;
                 }
+            }
+            if (count > 1) {
+                int finalCount = count;
+                item2Count.compute(currentItem.getId(), (key, oldValue) -> {
+                    if (oldValue == null) {
+                        return finalCount;
+                    } else {
+                        return Math.max(finalCount, oldValue);
+                    }
+                });
+            }
+        }
+
+        // bắt đầu tính toán giải thưởng đạt được trên 1 line
+        item2Count.forEach((id, countNumItem) -> {
+            Slot25ExtendFreeSpinItem item = Slot25ExtendFreeSpinItem.findItem(id);
+            Slot25ExtendFreeSpinAward award = Slot25ExtendFreeSpinAwards.getAward(item, countNumItem);
+            if (award != null) {
+                awardList.add(award);
             }
         });
     }
+//    public static void calculateFreeSpinAwardInLine(Line line, List<Slot25ExtendFreeSpinAward> awardList) {
+//        // ánh xạ giữa item và số lượng xuất hiện của nó trên 1 Line
+//        Map<Byte, Integer> itemId2Count = new HashMap<>();
+//        // duyệt qua các cell trên 1 line để tính toán số lần xuất hiện
+//        for (int cellIndex = 0; cellIndex < line.getCells().size(); cellIndex++) {
+//            Cell cell = line.getCell(cellIndex);
+//            Slot25ExtendFreeSpinItem item = (Slot25ExtendFreeSpinItem) cell.getItem();
+//            Integer countNumberItem = itemId2Count.get(item.getId());
+//            if (countNumberItem == null) {
+//                countNumberItem = 1;
+//            } else {
+//                countNumberItem += 1;
+//            }
+//            itemId2Count.put(item.getId(), countNumberItem);
+//        }
+//        // bắt đầu tính toán giải thưởng đạt được trên 1 line
+//        itemId2Count.forEach((id, countNumItem) -> {
+//            // Chỉ có item có số lần xuất hiện lớn hơn hoặc bằng 3 thì mới tính toán giải thưởng
+//            if (countNumItem >= 3) {
+//                Slot25ExtendFreeSpinItem item = Slot25ExtendFreeSpinItem.findItem(id);
+//                Slot25ExtendFreeSpinAward award = Slot25ExtendFreeSpinAwards.getAward(item, countNumItem);
+//                if (award != null) {
+//                    awardList.add(award);
+//                }
+//            }
+//        });
+//    }
 
     /**
      * Thay thế items trong 1 cột bằng WILD

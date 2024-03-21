@@ -7,11 +7,11 @@ public class Slot25ExtendFreeSpinItems {
 
     private static int[][] config = new int[][]
             {
-                    {0, 0, 0, 1, 5, 11, 12, 13, 15},
-                    {0, 0, 1, 1, 5, 12, 15, 16, 18},
-                    {0, 0, 1, 1, 4, 11, 12, 13, 14},
-                    {0, 0, 1, 1, 5, 11, 13, 14, 15},
-                    {0, 0, 1, 1, 5, 11, 13, 14, 14}
+                    {1, 1, 0, 1, 5, 11, 12, 13, 15},
+                    {1, 1, 0, 1, 5, 12, 15, 16, 18},
+                    {1, 1, 0, 1, 4, 11, 12, 13, 14},
+                    {1, 1, 0, 1, 5, 11, 13, 14, 15},
+                    {1, 1, 0, 1, 5, 11, 13, 14, 14}
             };
     private Slot25ExtendFreeSpinWheel[] wheels = new Slot25ExtendFreeSpinWheel[5];
 
