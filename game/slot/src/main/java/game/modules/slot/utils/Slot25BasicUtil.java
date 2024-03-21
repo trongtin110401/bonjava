@@ -275,7 +275,7 @@ public class Slot25BasicUtil {
                 SlotBasic25Item nextItem = (SlotBasic25Item) line.getCell(j).getItem();
                 if (currentItem == nextItem) {
                     count += 1;
-                } else if (nextItem == SlotBasic25Item.WILD) {
+                } else if (nextItem == SlotBasic25Item.WILD && currentItem != SlotBasic25Item.JACKPOT) {
                     count += 1;
                 } else {
                     break;
