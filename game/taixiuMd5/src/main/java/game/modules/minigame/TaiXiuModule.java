@@ -54,6 +54,7 @@ import com.vinplay.miniGame.TaiXiuAdminReportObj;
 import com.vinplay.miniGame.TaiXiuSetAmountBotFake;
 import com.vinplay.vbee.common.enums.Games;
 import com.vinplay.vbee.common.exceptions.KeyNotFoundException;
+import com.vinplay.vbee.common.response.minigame.TaiXiuAdmin;
 import com.vinplay.vbee.common.response.minigame.TaiXiuChatMsg;
 import com.vinplay.vbee.common.utils.DateTimeUtils;
 import game.modules.minigame.cmd.rev.BetTaiXiuCmd;
@@ -114,9 +115,19 @@ public class TaiXiuModule extends BaseClientRequestHandler {
     private int amountBotTaiFake = 0;
     private int amountBotXiuFake = 0;
 
+    private long fundTxMD5;
+
+    protected MiniGameService miniGameService = new MiniGameServiceImpl();
+
     ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(8);
 
     public void init() {
+        try {
+            fundTxMD5 = miniGameService.getFund(Games.TAI_XIU_MD5.getName());
+        } catch (Exception e) {
+            fundTxMD5 = 0;
+        }
+
         TaiXiuChatMsg taiXiuChatMsg = new TaiXiuChatMsg();
         cacheService.setObject("admin_lst_msg_md5", taiXiuChatMsg);
         cacheService.setObject("admin_msg_md5", taiXiuChatMsg);
@@ -384,9 +395,9 @@ public class TaiXiuModule extends BaseClientRequestHandler {
     private synchronized void gameLoop() {
         try {
             MGRoomTaiXiu roomTXVin = this.getRoomTX((short) 1);
-            MGRoomTaiXiu roomTXXu = this.getRoomTX((short) 0);
+//            MGRoomTaiXiu roomTXXu = this.getRoomTX((short) 0);
             if (count == 0) {
-                this.generateTaiXiuDices(roomTXVin, roomTXXu);
+                this.generateTaiXiuDices(roomTXVin);
             }
             ++this.count;
             this.botBet(this.count);
@@ -401,7 +412,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                 amountBotTaiFake = 0;
             }
 
-            roomTXXu.updateTaiXiuPerSecond(amountBotTaiFake, amountBotXiuFake, count);
+//            roomTXXu.updateTaiXiuPerSecond(amountBotTaiFake, amountBotXiuFake, count);
             roomTXVin.updateTaiXiuPerSecond(amountBotTaiFake, amountBotXiuFake, count);
 
 
@@ -412,17 +423,17 @@ public class TaiXiuModule extends BaseClientRequestHandler {
             switch (this.count) {
                 case 55: {
                     roomTXVin.disableBetting();
-                    roomTXXu.disableBetting();
+//                    roomTXXu.disableBetting();
                     break;
                 }
                 case 60: {
                     roomTXVin.finish();
-                    roomTXXu.finish();
+//                    roomTXXu.finish();
 
                     break;
                 }
                 case 61: {
-                    this.generateTaiXiuDicesMD5(roomTXVin, roomTXXu);
+                    this.generateTaiXiuDicesMD5(roomTXVin);
                     break;
                 }
                 case 63: {
@@ -440,6 +451,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                 case 75: {
                     try {
                         this.startNewRoundTX();
+                        mgService.saveFund(Games.TAI_XIU_MD5.getName(),fundTxMD5);
                         amountBotTaiFake = 0;
                         amountBotXiuFake = 0;
                         this.count = 0;
@@ -464,7 +476,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         this.forceBetSide = (short) -1;
     }
 
-    private void generateTaiXiuDices(MGRoomTaiXiu roomTXVin, MGRoomTaiXiu roomTXXu) {
+    private void generateTaiXiuDices(MGRoomTaiXiu roomTXVin) {
         short[] dices;
 
         dices = this.generationTX.generateDices();
@@ -478,11 +490,10 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         resultTaiXiuMd5.setMd5TextResult(md5);
         resultTaiXiuMd5.setPlantTextResult(result);
         roomTXVin.resultTX = resultTaiXiuMd5;
-        roomTXXu.resultTX = resultTaiXiuMd5;
     }
 
 
-    private void generateTaiXiuDicesMD5(MGRoomTaiXiu roomTXVin, MGRoomTaiXiu roomTXXu) {
+    private void generateTaiXiuDicesMD5(MGRoomTaiXiu roomTXVin) {
         String keyBeCang = "auto";
         try {
             keyBeCang = cacheService.getValueStr("tai_xiu_be_cang_md5");
@@ -507,7 +518,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
             dices = this.generationTX.generateResult(this.forceBetSide);
             String result = generationTX.buildResultText(dices);
             roomTXVin.resultTX.setPlantTextResult(result);
-            roomTXXu.resultTX.setPlantTextResult(result);
+//            roomTXXu.resultTX.setPlantTextResult(result);
         } else {
             dices[0] = (short) roomTXVin.resultTX.dice1;
             dices[1] = (short) roomTXVin.resultTX.dice2;
@@ -522,7 +533,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
          * Show ket qua ra man
          */
         roomTXVin.updateResultDices(dices, this.result);
-        roomTXXu.updateResultDices(dices, this.result);
+//        roomTXXu.updateResultDices(dices, this.result);
         ResultTaiXiuMd5 resultTX = roomTXVin.resultTX;
         resultTX.referenceId = this.referenceTaiXiuId;
         resultTX.result = this.result;
@@ -534,6 +545,34 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         if (this.lichSuPhienTX.size() > 120) {
             this.lichSuPhienTX.remove(0);
         }
+
+        short typeBet = 1;
+        //tinh toan chenh lenh user that
+        List<TaiXiuAdmin> contributors = this.getRoomTX(typeBet).getListTransaction();
+        long totalRealBetTai = 0;
+        long totalRealBetXiu = 0;
+        for (TaiXiuAdmin taiXiuAdmin : contributors) {
+            if (taiXiuAdmin.getCuaDat() == 0) {
+                //bet xiu
+                totalRealBetXiu += taiXiuAdmin.getMoney();
+            } else if (taiXiuAdmin.getCuaDat() == 1) {
+                // bet tai
+                totalRealBetTai += taiXiuAdmin.getMoney();
+            }
+        }
+        try {
+            if (this.result == 1) {
+                //ve tai
+                fundTxMD5 += totalRealBetXiu - totalRealBetTai;
+            } else {
+                //ve xiu
+                fundTxMD5 += totalRealBetTai - totalRealBetXiu;
+            }
+            cacheService.setValue("fund_tx_md5_auto", String.valueOf(fundTxMD5));
+        } catch (Exception e) {
+            cacheService.setValue("fund_tx_md5_auto", (int) fundTxMD5);
+        }
+
     }
 
     private void getLichSuPhienTX(User user) {
