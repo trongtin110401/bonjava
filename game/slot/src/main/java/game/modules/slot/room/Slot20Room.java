@@ -110,32 +110,6 @@ public class Slot20Room extends SlotRoom {
 
     public synchronized SLot20ResultMsg play(String username, String linesStr) {
 
-        // FORCE - R
-//        int forceResult = ResultSlot.MISSED;
-//        switch (resultState) {
-//            case 0:
-//                forceResult = ResultSlot.WIN;
-//                break;
-//            case 1:
-//                forceResult = ResultSlot.BIG_WIN;
-//                break;
-//            case 2:
-//                forceResult = ResultSlot.FREE_SPIN;
-//                break;
-//            case 3:
-//                forceResult = ResultSlot.JACKPOT;
-//                break;
-//            case 4:
-//                forceResult = ResultSlot.BONUS_GAME;
-//        }
-
-        // FORCE - R
-//        resultState++;
-//        if (resultState >= MAX_STATE) {
-//            resultState = 0;
-//        }
-
-//        long startTime = System.currentTimeMillis();
         // kết quả mặc định
         short result = ResultSlot.MISSED;
         // thời điểm hiện tại
@@ -544,24 +518,7 @@ public class Slot20Room extends SlotRoom {
     }
 
     public synchronized short play(User user, String linesStr) {
-//        String username = user.getName();
-//        int numFree = 0;
-//        if (user.getProperty("numFreeDaily") != null) {
-//            numFree = (Integer) user.getProperty("numFreeDaily");
-//        }
-//        SLot20ResultMsg msg;
-//        Slot20FreeDailyMsg freeDailyMsg = new Slot20FreeDailyMsg(commandCollection.FREE_DAILY_MESSAGE);
-//        if (numFree > 0) {
-//            msg = this.playFreeDaily(username);
-//            freeDailyMsg.remain = (byte) (--numFree);
-//            if (numFree > 0) {
-//                user.setProperty("numFreeDaily", numFree);
-//            } else {
-//                user.removeProperty("numFreeDaily");
-//            }
-//        } else {
-//            msg = this.play(username, linesStr);
-//        }
+        long startTime = System.currentTimeMillis();
         String username = user.getName();
         SLot20ResultMsg msg = this.play(username, linesStr);
         if (this.isUserMinimize(user)) {
@@ -572,8 +529,9 @@ public class Slot20Room extends SlotRoom {
             SlotUtils.sendMessageToUser(miniMsg, user);
         } else {
             SlotUtils.sendMessageToUser(msg, user);
-//            SlotUtils.sendMessageToUser(freeDailyMsg, user);
         }
+        long endTime = System.currentTimeMillis();
+        System.out.println("===========> PTIME " + gameName + ": " + (endTime - startTime));
         return msg.result;
     }
 
