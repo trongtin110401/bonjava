@@ -13,18 +13,18 @@ public class XocDiaAdminSetHuProcessor implements BaseProcessor<HttpServletReque
         HttpServletRequest request = (HttpServletRequest) param.get();
         String huMin = request.getParameter("huMin");
         String huMax = request.getParameter("huMax");
-        String hu = request.getParameter("hu");
+        String fund = request.getParameter("hu");
         CacheService cacheService = new CacheServiceImpl();
 
         try {
             long min = Long.parseLong(huMin);
             long max = Long.parseLong(huMax);
-            long huTx = Long.parseLong(hu);
+            long fundXd = Long.parseLong(fund);
             if (max > min) {
-                cacheService.setValue("min_hu_xd_auto", min + "");
-                cacheService.setValue("max_hu_xd_auto", max + "");
-                if (huTx == 99) {
-                    cacheService.setValue("hu_xd_auto", 0);
+                cacheService.setValue("min_fund_xd_auto", min + "");
+                cacheService.setValue("max_fund_xd_auto", max + "");
+                if (fundXd == 99) {
+                    cacheService.setValue("fund_xd_auto", 0);
                 }
             }
             return "OKE";

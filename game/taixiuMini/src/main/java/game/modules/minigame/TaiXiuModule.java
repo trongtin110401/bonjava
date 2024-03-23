@@ -388,7 +388,6 @@ public class TaiXiuModule
     
     private void botBet(int count) {
         MGRoomTaiXiu roomVin = this.getRoomTX((short) 1);
-        MGRoomTaiXiu roomXu = this.getRoomTX((short) 0);
         String[] strs = {"Jocelyn","Kelsey","Fallon","Maynard","Mildred","Aubrey"};
         for (BotTaiXiu b : this.botsVin) {
             if (b.getTimeBetting() != 60 - count) continue;
@@ -396,11 +395,6 @@ public class TaiXiuModule
                 roomVin.betTaiXiu(b.getNickname(), 0, b.getBetValue(), b.getTimeBetting(), (short) 1, b.getBetSide(), true);
             }
         }
-
-//    for (BotTaiXiu b : this.botsXu) {
-//      if (b.getTimeBetting() != 60 - count) continue;
-//      roomXu.betTaiXiu(b.getNickname(), 0, b.getBetValue(), b.getTimeBetting(), (short) 0, b.getBetSide(), true);
-//    }
     }
 
     // todo : user đặt cược tiền
@@ -447,11 +441,6 @@ public class TaiXiuModule
         try {
             ++this.count;
             this.botBet(this.count);
-//            if (this.countRutLoc > -1) {
-//                ++this.countRutLoc;
-//            }
-            //cacheService.setValue("tai_xiu_no_hu", null);
-            ///
             try{
                 TaiXiuSetAmountBotFake taiXiuSetAmountBotFake = (TaiXiuSetAmountBotFake) cacheService.getObject("taixiu_bot_fake_amount");
                 if(taiXiuSetAmountBotFake != null ){
@@ -496,7 +485,7 @@ public class TaiXiuModule
                 }
                 case 63: {
                     BitZeroServer.getInstance().getTaskScheduler().schedule(this.calculatingTXVinTask, 1, TimeUnit.SECONDS);
-                    BitZeroServer.getInstance().getTaskScheduler().schedule(this.calculatingTXXuTask, 1, TimeUnit.SECONDS);
+//                    BitZeroServer.getInstance().getTaskScheduler().schedule(this.calculatingTXXuTask, 1, TimeUnit.SECONDS);
                     amountBotTaiFake = 0;
                     amountBotXiuFake = 0;
                     break;
@@ -507,7 +496,6 @@ public class TaiXiuModule
                     break;
                 }
                 case 75: {
-//                    roomTXVin.getBalanceTX().startNewRound();  /// new round
                     try{
                         this.startNewRoundTX();
                         amountBotTaiFake = 0;
@@ -520,36 +508,6 @@ public class TaiXiuModule
 
                 }
             }
-//            switch (this.countRutLoc) {
-//                case 869: {
-//                    Debug.trace((Object) "RUT LOC");
-//                    this.rutLocPrizes = RutLocUtils.getPrizes(this.fundRutLoc, 10);
-//                    this.phanBoGiaiThuong = RutLocUtils.phanBoGiaiThuong(this.tongSoNguoiRutLocLanTruoc, 10);
-//                    StringBuilder builder = new StringBuilder();
-//                    for (int i = 0; i < this.phanBoGiaiThuong.length; ++i) {
-//                        builder.append(this.phanBoGiaiThuong[i]);
-//                        builder.append(",");
-//                    }
-//                    Debug.trace((Object) ("PHAN BO GIAI THUONG: " + builder.toString()));
-//                    this.enableRutLoc = true;
-//                    this.sendMessageToTaiXiuNewThread(new EnableRutLocMsg());
-//                    break;
-//                }
-//                case 900: {
-//                    Debug.trace((Object) "PHIEN RUT LOC MOI");
-//                    this.countRutLoc = 0;
-//                    if (this.fundRutLoc < 100000L) {
-//                        this.countRutLoc = -1;
-//                    }
-//                    this.tongSoNguoiRutLocLanTruoc = Math.max(this.countReqRutLoc, 30);
-//                    Debug.trace((Object) ("Tong so nguoi rut loc: " + this.tongSoNguoiRutLocLanTruoc));
-//                    this.countReqRutLoc = 0;
-//                    this.enableRutLoc = false;
-//                    StartNewRoundRutLocMsg newRoundMsg = new StartNewRoundRutLocMsg();
-//                    newRoundMsg.remainTime = this.getRemainTimeRutLoc();
-//                    this.sendMessageToTaiXiuNewThread(newRoundMsg);
-//                }
-//            }
         } catch (Exception e) {
             sendLogToTele(e.getMessage());
             Debug.trace((Object[]) new Object[]{"Exception: " + e.getMessage(), e});
@@ -612,15 +570,15 @@ public class TaiXiuModule
         if("auto".equals(keyBeCang)) {
             try {
                 //tin duoc tien chenh lech
-                String min_hu = cacheService.getValueStr("min_hu_tx_auto");
-                String max_hu = cacheService.getValueStr("max_hu_tx_auto");
-                String hu_tx = cacheService.getValueStr("hu_tx_auto");
-                long minHu = Long.parseLong(min_hu);
-                long maxHu = Long.parseLong(max_hu);
-                long huTx = Long.parseLong(hu_tx);
+                String min_fund = cacheService.getValueStr("min_fund_tx_auto");
+                String max_fund = cacheService.getValueStr("max_fund_tx_auto");
+                String fund_tx = cacheService.getValueStr("fund_tx_auto");
+                long minFund = Long.parseLong(min_fund);
+                long maxHu = Long.parseLong(max_fund);
+                long fundTx = Long.parseLong(fund_tx);
                 if(chenhLechTien > 0) {
                     //neu ma hu am
-                    if(huTx - chenhLechTien < minHu) {
+                    if(fundTx - chenhLechTien < minFund) {
                         // hu dang bi am tien hanh be nguoc nguoi choiif
                         if(totalRealBetTai > totalRealBetXiu) {
                             keyBeCang = "xiu";
@@ -630,10 +588,9 @@ public class TaiXiuModule
                     }
                 }
             }catch (Exception e) {
-                Debug.info((Object) ("hahahaa check log" + e.getMessage()));
-                cacheService.setValue("min_hu_tx_auto",0);
-                cacheService.setValue("max_hu_tx_auto",0);
-                cacheService.setValue("hu_tx_auto",0);
+                cacheService.setValue("min_fund_tx_auto",0);
+                cacheService.setValue("max_fund_tx_auto",0);
+                cacheService.setValue("fund_tx_auto",0);
             }
 
         }
@@ -658,7 +615,7 @@ public class TaiXiuModule
         dices = this.generationTX.generateResult(this.forceBetSide);
 
         if ("tai".equals(keyNoHu)) {
-            dices = this.generationTX.generateDiceNoHu((short) 1); // đoan này sai sai đúng rồi thế nó mới sai
+            dices = this.generationTX.generateDiceNoHu((short) 1);
 
         } else if ("xiu".equals(keyNoHu)) {
             dices = this.generationTX.generateDiceNoHu((short) 0);
@@ -671,7 +628,7 @@ public class TaiXiuModule
 
         //cong lai tien vao hu nguoi choi
         try {
-            String hu_tx = cacheService.getValueStr("hu_tx_auto");
+            String hu_tx = cacheService.getValueStr("fund_tx_auto");
             long huTx = Long.parseLong(hu_tx);
 
             if(this.result == 1) {
@@ -681,9 +638,9 @@ public class TaiXiuModule
                 //ve xiu
                 huTx+= totalRealBetTai - totalRealBetXiu;
             }
-            cacheService.setValue("hu_tx_auto",huTx+"");
+            cacheService.setValue("fund_tx_auto", String.valueOf(huTx));
         }catch (Exception e) {
-            cacheService.setValue("hu_tx_auto",0);
+            cacheService.setValue("fund_tx_auto",0);
         }
 
         /**

@@ -55,14 +55,14 @@ public class UpdateFundProcessor
                 cacheService.setValue(fundName, (int) fund);
             }
 
-            if (cacheService.getValueStr("hu_tx_auto") != null) {
-                response.setFundTaiXiu(cacheService.getValueInt("hu_tx_auto"));
+            if (cacheService.getValueStr("fund_tx_auto") != null) {
+                response.setFundTaiXiu(cacheService.getValueInt("fund_tx_auto"));
             }
-            if (cacheService.getValueStr("hu_tx_auto_md5") != null) {
-                response.setFundTaiXiuMd5(cacheService.getValueInt("hu_tx_auto_md5"));
+            if (cacheService.getValueStr("fund_tx_auto_md5") != null) {
+                response.setFundTaiXiuMd5(cacheService.getValueInt("fund_tx_auto_md5"));
             }
-            if (cacheService.getValueStr("hu_xd_auto") != null) {
-                response.setFundXocDia(cacheService.getValueInt("hu_xd_auto"));
+            if (cacheService.getValueStr("fund_xd_auto") != null) {
+                response.setFundXocDia(cacheService.getValueInt("fund_xd_auto"));
             }
             if (cacheService.getValueStr("hu_bc_auto") != null) {
                 response.setFundBauCua(cacheService.getValueInt("hu_bc_auto"));

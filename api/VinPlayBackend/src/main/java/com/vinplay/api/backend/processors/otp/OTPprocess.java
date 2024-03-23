@@ -20,7 +20,7 @@ public class OTPprocess {
         ResultSet rs = stm.executeQuery();
 
         while (rs.next()) {
-            uotp = new UserOTP(rs.getString("nickname"), rs.getString("username"), rs.getString("phone"), rs.getString("otp"), rs.getInt("active"), rs.getLong("creat_time"), rs.getLong("active_time"), rs.getInt("turn"), rs.getString("timelog"));
+            uotp = new UserOTP(rs.getString("nickname"), rs.getString("username"), rs.getString("phone"), rs.getString("otp"), rs.getInt("active"), rs.getLong("create_time"), rs.getLong("active_time"), rs.getInt("turn"), rs.getString("timelog"));
         }
 
         if (uotp == null) {
@@ -50,7 +50,7 @@ public class OTPprocess {
     public synchronized void InsertActive(UserOTP uotp) throws Exception {
         Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
         try {
-            String sql = "INSERT INTO vinplay.active (nickname,username,phone,otp,active,creat_time,active_time,turn,timelog) VALUES(?,?,?,?,?,?,?,?,?)";
+            String sql = "INSERT INTO vinplay.active (nickname,username,phone,otp,active,create_time,active_time,turn,timelog) VALUES(?,?,?,?,?,?,?,?,?)";
             PreparedStatement stm = conn.prepareStatement(sql);
             stm.setString(1, uotp.getNickname());
             stm.setString(2, uotp.getUsername());
@@ -74,7 +74,7 @@ public class OTPprocess {
     public synchronized void UpdateActive(UserOTP uotp) throws Exception {
         Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
         try {
-            String sql = "UPDATE vinplay.active SET phone=?, active=?, creat_time=?, active_time=?, turn=?, otp=?, timelog=? WHERE nickname=?";
+            String sql = "UPDATE vinplay.active SET phone=?, active=?, create_time=?, active_time=?, turn=?, otp=?, timelog=? WHERE nickname=?";
             PreparedStatement stm = conn.prepareStatement(sql);
             stm.setString(1, uotp.getPhone());
             stm.setInt(2, uotp.getActive());
@@ -103,7 +103,7 @@ public class OTPprocess {
         stm.setString(1, nickname);
         ResultSet rs = stm.executeQuery();
         while (rs.next()) {
-            uotp = new UserOTP(rs.getString("nickname"), rs.getString("username"), rs.getString("phone"), rs.getString("otp"), rs.getInt("active"), rs.getLong("creat_time"), rs.getLong("active_time"), rs.getInt("turn"), rs.getString("timelog"));
+            uotp = new UserOTP(rs.getString("nickname"), rs.getString("username"), rs.getString("phone"), rs.getString("otp"), rs.getInt("active"), rs.getLong("create_time"), rs.getLong("active_time"), rs.getInt("turn"), rs.getString("timelog"));
         }
         rs.close();
         stm.close();
@@ -121,7 +121,7 @@ public class OTPprocess {
         stm.setString(1, nickname);
         ResultSet rs = stm.executeQuery();
         if (rs.next()) {
-            uotp = new UserOTP(rs.getString("nickname"), rs.getString("username"), rs.getString("phone"), rs.getString("otp"), rs.getInt("active"), rs.getLong("creat_time"), rs.getLong("active_time"), rs.getInt("turn"), rs.getString("timelog"));
+            uotp = new UserOTP(rs.getString("nickname"), rs.getString("username"), rs.getString("phone"), rs.getString("otp"), rs.getInt("active"), rs.getLong("create_time"), rs.getLong("active_time"), rs.getInt("turn"), rs.getString("timelog"));
         }
         rs.close();
         stm.close();
@@ -142,7 +142,7 @@ public class OTPprocess {
         stm.setString(2, otp);
         ResultSet rs = stm.executeQuery();
         while (rs.next()) {
-            uotp = new UserOTP(rs.getString("nickname"), rs.getString("username"), rs.getString("phone"), rs.getString("otp"), rs.getInt("active"), rs.getLong("creat_time"), rs.getLong("active_time"), rs.getInt("turn"), rs.getString("timelog"));
+            uotp = new UserOTP(rs.getString("nickname"), rs.getString("username"), rs.getString("phone"), rs.getString("otp"), rs.getInt("active"), rs.getLong("create_time"), rs.getLong("active_time"), rs.getInt("turn"), rs.getString("timelog"));
         }
         if (uotp == null) {
             check = false;
@@ -167,7 +167,7 @@ public class OTPprocess {
         stm.setString(1, phone);
         ResultSet rs = stm.executeQuery();
         while (rs.next()) {
-            uotp = new UserOTP(rs.getString("nickname"), rs.getString("username"), rs.getString("phone"), rs.getString("otp"), rs.getInt("active"), rs.getLong("creat_time"), rs.getLong("active_time"), rs.getInt("turn"), rs.getString("timelog"));
+            uotp = new UserOTP(rs.getString("nickname"), rs.getString("username"), rs.getString("phone"), rs.getString("otp"), rs.getInt("active"), rs.getLong("create_time"), rs.getLong("active_time"), rs.getInt("turn"), rs.getString("timelog"));
         }
         if (uotp == null) {
             check = false;
@@ -206,13 +206,13 @@ public class OTPprocess {
     public ArrayList<UserOTP> GetListOTPByTime(long start, long end) throws Exception {
         Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
         ArrayList<UserOTP> list_otp = new ArrayList<>();
-        String sql = "SELECT * FROM vinplay.active where creat_time >= ? and creat_time <=?";
+        String sql = "SELECT * FROM vinplay.active where create_time >= ? and create_time <=?";
         PreparedStatement stm = conn.prepareStatement(sql);
         stm.setLong(1, start);
         stm.setLong(2, end);
         ResultSet rs = stm.executeQuery();
         while (rs.next()) {
-            UserOTP uotp = new UserOTP(rs.getString("nickname"), rs.getString("username"), rs.getString("phone"), rs.getString("otp"), rs.getInt("active"), rs.getLong("creat_time"), rs.getLong("active_time"), rs.getInt("turn"), rs.getString("timelog"));
+            UserOTP uotp = new UserOTP(rs.getString("nickname"), rs.getString("username"), rs.getString("phone"), rs.getString("otp"), rs.getInt("active"), rs.getLong("create_time"), rs.getLong("active_time"), rs.getInt("turn"), rs.getString("timelog"));
             list_otp.add(uotp);
         }
         rs.close();
@@ -230,7 +230,7 @@ public class OTPprocess {
         PreparedStatement stm = conn.prepareStatement(sql);
         ResultSet rs = stm.executeQuery();
         while (rs.next()) {
-            UserOTP uotp = new UserOTP(rs.getString("nickname"), rs.getString("username"), rs.getString("phone"), rs.getString("otp"), rs.getInt("active"), rs.getLong("creat_time"), rs.getLong("active_time"), rs.getInt("turn"), rs.getString("timelog"));
+            UserOTP uotp = new UserOTP(rs.getString("nickname"), rs.getString("username"), rs.getString("phone"), rs.getString("otp"), rs.getInt("active"), rs.getLong("create_time"), rs.getLong("active_time"), rs.getInt("turn"), rs.getString("timelog"));
             list_otp.add(uotp);
         }
         rs.close();

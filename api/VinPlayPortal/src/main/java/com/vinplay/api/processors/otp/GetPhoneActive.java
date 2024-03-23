@@ -16,7 +16,6 @@ public class GetPhoneActive implements BaseProcessor<HttpServletRequest, String>
         PhoneActiveResponse res = new PhoneActiveResponse(false, "1001");;
         try {
             HttpServletRequest request = (HttpServletRequest) param.get();
-            String nicknamex = request.getParameter("nickname");
             String accessToken = request.getParameter("at");
             String nickname = this.getUserNameByAccessToken(accessToken);
             OTPprocess otp_pro = new OTPprocess();

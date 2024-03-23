@@ -158,19 +158,19 @@ public class XocDiaResult {
         long minHu = 0;
         long maxHu = 0;
         long huTx = 0;
-        //cacheService.setValue("loi_hu_xd_auto","co vao day k");
+        //cacheService.setValue("loi_fund_xd_auto","co vao day k");
         try {
-            String min_hu = cacheService.getValueStr("min_hu_xd_auto");
-            String max_hu = cacheService.getValueStr("max_hu_xd_auto");
-            String hu_tx = cacheService.getValueStr("hu_xd_auto");
+            String min_hu = cacheService.getValueStr("min_fund_xd_auto");
+            String max_hu = cacheService.getValueStr("max_fund_xd_auto");
+            String hu_tx = cacheService.getValueStr("fund_xd_auto");
             minHu = Long.parseLong(min_hu);
             maxHu = Long.parseLong(max_hu);
             huTx = Long.parseLong(hu_tx);
         }catch (Exception e) {
-            cacheService.setValue("min_hu_xd_auto",0);
-            cacheService.setValue("max_hu_xd_auto",0);
-            cacheService.setValue("hu_xd_auto",0);
-            //cacheService.setValue("loi_hu_xd_auto",e.getMessage()+"loi o get");
+            cacheService.setValue("min_fund_xd_auto",0);
+            cacheService.setValue("max_fund_xd_auto",0);
+            cacheService.setValue("fund_xd_auto",0);
+            //cacheService.setValue("loi_fund_xd_auto",e.getMessage()+"loi o get");
         }
         ArrayList<List<Integer>> listDiceRandom = listDicesRandom();
         Collections.shuffle(listDiceRandom);
@@ -223,12 +223,12 @@ public class XocDiaResult {
         //random xong cong tien lai hu xem dung k
         try {
             long chenhLechTien = tinhToanTienChechLech(potList);
-            String hu_tx = cacheService.getValueStr("hu_xd_auto");
+            String hu_tx = cacheService.getValueStr("fund_xd_auto");
             huTx = Long.parseLong(hu_tx);
             huTx =chenhLechTien+huTx;
-            cacheService.setValue("hu_xd_auto",huTx+"");
+            cacheService.setValue("fund_xd_auto",huTx+"");
             Gson gson = new Gson();
-            //cacheService.setValue("loi_hu_xd_auto",chenhLechTien+"da vao day de get"+gson.toJson(potList.get(0).userBetMap));
+            //cacheService.setValue("loi_fund_xd_auto",chenhLechTien+"da vao day de get"+gson.toJson(potList.get(0).userBetMap));
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -317,7 +317,7 @@ public class XocDiaResult {
             chenhLechTien = totalLai - totalLo;
             return chenhLechTien;
         }catch (Exception e){
-            //cacheService.setValue("loi_hu_xd_auto",e.getMessage()+" loi me o cho set moneu roi");
+            //cacheService.setValue("loi_fund_xd_auto",e.getMessage()+" loi me o cho set moneu roi");
             e.getMessage();
         }
         return 11111;

@@ -20,9 +20,9 @@ public class GetCacheResultTaiXiuMd5Processor implements BaseProcessor<HttpServl
             Gson gson = new Gson();
             Map<String,String> hashMap = new HashMap<>();
             hashMap.put("tai_xiu_be_cang",cacheService.getValueStr("tai_xiu_be_cang_md5"));
-            hashMap.put("min_hu_tx_auto",cacheService.getValueStr("min_hu_tx_auto_md5"));
-            hashMap.put("max_hu_tx_auto",cacheService.getValueStr("max_hu_tx_auto_md5"));
-            hashMap.put("hu_tx_auto",cacheService.getValueStr("hu_tx_auto_md5"));
+            hashMap.put("min_fund_tx_auto",cacheService.getValueStr("min_fund_tx_auto_md5"));
+            hashMap.put("max_fund_tx_auto",cacheService.getValueStr("max_fund_tx_auto_md5"));
+            hashMap.put("fund_tx_auto",cacheService.getValueStr("fund_tx_auto_md5"));
 
 
             hashMap.put("my_debug",cacheService.getValueStr("my_debug_md5"));
@@ -38,9 +38,9 @@ public class GetCacheResultTaiXiuMd5Processor implements BaseProcessor<HttpServl
 
             cacheService.setValue("my_debug_md5","");
 
-            cacheService.setValue("min_hu_tx_auto_md5",0);
-            cacheService.setValue("max_hu_tx_auto_md5",0);
-            cacheService.setValue("hu_tx_auto_md5",0);
+            cacheService.setValue("min_fund_tx_auto_md5",0);
+            cacheService.setValue("max_fund_tx_auto_md5",0);
+            cacheService.setValue("fund_tx_auto_md5",0);
             return e.getMessage();
         }
     }
