@@ -191,9 +191,17 @@ public class XocDiaGameServer
 
     private String timestamp = "";
 
+    private static long fundXd = 0;
+
     public void init(GameRoom room) {
         try {
-             referenceId = mgService.getReferenceId(Games.XOC_DIA.getId());
+            try {
+                fundXd = mgService.getFund(Games.XOC_DIA.getName());
+                cacheService.setValue("fund_xd_auto", (int) fundXd);
+            } catch (Exception e) {
+                fundXd = 0;
+            }
+            referenceId = mgService.getReferenceId(Games.XOC_DIA.getId());
             this.room = room;
             this.roomId = room.getId();
             this.roomType = room.setting.rule;
@@ -510,14 +518,16 @@ public class XocDiaGameServer
             Debug.trace((Object) e);
         }
     }
+
     private void increaseAndSaveReferent() {
         try {
-            referenceId ++;
+            referenceId++;
             this.mgService.saveReferenceId(this.referenceId, Games.XOC_DIA.getId());
         } catch (SQLException e) {
             Debug.trace((Object) ("Save reference error " + e.getMessage()));
         }
     }
+
     private synchronized void startNewGame() {
         try {
             increaseAndSaveReferent();
@@ -1286,7 +1296,6 @@ public class XocDiaGameServer
 
                 }
 
-                System.out.println("!!!!!!!!!!!!XOCDIA!!!!!!!! Result " + result);
 
                 ResultMsg msg = new ResultMsg();
                 msg.dinces = dinces;
@@ -1319,17 +1328,13 @@ public class XocDiaGameServer
                             transactionXocDiaMessages.getBetResult().setEven(totalBetValue);
                         } else if (gPot.getPotName().equals("odd")) {
                             transactionXocDiaMessages.getBetResult().setOdd(totalBetValue);
-                        }
-                        else if (gPot.getPotName().equals("zeroWhite")) {
+                        } else if (gPot.getPotName().equals("zeroWhite")) {
                             transactionXocDiaMessages.getBetResult().setZeroWhite(totalBetValue);
-                        }
-                        else if (gPot.getPotName().equals("fourWhite")) {
+                        } else if (gPot.getPotName().equals("fourWhite")) {
                             transactionXocDiaMessages.getBetResult().setFourWhite(totalBetValue);
-                        }
-                        else if (gPot.getPotName().equals("threeWhite")) {
+                        } else if (gPot.getPotName().equals("threeWhite")) {
                             transactionXocDiaMessages.getBetResult().setThreeWhite(totalBetValue);
-                        }
-                        else if (gPot.getPotName().equals("oneWhite")) {
+                        } else if (gPot.getPotName().equals("oneWhite")) {
                             transactionXocDiaMessages.getBetResult().setOneWhite(totalBetValue);
                         }
                         transactionXocDiaMessages.setResult(result);

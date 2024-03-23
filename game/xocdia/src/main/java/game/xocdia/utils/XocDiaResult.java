@@ -12,8 +12,11 @@ package game.xocdia.utils;
 
 import bitzero.util.common.business.Debug;
 import com.google.gson.Gson;
+import com.vinplay.dal.service.MiniGameService;
+import com.vinplay.dal.service.impl.MiniGameServiceImpl;
 import com.vinplay.usercore.service.CacheService;
 import com.vinplay.usercore.service.impl.CacheServiceImpl;
+import com.vinplay.vbee.common.enums.Games;
 import com.vinplay.vbee.common.exceptions.KeyNotFoundException;
 import com.vinplay.vbee.common.response.BauCuaTo2.SetBauCuaKetqua;
 import game.xocdia.conf.XocDiaForceResult;
@@ -24,6 +27,8 @@ import game.xocdia.entities.PotType;
 import java.util.*;
 
 public class XocDiaResult {
+
+    private MiniGameService mgService = new MiniGameServiceImpl();
     private byte count;
     private List<Integer> dinces;
     private CacheService cacheService = new CacheServiceImpl();
@@ -226,9 +231,8 @@ public class XocDiaResult {
             String hu_tx = cacheService.getValueStr("fund_xd_auto");
             huTx = Long.parseLong(hu_tx);
             huTx =chenhLechTien+huTx;
-            cacheService.setValue("fund_xd_auto",huTx+"");
-            Gson gson = new Gson();
-            //cacheService.setValue("loi_fund_xd_auto",chenhLechTien+"da vao day de get"+gson.toJson(potList.get(0).userBetMap));
+            cacheService.setValue("fund_xd_auto", String.valueOf(huTx));
+            mgService.saveFund(Games.XOC_DIA.getName(),huTx );
         }catch (Exception e){
             e.printStackTrace();
         }
