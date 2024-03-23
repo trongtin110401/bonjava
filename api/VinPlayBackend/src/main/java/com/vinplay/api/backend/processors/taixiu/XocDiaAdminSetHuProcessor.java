@@ -21,8 +21,8 @@ public class XocDiaAdminSetHuProcessor implements BaseProcessor<HttpServletReque
             long max = Long.parseLong(huMax);
             long fundXd = Long.parseLong(fund);
             if (max > min) {
-                cacheService.setValue("min_fund_xd_auto", min + "");
-                cacheService.setValue("max_fund_xd_auto", max + "");
+                cacheService.setValue("min_fund_xd_auto", String.valueOf(min));
+                cacheService.setValue("max_fund_xd_auto", String.valueOf(max));
                 if (fundXd == 99) {
                     cacheService.setValue("fund_xd_auto", 0);
                 }
