@@ -19,16 +19,16 @@ public class GetCacheResultXocDiaProcessor implements BaseProcessor<HttpServletR
         try {
             Gson gson = new Gson();
             Map<String,String> hashMap = new HashMap<>();
-            hashMap.put("min_hu_xd_auto",cacheService.getValueStr("min_hu_xd_auto"));
-            hashMap.put("max_hu_xd_auto",cacheService.getValueStr("max_hu_xd_auto"));
-            hashMap.put("hu_xd_auto",cacheService.getValueStr("hu_xd_auto"));
-            hashMap.put("loi_hu_xd_auto",cacheService.getValueStr("loi_hu_xd_auto"));
+            hashMap.put("min_fund_xd_auto",cacheService.getValueStr("min_fund_xd_auto"));
+            hashMap.put("max_fund_xd_auto",cacheService.getValueStr("max_fund_xd_auto"));
+            hashMap.put("fund_xd_auto",cacheService.getValueStr("fund_xd_auto"));
+            hashMap.put("loi_fund_xd_auto",cacheService.getValueStr("loi_fund_xd_auto"));
             return gson.toJson(hashMap);
         } catch (Exception e) {
-            cacheService.setValue("min_hu_xd_auto",0);
-            cacheService.setValue("max_hu_xd_auto",0);
-            cacheService.setValue("hu_xd_auto",0);
-            cacheService.setValue("loi_hu_xd_auto","khoi tao");
+            cacheService.setValue("min_fund_xd_auto",0);
+            cacheService.setValue("max_fund_xd_auto",0);
+            cacheService.setValue("fund_xd_auto",0);
+            cacheService.setValue("loi_fund_xd_auto","khoi tao");
             return e.getMessage();
         }
     }
