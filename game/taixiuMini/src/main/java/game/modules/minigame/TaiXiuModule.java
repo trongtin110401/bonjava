@@ -54,6 +54,7 @@ import com.vinplay.miniGame.TaiXiuAdminReportObj;
 import com.vinplay.miniGame.TaiXiuSetAmountBotFake;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.vbee.common.config.VBeePath;
+import com.vinplay.vbee.common.enums.Games;
 import com.vinplay.vbee.common.exceptions.KeyNotFoundException;
 import com.vinplay.vbee.common.response.MoneyResponse;
 import com.vinplay.vbee.common.response.minigame.TaiXiuAdmin;
@@ -123,8 +124,11 @@ public class TaiXiuModule
     private List<String> listChatUsers = new ArrayList<String>();
     public static String CacheCurrentReference = "Tai_xiu_current_reference";
     public static long moneyHu = 50000000; // được lấy từ trong database
+
+    public static long fundTx = 0;
     ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(8);
 
+    protected MiniGameService miniGameService = new MiniGameServiceImpl();
     private int amountBotTaiFake = 0;
     private int amountBotXiuFake = 0;
 
@@ -132,14 +136,19 @@ public class TaiXiuModule
         TaiXiuChatMsg taiXiuChatMsg = new TaiXiuChatMsg();
         cacheService.setObject("admin_lst_msg", taiXiuChatMsg);
         cacheService.setObject("admin_msg", taiXiuChatMsg);
+        try {
+            fundTx = miniGameService.getFund(Games.TAI_XIU.getName());
+        } catch (Exception e) {
+            fundTx = 0;
+        }
         Debug.info("referentTaiXiuId là " + this.referenceTaiXiuId);
         this.rooms.put(MGRoomTaiXiu.getKeyRoom((short) 1), new MGRoomTaiXiu("TaiXiu_1", this.referenceTaiXiuId, (byte) 1));
         this.rooms.put(MGRoomTaiXiu.getKeyRoom((short) 0), new MGRoomTaiXiu("TaiXiu_0", this.referenceTaiXiuId, (byte) 0));
         //Debug.info("referentTaiXiuId là " + this.referenceTaiXiuId);
         this.loadData();
         Debug.info("referentTaiXiuId sau khi load data là " + this.referenceTaiXiuId);
-      //  this.loadChatData();
-       // this.loadChatUsers();
+        //  this.loadChatData();
+        // this.loadChatUsers();
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
         //BitZeroServer.getInstance().getTaskScheduler().schedule(this.botChatTask, 10, TimeUnit.SECONDS);
         BitZeroServer.getInstance().getTaskScheduler().schedule(this.serverReadyTask, 10, TimeUnit.SECONDS);
@@ -242,7 +251,7 @@ public class TaiXiuModule
     }
 
     // todo : handle dựa trên data cmd
-    public void handleClientRequest(User user, DataCmd dataCmd){
+    public void handleClientRequest(User user, DataCmd dataCmd) {
         switch (dataCmd.getId()) {
             case 2000: {
                 // mở game lên vào đây
@@ -284,7 +293,7 @@ public class TaiXiuModule
         }
     }
 
-    private void subcribeMiniGame(User user, DataCmd dataCmd){
+    private void subcribeMiniGame(User user, DataCmd dataCmd) {
         SubcribeMinigameCmd cmd = new SubcribeMinigameCmd(dataCmd);
         this.doSubcribeMiniGame(user, cmd.gameId, cmd.roomId);
         LichSuPhienMsg msgLSGD = new LichSuPhienMsg();
@@ -304,7 +313,7 @@ public class TaiXiuModule
     }
 
     // vào room
-    private void doSubcribeMiniGame(User user, short gameId, short roomId){
+    private void doSubcribeMiniGame(User user, short gameId, short roomId) {
         switch (gameId) {
             case 2: {
                 short moneyType = MGRoomTaiXiu.getMoneyType(roomId);
@@ -343,7 +352,7 @@ public class TaiXiuModule
         }
     }
 
-    private void changeRoom(User user, DataCmd dataCmd){
+    private void changeRoom(User user, DataCmd dataCmd) {
         ChangeRoomMinigameCmd cmd = new ChangeRoomMinigameCmd(dataCmd);
         this.doUnsubscribeMiniGame(user, cmd.gameId, cmd.lastRoomId);
         this.doSubcribeMiniGame(user, cmd.gameId, cmd.newRoomId);
@@ -385,13 +394,13 @@ public class TaiXiuModule
             GameUtils.sendAlert("Bot tai xiu start error: " + e.getMessage() + ", time= " + DateTimeUtils.getCurrentTime());
         }
     }
-    
+
     private void botBet(int count) {
         MGRoomTaiXiu roomVin = this.getRoomTX((short) 1);
-        String[] strs = {"Jocelyn","Kelsey","Fallon","Maynard","Mildred","Aubrey"};
+        String[] strs = {"Jocelyn", "Kelsey", "Fallon", "Maynard", "Mildred", "Aubrey"};
         for (BotTaiXiu b : this.botsVin) {
             if (b.getTimeBetting() != 60 - count) continue;
-            if( !ArrayUtils.contains( strs, b.getNickname() )){
+            if (!ArrayUtils.contains(strs, b.getNickname())) {
                 roomVin.betTaiXiu(b.getNickname(), 0, b.getBetValue(), b.getTimeBetting(), (short) 1, b.getBetSide(), true);
             }
         }
@@ -420,7 +429,7 @@ public class TaiXiuModule
         taiXiuAdminReportObj.setContributors(this.getRoomTX(typeBet).getListTransaction());
         taiXiuAdminReportObj.setRealTime(this.getRoomTX(typeBet).getRemainTime());
         taiXiuAdminReportObj.setBettingRound(this.getRoomTX(typeBet).bettingRound);
-        List<TaiXiuChatMsg> listChat =new ArrayList<>();
+        List<TaiXiuChatMsg> listChat = new ArrayList<>();
         try {
             listChat = (List<TaiXiuChatMsg>) cacheService.getObject("lstTaiXiuAdminMsg");
         } catch (KeyNotFoundException e) {
@@ -430,7 +439,7 @@ public class TaiXiuModule
         taiXiuAdminReportObj.setLstMsg(listChat);
         taiXiuAdminReportObj.setGetListChatUsers(this.getListChatUsers());
         cacheService.setValue("user_tai_xiu", taiXiuAdminReportObj.toJson());
-        cacheService.setObject("lstTaiXiuAdminMsg",new ArrayList<>());
+        cacheService.setObject("lstTaiXiuAdminMsg", new ArrayList<>());
     }
 
     public List<String> getListChatUsers() {
@@ -441,13 +450,13 @@ public class TaiXiuModule
         try {
             ++this.count;
             this.botBet(this.count);
-            try{
+            try {
                 TaiXiuSetAmountBotFake taiXiuSetAmountBotFake = (TaiXiuSetAmountBotFake) cacheService.getObject("taixiu_bot_fake_amount");
-                if(taiXiuSetAmountBotFake != null ){
-                    amountBotTaiFake += (taiXiuSetAmountBotFake.getNumberBotTaiFake())/40 ;
-                    amountBotXiuFake += (taiXiuSetAmountBotFake.getNumberBotXiuFake())/40;
+                if (taiXiuSetAmountBotFake != null) {
+                    amountBotTaiFake += (taiXiuSetAmountBotFake.getNumberBotTaiFake()) / 40;
+                    amountBotXiuFake += (taiXiuSetAmountBotFake.getNumberBotXiuFake()) / 40;
                 }
-            } catch (KeyNotFoundException ex){
+            } catch (KeyNotFoundException ex) {
 //                sendLogToTele(ex.getMessage());
                 amountBotXiuFake = 0;
                 amountBotTaiFake = 0;
@@ -496,14 +505,15 @@ public class TaiXiuModule
                     break;
                 }
                 case 75: {
-                    try{
+                    try {
                         this.startNewRoundTX();
+                        miniGameService.saveFund(Games.TAI_XIU.getName(), fundTx);
                         amountBotTaiFake = 0;
                         amountBotXiuFake = 0;
                         this.count = 0;
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         sendLogToTele(e.getMessage());
-                        Debug.trace("got bug",e.getCause());
+                        Debug.trace("got bug", e.getCause());
                     }
 
                 }
@@ -556,18 +566,18 @@ public class TaiXiuModule
         List<TaiXiuAdmin> contributors = this.getRoomTX(typeBet).getListTransaction();
         long totalRealBetTai = 0;
         long totalRealBetXiu = 0;
-        for(TaiXiuAdmin taiXiuAdmin : contributors) {
-            if(taiXiuAdmin.getCuaDat() == 0) {
+        for (TaiXiuAdmin taiXiuAdmin : contributors) {
+            if (taiXiuAdmin.getCuaDat() == 0) {
                 //bet xiu
-                totalRealBetXiu+= taiXiuAdmin.getMoney();
-            }else if(taiXiuAdmin.getCuaDat() == 1){
+                totalRealBetXiu += taiXiuAdmin.getMoney();
+            } else if (taiXiuAdmin.getCuaDat() == 1) {
                 // bet tai
-                totalRealBetTai+= taiXiuAdmin.getMoney();
+                totalRealBetTai += taiXiuAdmin.getMoney();
             }
         }
-        long chenhLechTien = Math.abs(totalRealBetTai-totalRealBetXiu);
-        Debug.info("xxxxx " + totalRealBetTai+"  vvvvvv"+ totalRealBetXiu);
-        if("auto".equals(keyBeCang)) {
+        long chenhLechTien = Math.abs(totalRealBetTai - totalRealBetXiu);
+        Debug.info("xxxxx " + totalRealBetTai + "  vvvvvv" + totalRealBetXiu);
+        if ("auto".equals(keyBeCang)) {
             try {
                 //tin duoc tien chenh lech
                 String min_fund = cacheService.getValueStr("min_fund_tx_auto");
@@ -576,21 +586,21 @@ public class TaiXiuModule
                 long minFund = Long.parseLong(min_fund);
                 long maxHu = Long.parseLong(max_fund);
                 long fundTx = Long.parseLong(fund_tx);
-                if(chenhLechTien > 0) {
+                if (chenhLechTien > 0) {
                     //neu ma hu am
-                    if(fundTx - chenhLechTien < minFund) {
+                    if (fundTx - chenhLechTien < minFund) {
                         // hu dang bi am tien hanh be nguoc nguoi choiif
-                        if(totalRealBetTai > totalRealBetXiu) {
+                        if (totalRealBetTai > totalRealBetXiu) {
                             keyBeCang = "xiu";
-                        }else {
+                        } else {
                             keyBeCang = "tai";
                         }
                     }
                 }
-            }catch (Exception e) {
-                cacheService.setValue("min_fund_tx_auto",0);
-                cacheService.setValue("max_fund_tx_auto",0);
-                cacheService.setValue("fund_tx_auto",0);
+            } catch (Exception e) {
+                cacheService.setValue("min_fund_tx_auto", 0);
+                cacheService.setValue("max_fund_tx_auto", 0);
+                cacheService.setValue("fund_tx_auto", 0);
             }
 
         }
@@ -628,19 +638,16 @@ public class TaiXiuModule
 
         //cong lai tien vao hu nguoi choi
         try {
-            String hu_tx = cacheService.getValueStr("fund_tx_auto");
-            long huTx = Long.parseLong(hu_tx);
-
-            if(this.result == 1) {
+            if (this.result == 1) {
                 //ve tai
-                huTx+= totalRealBetXiu - totalRealBetTai;
-            }else {
+                fundTx += totalRealBetXiu - totalRealBetTai;
+            } else {
                 //ve xiu
-                huTx+= totalRealBetTai - totalRealBetXiu;
+                fundTx += totalRealBetTai - totalRealBetXiu;
             }
-            cacheService.setValue("fund_tx_auto", String.valueOf(huTx));
-        }catch (Exception e) {
-            cacheService.setValue("fund_tx_auto",0);
+            cacheService.setValue("fund_tx_auto", String.valueOf(fundTx));
+        } catch (Exception e) {
+            cacheService.setValue("fund_tx_auto", (int) fundTx);
         }
 
         /**
@@ -888,7 +895,7 @@ public class TaiXiuModule
                 MGRoomTaiXiu room = TaiXiuModule.this.getRoomTX(this.roomId);
                 room.calculatePrize(TaiXiuModule.this.referenceTaiXiuId);
             } catch (Exception e) {
-                sendLogToTele(e.getMessage()+"Calculate TX " + this.roomId + ", phien= " + TaiXiuModule.this.referenceTaiXiuId + " error: ");
+                sendLogToTele(e.getMessage() + "Calculate TX " + this.roomId + ", phien= " + TaiXiuModule.this.referenceTaiXiuId + " error: ");
                 Debug.trace((Object) ("Calculate TX " + this.roomId + ", phien= " + TaiXiuModule.this.referenceTaiXiuId + " error: " + e.getMessage()));
             }
             long endTime = System.currentTimeMillis();
@@ -901,9 +908,10 @@ public class TaiXiuModule
             implements Runnable {
         public UpdateCacheTopDay() {
         }
+
         @Override
         public void run() {
-           TaiXiuModule.this.txService.updateAllTopDay();
+            TaiXiuModule.this.txService.updateAllTopDay();
         }
     }
 
@@ -911,9 +919,10 @@ public class TaiXiuModule
             implements Runnable {
         public UpdateCacheTopMonth() {
         }
+
         @Override
         public void run() {
-           TaiXiuModule.this.txService.updateAllTopMonth();
+            TaiXiuModule.this.txService.updateAllTopMonth();
         }
     }
 
