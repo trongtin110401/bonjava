@@ -21,10 +21,10 @@ public class TaiXiuAdminSetHuProcessor implements BaseProcessor<HttpServletReque
             long max = Long.parseLong(huMax);
             long huTx = Long.parseLong(hu);
             if (max > min) {
-                cacheService.setValue("min_hu_tx_auto", min + "");
-                cacheService.setValue("max_hu_tx_auto", max + "");
+                cacheService.setValue("min_fund_tx_auto", min + "");
+                cacheService.setValue("max_fund_tx_auto", max + "");
                 if (huTx == 99) {
-                    cacheService.setValue("hu_tx_auto", 0);
+                    cacheService.setValue("fund_tx_auto", 0);
                 }
             }
             return "OKE";

@@ -622,16 +622,16 @@ public class TaiXiuModule
             System.out.println("chenhLechTien " + chenhLechTien);
             try {
                 //tin duoc tien chenh lech
-                String min_hu = cacheService.getValueStr("min_hu_tx_auto");
-                String max_hu = cacheService.getValueStr("max_hu_tx_auto");
-                String hu_tx = cacheService.getValueStr("hu_tx_auto");
+                String min_hu = cacheService.getValueStr("min_fund_tx_auto");
+                String max_hu = cacheService.getValueStr("max_fund_tx_auto");
+                String fund_tx = cacheService.getValueStr("fund_tx_auto");
                 long minHu = Long.parseLong(min_hu);
                 long maxHu = Long.parseLong(max_hu);
-                long huTx = Long.parseLong(hu_tx);
+                long fundTx = Long.parseLong(fund_tx);
 //                if(maxHu > minHu && chenhLechTien > 0) {
                 if(chenhLechTien > 0) {
                     //neu ma hu am
-                    if(huTx - chenhLechTien < minHu) {
+                    if(fundTx - chenhLechTien < minHu) {
                         // hu dang bi am tien hanh be nguoc nguoi choiif
                         if(totalRealBetTai > totalRealBetXiu) {
                             keyBeCang = "xiu";
@@ -654,9 +654,9 @@ public class TaiXiuModule
                 }
             }catch (Exception e) {
                 Debug.info((Object) ("hahahaa check log" + e.getMessage()));
-                cacheService.setValue("min_hu_tx_auto",0);
-                cacheService.setValue("max_hu_tx_auto",0);
-                cacheService.setValue("hu_tx_auto",0);
+                cacheService.setValue("min_fund_tx_auto",0);
+                cacheService.setValue("max_fund_tx_auto",0);
+                cacheService.setValue("fund_tx_auto",0);
             }
 
         }
@@ -694,7 +694,7 @@ public class TaiXiuModule
 
         //cong lai tien vao hu nguoi choi
         try {
-            String hu_tx = cacheService.getValueStr("hu_tx_auto");
+            String hu_tx = cacheService.getValueStr("fund_tx_auto");
             long huTx = Long.parseLong(hu_tx);
 
             if(this.result == 1) {
@@ -704,9 +704,9 @@ public class TaiXiuModule
                 //ve xiu
                 huTx+= totalRealBetTai - totalRealBetXiu;
             }
-            cacheService.setValue("hu_tx_auto",huTx+"");
+            cacheService.setValue("fund_tx_auto",huTx+"");
         }catch (Exception e) {
-            cacheService.setValue("hu_tx_auto",0);
+            cacheService.setValue("fund_tx_auto",0);
         }
 
         /**
