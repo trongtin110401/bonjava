@@ -13,6 +13,7 @@ package com.vinplay.api.backend.processors;
 
 import com.vinplay.dal.service.CacheService;
 import com.vinplay.dal.service.impl.CacheServiceImpl;
+import com.vinplay.dal.service.impl.MiniGameServiceImpl;
 import com.vinplay.usercore.service.OtherService;
 import com.vinplay.usercore.service.impl.OtherServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
@@ -26,7 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 
 public class UpdateFundProcessor
         implements BaseProcessor<HttpServletRequest, String> {
-
+    private MiniGameServiceImpl service = new MiniGameServiceImpl();
     private final static String DEPOSIT = "deposit";
 
     private final static String WITHDRAW = "withdraw";
@@ -39,34 +40,15 @@ public class UpdateFundProcessor
         String fundName = request.getParameter("fundName");
         int amount = Integer.parseInt(request.getParameter("amount"));
         String type = request.getParameter("type");
-
-        CacheService cacheService = new CacheServiceImpl();
         try {
-
-            if (cacheService.getValueStr(fundName) != null) {
-                long fund = cacheService.getValueInt(fundName);
-
-                if (type.equals(DEPOSIT)) {
-                    fund += amount;
-                }
-                if (type.equals(WITHDRAW)) {
-                    fund -= amount;
-                }
-                cacheService.setValue(fundName, (int) fund);
+            long fund = service.getFund(fundName);
+            if (type.equals(DEPOSIT)) {
+                fund += amount;
             }
-
-            if (cacheService.getValueStr("fund_tx_auto") != null) {
-                response.setFundTaiXiu(cacheService.getValueInt("fund_tx_auto"));
+            if (type.equals(WITHDRAW)) {
+                fund -= amount;
             }
-            if (cacheService.getValueStr("fund_tx_auto_md5") != null) {
-                response.setFundTaiXiuMd5(cacheService.getValueInt("fund_tx_auto_md5"));
-            }
-            if (cacheService.getValueStr("fund_xd_auto") != null) {
-                response.setFundXocDia(cacheService.getValueInt("fund_xd_auto"));
-            }
-            if (cacheService.getValueStr("hu_bc_auto") != null) {
-                response.setFundBauCua(cacheService.getValueInt("hu_bc_auto"));
-            }
+            service.saveFund(fundName, fund);
 
             Document document = new Document();
             document.put("fund_name", fundName);
