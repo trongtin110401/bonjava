@@ -564,6 +564,7 @@ public class MGRoomTaiXiu
                             this.updateSumTran(sumTXTMap, tran);
                             this.updateSumTran(sumXiu, tran);
                             this.saveTransactionDetailTX(tran);
+                            TaiXiuModule.fundTx -= tran.refund;
                         } catch (Exception e) {
                             Debug.trace((Object) ("Error calculate prize user " + tran.username + " error: " + e.getMessage()));
                         }
@@ -631,6 +632,7 @@ public class MGRoomTaiXiu
                             this.updateSumTran(sumTXTMap, tran);
                             this.updateSumTran(sumTai, tran);
                             this.saveTransactionDetailTX(tran);
+                            TaiXiuModule.fundTx -= tran.refund;
                         } catch (Exception e) {
                             Debug.trace((Object) ("Error calculate prize user " + tran.username + " error: " + e.getMessage()));
                         }

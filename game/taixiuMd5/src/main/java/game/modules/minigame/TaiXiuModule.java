@@ -115,7 +115,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
     private int amountBotTaiFake = 0;
     private int amountBotXiuFake = 0;
 
-    private long fundTxMD5;
+    public static long fundTxMD5;
 
     protected MiniGameService miniGameService = new MiniGameServiceImpl();
 
