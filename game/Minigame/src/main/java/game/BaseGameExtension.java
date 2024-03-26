@@ -108,7 +108,8 @@ extends BZExtension {
         if (GameUtils.gameName.equalsIgnoreCase("Minigame")) { // todo :lấy từ config cluster file conf
             //this.addRequestHandler((short)2000, TaiXiuModule.class);
             this.addRequestHandler((short)4000, MiniPokerModule.class);
-            this.addRequestHandler((short)5000, BauCuaModule.class);
+            // comment baucua
+//            this.addRequestHandler((short)5000, BauCuaModule.class);
             this.addRequestHandler((short)6000, CaoThapModule.class);
             this.addRequestHandler((short)7000, CandyModule.class);
             this.addRequestHandler((short)18000, ChatModule.class);
