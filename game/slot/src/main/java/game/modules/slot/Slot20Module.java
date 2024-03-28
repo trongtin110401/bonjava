@@ -8,6 +8,7 @@ import bitzero.server.core.IBZEvent;
 import bitzero.server.entities.User;
 import bitzero.server.extensions.data.DataCmd;
 import bitzero.util.common.business.Debug;
+import com.google.gson.Gson;
 import com.vinplay.dal.common.BroadCastUserState;
 import com.vinplay.vbee.common.models.slot.SlotFreeSpin;
 import com.vinplay.vbee.common.utils.CommonUtils;
@@ -53,6 +54,9 @@ public abstract class Slot20Module extends SlotModule {
                     initPotValues[i] = Integer.parseInt(arr[i]);
                 }
                 this.jackpots = this.service.getPots(gameName);
+
+                System.out.println("==> POT " + gameName + ":" + new Gson().toJson(this.jackpots));
+
                 if (jackpots == null || jackpots.length == 0) {
                     jackpots = new long[4];
                     jackpots[0] = 5000000;
@@ -60,6 +64,7 @@ public abstract class Slot20Module extends SlotModule {
                     jackpots[2] = 500000000;
                     jackpots[3] = 0;
                 }
+                System.out.println("====> POT " + gameName + ":" + new Gson().toJson(this.jackpots));
 
                 Debug.trace(this.gameName + " POTS: " + CommonUtils.arrayLongToString(this.jackpots));
                 funds = this.service.getFunds(gameName);
