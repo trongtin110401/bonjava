@@ -69,7 +69,7 @@ public abstract class Slot25BasicModule extends SlotModule {
             funds = this.service.getFunds(this.gameName);
             Debug.trace(this.gameName + ": " + CommonUtils.arrayLongToString(funds));
         } catch (Exception e) {
-            Debug.trace("Init " + this.gameName + " error ", e);
+            System.out.println(ExceptionUtils.getStackTrace(e));
         }
 
 //        this.rooms.put(this.gameName + "_vin_100",
