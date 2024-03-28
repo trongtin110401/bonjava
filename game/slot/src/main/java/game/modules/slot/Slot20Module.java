@@ -21,6 +21,7 @@ import game.modules.slot.listener.SlotLogListener;
 import game.modules.slot.room.Slot20Room;
 import game.modules.slot.utils.SlotUtils;
 import game.util.ConfigGame;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -70,7 +71,7 @@ public abstract class Slot20Module extends SlotModule {
                 funds = this.service.getFunds(gameName);
                 Debug.trace(this.gameName + " FUNDS: " + CommonUtils.arrayLongToString(funds));
             } catch (Exception e) {
-                Debug.trace("Init POKE GO error ", e);
+                System.out.println(ExceptionUtils.getStackTrace(e));
             }
             // adding rooms
 //            this.rooms.put(this.gameName + "_vin_100",
