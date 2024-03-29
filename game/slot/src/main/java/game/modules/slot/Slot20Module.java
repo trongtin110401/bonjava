@@ -149,8 +149,7 @@ public abstract class Slot20Module extends SlotModule {
         Slot20UpdatePotMsg msg = new Slot20UpdatePotMsg(commandCollection.UPDATE_POT_MESSAGE);
         msg.value100 = this.jackpots[0];
         msg.value1000 = this.jackpots[1];
-        msg.value5000 = this.jackpots[2];
-        msg.value10000 = this.jackpots[3];
+        msg.value10000 = this.jackpots[2];
         msg.x2Room100 = this.x2Arr[0];
         msg.x2Room1000 = this.x2Arr[1];
         return msg;
