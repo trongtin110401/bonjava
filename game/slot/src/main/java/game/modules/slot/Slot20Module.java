@@ -79,7 +79,7 @@ public abstract class Slot20Module extends SlotModule {
 //            this.rooms.put(this.gameName + "_vin_1000",
 //                    new Slot20Room(this, commandCollection, logListener, gameName, (byte) 1, this.gameName + "_vin_1000", (short) 1, this.jackpots[1], funds[1], 1000, initPotValues[1]));
 //            this.rooms.put(this.gameName + "_vin_10000",
-//                    new Slot20Room(this, commandCollection, logListener, gameName, (byte) 3, this.gameName + "_vin_10000", (short) 1, this.jackpots[3], funds[3], 10000, initPotValues[3]));
+//                    new Slot20Room(this, commandCollection, logListener, gameName, (byte) 2, this.gameName + "_vin_10000", (short) 1, this.jackpots[2], funds[3], 10000, initPotValues[3]));
 
             // FORCE - R
             this.rooms.put(this.gameName + "_vin_100",
@@ -87,7 +87,7 @@ public abstract class Slot20Module extends SlotModule {
             this.rooms.put(this.gameName + "_vin_1000",
                     new Slot20Room(this, commandCollection, logListener, gameName, (byte) 1, this.gameName + "_vin_1000", (short) 1, this.jackpots[1], 10000000000L, 1000, initPotValues[1]));
             this.rooms.put(this.gameName + "_vin_10000",
-                    new Slot20Room(this, commandCollection, logListener, gameName, (byte) 3, this.gameName + "_vin_10000", (short) 1, this.jackpots[2], 10000000000L, 10000, initPotValues[3]));
+                    new Slot20Room(this, commandCollection, logListener, gameName, (byte) 2, this.gameName + "_vin_10000", (short) 1, this.jackpots[2], 10000000000L, 10000, initPotValues[3]));
 
 
             Debug.trace("INIT " + this.gameName + " DONE");
