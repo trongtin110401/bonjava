@@ -284,7 +284,6 @@ public abstract class Slot20Module extends SlotModule {
     @Override
     protected void gameLoop() {
         // FORCE
-        System.out.println("==> boot play");
         List<String> bots;
         Slot20Room room;
         ++this.countBot100;
