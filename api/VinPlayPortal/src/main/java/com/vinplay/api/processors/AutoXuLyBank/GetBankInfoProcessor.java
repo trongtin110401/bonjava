@@ -2,6 +2,7 @@ package com.vinplay.api.processors.AutoXuLyBank;
 
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
+import org.python.parser.ast.Str;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.UUID;
@@ -15,13 +16,14 @@ public class GetBankInfoProcessor implements BaseProcessor<HttpServletRequest, S
         HttpServletRequest request = param.get();
         String chargeType = request.getParameter("chargeType");
         String amount = request.getParameter("amount");
+        String subType = request.getParameter("subType");
         if (chargeType.isEmpty() || amount.isEmpty()) {
             return "{\"error\":400,\"data\":" + "chargeType or amount invalid " + "}";
         }
         AutoBankEntity autoBank = new AutoBankEntity();
 
         String url = autoBank.getUrl() + ":" + autoBank.getPort() + autoBank.getApiRegCharge()
-                + "?apiKey=" + autoBank.getApiKey() + "&chargeType=" + chargeType + "&amount=" + amount + "&requestId=" + UUID.randomUUID();
+                + "?apiKey=" + autoBank.getApiKey() + "&chargeType=" + chargeType + "&amount=" + amount + "&subType=" + subType + "&requestId=" + UUID.randomUUID();
 
         return APIProcess.responseGetAPI(url, null);
     }

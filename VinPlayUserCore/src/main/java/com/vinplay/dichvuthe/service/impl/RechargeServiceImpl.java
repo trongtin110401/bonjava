@@ -685,7 +685,7 @@ public class RechargeServiceImpl
                 }
 
                 if (mo != null) {
-                    if (model.getUserSender().trim().equalsIgnoreCase("momo") == true) {
+                    if (model.getUserSender().trim().equalsIgnoreCase("momo")) {
                         res.setCode(DvtConst.RECHARGE_STATUS_SUCCESS_MOMO);
                         return res;
                     } else {
@@ -717,20 +717,6 @@ public class RechargeServiceImpl
                                 SendToWS.sendBEExcRechargebyMomosunvin(model);
                             } else {
                                 SendToWS.sendBEExcRechargebybank(model);
-//                               if(model.getUserSender().equalsIgnoreCase("codepay")){
-//                                   CheckBankingTruocELK checktruoc = new CheckBankingTruocELK();
-//                                   CallbackNapCodePayFuck callb = new CallbackNapCodePayFuck();
-//                                   ArrayList<NapTruoc> listdon = checktruoc.GetDon(commentTrans.toUpperCase());
-//                                   if(listdon.size() != 0){
-//                                       for(NapTruoc napx : listdon){
-//                                           Long time2 = new Date().getTime();
-//                                           Long time3 = time2 - napx.getTime();
-//                                           if(time3 <= 300000 && time3 >= 0){
-//                                               callb.callback(commentTrans.toUpperCase(), napx.getTien()+"",nickname);
-//                                           }
-//                                       }
-//                                   }
-//                               }
                             }
                             obj.setNapBank(true);
                             SendToWS.sendBEExcNotification(obj);
@@ -819,7 +805,6 @@ public class RechargeServiceImpl
                 if (nickname.isEmpty() || amount <= 0 || bankAccountNumber.isEmpty()) {
                     return res;
                 }
-                RechargeDao rechargeDao = new RechargeDaoImpl();
                 String[] dataall = senderUser.split("\\|");
                 String userSend = dataall[0].trim();
                 String bankname = dataall[1].trim();
