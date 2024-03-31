@@ -120,7 +120,7 @@ public class Slot25ExtendRoom extends SlotRoom {
      * @param referenceId mã tham chiếu giao dịch
      * @return ResultBenleyMsg model kết quả
      */
-    public synchronized Slot25ResultMsg playNormal(String username, String linesStr, long referenceId) {
+    public Slot25ResultMsg playNormal(String username, String linesStr, long referenceId) {
 
         // kết quả mặc định
         short result = ResultSlot.MISSED;
