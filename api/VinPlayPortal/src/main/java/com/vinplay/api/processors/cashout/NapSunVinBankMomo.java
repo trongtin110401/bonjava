@@ -1,5 +1,6 @@
 package com.vinplay.api.processors.cashout;
 
+import com.vinplay.api.processors.AutoXuLyBank.AutoBankEntity;
 import com.vinplay.common.HttpCommon;
 import com.vinplay.vbee.common.models.BankPartnerModel;
 import okhttp3.*;
@@ -7,6 +8,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.UUID;
 
 public class NapSunVinBankMomo {
     public String AutoCodePay(String tranID, String bankCode) throws IOException {
@@ -85,11 +87,14 @@ public class NapSunVinBankMomo {
 
     public BankPartnerModel sendBenThuBaTaoCodePay(String bankCode, String type, long amount, String requestId) {
         try {
-            String sign = amount + type + requestId + "dg238iyfuifhdsg54gg5";
+            String sign = amount + type + requestId + UUID.randomUUID();
             sign = DigestUtils.md5Hex(sign);
+
+            AutoBankEntity autoBank = new AutoBankEntity();
+            String url = autoBank.getUrl() + ":" + autoBank.getPort() + autoBank.getApiRegCharge()
+                    + "?apiKey=" + autoBank.getApiKey() + "&chargeType="+type+"&amount="+amount+"&requestId="+requestId+"&subType="+bankCode+"&callback=https://iwspay.apisieunhangao.net/api/bank/xxxxfaddf2wefdasdf&sign="+sign;
             Request request = new Request.Builder()
-//                    .url("http://charging.go88.bz:10007/api/MM/RegCharge?apiKey=903d43ef-4c4a-43fb-8e24-d96770a1bb49&chargeType="+type+"&amount="+amount+"&requestId="+requestId)
-                    .url("http://fplay.vip:10007/api/MM/RegCharge?apiKey=903d43ef-4c4a-43fb-8e24-d96770a1bb49&chargeType="+type+"&amount="+amount+"&requestId="+requestId+"&subType="+bankCode+"&callback=https://iwspay.apisieunhangao.net/api/bank/xxxxfaddf2wefdasdf&sign="+sign)
+                    .url(url)
                     .method("GET", null)
                     .build();
             Response response = HttpCommon.getInstance().httpClient.newCall(request).execute();

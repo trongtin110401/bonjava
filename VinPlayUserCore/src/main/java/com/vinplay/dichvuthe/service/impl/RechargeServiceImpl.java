@@ -685,7 +685,7 @@ public class RechargeServiceImpl
                 }
 
                 if (mo != null) {
-                    if (model.getUserSender().trim().equalsIgnoreCase("momo") == true) {
+                    if (model.getUserSender().trim().equalsIgnoreCase("momo")) {
                         res.setCode(DvtConst.RECHARGE_STATUS_SUCCESS_MOMO);
                         return res;
                     } else {
@@ -717,20 +717,6 @@ public class RechargeServiceImpl
                                 SendToWS.sendBEExcRechargebyMomosunvin(model);
                             } else {
                                 SendToWS.sendBEExcRechargebybank(model);
-//                               if(model.getUserSender().equalsIgnoreCase("codepay")){
-//                                   CheckBankingTruocELK checktruoc = new CheckBankingTruocELK();
-//                                   CallbackNapCodePayFuck callb = new CallbackNapCodePayFuck();
-//                                   ArrayList<NapTruoc> listdon = checktruoc.GetDon(commentTrans.toUpperCase());
-//                                   if(listdon.size() != 0){
-//                                       for(NapTruoc napx : listdon){
-//                                           Long time2 = new Date().getTime();
-//                                           Long time3 = time2 - napx.getTime();
-//                                           if(time3 <= 300000 && time3 >= 0){
-//                                               callb.callback(commentTrans.toUpperCase(), napx.getTien()+"",nickname);
-//                                           }
-//                                       }
-//                                   }
-//                               }
                             }
                             obj.setNapBank(true);
                             SendToWS.sendBEExcNotification(obj);
@@ -819,7 +805,6 @@ public class RechargeServiceImpl
                 if (nickname.isEmpty() || amount <= 0 || bankAccountNumber.isEmpty()) {
                     return res;
                 }
-                RechargeDao rechargeDao = new RechargeDaoImpl();
                 String[] dataall = senderUser.split("\\|");
                 String userSend = dataall[0].trim();
                 String bankname = dataall[1].trim();
@@ -837,23 +822,11 @@ public class RechargeServiceImpl
 
                 if (userSend.equalsIgnoreCase("codepay") == true) {
                     insertCodepayDon(TranID, nickname, timeAt, timeAt, amount, 1, bankname, bankAccountNumber, bankAccname, commentTrans, "", userSend);
-                    //InsertCodepayDonELK(TranID,nickname, timeAt, timeAt, amount, 1, bankname, bankAccountNumber, bankAccname, commentTrans, "",userSend);
                 } else if (userSend.equalsIgnoreCase("momo") == true) {
                     insertMomoDon(TranID, nickname, timeAt, timeAt, amount, 1, bankname, bankAccountNumber, bankAccname, commentTrans, "", userSend);
-                    //InsertMomoDonELK(TranID,nickname, timeAt, timeAt, amount, 1, bankname, bankAccountNumber, bankAccname, commentTrans, "",userSend);
                 } else {
                     insertNHDon(TranID, nickname, timeAt, timeAt, amount, 1, bankname, bankAccountNumber, bankAccname, commentTrans, "", userSend);
-                    //InsertNHDonELK(TranID,nickname, timeAt, timeAt, amount, 1, bankname, bankAccountNumber, bankAccname, commentTrans, "",userSend);
                 }
-
-//                HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
-//                if (model.getUserSender().equalsIgnoreCase("codepay")) {
-//                    historyTransDao.insertTransaction(new HistoryTransModel(bankname + "|" + commentTrans, "CodePay", "Nạp tiền", "", "Đang xử lý", "Đang chờ xử lý", nickname, HistoryTransConst.BANK, model.Id));
-//                } else if (model.getUserSender().equalsIgnoreCase("momo")) {
-//                    historyTransDao.insertTransaction(new HistoryTransModel("Nạp NH", "Momo", "Nạp tiền", "", "Đang xử lý", "Đang chờ xử lý", nickname, HistoryTransConst.BANK, model.Id));
-//                } else {
-//                    historyTransDao.insertTransaction(new HistoryTransModel(bankname + "|" + commentTrans, "Ngân Hàng", "Nạp tiền", String.valueOf(amount), "Đang xử lý", "Đang chờ xử lý", nickname, HistoryTransConst.BANK, model.Id));
-//                }
 
                 NotificationAdminObj obj = new NotificationAdminObj();
                 try {
