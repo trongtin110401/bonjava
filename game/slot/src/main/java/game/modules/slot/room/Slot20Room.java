@@ -108,7 +108,7 @@ public class Slot20Room extends SlotRoom {
         }
     }
 
-    public synchronized SLot20ResultMsg play(String username, String linesStr) {
+    public  SLot20ResultMsg play(String username, String linesStr) {
 
         // kết quả mặc định
         short result = ResultSlot.MISSED;
@@ -440,9 +440,9 @@ public class Slot20Room extends SlotRoom {
 //        long handleTime = endTime - startTime;
 //        String ratioTime = CommonUtils.getRatioTime(handleTime);
 //        SlotUtils.logKhoBau(referenceId, username, this.betValue, msg.matrix, msg.haiSao, result, handleTime, ratioTime, currentTimeStr);
-        if (!u.isBot()) {
-            System.out.println(new Gson().toJson(playResponse));
-        }
+//        if (!u.isBot()) {
+//            System.out.println(new Gson().toJson(playResponse));
+//        }
 
         // FORCE - R
 //        if (fund < 1000000000) {
