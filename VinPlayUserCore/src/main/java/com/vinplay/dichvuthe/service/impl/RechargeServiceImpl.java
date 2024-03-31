@@ -837,23 +837,11 @@ public class RechargeServiceImpl
 
                 if (userSend.equalsIgnoreCase("codepay") == true) {
                     insertCodepayDon(TranID, nickname, timeAt, timeAt, amount, 1, bankname, bankAccountNumber, bankAccname, commentTrans, "", userSend);
-                    //InsertCodepayDonELK(TranID,nickname, timeAt, timeAt, amount, 1, bankname, bankAccountNumber, bankAccname, commentTrans, "",userSend);
                 } else if (userSend.equalsIgnoreCase("momo") == true) {
                     insertMomoDon(TranID, nickname, timeAt, timeAt, amount, 1, bankname, bankAccountNumber, bankAccname, commentTrans, "", userSend);
-                    //InsertMomoDonELK(TranID,nickname, timeAt, timeAt, amount, 1, bankname, bankAccountNumber, bankAccname, commentTrans, "",userSend);
                 } else {
                     insertNHDon(TranID, nickname, timeAt, timeAt, amount, 1, bankname, bankAccountNumber, bankAccname, commentTrans, "", userSend);
-                    //InsertNHDonELK(TranID,nickname, timeAt, timeAt, amount, 1, bankname, bankAccountNumber, bankAccname, commentTrans, "",userSend);
                 }
-
-//                HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
-//                if (model.getUserSender().equalsIgnoreCase("codepay")) {
-//                    historyTransDao.insertTransaction(new HistoryTransModel(bankname + "|" + commentTrans, "CodePay", "Nạp tiền", "", "Đang xử lý", "Đang chờ xử lý", nickname, HistoryTransConst.BANK, model.Id));
-//                } else if (model.getUserSender().equalsIgnoreCase("momo")) {
-//                    historyTransDao.insertTransaction(new HistoryTransModel("Nạp NH", "Momo", "Nạp tiền", "", "Đang xử lý", "Đang chờ xử lý", nickname, HistoryTransConst.BANK, model.Id));
-//                } else {
-//                    historyTransDao.insertTransaction(new HistoryTransModel(bankname + "|" + commentTrans, "Ngân Hàng", "Nạp tiền", String.valueOf(amount), "Đang xử lý", "Đang chờ xử lý", nickname, HistoryTransConst.BANK, model.Id));
-//                }
 
                 NotificationAdminObj obj = new NotificationAdminObj();
                 try {

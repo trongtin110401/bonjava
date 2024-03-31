@@ -877,43 +877,6 @@ public class LobbyModule
 
     private synchronized void depositCodePayManual(User user, DataCmd dataCmd) {
         try {
-//            CodePayCmd cmd = new CodePayCmd(dataCmd);
-//            String nickname = user.getName();
-//            String bankcode = "";
-//            String bank = cmd.bank;
-//            String cardName = cmd.cardName;
-//            String cardCode = cmd.cardCode;
-//            if(bank.equalsIgnoreCase("techcombank")){
-//                bankcode = "10040";
-//            }else if(bank.equalsIgnoreCase("Vietinbank")){
-//                bankcode = "10020";
-//            }else if(bank.equalsIgnoreCase("Vietcombank")){
-//                bankcode = "10010";
-//            }else if(bank.equalsIgnoreCase("BIDV")){
-//                bankcode = "10050";
-//            }else if(bank.equalsIgnoreCase("ACB")){
-//                bankcode = "10060";
-//            }else if(bank.equalsIgnoreCase("MBBank") || bank.equalsIgnoreCase("MB Bank")){
-//                bankcode = "10030";
-//            }else{
-//                bankcode = "error";
-//            }
-//
-//            String TranID = String.valueOf(VinPlayUtils.generateTransId());
-//            String commentcode = "SN"+GenContent(nickname);
-//            String nick = GetNicknameByCode(commentcode);
-//            if(nick == null){
-//                InsertCodeUserBankELK(nickname, commentcode);
-//            }
-////            String resp = "{\"errorCode\":200,\"errorDescription\":\"Thanh Cong.\",\"infomationAccount\":\""+encodedString+"\",\"comment\":\""+commentcode+"\",\"qrcode\":\"null\",\"type\":\"Bank\",\"bankCode\":\""+bankcode+"\",\"TrainID\": \""+TranID+"\"}";
-//            String dataall = "CodePay" + "|"+bank+"|"+cardName+"|"+TranID+"|"+ commentcode;
-//            RechargeServiceImpl reg = new RechargeServiceImpl();
-//            reg.rechargeByBankManual(nickname,1, cardCode, dataall);
-//
-//            CodePayMsg msg = new CodePayMsg();
-//            msg.Error = (byte) 200;
-//            msg.comment = commentcode;
-//            this.send((BaseMsg) msg, user);
 
             CodePayCmd cmd = new CodePayCmd(dataCmd);
             String nickname = user.getName();

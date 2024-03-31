@@ -951,6 +951,10 @@
             <name>Update link social</name>
             <path>com.vinplay.api.processors.UpdateLinkSocialProcessor</path>
         </command>
-
+        <command>
+            <id>4114</id>
+            <name>Get list banks</name>
+            <path>com.vinplay.api.processors.GetRechargeInfoProcessor</path>
+        </command>
     </commands>
 </portal>
