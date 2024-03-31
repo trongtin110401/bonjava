@@ -34,6 +34,7 @@ public class GetMomoSunProcress implements BaseProcessor<HttpServletRequest, Str
             HttpServletRequest request = (HttpServletRequest) param.get();
             Gson gson = new Gson();
             String accessToken = request.getParameter("at");
+
             RechargeServiceImpl rechargeService = new RechargeServiceImpl();
             String nickname = this.getUserNameByAccessToken(accessToken);
             DepositBankModel depositBankModel = rechargeService.finMoMoDeposit(nickname);
@@ -41,7 +42,6 @@ public class GetMomoSunProcress implements BaseProcessor<HttpServletRequest, Str
             if(depositBankModel != null) {
                 Date currentDate = new Date();
                 Date dateCreate = sim.parse(depositBankModel.getCreatedAt());
-//                Long time_end = Math.abs(time_check - timelog);
                 Long time_con = (currentDate.getTime() - dateCreate.getTime())/1000;
                 if(time_con > 720) {
                     //qua thoi gian
@@ -52,10 +52,9 @@ public class GetMomoSunProcress implements BaseProcessor<HttpServletRequest, Str
                     String respx = "{ \"comment\": \""+depositBankModel.Description+"\", \"TrainID\": \""+depositBankModel.Id+"\", \"phoneNum\": \""+depositBankModel.BankAccountNumber+"\", \"phoneName\": \""+depositBankModel.BankAccountName+"\", \"timeToExpired\": "+real_con+", \"amount\": 1 }";
                     return respx;
                 }
-            }else {
             }
             TelegramUtil telegramUtil = new TelegramUtil();
-            telegramUtil.sendMessageNapRut(nickname + " Th?c hi?n n?p ti?n qua MoMo");
+            telegramUtil.sendMessageNapRut(nickname + " Thực hiện yêu cầu nạp tiền qua momo");
             NapSunVinBankMomo napsun = new NapSunVinBankMomo();
             String TranID = String.valueOf(VinPlayUtils.generateTransId());
             BankPartnerModel requestTaoCode = napsun.sendBenThuBaTaoCodePay("momo", "momo", 1, TranID);

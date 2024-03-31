@@ -14,7 +14,6 @@ public class APIProcess {
         OkHttpClient httpClient = new OkHttpClient();
         OkHttpClient client = httpClient.newBuilder()
                 .build();
-        AutoBankEntity autoBank = new AutoBankEntity();
 
         Request request = new Request.Builder()
                 .url(url)
@@ -26,7 +25,9 @@ public class APIProcess {
                 return "{\"error\":404,\"data\":" + "not found" + "}";
             }
             Gson gson = new Gson();
-            return gson.toJson(response.body().string());
+            Object jsonObject = gson.fromJson(response.body().string(), Object.class);
+            return gson.toJson(jsonObject);
+
         } catch (IOException e) {
             e.printStackTrace();
             return "{\"error\":404,\"data\":" + "not found" + "}";
