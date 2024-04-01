@@ -2675,11 +2675,8 @@ public class LobbyModule
             msg.sparta5000 = spartan1000;
             msg.sparta10000 = spartan10000;
             msg.baucuatofund = baucauto;
-            String json = new Gson().toJson(msg);
-            System.out.println(json);
             for (User user : this.usersSubJackpot) {
                 if (user == null) continue;
-                System.out.println("send jackpot to " + user.getName() + " " + json);
                 this.send(msg, user);
             }
         } catch (Exception e) {
