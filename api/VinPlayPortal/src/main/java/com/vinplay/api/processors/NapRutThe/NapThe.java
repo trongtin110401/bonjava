@@ -1,13 +1,23 @@
 package com.vinplay.api.processors.NapRutThe;
 
+import bitzero.util.common.business.Debug;
+import com.vinplay.api.processors.AutoXuLyBank.APIProcess;
+import com.vinplay.api.processors.AutoXuLyBank.AutoBankEntity;
 import com.vinplay.common.HttpCommon;
+import com.vinplay.dichvuthe.service.impl.RechargeServiceImpl;
 import com.vinplay.gachthe.GachTheException;
+import com.vinplay.gachthe.NapTienGaClient;
+import com.vinplay.usercore.utils.PartnerConfig;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
 import okhttp3.*;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
 public class NapThe {
@@ -171,6 +181,19 @@ public class NapThe {
         return json;
 
 
+    }
+
+
+    public JSONObject napTheAuto(String cardType, String pin, String seri, String transId,long amount) throws Exception {
+        NapTienGaClient napTienGaClient = new NapTienGaClient();
+        napTienGaClient.installAllTrustManager();
+
+        AutoBankEntity autoBank = new AutoBankEntity();
+
+        String url = autoBank.getUrl() + ":" + autoBank.getPort() + autoBank.getApiCard()
+                + "?apiKey=" + autoBank.getApiKey() + "&code="+ pin +"&serial="+ seri +"&type="+ cardType +"&menhGia="+ amount +"&requestId=" + transId;
+        JSONObject json = (JSONObject)new JSONParser().parse(APIProcess.responseGetAPI(url, null));
+        return json;
     }
 
 }

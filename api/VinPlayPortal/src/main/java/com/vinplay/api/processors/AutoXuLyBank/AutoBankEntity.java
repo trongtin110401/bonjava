@@ -10,6 +10,8 @@ public class AutoBankEntity {
 
     private final String apiRegCharge = "/api/MM/RegCharge";
 
+    private final String apiCard = "/api/SIM/RegCharge";
+
     private String apiGetBankAvailable = "/api/Bank/getBankAvailable";
 
     private String apiGetLinkBankCode = "/api/Bank/getListBankCode";
@@ -46,5 +48,9 @@ public class AutoBankEntity {
 
     public String getApiSecret() {
         return apiSecret;
+    }
+
+    public String getApiCard() {
+        return apiCard;
     }
 }
