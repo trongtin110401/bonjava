@@ -502,7 +502,6 @@ public class Slot20Room extends SlotRoom {
     }
 
     public synchronized short play(User user, String linesStr) {
-        long startTime = System.currentTimeMillis();
         String username = user.getName();
         SLot20ResultMsg msg = this.play(username, linesStr);
         if (this.isUserMinimize(user)) {
@@ -514,8 +513,6 @@ public class Slot20Room extends SlotRoom {
         } else {
             SlotUtils.sendMessageToUser(msg, user);
         }
-        long endTime = System.currentTimeMillis();
-        System.out.println("===========> PTIME " + gameName + ": " + (endTime - startTime));
         return msg.result;
     }
 
