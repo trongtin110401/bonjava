@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  bitzero.server.BitZeroServer
  *  bitzero.server.core.BZEventParam
@@ -64,6 +64,7 @@ import game.modules.minigame.utils.MiniGameUtils;
 import game.modules.minigame.utils.PokeGoUtils;
 import game.utils.ConfigGame;
 import game.utils.GameUtils;
+
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -71,7 +72,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class CandyModule
-extends BaseClientRequestHandler {
+        extends BaseClientRequestHandler {
     private static Runnable pokeGoX2Task = new PokeGoX2Task();
     private static Map<String, MGRoom> rooms = new HashMap<String, MGRoom>();
     private MiniGameService service = new MiniGameServiceImpl();
@@ -85,6 +86,7 @@ extends BaseClientRequestHandler {
     private String fullLines = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20";
     protected CacheService sv = new CacheServiceImpl();
     public String gameName = Games.CANDY.getName();
+
     public void init() {
         super.init();
         long[] pots = new long[6];
@@ -97,32 +99,27 @@ extends BaseClientRequestHandler {
                 initPotValues[i] = Integer.parseInt(arr[i]);
             }
             pots = this.service.getPots(Games.CANDY.getName());
-            Debug.trace((Object)(this.gameName+" POTS: " + CommonUtils.arrayLongToString((long[])pots)));
+            Debug.trace((Object) (this.gameName + " POTS: " + CommonUtils.arrayLongToString((long[]) pots)));
             funds = this.service.getFunds(Games.CANDY.getName());
-            Debug.trace((Object)(this.gameName+" FUNDS: " + CommonUtils.arrayLongToString((long[])funds)));
+            Debug.trace((Object) (this.gameName + " FUNDS: " + CommonUtils.arrayLongToString((long[]) funds)));
+        } catch (Exception e) {
+            Debug.trace((Object[]) new Object[]{"Init " + this.gameName + " error ", e.getMessage()});
         }
-        catch (Exception e) {
-            Debug.trace((Object[])new Object[]{"Init "+this.gameName+" error ", e.getMessage()});
-        }
-        rooms.put(Games.CANDY.getName() + "_vin_100", new MGRoomCandy(Games.CANDY.getName() + "_vin_100", (short)1, pots[0], funds[0], 100, initPotValues[0]));
-        rooms.put(Games.CANDY.getName() + "_vin_1000", new MGRoomCandy(Games.CANDY.getName() + "_vin_1000", (short)1, pots[1], funds[1], 1000, initPotValues[1]));
-        rooms.put(Games.CANDY.getName() + "_vin_10000", new MGRoomCandy(Games.CANDY.getName() + "_vin_10000", (short)1, pots[2], funds[2], 10000, initPotValues[2]));
-        rooms.put(Games.CANDY.getName() + "_xu_1000", new MGRoomCandy(Games.CANDY.getName() + "_xu_1000", (short)0, pots[3], funds[3], 1000, initPotValues[3]));
-        rooms.put(Games.CANDY.getName() + "_xu_10000", new MGRoomCandy(Games.CANDY.getName() + "_xu_10000", (short)0, pots[4], funds[4], 10000, initPotValues[4]));
-        rooms.put(Games.CANDY.getName() + "_xu_100000", new MGRoomCandy(Games.CANDY.getName() + "_xu_100000", (short)0, pots[5], funds[5], 100000, initPotValues[5]));
-        Debug.trace((Object)"INIT "+this.gameName+" DONE");
-        this.getParentExtension().addEventListener((IBZEventType)BZEventType.USER_DISCONNECT, (IBZEventListener)this);
+        rooms.put(Games.CANDY.getName() + "_vin_100", new MGRoomCandy(Games.CANDY.getName() + "_vin_100", (short) 1, pots[0], funds[0], 100, initPotValues[0]));
+        rooms.put(Games.CANDY.getName() + "_vin_1000", new MGRoomCandy(Games.CANDY.getName() + "_vin_1000", (short) 1, pots[1], funds[1], 1000, initPotValues[1]));
+        rooms.put(Games.CANDY.getName() + "_vin_10000", new MGRoomCandy(Games.CANDY.getName() + "_vin_10000", (short) 1, pots[2], funds[2], 10000, initPotValues[2]));
+        Debug.trace((Object) "INIT " + this.gameName + " DONE");
+        this.getParentExtension().addEventListener((IBZEventType) BZEventType.USER_DISCONNECT, (IBZEventListener) this);
         referenceId = this.pgService.getLastReferenceId();
-        Debug.trace((Object)("START "+this.gameName+" REFERENCE ID= " + referenceId));
+        Debug.trace((Object) ("START " + this.gameName + " REFERENCE ID= " + referenceId));
         CacheServiceImpl sv = new CacheServiceImpl();
         try {
             sv.removeKey("poke_go_last_day_x2");
-        }
-        catch (KeyNotFoundException e) {
+        } catch (KeyNotFoundException e) {
             //Debug.trace((Object)"KEY NOT FOUND");
         }
 
-        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate((Runnable)this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
+        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate((Runnable) this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
     }
 
     public static long getNewRefenceId() {
@@ -139,13 +136,13 @@ extends BaseClientRequestHandler {
 
     public void handleServerEvent(IBZEvent ibzevent) throws BZException {
         if (ibzevent.getType() == BZEventType.USER_DISCONNECT) {
-            User user = (User)ibzevent.getParameter((IBZEventParam)BZEventParam.USER);
+            User user = (User) ibzevent.getParameter((IBZEventParam) BZEventParam.USER);
             this.userDis(user);
         }
     }
 
     private void userDis(User user) {
-        MGRoomCandy room = (MGRoomCandy)user.getProperty((Object)"MGROOM_"+this.gameName+"_INFO");
+        MGRoomCandy room = (MGRoomCandy) user.getProperty((Object) "MGROOM_" + this.gameName + "_INFO");
         if (room != null) {
             room.quitRoom(user);
             room.stopAutoPlay(user);
@@ -190,9 +187,9 @@ extends BaseClientRequestHandler {
             room.updatePotToUser(user);
             PokeGoX2Msg msg = new PokeGoX2Msg();
             msg.ngayX2 = "";
-            this.send((BaseMsg)msg, user);
+            this.send((BaseMsg) msg, user);
         } else {
-            Debug.trace((Object)(this.gameName+" SUBSCRIBE: room " + cmd.roomId + " not found"));
+            Debug.trace((Object) (this.gameName + " SUBSCRIBE: room " + cmd.roomId + " not found"));
         }
     }
 
@@ -203,7 +200,7 @@ extends BaseClientRequestHandler {
             room.stopAutoPlay(user);
             room.quitRoom(user);
         } else {
-            Debug.trace((Object)(this.gameName+" UNSUBSCRIBE: room " + cmd.roomId + " not found"));
+            Debug.trace((Object) (this.gameName + " UNSUBSCRIBE: room " + cmd.roomId + " not found"));
         }
     }
 
@@ -221,7 +218,7 @@ extends BaseClientRequestHandler {
 
     private void playPokeGo(User user, DataCmd dataCmd) {
         PlayPokeGoCmd cmd = new PlayPokeGoCmd(dataCmd);
-        MGRoomCandy room = (MGRoomCandy)user.getProperty((Object)"MGROOM_"+this.gameName+"_INFO");
+        MGRoomCandy room = (MGRoomCandy) user.getProperty((Object) "MGROOM_" + this.gameName + "_INFO");
         if (room != null) {
             room.play(user, cmd.lines);
         }
@@ -229,7 +226,7 @@ extends BaseClientRequestHandler {
 
     private void autoPlay(User user, DataCmd dataCMD) {
         AutoPlayPokeGoCmd cmd = new AutoPlayPokeGoCmd(dataCMD);
-        MGRoomCandy room = (MGRoomCandy)user.getProperty((Object)"MGROOM_"+this.gameName+"_INFO");
+        MGRoomCandy room = (MGRoomCandy) user.getProperty((Object) "MGROOM_" + this.gameName + "_INFO");
         if (room != null) {
             if (cmd.autoPlay == 1) {
                 short result = room.play(user, cmd.lines);
@@ -256,7 +253,7 @@ extends BaseClientRequestHandler {
         short moneyType = this.getMoneyTypeFromRoomId(roomId);
         long baseBetting = this.getBaseBetting(roomId);
         String roomName = this.getRoomName(moneyType, baseBetting);
-        MGRoomCandy room = (MGRoomCandy)rooms.get(roomName);
+        MGRoomCandy room = (MGRoomCandy) rooms.get(roomName);
         return room;
     }
 
@@ -293,7 +290,7 @@ extends BaseClientRequestHandler {
     }
 
     private int getCountTimeBot100() {
-        int n = ConfigGame.getIntValue(this.gameName+"_bot_100", 0);
+        int n = ConfigGame.getIntValue(this.gameName + "_bot_100", 0);
         if (n == 0) {
             return 0;
         }
@@ -304,7 +301,7 @@ extends BaseClientRequestHandler {
     }
 
     private int getCountTimeBot1000() {
-        int n = ConfigGame.getIntValue(this.gameName+"_bot_1000", 0);
+        int n = ConfigGame.getIntValue(this.gameName + "_bot_1000", 0);
         if (n == 0) {
             return 0;
         }
@@ -315,7 +312,7 @@ extends BaseClientRequestHandler {
     }
 
     private int getCountTimeBot10000() {
-        int n = ConfigGame.getIntValue(this.gameName+"_bot_10000", 0);
+        int n = ConfigGame.getIntValue(this.gameName + "_bot_10000", 0);
         if (n == 0) {
             return 0;
         }
@@ -331,37 +328,37 @@ extends BaseClientRequestHandler {
         ++this.countBot100;
         if (this.countBot100 >= this.getCountTimeBot100()) {
             this.countBot100 = 0;
-            bots = BotMinigame.getBots(ConfigGame.getIntValue(this.gameName+"_num_bot_100"), "vin");
+            bots = BotMinigame.getBots(ConfigGame.getIntValue(this.gameName + "_num_bot_100"), "vin");
             for (String bot : bots) {
                 if (bot == null) continue;
-                room = (MGRoomCandy)rooms.get(Games.CANDY.getName() + "_vin_100");
+                room = (MGRoomCandy) rooms.get(Games.CANDY.getName() + "_vin_100");
                 room.play(bot, this.fullLines);
             }
         }
         ++this.countBot1000;
         if (this.countBot1000 >= this.getCountTimeBot1000()) {
             this.countBot1000 = 0;
-            bots = BotMinigame.getBots(ConfigGame.getIntValue(this.gameName+"_num_bot_1000"), "vin");
+            bots = BotMinigame.getBots(ConfigGame.getIntValue(this.gameName + "_num_bot_1000"), "vin");
             for (String bot : bots) {
                 if (bot == null) continue;
-                room = (MGRoomCandy)rooms.get(Games.CANDY.getName() + "_vin_1000");
+                room = (MGRoomCandy) rooms.get(Games.CANDY.getName() + "_vin_1000");
                 room.play(bot, this.fullLines);
             }
         }
         ++this.countBot10000;
         if (this.countBot10000 >= this.getCountTimeBot10000()) {
             this.countBot10000 = 0;
-            bots = BotMinigame.getBots(ConfigGame.getIntValue(this.gameName+"_num_bot_10000"), "vin");
+            bots = BotMinigame.getBots(ConfigGame.getIntValue(this.gameName + "_num_bot_10000"), "vin");
             for (String bot : bots) {
                 if (bot == null) continue;
-                room = (MGRoomCandy)rooms.get(Games.CANDY.getName() + "_vin_10000");
+                room = (MGRoomCandy) rooms.get(Games.CANDY.getName() + "_vin_10000");
                 room.play(bot, this.fullLines);
             }
         }
     }
 
     private static final class PokeGoX2Task
-    implements Runnable {
+            implements Runnable {
         private PokeGoX2Task() {
         }
 
@@ -372,7 +369,7 @@ extends BaseClientRequestHandler {
     }
 
     private final class GameLoopTask
-    implements Runnable {
+            implements Runnable {
         private GameLoopTask() {
         }
 

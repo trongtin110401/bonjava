@@ -251,8 +251,8 @@ public class MGRoomCandy
                             for (AwardsOnLine entry2 : awardsOnLines) {
                                 if (entry2.getAward() == Award.TRIPLE_POKER_BALL) {
                                     // Chan nguoi choi no hu
-                                     if (!u.isBot()) continue block4;
-                                     if(!forceNoHu) continue block4;
+                                    if (!u.isBot()) continue block4;
+                                    if (!forceNoHu) continue block4;
                                     totalPrizes += this.pot;
                                 } else {
                                     totalPrizes += entry2.getMoney();
@@ -400,15 +400,13 @@ public class MGRoomCandy
     @Override
     protected void checkResetPot() {
         try {
-
-            int isReset = sv.getValueInt("reset_pot_" + this.gameName + "_" + this.betValue);
+            int isReset = sv.getValueInt("reset_pot_" + this.gameName + "_" + this.betValue, 0);
             if (isReset == 1) {
                 this.pot = this.initPotValue;
                 this.fund = 0;
                 this.savePot();
                 this.saveFund();
                 this.sv.removeKey("reset_pot_" + this.gameName + "_" + this.betValue);
-
             }
         } catch (Exception e) {
             e.printStackTrace();
