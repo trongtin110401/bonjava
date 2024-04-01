@@ -75,5 +75,229 @@ public class UpdateJackpotMsg extends BaseMsgEx {
         this.putLong(bf,this.txXiu);
         return this.packBuffer(bf);
     }
+
+    public long getPotMiniPoker100() {
+        return potMiniPoker100;
+    }
+
+    public void setPotMiniPoker100(long potMiniPoker100) {
+        this.potMiniPoker100 = potMiniPoker100;
+    }
+
+    public long getPotMiniPoker1000() {
+        return potMiniPoker1000;
+    }
+
+    public void setPotMiniPoker1000(long potMiniPoker1000) {
+        this.potMiniPoker1000 = potMiniPoker1000;
+    }
+
+    public long getPotMiniPoker10000() {
+        return potMiniPoker10000;
+    }
+
+    public void setPotMiniPoker10000(long potMiniPoker10000) {
+        this.potMiniPoker10000 = potMiniPoker10000;
+    }
+
+    public long getPotPokeGo100() {
+        return potPokeGo100;
+    }
+
+    public void setPotPokeGo100(long potPokeGo100) {
+        this.potPokeGo100 = potPokeGo100;
+    }
+
+    public long getPotPokeGo1000() {
+        return potPokeGo1000;
+    }
+
+    public void setPotPokeGo1000(long potPokeGo1000) {
+        this.potPokeGo1000 = potPokeGo1000;
+    }
+
+    public long getPotPokeGo10000() {
+        return potPokeGo10000;
+    }
+
+    public void setPotPokeGo10000(long potPokeGo10000) {
+        this.potPokeGo10000 = potPokeGo10000;
+    }
+
+    public long getPotKhoBau100() {
+        return potKhoBau100;
+    }
+
+    public void setPotKhoBau100(long potKhoBau100) {
+        this.potKhoBau100 = potKhoBau100;
+    }
+
+    public long getPotKhoBau1000() {
+        return potKhoBau1000;
+    }
+
+    public void setPotKhoBau1000(long potKhoBau1000) {
+        this.potKhoBau1000 = potKhoBau1000;
+    }
+
+    public long getPotKhoBau10000() {
+        return potKhoBau10000;
+    }
+
+    public void setPotKhoBau10000(long potKhoBau10000) {
+        this.potKhoBau10000 = potKhoBau10000;
+    }
+
+    public long getPotNDV100() {
+        return potNDV100;
+    }
+
+    public void setPotNDV100(long potNDV100) {
+        this.potNDV100 = potNDV100;
+    }
+
+    public long getPotNDV1000() {
+        return potNDV1000;
+    }
+
+    public void setPotNDV1000(long potNDV1000) {
+        this.potNDV1000 = potNDV1000;
+    }
+
+    public long getPotNDV10000() {
+        return potNDV10000;
+    }
+
+    public void setPotNDV10000(long potNDV10000) {
+        this.potNDV10000 = potNDV10000;
+    }
+
+    public long getPotAvengers100() {
+        return potAvengers100;
+    }
+
+    public void setPotAvengers100(long potAvengers100) {
+        this.potAvengers100 = potAvengers100;
+    }
+
+    public long getPotAvengers1000() {
+        return potAvengers1000;
+    }
+
+    public void setPotAvengers1000(long potAvengers1000) {
+        this.potAvengers1000 = potAvengers1000;
+    }
+
+    public long getPotAvengers10000() {
+        return potAvengers10000;
+    }
+
+    public void setPotAvengers10000(long potAvengers10000) {
+        this.potAvengers10000 = potAvengers10000;
+    }
+
+    public long getVqv100() {
+        return vqv100;
+    }
+
+    public void setVqv100(long vqv100) {
+        this.vqv100 = vqv100;
+    }
+
+    public long getVqv1000() {
+        return vqv1000;
+    }
+
+    public void setVqv1000(long vqv1000) {
+        this.vqv1000 = vqv1000;
+    }
+
+    public long getVqv10000() {
+        return vqv10000;
+    }
+
+    public void setVqv10000(long vqv10000) {
+        this.vqv10000 = vqv10000;
+    }
+
+    public long getFish100() {
+        return fish100;
+    }
+
+    public void setFish100(long fish100) {
+        this.fish100 = fish100;
+    }
+
+    public long getFish1000() {
+        return fish1000;
+    }
+
+    public void setFish1000(long fish1000) {
+        this.fish1000 = fish1000;
+    }
+
+    public long getSparta100() {
+        return sparta100;
+    }
+
+    public void setSparta100(long sparta100) {
+        this.sparta100 = sparta100;
+    }
+
+    public long getSparta1000() {
+        return sparta1000;
+    }
+
+    public void setSparta1000(long sparta1000) {
+        this.sparta1000 = sparta1000;
+    }
+
+    public long getSparta5000() {
+        return sparta5000;
+    }
+
+    public void setSparta5000(long sparta5000) {
+        this.sparta5000 = sparta5000;
+    }
+
+    public long getSparta10000() {
+        return sparta10000;
+    }
+
+    public void setSparta10000(long sparta10000) {
+        this.sparta10000 = sparta10000;
+    }
+
+    public long getBaucuatofund() {
+        return baucuatofund;
+    }
+
+    public void setBaucuatofund(long baucuatofund) {
+        this.baucuatofund = baucuatofund;
+    }
+
+    public long getTxHu() {
+        return txHu;
+    }
+
+    public void setTxHu(long txHu) {
+        this.txHu = txHu;
+    }
+
+    public long getTxTai() {
+        return txTai;
+    }
+
+    public void setTxTai(long txTai) {
+        this.txTai = txTai;
+    }
+
+    public long getTxXiu() {
+        return txXiu;
+    }
+
+    public void setTxXiu(long txXiu) {
+        this.txXiu = txXiu;
+    }
 }
 
