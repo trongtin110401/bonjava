@@ -474,10 +474,10 @@ public class Slot25BasicRoom extends SlotRoom {
             this.sendNotifyNoHu(username, (byte) 1, playResponse.prize, gameName);
         }
         System.out.println(username + " STEP 20");
-        if (!u.isBot()) {
-            System.out.println(username + " STEP 20_01");
-            System.out.println(new Gson().toJson(playResponse));
-        }
+//        if (!u.isBot()) {
+//            System.out.println(username + " STEP 20_01");
+//            System.out.println(new Gson().toJson(playResponse));
+//        }
         System.out.println(username + " STEP 21");
         return playResponse;
     }
