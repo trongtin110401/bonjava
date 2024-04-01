@@ -172,12 +172,14 @@ public class Slot25BasicRoom extends SlotRoom {
                     long fee = !isSpinningFree ? totalBetValue * percentFee / 100L : 0;
                     MoneyResponse moneyRes = new MoneyResponse(false, "1001");
                     // Không phải lả BOT => Cập nhật tiền
+                    System.out.println(username + " STEP 07");
                     if (!u.isBot()) {
-                        System.out.println(username + " STEP 07");
+                        System.out.println(username + " STEP 071");
                         long changeMoney = isSpinningFree ? 0 : totalBetValue;
                         String desc = isSpinningFree ? "Lượt quay miễn phí " + gameName : "Đặt cược " + gameName;
                         moneyRes = this.userService.updateMoney(username, -changeMoney, this.moneyTypeStr, this.gameName, "Quay " + gameName, desc, fee, referenceId, TransType.START_TRANS);
                     } else {
+                        System.out.println(username + " STEP 072");
                         moneyRes.setSuccess(true);
                     }
 
@@ -464,9 +466,10 @@ public class Slot25BasicRoom extends SlotRoom {
         playResponse.currentMoney = currentMoney;
 
         // update cache tien hu
+        System.out.println(username + " STEP 18");
         cacheService.setValue(CACHE_JACK_POT_VALUE_SLOT + "_" + this.betValue + "_" + gameName, String.valueOf(this.pot));
         if (result == ResultSlot.JACKPOT) {
-            System.out.println(username + " STEP 18");
+            System.out.println(username + " STEP 19");
             this.sendNotifyNoHu(username, (byte) 1, playResponse.prize, gameName);
         }
         if (!u.isBot()) {
