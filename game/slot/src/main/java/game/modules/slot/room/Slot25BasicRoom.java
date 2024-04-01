@@ -123,6 +123,7 @@ public class Slot25BasicRoom extends SlotRoom {
      * @return ResultBenleyMsg model kết quả
      */
     public Slot25ResultMsg playNormal(String username, String linesStr, long referenceId) {
+        System.out.println(username + " STEP 01");
         // kết quả mặc định
         short result = ResultSlot.MISSED;
         // thời điểm hiện tại
@@ -142,17 +143,22 @@ public class Slot25BasicRoom extends SlotRoom {
         // Lớp dịch vụ caching
         CacheServiceImpl cacheService = new CacheServiceImpl();
         try {
+            System.out.println(username + " STEP 02");
             usernameForce = cacheService.getValueStr(CACHE_NAME_USER_SPOT + gameName);
+            System.out.println(username + " STEP 03");
             roomForce = cacheService.getValueStr(CACHE_BET_VALUE_SLOT + gameName);
         } catch (Exception e) {
             usernameForce = "";
             roomForce = "";
         }
         // thông tin user
+        System.out.println(username + " STEP 04");
         UserCacheModel u = userService.getUser(username);
         // số dư hiện tại của user
+        System.out.println(username + " STEP 05");
         long currentMoney = userService.getMoneyUserCache(username, this.moneyTypeStr);
         // thông tin free spin
+        System.out.println(username + " STEP 06");
         int numOfFreeSpin = getNumOfFreeSpin(username);
         boolean isSpinningFree = numOfFreeSpin > 0;
         // số lines được chọn > 0
@@ -166,6 +172,7 @@ public class Slot25BasicRoom extends SlotRoom {
                     MoneyResponse moneyRes = new MoneyResponse(false, "1001");
                     // Không phải lả BOT => Cập nhật tiền
                     if (!u.isBot()) {
+                        System.out.println(username + " STEP 07");
                         long changeMoney = isSpinningFree ? 0 : totalBetValue;
                         String desc = isSpinningFree ? "Lượt quay miễn phí " + gameName : "Đặt cược " + gameName;
                         moneyRes = this.userService.updateMoney(username, -changeMoney, this.moneyTypeStr, this.gameName, "Quay " + gameName, desc, fee, referenceId, TransType.START_TRANS);
@@ -226,6 +233,7 @@ public class Slot25BasicRoom extends SlotRoom {
                                 }
                             }
 
+                            System.out.println(username + " STEP 08");
                             // sinh Matrix
                             SlotBasic25Item[][] matrix = isForceJackpot
                                     ? Slot25BasicUtil.generateMatrixNoHu(selectedLines)
@@ -257,7 +265,7 @@ public class Slot25BasicRoom extends SlotRoom {
                             if (isSpinningFree && (countScatter >= 3 || countBonus >= 3)) {
                                 continue;
                             }
-
+                            
                             // Tính toán phần thưởng cho BONUS GAME
                             if (countBonus >= 3) {
                                 bonusGameResponse = Slot25BasicUtil.buildBonusGameData(this.betValue, countBonus);
@@ -329,6 +337,7 @@ public class Slot25BasicRoom extends SlotRoom {
                                     this.pot = this.initJackpotValues;
                                     this.fund -= initJackpotValues;
 
+                                    System.out.println(username + " STEP 09");
                                     // get user cache
                                     HazelcastInstance client = HazelcastClientFactory.getInstance();
                                     IMap<String, UserModel> userMap = client.getMap("users");
@@ -344,6 +353,7 @@ public class Slot25BasicRoom extends SlotRoom {
                                     } else {
                                         UserDaoImpl dao = new UserDaoImpl();
                                         try {
+                                            System.out.println(username + " STEP 10");
                                             model = dao.getUserByNickName(username);
                                             if (model.getClient() != null && !Objects.equals(model.getClient(), "")) {
                                                 displayName = "[" + model.getClient() + "] " + username;
@@ -355,12 +365,14 @@ public class Slot25BasicRoom extends SlotRoom {
                                     }
                                     if (forceJackpotToUser) {
                                         try {
+                                            System.out.println(username + " STEP 11");
                                             cacheService.removeKey(CACHE_NAME_USER_SPOT + gameName);
                                             cacheService.removeKey(CACHE_BET_VALUE_SLOT + gameName);
                                         } catch (Exception e) {
                                             logger.error(" Reset cache " + gameName + " error with : " + e.getMessage());
                                         }
                                     }
+                                    System.out.println(username + " STEP 12");
                                     this.slotService.logNoHu(referenceId, this.gameName, displayName, this.betValue, linesStr, matrixStr, builderLinesWin.toString(), builderPrizesOnLine.toString(), totalPrizes, result, currentTimeStr);
                                 } else {
                                     if (!u.isBot()) {
@@ -373,6 +385,7 @@ public class Slot25BasicRoom extends SlotRoom {
                             }
 
                             // cập nhật và tính toán lượt quay miễn phí
+                            System.out.println(username + " STEP 13");
                             SlotFreeSpin slotFreeSpin = slotService.updateLuotQuaySlotFree(cacheFreeSpinName, username);
                             playResponse.freeSpin = (byte) this.setFreeSpin(username, linesStr, countScatter, slotFreeSpin.getNum());
                             if (countScatter >= 3) {
@@ -385,6 +398,7 @@ public class Slot25BasicRoom extends SlotRoom {
                             // only save real user
                             long moneyExchange = totalPrizes;
                             if (moneyExchange != 0 && !u.isBot()) {
+                                System.out.println(username + " STEP 14");
                                 moneyRes = this.userService.updateMoney(username, moneyExchange, this.moneyTypeStr, this.gameName, "Quay " + gameName, this.buildDescription(totalBetValue, totalPrizes, result), 0L, referenceId, TransType.END_TRANS);
                                 if (moneyRes != null && moneyRes.isSuccess()) {
                                     currentMoney = moneyRes.getCurrentMoney();
@@ -410,6 +424,7 @@ public class Slot25BasicRoom extends SlotRoom {
                                 }
                                 // lưu nhật ký nổ hũ
                                 if (result == ResultSlot.JACKPOT) {
+                                    System.out.println(username + " STEP 15");
                                     this.slotService.addTop(gameName, username, this.betValue, totalPrizes, currentTimeStr, result);
                                 }
                                 // thông báo tới toàn bộ người chơi trong game (trong MODULE)
@@ -426,11 +441,13 @@ public class Slot25BasicRoom extends SlotRoom {
                                 // empty catch block
                             }
                             // lưu thông tin quỹ
+                            System.out.println(username + " STEP 16");
                             this.saveFund();
                             // lưu thông tin HŨ
+                            System.out.println(username + " STEP 17");
                             this.savePot();
 
-                            System.out.println(gameName + ": Total Prize: " + totalPrizes + " - Fun: " + fund);
+//                            System.out.println(gameName + ": Total Prize: " + totalPrizes + " - Fun: " + fund);
                         }
                     }
                 } else {
@@ -448,6 +465,7 @@ public class Slot25BasicRoom extends SlotRoom {
         // update cache tien hu
         cacheService.setValue(CACHE_JACK_POT_VALUE_SLOT + "_" + this.betValue + "_" + gameName, String.valueOf(this.pot));
         if (result == ResultSlot.JACKPOT) {
+            System.out.println(username + " STEP 18");
             this.sendNotifyNoHu(username, (byte) 1, playResponse.prize, gameName);
         }
         if (!u.isBot()) {
