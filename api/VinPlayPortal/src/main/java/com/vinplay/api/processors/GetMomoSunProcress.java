@@ -48,9 +48,7 @@ public class GetMomoSunProcress implements BaseProcessor<HttpServletRequest, Str
                     rechargeService.cancelMomoById(depositBankModel.getId());
                 }else {
                     //con han
-                    long real_con = 720-time_con;
-                    String respx = "{ \"comment\": \""+depositBankModel.Description+"\", \"TrainID\": \""+depositBankModel.Id+"\", \"phoneNum\": \""+depositBankModel.BankAccountNumber+"\", \"phoneName\": \""+depositBankModel.BankAccountName+"\", \"timeToExpired\": "+real_con+", \"amount\": 1 }";
-                    return respx;
+                    return depositBankModel.toJson();
                 }
             }
             TelegramUtil telegramUtil = new TelegramUtil();
@@ -58,13 +56,10 @@ public class GetMomoSunProcress implements BaseProcessor<HttpServletRequest, Str
             NapSunVinBankMomo napsun = new NapSunVinBankMomo();
             String TranID = String.valueOf(VinPlayUtils.generateTransId());
             BankPartnerModel requestTaoCode = napsun.sendBenThuBaTaoCodePay("momo", "momo", 1, TranID);
-            logger.info("tao code "+ gson.toJson(requestTaoCode));
             String dataall = "Momo" + "|" + "momo" + "|" + requestTaoCode.phoneName + "|" + TranID + "|" + requestTaoCode.code;
-            logger.info("tao code "+ dataall);
             RechargeServiceImpl reg = new RechargeServiceImpl();
             reg.rechargeByBankManual2(nickname, 1, requestTaoCode.phoneNum, dataall);
-            String respx = "{ \"comment\": \""+requestTaoCode.code+"\", \"TrainID\": \""+TranID+"\", \"phoneNum\": \""+requestTaoCode.phoneNum+"\", \"phoneName\": \""+requestTaoCode.phoneName+"\", \"timeToExpired\": "+720+", \"amount\": 1 }";
-            return respx;
+            return requestTaoCode.toJson();
         } catch (Exception e) {
             e.printStackTrace();
             return e.getMessage();
