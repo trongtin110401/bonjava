@@ -73,6 +73,7 @@ import bitzero.server.extensions.data.DataCmd;
 import bitzero.util.ExtensionUtility;
 import bitzero.util.common.business.Debug;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.mongodb.Block;
@@ -2674,6 +2675,7 @@ public class LobbyModule
             msg.sparta5000 = spartan1000;
             msg.sparta10000 = spartan10000;
             msg.baucuatofund = baucauto;
+            System.out.println(new Gson().toJson(msg));
             for (User user : this.usersSubJackpot) {
                 if (user == null) continue;
                 this.send(msg, user);
