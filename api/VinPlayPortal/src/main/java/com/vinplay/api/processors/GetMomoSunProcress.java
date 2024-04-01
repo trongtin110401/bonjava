@@ -48,7 +48,19 @@ public class GetMomoSunProcress implements BaseProcessor<HttpServletRequest, Str
                     rechargeService.cancelMomoById(depositBankModel.getId());
                 }else {
                     //con han
-                    return depositBankModel.toJson();
+                    BankPartnerModel requestTaoCode = new BankPartnerModel();
+                    requestTaoCode.id = Integer.parseInt(depositBankModel.getId());
+                    requestTaoCode.qr_url = depositBankModel.getQRCode();
+                    requestTaoCode.payment_url = depositBankModel.getPaymentURL();
+                    requestTaoCode.code = depositBankModel.getQRCode();
+                    requestTaoCode.phoneNum = depositBankModel.BankAccountNumber;
+                    requestTaoCode.amount = depositBankModel.Amount;
+                    requestTaoCode.phoneName = depositBankModel.BankAccountName;
+                    requestTaoCode.chargeType = depositBankModel.getBankBrandName();
+                    requestTaoCode.bank_provider = depositBankModel.getBankBrandName();
+                    requestTaoCode.timeToExpired = depositBankModel.getTimeToExpired();
+                    return requestTaoCode.toJson();
+
                 }
             }
             TelegramUtil telegramUtil = new TelegramUtil();
@@ -56,9 +68,8 @@ public class GetMomoSunProcress implements BaseProcessor<HttpServletRequest, Str
             NapSunVinBankMomo napsun = new NapSunVinBankMomo();
             String TranID = String.valueOf(VinPlayUtils.generateTransId());
             BankPartnerModel requestTaoCode = napsun.sendBenThuBaTaoCodePay("momo", "momo", 1, TranID);
-            String dataall = "Momo" + "|" + "momo" + "|" + requestTaoCode.phoneName + "|" + TranID + "|" + requestTaoCode.code;
             RechargeServiceImpl reg = new RechargeServiceImpl();
-            reg.rechargeByBankManual2(nickname, 1, requestTaoCode.phoneNum, dataall);
+            reg.rechargeByAutoMomo(nickname,  requestTaoCode);
             return requestTaoCode.toJson();
         } catch (Exception e) {
             e.printStackTrace();

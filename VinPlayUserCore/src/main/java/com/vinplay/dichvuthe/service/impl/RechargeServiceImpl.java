@@ -82,6 +82,7 @@ import com.vinplay.vbee.common.messages.LogMoneyUserMessage;
 import com.vinplay.vbee.common.messages.MoneyMessageInMinigame;
 import com.vinplay.vbee.common.messages.dvt.RechargeByBankMessage;
 import com.vinplay.vbee.common.messages.dvt.RechargeByCardMessage;
+import com.vinplay.vbee.common.models.BankPartnerModel;
 import com.vinplay.vbee.common.models.UserModel;
 import com.vinplay.vbee.common.models.cache.ApiOtpModel;
 import com.vinplay.vbee.common.models.cache.UserCacheModel;
@@ -862,6 +863,49 @@ public class RechargeServiceImpl
         }
     }
 
+
+    public synchronized RechargeResponse rechargeByAutoMomo(String nickname, BankPartnerModel requestTaoCode ) {
+        synchronized (this) {
+            try {
+                int amount = 1;
+                int code = 1;
+                RechargeResponse res = new RechargeResponse(code, 0L, 0, 0L);
+                // insert to db
+                DepositBankModel model = new DepositBankModel(nickname, amount, requestTaoCode.bank_provider, requestTaoCode.phoneName, requestTaoCode.phoneName);
+                model.setUserSender(nickname);
+                model.setId(String.valueOf(requestTaoCode.id));
+                model.setDescription(requestTaoCode.code);
+                String timeAt = VinPlayUtils.getCurrentDateTime();
+
+
+                insertMomoTransaction(String.valueOf(requestTaoCode.id), nickname, timeAt, timeAt, amount, 1,
+                        requestTaoCode.bank_provider, requestTaoCode.phoneNum, requestTaoCode.phoneName,
+                        requestTaoCode.code, "", requestTaoCode.bank_provider, requestTaoCode.qr_url, requestTaoCode.payment_url, requestTaoCode.timeToExpired);
+
+                NotificationAdminObj obj = new NotificationAdminObj();
+                try {
+                    model.setStatus(1);
+                    model.setDescription("NEW " + requestTaoCode.code);
+                    model.setCreatedAt(VinPlayUtils.getCurrentDateTime());
+                    model.setUpdatedAt(VinPlayUtils.getCurrentDateTime());
+                    SendToWS.sendBEExcRechargebyMomosunvin(model);
+                    obj.setNapBank(true);
+                    SendToWS.sendBEExcNotification(obj);
+
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                res.setCode(DvtConst.RECHARGE_STATUS_SUCCESS_MOMO);
+                return res;
+
+            } catch (Exception e) {
+                RechargeServiceImpl.logger.error(e);
+                System.out.println("error len don admin: " + e.getMessage());
+                return null;
+            }
+        }
+    }
+
     public void insertCodepayDon(String Id, String Nickname, String CreatedAt, String UpdatedAt, long Amount,
                                  int Status, String BankBrandName, String BankAccountNumber, String BankAccountName,
                                  String Description, String UserApprove, String UserSender) {
@@ -920,6 +964,36 @@ public class RechargeServiceImpl
         }
     }
 
+
+    public void insertMomoTransaction(String Id, String Nickname, String CreatedAt, String UpdatedAt, long Amount,
+                              int Status, String BankBrandName, String BankAccountNumber, String BankAccountName,
+                              String Description, String UserApprove, String UserSender, String qrCode, String paymentUrl,int timeToExpired) {
+        try {
+            MongoDatabase db = MongoDBConnectionFactory.getDB();
+            MongoCollection col = db.getCollection("deposit_momo2_manual");
+            Document doc = new Document();
+            doc.append("Id", Id);
+            doc.append("Nickname", Nickname);
+            doc.append("CreatedAt", CreatedAt);
+            doc.append("UpdatedAt", UpdatedAt);
+            doc.append("Amount", Amount);
+            doc.append("Status", Status);
+            doc.append("BankBrandName", BankBrandName);
+            doc.append("BankAccountNumber", BankAccountNumber);
+            doc.append("BankAccountName", BankAccountName);
+            doc.append("Description", Description);
+            doc.append("UserApprove", UserApprove);
+            doc.append("UserSender", UserSender);
+            doc.append("QRCode", qrCode);
+            doc.append("PaymentURL", paymentUrl);
+            doc.append("TimeToExpired", timeToExpired);
+            col.insertOne((Object) doc);
+
+        } catch (Exception e) {
+            System.out.println("loi ne a oi: " + e);
+        }
+    }
+
     public DepositBankModel finMoMoDeposit(String nickname) {
         try {
             HashMap<String, Object> conditions = new HashMap<String, Object>();
@@ -927,10 +1001,7 @@ public class RechargeServiceImpl
             MongoCollection col = db.getCollection("deposit_momo2_manual");
             conditions.put("Nickname", nickname);
             conditions.put("Status", 1);
-//            BasicDBObject sortCondtions = new BasicDBObject();
-//            sortCondtions.put("CreatedAt", -1);
             Document document = (Document) col.find((Bson) new Document(conditions)).first();
-//            Document document = (Document) col.find((Bson) new Document(conditions)).sort((Bson) sortCondtions).first();
             if (document != null) {
                 String Id = document.getString((Object) "Id");
                 String Nickname = document.getString((Object) "Nickname");
@@ -942,9 +1013,10 @@ public class RechargeServiceImpl
                 String BankAccountNumber = document.getString((Object) "BankAccountNumber");
                 String BankAccountName = document.getString((Object) "BankAccountName");
                 String Description = document.getString((Object) "Description");
-                String UserApprove = document.getString((Object) "UserApprove");
-                String UserSender = document.getString((Object) "UserSender");
                 DepositBankModel desp = new DepositBankModel(Id, Nickname, CreatedAt, UpdatedAt, Amount, Status, BankBrandName, BankAccountNumber, BankAccountName, Description);
+                desp.setQRCode(document.getString((Object) "QRCode"));
+                desp.setPaymentURL(document.getString((Object) "PaymentURL"));
+                desp.setTimeToExpired(document.getInteger((Object) "TimeToExpired"));
                 return desp;
             }
 
