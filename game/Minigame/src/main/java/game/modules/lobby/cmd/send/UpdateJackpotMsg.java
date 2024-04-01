@@ -6,8 +6,7 @@ package game.modules.lobby.cmd.send;
 import game.BaseMsgEx;
 import java.nio.ByteBuffer;
 
-public class UpdateJackpotMsg
-extends BaseMsgEx {
+public class UpdateJackpotMsg extends BaseMsgEx {
     public long potMiniPoker100 = 0L;
     public long potMiniPoker1000 = 0L;
     public long potMiniPoker10000 = 0L;

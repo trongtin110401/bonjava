@@ -2609,21 +2609,27 @@ public class LobbyModule
             int miniPoker100 = cacheService.getValueInt(Games.MINI_POKER.getName() + "_vin_100");
             int miniPoker1000 = cacheService.getValueInt(Games.MINI_POKER.getName() + "_vin_1000");
             int miniPoker10000 = cacheService.getValueInt(Games.MINI_POKER.getName() + "_vin_10000");
-            int pokeGo100 = cacheService.getValueInt(Games.POKE_GO.getName() + "_vin_100");
-            int pokeGo1000 = cacheService.getValueInt(Games.POKE_GO.getName() + "_vin_1000");
-            int pokeGo10000 = cacheService.getValueInt(Games.POKE_GO.getName() + "_vin_10000");
+
+            int pokeGo100 = cacheService.getValueInt(Games.CANDY.getName() + "_vin_100");
+            int pokeGo1000 = cacheService.getValueInt(Games.CANDY.getName() + "_vin_1000");
+            int pokeGo10000 = cacheService.getValueInt(Games.CANDY.getName() + "_vin_10000");
+
             int khoBau100 = cacheService.getValueInt(Games.KHO_BAU.getName() + "_vin_100");
             int khoBau1000 = cacheService.getValueInt(Games.KHO_BAU.getName() + "_vin_1000");
             int khoBau10000 = cacheService.getValueInt(Games.KHO_BAU.getName() + "_vin_10000");
+
             int ndv100 = cacheService.getValueInt(Games.NU_DIEP_VIEN.getName() + "_vin_100");
             int ndv1000 = cacheService.getValueInt(Games.NU_DIEP_VIEN.getName() + "_vin_1000");
             int ndv10000 = cacheService.getValueInt(Games.NU_DIEP_VIEN.getName() + "_vin_10000");
+
             int avengers100 = cacheService.getValueInt(Games.AVENGERS.getName() + "_vin_100");
             int avengers1000 = cacheService.getValueInt(Games.AVENGERS.getName() + "_vin_1000");
             int avengers10000 = cacheService.getValueInt(Games.AVENGERS.getName() + "_vin_10000");
+
             int vqv100 = cacheService.getValueInt(Games.VUONG_QUOC_VIN.getName() + "_vin_100");
             int vqv1000 = cacheService.getValueInt(Games.VUONG_QUOC_VIN.getName() + "_vin_1000");
             int vqv10000 = cacheService.getValueInt(Games.VUONG_QUOC_VIN.getName() + "_vin_10000");
+
             int fish100 = cacheService.getValueInt(Games.HAM_CA_MAP.getName() + "_vin_100");
             int fish1000 = cacheService.getValueInt(Games.HAM_CA_MAP.getName() + "_vin_1000");
 
@@ -2689,6 +2695,15 @@ public class LobbyModule
 
     private void gameLoop() {
 
+        ++this.countUpdateJackpot;
+        if (this.countUpdateJackpot >= (long) ConfigGame.getIntValue("update_jackpot_time")) {
+            this.updateJackpot();
+            this.bauCuaJackpot();
+            this.txJackpot();
+            this.txMd5Jackpot();
+            this.countUpdateJackpot = 0L;
+        }
+
         try {
             this.checkOnepayTranstion();
         } catch (Exception r) {
@@ -2699,14 +2714,7 @@ public class LobbyModule
         } catch (Exception e) {
             // this.removeCacheHu();
         }
-        ++this.countUpdateJackpot;
-        if (this.countUpdateJackpot >= (long) ConfigGame.getIntValue("update_jackpot_time")) {
-            this.updateJackpot();
-            this.bauCuaJackpot();
-            this.txJackpot();
-            this.txMd5Jackpot();
-            this.countUpdateJackpot = 0L;
-        }
+
 
 
     }
