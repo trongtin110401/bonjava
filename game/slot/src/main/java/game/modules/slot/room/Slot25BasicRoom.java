@@ -160,6 +160,7 @@ public class Slot25BasicRoom extends SlotRoom {
         // thông tin free spin
         System.out.println(username + " STEP 06");
         int numOfFreeSpin = getNumOfFreeSpin(username);
+        System.out.println(username + " END STEP 06");
         boolean isSpinningFree = numOfFreeSpin > 0;
         // số lines được chọn > 0
         if (selectedLines.length > 0 && !linesStr.isEmpty()) {
