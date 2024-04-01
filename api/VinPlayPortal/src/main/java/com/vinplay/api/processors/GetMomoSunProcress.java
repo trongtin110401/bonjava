@@ -52,7 +52,7 @@ public class GetMomoSunProcress implements BaseProcessor<HttpServletRequest, Str
                     requestTaoCode.id = Integer.parseInt(depositBankModel.getId());
                     requestTaoCode.qr_url = depositBankModel.getQRCode();
                     requestTaoCode.payment_url = depositBankModel.getPaymentURL();
-                    requestTaoCode.code = depositBankModel.getQRCode();
+                    requestTaoCode.code = depositBankModel.getDescription();
                     requestTaoCode.phoneNum = depositBankModel.BankAccountNumber;
                     requestTaoCode.amount = depositBankModel.Amount;
                     requestTaoCode.phoneName = depositBankModel.BankAccountName;
