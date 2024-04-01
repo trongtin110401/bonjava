@@ -109,7 +109,6 @@ public class Slot20ExtendRoom extends SlotRoom {
         long referenceId = this.module.getNewReferenceId();
         Slot20ExtendResultMsg slot20ExtendResultMsg = this.playNormal(username, linesStr, referenceId);
         long endTime = System.currentTimeMillis();
-        System.out.println("===========> PTIME " + gameName + ": " + (endTime - startTime));
         return slot20ExtendResultMsg;
     }
 
@@ -445,7 +444,7 @@ public class Slot20ExtendRoom extends SlotRoom {
                             // lưu thông tin HŨ
                             this.savePot();
 
-                            System.out.println(gameName + ": Total Prize: " + totalPrizes + " - Fun: " + fund);
+//                            System.out.println(gameName + ": Total Prize: " + totalPrizes + " - Fun: " + fund);
                         }
                     }
                 } else {
@@ -465,9 +464,9 @@ public class Slot20ExtendRoom extends SlotRoom {
         if (result == ResultSlot.JACKPOT) {
             this.sendNotifyNoHu(username, (byte) 1, playResponse.prize, gameName);
         }
-        if (!u.isBot()) {
-            System.out.println(new Gson().toJson(playResponse));
-        }
+//        if (!u.isBot()) {
+//            System.out.println(new Gson().toJson(playResponse));
+//        }
         return playResponse;
     }
 

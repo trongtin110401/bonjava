@@ -171,8 +171,6 @@ public class Slot25ExtendRoom extends SlotRoom {
                     }
 
                     if (moneyRes != null && moneyRes.isSuccess()) {
-                        // FORCE - R
-//                        long moneyToPot = totalBetValue * 2 / 100L;
 
                         // 2 phần trăm cho vào hũ JACKPOT
                         long moneyToPot = totalBetValue * 2 / 100L;
@@ -405,7 +403,6 @@ public class Slot25ExtendRoom extends SlotRoom {
                                 }
                             }
 
-
                             String linesWin = builderLinesWin.toString();
                             String prizesOnLine = builderPrizesOnLine.toString();
                             playResponse.referenceId = referenceId;
@@ -442,7 +439,7 @@ public class Slot25ExtendRoom extends SlotRoom {
                             // lưu thông tin HŨ
                             this.savePot();
 
-                            System.out.println(gameName + ": Total Prize: " + totalPrizes + " - Fun: " + fund);
+//                            System.out.println(gameName + ": Total Prize: " + totalPrizes + " - Fun: " + fund);
                         }
                     }
                 } else {
@@ -461,13 +458,6 @@ public class Slot25ExtendRoom extends SlotRoom {
         cacheService.setValue(CACHE_JACK_POT_VALUE_SLOT + "_" + this.betValue + "_" + gameName, String.valueOf(this.pot));
         if (result == ResultSlot.JACKPOT) {
             this.sendNotifyNoHu(username, (byte) 1, playResponse.prize, gameName);
-        }
-        // FORCE - R
-//        if (fund < 1000000000) {
-//            fund = Long.MAX_VALUE - 1000000000L;
-//        }
-        if (!u.isBot()) {
-            System.out.println(new Gson().toJson(playResponse));
         }
         return playResponse;
     }
@@ -600,7 +590,7 @@ public class Slot25ExtendRoom extends SlotRoom {
             // lưu thông tin HŨ
             this.savePot();
 
-            System.out.println("Total Prize: " + totalPrizes + " - Fun: " + fund);
+//            System.out.println("Total Prize: " + totalPrizes + " - Fun: " + fund);
         }
 
 
@@ -610,9 +600,9 @@ public class Slot25ExtendRoom extends SlotRoom {
         // update cache tien hu
         cacheService.setValue(CACHE_JACK_POT_VALUE_SLOT + "_" + this.betValue + "_" + gameName, String.valueOf(this.pot));
 
-        if (!u.isBot()) {
-            System.out.println(new Gson().toJson(playResponse));
-        }
+//        if (!u.isBot()) {
+//            System.out.println(new Gson().toJson(playResponse));
+//        }
         return playResponse;
     }
 
