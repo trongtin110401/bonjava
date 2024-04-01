@@ -16,6 +16,10 @@ public class DepositBankModel {
     public String Description;
     public String UserApprove;
     public String UserSender;
+    public String QRCode;
+    private String paymentURL;
+
+    private int timeToExpired;
 
     public long getAmount() {
         return Amount;
@@ -126,6 +130,7 @@ public class DepositBankModel {
         Description = description;
     }
 
+
     public DepositBankModel(String id, String nickname, String createdAt, String updatedAt, long amount, int status, String bankBrandName, String bankAccountNumber, String bankAccountName, String description, String userApprove) {
         Id = id;
         Nickname = nickname;
@@ -171,5 +176,29 @@ public class DepositBankModel {
         } catch (JsonProcessingException mapper) {
             return "{\"code\":500,\"message\":\"error\"}";
         }
+    }
+
+    public String getQRCode() {
+        return QRCode;
+    }
+
+    public void setQRCode(String QRCode) {
+        this.QRCode = QRCode;
+    }
+
+    public String getPaymentURL() {
+        return paymentURL;
+    }
+
+    public void setPaymentURL(String paymentURL) {
+        this.paymentURL = paymentURL;
+    }
+
+    public int getTimeToExpired() {
+        return timeToExpired;
+    }
+
+    public void setTimeToExpired(int timeToExpired) {
+        this.timeToExpired = timeToExpired;
     }
 }
