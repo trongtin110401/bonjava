@@ -412,8 +412,6 @@ public class Slot20Room extends SlotRoom {
                             this.saveFund();
                             // lưu thông tin HŨ
                             this.savePot();
-
-                            System.out.println(gameName + ": Total Prize: " + totalPrizes + " - Fun: " + fund);
                         }
                     } else {
                         result = ResultSlot.NOT_ENOUGH_MONEY;
@@ -436,20 +434,6 @@ public class Slot20Room extends SlotRoom {
         if (result == ResultSlot.JACKPOT) {
             this.sendNotifyNoHu(username, (byte) 1, playResponse.prize, gameName);
         }
-//        long endTime = System.currentTimeMillis();
-//        long handleTime = endTime - startTime;
-//        String ratioTime = CommonUtils.getRatioTime(handleTime);
-//        SlotUtils.logKhoBau(referenceId, username, this.betValue, msg.matrix, msg.haiSao, result, handleTime, ratioTime, currentTimeStr);
-//        if (!u.isBot()) {
-//            System.out.println(new Gson().toJson(playResponse));
-//        }
-
-        // FORCE - R
-//        if (fund < 1000000000) {
-//            fund = Long.MAX_VALUE - 1000000000L;
-//        }
-
-//        System.out.println(new Gson().toJson(playResponse));
         return playResponse;
     }
 
