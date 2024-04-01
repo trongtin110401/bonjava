@@ -48,16 +48,11 @@ public class SlotMachineExtension extends BZExtension {
             Debug.trace("INIT MINIGAME ERROR " + e.getMessage());
         }
 
-//        this.addRequestHandler((short) 10000, HallSlotModule.class);
-//        this.addRequestHandler((short) 2000, LienMinhModule.class);
-//        this.addRequestHandler((short) 3000, FastAndFuriousModule.class);
+        this.addRequestHandler((short) 10000, HallSlotModule.class);
+        this.addRequestHandler((short) 2000, LienMinhModule.class);
+        this.addRequestHandler((short) 3000, FastAndFuriousModule.class);
         this.addRequestHandler((short) 4000, CowboyModule.class);
-//        this.addRequestHandler((short) 5000, LadyNightModule.class);
-
-
-//        this.addRequestHandler((short) 5000, RollRoyModule.class);
-//        this.addRequestHandler((short) 12000, SpartanModule.class);
-//        this.addRequestHandler((short) 14000, TamHungModule.class);
+        this.addRequestHandler((short) 5000, LadyNightModule.class);
 
         this.addEventHandler(BZEventType.USER_LOGIN, LoginSuccessHandler.class);
         this.addEventHandler(BZEventType.USER_DISCONNECT, LoginSuccessHandler.class);
