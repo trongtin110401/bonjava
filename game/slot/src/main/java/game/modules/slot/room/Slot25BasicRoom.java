@@ -468,13 +468,17 @@ public class Slot25BasicRoom extends SlotRoom {
         // update cache tien hu
         System.out.println(username + " STEP 18");
         cacheService.setValue(CACHE_JACK_POT_VALUE_SLOT + "_" + this.betValue + "_" + gameName, String.valueOf(this.pot));
+        System.out.println(username + " STEP 19");
         if (result == ResultSlot.JACKPOT) {
-            System.out.println(username + " STEP 19");
+            System.out.println(username + " STEP 19_01");
             this.sendNotifyNoHu(username, (byte) 1, playResponse.prize, gameName);
         }
+        System.out.println(username + " STEP 20");
         if (!u.isBot()) {
+            System.out.println(username + " STEP 20_01");
             System.out.println(new Gson().toJson(playResponse));
         }
+        System.out.println(username + " STEP 21");
         return playResponse;
     }
 
