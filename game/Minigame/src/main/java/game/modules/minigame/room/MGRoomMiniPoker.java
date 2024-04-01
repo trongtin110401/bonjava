@@ -168,7 +168,7 @@ public class MGRoomMiniPoker
             userForce = "";
             betValueCache = "";
         }
-        long hu100 =0;
+        long hu100 = 0;
         long hu1k = 0;
         long hu10k = 0;
         try {
@@ -178,11 +178,11 @@ public class MGRoomMiniPoker
             hu100 = Long.parseLong(hu100x);
             hu1k = Long.parseLong(hu1kx);
             hu10k = Long.parseLong(hu10kx);
-        }catch (Exception e) {
-            cacheService.setValue("hu_100_poker",0);
-            cacheService.setValue("hu_1k_poker",0);
-            cacheService.setValue("hu_10k_poker",0);
-            cacheService.setValue("my_debug","");
+        } catch (Exception e) {
+            cacheService.setValue("hu_100_poker", 0);
+            cacheService.setValue("hu_1k_poker", 0);
+            cacheService.setValue("hu_10k_poker", 0);
+            cacheService.setValue("my_debug", "");
         }
         String mydebug = "";
 //        if (this.fund >= 0L) {
@@ -191,7 +191,7 @@ public class MGRoomMiniPoker
                 MoneyResponse moneyRes = this.userService.updateMoney(username, -betValue, this.moneyTypeStr, Games.MINI_POKER.getName(), "Quay MiniPoker", "\u0110\u1eb7t c\u01b0\u1ee3c MiniPoker", 0L, Long.valueOf(referenceId), TransType.START_TRANS);
                 if (moneyRes != null && moneyRes.isSuccess()) {
                     boolean enoughToPair = false;
-                    long moneyToPot = betValue/ 100L;
+                    long moneyToPot = betValue / 100L;
                     long fee = (long) ((float) betValue * this.tax / 100.0f);
                     long moneyToFund = betValue - moneyToPot - fee;
                     long tienThuongX2 = 0L;
@@ -222,7 +222,7 @@ public class MGRoomMiniPoker
                         if (cards.size() != 5) {
                             cards = this.gen.randomCards();
                         }
-                        for(int i = 0; i < 20; i++) {
+                        for (int i = 0; i < 20; i++) {
                             cards = this.gen.randomCards2(forceJackpotByUser);
                             if (cards.size() != 5) {
                                 cards = this.gen.randomCards();
@@ -308,7 +308,7 @@ public class MGRoomMiniPoker
                                     }
                                 }
                             }
-                            mydebug+=" random kq lan: "+ i+" result : "+result+" prize:" + prize+" hu:" + hu100;
+                            mydebug += " random kq lan: " + i + " result : " + result + " prize:" + prize + " hu:" + hu100;
 
 //                            if(betValue == 100) {
 //                                //so sanh hu 100
@@ -318,25 +318,25 @@ public class MGRoomMiniPoker
 //                                //so sanh hu 10k
 //                            }
                             //tam thoi cho het vao 1 hu set hu la 100tr
-                            if(hu100 - prize < 0 || hu100 + prize > 100000000 || hu100 < 0) {
+                            if (hu100 - prize < 0 || hu100 + prize > 100000000 || hu100 < 0) {
                                 //random lai
                                 mydebug += "bi ran dom lai";
-                                continue ;
-                            }else {
+                                continue;
+                            } else {
                                 mydebug += "khong bi random lai tipe tuc";
                                 // thoa ma dieu kien hu
-                                break ;
+                                break;
                             }
                         }
                         //update lai hu
-                        if(prize > 0) {
+                        if (prize > 0) {
                             //hu mat di
                             hu100 = hu100 - prize;
-                        }else {
+                        } else {
 
                         }
 //                        cacheService.setValue("my_debug",mydebug);
-                        cacheService.setValue("hu_100_poker",hu100+"");
+                        cacheService.setValue("hu_100_poker", hu100 + "");
 
                         long fundExchange = Math.max(prize, 0L);
 //                        long l = fundExchange;
@@ -638,7 +638,7 @@ public class MGRoomMiniPoker
     @Override
     protected void checkResetPot() {
         try {
-            int isReset = sv.getValueInt("reset_pot_" + this.gameName + "_" + this.betValue);
+            int isReset = sv.getValueInt("reset_pot_" + this.gameName + "_" + this.betValue, 0);
             if (isReset == 1) {
                 this.pot = this.initPotValue;
                 this.fund = 0;
