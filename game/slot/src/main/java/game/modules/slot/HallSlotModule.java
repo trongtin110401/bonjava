@@ -93,27 +93,19 @@ public class HallSlotModule extends BaseClientRequestHandler {
     }
 
     private String buildJsonJackpots() {
+
         JSONObject json = new JSONObject();
-        JSONObject jsonAudition = this.buildGameSlotInfo(Games.LIEN_MINH.getName());
-        json.put("audition", jsonAudition);
+        JSONObject jsonLienMinh = this.buildGameSlotInfo(Games.LIEN_MINH.getName());
+        json.put(Games.LIEN_MINH.getName(), jsonLienMinh);
 
-        JSONObject jsonMaybach = this.buildGameSlotInfo(Games.MAYBACH.getName());
-        json.put("maybach", jsonMaybach);
+        JSONObject jsonCowboy = this.buildGameSlotInfo(Games.COWBOY.getName());
+        json.put(Games.COWBOY.getName(), jsonCowboy);
 
-        JSONObject jsonTamhung = this.buildGameSlotInfo(Games.TAMHUNG.getName());
-        json.put("tamhung", jsonTamhung);
+        JSONObject jsonFast = this.buildGameSlotInfo(Games.FAST_AND_FURIOUS.getName());
+        json.put(Games.FAST_AND_FURIOUS.getName(), jsonFast);
 
-        JSONObject jsonRangeRover = this.buildGameSlotInfo(Games.RANGE_ROVER.getName());
-        json.put("rangeRover", jsonRangeRover);
-
-        JSONObject jsonBenley = this.buildGameSlotInfo(Games.COWBOY.getName());
-        json.put("benley", jsonBenley);
-
-        JSONObject jsonRollRoye = this.buildGameSlotInfo(Games.FAST_AND_FURIOUS.getName());
-        json.put("rollRoye", jsonRollRoye);
-
-        JSONObject jsonSpartan = this.buildGameSlotInfo(Games.LADY_NIGHT.getName());
-        json.put("spartan", jsonSpartan);
+        JSONObject jsonLadyNight = this.buildGameSlotInfo(Games.LADY_NIGHT.getName());
+        json.put(Games.LADY_NIGHT.getName(), jsonLadyNight);
 
         return json.toJSONString();
     }
@@ -128,7 +120,6 @@ public class HallSlotModule extends BaseClientRequestHandler {
             JSONObject room102 = this.buildRoomSlotInfo(gameName, 10000);
             jsonGame.put("10000", room102);
         } catch (Exception e) {
-//            Debug.trace((Object) ("Hall Slot get jackpots " + gameName + " error: " + e.getMessage()));
         }
         return jsonGame;
     }
@@ -142,7 +133,6 @@ public class HallSlotModule extends BaseClientRequestHandler {
             int x2 = cacheService.getValueInt(gameName + "_vin_" + room + "_x2");
             jsonValue.put("x2", x2);
         } catch (Exception e) {
-//            Debug.trace("Hall Slot get jackpots " + gameName + " - " + room + " error: " + e.getMessage());
         }
         return jsonValue;
     }

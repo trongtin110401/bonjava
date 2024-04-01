@@ -426,8 +426,6 @@ public class Slot25BasicRoom extends SlotRoom {
                             this.saveFund();
                             // lưu thông tin HŨ
                             this.savePot();
-
-//                            System.out.println(gameName + ": Total Prize: " + totalPrizes + " - Fun: " + fund);
                         }
                     }
                 } else {

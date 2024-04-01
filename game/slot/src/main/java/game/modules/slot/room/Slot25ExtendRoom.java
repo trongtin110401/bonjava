@@ -106,11 +106,8 @@ public class Slot25ExtendRoom extends SlotRoom {
     }
 
     public Slot25ResultMsg play(String username, String linesStr) {
-        long startTime = System.currentTimeMillis();
         long referenceId = this.module.getNewReferenceId();
         Slot25ResultMsg msg = this.playNormal(username, linesStr, referenceId);
-        long endTime = System.currentTimeMillis();
-        System.out.println("===========> PTIME " + gameName + ": " + (endTime - startTime));
         return msg;
     }
 
