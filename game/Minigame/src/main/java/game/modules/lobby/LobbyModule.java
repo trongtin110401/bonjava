@@ -73,7 +73,6 @@ import bitzero.server.extensions.data.DataCmd;
 import bitzero.util.ExtensionUtility;
 import bitzero.util.common.business.Debug;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.mongodb.Block;
@@ -164,8 +163,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-public class LobbyModule
-        extends BaseClientRequestHandler {
+public class LobbyModule extends BaseClientRequestHandler {
     private static final String CURRENT_COMMAND = "cmd";
     private static final String CURRENT_OBJECT_COMMAND = "obj_cmd";
     private static final String FORCE_CHECK_OTP = "force_check_otp";
@@ -196,7 +194,6 @@ public class LobbyModule
     private EventX2EndTask eventX2EndTask = new EventX2EndTask();
     private final Runnable slotDailyTask = new SlotDailyTask();
     private UserSecretServiceImpl userSecretService = new UserSecretServiceImpl();
-    // private CacheService cacheService = new CacheServiceImpl();
     Map<String, String> mapUserOnePay = new HashMap<>();
 
     private CacheService cacheService = new CacheServiceImpl();
@@ -211,7 +208,7 @@ public class LobbyModule
 
     public void init() {
         super.init();
-        this.getParentExtension().addEventListener((IBZEventType) BZEventType.USER_DISCONNECT, (IBZEventListener) this);
+        this.getParentExtension().addEventListener(BZEventType.USER_DISCONNECT, this);
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate((Runnable) this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate((Runnable) this.cardTransactionTask, 30, 30, TimeUnit.SECONDS);
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate((Runnable) this.checkMoneyUser, 10, 1, TimeUnit.SECONDS);
@@ -223,24 +220,24 @@ public class LobbyModule
             this.initVP();
             MongoDBConnectionFactory.init();
         } catch (Exception e) {
-            Debug.trace((Object) ("init vippoint event error " + e));
+            Debug.trace("init vippoint event error " + e);
         }
         try {
             LuckyUtils.initSlotMap();
-            DvtUtils.initDVT((boolean) true);
+            DvtUtils.initDVT(true);
         } catch (Exception e) {
-            Debug.trace((Object) ("init slot free error " + e));
+            Debug.trace("init slot free error " + e);
         }
         try {
             PartnerConfig.ReadConfig();
         } catch (Exception e) {
-            Debug.trace((Object) ("init partnerconfig event error " + e));
+            Debug.trace("init partnerconfig event error " + e);
         }
         long currentTime = System.currentTimeMillis() / 1000L;
         long endToday = DateTimeUtils.getEndTimeToDayAsLong() / 1000L;
         int n = (int) (endToday - currentTime);
         BitZeroServer.getInstance().getTaskScheduler().schedule(this.slotDailyTask, n + 5, TimeUnit.SECONDS);
-        logger.debug((Object) ("LobbyModule Init"));
+        logger.debug("LobbyModule Init");
         CacheService cacheService = new CacheServiceImpl();
         cacheService.setValue("nap_bank", "false");
         cacheService.setValue("nap_one_pay", "false");
@@ -489,9 +486,8 @@ public class LobbyModule
             this.sendRequireCodeRes(user, 4);
             return;
         }
-        if (userMap.containsKey((Object) user.getName())) {
-            model = (UserModel) userMap.get((Object) user.getName());
-            UserCacheModel userCacheModel = (UserCacheModel) model;
+        if (userMap.containsKey(user.getName())) {
+            model = userMap.get(user.getName());
         }
         // UserModel userModel2 = userService.getUserByUserName(user.get());
         if (model.getPassword().equals(cmd.password)) {
@@ -1311,21 +1307,21 @@ public class LobbyModule
     private void checkIAP(User user, DataCmd dataCmd) {
         CheckIAPCmd cmd = new CheckIAPCmd(dataCmd);
         CheckIAPMsg msg = new CheckIAPMsg();
-        msg.Error = this.rechargeService.checkRechargeIAP(user.getName(), (int) cmd.productId);
-        this.send((BaseMsg) msg, user);
+        msg.Error = this.rechargeService.checkRechargeIAP(user.getName(), cmd.productId);
+        this.send(msg, user);
     }
 
     private void resultIAP(User user, DataCmd dataCmd) {
         ResultIAPCmd cmd = new ResultIAPCmd(dataCmd);
         ResultIAPMsg msg = new ResultIAPMsg();
-        Debug.trace((Object) ("nickname: " + user.getName()));
-        Debug.trace((Object) ("signedData: " + cmd.signedData));
-        Debug.trace((Object) ("signature: " + cmd.signature));
+        Debug.trace("nickname: " + user.getName());
+        Debug.trace("signedData: " + cmd.signedData);
+        Debug.trace("signature: " + cmd.signature);
         RechargeIAPResponse rcRes = this.rechargeService.rechargeIAP(user.getName(), cmd.signedData, cmd.signature);
         msg.Error = (byte) rcRes.getCode();
         msg.productId = (byte) rcRes.getProductId();
         msg.currentMoney = rcRes.getCurrentMoney();
-        this.send((BaseMsg) msg, user);
+        this.send(msg, user);
     }
 
     private void getInfo(User user, DataCmd dataCmd) {
@@ -1344,29 +1340,29 @@ public class LobbyModule
                 msg.loginSecure = userCache.isHasLoginSecurity() ? (byte) 1 : 0;
                 msg.moneyLoginotp = userCache.getLoginOtp();
                 ObjectMapper mapper = new ObjectMapper();
-                msg.configGame = mapper.writeValueAsString((Object) this.securityService.getListGameBai(userCache.getStatus()));
+                msg.configGame = mapper.writeValueAsString(this.securityService.getListGameBai(userCache.getStatus()));
             } else {
                 msg.Error = 1;
             }
         } catch (Exception e) {
-            Debug.trace((Object) ("LobbyModule get info error: " + e));
+            Debug.trace("LobbyModule get info error: " + e);
             msg.Error = 1;
         }
-        this.send((BaseMsg) msg, user);
+        this.send(msg, user);
     }
 
     private void getMoneyUse(User user, DataCmd dataCmd) {
         GetMoneyUseMsg msg = new GetMoneyUseMsg();
         msg.moneyUse = this.userService.getMoneyUserCache(user.getName(), "vin");
-        this.send((BaseMsg) msg, user);
+        this.send(msg, user);
     }
 
     private void doiPass(User user, DataCmd dataCmd) {
         DoiPassCmd cmd = new DoiPassCmd(dataCmd);
         byte res = this.securityService.changePassword(user.getName(), cmd.oldPass, cmd.newPass, true);
         if (res == 0) {
-            user.setProperty((Object) CURRENT_COMMAND, (Object) dataCmd.getId());
-            user.setProperty((Object) CURRENT_OBJECT_COMMAND, (Object) cmd);
+            user.setProperty(CURRENT_COMMAND, dataCmd.getId());
+            user.setProperty(CURRENT_OBJECT_COMMAND, cmd);
         }
         DoiPassMsg msg = new DoiPassMsg();
         msg.Error = res;
@@ -1381,15 +1377,15 @@ public class LobbyModule
 //            Debug.trace((Object)("LobbyModule error: " + e));
 //        }
 
-        this.send((BaseMsg) msg, user);
+        this.send(msg, user);
     }
 
     private void doiVippoint(User user, DataCmd dataCmd) {
         DoiVippointCmd cmd = new DoiVippointCmd(dataCmd);
         byte res = this.vpService.checkCashoutVP(user.getName());
         if (res == 0) {
-            user.setProperty((Object) CURRENT_COMMAND, (Object) dataCmd.getId());
-            user.setProperty((Object) CURRENT_OBJECT_COMMAND, (Object) cmd);
+            user.setProperty(CURRENT_COMMAND, dataCmd.getId());
+            user.setProperty(CURRENT_OBJECT_COMMAND, cmd);
             // send otp
 //            OtpServiceImpl otpService = new OtpServiceImpl();
 //            try {
@@ -1404,19 +1400,19 @@ public class LobbyModule
         }
         DoiVippointMsg msg = new DoiVippointMsg();
         msg.Error = res;
-        this.send((BaseMsg) msg, user);
+        this.send(msg, user);
     }
 
     private void updateUserInfo(User user, DataCmd dataCmd) {
         UpdateUserInfoCmd cmd = new UpdateUserInfoCmd(dataCmd);
-        if (cmd.cmt == "")
+        if (Objects.equals(cmd.cmt, ""))
             cmd.cmt = null;
-        if (cmd.email == "")
+        if (Objects.equals(cmd.email, ""))
             cmd.email = null;
         byte res = this.securityService.updateUserInfo(user.getName(), cmd.cmt, cmd.email, cmd.mobile);
         UpdateUserInfoMsg msg = new UpdateUserInfoMsg();
         msg.Error = res;
-        this.send((BaseMsg) msg, user);
+        this.send(msg, user);
     }
 
     private void updateEmail(User user, DataCmd dataCmd) {
@@ -1424,7 +1420,7 @@ public class LobbyModule
         byte res = this.securityService.updateEmail(user.getName(), cmd.email);
         UpdateEmailMsg msg = new UpdateEmailMsg();
         msg.Error = res;
-        this.send((BaseMsg) msg, user);
+        this.send(msg, user);
     }
 
     private void updateMobile(User user, DataCmd dataCmd) {
@@ -1432,22 +1428,22 @@ public class LobbyModule
         byte res = this.securityService.updateMobile(user.getName(), cmd.mobile);
         UpdateMobileMsg msg = new UpdateMobileMsg();
         msg.Error = res;
-        this.send((BaseMsg) msg, user);
+        this.send(msg, user);
     }
 
     private void activeEmail(User user, DataCmd dataCmd) {
         byte res = this.securityService.activeEmail(user.getName());
         ActiveEmailMsg msg = new ActiveEmailMsg();
         msg.Error = res;
-        this.send((BaseMsg) msg, user);
+        this.send(msg, user);
     }
 
     private void activeMobile(User user, DataCmd dataCmd) {
         ActiveMobileCmd cmd = new ActiveMobileCmd(dataCmd);
         byte res = this.securityService.activeMobile(user.getName(), true);
         if (res == 0) {
-            user.setProperty((Object) CURRENT_COMMAND, (Object) dataCmd.getId());
-            user.setProperty((Object) CURRENT_OBJECT_COMMAND, (Object) cmd);
+            user.setProperty(CURRENT_COMMAND, dataCmd.getId());
+            user.setProperty(CURRENT_OBJECT_COMMAND, cmd);
         }
         ActiveMobileMsg msg = new ActiveMobileMsg();
         msg.Error = res;
@@ -1459,19 +1455,19 @@ public class LobbyModule
 //                Debug.trace("Cannot send OTP message!");
 //            }
         } catch (Exception e) {
-            Debug.trace((Object) ("LobbyModule error: " + e));
+            Debug.trace("LobbyModule error: " + e);
         }
 
-        this.send((BaseMsg) msg, user);
+        this.send(msg, user);
     }
 
     private void updateNewMobile(User user, DataCmd dataCmd) {
         UpdateNewMobileCmd cmd = new UpdateNewMobileCmd(dataCmd);
         byte res = this.securityService.updateNewMobile(user.getName(), cmd.mobile, true);
         if (res == 0) {
-            user.setProperty((Object) CURRENT_COMMAND, (Object) dataCmd.getId());
-            user.setProperty((Object) CURRENT_OBJECT_COMMAND, (Object) cmd);
-            user.setProperty((Object) UPDATE_NEW_MOBILE, (Object) cmd.mobile);
+            user.setProperty(CURRENT_COMMAND, dataCmd.getId());
+            user.setProperty(CURRENT_OBJECT_COMMAND, cmd);
+            user.setProperty(UPDATE_NEW_MOBILE, cmd.mobile);
         }
         UpdateNewMobileMsg msg = new UpdateNewMobileMsg();
 
@@ -1486,13 +1482,13 @@ public class LobbyModule
 //            Debug.trace((Object)("LobbyModule error: " + e));
 //        }
         msg.Error = res;
-        this.send((BaseMsg) msg, user);
+        this.send(msg, user);
     }
 
     private void loginOtp(User user, DataCmd dataCmd) {
         LoginOtpCmd cmd = new LoginOtpCmd(dataCmd);
-        user.setProperty((Object) CURRENT_COMMAND, (Object) dataCmd.getId());
-        user.setProperty((Object) CURRENT_OBJECT_COMMAND, (Object) cmd);
+        user.setProperty(CURRENT_COMMAND, dataCmd.getId());
+        user.setProperty(CURRENT_OBJECT_COMMAND, cmd);
         OtpServiceImpl otpService = new OtpServiceImpl();
         try {
             int ret = otpService.sendVoiceOtp(user.getName(), "", true);
@@ -1500,7 +1496,7 @@ public class LobbyModule
                 Debug.trace("Cannot send OTP message!");
             }
         } catch (Exception e) {
-            Debug.trace((Object) ("LobbyModule error: " + e));
+            Debug.trace("LobbyModule error: " + e);
         }
     }
 
@@ -1515,8 +1511,8 @@ public class LobbyModule
             moneyres = this.securityService.takeMoneyInSafe(user.getName(), cmd.moneyExchange, false);
             if (moneyres.getErrorCode().equals("0")) {
                 res = 0;
-                user.setProperty((Object) CURRENT_COMMAND, (Object) dataCmd.getId());
-                user.setProperty((Object) CURRENT_OBJECT_COMMAND, (Object) cmd);
+                user.setProperty(CURRENT_COMMAND, dataCmd.getId());
+                user.setProperty(CURRENT_OBJECT_COMMAND, cmd);
             } else if (moneyres.getErrorCode().equals("1002")) {
                 res = 2;
             }
@@ -1534,13 +1530,13 @@ public class LobbyModule
         ksMsg.safe = moneyres.getSafeMoney();
         ksMsg.currentMoney = moneyres.getCurrentMoney();
         ksMsg.Error = cmd.moneyExchange == 0 ? 3 : res;
-        this.send((BaseMsg) ksMsg, user);
+        this.send(ksMsg, user);
     }
 
     private void gameConfig(User user, DataCmd dataCmd) {
         GameConfigCmd cmd = new GameConfigCmd(dataCmd);
-        user.setProperty((Object) CURRENT_COMMAND, (Object) dataCmd.getId());
-        user.setProperty((Object) CURRENT_OBJECT_COMMAND, (Object) cmd);
+        user.setProperty(CURRENT_COMMAND, dataCmd.getId());
+        user.setProperty(CURRENT_OBJECT_COMMAND, cmd);
 
 //        OtpServiceImpl otpService = new OtpServiceImpl();
 //        try {
@@ -1558,12 +1554,12 @@ public class LobbyModule
         NapXuCmd cmd = new NapXuCmd(dataCmd);
         NapXuResponse response = this.userService.napXu(user.getName(), cmd.moneyVin, true);
         if (response.getResult() == 0) {
-            user.setProperty((Object) CURRENT_COMMAND, (Object) dataCmd.getId());
-            user.setProperty((Object) CURRENT_OBJECT_COMMAND, (Object) cmd);
+            user.setProperty(CURRENT_COMMAND, dataCmd.getId());
+            user.setProperty(CURRENT_OBJECT_COMMAND, cmd);
         }
         NapXuMsg msg = new NapXuMsg();
         msg.Error = response.getResult();
-        this.send((BaseMsg) msg, user);
+        this.send(msg, user);
     }
 
     private void napTheDienThoai(User user, DataCmd dataCmd) {
@@ -1574,16 +1570,16 @@ public class LobbyModule
         NapTheDienThoaiMsg msg = new NapTheDienThoaiMsg();
         if (GameUtils.allowDepositCard(user.getName())) { // todo check time ban allow deposit
             try {
-                Debug.trace((Object) ("Recharge error: " + PartnerConfig.CongGachThe + ":" + cmd.provider + ":" + cmd.serial + ":" + cmd.pin + ":" + cmd.menhgia));
-                Platform platform = Platform.find((String) ((String) user.getProperty((Object) "pf")));
+                Debug.trace("Recharge error: " + PartnerConfig.CongGachThe + ":" + cmd.provider + ":" + cmd.serial + ":" + cmd.pin + ":" + cmd.menhgia);
+                Platform platform = Platform.find((String) user.getProperty("pf"));
                 cmd.menhgia = cmd.menhgia.replace(".", "");
                 cmd.menhgia = cmd.menhgia.replace(",", "");
 
-                res = this.rechargeService.rechargeByGachThe(user.getName(), ProviderType.getProviderById((int) cmd.provider), cmd.serial, cmd.pin, cmd.menhgia, platform.getName(), user.getId());
+                res = this.rechargeService.rechargeByGachThe(user.getName(), ProviderType.getProviderById(cmd.provider), cmd.serial, cmd.pin, cmd.menhgia, platform.getName(), user.getId());
 
             } catch (Exception e) {
                 logger.debug("napTheDienThoai error:" + e.getMessage());
-                Debug.trace((Object) ("Recharge error: " + e.getMessage()));
+                Debug.trace("Recharge error: " + e.getMessage());
             }
 
             if (res != null) {
@@ -1600,8 +1596,8 @@ public class LobbyModule
         }
 
         BroadCastUserMoney.pushBroadCast(user.getName());
-        Debug.trace((Object) ("Recharge Gachthe error: " + msg.Error));
-        this.send((BaseMsg) msg, user);
+        Debug.trace("Recharge Gachthe error: " + msg.Error);
+        this.send(msg, user);
         CardBanMoneyService banMoneyService = new CardBanMoneyService();
         banMoneyService.banWidrawUser(user.getName(), 2000);
     }
@@ -1611,14 +1607,14 @@ public class LobbyModule
         byte result = 1;
         RechargeResponse res = null;
         try {
-            Debug.trace((Object) ("Recharge error: " + cmd.provider + ":" + cmd.serial + ":" + cmd.pin + ":" + cmd.menhgia));
-            Platform platform = Platform.find((String) ((String) user.getProperty((Object) "pf")));
+            Debug.trace("Recharge error: " + cmd.provider + ":" + cmd.serial + ":" + cmd.pin + ":" + cmd.menhgia);
+            Platform platform = Platform.find((String) user.getProperty((Object) "pf"));
             cmd.menhgia = cmd.menhgia.replace(".", "");
             cmd.menhgia = cmd.menhgia.replace(",", "");
             //res = this.rechargeService.rechargeByCard(user.getName(), ProviderType.getProviderById((int)cmd.provider), cmd.serial, cmd.pin, platform.getName());
             res = this.rechargeService.rechargeByGachThe(user.getName(), ProviderType.getProviderById((int) cmd.provider), cmd.serial, cmd.pin, cmd.menhgia, platform.getName(), user.getId());
         } catch (Exception e) {
-            Debug.trace((Object) ("Recharge error: " + e.getMessage()));
+            Debug.trace("Recharge error: " + e.getMessage());
         }
         GachTheDienThoaiMsg msg = new GachTheDienThoaiMsg();
         if (res != null) {
@@ -1629,8 +1625,8 @@ public class LobbyModule
         } else {
             msg.Error = result;
         }
-        Debug.trace((Object) ("Recharge Gachthe error: " + msg.Error));
-        this.send((BaseMsg) msg, user);
+        Debug.trace("Recharge Gachthe error: " + msg.Error);
+        this.send(msg, user);
     }
 
     private void napVinCard(User user, DataCmd dataCmd) {
@@ -1971,13 +1967,11 @@ public class LobbyModule
                     check_code_tt = true;
                     codex = new CodeTT(cc.getCode(), cc.getMoney(), cc.getTimelog(), cc.getStop());
                     break;
-                } else {
-                    check_code_tt = false;
                 }
             }
 
-            if (check_user_active_otp == true) {
-                if (check_use_code_tanthu == false && check_code_tt == true) {
+            if (check_user_active_otp) {
+                if (!check_use_code_tanthu && check_code_tt) {
                     String timelog = VinPlayUtils.getCurrentDateTime();
                     UseCode usercode = new UseCode(user.getName(), codex.getCode(), 1, timelog, usotp.getUsername(), usotp.getPhone(), usotp.getActive());
                     ttdao.InsertCode(usercode);
@@ -2102,19 +2096,19 @@ public class LobbyModule
         try {
             boolean forceCheck = true;
             String mobile = "";
-            if (user.getProperty((Object) FORCE_CHECK_OTP) != null)
-                forceCheck = (boolean) user.getProperty((Object) FORCE_CHECK_OTP);
+            if (user.getProperty(FORCE_CHECK_OTP) != null)
+                forceCheck = (boolean) user.getProperty(FORCE_CHECK_OTP);
             if (!forceCheck) {
-                if (user.getProperty((Object) UPDATE_NEW_MOBILE) != null)
-                    mobile = (String) user.getProperty((Object) UPDATE_NEW_MOBILE);
+                if (user.getProperty(UPDATE_NEW_MOBILE) != null)
+                    mobile = (String) user.getProperty(UPDATE_NEW_MOBILE);
             }
-            Debug.trace((Object) (user.getName() + ":" + mobile));
+            Debug.trace(user.getName() + ":" + mobile);
             int ret = otpService.sendVoiceOtp(user.getName(), mobile, forceCheck);
             msg.Error = (byte) ret;
         } catch (Exception e) {
-            Debug.trace((Object) ("LobbyModule error: " + e));
+            Debug.trace("LobbyModule error: " + e);
         }
-        this.send((BaseMsg) msg, user);
+        this.send(msg, user);
     }
 
     private void checkOtp(User user, DataCmd dataCmd) {
@@ -2607,6 +2601,14 @@ public class LobbyModule
     public void updateJackpot() {
         try {
             CacheService cacheService = new CacheServiceImpl();
+
+            int caoThap1000 = cacheService.getValueInt(Games.CAO_THAP.getName() + "_vin_1000", 0);
+            int caoThap10000 = cacheService.getValueInt(Games.CAO_THAP.getName() + "_vin_10000", 0);
+            int caoThap50000 = cacheService.getValueInt(Games.CAO_THAP.getName() + "_vin_50000", 0);
+            int caoThap100000 = cacheService.getValueInt(Games.CAO_THAP.getName() + "_vin_100000", 0);
+            int caoThap500000 = cacheService.getValueInt(Games.CAO_THAP.getName() + "_vin_500000", 0);
+
+
             int miniPoker100 = cacheService.getValueInt(Games.MINI_POKER.getName() + "_vin_100", 0);
             int miniPoker1000 = cacheService.getValueInt(Games.MINI_POKER.getName() + "_vin_1000", 0);
             int miniPoker10000 = cacheService.getValueInt(Games.MINI_POKER.getName() + "_vin_10000", 0);
@@ -2675,6 +2677,13 @@ public class LobbyModule
             msg.sparta5000 = spartan1000;
             msg.sparta10000 = spartan10000;
             msg.baucuatofund = baucauto;
+
+            msg.potCaoThap1000 = caoThap1000;
+            msg.potCaoThap10000 = caoThap10000;
+            msg.potCaoThap50000 = caoThap100000;
+            msg.potCaoThap100000 = caoThap50000;
+            msg.potCaoThap500000 = caoThap500000;
+
             for (User user : this.usersSubJackpot) {
                 if (user == null) continue;
                 this.send(msg, user);

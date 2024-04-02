@@ -73,8 +73,7 @@ import java.util.concurrent.TimeoutException;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 
-public class MGRoomMiniPoker
-        extends MGRoom {
+public class MGRoomMiniPoker extends MGRoom {
     private float tax = MinigameConstant.MINIGAME_TAX_VIN;
     private long pot;
     private long fund;
@@ -153,8 +152,6 @@ public class MGRoomMiniPoker
         StringBuilder builder = new StringBuilder();
         short result = 0;
         long prize = 0L;
-        int soLanNoHu = ConfigGame.getIntValue("mini_poker_so_lan_no_hu");
-        Random rd;
         long currentMoney = this.userService.getMoneyUserCache(username, this.moneyTypeStr);
         UserCacheModel u = this.userService.getUser(username);
         long referenceId = System.currentTimeMillis();
@@ -184,8 +181,7 @@ public class MGRoomMiniPoker
             cacheService.setValue("hu_10k_poker", 0);
             cacheService.setValue("my_debug", "");
         }
-        String mydebug = "";
-//        if (this.fund >= 0L) {
+
         if (betValue > 0L) {
             if (currentMoney >= betValue) {
                 MoneyResponse moneyRes = this.userService.updateMoney(username, -betValue, this.moneyTypeStr, Games.MINI_POKER.getName(), "Quay MiniPoker", "\u0110\u1eb7t c\u01b0\u1ee3c MiniPoker", 0L, Long.valueOf(referenceId), TransType.START_TRANS);
@@ -207,11 +203,6 @@ public class MGRoomMiniPoker
                         tienThuongX2 = 0L;
                         long moneyExchange = 0L;
                         boolean forceNoHu = false;
-//                        if ((soLanNoHu > 0) && (fund > initPotValue * 2L)) {
-//                            rd = new Random();
-//                            if (rd.nextInt(soLanNoHu) == 0)
-//                                forceNoHu = true;
-//                        }
                         // // lock no hũ 11/01 kane
                         if (userForce.equals(username) && betValueCache.equals(String.valueOf(this.betValue))) {
                             forceNoHu = true;
@@ -290,10 +281,8 @@ public class MGRoomMiniPoker
                                     break;
                                 }
                                 case StraightFlush: {
-//                                if (!u.isBot()) continue block13;
                                     if (forceJackpotByUser) {
                                         if (CardLibUtils.isStraightFlushJack(cards)) {
-//                                    if (!u.isBot()) continue block13;
                                             result = 1;
                                             if (this.huX2) {
                                                 tienThuongX2 = this.pot;
@@ -308,22 +297,12 @@ public class MGRoomMiniPoker
                                     }
                                 }
                             }
-                            mydebug += " random kq lan: " + i + " result : " + result + " prize:" + prize + " hu:" + hu100;
 
-//                            if(betValue == 100) {
-//                                //so sanh hu 100
-//                            }else if(betValue == 1000) {
-//                                //so sanh hu 1k
-//                            }else if(betValue == 10000) {
-//                                //so sanh hu 10k
-//                            }
                             //tam thoi cho het vao 1 hu set hu la 100tr
                             if (hu100 - prize < 0 || hu100 + prize > 100000000 || hu100 < 0) {
                                 //random lai
-                                mydebug += "bi ran dom lai";
                                 continue;
                             } else {
-                                mydebug += "khong bi random lai tipe tuc";
                                 // thoa ma dieu kien hu
                                 break;
                             }
@@ -335,12 +314,9 @@ public class MGRoomMiniPoker
                         } else {
 
                         }
-//                        cacheService.setValue("my_debug",mydebug);
                         cacheService.setValue("hu_100_poker", hu100 + "");
 
                         long fundExchange = Math.max(prize, 0L);
-//                        long l = fundExchange;
-//                            if (result == 1 ? this.fund - this.initPotValue < 0L : this.fund - fundExchange < 0L) continue;
                         enoughToPair = true;
                         if (cards.size() == 5) {
                             resultMiniPokerMsg.card1 = (byte) cards.get(0).getCode();
@@ -354,38 +330,6 @@ public class MGRoomMiniPoker
                                 if (this.huX2) {
                                     result = 12;
                                 }
-//                                this.noHuX2();
-//                                if (this.moneyType == 1) {
-//                                        GameUtils.sendSMSToUser(username, "Chuc mung " + username + " da no hu game MiniPoker phong " + betValue + ". So tien no hu: " + this.pot + " Vin");
-//                                }
-//                                long oldPotValue = this.pot;
-                                this.pot = this.initPotValue;
-                                this.fund -= this.initPotValue;
-                                // get usercache
-//                                HazelcastInstance client = HazelcastClientFactory.getInstance();
-//                                IMap<String, UserModel> userMap = client.getMap("users");
-//                                UserModel model = null;
-//                                String displayName = username;
-//                                if (userMap.containsKey((Object) username)) {
-//                                    model = (UserModel) userMap.get((Object) displayName);
-//                                    if (model.getClient() != null && model.getClient() != "") {
-//                                        displayName = "[" + model.getClient() + "] " + username;
-//                                    } else {
-//                                        displayName = "[X] " + username;
-//                                    }
-//                                } else {
-//                                    UserDaoImpl dao = new UserDaoImpl();
-//                                    try {
-//                                        model = dao.getUserByNickName(username);
-//                                        if (model.getClient() != null && model.getClient() != "") {
-//                                            displayName = "[" + model.getClient() + "] " + username;
-//                                        } else {
-//                                            displayName = "[X] " + username;
-//                                        }
-//                                    } catch (SQLException ex) {
-//
-//                                    }
-//                                }
                                 if (forceNoHu) {
                                     try {
                                         sv.removeKey(CACHE_NAME_USER_SPOT + this.gameName);
@@ -424,7 +368,7 @@ public class MGRoomMiniPoker
 
                             }
                         } catch (IOException | InterruptedException | TimeoutException e) {
-                            Debug.trace((Object[]) new Object[]{"Log mini poker error ", e.getMessage()});
+                            Debug.trace(new Object[]{"Log mini poker error ", e.getMessage()});
                         }
                     }
                     this.saveFund();
@@ -436,9 +380,7 @@ public class MGRoomMiniPoker
         } else {
             result = 101;
         }
-//        } else {
-//            result = 100;
-//        }
+
         sv.setValue(CACHE_JACK_POT_VALUE_MINIGAME + "_" + this.betValue + "_" + this.gameName, String.valueOf(this.pot));
         resultMiniPokerMsg.result = result;
         resultMiniPokerMsg.prize = prize;

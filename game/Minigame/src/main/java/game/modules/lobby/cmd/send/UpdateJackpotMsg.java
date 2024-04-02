@@ -4,6 +4,7 @@
 package game.modules.lobby.cmd.send;
 
 import game.BaseMsgEx;
+
 import java.nio.ByteBuffer;
 
 public class UpdateJackpotMsg extends BaseMsgEx {
@@ -33,22 +34,34 @@ public class UpdateJackpotMsg extends BaseMsgEx {
     public long sparta5000 = 0L;
     public long sparta10000 = 0L;
     // pot bau cua to
-    public  long baucuatofund =0L;
-    public  long txHu =0L;
-    public  long txTai =0L;
-    public  long txXiu =0L;
+    public long baucuatofund = 0L;
+    public long txHu = 0L;
+    public long txTai = 0L;
+    public long txXiu = 0L;
+
+    public long potCaoThap1000 = 0L;
+    public long potCaoThap10000 = 0L;
+    public long potCaoThap50000 = 0L;
+    public long potCaoThap100000 = 0L;
+    public long potCaoThap500000 = 0L;
+
     public UpdateJackpotMsg() {
         super(20101);
     }
 
     public byte[] createData() {
         ByteBuffer bf = this.makeBuffer();
+
+        // MINI POKER
         this.putLong(bf, this.potMiniPoker100);
         this.putLong(bf, this.potMiniPoker1000);
         this.putLong(bf, this.potMiniPoker10000);
+
+        // WISHKEY
         this.putLong(bf, this.potPokeGo100);
         this.putLong(bf, this.potPokeGo1000);
         this.putLong(bf, this.potPokeGo10000);
+
         this.putLong(bf, this.potKhoBau100);
         this.putLong(bf, this.potKhoBau1000);
         this.putLong(bf, this.potKhoBau10000);
@@ -69,10 +82,19 @@ public class UpdateJackpotMsg extends BaseMsgEx {
         this.putLong(bf, this.sparta1000);
         this.putLong(bf, this.sparta5000);
         this.putLong(bf, this.sparta10000);
-        this.putLong(bf,this.baucuatofund);
-        this.putLong(bf,this.txHu);
-        this.putLong(bf,this.txTai);
-        this.putLong(bf,this.txXiu);
+        this.putLong(bf, this.baucuatofund);
+
+        this.putLong(bf, this.txHu);
+        this.putLong(bf, this.txTai);
+        this.putLong(bf, this.txXiu);
+
+        // cao thap
+        this.putLong(bf, this.potCaoThap1000);
+        this.putLong(bf, this.potCaoThap10000);
+        this.putLong(bf, this.potCaoThap50000);
+        this.putLong(bf, this.potCaoThap100000);
+        this.putLong(bf, this.potCaoThap500000);
+
         return this.packBuffer(bf);
     }
 
@@ -298,6 +320,46 @@ public class UpdateJackpotMsg extends BaseMsgEx {
 
     public void setTxXiu(long txXiu) {
         this.txXiu = txXiu;
+    }
+
+    public long getPotCaoThap1000() {
+        return potCaoThap1000;
+    }
+
+    public void setPotCaoThap1000(long potCaoThap1000) {
+        this.potCaoThap1000 = potCaoThap1000;
+    }
+
+    public long getPotCaoThap10000() {
+        return potCaoThap10000;
+    }
+
+    public void setPotCaoThap10000(long potCaoThap10000) {
+        this.potCaoThap10000 = potCaoThap10000;
+    }
+
+    public long getPotCaoThap50000() {
+        return potCaoThap50000;
+    }
+
+    public void setPotCaoThap50000(long potCaoThap50000) {
+        this.potCaoThap50000 = potCaoThap50000;
+    }
+
+    public long getPotCaoThap100000() {
+        return potCaoThap100000;
+    }
+
+    public void setPotCaoThap100000(long potCaoThap100000) {
+        this.potCaoThap100000 = potCaoThap100000;
+    }
+
+    public long getPotCaoThap500000() {
+        return potCaoThap500000;
+    }
+
+    public void setPotCaoThap500000(long potCaoThap500000) {
+        this.potCaoThap500000 = potCaoThap500000;
     }
 }
 
