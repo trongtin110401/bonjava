@@ -143,7 +143,7 @@ public class HistoryTransDaoImpl implements HistoryTransDao {
             int numStart = page * maxItem;
             int numEnd = maxItem;
             BasicDBObject objsort = new BasicDBObject();
-            objsort.put("_id", -1);
+            objsort.put("createAt", -1);
             HashMap<String, Object> conditions = new HashMap<String, Object>();
             if (nickName != null && !nickName.isEmpty()) {
                 conditions.put("nickName", nickName.trim());
@@ -244,7 +244,7 @@ public class HistoryTransDaoImpl implements HistoryTransDao {
             int numStart = page * maxItem;
             int numEnd = maxItem;
             BasicDBObject objsort = new BasicDBObject();
-            objsort.put("_id", -1);
+            objsort.put("createAt", -1);
             HashMap<String, Object> conditions = new HashMap<String, Object>();
             if (nickName != null && !nickName.isEmpty()) {
                 conditions.put("nickName", nickName.trim());

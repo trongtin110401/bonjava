@@ -2,6 +2,9 @@ package com.vinplay.api.processors;
 
 import com.vinplay.api.dao.ManageGiftCodeDAO;
 import com.vinplay.api.entities.UserOTP;
+import com.vinplay.lognaprut.HistoryTransDao;
+import com.vinplay.lognaprut.entities.HistoryTransModel;
+import com.vinplay.lognaprut.impl.HistoryTransDaoImpl;
 import com.vinplay.usercore.service.impl.GiftCodeServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
@@ -14,15 +17,12 @@ import com.vinplay.vbee.common.utils.VinPlayUtils;
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;
 
 import static game.modules.gameRoom.entities.GameMoneyInfo.userService;
 
 public class UserNapGiftCodeProcessor
         implements BaseProcessor<HttpServletRequest, String> {
-
-    private final String CODE_TAN_THU = "1";
-
-    private final String CODE_VIP = "2";
 
 
     public String execute(Param<HttpServletRequest> param) {
@@ -52,7 +52,7 @@ public class UserNapGiftCodeProcessor
             }
 
             UserOTP usotp = dao.getUserActiveOTP(nickName);
-            if (usotp.getActive() != 1 && !giftCodeDto.getType().equals(CODE_TAN_THU)) {
+            if (usotp.getActive() != 1) {
                 return response.toJson();
             }
             giftCodeDto.setNickName(nickName);
@@ -71,8 +71,10 @@ public class UserNapGiftCodeProcessor
             userGiftCode.setType(giftCodeDto.getType());
             service.saveUserUseGiftCode(userGiftCode);
             service.updateGiftCode(giftCodeDto);
-
-            userService.updateMoney(nickName, giftCodeDto.getPrice(), "vin", giftCodeDto.getType(), giftCodeDto.getType(), "M\u00e3: " + code, 0L, null, TransType.NO_VIPPOINT);
+            HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
+            historyTransDao.insertTransaction(new HistoryTransModel("Nạp Tiền Từ Gift Code", "Hệ Thống",
+                    "Nạp tiền", String.valueOf(giftCodeDto.getPrice()), "Thành công",code , nickName, "GIFT_CODE", UUID.randomUUID().toString()));
+            userService.updateMoney(nickName, giftCodeDto.getPrice(), "vin", giftCodeDto.getType(), giftCodeDto.getType(), "Mã: " + code, 0L, null, TransType.NO_VIPPOINT);
 
         } catch (Exception ex) {
             throw new RuntimeException(ex);

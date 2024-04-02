@@ -1,19 +1,14 @@
 package com.vinplay.api.processors.lichsunaprut;
 
-import com.vinplay.dichvuthe.dao.CashoutDao;
-import com.vinplay.dichvuthe.dao.impl.CashoutDaoImpl;
 import com.vinplay.lognaprut.HistoryTransDao;
-import com.vinplay.lognaprut.entities.HistoryTransModel;
 import com.vinplay.lognaprut.entities.HistoryTransResponse;
 import com.vinplay.lognaprut.impl.HistoryTransDaoImpl;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
-import com.vinplay.vbee.common.messages.dvt.CashoutByCardMessage;
 import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 public class HistoryMoneyProcessor implements BaseProcessor<HttpServletRequest, String> {
     private static final Logger logger = Logger.getLogger((String) "api");
@@ -41,7 +36,7 @@ public class HistoryMoneyProcessor implements BaseProcessor<HttpServletRequest, 
 
                 //1. find by trans time and nickname
                 HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
-                res = historyTransDao.getListTransByName(nickName, page, 20);
+                res = historyTransDao.getListTransByName(nickName, page, 5);
                 if (res != null) {
                     res.setSuccess(true);
                     res.setErrorCode("0");
@@ -51,7 +46,7 @@ public class HistoryMoneyProcessor implements BaseProcessor<HttpServletRequest, 
             }else if(ver.equalsIgnoreCase("1")){
                 //get nap
                 HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
-                res = historyTransDao.getListTransNapByName(nickName, page, 20);
+                res = historyTransDao.getListTransNapByName(nickName, page, 5);
                 if (res != null) {
                     res.setSuccess(true);
                     res.setErrorCode("0");
@@ -61,7 +56,7 @@ public class HistoryMoneyProcessor implements BaseProcessor<HttpServletRequest, 
             }else if(ver.equalsIgnoreCase("2")){
                 //get rut the
                 HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
-                res = historyTransDao.getListTransRutTheByName(nickName, page, 20);
+                res = historyTransDao.getListTransRutTheByName(nickName, page, 5);
                 if (res != null) {
                     res.setSuccess(true);
                     res.setErrorCode("0");
@@ -71,7 +66,7 @@ public class HistoryMoneyProcessor implements BaseProcessor<HttpServletRequest, 
             }else if(ver.equalsIgnoreCase("3")){
                 //get rut bank
                 HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
-                res = historyTransDao.getListTransRutBankByName(nickName, page, 20);
+                res = historyTransDao.getListTransRutBankByName(nickName, page, 5);
                 if (res != null) {
                     res.setSuccess(true);
                     res.setErrorCode("0");
@@ -81,7 +76,7 @@ public class HistoryMoneyProcessor implements BaseProcessor<HttpServletRequest, 
             }else{
                 //1. find by trans time and nickname
                 HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
-                res = historyTransDao.getListTransByName(nickName, page, 20);
+                res = historyTransDao.getListTransByName(nickName, page, 5);
                 if (res != null) {
                     res.setSuccess(true);
                     res.setErrorCode("0");
