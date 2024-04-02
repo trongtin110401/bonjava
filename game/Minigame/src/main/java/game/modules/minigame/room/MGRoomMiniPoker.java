@@ -146,14 +146,12 @@ public class MGRoomMiniPoker extends MGRoom {
     }
 
     public synchronized ResultMiniPokerMsg play(String username, long betValue) {
-        System.out.println("STE 01");
         long lastPot = this.pot;
         long lastFund = this.fund;
         ResultMiniPokerMsg resultMiniPokerMsg = new ResultMiniPokerMsg();
         StringBuilder builder = new StringBuilder();
         short result = ResultPoker.TRUOT;
         long prize = 0L;
-        System.out.println("STE 02");
         UserCacheModel u = this.userService.getUser(username);
         long referenceId = System.currentTimeMillis();
 
@@ -161,15 +159,12 @@ public class MGRoomMiniPoker extends MGRoom {
         String betValueCache = "";
         boolean forceJackpotByUser = false;
         try {
-            System.out.println("STE 03");
             userForce = sv.getValueStr(CACHE_NAME_USER_SPOT + this.gameName);
-            System.out.println("STE 04");
             betValueCache = sv.getValueStr(CACHE_BET_VALUE_SLOT + this.gameName);
         } catch (Exception e) {
             userForce = "";
             betValueCache = "";
         }
-        System.out.println("STE 05");
         long currentMoney = this.userService.getMoneyUserCache(username, this.moneyTypeStr);
         if (betValue > 0L) {
             if (currentMoney >= betValue) {
@@ -201,13 +196,11 @@ public class MGRoomMiniPoker extends MGRoom {
                             forceJackpotByUser = true;
                         }
 
-                        System.out.println("STE 06");
                         List<Card> cards = this.gen.randomCards2(forceJackpotByUser);
                         if (cards.size() != 5) {
                             cards = this.gen.randomCards();
                         }
 
-                        System.out.println("STE 07");
                         if ((groupType = CardLibUtils.calculateTypePoker(cards)) == null) continue;
                         switch (groupType) {
                             case HighCard: {
@@ -324,19 +317,15 @@ public class MGRoomMiniPoker extends MGRoom {
 
                         long moneyAdded = prize;
                         String des = "Quay MiniPoker";
-                        System.out.println("STE 08");
                         if (result == ResultPoker.NO_HU_X2 && !u.isBot()) {
                             moneyAdded -= tienThuongX2;
                             this.userService.updateMoney(username, tienThuongX2, this.moneyTypeStr, this.gameName, des, "Th\u1eafng X2", 0L, null, TransType.NO_VIPPOINT);
                         }
-                        System.out.println("STE 09");
                         if (!u.isBot()) {
                             moneyRes = this.userService.updateMoney(username, moneyAdded, this.moneyTypeStr, Games.MINI_POKER.getName(), des, this.buildDescription(betValue, moneyAdded, result), fee, Long.valueOf(referenceId), TransType.END_TRANS);
                         }
-                        System.out.println("STE 10");
                         moneyExchange = prize - betValue;
                         if (moneyRes != null && moneyRes.isSuccess()) {
-                            System.out.println("STE 11");
                             currentMoney = moneyRes.getCurrentMoney();
                             if (this.moneyType == 1 && moneyExchange >= (long) BroadcastMessageServiceImpl.MIN_MONEY) {
                                 this.broadcastMsgService.putMessage(Games.MINI_POKER.getId(), username, moneyExchange);
@@ -348,7 +337,6 @@ public class MGRoomMiniPoker extends MGRoom {
                             builder.append(cards.get(i).toString());
                         }
                         try {
-                            System.out.println("STE 12");
                             if (!isBot(username)) {
                                 this.mpService.logMiniPoker(username, betValue, result, prize, builder.toString(), lastPot, lastFund, this.moneyType);
                             }
@@ -356,9 +344,7 @@ public class MGRoomMiniPoker extends MGRoom {
                             Debug.trace("Log mini poker error ", e.getMessage());
                         }
                     }
-                    System.out.println("STE 13");
                     this.saveFund();
-                    System.out.println("STE 14");
                     this.savePot();
                 }
             } else {
@@ -368,10 +354,8 @@ public class MGRoomMiniPoker extends MGRoom {
             result = ResultPoker.DAT_CUOC_KHONG_HOP_LE;
         }
 
-        System.out.println("STE 15");
         sv.setValue(CACHE_JACK_POT_VALUE_MINIGAME + "_" + this.betValue + "_" + this.gameName, String.valueOf(this.pot));
 
-        System.out.println("STE 16");
         if (forceJackpotByUser) {
             this.sendNotifyNoHu(username, (byte) 1, resultMiniPokerMsg.prize, this.gameName);
         }
