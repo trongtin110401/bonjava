@@ -323,7 +323,7 @@ public class MiniPokerModule
             this.countBot100 = 0;
             bots = BotMinigame.getBots(ConfigGame.getIntValue("mini_poker_num_bot_100"), "vin");
             for (String bot : bots) {
-                System.out.println(bot + " play MiniPoker");
+                System.out.println(bot + " play MiniPoker 100");
                 if (bot == null) continue;
                 room = (MGRoomMiniPoker) rooms.get(Games.MINI_POKER.getName() + "_vin_100");
                 room.play(bot, 100L);
@@ -334,7 +334,7 @@ public class MiniPokerModule
             this.countBot1000 = 0;
             bots = BotMinigame.getBots(ConfigGame.getIntValue("mini_poker_num_bot_1000"), "vin");
             for (String bot : bots) {
-                System.out.println(bot + " play MiniPoker");
+                System.out.println(bot + " play MiniPoker 1.000");
                 if (bot == null) continue;
                 room = (MGRoomMiniPoker) rooms.get(Games.MINI_POKER.getName() + "r_vin_1000");
                 room.play(bot, 1000L);
@@ -345,7 +345,7 @@ public class MiniPokerModule
             this.countBot10000 = 0;
             bots = BotMinigame.getBots(ConfigGame.getIntValue("mini_poker_num_bot_10000"), "vin");
             for (String bot : bots) {
-                System.out.println(bot + " play MiniPoker");
+                System.out.println(bot + " play MiniPoker 10.000");
                 if (bot == null) continue;
                 room = (MGRoomMiniPoker) rooms.get(Games.MINI_POKER.getName() + "_vin_10000");
                 room.play(bot, 10000L);
