@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  bitzero.server.BitZeroServer
  *  bitzero.server.core.BZEventParam
@@ -28,26 +28,16 @@ import bitzero.server.BitZeroServer;
 import bitzero.server.core.BZEventParam;
 import bitzero.server.core.BZEventType;
 import bitzero.server.core.IBZEvent;
-import bitzero.server.core.IBZEventListener;
-import bitzero.server.core.IBZEventParam;
-import bitzero.server.core.IBZEventType;
 import bitzero.server.entities.User;
 import bitzero.server.exceptions.BZException;
-import bitzero.server.extensions.BZExtension;
 import bitzero.server.extensions.BaseClientRequestHandler;
-import bitzero.server.extensions.data.BaseMsg;
 import bitzero.server.extensions.data.DataCmd;
-import bitzero.server.util.TaskScheduler;
 import bitzero.util.common.business.Debug;
 import com.vinplay.cardlib.models.Card;
 import com.vinplay.dal.service.CaoThapService;
 import com.vinplay.dal.service.impl.CaoThapServiceImpl;
 import com.vinplay.vbee.common.utils.DateTimeUtils;
-import game.modules.minigame.cmd.rev.caothap.ChangeRoomCaoThapCmd;
-import game.modules.minigame.cmd.rev.caothap.PlayCaoThapCmd;
-import game.modules.minigame.cmd.rev.caothap.StartPlayCaoThapCmd;
-import game.modules.minigame.cmd.rev.caothap.StopPlayCaoThapCmd;
-import game.modules.minigame.cmd.rev.caothap.UnSubscribeCaoThapCmd;
+import game.modules.minigame.cmd.rev.caothap.*;
 import game.modules.minigame.cmd.send.caothap.ChangeRoomCaoThapMsg;
 import game.modules.minigame.cmd.send.caothap.SubscribeCaoThapMsg;
 import game.modules.minigame.cmd.send.caothap.UserInfoCaoThapMsg;
@@ -60,19 +50,15 @@ import game.modules.minigame.utils.GenerationMiniPoker;
 import game.modules.minigame.utils.MiniGameUtils;
 import game.utils.ConfigGame;
 import game.utils.GameUtils;
+
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.ScheduledFuture;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class CaoThapModule
-extends BaseClientRequestHandler {
-    private Map<String, MGRoom> rooms = new HashMap<String, MGRoom>();
+        extends BaseClientRequestHandler {
+    private Map<String, MGRoom> rooms = new HashMap<>();
     private CaoThapService service = new CaoThapServiceImpl();
     private final Runnable rewardDailyTask = new RewardDaily();
     private final Runnable botDailyTask = new BotDailyTask();
@@ -84,44 +70,37 @@ extends BaseClientRequestHandler {
         long[] funds = new long[10];
         try {
             pots = this.service.getPotCaoThap();
-            Debug.trace((Object)("CAO THAP POTS: " + pots));
+            Debug.trace("CAO THAP POTS: " + Arrays.toString(pots));
             funds = this.service.getFundCaoThap();
-            Debug.trace((Object)("CAO THAP FUNDS: " + funds));
+            Debug.trace("CAO THAP FUNDS: " + Arrays.toString(funds));
             this.referenceId = this.service.getLastReferenceId();
-            Debug.trace((Object)("CAO THAP phien: " + this.referenceId));
+            Debug.trace("CAO THAP phien: " + this.referenceId);
+        } catch (SQLException e) {
+            Debug.trace("Get cao thap pot error ", e.getMessage());
         }
-        catch (SQLException e) {
-            Debug.trace((Object[])new Object[]{"Get cao thap pot error ", e.getMessage()});
-        }
-        this.rooms.put("cao_thap_vin_1000", new MGRoomCaoThap("cao_thap_vin_1000", (byte)1, pots[0], funds[0], 1000));
-        this.rooms.put("cao_thap_vin_10000", new MGRoomCaoThap("cao_thap_vin_10000", (byte)1, pots[1], funds[1], 10000));
-        this.rooms.put("cao_thap_vin_50000", new MGRoomCaoThap("cao_thap_vin_50000", (byte)1, pots[2], funds[2], 50000));
-        this.rooms.put("cao_thap_vin_100000", new MGRoomCaoThap("cao_thap_vin_100000", (byte)1, pots[3], funds[3], 100000));
-        this.rooms.put("cao_thap_vin_500000", new MGRoomCaoThap("cao_thap_vin_500000", (byte)1, pots[4], funds[4], 500000));
-        this.rooms.put("cao_thap_xu_10000", new MGRoomCaoThap("cao_thap_xu_10000", (byte)0, pots[5], funds[5], 10000));
-        this.rooms.put("cao_thap_xu_100000", new MGRoomCaoThap("cao_thap_xu_100000", (byte)0, pots[6], funds[6], 100000));
-        this.rooms.put("cao_thap_xu_500000", new MGRoomCaoThap("cao_thap_xu_500000", (byte)0, pots[7], funds[7], 500000));
-        this.rooms.put("cao_thap_xu_1000000", new MGRoomCaoThap("cao_thap_xu_1000000", (byte)0, pots[8], funds[8], 1000000));
-        this.rooms.put("cao_thap_xu_5000000", new MGRoomCaoThap("cao_thap_xu_5000000", (byte)0, pots[9], funds[9], 5000000));
+        this.rooms.put("cao_thap_vin_1000", new MGRoomCaoThap("cao_thap_vin_1000", (byte) 1, pots[0], funds[0], 1000));
+        this.rooms.put("cao_thap_vin_10000", new MGRoomCaoThap("cao_thap_vin_10000", (byte) 1, pots[1], funds[1], 10000));
+        this.rooms.put("cao_thap_vin_50000", new MGRoomCaoThap("cao_thap_vin_50000", (byte) 1, pots[2], funds[2], 50000));
+        this.rooms.put("cao_thap_vin_100000", new MGRoomCaoThap("cao_thap_vin_100000", (byte) 1, pots[3], funds[3], 100000));
+        this.rooms.put("cao_thap_vin_500000", new MGRoomCaoThap("cao_thap_vin_500000", (byte) 1, pots[4], funds[4], 500000));
         try {
             int remainTimeTraThuong = MiniGameUtils.calculateTimeRewardOnNextDay("");
             BitZeroServer.getInstance().getTaskScheduler().schedule(this.rewardDailyTask, remainTimeTraThuong, TimeUnit.SECONDS);
+        } catch (ParseException e) {
+            Debug.trace("Calculate time reward Cao Thap error ", e.getMessage());
         }
-        catch (ParseException e) {
-            Debug.trace((Object[])new Object[]{"Calculate time reward Cao Thap error ", e.getMessage()});
-        }
-        Debug.trace((Object)"INIT CAO THAP DONE");
-        this.getParentExtension().addEventListener((IBZEventType)BZEventType.USER_DISCONNECT, (IBZEventListener)this);
+        Debug.trace("INIT CAO THAP DONE");
+        this.getParentExtension().addEventListener(BZEventType.USER_DISCONNECT, this);
         //this.scheduleBotCT();
     }
 
     private void scheduleBotCT() {
         long currentTime = System.currentTimeMillis() / 1000L;
         long endToday = DateTimeUtils.getEndTimeToDayAsLong() / 1000L;
-        int n = (int)(endToday - currentTime);
-        Debug.trace((Object)("current= " + currentTime));
-        Debug.trace((Object)("end today= " + endToday));
-        Debug.trace((Object)("n= " + n));
+        int n = (int) (endToday - currentTime);
+        Debug.trace("current= " + currentTime);
+        Debug.trace("end today= " + endToday);
+        Debug.trace("n= " + n);
         BitZeroServer.getInstance().getTaskScheduler().schedule(this.botDailyTask, n + 100, TimeUnit.SECONDS);
         if (n >= 21600) {
             int numBots = 5;
@@ -139,21 +118,21 @@ extends BaseClientRequestHandler {
                     tpsA = true;
                 }
                 BotTask botTask = new BotTask(tpsA);
-                BitZeroServer.getInstance().getTaskScheduler().schedule((Runnable)botTask, times[i], TimeUnit.SECONDS);
-                Debug.trace((Object)("" + i + " = " + times[i]));
+                BitZeroServer.getInstance().getTaskScheduler().schedule(botTask, times[i], TimeUnit.SECONDS);
+                Debug.trace("" + i + " = " + times[i]);
             }
         }
     }
 
     public void handleServerEvent(IBZEvent ibzevent) throws BZException {
         if (ibzevent.getType() == BZEventType.USER_DISCONNECT) {
-            User user = (User)ibzevent.getParameter((IBZEventParam)BZEventParam.USER);
+            User user = (User) ibzevent.getParameter(BZEventParam.USER);
             this.userDis(user);
         }
     }
 
     private void userDis(User user) {
-        MGRoomCaoThap room = (MGRoomCaoThap)user.getProperty((Object)"MGROOM_CAO_THAP_INFO");
+        MGRoomCaoThap room = (MGRoomCaoThap) user.getProperty("MGROOM_CAO_THAP_INFO");
         if (room != null) {
             if (room.getUsers().containsKey(user.getName())) {
                 CaoThapInfo info = room.getUsers().get(user.getName());
@@ -203,7 +182,7 @@ extends BaseClientRequestHandler {
         byte roomId = -1;
         boolean play = false;
         int cntRoomPlaying = 0;
-        for (byte i = 0; i < 10; i = (byte)(i + 1)) {
+        for (byte i = 0; i < 10; i = (byte) (i + 1)) {
             MGRoomCaoThap room = this.getRoom(i);
             if (room.getUsers().containsKey(user.getName())) {
                 CaoThapInfo info = room.getUsers().get(user.getName());
@@ -218,18 +197,18 @@ extends BaseClientRequestHandler {
                     room.updatePotToUser(user);
                     msg.status = 0;
                     msg.roomId = roomId;
-                    this.send((BaseMsg)msg, user);
+                    this.send(msg, user);
                     UserInfoCaoThapMsg msgInfo = new UserInfoCaoThapMsg();
                     msgInfo.numA = info.getNumA();
-                    msgInfo.card = (byte)info.getCard().getCode();
+                    msgInfo.card = (byte) info.getCard().getCode();
                     msgInfo.money1 = info.getMoneyUp();
                     msgInfo.money2 = info.getMoney();
                     msgInfo.money3 = info.getMoneyDown();
                     msgInfo.time = info.getTime();
-                    msgInfo.step = (byte)info.getStep();
+                    msgInfo.step = (byte) info.getStep();
                     msgInfo.referenceId = info.getReferenceId();
                     msgInfo.cards = CaoThapUtils.getCardStr(info.getCarryCards());
-                    this.send((BaseMsg)msgInfo, user);
+                    this.send(msgInfo, user);
                     return;
                 }
                 ++cntRoomPlaying;
@@ -248,7 +227,7 @@ extends BaseClientRequestHandler {
             msg.status = 0;
         }
         msg.roomId = roomId;
-        this.send((BaseMsg)msg, user);
+        this.send(msg, user);
     }
 
     private void unSubScribeCaoThap(User user, DataCmd dataCmd) {
@@ -257,7 +236,7 @@ extends BaseClientRequestHandler {
         if (room != null) {
             room.quitRoom(user);
         } else {
-            Debug.trace((Object)("CAO THAP UNSUBSCRIBE: room " + cmd.roomId + " not found"));
+            Debug.trace("CAO THAP UNSUBSCRIBE: room " + cmd.roomId + " not found");
         }
     }
 
@@ -270,14 +249,14 @@ extends BaseClientRequestHandler {
             if (roomLeaved.getUsers().containsKey(user.getName())) {
                 CaoThapInfo info = roomLeaved.getUsers().get(user.getName());
                 if (info.getId() != -1 && info.getId() == user.getId()) {
-                    msg.status = (byte)2;
-                    this.send((BaseMsg)msg, user);
+                    msg.status = (byte) 2;
+                    this.send(msg, user);
                 } else {
                     roomLeaved.quitRoom(user);
                     roomJoined.joinRoom(user);
                     roomJoined.updatePotToUser(user);
                     msg.status = 0;
-                    this.send((BaseMsg)msg, user);
+                    this.send(msg, user);
                 }
             } else if (roomJoined.getUsers().containsKey(user.getName())) {
                 CaoThapInfo info = roomJoined.getUsers().get(user.getName());
@@ -291,50 +270,50 @@ extends BaseClientRequestHandler {
                     roomJoined.joinRoom(user);
                     roomJoined.updatePotToUser(user);
                     msg.status = 1;
-                    this.send((BaseMsg)msg, user);
+                    this.send(msg, user);
                     UserInfoCaoThapMsg msg1 = new UserInfoCaoThapMsg();
                     msg1.numA = info.getNumA();
-                    msg1.card = (byte)info.getCard().getCode();
+                    msg1.card = (byte) info.getCard().getCode();
                     msg1.money1 = info.getMoneyUp();
                     msg1.money2 = info.getMoney();
                     msg1.money3 = info.getMoneyDown();
                     msg1.time = info.getTime();
-                    msg1.step = (byte)info.getStep();
+                    msg1.step = (byte) info.getStep();
                     msg1.referenceId = info.getReferenceId();
                     msg1.cards = CaoThapUtils.getCardStr(info.getCarryCards());
-                    this.send((BaseMsg)msg1, user);
+                    this.send(msg1, user);
                 } else {
-                    msg.status = (byte)3;
-                    this.send((BaseMsg)msg, user);
+                    msg.status = (byte) 3;
+                    this.send(msg, user);
                 }
             } else {
                 roomLeaved.quitRoom(user);
                 roomJoined.joinRoom(user);
                 roomJoined.updatePotToUser(user);
                 msg.status = 0;
-                this.send((BaseMsg)msg, user);
+                this.send(msg, user);
             }
         } else {
-            Debug.trace((Object)("CAO THAP: change room error, leaved= " + cmd.roomLeavedId + ", joined= " + cmd.roomJoinedId));
+            Debug.trace("CAO THAP: change room error, leaved= " + cmd.roomLeavedId + ", joined= " + cmd.roomJoinedId);
         }
     }
 
     private void startPlayCaoThap(User user, DataCmd dataCmd) {
         StartPlayCaoThapCmd cmd = new StartPlayCaoThapCmd(dataCmd);
         String roomName = this.getRoomName(cmd.moneyType, cmd.betValue);
-        MGRoomCaoThap room = (MGRoomCaoThap)this.rooms.get(roomName);
+        MGRoomCaoThap room = (MGRoomCaoThap) this.rooms.get(roomName);
         if (room != null) {
             ++this.referenceId;
             room.startPlay(user, cmd.betValue, this.referenceId);
         } else {
-            Debug.trace((Object)("CAO THAP: room " + roomName + " not found"));
+            Debug.trace("CAO THAP: room " + roomName + " not found");
         }
     }
 
     private void playCaoThap(User user, DataCmd dataCmd) {
         PlayCaoThapCmd cmd = new PlayCaoThapCmd(dataCmd);
         String roomName = this.getRoomName(cmd.moneyType, cmd.betValue);
-        MGRoomCaoThap room = (MGRoomCaoThap)this.rooms.get(roomName);
+        MGRoomCaoThap room = (MGRoomCaoThap) this.rooms.get(roomName);
         if (room != null) {
             room.play(user, cmd.choose);
         }
@@ -343,7 +322,7 @@ extends BaseClientRequestHandler {
     private void stopPlayCaoThap(User user, DataCmd dataCmd) {
         StopPlayCaoThapCmd cmd = new StopPlayCaoThapCmd(dataCmd);
         String roomName = this.getRoomName(cmd.moneyType, cmd.betValue);
-        MGRoomCaoThap room = (MGRoomCaoThap)this.rooms.get(roomName);
+        MGRoomCaoThap room = (MGRoomCaoThap) this.rooms.get(roomName);
         if (room != null) {
             room.stopPlay(user);
         }
@@ -361,8 +340,7 @@ extends BaseClientRequestHandler {
         short moneyType = this.getMoneyTypeFromRoomId(roomId);
         long baseBetting = this.getBaseBetting(roomId);
         String roomName = this.getRoomName(moneyType, baseBetting);
-        MGRoomCaoThap room = (MGRoomCaoThap)this.rooms.get(roomName);
-        return room;
+        return (MGRoomCaoThap) this.rooms.get(roomName);
     }
 
     private short getMoneyTypeFromRoomId(byte roomId) {
@@ -426,7 +404,7 @@ extends BaseClientRequestHandler {
             Random rd = new Random();
             int n = rd.nextInt(5);
             long betValue = 1000L;
-            long prize = 50000L;
+            long prize;
             if (n == 0) {
                 betValue = 10000L;
                 n = rd.nextInt(950000);
@@ -446,35 +424,35 @@ extends BaseClientRequestHandler {
                     break;
                 }
             }
-            List<Card> cards = new ArrayList();
+            ArrayList<Card> cards;
             switch (type) {
                 case 0: {
-                    cards = GenerationMiniPoker.randomTuQuy();
+                    cards = (ArrayList<Card>) GenerationMiniPoker.randomTuQuy();
                     break;
                 }
                 case 1: {
-                    cards = GenerationMiniPoker.randomThungPhaSanhNho();
+                    cards = (ArrayList<Card>) GenerationMiniPoker.randomThungPhaSanhNho();
                     break;
                 }
                 case 2: {
-                    cards = GenerationMiniPoker.randomThungPhaSanhJDenK();
+                    cards = (ArrayList<Card>) GenerationMiniPoker.randomThungPhaSanhJDenK();
                     break;
                 }
                 default: {
-                    cards = GenerationMiniPoker.randomThungPhaSanhA();
+                    cards = (ArrayList<Card>) GenerationMiniPoker.randomThungPhaSanhA();
                 }
             }
             StringBuilder cardsStr = new StringBuilder();
             for (Card c : cards) {
                 cardsStr.append(c.getCode()).append(",");
             }
-            Debug.trace((Object)("CaoThap Su kien: Bot " + botName + " prize= " + prize + ", cards= " + cardsStr));
+            Debug.trace("CaoThap Su kien: Bot " + botName + " prize= " + prize + ", cards= " + cardsStr);
             this.service.insertBotEvent(botName, betValue, prize, cardsStr.toString());
         }
     }
 
     private final class RewardDaily
-    implements Runnable {
+            implements Runnable {
         private RewardDaily() {
         }
 
@@ -482,12 +460,11 @@ extends BaseClientRequestHandler {
         public void run() {
             //CaoThapUtils.reward();
             BitZeroServer.getInstance().getTaskScheduler().schedule(CaoThapModule.this.rewardDailyTask, 24, TimeUnit.HOURS);
-            Debug.trace((Object)"Tra thuong Cao Thap");
+            Debug.trace("Tra thuong Cao Thap");
         }
     }
 
-    private final class BotDailyTask
-    implements Runnable {
+    private final class BotDailyTask implements Runnable {
         private BotDailyTask() {
         }
 
@@ -497,9 +474,8 @@ extends BaseClientRequestHandler {
         }
     }
 
-    private final class BotTask
-    implements Runnable {
-        private boolean thungPhaSanhA = false;
+    private final class BotTask implements Runnable {
+        private boolean thungPhaSanhA;
 
         public BotTask(boolean thungPhaSanhA) {
             this.thungPhaSanhA = thungPhaSanhA;
