@@ -371,8 +371,7 @@ public class MiniPokerModule
         }
     }
 
-    private final class GameLoopTask
-            implements Runnable {
+    private final class GameLoopTask implements Runnable {
         private GameLoopTask() {
         }
 
