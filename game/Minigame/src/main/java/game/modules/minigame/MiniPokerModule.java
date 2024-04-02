@@ -50,6 +50,7 @@ import game.modules.minigame.room.MGRoomMiniPoker;
 import game.modules.minigame.utils.MiniGameUtils;
 import game.utils.ConfigGame;
 import game.utils.GameUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.sql.SQLException;
 import java.util.Calendar;
@@ -315,41 +316,45 @@ public class MiniPokerModule
     }
 
     private void gameLoop() {
-        System.out.println("Minipoker BOT===>");
-        List<String> bots;
-        MGRoomMiniPoker room;
-        ++this.countBot100;
-        if (this.countBot100 >= this.getCountTimeBot100()) {
-            this.countBot100 = 0;
-            bots = BotMinigame.getBots(ConfigGame.getIntValue("mini_poker_num_bot_100"), "vin");
-            for (String bot : bots) {
-                System.out.println(bot + " play MiniPoker 100");
-                if (bot == null) continue;
-                room = (MGRoomMiniPoker) rooms.get(Games.MINI_POKER.getName() + "_vin_100");
-                room.play(bot, 100L);
+        try {
+            System.out.println("Minipoker BOT===>");
+            List<String> bots;
+            MGRoomMiniPoker room;
+            ++this.countBot100;
+            if (this.countBot100 >= this.getCountTimeBot100()) {
+                this.countBot100 = 0;
+                bots = BotMinigame.getBots(ConfigGame.getIntValue("mini_poker_num_bot_100"), "vin");
+                for (String bot : bots) {
+                    System.out.println(bot + " play MiniPoker 100");
+                    if (bot == null) continue;
+                    room = (MGRoomMiniPoker) rooms.get(Games.MINI_POKER.getName() + "_vin_100");
+                    room.play(bot, 100L);
+                }
             }
-        }
-        ++this.countBot1000;
-        if (this.countBot1000 >= this.getCountTimeBot1000()) {
-            this.countBot1000 = 0;
-            bots = BotMinigame.getBots(ConfigGame.getIntValue("mini_poker_num_bot_1000"), "vin");
-            for (String bot : bots) {
-                System.out.println(bot + " play MiniPoker 1.000");
-                if (bot == null) continue;
-                room = (MGRoomMiniPoker) rooms.get(Games.MINI_POKER.getName() + "r_vin_1000");
-                room.play(bot, 1000L);
+            ++this.countBot1000;
+            if (this.countBot1000 >= this.getCountTimeBot1000()) {
+                this.countBot1000 = 0;
+                bots = BotMinigame.getBots(ConfigGame.getIntValue("mini_poker_num_bot_1000"), "vin");
+                for (String bot : bots) {
+                    System.out.println(bot + " play MiniPoker 1.000");
+                    if (bot == null) continue;
+                    room = (MGRoomMiniPoker) rooms.get(Games.MINI_POKER.getName() + "_vin_1000");
+                    room.play(bot, 1000L);
+                }
             }
-        }
-        ++this.countBot10000;
-        if (this.countBot10000 >= this.getCountTimeBot10000()) {
-            this.countBot10000 = 0;
-            bots = BotMinigame.getBots(ConfigGame.getIntValue("mini_poker_num_bot_10000"), "vin");
-            for (String bot : bots) {
-                System.out.println(bot + " play MiniPoker 10.000");
-                if (bot == null) continue;
-                room = (MGRoomMiniPoker) rooms.get(Games.MINI_POKER.getName() + "_vin_10000");
-                room.play(bot, 10000L);
+            ++this.countBot10000;
+            if (this.countBot10000 >= this.getCountTimeBot10000()) {
+                this.countBot10000 = 0;
+                bots = BotMinigame.getBots(ConfigGame.getIntValue("mini_poker_num_bot_10000"), "vin");
+                for (String bot : bots) {
+                    System.out.println(bot + " play MiniPoker 10.000");
+                    if (bot == null) continue;
+                    room = (MGRoomMiniPoker) rooms.get(Games.MINI_POKER.getName() + "_vin_10000");
+                    room.play(bot, 10000L);
+                }
             }
+        } catch (Exception ex) {
+            System.out.println(ExceptionUtils.getStackTrace(ex));
         }
     }
 
