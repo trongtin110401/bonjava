@@ -42,16 +42,9 @@ public class GenerationMiniPoker {
         switch (prize) {
             case 1: {
                 return GenerationMiniPoker.randomThungPhaSanhJDenA();
-//                return this.randomCuLu();
             }
-            case 2: {
-               // return GenerationMiniPoker.randomThungPhaSanhNho();
-                return this.randomCuLu();
-            }
-            case 3: {
-                //return GenerationMiniPoker.randomTuQuy();
-                return this.randomCuLu();
-            }
+            case 2:
+            case 3:
             case 4: {
                 return this.randomCuLu();
             }
