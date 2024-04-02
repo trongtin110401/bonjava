@@ -145,7 +145,7 @@ public class MGRoomMiniPoker extends MGRoom {
         return msg.result;
     }
 
-    public synchronized ResultMiniPokerMsg play(String username, long betValue) {
+    public ResultMiniPokerMsg play(String username, long betValue) {
         long lastPot = this.pot;
         long lastFund = this.fund;
         ResultMiniPokerMsg resultMiniPokerMsg = new ResultMiniPokerMsg();
