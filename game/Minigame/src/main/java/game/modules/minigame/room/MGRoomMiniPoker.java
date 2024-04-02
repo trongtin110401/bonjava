@@ -141,7 +141,7 @@ public class MGRoomMiniPoker extends MGRoom {
 
     public short play(User user, long betValue) {
         ResultMiniPokerMsg msg = this.play(user.getName(), betValue);
-        this.sendMessageToUser((BaseMsg) msg, user);
+        this.sendMessageToUser(msg, user);
         return msg.result;
     }
 
@@ -150,11 +150,12 @@ public class MGRoomMiniPoker extends MGRoom {
         long lastFund = this.fund;
         ResultMiniPokerMsg resultMiniPokerMsg = new ResultMiniPokerMsg();
         StringBuilder builder = new StringBuilder();
-        short result = 0;
+        short result = ResultPoker.TRUOT;
         long prize = 0L;
-        long currentMoney = this.userService.getMoneyUserCache(username, this.moneyTypeStr);
+
         UserCacheModel u = this.userService.getUser(username);
         long referenceId = System.currentTimeMillis();
+
         String userForce = "";
         String betValueCache = "";
         boolean forceJackpotByUser = false;
@@ -179,16 +180,16 @@ public class MGRoomMiniPoker extends MGRoom {
             cacheService.setValue("hu_100_poker", 0);
             cacheService.setValue("hu_1k_poker", 0);
             cacheService.setValue("hu_10k_poker", 0);
-            cacheService.setValue("my_debug", "");
         }
 
+        long currentMoney = this.userService.getMoneyUserCache(username, this.moneyTypeStr);
         if (betValue > 0L) {
             if (currentMoney >= betValue) {
                 MoneyResponse moneyRes = this.userService.updateMoney(username, -betValue, this.moneyTypeStr, Games.MINI_POKER.getName(), "Quay MiniPoker", "\u0110\u1eb7t c\u01b0\u1ee3c MiniPoker", 0L, Long.valueOf(referenceId), TransType.START_TRANS);
                 if (moneyRes != null && moneyRes.isSuccess()) {
                     boolean enoughToPair = false;
                     long moneyToPot = betValue / 100L;
-                    long fee = (long) ((float) betValue * this.tax / 100.0f);
+                    long fee = (long) (betValue * this.tax / 100.0f);
                     long moneyToFund = betValue - moneyToPot - fee;
                     long tienThuongX2 = 0L;
                     this.pot += moneyToPot;
@@ -196,23 +197,23 @@ public class MGRoomMiniPoker extends MGRoom {
                         this.fund += moneyToFund;
                     }
                     hu100 = hu100 + betValue;
-                    block13:
                     while (!enoughToPair) {
                         GroupType groupType;
                         prize = 0L;
                         tienThuongX2 = 0L;
                         long moneyExchange = 0L;
                         boolean forceNoHu = false;
-                        // // lock no hũ 11/01 kane
+
                         if (userForce.equals(username) && betValueCache.equals(String.valueOf(this.betValue))) {
                             forceNoHu = true;
                             forceJackpotByUser = true;
                         }
-                        Debug.trace(forceNoHu + ":" + fund);
+
                         List<Card> cards = this.gen.randomCards2(forceJackpotByUser);
                         if (cards.size() != 5) {
                             cards = this.gen.randomCards();
                         }
+
                         for (int i = 0; i < 20; i++) {
                             cards = this.gen.randomCards2(forceJackpotByUser);
                             if (cards.size() != 5) {
@@ -221,31 +222,31 @@ public class MGRoomMiniPoker extends MGRoom {
                             if ((groupType = CardLibUtils.calculateTypePoker(cards)) == null) continue;
                             switch (groupType) {
                                 case HighCard: {
-                                    result = 11;
+                                    result = ResultPoker.BAI_CAO;
                                     break;
                                 }
                                 case OnePair: {
                                     if (CardLibUtils.pairEqualOrGreatJack(cards)) {
-                                        result = 9;
+                                        result = ResultPoker.MOT_DOI_TO;
                                         prize = (int) ((float) betValue * 2.5f);
                                         break;
                                     }
-                                    result = 10;
+                                    result = ResultPoker.MOT_DOI_NHO;
                                     prize = 0L;
                                     break;
                                 }
                                 case TwoPair: {
-                                    result = 8;
+                                    result = ResultPoker.HAI_DOI;
                                     prize = betValue * 5L;
                                     break;
                                 }
                                 case ThreeOfKind: {
-                                    result = 7;
+                                    result = ResultPoker.SAM_CO;
                                     prize = betValue * 8L;
                                     break;
                                 }
                                 case Straight: {
-                                    result = 6;
+                                    result = ResultPoker.SANH;
                                     if (this.moneyType == 1) {
                                         prize = betValue * 13L;
                                         break;
@@ -254,7 +255,7 @@ public class MGRoomMiniPoker extends MGRoom {
                                     break;
                                 }
                                 case Flush: {
-                                    result = 5;
+                                    result = ResultPoker.THUNG;
                                     if (this.moneyType == 1) {
                                         prize = betValue * 20L;
                                         break;
@@ -263,7 +264,7 @@ public class MGRoomMiniPoker extends MGRoom {
                                     break;
                                 }
                                 case FullHouse: {
-                                    result = 4;
+                                    result = ResultPoker.CU_LU;
                                     if (this.moneyType == 1) {
                                         prize = betValue * 50L;
                                         break;
@@ -272,7 +273,7 @@ public class MGRoomMiniPoker extends MGRoom {
                                     break;
                                 }
                                 case FourOfKind: {
-                                    result = 3;
+                                    result = ResultPoker.TU_QUY;
                                     if (this.moneyType == 1) {
                                         prize = betValue * 150L;
                                         break;
@@ -283,7 +284,7 @@ public class MGRoomMiniPoker extends MGRoom {
                                 case StraightFlush: {
                                     if (forceJackpotByUser) {
                                         if (CardLibUtils.isStraightFlushJack(cards)) {
-                                            result = 1;
+                                            result = ResultPoker.NO_HU;
                                             if (this.huX2) {
                                                 tienThuongX2 = this.pot;
                                                 prize = this.pot * 2L;
@@ -292,13 +293,13 @@ public class MGRoomMiniPoker extends MGRoom {
                                             prize = this.pot;
                                             break;
                                         }
-                                        result = 2;
+                                        result = ResultPoker.THUNG_PHA_SANH_NHO;
                                         prize = betValue * 1000L;
                                     }
                                 }
                             }
 
-                            //tam thoi cho het vao 1 hu set hu la 100tr
+                            // tam thoi cho het vao 1 hu set hu la 100tr
                             if (hu100 - prize < 0 || hu100 + prize > 100000000 || hu100 < 0) {
                                 //random lai
                                 continue;
@@ -311,8 +312,6 @@ public class MGRoomMiniPoker extends MGRoom {
                         if (prize > 0) {
                             //hu mat di
                             hu100 = hu100 - prize;
-                        } else {
-
                         }
                         cacheService.setValue("hu_100_poker", hu100 + "");
 
@@ -326,9 +325,9 @@ public class MGRoomMiniPoker extends MGRoom {
                             resultMiniPokerMsg.card5 = (byte) cards.get(4).getCode();
                         }
                         if (prize > 0L) {
-                            if (result == 1) {
+                            if (result == ResultPoker.NO_HU) {
                                 if (this.huX2) {
-                                    result = 12;
+                                    result = ResultPoker.NO_HU_X2;
                                 }
                                 if (forceNoHu) {
                                     try {
@@ -338,14 +337,13 @@ public class MGRoomMiniPoker extends MGRoom {
                                         exception.printStackTrace();
                                     }
                                 }
-
                             } else {
                                 this.fund -= fundExchange;
                             }
                         }
                         long moneyAdded = prize;
                         String des = "Quay MiniPoker";
-                        if (result == 12) {
+                        if (result == ResultPoker.NO_HU_X2) {
                             moneyAdded -= tienThuongX2;
                             this.userService.updateMoney(username, tienThuongX2, this.moneyTypeStr, this.gameName, des, "Th\u1eafng X2", 0L, null, TransType.NO_VIPPOINT);
                         }
@@ -365,29 +363,30 @@ public class MGRoomMiniPoker extends MGRoom {
                         try {
                             if (!isBot(username)) {
                                 this.mpService.logMiniPoker(username, betValue, result, prize, builder.toString(), lastPot, lastFund, this.moneyType);
-
                             }
                         } catch (IOException | InterruptedException | TimeoutException e) {
-                            Debug.trace(new Object[]{"Log mini poker error ", e.getMessage()});
+                            Debug.trace("Log mini poker error ", e.getMessage());
                         }
                     }
                     this.saveFund();
                     this.savePot();
                 }
             } else {
-                result = 102;
+                result = ResultPoker.KHONG_DU_TIEN;
             }
         } else {
-            result = 101;
+            result = ResultPoker.DAT_CUOC_KHONG_HOP_LE;
         }
 
         sv.setValue(CACHE_JACK_POT_VALUE_MINIGAME + "_" + this.betValue + "_" + this.gameName, String.valueOf(this.pot));
-        resultMiniPokerMsg.result = result;
-        resultMiniPokerMsg.prize = prize;
-        resultMiniPokerMsg.currentMoney = currentMoney;
+
         if (forceJackpotByUser) {
             this.sendNotifyNoHu(username, (byte) 1, resultMiniPokerMsg.prize, this.gameName);
         }
+
+        resultMiniPokerMsg.result = result;
+        resultMiniPokerMsg.prize = prize;
+        resultMiniPokerMsg.currentMoney = currentMoney;
         return resultMiniPokerMsg;
     }
 
@@ -439,15 +438,6 @@ public class MGRoomMiniPoker extends MGRoom {
         return model.isBot();
     }
 
-    private boolean checkDienKienNoHu(String username) {
-        try {
-            UserModel u = this.userService.getUserByUserName(username);
-            return u.isBot();
-        } catch (Exception u) {
-            return false;
-        }
-    }
-
     private void saveFund() {
         long currentTime = System.currentTimeMillis();
         if (currentTime - this.lastTimeUpdateFundToRoom >= 60000L) {
@@ -480,7 +470,7 @@ public class MGRoomMiniPoker extends MGRoom {
         UpdatePotMiniPokerMsg msg = new UpdatePotMiniPokerMsg();
         msg.value = this.pot;
         msg.x2 = this.huX2 ? (byte) 1 : 0;
-        this.sendMessageToUser((BaseMsg) msg, user);
+        this.sendMessageToUser(msg, user);
     }
 
     /*
