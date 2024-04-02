@@ -3276,7 +3276,6 @@ public class LobbyModule extends BaseClientRequestHandler {
     private synchronized void checkOnepayTranstion() {
 
         ArrayList<DepositOnePayModel> listOnePayModel = this.rechargeService.GetListDepositOnePayBank(1); // lấy list user và gửi thông báo về cho từng user
-        Debug.trace((Object) ("update status onepay: Size" + listOnePayModel.size())); // lấy ra list cần bắn đến user
         for (DepositOnePayModel model : listOnePayModel) {
 
             boolean isSended = false;
