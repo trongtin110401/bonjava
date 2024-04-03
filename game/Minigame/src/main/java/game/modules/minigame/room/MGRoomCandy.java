@@ -101,7 +101,7 @@ public class MGRoomCandy extends MGRoom {
         }
         this.pot = pot;
         CacheServiceImpl cacheService = new CacheServiceImpl();
-        cacheService.setValue(name, (int) pot);
+        cacheService.setValue(name, (int) this.pot);
 
         this.fund = fund;
         this.betValue = betValue;
