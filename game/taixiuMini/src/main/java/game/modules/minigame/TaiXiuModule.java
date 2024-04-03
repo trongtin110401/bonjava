@@ -469,7 +469,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                     this.executor.execute(t);
                     break;
                 }
-                case 35: { // 75
+                case 40: { // 75
                     try {
                         this.startNewRoundTX();
                         miniGameService.saveFund(Games.TAI_XIU.getName(), fundTx);
