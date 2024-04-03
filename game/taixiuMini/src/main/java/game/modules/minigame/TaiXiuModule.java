@@ -96,7 +96,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
     private final Runnable updateCacheTopDay = new UpdateCacheTopDay();  // thread tính tài xỉu top theo ngay
     private final Runnable updateCacheTopMonth = new UpdateCacheTopMonth();  // thread tính tài xỉu theo thang
     private final CacheService cacheService = new CacheServiceImpl(); // caching hazelcast service
-    private int count = 0;
+    public int count = 0;
     private boolean serverReady = false;
     private ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);  // thread pool 10 cái thread
     private long referenceTaiXiuId; // được lấy từ trong database
@@ -135,9 +135,11 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         } catch (Exception e) {
             fundTx = 0;
         }
+
         Debug.info("referentTaiXiuId là " + this.referenceTaiXiuId);
-        this.rooms.put(MGRoomTaiXiu.getKeyRoom((short) 1), new MGRoomTaiXiu("TaiXiu_1", this.referenceTaiXiuId, (byte) 1));
-        this.rooms.put(MGRoomTaiXiu.getKeyRoom((short) 0), new MGRoomTaiXiu("TaiXiu_0", this.referenceTaiXiuId, (byte) 0));
+        this.rooms.put(MGRoomTaiXiu.getKeyRoom((short) 1), new MGRoomTaiXiu("TaiXiu_1", this.referenceTaiXiuId, (byte) 1, this));
+        this.rooms.put(MGRoomTaiXiu.getKeyRoom((short) 0), new MGRoomTaiXiu("TaiXiu_0", this.referenceTaiXiuId, (byte) 0, this));
+
         //Debug.info("referentTaiXiuId là " + this.referenceTaiXiuId);
         this.loadData();
         Debug.info("referentTaiXiuId sau khi load data là " + this.referenceTaiXiuId);

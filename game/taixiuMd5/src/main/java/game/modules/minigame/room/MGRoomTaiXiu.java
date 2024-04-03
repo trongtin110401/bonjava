@@ -89,8 +89,11 @@ public class MGRoomTaiXiu extends MGRoom {
 
     private static final org.apache.log4j.Logger logger = Logger.getLogger((String) "recharge");
 
-    public MGRoomTaiXiu(String name, long referenceId, short moneyType) {
+    TaiXiuModule module;
+
+    public MGRoomTaiXiu(String name, long referenceId, short moneyType, TaiXiuModule module) {
         super(name);
+        this.module = module;
         this.moneyType = moneyType;
         this.moneyTypeStr = "xu";
         if (moneyType == 1) {
@@ -171,7 +174,7 @@ public class MGRoomTaiXiu extends MGRoom {
             remainTime = 25;
         }
         if (this.bettingRound) {
-            return (short) (25 - remainTime);
+            return (short) (25 - this.module.count);
         }
         return (short) (15 - remainTime);
     }

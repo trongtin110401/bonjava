@@ -2651,24 +2651,31 @@ public class LobbyModule extends BaseClientRequestHandler {
             }
 
             UpdateJackpotMsg msg = new UpdateJackpotMsg();
+
             msg.potMiniPoker100 = miniPoker100;
             msg.potMiniPoker1000 = miniPoker1000;
             msg.potMiniPoker10000 = miniPoker10000;
+
             msg.potPokeGo100 = pokeGo100;
             msg.potPokeGo1000 = pokeGo1000;
             msg.potPokeGo10000 = pokeGo10000;
+
             msg.potKhoBau100 = khoBau100;
             msg.potKhoBau1000 = khoBau1000;
             msg.potKhoBau10000 = khoBau10000;
+
             msg.potNDV100 = ndv100;
             msg.potNDV1000 = ndv1000;
             msg.potNDV10000 = ndv10000;
+
             msg.potAvengers100 = avengers100;
             msg.potAvengers1000 = avengers1000;
             msg.potAvengers10000 = avengers10000;
+
             msg.vqv100 = vqv100;
             msg.vqv1000 = vqv1000;
             msg.vqv10000 = vqv10000;
+
             msg.fish100 = fish100;
             msg.fish1000 = fish1000;
 
@@ -2676,6 +2683,7 @@ public class LobbyModule extends BaseClientRequestHandler {
             msg.sparta1000 = spartan1000;
             msg.sparta5000 = spartan1000;
             msg.sparta10000 = spartan10000;
+
             msg.baucuatofund = baucauto;
 
             msg.potCaoThap1000 = caoThap1000;
