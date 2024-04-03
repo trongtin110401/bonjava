@@ -96,11 +96,11 @@ public class MGRoomCandy extends MGRoom {
         this.executor = moneyType == 1 ? (ThreadPoolExecutor) Executors.newFixedThreadPool(ConfigGame.getIntValue(this.gameName + "_thread_pool_per_room_vin")) :
                 (ThreadPoolExecutor) Executors.newFixedThreadPool(ConfigGame.getIntValue(this.gameName + "_thread_pool_per_room_xu"));
 
-        if(pot < 0) {
+        if (pot < 0) {
             pot = initPotValue;
         }
         this.pot = pot;
-        sv.setValue(name, (int) this.pot);
+        sv.setValue(name, this.pot);
 
         this.fund = fund;
         this.betValue = betValue;
@@ -331,7 +331,7 @@ public class MGRoomCandy extends MGRoom {
         PokeGoUtils.log(refernceId, username, this.betValue, msg.matrix, result, this.moneyType, handleTime, ratioTime, currentTimeStr);
 
         // Update cache tien hu
-        sv.setValue(this.name, (int) this.pot);
+        sv.setValue(this.name, this.pot);
 
         if (forceJackpotByUser) {
             this.sendNotifyNoHu(username, (byte) 1, msg.prize, this.gameName);
