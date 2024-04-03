@@ -2693,7 +2693,7 @@ public class LobbyModule extends BaseClientRequestHandler {
             msg.potCaoThap100000 = caoThap50000;
             msg.potCaoThap500000 = caoThap500000;
 
-            System.out.println(new Gson().toJson(msg));
+//            System.out.println(new Gson().toJson(msg));
 
             for (User user : this.usersSubJackpot) {
                 if (user == null) continue;
