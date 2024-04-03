@@ -183,7 +183,7 @@ public class CaoThapModule
         byte roomId = -1;
         boolean play = false;
         int cntRoomPlaying = 0;
-        for (byte i = 0; i < 10; i = (byte) (i + 1)) {
+        for (byte i = 0; i < 5; i = (byte) (i + 1)) {
             MGRoomCaoThap room = this.getRoom(i);
             if (room.getUsers().containsKey(user.getName())) {
                 CaoThapInfo info = room.getUsers().get(user.getName());
