@@ -29,6 +29,13 @@ public class CacheServiceImpl
     }
 
     @Override
+    public void setValue(String key, long value) {
+        HazelcastInstance instance = HazelcastClientFactory.getInstance();
+        IMap map = instance.getMap("cacheConfig");
+        map.put(key, String.valueOf(value));
+    }
+
+    @Override
     public void setValue(String key, int value) {
         HazelcastInstance instance = HazelcastClientFactory.getInstance();
         IMap map = instance.getMap("cacheConfig");
