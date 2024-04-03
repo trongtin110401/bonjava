@@ -353,13 +353,6 @@ public class MGRoomTaiXiu
         msg.numBetXiu = (this.potXiu.getNumBet() + amountBotXiuFake)
         ;
         msg.moneyHu = TaiXiuModule.moneyHu;
-        //todo: lấy hũ trong cache done
-//        try {
-//            msg.moneyHu = Long.parseLong(cacheService.getValueStr("Hu_TX_" + this.moneyType));
-//        } catch (KeyNotFoundException ex) {
-//            msg.moneyHu = TaiXiuModule.moneyHu;
-//        }
-//        AdminSocketAlert.sendMessageAlert("chatevent", "TaiXiu", new Date() + ""); // todo : alert admin
         cacheService.setValue("Lobby_tx_tai_" + this.moneyType, String.valueOf(this.getPotTai()));
         cacheService.setValue("Lobby_tx_xiu_" + this.moneyType, String.valueOf(this.getPotXiu()));
         this.sendMessageToRoom(msg);
@@ -688,27 +681,12 @@ public class MGRoomTaiXiu
                             return Long.compare(o1.betValue - o1.totalRefund, o2.betValue - o2.totalRefund);
                         }
                     });
-//                    int flag = 0;
-//                    if (lst.size() > 0 && lst.get(0).moneyType == 1) {
-//                        for (int i = lst.size() - 1; i >= 0; i--) {
-//                            long money = ((lst.get(i).betValue - lst.get(i).totalRefund) * TaiXiuModule.moneyHu) / tongTienHopLe;
-//                            moneyUserHu.append(money).append(",");
-//                            userNameHu.append(lst.get(i).username).append(",");
-//                            flag++;
-//                            if (flag > 4)
-//                                break;
-//                        }
-//                        this.api.saveNoHuTaiXiu(rs.referenceId, totalDice == 3 ? "0" : "1", TaiXiuModule.moneyHu, userNameHu.toString(), moneyUserHu.toString(), trans.size());
-//                    }
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-//                TaiXiuModule.moneyHu = 50000000;
                 rs.statusHu = 1;
             }
 
-            //cacheService.setValue("Hu_TX_" + this.moneyType, String.valueOf(TaiXiuModule.moneyHu));
             CalculateEndTXTask task = new CalculateEndTXTask(trans);
             task.start();
 
@@ -770,11 +748,6 @@ public class MGRoomTaiXiu
         }
     }
 
-    private void calculateMoneyHu() {
-
-    }
-
-
     class MoneyHuUser {
         String username;
         long money;
@@ -802,15 +775,12 @@ public class MGRoomTaiXiu
     }
 
     private void updateSumTran(Map<String, TransactionTaiXiu> map, TransactionTaiXiuDetail tranDetail) {
-        if (tranDetail.username.equals("banhday"))
-            System.out.println(tranDetail.prize + "tien truoc khi nha lại");
         if (map.containsKey(tranDetail.username)) {
             TransactionTaiXiu txt = map.get(tranDetail.username);
             if (txt.betSide == tranDetail.betSide) {
                 txt.betValue += tranDetail.betValue;
                 txt.totalPrize += tranDetail.prize;
                 txt.totalRefund += tranDetail.refund;
-                //txt.totalExchange += tranDetail.totalExchange;
                 map.put(tranDetail.username, txt);
             }
         } else {
@@ -823,79 +793,8 @@ public class MGRoomTaiXiu
             tran.betValue = tranDetail.betValue;
             tran.totalPrize = tranDetail.prize;
             tran.totalRefund = tranDetail.refund;
-            //tran.totalExchange = tranDetail.totalExchange;
             map.put(tranDetail.username, tran);
         }
-    }
-
-    public short calculateBalanceTX(int type) {
-        long tienDuocTinh;
-        long totalPrizeBotTai = 0L;
-        long totalPrizeBotXiu = 0L;
-        long totalPrizeUserTai = 0L;
-        long totalPrizeUserXiu = 0L;
-        long tongTienHopLe = this.potTai.getTotalValue() > this.potXiu.getTotalValue() ? this.potXiu.getTotalValue() : this.potTai.getTotalBotBet();
-        long tongTienXiuDaTinh = 0L;
-        long tongTienTaiDaTinh = 0L;
-        for (TransactionTaiXiuDetail tran : this.potXiu.contributors) {
-            tienDuocTinh = tran.betValue;
-            if (tongTienXiuDaTinh + tran.betValue > tongTienHopLe) {
-                tienDuocTinh = tongTienHopLe - tongTienXiuDaTinh;
-            }
-            tongTienXiuDaTinh += tienDuocTinh;
-            if (this.isBot(tran.username)) {
-                totalPrizeBotXiu += tienDuocTinh;
-                continue;
-            }
-            totalPrizeUserXiu += tienDuocTinh;
-        }
-        for (TransactionTaiXiuDetail tran : this.potTai.contributors) {
-            tienDuocTinh = tran.betValue;
-            if (tongTienTaiDaTinh + tran.betValue > tongTienHopLe) {
-                tienDuocTinh = tongTienHopLe - tongTienTaiDaTinh;
-            }
-            tongTienTaiDaTinh += tienDuocTinh;
-            if (this.isBot(tran.username)) {
-                totalPrizeBotTai += tienDuocTinh;
-                continue;
-            }
-            totalPrizeUserTai += tienDuocTinh;
-        }
-        Debug.trace((Object) ("Bot tai: " + totalPrizeBotTai + ", bot xiu: " + totalPrizeBotXiu));
-        Debug.trace((Object) ("User tai: " + totalPrizeUserTai + ", user xiu: " + totalPrizeUserXiu));
-        short result = -1;
-        switch (type) {
-            case 1: {
-                result = this.tinhCuaThang(totalPrizeBotTai, totalPrizeBotXiu);
-                Debug.trace((Object) ("He thong am, force= " + result));
-                break;
-            }
-            case -2: {
-                result = this.tinhCuaThang(-this.blackListBetTai, -this.blackListBetXiu);
-                Debug.trace((Object) ("Black list: " + result));
-                break;
-            }
-            case -3: {
-                result = this.tinhCuaThang(this.whiteListBetTai, this.whiteListBetXiu);
-                Debug.trace((Object) ("White list: " + result));
-                break;
-            }
-            case -1: {
-                long totalUserWinSystem = Math.abs(totalPrizeUserTai - totalPrizeUserXiu);
-                if (totalUserWinSystem <= this.balance.getMaxWinUser()) {
-                    result = this.tinhCuaThang(totalPrizeUserTai, totalPrizeUserXiu);
-                    Debug.trace((Object) ("Nguoi choi am, force = " + result));
-                    break;
-                }
-                Debug.trace((Object) ("Nguoi choi am nhung so tien an qua lo'n= " + totalUserWinSystem));
-                result = this.checkHeThongAm(totalPrizeUserTai, totalPrizeUserXiu, totalPrizeBotTai, totalPrizeBotXiu);
-                break;
-            }
-            default: {
-                result = this.checkHeThongAm(totalPrizeUserTai, totalPrizeUserXiu, totalPrizeBotTai, totalPrizeBotXiu);
-            }
-        }
-        return result;
     }
 
     private short tinhCuaThang(long tai, long xiu) {
@@ -918,12 +817,6 @@ public class MGRoomTaiXiu
             Debug.trace("Chong he thong am, force= " + result + ", max user win= " + maxUserWin);
         }
         return result;
-    }
-
-    public int calculateForceBalance() {
-        boolean hasBlackList = this.blackListBetTai + this.blackListBetXiu > 0L;
-        boolean hasWhiteList = this.whiteListBetTai + this.whiteListBetXiu > 0L;
-        return this.balance.isForceBalance(hasBlackList, hasWhiteList);
     }
 
     /**
@@ -1140,15 +1033,9 @@ public class MGRoomTaiXiu
                     msg.totalMoney = txt.totalPrize + txt.totalRefund;
                     msg.currentMoney = currentMoney;
                     msg.moneyHu = TaiXiuModule.moneyHu;
-                    //todo : lấy hũ trong cache Done
-//                    try {
-//                        msg.moneyHu = Long.parseLong(cacheService.getValueStr("Hu_TX_" + MGRoomTaiXiu.this.moneyType));
-//                    } catch (KeyNotFoundException ex) {
-//                        msg.moneyHu = TaiXiuModule.moneyHu;
-//                    }
-                    MGRoomTaiXiu.this.sendMessageToUser((BaseMsg) msg, username);
+                    MGRoomTaiXiu.this.sendMessageToUser(msg, username);
                 } catch (Exception e) {
-                    Debug.trace((Object) ("Update tai xiu money phien " + MGRoomTaiXiu.this.referenceId + " error: " + e.getMessage()));
+                    Debug.trace("Update tai xiu money phien " + MGRoomTaiXiu.this.referenceId + " error: " + e.getMessage());
                 }
             }
         }
