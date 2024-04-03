@@ -359,11 +359,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
             this.botsVin.clear();
             this.botsVin = BotMinigame.getBotTaiXiu("vin");
             Debug.trace((Object) ("BOTS VIN: " + this.botsVin.size()));
-//      List<BotTaiXiu> botsVip = BotMinigame.getVipBotTaiXiu();
-//      this.botsVin.addAll(botsVip);
-//      Debug.trace((Object) ("TX BOTS VIP: " + botsVip.size()));
-            //this.botsXu = BotMinigame.getBotTaiXiu("xu");
-//            Debug.trace((Object) ("BOTS XU: " + this.botsXu.size()));
         } catch (Exception e) {
             sendLogToTele(e.getMessage());
             GameUtils.sendAlert("Bot tai xiu start error: " + e.getMessage() + ", time= " + DateTimeUtils.getCurrentTime());
@@ -394,7 +389,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
     // todo : lấy số tiền thực tế người dùng dặt
     public void getUserPotTaiXiu() {
         short typeBet = 1;
-        // this.getRoomTX((short) 1).getPotTai(); // tổng số tiền bên tài
         // lấy người chơi đặt tài
         TaiXiuAdminReportObj taiXiuAdminReportObj = new TaiXiuAdminReportObj(this.getRoomTX(typeBet).getUserBetTai(),
                 this.getRoomTX(typeBet).getUserBetXiu(), this.getRoomTX(typeBet).getNumberUserRealTai(), this.getRoomTX(typeBet).getNumberUserRealXiu(),
@@ -725,7 +719,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
             }
             long endTime = System.currentTimeMillis();
             Debug.trace((Object) ("CALCUALTE PRIZE, time handle= " + (endTime - startTime) + " (ms)") + " Room " + (roomId == 1 ? "vin" : "xu"));
-//            TaiXiuModule.this.txService.updateAllTop();
         }
     }
 
@@ -775,7 +768,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
 
         @Override
         public void run() {
-            Debug.trace("Call SendMessageToTXThread " + this.all);
             if (this.all) {
                 TaiXiuModule.this.sendMessageToAllUsers(this.msg);
             } else {
@@ -801,49 +793,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
             }
         }
     }
-
-    private final class ScheduleBotChatTask
-            extends Thread {
-        private ScheduleBotChatTask() {
-        }
-
-        @Override
-        public void run() {
-            try {
-                Debug.trace("Schedule bot chat running ...");
-                TaiXiuModule.this.scheduleBotChat();
-                Debug.trace("Schedule bot chat finished ...");
-            } catch (Exception ex) {
-                sendLogToTele(ex.getMessage());
-                Debug.trace(ex.getMessage());
-            }
-        }
-    }
-
-    private void scheduleBotChat() { // todo:fake chat user
-        try {
-            Random rand = new Random();
-            while (true) if (listChatUsers.size() > 0) {
-                int sleep = rand.nextInt(2);
-                Thread.sleep(14000 + sleep * 1000);
-                MGRoomTaiXiu roomTXVin = this.getRoomTX((short) 1);
-                ChatMsg msg = new ChatMsg();
-                String user = listChatUsers.get(rand.nextInt(listChatUsers.size()));
-                msg.nickname = user;
-                String randMessage = listChat.get(rand.nextInt(listChat.size()));
-                msg.mesasge = randMessage;
-                roomTXVin.sendMessageToRoom(msg);
-            } else {
-                int sleep = rand.nextInt(5000);
-                Thread.sleep(sleep * 1000);
-            }
-        } catch (Exception e) {
-            System.out.println("exception scheduleBotChat " + e);
-            sendLogToTele(e.getMessage());
-            Debug.trace(e.getMessage());
-        }
-    }
-
 
     /**
      * Schedule lấy message admin send
