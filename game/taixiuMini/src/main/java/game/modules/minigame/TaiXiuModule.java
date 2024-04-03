@@ -33,7 +33,10 @@
 package game.modules.minigame;
 
 import bitzero.server.BitZeroServer;
-import bitzero.server.core.*;
+import bitzero.server.core.BZEventParam;
+import bitzero.server.core.BZEventType;
+import bitzero.server.core.IBZEvent;
+import bitzero.server.core.IBZEventParam;
 import bitzero.server.entities.User;
 import bitzero.server.exceptions.BZException;
 import bitzero.server.extensions.BaseClientRequestHandler;
@@ -42,7 +45,6 @@ import bitzero.server.extensions.data.DataCmd;
 import bitzero.util.ExtensionUtility;
 import bitzero.util.common.business.CommonHandle;
 import bitzero.util.common.business.Debug;
-import com.vinplay.common.HttpCommon;
 import com.vinplay.dal.entities.taixiu.ResultTaiXiu;
 import com.vinplay.dal.service.CacheService;
 import com.vinplay.dal.service.MiniGameService;
@@ -52,39 +54,38 @@ import com.vinplay.dal.service.impl.MiniGameServiceImpl;
 import com.vinplay.dal.service.impl.TaiXiuServiceImpl;
 import com.vinplay.miniGame.TaiXiuAdminReportObj;
 import com.vinplay.miniGame.TaiXiuSetAmountBotFake;
-import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.vbee.common.config.VBeePath;
 import com.vinplay.vbee.common.enums.Games;
 import com.vinplay.vbee.common.exceptions.KeyNotFoundException;
-import com.vinplay.vbee.common.response.MoneyResponse;
 import com.vinplay.vbee.common.response.minigame.TaiXiuAdmin;
 import com.vinplay.vbee.common.response.minigame.TaiXiuChatMsg;
-import com.vinplay.vbee.common.statics.TransType;
 import com.vinplay.vbee.common.utils.DateTimeUtils;
-import game.modules.chat.ChatModule;
-import game.modules.chat.cmd.send.ChatMsg;
-import game.modules.minigame.cmd.rev.*;
+import game.modules.minigame.cmd.rev.BetTaiXiuCmd;
+import game.modules.minigame.cmd.rev.ChangeRoomMinigameCmd;
+import game.modules.minigame.cmd.rev.SubcribeMinigameCmd;
+import game.modules.minigame.cmd.rev.UnsubscribeMiniGameCmd;
 import game.modules.minigame.cmd.send.*;
 import game.modules.minigame.entities.BotMinigame;
 import game.modules.minigame.entities.BotTaiXiu;
 import game.modules.minigame.room.MGRoom;
 import game.modules.minigame.room.MGRoomTaiXiu;
 import game.modules.minigame.utils.GenerationTaiXiu;
-import game.modules.minigame.utils.MiniGameUtils;
 import game.modules.minigame.utils.TaiXiuUtils;
 import game.utils.GameUtils;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
 
 import java.io.*;
-import java.net.URLEncoder;
 import java.sql.SQLException;
-import java.text.ParseException;
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class TaiXiuModule extends BaseClientRequestHandler {
     private static final Logger logger = Logger.getLogger(TaiXiuModule.class);
@@ -426,6 +427,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                     amountBotXiuFake += (taiXiuSetAmountBotFake.getNumberBotXiuFake()) / 40;
                 }
             } catch (KeyNotFoundException ex) {
+//                sendLogToTele(ex.getMessage());
                 amountBotXiuFake = 0;
                 amountBotTaiFake = 0;
             }
@@ -480,7 +482,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
             }
         } catch (Exception e) {
             sendLogToTele(e.getMessage());
-            Debug.trace(new Object[]{"Exception: " + e.getMessage(), e});
+            System.out.println(ExceptionUtils.getStackTrace(e));
         }
     }
 
