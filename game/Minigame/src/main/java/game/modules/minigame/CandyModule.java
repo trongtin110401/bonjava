@@ -105,6 +105,9 @@ public class CandyModule
         } catch (Exception e) {
             Debug.trace("Init " + this.gameName + " error ", e.getMessage());
         }
+
+        System.out.println("=========================> " + pots[0] + " == " + pots[1] + " == " + pots[2]);
+
         rooms.put(Games.CANDY.getName() + "_vin_100", new MGRoomCandy(Games.CANDY.getName() + "_vin_100", (short) 1, pots[0], funds[0], 100, initPotValues[0]));
         rooms.put(Games.CANDY.getName() + "_vin_1000", new MGRoomCandy(Games.CANDY.getName() + "_vin_1000", (short) 1, pots[1], funds[1], 1000, initPotValues[1]));
         rooms.put(Games.CANDY.getName() + "_vin_10000", new MGRoomCandy(Games.CANDY.getName() + "_vin_10000", (short) 1, pots[2], funds[2], 10000, initPotValues[2]));
