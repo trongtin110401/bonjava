@@ -2,6 +2,7 @@ package com.vinplay.dichvuthe.entities;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.python.parser.ast.Str;
 
 public class DepositBankModel {
     public String Id;
@@ -18,8 +19,28 @@ public class DepositBankModel {
     public String UserSender;
     public String QRCode;
     private String paymentURL;
+    private String transactionID;
 
     private int timeToExpired;
+    private String subType;
+
+
+
+    public String getTransactionID() {
+        return transactionID;
+    }
+
+    public void setTransactionID(String transactionID) {
+        this.transactionID = transactionID;
+    }
+
+    public String getSubType() {
+        return subType;
+    }
+
+    public void setSubType(String subType) {
+        this.subType = subType;
+    }
 
     public long getAmount() {
         return Amount;
@@ -129,7 +150,7 @@ public class DepositBankModel {
         BankAccountName = bankAccountName;
         Description = description;
     }
-
+    public DepositBankModel(){}
 
     public DepositBankModel(String id, String nickname, String createdAt, String updatedAt, long amount, int status, String bankBrandName, String bankAccountNumber, String bankAccountName, String description, String userApprove) {
         Id = id;
