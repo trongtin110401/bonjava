@@ -350,8 +350,7 @@ public class MGRoomTaiXiu
         msg.potXiu = this.getPotXiu();
 
         msg.numBetTai = (this.potTai.getNumBet() + amountBotTaiFake);
-        msg.numBetXiu = (this.potXiu.getNumBet() + amountBotXiuFake)
-        ;
+        msg.numBetXiu = (this.potXiu.getNumBet() + amountBotXiuFake);
         msg.moneyHu = TaiXiuModule.moneyHu;
         cacheService.setValue("Lobby_tx_tai_" + this.moneyType, String.valueOf(this.getPotTai()));
         cacheService.setValue("Lobby_tx_xiu_" + this.moneyType, String.valueOf(this.getPotXiu()));
