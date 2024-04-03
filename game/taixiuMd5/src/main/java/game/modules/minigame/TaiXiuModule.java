@@ -452,7 +452,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                         Debug.trace("got bug", e.getCause());
                         ExceptionUtils.printRootCauseStackTrace(e);
                     }
-
                 }
             }
 

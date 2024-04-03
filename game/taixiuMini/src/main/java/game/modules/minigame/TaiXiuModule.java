@@ -464,12 +464,12 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                     amountBotXiuFake = 0;
                     break;
                 }
-                case 35: { /// 70
+                case 30: { /// 70
                     ScheduleBotTask t = new ScheduleBotTask();
                     this.executor.execute(t);
                     break;
                 }
-                case 40: { // 75
+                case 35: { // 75
                     try {
                         this.startNewRoundTX();
                         miniGameService.saveFund(Games.TAI_XIU.getName(), fundTx);
