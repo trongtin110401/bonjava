@@ -620,61 +620,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         this.send((BaseMsg) msg, user);
     }
 
-    private void tanLoc(User user, DataCmd dataCmd) {
-        TanLocCMD cmd = new TanLocCMD(dataCmd);
-        TanLocMsg msg = new TanLocMsg();
-        msg.result = 1;
-        UserServiceImpl userService = new UserServiceImpl();
-        long curretnMoney = userService.getMoneyUserCache(user.getName(), "vin");
-        if (cmd.money <= curretnMoney) {
-            if (cmd.money >= 1000L) {
-                boolean success;
-                MoneyResponse response = userService.updateMoney(user.getName(), -cmd.money, "vin", "TaiXiu", "Tài Xỉu - Tán lộc", "Tán lộc tài xỉu", 0L, null, TransType.NO_VIPPOINT);
-                if (response != null && response.isSuccess() && (success = this.updateFundRutLoc(cmd.money))) {
-                    curretnMoney = response.getCurrentMoney();
-                    msg.result = 0;
-                    try {
-                        this.txService.logTanLoc(user.getName(), cmd.money);
-                    } catch (IOException | InterruptedException | TimeoutException exception) {
-                        // empty catch block
-                        sendLogToTele(exception.getMessage());
-                    }
-                    if (this.countRutLoc == -1 && this.fundRutLoc >= 100000L) {
-                        this.countRutLoc = 0;
-                        StartNewRoundRutLocMsg newRoundMsg = new StartNewRoundRutLocMsg();
-                        newRoundMsg.remainTime = this.getRemainTimeRutLoc();
-                        this.sendMessageToTaiXiu(newRoundMsg);
-                    }
-                }
-            } else {
-                msg.result = (short) 3;
-            }
-        } else {
-            msg.result = (short) 2;
-        }
-        msg.currentMoney = curretnMoney;
-        this.send((BaseMsg) msg, user);
-    }
-
-    private boolean updateFundRutLoc(long moneyExchagne) {
-        boolean success = false;
-        this.fundRutLoc += moneyExchagne;
-        if (this.fundRutLoc < 0L) {
-            Debug.trace((Object) ("Quy rut loc " + this.fundRutLoc + " < 0"));
-        }
-        try {
-            this.txService.updatePotTanLoc(this.fundRutLoc);
-            UpdateFundTanLocMsg msg = new UpdateFundTanLocMsg();
-            msg.value = this.fundRutLoc;
-            this.sendMessageToTaiXiu(msg);
-            success = true;
-        } catch (Exception e) {
-            sendLogToTele(e.getMessage());
-            Debug.trace((Object[]) new Object[]{"Update fund tan loc error ", e.getMessage()});
-        }
-        return success;
-    }
-
     private short getRemainTimeRutLoc() {
         if (this.countRutLoc == -1) {
             return 0;
@@ -813,8 +758,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
 
         @Override
         public void run() {
-            //       TaiXiuUtils.rewardThanhDu();
-            //BitZeroServer.getInstance().getTaskScheduler().schedule(TaiXiuModule.this.rewardThanhDuDailyTask, 24, TimeUnit.HOURS);
             Debug.trace((Object) "Tra thuong Thanh Du");
         }
     }
@@ -898,7 +841,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
             System.out.println("exception scheduleBotChat " + e);
             sendLogToTele(e.getMessage());
             Debug.trace(e.getMessage());
-            // GameUtils.sendAlert("Bot tai xiu start error: " + e.getMessage() + ", time= " + DateTimeUtils.getCurrentTime());
         }
     }
 
@@ -908,24 +850,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
      */
 
     public void sendLogToTele(String log) {
-//        logger.error(log+" vnxx");
-//        new Thread(() -> {
-//            try {
-//                String messageEncode = URLEncoder.encode(log);
-//                OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
-//                        .build();
-//                Request request = new Request.Builder()
-//                        .url("https://api.telegram.org/bot5158664131:AAFSQZ_VCMGdpDYl34gqaXXwWDecwel-1xM/sendMessage?chat_id=-610762842&text=xxxx"+messageEncode)
-//                        .method("GET", null)
-//                        .build();
-//                Response response = client.newCall(request).execute();
-//                String data = response.body().string();
-//            }catch (Exception exception) {
-//                logger.error(log+" vnxx");
-//                exception.printStackTrace();
-//            }
-//        }).start();
-
     }
 }
 
