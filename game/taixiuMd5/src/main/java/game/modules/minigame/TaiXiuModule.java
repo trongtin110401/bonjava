@@ -133,7 +133,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         cacheService.setObject("admin_msg_md5", taiXiuChatMsg);
         Debug.info("referentTaiXiuId là " + this.referenceTaiXiuId);
         this.rooms.put(MGRoomTaiXiu.getKeyRoom((short) 1), new MGRoomTaiXiu("TaiXiu_1", this.referenceTaiXiuId, (byte) 1));
-        this.rooms.put(MGRoomTaiXiu.getKeyRoom((short) 0), new MGRoomTaiXiu("TaiXiu_0", this.referenceTaiXiuId, (byte) 0));
+//        this.rooms.put(MGRoomTaiXiu.getKeyRoom((short) 0), new MGRoomTaiXiu("TaiXiu_0", this.referenceTaiXiuId, (byte) 0));
 
         this.loadData();
 
@@ -145,12 +145,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
 
         scheduler.scheduleAtFixedRate(updateCacheTopDay, 2000, 3600, TimeUnit.SECONDS);
         scheduler.scheduleAtFixedRate(updateCacheTopMonth, 2000, 86400, TimeUnit.SECONDS);
-        try {
-            int remainTimeTraThuongThanhDu = MiniGameUtils.calculateTimeRewardOnNextDay("");
-        } catch (ParseException e) {
-            sendLogToTele(e.getMessage());
-            Debug.trace((Object[]) new Object[]{"Calculate time reward Thanh du error ", e.getMessage()});
-        }
     }
 
     public void handleServerEvent(IBZEvent ibzevent) throws BZException {
@@ -395,7 +389,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
     private synchronized void gameLoop() {
         try {
             MGRoomTaiXiu roomTXVin = this.getRoomTX((short) 1);
-//            MGRoomTaiXiu roomTXXu = this.getRoomTX((short) 0);
             if (count == 0) {
                 this.generateTaiXiuDices(roomTXVin);
             }
@@ -421,34 +414,34 @@ public class TaiXiuModule extends BaseClientRequestHandler {
             this.getUserPotTaiXiu();
             this.sendTXTime(roomTXVin.getRemainTime(), roomTXVin.isBetting()); // todo tinh thoi gian con lai
             switch (this.count) {
-                case 55: {
+                case 20: {
                     roomTXVin.disableBetting();
 //                    roomTXXu.disableBetting();
                     break;
                 }
-                case 60: {
+                case 23: {
                     roomTXVin.finish();
 //                    roomTXXu.finish();
 
                     break;
                 }
-                case 61: {
+                case 25: {
                     this.generateTaiXiuDicesMD5(roomTXVin);
                     break;
                 }
-                case 63: {
+                case 26: {
                     BitZeroServer.getInstance().getTaskScheduler().schedule(this.calculatingTXVinTask, 1, TimeUnit.SECONDS);
                     BitZeroServer.getInstance().getTaskScheduler().schedule(this.calculatingTXXuTask, 1, TimeUnit.SECONDS);
                     amountBotTaiFake = 0;
                     amountBotXiuFake = 0;
                     break;
                 }
-                case 70: {
+                case 28: {
                     ScheduleBotTask t = new ScheduleBotTask();
                     this.executor.execute(t);
                     break;
                 }
-                case 75: {
+                case 35: {
                     try {
                         this.startNewRoundTX();
                         mgService.saveFund(Games.TAI_XIU_MD5.getName(),fundTxMD5);
@@ -704,7 +697,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
             } finally {
                 long endTime = System.currentTimeMillis();
                 Debug.trace((Object) ("CALCUALTE PRIZE, time handle= " + (endTime - startTime) + " (ms)") + " Room " + (roomId == 1 ? "vin" : "xu"));
-//                TaiXiuModule.this.txService.updateAllTop();
             }
         }
     }
@@ -774,23 +766,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
      * Schedule lấy message admin send
      */
     public void sendLogToTele(String log) {
-//        logger.error(log+" vnxx");
-//        new Thread(() -> {
-//            try {
-//                String messageEncode = URLEncoder.encode(log);
-//                OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
-//                        .build();
-//                Request request = new Request.Builder()
-//                        .url("https://api.telegram.org/bot5158664131:AAFSQZ_VCMGdpDYl34gqaXXwWDecwel-1xM/sendMessage?chat_id=-610762842&text=xxxx"+messageEncode)
-//                        .method("GET", null)
-//                        .build();
-//                Response response = client.newCall(request).execute();
-//                String data = response.body().string();
-//            }catch (Exception exception) {
-//                logger.error(log+" vnxx");
-//                exception.printStackTrace();
-//            }
-//        }).start();
 
     }
 }
