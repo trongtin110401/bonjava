@@ -100,8 +100,7 @@ public class MGRoomCandy extends MGRoom {
             pot = initPotValue;
         }
         this.pot = pot;
-        CacheServiceImpl cacheService = new CacheServiceImpl();
-        cacheService.setValue(name, (int) this.pot);
+        sv.setValue(name, (int) this.pot);
 
         this.fund = fund;
         this.betValue = betValue;
@@ -111,7 +110,7 @@ public class MGRoomCandy extends MGRoom {
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.checkResetPotTask, 10, 10, TimeUnit.SECONDS);
 
         try {
-            this.mgService.savePot(name, pot, this.huX2);
+            this.mgService.savePot(name, this.pot, this.huX2);
         } catch (IOException | InterruptedException | TimeoutException exception) {
             // empty catch block
         }
@@ -331,8 +330,8 @@ public class MGRoomCandy extends MGRoom {
         String ratioTime = CommonUtils.getRatioTime(handleTime);
         PokeGoUtils.log(refernceId, username, this.betValue, msg.matrix, result, this.moneyType, handleTime, ratioTime, currentTimeStr);
 
-        //Update cache tien hu
-        sv.setValue(name, (int) pot);
+        // Update cache tien hu
+        sv.setValue(this.name, (int) this.pot);
 
         if (forceJackpotByUser) {
             this.sendNotifyNoHu(username, (byte) 1, msg.prize, this.gameName);

@@ -14,7 +14,7 @@ Games {
     TAI_XIU(2, "TaiXiu", "Tài x?u"),
     TAI_XIU_MD5(2000, "TaiXiuMd5", "Tài x?u Md5"),
     BAU_CUA(3, "BauCua", "B?u cua"),
-    CAO_THAP(4, "CaoThap", "Cao th?p"),
+    CAO_THAP(4, "cao_thap", "Cao th?p"),
     POKE_GO(5, "PokeGo", "Pokego"),
     CANDY(5, "CANDY", "CANDY"),
     VQMM(7, "VQMM", "Vòng quay may m?n"),
