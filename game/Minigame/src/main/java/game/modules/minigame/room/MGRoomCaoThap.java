@@ -31,8 +31,10 @@ import com.vinplay.cardlib.models.Card;
 import com.vinplay.cardlib.models.Deck;
 import com.vinplay.cardlib.models.Rank;
 import com.vinplay.dal.service.BroadcastMessageService;
+import com.vinplay.dal.service.CacheService;
 import com.vinplay.dal.service.CaoThapService;
 import com.vinplay.dal.service.impl.BroadcastMessageServiceImpl;
+import com.vinplay.dal.service.impl.CacheServiceImpl;
 import com.vinplay.dal.service.impl.CaoThapServiceImpl;
 import com.vinplay.usercore.service.UserService;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
@@ -62,8 +64,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-public class MGRoomCaoThap
-        extends MGRoom {
+public class MGRoomCaoThap extends MGRoom {
     private long pot;
     private long fund;
     private float tax = MinigameConstant.MINIGAME_TAX_VIN;
@@ -77,6 +78,8 @@ public class MGRoomCaoThap
     private CaoThapService ctService = new CaoThapServiceImpl();
     private BroadcastMessageService broadcastMsgService = new BroadcastMessageServiceImpl();
 
+    protected CacheService sv = new CacheServiceImpl();
+
     public MGRoomCaoThap(String roomName, byte moneyType, long pot, long fund, int baseBetValue) {
         super(roomName);
         this.moneyType = moneyType;
@@ -88,6 +91,8 @@ public class MGRoomCaoThap
             this.tax = MinigameConstant.MINIGAME_TAX_XU;
         }
         this.pot = pot;
+        sv.setValue(name, pot);
+
         this.fund = fund;
         this.baseBetValue = baseBetValue;
         this.usersCaoThap = new HashMap<String, CaoThapInfo>();
@@ -398,9 +403,11 @@ public class MGRoomCaoThap
 
     private void savePot() {
         UpdatePotCaoThapMsg msg = new UpdatePotCaoThapMsg();
+
         msg.value = this.pot;
         this.sendMessageToRoom(msg);
         try {
+            sv.setValue(name, pot);
             this.ctService.updatePotCaoThap(this.name, this.pot);
         } catch (IOException | InterruptedException | TimeoutException e) {
             Debug.trace((Object[]) new Object[]{"CAO THAP: update pot cao thap error ", e.getMessage()});
