@@ -65,8 +65,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-public class MGRoomCandy
-        extends MGRoom {
+public class MGRoomCandy extends MGRoom {
     private long pot;
     private long fund;
     private long initPotValue;
@@ -78,41 +77,39 @@ public class MGRoomCandy
     private PokeGoService pgService = new PokeGoServiceImpl();
     private BroadcastMessageService broadcastMsgService = new BroadcastMessageServiceImpl();
     private final Runnable gameLoopTask = new GameLoopTask();
-    private Map<String, AutoUserPokeGo> usersAuto = new HashMap<String, AutoUserPokeGo>();
+    private final Map<String, AutoUserPokeGo> usersAuto = new HashMap<>();
     private Lines lines = new Lines();
     private long lastTimeUpdatePotToRoom = 0L;
     private long lastTimeUpdateFundToRoom = 0L;
     private ThreadPoolExecutor executor;
-    private int countHu = -1;
-    private int countNoHuX2 = 0;
     private boolean huX2 = false;
     public String gameName = Games.CANDY.getName();
     protected CacheService sv = new CacheServiceImpl();
-    public static final String CACHE_NAME_USER_SPOT = "user_force_jackpot_";
-    public static final String CACHE_BET_VALUE_SLOT = "bet_value_jackpot_";
     private final Runnable checkResetPotTask = new CheckResetPot();
 
     public MGRoomCandy(String name, short moneyType, long pot, long fund, int betValue, long initPotValue) {
+
         super(name);
+
         this.moneyType = moneyType;
         this.moneyTypeStr = this.moneyType == 1 ? "vin" : "xu";
         this.executor = moneyType == 1 ? (ThreadPoolExecutor) Executors.newFixedThreadPool(ConfigGame.getIntValue(this.gameName + "_thread_pool_per_room_vin")) :
                 (ThreadPoolExecutor) Executors.newFixedThreadPool(ConfigGame.getIntValue(this.gameName + "_thread_pool_per_room_xu"));
+
+        if(pot < 0) {
+            pot = initPotValue;
+        }
         this.pot = pot;
         CacheServiceImpl cacheService = new CacheServiceImpl();
         cacheService.setValue(name, (int) pot);
+
         this.fund = fund;
         this.betValue = betValue;
         this.initPotValue = initPotValue;
+
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.checkResetPotTask, 10, 10, TimeUnit.SECONDS);
-        try {
-            this.countHu = this.sv.getValueInt(name + "_count_hu");
-            this.countNoHuX2 = this.sv.getValueInt(name + "_count_no_hu_x2");
-            this.calculatHuX2();
-        } catch (KeyNotFoundException keyNotFoundException) {
-            // empty catch block
-        }
+
         try {
             this.mgService.savePot(name, pot, this.huX2);
         } catch (IOException | InterruptedException | TimeoutException exception) {
@@ -124,9 +121,7 @@ public class MGRoomCandy
      * WARNING - Removed try catching itself - possible behaviour change.
      */
     public void autoPlay(User user, String lines) {
-        Map<String, AutoUserPokeGo> map;
-        Map<String, AutoUserPokeGo> map2 = map = this.usersAuto;
-        synchronized (map2) {
+        synchronized (this.usersAuto) {
             if (this.usersAuto.containsKey(user.getName())) {
                 AutoUserPokeGo entry = this.usersAuto.get(user.getName());
                 this.forceStopAutoPlay(entry.getUser());
@@ -139,11 +134,8 @@ public class MGRoomCandy
      * WARNING - Removed try catching itself - possible behaviour change.
      */
     public void stopAutoPlay(User user) {
-        Map<String, AutoUserPokeGo> map;
-        Map<String, AutoUserPokeGo> map2 = map = this.usersAuto;
-        synchronized (map2) {
+        synchronized (this.usersAuto) {
             AutoUserPokeGo entry;
-//            if (this.usersAuto.containsKey(user.getName()) && (entry = this.usersAuto.get(user.getName())).getUser().getUniqueId() == user.getUniqueId()) {
             if (this.usersAuto.containsKey(user.getName()) && (entry = this.usersAuto.get(user.getName())).getUser().getId() == user.getId()) {
                 this.usersAuto.remove(user.getName());
             }
@@ -312,7 +304,6 @@ public class MGRoomCandy
                             try {
                                 if (!u.isBot()) {
                                     this.pgService.logPokeGo(refernceId, username, this.betValue, linesStr, linesWin, prizesOnLine, result, totalPrizes, this.moneyType, currentTimeStr);
-
                                 }
                                 if (result == 3 || result == 4) {
                                     this.pgService.addTop(username, this.betValue, totalPrizes, this.moneyType, currentTimeStr, result);
@@ -339,8 +330,10 @@ public class MGRoomCandy
         long handleTime = endTime - startTime;
         String ratioTime = CommonUtils.getRatioTime(handleTime);
         PokeGoUtils.log(refernceId, username, this.betValue, msg.matrix, result, this.moneyType, handleTime, ratioTime, currentTimeStr);
+
         //Update cache tien hu
-        sv.setValue(CACHE_JACK_POT_VALUE_MINIGAME + "_" + this.betValue + "_" + this.gameName, String.valueOf(this.pot));
+        sv.setValue(name, (int) pot);
+
         if (forceJackpotByUser) {
             this.sendNotifyNoHu(username, (byte) 1, msg.prize, this.gameName);
         }

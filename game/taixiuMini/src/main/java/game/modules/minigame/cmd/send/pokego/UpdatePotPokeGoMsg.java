@@ -7,8 +7,7 @@ import game.BaseMsgEx;
 
 import java.nio.ByteBuffer;
 
-public class UpdatePotPokeGoMsg
-extends BaseMsgEx {
+public class UpdatePotPokeGoMsg extends BaseMsgEx {
     public long value;
     public byte x2 = 0;
 
