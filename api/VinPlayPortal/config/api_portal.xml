@@ -962,5 +962,10 @@
             <name>Get bank info</name>
             <path>com.vinplay.api.processors.AutoXuLyBank.GetBankInfoProcessor</path>
         </command>
+        <command>
+            <id>4116</id>
+            <name>Get list bank code</name>
+            <path>com.vinplay.api.processors.AutoXuLyBank.GetListBankTypeProcessor</path>
+        </command>
     </commands>
 </portal>

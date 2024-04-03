@@ -15,8 +15,6 @@ import com.vinplay.usercore.service.impl.UserServiceImpl;
 import java.io.IOException;
 
 public class AutoRutTien {
-    private static final int MAX_ITEM = 15;
-    private static final String ACCESS_TOKEN = "";
     private static final String URL_CALL_BACK = "https://lunglinhlalenluons.store/api?c=4009";
     public String autoRut(String status, String transid, String typeStr){
         try {
@@ -41,7 +39,7 @@ public class AutoRutTien {
             if (status.equals(CashoutUtil.STATUS_SENDING)) {
                 this.sendMesToAdmin(transid, 102);
                 CallAutoTransBankRut callBank = new CallAutoTransBankRut();
-                String output = callBank.CallAPI(userWithdraw, ACCESS_TOKEN, URL_CALL_BACK); //Product
+                String output = callBank.CallAPI(userWithdraw, URL_CALL_BACK); //Product
                 String check_money_now = "Số dư tài khoản không đủ để thực hiện";
                 if(output.contains(check_money_now)){
                     this.sendMesToAdmin(transid, 3); // Số dư tài khoản không đủ để thực hiện

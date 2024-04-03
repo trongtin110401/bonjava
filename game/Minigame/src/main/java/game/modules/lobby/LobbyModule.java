@@ -209,13 +209,13 @@ public class LobbyModule extends BaseClientRequestHandler {
     public void init() {
         super.init();
         this.getParentExtension().addEventListener(BZEventType.USER_DISCONNECT, this);
-        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate((Runnable) this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
-        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate((Runnable) this.cardTransactionTask, 30, 30, TimeUnit.SECONDS);
-        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate((Runnable) this.checkMoneyUser, 10, 1, TimeUnit.SECONDS);
-        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate((Runnable) this.checkOnePayStatusTask, 1, 10, TimeUnit.MINUTES);
-        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate((Runnable) this.checkCodePayStatusTask, 1, 1, TimeUnit.SECONDS);
-        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate((Runnable) this.checkOutGameTask, 1, 500, TimeUnit.MILLISECONDS);
-        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate((Runnable) this.checkCodePayHuyStatusTask, 1, 1, TimeUnit.SECONDS);
+        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
+        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.cardTransactionTask, 30, 30, TimeUnit.SECONDS);
+        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.checkMoneyUser, 10, 1, TimeUnit.SECONDS);
+        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.checkOnePayStatusTask, 1, 10, TimeUnit.MINUTES);
+        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.checkCodePayStatusTask, 1, 1, TimeUnit.SECONDS);
+        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.checkOutGameTask, 1, 500, TimeUnit.MILLISECONDS);
+        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.checkCodePayHuyStatusTask, 1, 1, TimeUnit.SECONDS);
         try {
             this.initVP();
             MongoDBConnectionFactory.init();

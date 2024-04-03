@@ -241,7 +241,7 @@ implements RechargeByCardDAO {
             obj.put("$lte", (Object)timeEnd);
             conditions.put("time_log", (Object)obj);
         }
-        iterable = db.getCollection("dvt_recharge_by_card").find((Bson)new Document((Map)conditions)).sort((Bson)objsort).skip(num_start).limit(50).maxTime(30L, TimeUnit.SECONDS);
+        iterable = db.getCollection("Card_mobile_Auto").find((Bson)new Document((Map)conditions)).sort((Bson)objsort).skip(num_start).limit(50).maxTime(30L, TimeUnit.SECONDS);
         iterable.forEach((Block)new Block<Document>(){
 
             public void apply(Document document) {

@@ -1,7 +1,5 @@
 package com.vinplay.api.processors.rutbankapi;
 
-import bitzero.server.extensions.data.BaseMsg;
-import com.vinplay.api.processors.CheckBank.KiemTra;
 import com.vinplay.dal.common.BroadCastUserMoney;
 import com.vinplay.dichvuthe.dao.CashoutDao;
 import com.vinplay.dichvuthe.dao.impl.CashoutDaoImpl;
@@ -17,17 +15,12 @@ import com.vinplay.utils.TelegramUtil;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.response.BaseResponseModel;
-import com.vinplay.vbee.common.rmq.HttpCommon;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URLEncoder;
 
 public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, String> {
-    private static final Logger logger = Logger.getLogger((String) "api");
     private UserService userService = new UserServiceImpl();
 
     public synchronized String execute(Param<HttpServletRequest> param) {
@@ -48,40 +41,21 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
             long yeu_cau_rut = Long.parseLong(amount);
             long tienrut = checknap.tongrut(nickname);
             long tongx = ntmp.getNapbank() + ntmp.getNapmomo();
-            long rutx = tienrut * (-1);
-            long ruty = rutx + yeu_cau_rut;
             NapRutGame nrg = new NapRutGame();
             boolean check_onoff = nrg.OnOffAutoRut();
             if (tiennap >= 0) {
-                if (check_onoff == true && yeu_cau_rut < 10000000 && tiennap >= 20000) {
+                if (check_onoff && yeu_cau_rut < 10000000 && tiennap >= 20000) {
                     //Auto rut tien bank
-                    String ACCESS_TOKEN_bank2 = "";
-                    String ACCESS_TOKEN_bank3 = "";
-                    String Access_token_bank9 = "";
-                    String Access_token_bank10 = "";
-                    String userAprrove = "";
-                    String ACCESS_TOKEN = "";
+                    String userAprrove = "Auto Rút Tiền Bank";
                     double randomDouble = Math.random();
                     randomDouble = randomDouble * 100 + 1;
                     int randomInt = (int) randomDouble;
-                    boolean checkBank = true;
                     int dudu = randomInt % 2;
-                    if (dudu == 0) {
-                        checkBank = true;
-                    } else {
-                        checkBank = false;
-                    }
-                    if (checkBank == true) {
-                        ACCESS_TOKEN = Access_token_bank9;
-                        userAprrove = "Auto Rút Tiền Bank";
-                    } else {
-                        ACCESS_TOKEN = Access_token_bank10;
-                        userAprrove = "Auto Rút Tiền Bank";
-                    }
+
                     String URL_CALL_BACK = "https://lunglinhlalenluons.store/api?c=4009";
 
                     UserWithdraw userWithdraw = new UserWithdraw(nickname, yeu_cau_rut_1, banknum, bankacc, bankname);
-                    BaseResponseModel res = this.userService.UpdateMoneyWhenWithdrawBank(userWithdraw);
+                    this.userService.UpdateMoneyWhenWithdrawBank(userWithdraw);
                     String transId = userWithdraw.Id;
                     //find trans
                     CashoutDao cashoutDao = new CashoutDaoImpl();
@@ -92,7 +66,7 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
                         AutoRutTien auRut = new AutoRutTien();
                         auRut.sendMesToAdmin(transId, 102);
                         CallAutoTransBankRut callBank = new CallAutoTransBankRut();
-                        String output = callBank.CallAPI(userWithdraw, ACCESS_TOKEN, URL_CALL_BACK); //Product
+                        String output = callBank.CallAPI(userWithdraw, URL_CALL_BACK); //Product
                         String check_money_now = "Số dư tài khoản không đủ để thực hiện";
                         if (output.contains(check_money_now)) {
                             auRut.sendMesToAdmin(transId, 3); // Số dư tài khoản không đủ để thực hiện
@@ -110,11 +84,11 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
                             long SoTien = yeu_cau_rut * (-1);
                             if (codedl == null) {
                                 int xx = 2;
-                            } else if (codedl != null && codedl.trim().length() == 0) {
+                            } else if (codedl.trim().length() == 0) {
                                 int xx = 2;
-                            } else if (codedl != null && codedl.trim().equalsIgnoreCase("null") == false) {
+                            } else if (!codedl.trim().equalsIgnoreCase("null")) {
                                 NapRutModel napgame = new NapRutModel(transId, nickname, codedl, SoTien, "Rut Bank", userWithdraw.CreatedAt);
-                                if (nrg.getTransID(transId) == false) {
+                                if (!nrg.getTransID(transId)) {
                                     nrg.NapRut(napgame);
                                 }
                             } else {
@@ -129,7 +103,7 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
                 } else {
                     long taixi = 0;
                     UserWithdraw userWithdraw = new UserWithdraw(nickname, yeu_cau_rut_1, banknum, bankacc, bankname);
-                    BaseResponseModel res = this.userService.UpdateMoneyWhenWithdrawBank(userWithdraw);
+                    this.userService.UpdateMoneyWhenWithdrawBank(userWithdraw);
                     sodu = this.userService.getCurrentMoneyUserCache(nickname, "vin");
                     BroadCastUserMoney.pushBroadCast(nickname);
                     long tienthe = ntmp.getNapthe();
