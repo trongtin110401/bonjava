@@ -167,11 +167,11 @@ public class MGRoomTaiXiu extends MGRoom {
         int remainTime = (int) ((currentTime - this.startTime) / 1000L);
         if (remainTime < 0) {
             remainTime = 0;
-        } else if (remainTime > 60) {
-            remainTime = 60;
+        } else if (remainTime > 25) {
+            remainTime = 25;
         }
         if (this.bettingRound) {
-            return (short) (60 - remainTime);
+            return (short) (25 - remainTime);
         }
         return (short) (15 - remainTime);
     }

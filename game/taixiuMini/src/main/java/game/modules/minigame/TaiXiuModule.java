@@ -136,7 +136,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         }
         Debug.info("referentTaiXiuId là " + this.referenceTaiXiuId);
         this.rooms.put(MGRoomTaiXiu.getKeyRoom((short) 1), new MGRoomTaiXiu("TaiXiu_1", this.referenceTaiXiuId, (byte) 1));
-        this.rooms.put(MGRoomTaiXiu.getKeyRoom((short) 0), new MGRoomTaiXiu("TaiXiu_0", this.referenceTaiXiuId, (byte) 0));
+//        this.rooms.put(MGRoomTaiXiu.getKeyRoom((short) 0), new MGRoomTaiXiu("TaiXiu_0", this.referenceTaiXiuId, (byte) 0));
         //Debug.info("referentTaiXiuId là " + this.referenceTaiXiuId);
         this.loadData();
         Debug.info("referentTaiXiuId sau khi load data là " + this.referenceTaiXiuId);
@@ -426,7 +426,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                     amountBotXiuFake += (taiXiuSetAmountBotFake.getNumberBotXiuFake()) / 40;
                 }
             } catch (KeyNotFoundException ex) {
-//                sendLogToTele(ex.getMessage());
                 amountBotXiuFake = 0;
                 amountBotTaiFake = 0;
             }
