@@ -285,7 +285,7 @@ public class MGRoomTaiXiu extends MGRoom {
         msg.numBetXiu = (this.potXiu.getNumBet() + amountBotXiuFake);
         msg.moneyHu = TaiXiuModule.moneyHu;
         msg.md5TextResult = resultTX.getMd5TextResult();
-        if (secondGamePlay >= 62) {
+        if (secondGamePlay >= 26) {
             msg.plaintTextResult = resultTX.getPlantTextResult();
         }
         cacheService.setValue("Md5_Lobby_tx_tai_" + this.moneyType, String.valueOf(this.getPotTai()));
