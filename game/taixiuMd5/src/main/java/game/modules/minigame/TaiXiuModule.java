@@ -131,7 +131,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         cacheService.setObject("admin_msg_md5", taiXiuChatMsg);
         Debug.info("referentTaiXiuId là " + this.referenceTaiXiuId);
         this.rooms.put(MGRoomTaiXiu.getKeyRoom((short) 1), new MGRoomTaiXiu("TaiXiu_1", this.referenceTaiXiuId, (byte) 1, this));
-        this.rooms.put(MGRoomTaiXiu.getKeyRoom((short) 0), new MGRoomTaiXiu("TaiXiu_0", this.referenceTaiXiuId, (byte) 0, this));
+//        this.rooms.put(MGRoomTaiXiu.getKeyRoom((short) 0), new MGRoomTaiXiu("TaiXiu_0", this.referenceTaiXiuId, (byte) 0, this));
 
         this.loadData();
 
@@ -236,18 +236,18 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         this.doSubcribeMiniGame(user, cmd.gameId, cmd.roomId);
         LichSuPhienMsg msgLSGD = new LichSuPhienMsg();
         msgLSGD.data = TaiXiuUtils.buildLichSuPhien(this.lichSuPhienTX, 22);
-        this.send((BaseMsg) msgLSGD, user);
+        this.send(msgLSGD, user);
         UpdateRutLocMsg rutLocMsg = new UpdateRutLocMsg();
         try {
             rutLocMsg.soLuotRut = this.txService.getLuotRutLoc(user.getName());
         } catch (Exception e) {
             sendLogToTele(e.getMessage());
-            Debug.trace((Object[]) new Object[]{"Get so luot rut loc " + user.getName() + " error ", e.getMessage()});
+            Debug.trace(new Object[]{"Get so luot rut loc " + user.getName() + " error ", e.getMessage()});
         }
-        this.send((BaseMsg) rutLocMsg, user);
+        this.send(rutLocMsg, user);
         UpdateFundTanLocMsg fundRLMsg = new UpdateFundTanLocMsg();
         fundRLMsg.value = this.fundRutLoc;
-        this.send((BaseMsg) fundRLMsg, user);
+        this.send(fundRLMsg, user);
     }
 
     // vào room
@@ -263,11 +263,11 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                     roomTX.updateTaiXiuInfo(user, this.getRemainTimeRutLoc());
                     break;
                 }
-                CommonHandle.writeErrLog((String) "Game TAI XIU not found");
+                CommonHandle.writeErrLog("Game TAI XIU not found");
                 break;
             }
             default: {
-                Debug.trace((Object) "Game id not found");
+                Debug.trace("Game id not found");
             }
         }
     }
@@ -299,12 +299,12 @@ public class TaiXiuModule extends BaseClientRequestHandler {
     //todo : bắt đầu một round tài xỉu mới
     private void startNewRoundTX() {
         MGRoomTaiXiu roomTXVin = this.getRoomTX((short) 1);
-        MGRoomTaiXiu roomTXXu = this.getRoomTX((short) 0);
+//        MGRoomTaiXiu roomTXXu = this.getRoomTX((short) 0);
         ++this.referenceTaiXiuId;
 
         //update referenceId
         roomTXVin.startNewGame(this.referenceTaiXiuId);
-        roomTXXu.startNewGame(this.referenceTaiXiuId);
+//        roomTXXu.startNewGame(this.referenceTaiXiuId);
         StartNewGameTaiXiuMsg msg = new StartNewGameTaiXiuMsg();
         msg.referenceId = this.referenceTaiXiuId;
         msg.moneyHu = moneyHu;
@@ -628,9 +628,9 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         MGRoomTaiXiu roomTXVin = this.getRoomTX((short) 1);
         // todo : gửi message đến room
         roomTXVin.sendMessageToRoom(msg);
-        MGRoomTaiXiu roomTXXu = this.getRoomTX((short) 0);
+//        MGRoomTaiXiu roomTXXu = this.getRoomTX((short) 0);
         // todo : gửi message đến room xu ( CÁI NÀY KO DÙNG TRONG GAME HIỆN TẠI)
-        roomTXXu.sendMessageToRoom(msg);
+//        roomTXXu.sendMessageToRoom(msg);
     }
 
     public MGRoom getGame(String key) {
