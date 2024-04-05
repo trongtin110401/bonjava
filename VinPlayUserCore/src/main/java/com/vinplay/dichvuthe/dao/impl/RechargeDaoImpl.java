@@ -1482,23 +1482,23 @@ public class RechargeDaoImpl
                 conditions.put("CreatedAt", (Object) obj);
             }
 
-            FindIterable iterable = col.find((Bson) new Document(conditions)).sort((Bson) objsort).skip(numStart).limit(maxItem);
+            FindIterable iterable = col.find(new Document(conditions)).sort(objsort).skip(numStart).limit(maxItem);
             iterable.forEach((Block) new Block<Document>() {
 
                 public void apply(Document document) {
 
                     DepositBankModel model = new DepositBankModel(
-                            document.getString((Object) "Id"),
-                            document.getString((Object) "Nickname"),
-                            document.getString((Object) "CreatedAt"),
-                            document.getString((Object) "UpdatedAt"),
-                            document.getLong((Object) "Amount"),
-                            document.getInteger((Object) "Status"),
-                            document.getString((Object) "BankBrandName"),
-                            document.getString((Object) "BankAccountNumber"),
-                            document.getString((Object) "BankAccountName"),
-                            document.getString((Object) "Description"),
-                            document.getString((Object) "UserApprove")
+                           String.valueOf(document.getInteger("Id")),
+                            document.getString("Nickname"),
+                            document.getString("CreatedAt"),
+                            document.getString("UpdatedAt"),
+                            document.getLong("Amount"),
+                            document.getInteger("Status"),
+                            document.getString("BankCode"),
+                            document.getString("BankAccountNumber"),
+                            document.getString("BankAccountName"),
+                            document.getString("Description"),
+                            document.getString("UserApprove")
 
                     );
                     model.setUserSender(document.getString((Object) "UserSender"));
