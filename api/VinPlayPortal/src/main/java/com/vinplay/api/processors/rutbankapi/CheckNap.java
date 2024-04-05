@@ -255,14 +255,16 @@ public class CheckNap {
                     sotienx = "0";
                 }
                 long sotien = Long.parseLong(sotienx);
+                if (sotien <=0){
+                    sotien = 0;
+                }
+
                 String HinhThucTran = document.getString((Object) "hinhthucTrans");
                 checknapEnity check = new checknapEnity(nickname, HinhThucTran, sotien);
                 listtien.add(check);
             }
         });
         for(checknapEnity s : listtien){
-//            if(s.getHinhtruc().equalsIgnoreCase("CARD") || s.getHinhtruc().equalsIgnoreCase("BANK") || s.getHinhtruc().equalsIgnoreCase("CodePay")
-//                    || s.getHinhtruc().equalsIgnoreCase("ONE_PAY") || s.getHinhtruc().equalsIgnoreCase("ADMIN_TRANSFER_TO_USER")){
             tong = tong + s.getSotien();
             if(s.getHinhtruc().equalsIgnoreCase("CARD")){
                 tongthe = tongthe + s.getSotien();
