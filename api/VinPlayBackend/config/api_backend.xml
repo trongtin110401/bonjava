@@ -1732,5 +1732,10 @@
             <name>get slot fee</name>
             <path>com.vinplay.api.backend.processors.GetAllSlotFeeProcessor</path>
         </command>
+        <command>
+            <id>11028</id>
+            <name>get slot fee</name>
+            <path>com.vinplay.api.backend.processors.ChargeOutProcessor</path>
+        </command>
     </commands>
 </backend>

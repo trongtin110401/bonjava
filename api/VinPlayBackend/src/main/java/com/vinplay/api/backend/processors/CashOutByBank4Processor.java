@@ -39,7 +39,7 @@ public class CashOutByBank4Processor implements BaseProcessor<HttpServletRequest
     public String execute(Param<HttpServletRequest> param) {
         ResultCashOutByBankResponse response = new ResultCashOutByBankResponse(false, "1001");
         try {
-            HttpServletRequest request = (HttpServletRequest) param.get();
+            HttpServletRequest request = param.get();
             String nickName = request.getParameter("nn");
             String bankName = request.getParameter("b");
             String bankAccountNumber = request.getParameter("bankNumber");
@@ -47,7 +47,6 @@ public class CashOutByBank4Processor implements BaseProcessor<HttpServletRequest
             String userAprrove = request.getParameter("uad");
             userAprrove = userAprrove == null ? "" : userAprrove;
             String status = request.getParameter("st");
-            String code = request.getParameter("co");
             String timeStart = request.getParameter("ts");
             String timeEnd = request.getParameter("te");
             String pageStr = request.getParameter("p");
@@ -60,18 +59,10 @@ public class CashOutByBank4Processor implements BaseProcessor<HttpServletRequest
             int maxItem = numberMax != null ? Integer.parseInt(numberMax) : MAX_ITEM;
             act = act == null || act.isEmpty() ? "getList" : act;
             CashoutDao cashoutDao = new CashoutDaoImpl();
-//            if(typeStr.equalsIgnoreCase("100")){
-//                updateHis(transid);
-//            }
-//            if(typeStr.equalsIgnoreCase("2") || typeStr.equalsIgnoreCase("0") || typeStr.equalsIgnoreCase("3")){
-//                updateHis2(transid);
-//            }
 
             if (act.equals("getList")) {
-
                 UserWithdraw userWithdraw = new UserWithdraw(transid, nickName, bankAccountNumber, bankAccountAccountName, bankName, status);
                 CashoutBankResponse res = cashoutDao.GetListCashoutBank(userWithdraw, page, maxItem, timeEnd, timeStart);
-
                 return res.toJson();
             } else if (act.equals("get")) {
                 if (transid == null || transid.isEmpty()) {
@@ -93,31 +84,22 @@ public class CashOutByBank4Processor implements BaseProcessor<HttpServletRequest
                     return "";
                 }
 
-//                if (!userWithdraw.Status.equals(CashoutUtil.STATUS_PENDING)) {
-//                    return "";
-//                }
-
                 if (status.equals(CashoutUtil.STATUS_SENDING)) {
                     this.sendMesToAdmin(transid, 102);
                     CallAutoTransBank4 callBank = new CallAutoTransBank4();
                     String output = callBank.CallAPI(userWithdraw, ACCESS_TOKEN, URL_CALL_BACK); //Product
                     String check_money_now = "Số dư tài khoản không đủ để thực hiện";
-                    if(output.contains(check_money_now)){
-                        this.sendMesToAdmin(transid, 3); // Số dư tài khoản không đủ để thực hiện
+                    if (output.contains(check_money_now)) {
+                        this.sendMesToAdmin(transid, 3);
                     }
                 }
 
-                // update trans
                 boolean updateTrans = cashoutDao.UpdateCashoutBank(transid, status, userAprrove);
-
-
-
 
                 if (!updateTrans) {
                     return "";
                 }
                 // refund
-
                 int type = Integer.parseInt(typeStr);
                 historyTransService.update(transid, userWithdraw.Username, HistoryTransConst.RUT_BANK, this.getTrangthai(type), this.getTrangthaiDes(type));
 
@@ -134,22 +116,18 @@ public class CashOutByBank4Processor implements BaseProcessor<HttpServletRequest
                 NapRutGame nrg = new NapRutGame();
                 String codedl = nrg.getMaDaily(userWithdraw.Username);
                 long SoTien = userWithdraw.AmountReal * (-1);
-                if(codedl == null){
+                if (codedl == null) {
                     int xx = 2;
-                }else if(codedl != null && codedl.trim().length() == 0){
+                } else if (codedl.trim().length() == 0) {
                     int xx = 2;
-                }else if(codedl != null && codedl.trim().equalsIgnoreCase("null") == false){
-                    NapRutModel napgame = new NapRutModel(transid, userWithdraw.Username, codedl, SoTien,"Rut Bank", userWithdraw.CreatedAt);
-                    if(nrg.getTransID(transid) == false){
+                } else if (!codedl.trim().equalsIgnoreCase("null")) {
+                    NapRutModel napgame = new NapRutModel(transid, userWithdraw.Username, codedl, SoTien, "Rut Bank", userWithdraw.CreatedAt);
+                    if (!nrg.getTransID(transid)) {
                         nrg.NapRut(napgame);
                     }
-                }else{
-                    int xx =2;
                 }
-
                 return "true";
             }
-
             return "";
 
         } catch (Exception e) {
@@ -198,28 +176,30 @@ public class CashOutByBank4Processor implements BaseProcessor<HttpServletRequest
         }
         return "Đang xử lý";
     }
+
     private void updateHis(String TrainID) {
         try {
             MongoDatabase db = MongoDBConnectionFactory.getDB();
             MongoCollection col = db.getCollection("History_User_transaction");
             Document doc = new Document();
-            doc.append("trangthai","Thành công");
-            col.updateOne((Bson) new Document("transId", TrainID), (Bson) new Document("$set", (Object) doc));
+            doc.append("trangthai", "Thành công");
+            col.updateOne((Bson) new Document("transId", TrainID), new Document("$set", doc));
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
+
     private void updateHis2(String TrainID) {
         try {
             MongoDatabase db = MongoDBConnectionFactory.getDB();
             MongoCollection col = db.getCollection("History_User_transaction");
             Document doc = new Document();
-            doc.append("trangthai","Từ chối");
-            col.updateOne((Bson) new Document("transId", TrainID), (Bson) new Document("$set", (Object) doc));
+            doc.append("trangthai", "Từ chối");
+            col.updateOne((Bson) new Document("transId", TrainID), new Document("$set", (Object) doc));
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

@@ -1,6 +1,12 @@
 package com.vinplay.api.backend.processors.cashout;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.vinplay.api.backend.processors.rutbank.CallAutoTransBank;
+import com.vinplay.api.backend.processors.rutbank.CallAutoTransMomo;
+import com.vinplay.common.notification.SendToWS;
+import com.vinplay.common.report.EventactionAdminObj;
 import com.vinplay.dichvuthe.dao.CashoutDao;
 import com.vinplay.dichvuthe.dao.impl.CashoutDaoImpl;
 import com.vinplay.dichvuthe.entities.CashoutBankResponse;
@@ -15,15 +21,19 @@ import com.vinplay.vbee.common.response.ResultCashOutByBankResponse;
 import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 public class CashoutByMomoProcess implements BaseProcessor<HttpServletRequest, String> {
     private static final Logger logger = Logger.getLogger((String)"backend");
+
+    private static final String URL_CALL_BACK = "https://lunglinhlalenluons.store/api?c=4009";
     public String execute(Param<HttpServletRequest> param) {
         ResultCashOutByBankResponse response = new ResultCashOutByBankResponse(false, "1001");
         try{
             HttpServletRequest request = (HttpServletRequest)param.get();
             String nickName = request.getParameter("nn");
             String phoneNumber = request.getParameter("phone");
+            String phoneName = request.getParameter("name");
 
             String userAprrove = request.getParameter("uad");
             userAprrove = userAprrove == null ? "" : userAprrove;
@@ -64,6 +74,14 @@ public class CashoutByMomoProcess implements BaseProcessor<HttpServletRequest, S
                     return "";
                 }
                 if(!userWithdraw.Status.equals(CashoutUtil.STATUS_PENDING)){
+                    this.sendMesToAdmin(transid, 102);
+                    CallAutoTransMomo callAutoTransMomo = new CallAutoTransMomo();
+                    String output = callAutoTransMomo.CallAPI(userWithdraw, URL_CALL_BACK); //Product
+                    Gson gson = new Gson();
+                    JsonObject jsonObject = gson.fromJson(output, JsonObject.class);
+                    if (jsonObject.get("ex_stt").equals("-2.3")) {
+                        this.sendMesToAdmin(transid, 3); // S? d? tài kho?n không ?? ?? th?c hi?n
+                    }
                     return "";
                 }
                 // update trans
@@ -90,8 +108,18 @@ public class CashoutByMomoProcess implements BaseProcessor<HttpServletRequest, S
             return response.toJson();
         }
 
+    }
 
-
-
+    String sendMesToAdmin(String transID, int status) {
+        EventactionAdminObj model = new EventactionAdminObj();
+        model.setId(transID);
+        model.setStatus(status);
+        model.setType("CASH_OUT_BANK");
+        try {
+            SendToWS.sendBEExcEventaction(model);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "true";
     }
 }

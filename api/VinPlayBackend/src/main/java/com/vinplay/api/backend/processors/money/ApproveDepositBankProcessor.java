@@ -37,7 +37,8 @@ import java.io.IOException;
 // todo : approve tiền nạp qua ngân hàng cho user
 public class ApproveDepositBankProcessor implements BaseProcessor<HttpServletRequest, String> {
     private static final Logger logger = Logger.getLogger("backend");
-// todo fix connect db oxyhome6699
+
+    // todo fix connect db oxyhome6699
     @Override
     public String execute(Param<HttpServletRequest> param) {
         // type = 0 is approve
@@ -67,10 +68,8 @@ public class ApproveDepositBankProcessor implements BaseProcessor<HttpServletReq
                 DepositBankModel trans = rechargeService.finMoMoDepositByTransactionId(transId);
 
 
-
                 // update trans in db
                 int status = type == 100 ? DvtConst.STATUS_APPROVE : DvtConst.STATUS_REJECT;
-//                boolean resultUpdateTrans = dao.UpdateDepositBankManualStatus(transId, status, trans.Description, userApprove);
                 boolean resultUpdateTrans = dao.UpdateDepositBankManualStatus(transId, status, trans.getDescription(), userApprove);
                 logger.debug(this.getClass().getName() + "resultUpdateTrans: " + resultUpdateTrans);
                 if (!resultUpdateTrans) {
@@ -85,7 +84,7 @@ public class ApproveDepositBankProcessor implements BaseProcessor<HttpServletReq
                     model.setId(transId);
                     model.setStatus(2);
                     model.setType("DEPOSIT_BANK");
-                    updateCodepay(trans.getNickname(), true,trans.getDescription(), trans.getUserSender());
+                    updateCodepay(trans.getNickname(), true, trans.getDescription(), trans.getUserSender());
                     try {
                         SendToWS.sendBEExcEventaction(model);
                     } catch (IOException e) {
@@ -130,7 +129,7 @@ public class ApproveDepositBankProcessor implements BaseProcessor<HttpServletReq
                 }
                 BroadCastUserMoney.pushBroadCast(trans.getNickname());
                 BroadCastUserMoney.pushBroadTime(trans.getNickname());
-                updateCodepay(trans.getNickname(), true, trans.getDescription(),trans.getBankBrandName());
+                updateCodepay(trans.getNickname(), true, trans.getDescription(), trans.getBankBrandName());
                 updateMoneyCodePayMomoSun(transId, tien);
                 updateMoneyCodePayMomoSun2(transId, tien + "");
                 NapRutGame nrg = new NapRutGame();
@@ -147,13 +146,13 @@ public class ApproveDepositBankProcessor implements BaseProcessor<HttpServletReq
                         NapRutModel napgame = new NapRutModel(transId, trans.getNickname(), codedl, SoTien, "CodePay", trans.CreatedAt);
                         nrg.NapRut(napgame);
                     } else if (usend.equalsIgnoreCase("Momo")) {
-                        NapRutModel napgame = new NapRutModel(trans.getId(),  trans.getNickname(), codedl, SoTien, "MoMo", trans.CreatedAt);
+                        NapRutModel napgame = new NapRutModel(trans.getId(), trans.getNickname(), codedl, SoTien, "MoMo", trans.CreatedAt);
                         nrg.NapRut(napgame);
                     } else {
-                        NapRutModel napgame = new NapRutModel(trans.getId(),  trans.getNickname(), codedl, SoTien, "Bank", trans.CreatedAt);
+                        NapRutModel napgame = new NapRutModel(trans.getId(), trans.getNickname(), codedl, SoTien, "Bank", trans.CreatedAt);
                         nrg.NapRut(napgame);
                     }
-                    NapRutModel napgame = new NapRutModel(transId,trans.getNickname() , codedl, SoTien, "Bank", trans.CreatedAt);
+                    NapRutModel napgame = new NapRutModel(transId, trans.getNickname(), codedl, SoTien, "Bank", trans.CreatedAt);
                     nrg.NapRut(napgame);
                 } else {
                     int xx = 2;
