@@ -245,22 +245,6 @@ public class CashoutDaoImpl
         }
     }
 
-    public boolean InsertCashoutByMomoManual(UserWithdraw userWithdraw) {
-        try {
-            MongoDatabase db = MongoDBConnectionFactory.getDB();
-            MongoCollection col = db.getCollection(CashoutUtil.CASHOUT_BY_MOMO_COLLECTION);
-            Gson gson = new Gson();
-            String json = gson.toJson(userWithdraw);
-            // Parse to bson document and insert
-            Document doc = Document.parse(json);
-
-            col.insertOne((Object) doc);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
     @Override
     public boolean InsertCashoutByMomoManual(UserWithdrawMomo userWithdrawMomo) {
         try {
