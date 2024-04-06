@@ -78,10 +78,9 @@ public class MailBoxDaoImpl
 
     @Override
     public List<MailBoxResponse> listMailBox(String nickName, int page) {
-        final ArrayList<MailBoxResponse> results = new ArrayList<>();
+        final ArrayList<MailBoxResponse> results = new ArrayList<MailBoxResponse>();
         int num_start = (page - 1) * 5;
         int num_end = 5;
-
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         BasicDBObject objsort = new BasicDBObject();
 
@@ -97,29 +96,21 @@ public class MailBoxDaoImpl
 
         objsort.put("_id", -1);
         FindIterable iterable = db.getCollection("mail_box").find(query)
-                .skip(num_start).limit(5).sort(objsort);
+                .skip(num_start).limit(num_end).sort(objsort);
 
-
-//        MongoDatabase db = MongoDBConnectionFactory.getDB();
-//        HashMap<String, Object> conditions = new HashMap<>();
-//        BasicDBObject objsort = new BasicDBObject();
-//        conditions.put("nick_name", nickName);
-//        objsort.put("_id", -1);
-//        FindIterable iterable = db.getCollection("mail_box").find(new Document(conditions))
-//                .skip(num_start).limit(5).sort(objsort);
         iterable.forEach((Block) new Block<Document>() {
 
             public void apply(Document document) {
                 MailBoxResponse mail = new MailBoxResponse();
-                mail.sysMail = document.getString("nick_name").equals("*") ? 1 : 0;
-                mail.title = document.getString("title");
-                mail.createTime = document.getString("create_time");
-                mail.author = document.getString("author");
-                mail.content = document.getString("content");
-                mail.status = document.getInteger("status");
-                mail.mail_id = document.getString("mail_id");
-                if (document.getString("mail_gift_code") != null && !document.getString((Object) "mail_gift_code").equals("")) {
-                    mail.giftCode = document.getString("mail_gift_code");
+                mail.sysMail = document.getString((Object) "nick_name").equals("*") ? 1 : 0;
+                mail.title = document.getString((Object) "title");
+                mail.createTime = document.getString((Object) "create_time");
+                mail.author = document.getString((Object) "author");
+                mail.content = document.getString((Object) "content");
+                mail.status = document.getInteger((Object) "status");
+                mail.mail_id = document.getString((Object) "mail_id");
+                if (document.getString((Object) "mail_gift_code") != null && !document.getString((Object) "mail_gift_code").equals("")) {
+                    mail.giftCode = document.getString((Object) "mail_gift_code");
                 }
                 results.add(mail);
             }
