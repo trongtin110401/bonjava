@@ -84,7 +84,7 @@ public class CandyModule
     private int countBot1000 = 0;
     private int countBot10000 = 0;
     private String fullLines = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20";
-    protected CacheService sv = new CacheServiceImpl();
+
     public String gameName = Games.CANDY.getName();
 
     public void init() {
@@ -99,39 +99,33 @@ public class CandyModule
                 initPotValues[i] = Integer.parseInt(arr[i]);
             }
             pots = this.service.getPots(Games.CANDY.getName());
-            Debug.trace((Object) (this.gameName + " POTS: " + CommonUtils.arrayLongToString((long[]) pots)));
+            Debug.trace(this.gameName + " POTS: " + CommonUtils.arrayLongToString((long[]) pots));
             funds = this.service.getFunds(Games.CANDY.getName());
-            Debug.trace((Object) (this.gameName + " FUNDS: " + CommonUtils.arrayLongToString((long[]) funds)));
+            Debug.trace(this.gameName + " FUNDS: " + CommonUtils.arrayLongToString((long[]) funds));
         } catch (Exception e) {
-            Debug.trace((Object[]) new Object[]{"Init " + this.gameName + " error ", e.getMessage()});
+            Debug.trace("Init " + this.gameName + " error ", e.getMessage());
         }
+
+        System.out.println("=========================> " + pots[0] + " == " + pots[1] + " == " + pots[2]);
+
         rooms.put(Games.CANDY.getName() + "_vin_100", new MGRoomCandy(Games.CANDY.getName() + "_vin_100", (short) 1, pots[0], funds[0], 100, initPotValues[0]));
         rooms.put(Games.CANDY.getName() + "_vin_1000", new MGRoomCandy(Games.CANDY.getName() + "_vin_1000", (short) 1, pots[1], funds[1], 1000, initPotValues[1]));
         rooms.put(Games.CANDY.getName() + "_vin_10000", new MGRoomCandy(Games.CANDY.getName() + "_vin_10000", (short) 1, pots[2], funds[2], 10000, initPotValues[2]));
-        Debug.trace((Object) "INIT " + this.gameName + " DONE");
-        this.getParentExtension().addEventListener((IBZEventType) BZEventType.USER_DISCONNECT, (IBZEventListener) this);
+        Debug.trace("INIT " + this.gameName + " DONE");
+        this.getParentExtension().addEventListener(BZEventType.USER_DISCONNECT, this);
         referenceId = this.pgService.getLastReferenceId();
-        Debug.trace((Object) ("START " + this.gameName + " REFERENCE ID= " + referenceId));
+        Debug.trace("START " + this.gameName + " REFERENCE ID= " + referenceId);
         CacheServiceImpl sv = new CacheServiceImpl();
         try {
             sv.removeKey("poke_go_last_day_x2");
         } catch (KeyNotFoundException e) {
             //Debug.trace((Object)"KEY NOT FOUND");
         }
-
-        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate((Runnable) this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
+        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
     }
 
     public static long getNewRefenceId() {
         return ++referenceId;
-    }
-
-    public static void startX2() {
-
-    }
-
-    public static void stopX2() {
-
     }
 
     public void handleServerEvent(IBZEvent ibzevent) throws BZException {

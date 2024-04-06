@@ -66,6 +66,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.python.parser.ast.Str;
 
 public class RechargeDaoImpl
         implements RechargeDao {
@@ -1183,23 +1184,29 @@ public class RechargeDaoImpl
     @Override
     public boolean InsertDepositBankManual(DepositBankModel depositBankModel) {
         try {
-
             MongoDatabase db = MongoDBConnectionFactory.getDB();
             MongoCollection col = db.getCollection(DvtConst.DEPOSIT_BANK_COLLECTION);
             Document doc = new Document();
-            doc.append("Id", (Object) depositBankModel.Id);
-            doc.append("Nickname", (Object) depositBankModel.Nickname);
-            doc.append("CreatedAt", (Object) (Object) VinPlayUtils.getCurrentDateTime());
-            doc.append("UpdatedAt", (Object) (Object) VinPlayUtils.getCurrentDateTime());
-            doc.append("Amount", (Object) depositBankModel.Amount);
-            doc.append("Status", (Object) DvtConst.STATUS_PENDING);
-            doc.append("BankBrandName", (Object) depositBankModel.BankBrandName);
-            doc.append("BankAccountNumber", (Object) depositBankModel.BankAccountNumber);
-            doc.append("BankAccountName", (Object) depositBankModel.BankAccountName);
-            doc.append("Description", (Object) depositBankModel.Description);
-            doc.append("UserApprove", (Object) depositBankModel.UserApprove);
-            doc.append("UserSender", (Object) depositBankModel.UserSender);
-            col.insertOne((Object) doc);
+            String doubleString = depositBankModel.Id;
+            int integerValue = Double.valueOf(doubleString).intValue();
+            doc.append("Id", integerValue);
+            doc.append("Nickname", depositBankModel.Nickname);
+            doc.append("CreatedAt", VinPlayUtils.getCurrentDateTime());
+            doc.append("UpdatedAt", VinPlayUtils.getCurrentDateTime());
+            doc.append("Amount", depositBankModel.Amount);
+            doc.append("Status", DvtConst.STATUS_PENDING);
+            doc.append("BankBrandName", depositBankModel.BankBrandName);
+            doc.append("BankAccountNumber", depositBankModel.BankAccountNumber);
+            doc.append("BankAccountName", depositBankModel.BankAccountName);
+            doc.append("Description", depositBankModel.Description);
+            doc.append("UserApprove", depositBankModel.UserApprove);
+            doc.append("UserSender", depositBankModel.UserSender);
+            doc.append("TransactionId", depositBankModel.getTransactionID());
+            doc.append("TimeToExpired", depositBankModel.getTimeToExpired());
+            doc.append("QRCode", depositBankModel.getQRCode());
+            doc.append("PaymentURL", depositBankModel.getPaymentURL());
+            doc.append("BankCode", depositBankModel.getSubType());
+            col.insertOne(doc);
             return true;
 
         } catch (Exception e) {
@@ -1424,13 +1431,13 @@ public class RechargeDaoImpl
 
             MongoDatabase db = MongoDBConnectionFactory.getDB();
             Document conditions = new Document();
-            conditions.put("Id", (Object) transId);
+            conditions.put("Id", Integer.parseInt(transId));
             conditions.put("Status", 1);
             BasicDBObject updateFields = new BasicDBObject();
-            updateFields.append("Status", (Object) status);
-            updateFields.append("Description", (Object) desc);
-            updateFields.append("UserApprove", (Object) userApprove);
-            db.getCollection(DvtConst.DEPOSIT_BANK_COLLECTION).updateOne(conditions, (Bson) new Document("$set", (Object) updateFields));
+            updateFields.append("Status", status);
+            updateFields.append("Description", desc);
+            updateFields.append("UserApprove", userApprove);
+                db.getCollection(DvtConst.DEPOSIT_BANK_COLLECTION).updateOne(conditions, new Document("$set", updateFields));
             return true;
         } catch (Exception e) {
             return false;
@@ -1475,27 +1482,27 @@ public class RechargeDaoImpl
                 conditions.put("CreatedAt", (Object) obj);
             }
 
-            FindIterable iterable = col.find((Bson) new Document(conditions)).sort((Bson) objsort).skip(numStart).limit(maxItem);
+            FindIterable iterable = col.find(new Document(conditions)).sort(objsort).skip(numStart).limit(maxItem);
             iterable.forEach((Block) new Block<Document>() {
 
                 public void apply(Document document) {
 
                     DepositBankModel model = new DepositBankModel(
-                            document.getString((Object) "Id"),
-                            document.getString((Object) "Nickname"),
-                            document.getString((Object) "CreatedAt"),
-                            document.getString((Object) "UpdatedAt"),
-                            document.getLong((Object) "Amount"),
-                            document.getInteger((Object) "Status"),
-                            document.getString((Object) "BankBrandName"),
-                            document.getString((Object) "BankAccountNumber"),
-                            document.getString((Object) "BankAccountName"),
-                            document.getString((Object) "Description"),
-                            document.getString((Object) "UserApprove")
+                           String.valueOf(document.getInteger("Id")),
+                            document.getString("Nickname"),
+                            document.getString("CreatedAt"),
+                            document.getString("UpdatedAt"),
+                            document.getLong("Amount"),
+                            document.getInteger("Status"),
+                            document.getString("BankCode"),
+                            document.getString("BankAccountNumber"),
+                            document.getString("BankAccountName"),
+                            document.getString("Description"),
+                            document.getString("UserApprove")
 
                     );
                     model.setUserSender(document.getString((Object) "UserSender"));
-                    if(model.getUserSender().equalsIgnoreCase("momo") == false){
+                    if (model.getUserSender().equalsIgnoreCase("momo") == false) {
                         records.add(model);
                     }
 
@@ -2350,7 +2357,7 @@ public class RechargeDaoImpl
     }
 
     @Override
-    public boolean UpdateDepositMomoManualStatus2(long amount,String transId, int status, String desc, String userApprove) {
+    public boolean UpdateDepositMomoManualStatus2(long amount, String transId, int status, String desc, String userApprove) {
         try {
 
             MongoDatabase db = MongoDBConnectionFactory.getDB();
@@ -2367,6 +2374,7 @@ public class RechargeDaoImpl
             return false;
         }
     }
+
     @Override
     public DepositMomoReponse GetListDepositMomo(DepositMomoModel depositMomoModel, int page, int maxItem, String fromTime, String endTime) {
         try {
@@ -2630,6 +2638,35 @@ public class RechargeDaoImpl
             RechargeDaoImpl.logger.error(e);
             return false;
         }
+    }
+
+    public DepositBankModel isPendingTransDepositBankByNicknameAndBankName(String nickname, String subType) {
+        DepositBankModel depositBankModel = new DepositBankModel();
+        try {
+            MongoDatabase db = MongoDBConnectionFactory.getDB();
+            Document conditions = new Document();
+            conditions.put("Nickname", nickname);
+            conditions.put("BankCode", subType);
+            conditions.put("Status", DvtConst.STATUS_PENDING);
+            Document doc = db.getCollection(DvtConst.DEPOSIT_BANK_COLLECTION).find(conditions).first();
+            if (doc == null) {
+                return null;
+            }
+            depositBankModel.setCreatedAt(doc.getString("CreatedAt"));
+            depositBankModel.setId(String.valueOf(doc.getInteger("Id")));
+            depositBankModel.setQRCode(doc.getString("QRCode"));
+            depositBankModel.setPaymentURL(doc.getString("paymentURL"));
+            depositBankModel.setDescription(doc.getString("Description"));
+            depositBankModel.setBankAccountNumber(doc.getString("BankAccountNumber"));
+            depositBankModel.setBankAccountName(doc.getString("BankAccountName"));
+            depositBankModel.setUserSender(doc.getString("UserSender"));
+            depositBankModel.setSubType(doc.getString("BankCode"));
+            depositBankModel.setTimeToExpired(doc.getInteger("TimeToExpired"));
+
+        } catch (Exception e) {
+            RechargeDaoImpl.logger.error(e);
+        }
+        return depositBankModel;
     }
 
     @Override

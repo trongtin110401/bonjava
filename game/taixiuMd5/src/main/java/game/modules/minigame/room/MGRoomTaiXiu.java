@@ -89,8 +89,11 @@ public class MGRoomTaiXiu extends MGRoom {
 
     private static final org.apache.log4j.Logger logger = Logger.getLogger((String) "recharge");
 
-    public MGRoomTaiXiu(String name, long referenceId, short moneyType) {
+    TaiXiuModule module;
+
+    public MGRoomTaiXiu(String name, long referenceId, short moneyType, TaiXiuModule module) {
         super(name);
+        this.module = module;
         this.moneyType = moneyType;
         this.moneyTypeStr = "xu";
         if (moneyType == 1) {
@@ -167,13 +170,13 @@ public class MGRoomTaiXiu extends MGRoom {
         int remainTime = (int) ((currentTime - this.startTime) / 1000L);
         if (remainTime < 0) {
             remainTime = 0;
-        } else if (remainTime > 60) {
-            remainTime = 60;
+        } else if (remainTime > 25) {
+            remainTime = 25;
         }
         if (this.bettingRound) {
-            return (short) (60 - remainTime);
+            return (short) (25 - this.module.count);
         }
-        return (short) (15 - remainTime);
+        return (short) (35 - this.module.count);
     }
 
     // todo : bet tài xỉu
@@ -282,7 +285,7 @@ public class MGRoomTaiXiu extends MGRoom {
         msg.numBetXiu = (this.potXiu.getNumBet() + amountBotXiuFake);
         msg.moneyHu = TaiXiuModule.moneyHu;
         msg.md5TextResult = resultTX.getMd5TextResult();
-        if (secondGamePlay >= 62) {
+        if (secondGamePlay >= 26) {
             msg.plaintTextResult = resultTX.getPlantTextResult();
         }
         cacheService.setValue("Md5_Lobby_tx_tai_" + this.moneyType, String.valueOf(this.getPotTai()));

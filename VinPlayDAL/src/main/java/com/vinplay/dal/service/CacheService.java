@@ -15,11 +15,17 @@ public interface CacheService {
 
     public void setValue(String var1, int var2);
 
+    public void setValue(String var1, long var2);
+
     public String getValueStr(String var1) throws KeyNotFoundException;
 
     public int getValueInt(String var1) throws KeyNotFoundException, NumberFormatException;
 
     public int getValueInt(String var1, int defaultValue);
+
+    public long getValueLong(String var1) throws KeyNotFoundException, NumberFormatException;
+
+    public long getValueLong(String var1, long defaultValue);
 
     public boolean removeKey(String var1) throws KeyNotFoundException;
 

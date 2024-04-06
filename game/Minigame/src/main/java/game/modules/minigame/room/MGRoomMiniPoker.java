@@ -113,6 +113,9 @@ public class MGRoomMiniPoker extends MGRoom {
             this.tax = MinigameConstant.MINIGAME_TAX_XU;
         }
         this.executor = moneyType == 1 ? (ThreadPoolExecutor) Executors.newFixedThreadPool(ConfigGame.getIntValue("mini_poker_thread_pool_per_room_vin")) : (ThreadPoolExecutor) Executors.newFixedThreadPool(ConfigGame.getIntValue("mini_poker_thread_pool_per_room_xu"));
+        if (pot < 0) {
+            pot = initPotValue;
+        }
         this.pot = pot;
         CacheServiceImpl cacheService = new CacheServiceImpl();
         cacheService.setValue(this.name, (int) pot);
@@ -354,7 +357,7 @@ public class MGRoomMiniPoker extends MGRoom {
             result = ResultPoker.DAT_CUOC_KHONG_HOP_LE;
         }
 
-        sv.setValue(CACHE_JACK_POT_VALUE_MINIGAME + "_" + this.betValue + "_" + this.gameName, String.valueOf(this.pot));
+        sv.setValue(name, (int) pot);
 
         if (forceJackpotByUser) {
             this.sendNotifyNoHu(username, (byte) 1, resultMiniPokerMsg.prize, this.gameName);
@@ -416,7 +419,7 @@ public class MGRoomMiniPoker extends MGRoom {
 
     private void saveFund() {
         long currentTime = System.currentTimeMillis();
-        if (currentTime - this.lastTimeUpdateFundToRoom >= 60000L) {
+        if (currentTime - this.lastTimeUpdateFundToRoom >= 10000L) {
             try {
                 this.mgService.saveFund(this.name, this.fund);
             } catch (IOException | InterruptedException | TimeoutException e) {

@@ -29,6 +29,13 @@ public class CacheServiceImpl
     }
 
     @Override
+    public void setValue(String key, long value) {
+        HazelcastInstance instance = HazelcastClientFactory.getInstance();
+        IMap map = instance.getMap("cacheConfig");
+        map.put(key, String.valueOf(value));
+    }
+
+    @Override
     public void setValue(String key, int value) {
         HazelcastInstance instance = HazelcastClientFactory.getInstance();
         IMap map = instance.getMap("cacheConfig");
@@ -49,8 +56,8 @@ public class CacheServiceImpl
     public int getValueInt(String key) throws KeyNotFoundException, NumberFormatException {
         HazelcastInstance instance = HazelcastClientFactory.getInstance();
         IMap map = instance.getMap("cacheConfig");
-        if (map.containsKey((Object) key)) {
-            return Integer.parseInt((String) map.get((Object) key));
+        if (map.containsKey(key)) {
+            return Integer.parseInt((String) map.get(key));
         }
         throw new KeyNotFoundException();
     }
@@ -59,6 +66,25 @@ public class CacheServiceImpl
     public int getValueInt(String var1, int defaultValue) {
         try {
             return getValueInt(var1);
+        } catch (Exception ex) {
+            return defaultValue;
+        }
+    }
+
+    @Override
+    public long getValueLong(String key) throws KeyNotFoundException, NumberFormatException {
+        HazelcastInstance instance = HazelcastClientFactory.getInstance();
+        IMap map = instance.getMap("cacheConfig");
+        if (map.containsKey(key)) {
+            return Long.parseLong((String) map.get(key));
+        }
+        throw new KeyNotFoundException();
+    }
+
+    @Override
+    public long getValueLong(String key, long defaultValue) {
+        try {
+            return getValueLong(key);
         } catch (Exception ex) {
             return defaultValue;
         }

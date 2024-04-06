@@ -92,7 +92,9 @@ public class NapSunVinBankMomo {
 
             AutoBankEntity autoBank = new AutoBankEntity();
             String url = autoBank.getUrl() + ":" + autoBank.getPort() + autoBank.getApiRegCharge()
-                    + "?apiKey=" + autoBank.getApiKey() + "&chargeType="+type+"&amount="+amount+"&requestId="+requestId+"&subType="+bankCode+"&callback=https://iwspay.apisieunhangao.net/api/bank/xxxxfaddf2wefdasdf&sign="+sign;
+                    + "?apiKey=" + autoBank.getApiKey() + "&chargeType="+type+"&amount="+amount+
+                    "&requestId="+requestId+"&subType="+bankCode+
+                    "&callback=https://iwspay.apisieunhangao.net/api/bank/xxxxfaddf2wefdasdf&sign="+sign;
             Request request = new Request.Builder()
                     .url(url)
                     .method("GET", null)

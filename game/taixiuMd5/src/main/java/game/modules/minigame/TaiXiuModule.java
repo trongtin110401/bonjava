@@ -67,7 +67,6 @@ import game.modules.minigame.entities.BotTaiXiu;
 import game.modules.minigame.room.MGRoom;
 import game.modules.minigame.room.MGRoomTaiXiu;
 import game.modules.minigame.utils.GenerationTaiXiu;
-import game.modules.minigame.utils.MiniGameUtils;
 import game.modules.minigame.utils.TaiXiuUtils;
 import game.utils.GameUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -75,7 +74,6 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -94,7 +92,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
     private final Runnable updateCacheTopMonth = new UpdateCacheTopMonth();  // thread tính tài xỉu theo thang
     private final Runnable calculatingTXXuTask = new CalculatingTaiXiuPrize((short) 0);  // thread tính tài xỉu xu
     private final CacheService cacheService = new CacheServiceImpl(); // caching hazelcast service
-    private int count = 0;
+    public int count = 0;
     private boolean serverReady = false;
     private ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);  // thread pool 10 cái thread
     private long referenceTaiXiuId; // được lấy từ trong database
@@ -132,8 +130,8 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         cacheService.setObject("admin_lst_msg_md5", taiXiuChatMsg);
         cacheService.setObject("admin_msg_md5", taiXiuChatMsg);
         Debug.info("referentTaiXiuId là " + this.referenceTaiXiuId);
-        this.rooms.put(MGRoomTaiXiu.getKeyRoom((short) 1), new MGRoomTaiXiu("TaiXiu_1", this.referenceTaiXiuId, (byte) 1));
-        this.rooms.put(MGRoomTaiXiu.getKeyRoom((short) 0), new MGRoomTaiXiu("TaiXiu_0", this.referenceTaiXiuId, (byte) 0));
+        this.rooms.put(MGRoomTaiXiu.getKeyRoom((short) 1), new MGRoomTaiXiu("TaiXiu_1", this.referenceTaiXiuId, (byte) 1, this));
+//        this.rooms.put(MGRoomTaiXiu.getKeyRoom((short) 0), new MGRoomTaiXiu("TaiXiu_0", this.referenceTaiXiuId, (byte) 0, this));
 
         this.loadData();
 
@@ -145,12 +143,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
 
         scheduler.scheduleAtFixedRate(updateCacheTopDay, 2000, 3600, TimeUnit.SECONDS);
         scheduler.scheduleAtFixedRate(updateCacheTopMonth, 2000, 86400, TimeUnit.SECONDS);
-        try {
-            int remainTimeTraThuongThanhDu = MiniGameUtils.calculateTimeRewardOnNextDay("");
-        } catch (ParseException e) {
-            sendLogToTele(e.getMessage());
-            Debug.trace((Object[]) new Object[]{"Calculate time reward Thanh du error ", e.getMessage()});
-        }
     }
 
     public void handleServerEvent(IBZEvent ibzevent) throws BZException {
@@ -244,18 +236,18 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         this.doSubcribeMiniGame(user, cmd.gameId, cmd.roomId);
         LichSuPhienMsg msgLSGD = new LichSuPhienMsg();
         msgLSGD.data = TaiXiuUtils.buildLichSuPhien(this.lichSuPhienTX, 22);
-        this.send((BaseMsg) msgLSGD, user);
+        this.send(msgLSGD, user);
         UpdateRutLocMsg rutLocMsg = new UpdateRutLocMsg();
         try {
             rutLocMsg.soLuotRut = this.txService.getLuotRutLoc(user.getName());
         } catch (Exception e) {
             sendLogToTele(e.getMessage());
-            Debug.trace((Object[]) new Object[]{"Get so luot rut loc " + user.getName() + " error ", e.getMessage()});
+            Debug.trace(new Object[]{"Get so luot rut loc " + user.getName() + " error ", e.getMessage()});
         }
-        this.send((BaseMsg) rutLocMsg, user);
+        this.send(rutLocMsg, user);
         UpdateFundTanLocMsg fundRLMsg = new UpdateFundTanLocMsg();
         fundRLMsg.value = this.fundRutLoc;
-        this.send((BaseMsg) fundRLMsg, user);
+        this.send(fundRLMsg, user);
     }
 
     // vào room
@@ -271,11 +263,11 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                     roomTX.updateTaiXiuInfo(user, this.getRemainTimeRutLoc());
                     break;
                 }
-                CommonHandle.writeErrLog((String) "Game TAI XIU not found");
+                CommonHandle.writeErrLog("Game TAI XIU not found");
                 break;
             }
             default: {
-                Debug.trace((Object) "Game id not found");
+                Debug.trace("Game id not found");
             }
         }
     }
@@ -307,12 +299,12 @@ public class TaiXiuModule extends BaseClientRequestHandler {
     //todo : bắt đầu một round tài xỉu mới
     private void startNewRoundTX() {
         MGRoomTaiXiu roomTXVin = this.getRoomTX((short) 1);
-        MGRoomTaiXiu roomTXXu = this.getRoomTX((short) 0);
+//        MGRoomTaiXiu roomTXXu = this.getRoomTX((short) 0);
         ++this.referenceTaiXiuId;
 
         //update referenceId
         roomTXVin.startNewGame(this.referenceTaiXiuId);
-        roomTXXu.startNewGame(this.referenceTaiXiuId);
+//        roomTXXu.startNewGame(this.referenceTaiXiuId);
         StartNewGameTaiXiuMsg msg = new StartNewGameTaiXiuMsg();
         msg.referenceId = this.referenceTaiXiuId;
         msg.moneyHu = moneyHu;
@@ -395,7 +387,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
     private synchronized void gameLoop() {
         try {
             MGRoomTaiXiu roomTXVin = this.getRoomTX((short) 1);
-//            MGRoomTaiXiu roomTXXu = this.getRoomTX((short) 0);
             if (count == 0) {
                 this.generateTaiXiuDices(roomTXVin);
             }
@@ -421,34 +412,34 @@ public class TaiXiuModule extends BaseClientRequestHandler {
             this.getUserPotTaiXiu();
             this.sendTXTime(roomTXVin.getRemainTime(), roomTXVin.isBetting()); // todo tinh thoi gian con lai
             switch (this.count) {
-                case 55: {
+                case 20: {
                     roomTXVin.disableBetting();
 //                    roomTXXu.disableBetting();
                     break;
                 }
-                case 60: {
+                case 23: {
                     roomTXVin.finish();
 //                    roomTXXu.finish();
 
                     break;
                 }
-                case 61: {
+                case 25: {
                     this.generateTaiXiuDicesMD5(roomTXVin);
                     break;
                 }
-                case 63: {
+                case 26: {
                     BitZeroServer.getInstance().getTaskScheduler().schedule(this.calculatingTXVinTask, 1, TimeUnit.SECONDS);
                     BitZeroServer.getInstance().getTaskScheduler().schedule(this.calculatingTXXuTask, 1, TimeUnit.SECONDS);
                     amountBotTaiFake = 0;
                     amountBotXiuFake = 0;
                     break;
                 }
-                case 70: {
+                case 28: {
                     ScheduleBotTask t = new ScheduleBotTask();
                     this.executor.execute(t);
                     break;
                 }
-                case 75: {
+                case 35: {
                     try {
                         this.startNewRoundTX();
                         mgService.saveFund(Games.TAI_XIU_MD5.getName(),fundTxMD5);
@@ -461,7 +452,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                         Debug.trace("got bug", e.getCause());
                         ExceptionUtils.printRootCauseStackTrace(e);
                     }
-
                 }
             }
 
@@ -638,9 +628,9 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         MGRoomTaiXiu roomTXVin = this.getRoomTX((short) 1);
         // todo : gửi message đến room
         roomTXVin.sendMessageToRoom(msg);
-        MGRoomTaiXiu roomTXXu = this.getRoomTX((short) 0);
+//        MGRoomTaiXiu roomTXXu = this.getRoomTX((short) 0);
         // todo : gửi message đến room xu ( CÁI NÀY KO DÙNG TRONG GAME HIỆN TẠI)
-        roomTXXu.sendMessageToRoom(msg);
+//        roomTXXu.sendMessageToRoom(msg);
     }
 
     public MGRoom getGame(String key) {
@@ -704,7 +694,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
             } finally {
                 long endTime = System.currentTimeMillis();
                 Debug.trace((Object) ("CALCUALTE PRIZE, time handle= " + (endTime - startTime) + " (ms)") + " Room " + (roomId == 1 ? "vin" : "xu"));
-//                TaiXiuModule.this.txService.updateAllTop();
             }
         }
     }
@@ -774,23 +763,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
      * Schedule lấy message admin send
      */
     public void sendLogToTele(String log) {
-//        logger.error(log+" vnxx");
-//        new Thread(() -> {
-//            try {
-//                String messageEncode = URLEncoder.encode(log);
-//                OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
-//                        .build();
-//                Request request = new Request.Builder()
-//                        .url("https://api.telegram.org/bot5158664131:AAFSQZ_VCMGdpDYl34gqaXXwWDecwel-1xM/sendMessage?chat_id=-610762842&text=xxxx"+messageEncode)
-//                        .method("GET", null)
-//                        .build();
-//                Response response = client.newCall(request).execute();
-//                String data = response.body().string();
-//            }catch (Exception exception) {
-//                logger.error(log+" vnxx");
-//                exception.printStackTrace();
-//            }
-//        }).start();
 
     }
 }

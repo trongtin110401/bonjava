@@ -864,7 +864,7 @@ public class RechargeServiceImpl
     }
 
 
-    public synchronized RechargeResponse rechargeByAutoMomo(String nickname, BankPartnerModel requestTaoCode ) {
+    public synchronized RechargeResponse rechargeByAutoMomo(String nickname, BankPartnerModel requestTaoCode, String transactionId ) {
         synchronized (this) {
             try {
                 int amount = 1;
@@ -880,7 +880,8 @@ public class RechargeServiceImpl
 
                 insertMomoTransaction(String.valueOf(requestTaoCode.id), nickname, timeAt, timeAt, amount, 1,
                         requestTaoCode.bank_provider, requestTaoCode.phoneNum, requestTaoCode.phoneName,
-                        requestTaoCode.code, "", requestTaoCode.bank_provider, requestTaoCode.qr_url, requestTaoCode.payment_url, requestTaoCode.timeToExpired);
+                        requestTaoCode.code, "", requestTaoCode.bank_provider,
+                        requestTaoCode.qr_url, requestTaoCode.payment_url, requestTaoCode.timeToExpired, transactionId);
 
                 NotificationAdminObj obj = new NotificationAdminObj();
                 try {
@@ -967,7 +968,8 @@ public class RechargeServiceImpl
 
     public void insertMomoTransaction(String Id, String Nickname, String CreatedAt, String UpdatedAt, long Amount,
                               int Status, String BankBrandName, String BankAccountNumber, String BankAccountName,
-                              String Description, String UserApprove, String UserSender, String qrCode, String paymentUrl,int timeToExpired) {
+                              String Description, String UserApprove, String UserSender,
+                                      String qrCode, String paymentUrl,int timeToExpired,String transactionId) {
         try {
             MongoDatabase db = MongoDBConnectionFactory.getDB();
             MongoCollection col = db.getCollection("deposit_momo2_manual");
@@ -987,7 +989,8 @@ public class RechargeServiceImpl
             doc.append("QRCode", qrCode);
             doc.append("PaymentURL", paymentUrl);
             doc.append("TimeToExpired", timeToExpired);
-            col.insertOne((Object) doc);
+            doc.append("TransactionId",transactionId);
+            col.insertOne(doc);
 
         } catch (Exception e) {
             System.out.println("loi ne a oi: " + e);

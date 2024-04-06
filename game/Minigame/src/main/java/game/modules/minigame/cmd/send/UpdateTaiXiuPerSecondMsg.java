@@ -6,8 +6,7 @@ package game.modules.minigame.cmd.send;
 import game.BaseMsgEx;
 import java.nio.ByteBuffer;
 
-public class UpdateTaiXiuPerSecondMsg
-extends BaseMsgEx {
+public class UpdateTaiXiuPerSecondMsg extends BaseMsgEx {
     public short remainTime;
     public boolean bettingState;
     public long potTai;

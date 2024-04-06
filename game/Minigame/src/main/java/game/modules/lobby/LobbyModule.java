@@ -73,6 +73,7 @@ import bitzero.server.extensions.data.DataCmd;
 import bitzero.util.ExtensionUtility;
 import bitzero.util.common.business.Debug;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.mongodb.Block;
@@ -209,13 +210,13 @@ public class LobbyModule extends BaseClientRequestHandler {
     public void init() {
         super.init();
         this.getParentExtension().addEventListener(BZEventType.USER_DISCONNECT, this);
-        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate((Runnable) this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
-        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate((Runnable) this.cardTransactionTask, 30, 30, TimeUnit.SECONDS);
-        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate((Runnable) this.checkMoneyUser, 10, 1, TimeUnit.SECONDS);
-        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate((Runnable) this.checkOnePayStatusTask, 1, 10, TimeUnit.MINUTES);
-        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate((Runnable) this.checkCodePayStatusTask, 1, 1, TimeUnit.SECONDS);
-        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate((Runnable) this.checkOutGameTask, 1, 500, TimeUnit.MILLISECONDS);
-        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate((Runnable) this.checkCodePayHuyStatusTask, 1, 1, TimeUnit.SECONDS);
+        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
+        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.cardTransactionTask, 30, 30, TimeUnit.SECONDS);
+        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.checkMoneyUser, 10, 1, TimeUnit.SECONDS);
+        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.checkOnePayStatusTask, 1, 10, TimeUnit.MINUTES);
+        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.checkCodePayStatusTask, 1, 1, TimeUnit.SECONDS);
+        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.checkOutGameTask, 1, 500, TimeUnit.MILLISECONDS);
+        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.checkCodePayHuyStatusTask, 1, 1, TimeUnit.SECONDS);
         try {
             this.initVP();
             MongoDBConnectionFactory.init();
@@ -2602,73 +2603,80 @@ public class LobbyModule extends BaseClientRequestHandler {
         try {
             CacheService cacheService = new CacheServiceImpl();
 
-            int caoThap1000 = cacheService.getValueInt(Games.CAO_THAP.getName() + "_vin_1000", 0);
-            int caoThap10000 = cacheService.getValueInt(Games.CAO_THAP.getName() + "_vin_10000", 0);
-            int caoThap50000 = cacheService.getValueInt(Games.CAO_THAP.getName() + "_vin_50000", 0);
-            int caoThap100000 = cacheService.getValueInt(Games.CAO_THAP.getName() + "_vin_100000", 0);
-            int caoThap500000 = cacheService.getValueInt(Games.CAO_THAP.getName() + "_vin_500000", 0);
+            long caoThap1000 = cacheService.getValueLong(Games.CAO_THAP.getName() + "_vin_1000", 0);
+            long caoThap10000 = cacheService.getValueLong(Games.CAO_THAP.getName() + "_vin_10000", 0);
+            long caoThap50000 = cacheService.getValueLong(Games.CAO_THAP.getName() + "_vin_50000", 0);
+            long caoThap100000 = cacheService.getValueLong(Games.CAO_THAP.getName() + "_vin_100000", 0);
+            long caoThap500000 = cacheService.getValueLong(Games.CAO_THAP.getName() + "_vin_500000", 0);
 
 
-            int miniPoker100 = cacheService.getValueInt(Games.MINI_POKER.getName() + "_vin_100", 0);
-            int miniPoker1000 = cacheService.getValueInt(Games.MINI_POKER.getName() + "_vin_1000", 0);
-            int miniPoker10000 = cacheService.getValueInt(Games.MINI_POKER.getName() + "_vin_10000", 0);
+            long miniPoker100 = cacheService.getValueLong(Games.MINI_POKER.getName() + "_vin_100", 0);
+            long miniPoker1000 = cacheService.getValueLong(Games.MINI_POKER.getName() + "_vin_1000", 0);
+            long miniPoker10000 = cacheService.getValueLong(Games.MINI_POKER.getName() + "_vin_10000", 0);
 
-            int pokeGo100 = cacheService.getValueInt(Games.CANDY.getName() + "_vin_100", 0);
-            int pokeGo1000 = cacheService.getValueInt(Games.CANDY.getName() + "_vin_1000", 0);
-            int pokeGo10000 = cacheService.getValueInt(Games.CANDY.getName() + "_vin_10000", 0);
+            long pokeGo100 = cacheService.getValueLong(Games.CANDY.getName() + "_vin_100", 0);
+            long pokeGo1000 = cacheService.getValueLong(Games.CANDY.getName() + "_vin_1000", 0);
+            long pokeGo10000 = cacheService.getValueLong(Games.CANDY.getName() + "_vin_10000", 0);
 
-            int khoBau100 = cacheService.getValueInt(Games.KHO_BAU.getName() + "_vin_100", 0);
-            int khoBau1000 = cacheService.getValueInt(Games.KHO_BAU.getName() + "_vin_1000", 0);
-            int khoBau10000 = cacheService.getValueInt(Games.KHO_BAU.getName() + "_vin_10000", 0);
+            long khoBau100 = cacheService.getValueLong(Games.KHO_BAU.getName() + "_vin_100", 0);
+            long khoBau1000 = cacheService.getValueLong(Games.KHO_BAU.getName() + "_vin_1000", 0);
+            long khoBau10000 = cacheService.getValueLong(Games.KHO_BAU.getName() + "_vin_10000", 0);
 
-            int ndv100 = cacheService.getValueInt(Games.NU_DIEP_VIEN.getName() + "_vin_100", 0);
-            int ndv1000 = cacheService.getValueInt(Games.NU_DIEP_VIEN.getName() + "_vin_1000", 0);
-            int ndv10000 = cacheService.getValueInt(Games.NU_DIEP_VIEN.getName() + "_vin_10000", 0);
+            long ndv100 = cacheService.getValueLong(Games.NU_DIEP_VIEN.getName() + "_vin_100", 0);
+            long ndv1000 = cacheService.getValueLong(Games.NU_DIEP_VIEN.getName() + "_vin_1000", 0);
+            long ndv10000 = cacheService.getValueLong(Games.NU_DIEP_VIEN.getName() + "_vin_10000", 0);
 
-            int avengers100 = cacheService.getValueInt(Games.AVENGERS.getName() + "_vin_100", 0);
-            int avengers1000 = cacheService.getValueInt(Games.AVENGERS.getName() + "_vin_1000", 0);
-            int avengers10000 = cacheService.getValueInt(Games.AVENGERS.getName() + "_vin_10000", 0);
+            long avengers100 = cacheService.getValueLong(Games.AVENGERS.getName() + "_vin_100", 0);
+            long avengers1000 = cacheService.getValueLong(Games.AVENGERS.getName() + "_vin_1000", 0);
+            long avengers10000 = cacheService.getValueLong(Games.AVENGERS.getName() + "_vin_10000", 0);
 
-            int vqv100 = cacheService.getValueInt(Games.VUONG_QUOC_VIN.getName() + "_vin_100", 0);
-            int vqv1000 = cacheService.getValueInt(Games.VUONG_QUOC_VIN.getName() + "_vin_1000", 0);
-            int vqv10000 = cacheService.getValueInt(Games.VUONG_QUOC_VIN.getName() + "_vin_10000", 0);
+            long vqv100 = cacheService.getValueLong(Games.VUONG_QUOC_VIN.getName() + "_vin_100", 0);
+            long vqv1000 = cacheService.getValueLong(Games.VUONG_QUOC_VIN.getName() + "_vin_1000", 0);
+            long vqv10000 = cacheService.getValueLong(Games.VUONG_QUOC_VIN.getName() + "_vin_10000", 0);
 
-            int fish100 = cacheService.getValueInt(Games.HAM_CA_MAP.getName() + "_vin_100", 0);
-            int fish1000 = cacheService.getValueInt(Games.HAM_CA_MAP.getName() + "_vin_1000", 0);
+            long fish100 = cacheService.getValueLong(Games.HAM_CA_MAP.getName() + "_vin_100", 0);
+            long fish1000 = cacheService.getValueLong(Games.HAM_CA_MAP.getName() + "_vin_1000", 0);
 
             //spartan game
 
-            int spartan100 = cacheService.getValueInt(Games.LADY_NIGHT.getName() + "_vin_100", 0);
-            int spartan1000 = cacheService.getValueInt(Games.LADY_NIGHT.getName() + "_vin_1000", 0);
-            int spartan5000 = cacheService.getValueInt(Games.LADY_NIGHT.getName() + "_vin_5000", 0);
-            int spartan10000 = cacheService.getValueInt(Games.LADY_NIGHT.getName() + "_vin_10000", 0);
-            int baucauto = 500000;
+            long spartan100 = cacheService.getValueLong(Games.LADY_NIGHT.getName() + "_vin_100", 0);
+            long spartan1000 = cacheService.getValueLong(Games.LADY_NIGHT.getName() + "_vin_1000", 0);
+            long spartan5000 = cacheService.getValueLong(Games.LADY_NIGHT.getName() + "_vin_5000", 0);
+            long spartan10000 = cacheService.getValueLong(Games.LADY_NIGHT.getName() + "_vin_10000", 0);
+            long baucauto = 500000;
             try {
                 ///
-                baucauto = cacheService.getValueInt("Hu_Bau_cua_to20", 0);
+                baucauto = cacheService.getValueLong("Hu_Bau_cua_to20", 0);
             } catch (Exception e) {
                 logger.error(" Set bau cua hu error " + e.getMessage());
             }
 
             UpdateJackpotMsg msg = new UpdateJackpotMsg();
+
             msg.potMiniPoker100 = miniPoker100;
             msg.potMiniPoker1000 = miniPoker1000;
             msg.potMiniPoker10000 = miniPoker10000;
+
             msg.potPokeGo100 = pokeGo100;
             msg.potPokeGo1000 = pokeGo1000;
             msg.potPokeGo10000 = pokeGo10000;
+
             msg.potKhoBau100 = khoBau100;
             msg.potKhoBau1000 = khoBau1000;
             msg.potKhoBau10000 = khoBau10000;
+
             msg.potNDV100 = ndv100;
             msg.potNDV1000 = ndv1000;
             msg.potNDV10000 = ndv10000;
+
             msg.potAvengers100 = avengers100;
             msg.potAvengers1000 = avengers1000;
             msg.potAvengers10000 = avengers10000;
+
             msg.vqv100 = vqv100;
             msg.vqv1000 = vqv1000;
             msg.vqv10000 = vqv10000;
+
             msg.fish100 = fish100;
             msg.fish1000 = fish1000;
 
@@ -2676,6 +2684,7 @@ public class LobbyModule extends BaseClientRequestHandler {
             msg.sparta1000 = spartan1000;
             msg.sparta5000 = spartan1000;
             msg.sparta10000 = spartan10000;
+
             msg.baucuatofund = baucauto;
 
             msg.potCaoThap1000 = caoThap1000;
@@ -2683,6 +2692,8 @@ public class LobbyModule extends BaseClientRequestHandler {
             msg.potCaoThap50000 = caoThap100000;
             msg.potCaoThap100000 = caoThap50000;
             msg.potCaoThap500000 = caoThap500000;
+
+//            System.out.println(new Gson().toJson(msg));
 
             for (User user : this.usersSubJackpot) {
                 if (user == null) continue;

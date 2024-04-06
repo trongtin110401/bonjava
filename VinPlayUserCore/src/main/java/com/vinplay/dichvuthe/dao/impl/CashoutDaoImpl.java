@@ -252,9 +252,7 @@ public class CashoutDaoImpl
             MongoCollection col = db.getCollection(CashoutUtil.CASHOUT_BY_MOMO_COLLECTION);
             Gson gson = new Gson();
             String json = gson.toJson(userWithdrawMomo);
-            // Parse to bson document and insert
             Document doc = Document.parse(json);
-
             col.insertOne((Object) doc);
             return true;
         } catch (Exception e) {

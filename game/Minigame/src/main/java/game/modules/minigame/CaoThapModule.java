@@ -36,6 +36,7 @@ import bitzero.util.common.business.Debug;
 import com.vinplay.cardlib.models.Card;
 import com.vinplay.dal.service.CaoThapService;
 import com.vinplay.dal.service.impl.CaoThapServiceImpl;
+import com.vinplay.vbee.common.enums.Games;
 import com.vinplay.vbee.common.utils.DateTimeUtils;
 import game.modules.minigame.cmd.rev.caothap.*;
 import game.modules.minigame.cmd.send.caothap.ChangeRoomCaoThapMsg;
@@ -78,11 +79,11 @@ public class CaoThapModule
         } catch (SQLException e) {
             Debug.trace("Get cao thap pot error ", e.getMessage());
         }
-        this.rooms.put("cao_thap_vin_1000", new MGRoomCaoThap("cao_thap_vin_1000", (byte) 1, pots[0], funds[0], 1000));
-        this.rooms.put("cao_thap_vin_10000", new MGRoomCaoThap("cao_thap_vin_10000", (byte) 1, pots[1], funds[1], 10000));
-        this.rooms.put("cao_thap_vin_50000", new MGRoomCaoThap("cao_thap_vin_50000", (byte) 1, pots[2], funds[2], 50000));
-        this.rooms.put("cao_thap_vin_100000", new MGRoomCaoThap("cao_thap_vin_100000", (byte) 1, pots[3], funds[3], 100000));
-        this.rooms.put("cao_thap_vin_500000", new MGRoomCaoThap("cao_thap_vin_500000", (byte) 1, pots[4], funds[4], 500000));
+        this.rooms.put(Games.CAO_THAP.getName() + "_vin_1000", new MGRoomCaoThap(Games.CAO_THAP.getName() + "_vin_1000", (byte) 1, pots[0], funds[0], 1000));
+        this.rooms.put(Games.CAO_THAP.getName() + "_vin_10000", new MGRoomCaoThap(Games.CAO_THAP.getName() + "_vin_10000", (byte) 1, pots[1], funds[1], 10000));
+        this.rooms.put(Games.CAO_THAP.getName() + "_vin_50000", new MGRoomCaoThap(Games.CAO_THAP.getName() + "_vin_50000", (byte) 1, pots[2], funds[2], 50000));
+        this.rooms.put(Games.CAO_THAP.getName() + "_vin_100000", new MGRoomCaoThap(Games.CAO_THAP.getName() + "_vin_100000", (byte) 1, pots[3], funds[3], 100000));
+        this.rooms.put(Games.CAO_THAP.getName() + "_vin_500000", new MGRoomCaoThap(Games.CAO_THAP.getName() + "_vin_500000", (byte) 1, pots[4], funds[4], 500000));
         try {
             int remainTimeTraThuong = MiniGameUtils.calculateTimeRewardOnNextDay("");
             BitZeroServer.getInstance().getTaskScheduler().schedule(this.rewardDailyTask, remainTimeTraThuong, TimeUnit.SECONDS);
@@ -182,7 +183,7 @@ public class CaoThapModule
         byte roomId = -1;
         boolean play = false;
         int cntRoomPlaying = 0;
-        for (byte i = 0; i < 10; i = (byte) (i + 1)) {
+        for (byte i = 0; i < 5; i = (byte) (i + 1)) {
             MGRoomCaoThap room = this.getRoom(i);
             if (room.getUsers().containsKey(user.getName())) {
                 CaoThapInfo info = room.getUsers().get(user.getName());
@@ -333,7 +334,7 @@ public class CaoThapModule
         if (moneyType == 1) {
             moneyTypeStr = "vin";
         }
-        return "cao_thap_" + moneyTypeStr + "_" + baseBetting;
+        return Games.CAO_THAP.getName() + "_" + moneyTypeStr + "_" + baseBetting;
     }
 
     private MGRoomCaoThap getRoom(byte roomId) {
