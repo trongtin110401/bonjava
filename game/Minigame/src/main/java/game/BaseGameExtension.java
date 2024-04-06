@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  bitzero.engine.sessions.ISession
  *  bitzero.server.BitZeroServer
@@ -61,6 +61,7 @@ import com.vinplay.vbee.common.utils.DateTimeUtils;
 import game.eventHandlers.LoginSuccessHandler;
 import game.eventHandlers.UserDisconnectHandler;
 import game.modules.admin.AdminModule;
+import game.modules.chat.ChatMd5Module;
 import game.modules.chat.ChatModule;
 import game.modules.gameRoom.GameRoomModule;
 import game.modules.lobby.LobbyModule;
@@ -75,7 +76,7 @@ import game.utils.GameUtils;
 import java.util.concurrent.TimeUnit;
 
 public class BaseGameExtension
-extends BZExtension {
+        extends BZExtension {
     private int countReloadConfig = 0;
     private int countLogCCU = 0;
     private final Runnable gameLoopTask = new GameLoopTask();
@@ -90,38 +91,38 @@ extends BZExtension {
 
     public void init() {
         try {
-            Debug.trace((Object)("INIT MINIGAME"));
-            RMQApi.start((String)"config/rmq.properties");
+            Debug.trace((Object) ("INIT MINIGAME"));
+            RMQApi.start((String) "config/rmq.properties");
             HazelcastLoader.start();
-            MongoDBConnectionFactory.init();            
-            ConnectionPool.start((String)"config/db_pool.properties");
+            MongoDBConnectionFactory.init();
+            ConnectionPool.start((String) "config/db_pool.properties");
             ConfigGame.reload(); // todo : lấy config game từ trong mongo db
             BotMinigame.loadData(); // todo load bot
             PartnerConfig.ReadConfig(); // todo: đọc hả
             // config từ bên third party
             GameCommon.init(); // todo khởi tạo common bao gồm key ừ bên third party
+        } catch (Exception e) {
+            Debug.trace((Object) ("INIT MINIGAME ERROR " + e.getMessage()));
         }
-        catch (Exception e) {
-            Debug.trace((Object)("INIT MINIGAME ERROR " + e.getMessage()));
-        }
-        this.addRequestHandler((short)1000, PlayerModule.class);
+        this.addRequestHandler((short) 1000, PlayerModule.class);
         if (GameUtils.gameName.equalsIgnoreCase("Minigame")) { // todo :lấy từ config cluster file conf
             //this.addRequestHandler((short)2000, TaiXiuModule.class);
-            this.addRequestHandler((short)4000, MiniPokerModule.class);
+            this.addRequestHandler((short) 4000, MiniPokerModule.class);
             // comment baucua
 //            this.addRequestHandler((short)5000, BauCuaModule.class);
-            this.addRequestHandler((short)6000, CaoThapModule.class);
-            this.addRequestHandler((short)7000, CandyModule.class);
-            this.addRequestHandler((short)18000, ChatModule.class);
-         //   this.addRequestHandler((short)19000, AdminModule.class);
-            this.addRequestHandler((short)20000, LobbyModule.class);
-         //   this.addRequestHandler((short)21000, MissionModule.class);
+            this.addRequestHandler((short) 6000, CaoThapModule.class);
+            this.addRequestHandler((short) 7000, CandyModule.class);
+            this.addRequestHandler((short) 18000, ChatModule.class);
+            this.addRequestHandler((short) 18010, ChatMd5Module.class);
+            //   this.addRequestHandler((short)19000, AdminModule.class);
+            this.addRequestHandler((short) 20000, LobbyModule.class);
+            //   this.addRequestHandler((short)21000, MissionModule.class);
             //this.addRequestHandler((short)8000, Slot3x3ExtendModule.class);
         } else {
-          //  this.addRequestHandler((short)3000, GameRoomModule.class);
+            //  this.addRequestHandler((short)3000, GameRoomModule.class);
         }
-        this.addEventHandler((IBZEventType)BZEventType.USER_LOGIN, LoginSuccessHandler.class);
-        this.addEventHandler((IBZEventType)BZEventType.USER_DISCONNECT, UserDisconnectHandler.class);
+        this.addEventHandler((IBZEventType) BZEventType.USER_LOGIN, LoginSuccessHandler.class);
+        this.addEventHandler((IBZEventType) BZEventType.USER_DISCONNECT, UserDisconnectHandler.class);
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
     }
 
@@ -133,7 +134,7 @@ extends BZExtension {
         LoginCmd cmd = new LoginCmd(dataCmd);
         UserInfo info = GameUtils.getUserInfo(cmd.nickname, cmd.sessionKey);
         if (info != null && (user = ExtensionUtility.instance().canLogin(info, "", iSession)) != null) {
-            user.setProperty((Object)"dai_ly", (Object)info.getStatus());
+            user.setProperty((Object) "dai_ly", (Object) info.getStatus());
             this.saveCCUPlatform(user);
         }
     }
@@ -144,11 +145,11 @@ extends BZExtension {
     public void saveCCUPlatform(User user) {
         HazelcastInstance instance = HazelcastClientFactory.getInstance();
         IMap userExtraModel = instance.getMap("cache_user_extra_info");
-        if (userExtraModel.containsKey((Object)user.getName())) {
-            UserExtraInfoModel model = (UserExtraInfoModel)userExtraModel.get((Object)user.getName());
+        if (userExtraModel.containsKey((Object) user.getName())) {
+            UserExtraInfoModel model = (UserExtraInfoModel) userExtraModel.get((Object) user.getName());
             if (model != null && model.getPlatfrom() != null) {
-                user.setProperty((Object)"pf", (Object)model.getPlatfrom());
-                Platform platform = Platform.find((String)model.getPlatfrom());
+                user.setProperty((Object) "pf", (Object) model.getPlatfrom());
+                Platform platform = Platform.find((String) model.getPlatfrom());
                 switch (platform) {
                     case WEB: {
                         ++ccuWeb;
@@ -176,14 +177,14 @@ extends BZExtension {
                 }
             }
         } else {
-            Debug.trace((Object)("Cannot find user's extra info " + user.getName()));
+            Debug.trace((Object) ("Cannot find user's extra info " + user.getName()));
         }
     }
 
     private void gameLoop() { // todo :game loop luôn chạy thằng này
         ++this.countReloadConfig;
         if (this.countReloadConfig == 300) {
-            Debug.trace((Object)"reload config");
+            Debug.trace((Object) "reload config");
             ConfigGame.reload(); // todo luôn reload config khi 300
             PartnerConfig.ReadConfig();
             this.countReloadConfig = 0;
@@ -192,7 +193,7 @@ extends BZExtension {
         if (this.countLogCCU == ConfigGame.getIntValue("update_log_ccu")) {
             int ccu = ExtensionUtility.globalUserManager.getUserCount();//  .getUserCountByName(); // lấy số lượng người chơi online
             long ccuGiam = this.lastCCU - ccu;
-            if (ccuGiam >= (long)ConfigGame.getIntValue("min_so_ccu_giam", 50)) {
+            if (ccuGiam >= (long) ConfigGame.getIntValue("min_so_ccu_giam", 50)) {
                 GameUtils.sendAlertAndCall("CCU giam " + ccuGiam + " trong " + ConfigGame.getIntValue("update_log_ccu") + " (s), time= " + DateTimeUtils.getCurrentTime());
             }
             this.lastCCU = ccu;
@@ -203,7 +204,7 @@ extends BZExtension {
     }
 
     private final class GameLoopTask
-    implements Runnable {
+            implements Runnable {
         private GameLoopTask() {
         }
 
