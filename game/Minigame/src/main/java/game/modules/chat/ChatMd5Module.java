@@ -164,6 +164,7 @@ public class ChatMd5Module
      * WARNING - Removed try catching itself - possible behaviour change.
      */
     private void subscribe(User user) {
+        System.out.println("=============> DUNG SUCRIBE");
         Set<User> set;
         Set<User> set2 = set = this.users;
         synchronized (set2) {
@@ -176,6 +177,7 @@ public class ChatMd5Module
      * WARNING - Removed try catching itself - possible behaviour change.
      */
     private void unsubscribe(User user) {
+        System.out.println("=============> DUNG UNSCRIBE");
         Set<User> set;
         Set<User> set2 = set = this.users;
         synchronized (set2) {
@@ -223,6 +225,7 @@ public class ChatMd5Module
     }
 
     private void chat(User user, DataCmd dataCmd) {
+        System.out.println("=============> DUNG CHAT");
         int daiLy = this.getStatusDaiLy(user);
         ChatCmd cmd = new ChatCmd(dataCmd);
         String username = user.getName();
