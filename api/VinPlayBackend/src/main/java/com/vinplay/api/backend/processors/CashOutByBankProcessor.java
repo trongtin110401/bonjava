@@ -45,13 +45,12 @@ public class CashOutByBankProcessor
         implements BaseProcessor<HttpServletRequest, String> {
     private static final Logger logger = Logger.getLogger((String) "backend");
     private static final int MAX_ITEM = 15;
-    private static final String ACCESS_TOKEN = "";
     private static final String URL_CALL_BACK = "https://lunglinhlalenluons.store/api?c=4009";
     private static LinkedList<BlockByTran> listTranBlock = new LinkedList<BlockByTran>();
     public synchronized String execute(Param<HttpServletRequest> param) {
         ResultCashOutByBankResponse response = new ResultCashOutByBankResponse(false, "1001");
         try {
-            HttpServletRequest request = (HttpServletRequest) param.get();
+            HttpServletRequest request = param.get();
             String nickName = request.getParameter("nn");
             String bankName = request.getParameter("b");
             String bankAccountNumber = request.getParameter("bankNumber");
@@ -59,7 +58,6 @@ public class CashOutByBankProcessor
             String userAprrove = request.getParameter("uad");
             userAprrove = userAprrove == null ? "" : userAprrove;
             String status = request.getParameter("st");
-            String code = request.getParameter("co");
             String timeStart = request.getParameter("ts");
             String timeEnd = request.getParameter("te");
             String pageStr = request.getParameter("p");
@@ -72,12 +70,6 @@ public class CashOutByBankProcessor
             int maxItem = numberMax != null ? Integer.parseInt(numberMax) : MAX_ITEM;
             act = act == null || act.isEmpty() ? "getList" : act;
             CashoutDao cashoutDao = new CashoutDaoImpl();
-//            if(typeStr.equalsIgnoreCase("100")){
-//                updateHis(transid);
-//            }
-//            if(typeStr.equalsIgnoreCase("2") || typeStr.equalsIgnoreCase("0") || typeStr.equalsIgnoreCase("3")){
-//                updateHis2(transid);
-//            }
 
             if (act.equals("getList")) {
 
@@ -91,7 +83,7 @@ public class CashOutByBankProcessor
                 }
                 UserWithdraw userWithdraw = cashoutDao.FindCashoutBankById(transid);
                 ObjectMapper mapper = new ObjectMapper();
-                return mapper.writeValueAsString((Object) userWithdraw);
+                return mapper.writeValueAsString(userWithdraw);
             } else if (act.equals("update")) {
                 if (transid == null || transid.isEmpty()) {
                     return "";
@@ -115,7 +107,7 @@ public class CashOutByBankProcessor
                 if (status.equals(CashoutUtil.STATUS_SENDING)) {
                     this.sendMesToAdmin(transid, 102);
                     CallAutoTransBank callBank = new CallAutoTransBank();
-                    String output = callBank.CallAPI(userWithdraw, ACCESS_TOKEN, URL_CALL_BACK); //Product
+                    String output = callBank.CallAPI(userWithdraw, URL_CALL_BACK); //Product
                     String check_money_now = "Số dư tài khoản không đủ để thực hiện";
                     if(output.contains(check_money_now)){
                         this.sendMesToAdmin(transid, 3); // Số dư tài khoản không đủ để thực hiện
