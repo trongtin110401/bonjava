@@ -2387,7 +2387,6 @@ public class UserServiceImpl
             boolean insert = cashoutDao.InsertCashoutByBankManual(userWithdraw);
             HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
             historyTransDao.insertTransaction(new HistoryTransModel(userWithdraw.BankName, "Ngân Hàng", "Rút tiền", String.valueOf(amount), "Đang xử lý", "Đang chờ duyệt", nickname, HistoryTransConst.RUT_BANK, userWithdraw.Id));
-//            new TelegramUtil().senMessToDaily(nickname, "Đang chờ duyệt Rút tiền Ngân hàng ", 0);
             if (!insert) {
                 response.setSuccess(false);
                 response.setErrorCode("1002");

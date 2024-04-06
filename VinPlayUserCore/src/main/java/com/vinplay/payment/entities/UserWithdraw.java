@@ -19,6 +19,7 @@ public class UserWithdraw {
     public String Status;
     public int Version;
     public String UserProve;
+    private String type;
 
     public UserWithdraw(String id, String username, int amount, String bankAccountNumber, String bankAccountName, String bankName, String createdAt, String updatedAt, String status, int version) {
         Id = id;
@@ -83,6 +84,14 @@ public class UserWithdraw {
         Status = status;
         Version = version;
         UserProve = userProve;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String toJson() {

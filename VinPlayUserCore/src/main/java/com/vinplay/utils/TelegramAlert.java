@@ -6,16 +6,18 @@ import com.vinplay.payment.entities.UserWithdraw;
 import com.vinplay.payment.entities.UserWithdrawMomo;
 import com.vinplay.usercore.utils.GameCommon;
 
+import java.net.URLEncoder;
+
 public class TelegramAlert {
     public static boolean SendMessage(String message){
         try{
-            String chatId = GameCommon.getValueStr("Telegram_chat_id");
-            String bootToken = GameCommon.getValueStr("Telegram_boot_token");
-            return TelegramUtil.sendMessage(message, chatId, bootToken);
+            String messageEncode = URLEncoder.encode(message);
+            TelegramUtil telegramUtil = new TelegramUtil();
+            telegramUtil.sendMessageNapRut(messageEncode);
         }catch (Exception e){
             return false;
         }
-
+        return true;
     }
     public static boolean SendMessageCashout(UserWithdraw userWithdraw){
         try{

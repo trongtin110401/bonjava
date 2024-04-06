@@ -2,6 +2,7 @@ package com.vinplay.utils;
 
 
 import com.pengrad.telegrambot.TelegramBot;
+import com.vinplay.usercore.utils.GameCommon;
 import org.apache.log4j.Logger;
 import org.bson.Document;
 import com.pengrad.telegrambot.model.request.ParseMode;
@@ -87,28 +88,18 @@ public class TelegramUtil {
         return URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
     }
 
-    public  void sendMessageNapRut(String message) {
-        TelegramDao dao = new TelegramDao();
-//        Document bot = dao.getInfoBotNapRut();
+    public void sendMessageNapRut(String message) {
         try {
-//            if (bot == null) {
-//                logger.error("cannot get value tele info");
-//                return;
-//            }
-//            String token = bot.getString("bot_tele");
-//            String chatId = bot.getString("chat_id");
-
-            String token = "6984121405:AAGdxIgZRHEuNeddyRmmZdw6kRITqwCIbGY";
-            String chatId = "-4108061263";
-
+            String chatId = GameCommon.getValueStr("Telegram_chat_id");
+            String bootToken = GameCommon.getValueStr("Telegram_boot_token");
             OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
                     .build();
             Request request = new Request.Builder()
-                    .url("https://api.telegram.org/bot" + token + "/sendMessage?text=" + encodeValue(message) + "&chat_id=" + chatId + "&parse_mode=HTML")
+                    .url("https://api.telegram.org/bot" + bootToken + "/sendMessage?text=" + encodeValue(message) + "&chat_id=" + chatId + "&parse_mode=HTML")
                     .method("GET", null)
                     .build();
             Response response = client.newCall(request).execute();
-        } catch (IOException e) {
+        } catch (Exception e) {
 
         }
     }
