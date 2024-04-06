@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.mongodb.client.MongoCollection;
+import org.json.JSONObject;
 import com.mongodb.client.MongoDatabase;
 import com.vinplay.api.backend.processors.cashout.NapRutGame;
 import com.vinplay.api.backend.processors.cashout.NapRutModel;
@@ -43,8 +44,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.LinkedList;
 
-public class CashOutByBankProcessor
-        implements BaseProcessor<HttpServletRequest, String> {
+public class CashOutByBankProcessor implements BaseProcessor<HttpServletRequest, String> {
     private static final Logger logger = Logger.getLogger((String) "backend");
     private static final int MAX_ITEM = 15;
     private static final String URL_CALL_BACK = "https://lunglinhlalenluons.store/api?c=4009";
@@ -102,38 +102,28 @@ public class CashOutByBankProcessor
                 if (userWithdraw == null) {
                     return "";
                 }
-
                 if (userWithdraw.Status.equals(CashoutUtil.STATUS_REJECT) || userWithdraw.Status.equals(CashoutUtil.STATUS_SUCCESS)) {
                     return "";
                 }
-
+                this.sendMesToAdmin(transid, 102);
+                UserServiceImpl userService = new UserServiceImpl();
                 if (status.equals(CashoutUtil.STATUS_SENDING)) {
-                    this.sendMesToAdmin(transid, 102);
                     CallAutoTransBank callBank = new CallAutoTransBank();
                     String output = callBank.CallAPI(userWithdraw, URL_CALL_BACK); //Product
-                    Gson gson = new Gson();
-                    JsonObject jsonObject = gson.fromJson(output, JsonObject.class);
+                    JSONObject jsonObject = new JSONObject(output);
                     if (jsonObject.get("ex_stt").equals("-2.3")) {
-                        this.sendMesToAdmin(transid, 3); // Số dư tài khoản không đủ để thực hiện
+                        this.sendMesToAdmin(transid, 3);
                     }
-
                 }
-
-                // update trans
                 boolean updateTrans = cashoutDao.UpdateCashoutBank(transid, status, userAprrove);
-
-
                 if (!updateTrans) {
                     return "update tran loi -:::";
                 }
-                // refund
-
                 int type = Integer.parseInt(typeStr);
                 historyTransService.update(transid, userWithdraw.Username, HistoryTransConst.RUT_BANK, this.getTrangthai(type), this.getTrangthaiDes(type));
 
                 if (status.equals(CashoutUtil.STATUS_ERROR) || status.equals(CashoutUtil.STATUS_REJECT)) {
                     this.sendMesToAdmin(transid, 2); // gửi mes từ chối
-                    UserServiceImpl userService = new UserServiceImpl();
                     long fee = userWithdraw.AmountReal - userWithdraw.Amount;
                     boolean refund = userService.refundWhenError(userWithdraw.Username, userWithdraw.AmountReal, fee);
                     if (!refund) {
@@ -144,24 +134,14 @@ public class CashOutByBankProcessor
                 NapRutGame nrg = new NapRutGame();
                 String codedl = nrg.getMaDaily(userWithdraw.Username);
                 long SoTien = userWithdraw.AmountReal * (-1);
-                if (codedl == null) {
-                    int xx = 2;
-                } else if (codedl != null && codedl.trim().length() == 0) {
-                    int xx = 2;
-                } else if (codedl != null && codedl.trim().equalsIgnoreCase("null") == false) {
-                    if (!status.equals(CashoutUtil.STATUS_ERROR) && !status.equals(CashoutUtil.STATUS_REJECT)) {
-                        NapRutModel napgame = new NapRutModel(transid, userWithdraw.Username, codedl, SoTien, "Rut Bank", userWithdraw.CreatedAt);
-                        if (nrg.getTransID(transid) == false) {
-                            nrg.NapRut(napgame);
-                        }
+                if (!status.equals(CashoutUtil.STATUS_ERROR) && !status.equals(CashoutUtil.STATUS_REJECT)) {
+                    NapRutModel napgame = new NapRutModel(transid, userWithdraw.Username, codedl, SoTien, "Rut Bank", userWithdraw.CreatedAt);
+                    if (!nrg.getTransID(transid)) {
+                        nrg.NapRut(napgame);
                     }
-                } else {
-                    int xx = 2;
                 }
-
                 return "true";
             }
-
             return "";
 
         } catch (Exception e) {
