@@ -29,9 +29,7 @@ import bitzero.server.BitZeroServer;
 import bitzero.server.core.BZEventParam;
 import bitzero.server.core.BZEventType;
 import bitzero.server.core.IBZEvent;
-import bitzero.server.core.IBZEventListener;
 import bitzero.server.core.IBZEventParam;
-import bitzero.server.core.IBZEventType;
 import bitzero.server.entities.User;
 import bitzero.server.exceptions.BZException;
 import bitzero.server.extensions.BaseClientRequestHandler;
@@ -40,42 +38,31 @@ import bitzero.server.extensions.data.DataCmd;
 import bitzero.util.common.business.Debug;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
-import com.pengrad.telegrambot.model.Chat;
 import com.vinplay.dal.service.CacheService;
 import com.vinplay.dal.service.ChatLobbyService;
 import com.vinplay.dal.service.impl.CacheServiceImpl;
 import com.vinplay.dal.service.impl.ChatLobbyServiceImpl;
-import com.vinplay.usercore.dao.impl.UserDaoImpl;
 import com.vinplay.usercore.service.UserService;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.vbee.common.config.VBeePath;
-import com.vinplay.vbee.common.exceptions.KeyNotFoundException;
 import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
 import com.vinplay.vbee.common.models.UserModel;
 import com.vinplay.vbee.common.response.minigame.TaiXiuChatMsg;
 import com.vinplay.vbee.common.utils.DateTimeUtils;
 import game.modules.chat.cmd.rev.ChatCmd;
-import game.modules.chat.cmd.send.ChatInfoMsg;
-import game.modules.chat.cmd.send.ChatMsg;
+import game.modules.chat.cmd.send.ChatInfoMd5Msg;
+import game.modules.chat.cmd.send.ChatMd5Msg;
 import game.modules.chat.entities.ChatEntry;
-import game.modules.minigame.TaiXiuModule;
-import game.modules.minigame.room.MGRoomTaiXiu;
 import game.utils.ConfigGame;
 import game.utils.ServerUtil;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.sql.SQLException;
+import java.io.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-public class ChatModule
+public class ChatMd5Module
         extends BaseClientRequestHandler {
     private static final int MAX_LOG_CHAT = 10;
     private ChatLobbyService chatService = new ChatLobbyServiceImpl();
@@ -86,7 +73,7 @@ public class ChatModule
     private Logger logger = Logger.getLogger((String) "BlockChat");
     public static List<TaiXiuChatMsg> lstTaiXiuAdminMsg = new ArrayList<>();
     private CacheService cacheService = new CacheServiceImpl();
-    private final Runnable botChatTask = new ChatModule.ScheduleBotChatTask();
+    private final Runnable botChatTask = new ChatMd5Module.ScheduleBotChatTask();
     private List<String> listChatUsers = new ArrayList<String>();
     private List<String> listChatBot = new ArrayList<String>();
     private final Runnable adminChatRunnable = new AdminChat();
@@ -159,15 +146,15 @@ public class ChatModule
 
     public void handleClientRequest(User user, DataCmd dataCmd) {
         switch (dataCmd.getId()) {
-            case 18001: {
+            case 18011: {
                 this.subscribe(user);
                 break;
             }
-            case 18002: {
+            case 18012: {
                 this.unsubscribe(user);
                 break;
             }
-            case 18000: {
+            case 18010: {
                 this.chat(user, dataCmd);
             }
         }
@@ -205,7 +192,7 @@ public class ChatModule
         public void run() {
             try {
                 Debug.trace("Schedule bot chat running ...");
-                ChatModule.this.scheduleBotChat();
+                ChatMd5Module.this.scheduleBotChat();
                 Debug.trace("Schedule bot chat finished ...");
             } catch (Exception ex) {
                 // sendLogToTele(ex.getMessage());
@@ -239,7 +226,7 @@ public class ChatModule
         int daiLy = this.getStatusDaiLy(user);
         ChatCmd cmd = new ChatCmd(dataCmd);
         String username = user.getName();
-        ChatMsg msg = new ChatMsg();
+        ChatMd5Msg msg = new ChatMd5Msg();
 
         if (this.containBadword(username, cmd.message)) {
             msg.Error = 5;
@@ -287,23 +274,23 @@ public class ChatModule
 
         @Override
         public void run() {
-            ChatModule.this.scheduleGetChatAdmin();
+            ChatMd5Module.this.scheduleGetChatAdmin();
         }
     }
 
 
     private void scheduleGetChatAdmin() {
         try {
-            TaiXiuChatMsg obj = (TaiXiuChatMsg) cacheService.getObject("admin_msg");
+            TaiXiuChatMsg obj = (TaiXiuChatMsg) cacheService.getObject("admin_md5_msg");
             //kiểm tra trạng thái chưa gửi và tên không null thì được phép gửi tới client
             if (!obj.getNickname().isEmpty() && !Objects.equals(obj.getStatus(), 1)) {
-                ChatMsg msg = new ChatMsg();
+                ChatMd5Msg msg = new ChatMd5Msg();
                 msg.nickname = obj.getNickname();
                 msg.mesasge = obj.getMesasge();
-                ChatModule.lstTaiXiuAdminMsg.add(obj);
+                ChatMd5Module.lstTaiXiuAdminMsg.add(obj);
                 this.chat(obj.getNickname(), obj.getMesasge());
                 obj.setStatus(1);
-                cacheService.setObject("admin_msg", obj);
+                cacheService.setObject("admin_md5_msg", obj);
             }
             Thread.sleep(500);
         } catch (Exception e) {
@@ -318,7 +305,7 @@ public class ChatModule
     private void chat(String username, String content) {
         Set<User> set;
         ChatEntry newEntry = new ChatEntry(username, content);
-        ChatMsg msg = new ChatMsg();
+        ChatMd5Msg msg = new ChatMd5Msg();
 
         String displayName = username;
 
@@ -364,7 +351,7 @@ public class ChatModule
             arr.add((Object) entry.toJson());
         }
         String str = arr.toString();
-        ChatInfoMsg chatInfoMsg = new ChatInfoMsg();
+        ChatInfoMd5Msg chatInfoMsg = new ChatInfoMd5Msg();
         chatInfoMsg.msg = str;
         chatInfoMsg.minVipPointRequire = (byte) ConfigGame.getIntValue("chat_min_vp_require", 20);
         chatInfoMsg.timeUnBan = this.chatService.getBanTime(user.getName());
