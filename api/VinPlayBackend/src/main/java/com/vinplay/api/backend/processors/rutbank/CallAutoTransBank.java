@@ -22,7 +22,7 @@ public class CallAutoTransBank {
 
             AutoBankEntity autoBank = new AutoBankEntity();
             String signature = generateSignature(bankAccount, amount, TransId, autoBank.getApiSecret());
-            String url = autoBank.getUrl() + ":" + autoBank.getPort() + autoBank.getApiRegCharge()
+            String url = autoBank.getUrl() + ":" + autoBank.getPort() + autoBank.getApiChargeOut()
                     + "?apiKey=" + autoBank.getApiKey() + "&bank_code=" + BankName + "&bank_account="
                     + bankAccount + "&bank_accountName=" + bankAccountName + "&amount=" + amount + "&signature=" + signature
                     + "&requestId=" + TransId + "&msg=" + TransId + "&callback=" + urlCallBack;

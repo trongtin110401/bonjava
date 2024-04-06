@@ -11,6 +11,8 @@
 package com.vinplay.api.backend.processors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.vinplay.api.backend.processors.cashout.NapRutGame;
@@ -47,6 +49,7 @@ public class CashOutByBankProcessor
     private static final int MAX_ITEM = 15;
     private static final String URL_CALL_BACK = "https://lunglinhlalenluons.store/api?c=4009";
     private static LinkedList<BlockByTran> listTranBlock = new LinkedList<BlockByTran>();
+
     public synchronized String execute(Param<HttpServletRequest> param) {
         ResultCashOutByBankResponse response = new ResultCashOutByBankResponse(false, "1001");
         try {
@@ -54,7 +57,7 @@ public class CashOutByBankProcessor
             String nickName = request.getParameter("nn");
             String bankName = request.getParameter("b");
             String bankAccountNumber = request.getParameter("bankNumber");
-            String bankAccountAccountName = request.getParameter("bankAccountAccountName");
+            String bankAccountName = request.getParameter("bankAccountName");
             String userAprrove = request.getParameter("uad");
             userAprrove = userAprrove == null ? "" : userAprrove;
             String status = request.getParameter("st");
@@ -73,7 +76,7 @@ public class CashOutByBankProcessor
 
             if (act.equals("getList")) {
 
-                UserWithdraw userWithdraw = new UserWithdraw(transid, nickName, bankAccountNumber, bankAccountAccountName, bankName, status);
+                UserWithdraw userWithdraw = new UserWithdraw(transid, nickName, bankAccountNumber, bankAccountName, bankName, status);
                 CashoutBankResponse res = cashoutDao.GetListCashoutBank(userWithdraw, page, maxItem, timeEnd, timeStart);
 
                 return res.toJson();
@@ -91,7 +94,7 @@ public class CashOutByBankProcessor
                 if (status == null || status.isEmpty()) {
                     return "";
                 }
-                if(!checkBlockTran(transid)) {
+                if (!checkBlockTran(transid)) {
                     return "Thao tác quá nhanh";
                 }
                 //find trans
@@ -108,16 +111,16 @@ public class CashOutByBankProcessor
                     this.sendMesToAdmin(transid, 102);
                     CallAutoTransBank callBank = new CallAutoTransBank();
                     String output = callBank.CallAPI(userWithdraw, URL_CALL_BACK); //Product
-                    String check_money_now = "Số dư tài khoản không đủ để thực hiện";
-                    if(output.contains(check_money_now)){
+                    Gson gson = new Gson();
+                    JsonObject jsonObject = gson.fromJson(output, JsonObject.class);
+                    if (jsonObject.get("ex_stt").equals("-2.3")) {
                         this.sendMesToAdmin(transid, 3); // Số dư tài khoản không đủ để thực hiện
                     }
+
                 }
 
                 // update trans
                 boolean updateTrans = cashoutDao.UpdateCashoutBank(transid, status, userAprrove);
-
-
 
 
                 if (!updateTrans) {
@@ -141,19 +144,19 @@ public class CashOutByBankProcessor
                 NapRutGame nrg = new NapRutGame();
                 String codedl = nrg.getMaDaily(userWithdraw.Username);
                 long SoTien = userWithdraw.AmountReal * (-1);
-                if(codedl == null){
+                if (codedl == null) {
                     int xx = 2;
-                }else if(codedl != null && codedl.trim().length() == 0){
+                } else if (codedl != null && codedl.trim().length() == 0) {
                     int xx = 2;
-                }else if(codedl != null && codedl.trim().equalsIgnoreCase("null") == false){
+                } else if (codedl != null && codedl.trim().equalsIgnoreCase("null") == false) {
                     if (!status.equals(CashoutUtil.STATUS_ERROR) && !status.equals(CashoutUtil.STATUS_REJECT)) {
-                        NapRutModel napgame = new NapRutModel(transid, userWithdraw.Username, codedl, SoTien,"Rut Bank", userWithdraw.CreatedAt);
-                        if(nrg.getTransID(transid) == false){
+                        NapRutModel napgame = new NapRutModel(transid, userWithdraw.Username, codedl, SoTien, "Rut Bank", userWithdraw.CreatedAt);
+                        if (nrg.getTransID(transid) == false) {
                             nrg.NapRut(napgame);
                         }
                     }
-                }else{
-                    int xx =2;
+                } else {
+                    int xx = 2;
                 }
 
                 return "true";
@@ -174,7 +177,7 @@ public class CashOutByBankProcessor
             if (!listTranBlock.isEmpty() && listTranBlock.size() > 300) {
                 System.out.println("Đẩy 1 phần tử ra ngoài: " + listTranBlock.pop());
             }
-            for(BlockByTran object : listTranBlock) {
+            for (BlockByTran object : listTranBlock) {
                 if (object.transid.equals(transid)) {
                     long curentTimeStamp = new Date().getTime();
                     long difftime = curentTimeStamp - object.timeStamp;
@@ -234,33 +237,36 @@ public class CashOutByBankProcessor
         }
         return "Đang xử lý";
     }
+
     private void updateHis(String TrainID) {
         try {
             MongoDatabase db = MongoDBConnectionFactory.getDB();
             MongoCollection col = db.getCollection("History_User_transaction");
             Document doc = new Document();
-            doc.append("trangthai","Thành công");
+            doc.append("trangthai", "Thành công");
             col.updateOne((Bson) new Document("transId", TrainID), (Bson) new Document("$set", (Object) doc));
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
+
     private void updateHis2(String TrainID) {
         try {
             MongoDatabase db = MongoDBConnectionFactory.getDB();
             MongoCollection col = db.getCollection("History_User_transaction");
             Document doc = new Document();
-            doc.append("trangthai","Từ chối");
+            doc.append("trangthai", "Từ chối");
             col.updateOne((Bson) new Document("transId", TrainID), (Bson) new Document("$set", (Object) doc));
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
 }
+
 class BlockByTran {
     public String transid = "";
     public long timeStamp = new Date().getTime();

@@ -1,6 +1,8 @@
 package com.vinplay.api.backend.processors.cashout;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.vinplay.api.backend.processors.rutbank.CallAutoTransBank;
 import com.vinplay.api.backend.processors.rutbank.CallAutoTransMomo;
 import com.vinplay.common.notification.SendToWS;
@@ -75,8 +77,9 @@ public class CashoutByMomoProcess implements BaseProcessor<HttpServletRequest, S
                     this.sendMesToAdmin(transid, 102);
                     CallAutoTransMomo callAutoTransMomo = new CallAutoTransMomo();
                     String output = callAutoTransMomo.CallAPI(userWithdraw, URL_CALL_BACK); //Product
-                    String check_money_now = "S? d? tài kho?n không ?? ?? th?c hi?n";
-                    if(output.contains(check_money_now)){
+                    Gson gson = new Gson();
+                    JsonObject jsonObject = gson.fromJson(output, JsonObject.class);
+                    if (jsonObject.get("ex_stt").equals("-2.3")) {
                         this.sendMesToAdmin(transid, 3); // S? d? tài kho?n không ?? ?? th?c hi?n
                     }
                     return "";
