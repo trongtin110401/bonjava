@@ -113,7 +113,7 @@ public class BaseGameExtension
             this.addRequestHandler((short) 6000, CaoThapModule.class);
             this.addRequestHandler((short) 7000, CandyModule.class);
             this.addRequestHandler((short) 18000, ChatModule.class);
-            this.addRequestHandler((short) 18010, ChatMd5Module.class);
+            this.addRequestHandler((short) 17000, ChatMd5Module.class);
             //   this.addRequestHandler((short)19000, AdminModule.class);
             this.addRequestHandler((short) 20000, LobbyModule.class);
             //   this.addRequestHandler((short)21000, MissionModule.class);
