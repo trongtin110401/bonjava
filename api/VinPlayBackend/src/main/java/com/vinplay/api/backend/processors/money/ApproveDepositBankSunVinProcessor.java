@@ -141,10 +141,6 @@ public class ApproveDepositBankSunVinProcessor implements BaseProcessor<HttpServ
                 }
 
                 return response.toJson();
-                //send to user
-
-                //
-
             } catch (Exception e) {
                 return response.toJson();
             }
