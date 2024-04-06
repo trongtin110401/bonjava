@@ -13,7 +13,7 @@ extends BaseMsgEx {
     public String mesasge = "";
 
     public ChatMd5Msg() {
-        super(18000);
+        super(17000);
     }
 
     public byte[] createData() {
