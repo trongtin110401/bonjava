@@ -35,11 +35,9 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
             if (tiennap >= 0) {
                 if ("momo".equalsIgnoreCase(type)) {
                     UserWithdrawMomo userWithdrawMomo = new UserWithdrawMomo(nickname, yeu_cau_rut_1, banknum);
-                    userWithdrawMomo.setType(type);
                     this.userService.UpdateMoneyWhenWithdrawMomo(userWithdrawMomo);
                 } else if ("bank".equalsIgnoreCase(type)) {
                     UserWithdraw userWithdraw = new UserWithdraw(nickname, yeu_cau_rut_1, banknum, bankacc, bankname);
-                    userWithdraw.setType(type);
                     this.userService.UpdateMoneyWhenWithdrawBank(userWithdraw);
                 }
                 BroadCastUserMoney.pushBroadCast(nickname);
