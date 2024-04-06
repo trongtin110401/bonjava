@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  com.mongodb.BasicDBObject
  *  com.mongodb.Block
@@ -28,16 +28,18 @@ import com.vinplay.usercore.dao.MailBoxDao;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.response.MailBoxResponse;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
 public class MailBoxDaoImpl
-implements MailBoxDao {
+        implements MailBoxDao {
     private int flag = 0;
 
     @Override
@@ -46,14 +48,14 @@ implements MailBoxDao {
         MongoCollection col = db.getCollection("mail_box");
         for (String name : nickName) {
             Document doc = new Document();
-            doc.append("mail_id", (Object)String.valueOf(System.currentTimeMillis()));
-            doc.append("nick_name", (Object)name);
-            doc.append("title", (Object)title);
-            doc.append("content", (Object)content);
-            doc.append("create_time", (Object)VinPlayUtils.getCurrentDateTime());
-            doc.append("author", (Object)"H\u1ec7 th\u1ed1ng");
-            doc.append("status", (Object)0);
-            col.insertOne((Object)doc);
+            doc.append("mail_id", (Object) String.valueOf(System.currentTimeMillis()));
+            doc.append("nick_name", (Object) name);
+            doc.append("title", (Object) title);
+            doc.append("content", (Object) content);
+            doc.append("create_time", (Object) VinPlayUtils.getCurrentDateTime());
+            doc.append("author", (Object) "H\u1ec7 th\u1ed1ng");
+            doc.append("status", (Object) 0);
+            col.insertOne((Object) doc);
         }
         return true;
     }
@@ -63,14 +65,14 @@ implements MailBoxDao {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection col = db.getCollection("mail_box");
         Document doc = new Document();
-        doc.append("mail_id", (Object)String.valueOf(System.currentTimeMillis()));
-        doc.append("nick_name", (Object)nickName);
-        doc.append("title", (Object)title);
-        doc.append("content", (Object)content);
-        doc.append("create_time", (Object)VinPlayUtils.getCurrentDateTime());
-        doc.append("author", (Object)"H\u1ec7 th\u1ed1ng");
-        doc.append("status", (Object)0);
-        col.insertOne((Object)doc);
+        doc.append("mail_id", (Object) String.valueOf(System.currentTimeMillis()));
+        doc.append("nick_name", (Object) nickName);
+        doc.append("title", (Object) title);
+        doc.append("content", (Object) content);
+        doc.append("create_time", (Object) VinPlayUtils.getCurrentDateTime());
+        doc.append("author", (Object) "H\u1ec7 th\u1ed1ng");
+        doc.append("status", (Object) 0);
+        col.insertOne((Object) doc);
         return true;
     }
 
@@ -80,25 +82,35 @@ implements MailBoxDao {
         int num_start = (page - 1) * 5;
         int num_end = 5;
         MongoDatabase db = MongoDBConnectionFactory.getDB();
-        HashMap<String, Object> conditions = new HashMap<String, Object>();
-//        HashMap<String, String> conditions = new HashMap<String, String>();
         BasicDBObject objsort = new BasicDBObject();
-        conditions.put("nick_name", nickName);
+
+        List<BasicDBObject> orConditions = new ArrayList<>();
+
+        BasicDBObject condition1 = new BasicDBObject("nick_name", nickName);
+        orConditions.add(condition1);
+
+        BasicDBObject condition2 = new BasicDBObject("nick_name", "*");
+        orConditions.add(condition2);
+
+        BasicDBObject query = new BasicDBObject("$or", orConditions);
+
         objsort.put("_id", -1);
-        FindIterable iterable = db.getCollection("mail_box").find((Bson)new Document(conditions)).skip(num_start).limit(5).sort((Bson)objsort);
-        iterable.forEach((Block)new Block<Document>(){
+        FindIterable iterable = db.getCollection("mail_box").find(query)
+                .skip(num_start).limit(num_end).sort(objsort);
+
+        iterable.forEach((Block) new Block<Document>() {
 
             public void apply(Document document) {
                 MailBoxResponse mail = new MailBoxResponse();
-                mail.sysMail = document.getString((Object)"nick_name").equals("*") ? 1 : 0;
-                mail.title = document.getString((Object)"title");
-                mail.createTime = document.getString((Object)"create_time");
-                mail.author = document.getString((Object)"author");
-                mail.content = document.getString((Object)"content");
-                mail.status = document.getInteger((Object)"status");
-                mail.mail_id = document.getString((Object)"mail_id");
-                if (document.getString((Object)"mail_gift_code") != null && !document.getString((Object)"mail_gift_code").equals("")) {
-                    mail.giftCode = document.getString((Object)"mail_gift_code");
+                mail.sysMail = document.getString((Object) "nick_name").equals("*") ? 1 : 0;
+                mail.title = document.getString((Object) "title");
+                mail.createTime = document.getString((Object) "create_time");
+                mail.author = document.getString((Object) "author");
+                mail.content = document.getString((Object) "content");
+                mail.status = document.getInteger((Object) "status");
+                mail.mail_id = document.getString((Object) "mail_id");
+                if (document.getString((Object) "mail_gift_code") != null && !document.getString((Object) "mail_gift_code").equals("")) {
+                    mail.giftCode = document.getString((Object) "mail_gift_code");
                 }
                 results.add(mail);
             }
@@ -110,7 +122,7 @@ implements MailBoxDao {
     public int updateStatusMailBox(String mailId) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection colmail = db.getCollection("mail_box");
-        colmail.updateOne((Bson)new Document("mail_id", (Object)mailId), (Bson)new Document("$set", (Object)new Document("status", (Object)1)));
+        colmail.updateOne((Bson) new Document("mail_id", (Object) mailId), (Bson) new Document("$set", (Object) new Document("status", (Object) 1)));
         return 0;
     }
 
@@ -118,16 +130,16 @@ implements MailBoxDao {
     public int deleteMailBox(String mailId) {
         final MongoDatabase db = MongoDBConnectionFactory.getDB();
         final BasicDBObject obj = new BasicDBObject();
-        obj.put("mail_id", (Object)mailId);
+        obj.put("mail_id", (Object) mailId);
         HashMap<String, Object> conditions = new HashMap<String, Object>();
 //        HashMap<String, String> conditions = new HashMap<String, String>();
         conditions.put("mail_id", mailId);
-        FindIterable iterable = db.getCollection("mail_box").find((Bson)new Document(conditions));
-        iterable.forEach((Block)new Block<Document>(){
+        FindIterable iterable = db.getCollection("mail_box").find((Bson) new Document(conditions));
+        iterable.forEach((Block) new Block<Document>() {
 
             public void apply(Document document) {
-                if (!document.getString((Object)"nick_name").equals("*")) {
-                    db.getCollection("mail_box").deleteOne((Bson)obj);
+                if (!document.getString((Object) "nick_name").equals("*")) {
+                    db.getCollection("mail_box").deleteOne((Bson) obj);
                     MailBoxDaoImpl.this.flag = 0;
                 } else {
                     MailBoxDaoImpl.this.flag = 1;
@@ -144,7 +156,7 @@ implements MailBoxDao {
         HashMap<String, Object> conditions = new HashMap<String, Object>();
 //        HashMap<String, String> conditions = new HashMap<String, String>();
         conditions.put("nick_name", nickName);
-        record = (int)db.getCollection("mail_box").count((Bson)new Document(conditions));
+        record = (int) db.getCollection("mail_box").count((Bson) new Document(conditions));
         return record;
     }
 
@@ -166,15 +178,15 @@ implements MailBoxDao {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection col = db.getCollection("mail_box");
         Document doc = new Document();
-        doc.append("mail_id", (Object)String.valueOf(System.currentTimeMillis()));
-        doc.append("nick_name", (Object)nickName);
-        doc.append("mail_gift_code", (Object)giftcode);
-        doc.append("title", (Object)title);
-        doc.append("content", (Object)content);
-        doc.append("create_time", (Object)VinPlayUtils.getCurrentDateTime());
-        doc.append("author", (Object)"H\u1ec7 th\u1ed1ng");
-        doc.append("status", (Object)0);
-        col.insertOne((Object)doc);
+        doc.append("mail_id", (Object) String.valueOf(System.currentTimeMillis()));
+        doc.append("nick_name", (Object) nickName);
+        doc.append("mail_gift_code", (Object) giftcode);
+        doc.append("title", (Object) title);
+        doc.append("content", (Object) content);
+        doc.append("create_time", (Object) VinPlayUtils.getCurrentDateTime());
+        doc.append("author", (Object) "H\u1ec7 th\u1ed1ng");
+        doc.append("status", (Object) 0);
+        col.insertOne((Object) doc);
         return true;
     }
 
@@ -185,7 +197,7 @@ implements MailBoxDao {
         HashMap<String, Object> conditions = new HashMap<String, Object>();
         conditions.put("nick_name", nickName);
         conditions.put("status", 0);
-        record = (int)db.getCollection("mail_box").count((Bson)new Document(conditions));
+        record = (int) db.getCollection("mail_box").count((Bson) new Document(conditions));
         return record;
     }
 
@@ -194,15 +206,15 @@ implements MailBoxDao {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection col = db.getCollection("mail_box");
         Document doc = new Document();
-        doc.append("mail_id", (Object)String.valueOf(System.currentTimeMillis()));
-        doc.append("nick_name", (Object)nickName);
-        doc.append("mail_gift_code", (Object)giftcode);
-        doc.append("title", (Object)title);
-        doc.append("content", (Object)content);
-        doc.append("create_time", (Object)VinPlayUtils.getCurrentDateTime());
-        doc.append("author", (Object)"H\u1ec7 th\u1ed1ng");
-        doc.append("status", (Object)0);
-        col.insertOne((Object)doc);
+        doc.append("mail_id", (Object) String.valueOf(System.currentTimeMillis()));
+        doc.append("nick_name", (Object) nickName);
+        doc.append("mail_gift_code", (Object) giftcode);
+        doc.append("title", (Object) title);
+        doc.append("content", (Object) content);
+        doc.append("create_time", (Object) VinPlayUtils.getCurrentDateTime());
+        doc.append("author", (Object) "H\u1ec7 th\u1ed1ng");
+        doc.append("status", (Object) 0);
+        col.insertOne((Object) doc);
         return true;
     }
 
@@ -210,15 +222,15 @@ implements MailBoxDao {
     public int deleteMailBoxAdmin(String mailId) {
         final MongoDatabase db = MongoDBConnectionFactory.getDB();
         final BasicDBObject obj = new BasicDBObject();
-        obj.put("mail_id", (Object)mailId);
+        obj.put("mail_id", (Object) mailId);
         HashMap<String, Object> conditions = new HashMap<String, Object>();
 //        HashMap<String, String> conditions = new HashMap<String, String>();
         conditions.put("mail_id", mailId);
-        FindIterable iterable = db.getCollection("mail_box").find((Bson)new Document(conditions));
-        iterable.forEach((Block)new Block<Document>(){
+        FindIterable iterable = db.getCollection("mail_box").find((Bson) new Document(conditions));
+        iterable.forEach((Block) new Block<Document>() {
 
             public void apply(Document document) {
-                db.getCollection("mail_box").deleteOne((Bson)obj);
+                db.getCollection("mail_box").deleteOne((Bson) obj);
                 MailBoxDaoImpl.this.flag = 0;
             }
         });
@@ -231,24 +243,24 @@ implements MailBoxDao {
         HashMap conditions = new HashMap();
         final BasicDBObject obj = new BasicDBObject();
         if (nickName != null && !nickName.equals("") || title != null && !title.equals("")) {
-            BasicDBObject query1 = new BasicDBObject("nick_name", (Object)nickName);
-            BasicDBObject query2 = new BasicDBObject("title", (Object)title);
+            BasicDBObject query1 = new BasicDBObject("nick_name", (Object) nickName);
+            BasicDBObject query2 = new BasicDBObject("title", (Object) title);
             ArrayList<BasicDBObject> myList = new ArrayList<BasicDBObject>();
             myList.add(query1);
             myList.add(query2);
             conditions.put("$or", myList);
         }
         if (nickName != null && !nickName.equals("")) {
-            obj.put("nick_name", (Object)nickName);
+            obj.put("nick_name", (Object) nickName);
         }
         if (title != null && !title.equals("")) {
-            obj.put("title", (Object)title);
+            obj.put("title", (Object) title);
         }
-        FindIterable iterable = db.getCollection("mail_box").find((Bson)new Document(conditions));
-        iterable.forEach((Block)new Block<Document>(){
+        FindIterable iterable = db.getCollection("mail_box").find((Bson) new Document(conditions));
+        iterable.forEach((Block) new Block<Document>() {
 
             public void apply(Document document) {
-                db.getCollection("mail_box").deleteOne((Bson)obj);
+                db.getCollection("mail_box").deleteOne((Bson) obj);
                 MailBoxDaoImpl.this.flag = 0;
             }
         });
@@ -260,16 +272,16 @@ implements MailBoxDao {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection col = db.getCollection("mail_box");
         Document doc = new Document();
-        doc.append("mail_id", (Object)String.valueOf(System.currentTimeMillis()));
-        doc.append("nick_name", (Object)nickName);
-        doc.append("serial", (Object)serial);
-        doc.append("pin", (Object)pin);
-        doc.append("title", (Object)title);
-        doc.append("content", (Object)content);
-        doc.append("create_time", (Object)VinPlayUtils.getCurrentDateTime());
-        doc.append("author", (Object)"H\u1ec7 th\u1ed1ng");
-        doc.append("status", (Object)0);
-        col.insertOne((Object)doc);
+        doc.append("mail_id", (Object) String.valueOf(System.currentTimeMillis()));
+        doc.append("nick_name", (Object) nickName);
+        doc.append("serial", (Object) serial);
+        doc.append("pin", (Object) pin);
+        doc.append("title", (Object) title);
+        doc.append("content", (Object) content);
+        doc.append("create_time", (Object) VinPlayUtils.getCurrentDateTime());
+        doc.append("author", (Object) "H\u1ec7 th\u1ed1ng");
+        doc.append("status", (Object) 0);
+        col.insertOne((Object) doc);
         return true;
     }
 
