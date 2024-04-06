@@ -146,15 +146,15 @@ public class ChatMd5Module
 
     public void handleClientRequest(User user, DataCmd dataCmd) {
         switch (dataCmd.getId()) {
-            case 18011: {
+            case 17001: {
                 this.subscribe(user);
                 break;
             }
-            case 18012: {
+            case 17002: {
                 this.unsubscribe(user);
                 break;
             }
-            case 18010: {
+            case 17000: {
                 this.chat(user, dataCmd);
             }
         }

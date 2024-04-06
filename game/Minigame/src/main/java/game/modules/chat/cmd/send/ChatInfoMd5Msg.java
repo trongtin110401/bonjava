@@ -15,7 +15,7 @@ extends BaseMsgEx {
     public byte userType;
 
     public ChatInfoMd5Msg() {
-        super(18013);
+        super(17003);
     }
 
     public byte[] createData() {
