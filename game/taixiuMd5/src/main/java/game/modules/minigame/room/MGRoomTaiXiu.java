@@ -292,7 +292,7 @@ public class MGRoomTaiXiu extends MGRoom {
         cacheService.setValue("Md5_Lobby_tx_xiu_" + this.moneyType, String.valueOf(this.getPotXiu()));
         this.sendMessageToRoom(msg);
 
-        System.out.println("Second: " + secondGamePlay + " | md5: " + resultTX.getMd5TextResult() + " | plain: " + resultTX.getPlantTextResult());
+//        System.out.println("Second: " + secondGamePlay + " | md5: " + resultTX.getMd5TextResult() + " | plain: " + resultTX.getPlantTextResult());
     }
 
     // todo : tính toán kết quả
