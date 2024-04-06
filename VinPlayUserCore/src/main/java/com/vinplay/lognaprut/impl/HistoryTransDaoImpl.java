@@ -106,21 +106,13 @@ public class HistoryTransDaoImpl implements HistoryTransDao {
         try {
             MongoDatabase db = MongoDBConnectionFactory.getDB();
             Document conditions = new Document();
-            InsertELK elk = new InsertELK();
             conditions.put("transId", (Object) historyTransModel.transId);
             conditions.put("nickName", (Object) historyTransModel.nickName);
             conditions.put("hinhthucTrans", (Object) historyTransModel.hinhthucTrans);
             BasicDBObject updateFields = new BasicDBObject();
             updateFields.append("trangthai", (Object) historyTransModel.trangthai);
             updateFields.append("ghiChu", (Object) historyTransModel.ghiChu);
-            //us
             db.getCollection("History_User_transaction").updateOne(conditions, (Bson) new Document("$set", (Object) updateFields));
-            HistoryTransModel his = findTransaction(historyTransModel.transId, historyTransModel.nickName, historyTransModel.hinhthucTrans);
-            HistoryTransModel hisx = elk.GetHistorybyTransID(historyTransModel.transId);
-            long idelk = Long.parseLong(hisx.getId());
-            hisx.setTrangthai(historyTransModel.trangthai);
-            hisx.setGhiChu(historyTransModel.ghiChu);
-            elk.InsertHistoryUserTransOK(hisx, idelk, hisx.getCreateAt());
             return true;
         } catch (Exception e) {
             return false;
