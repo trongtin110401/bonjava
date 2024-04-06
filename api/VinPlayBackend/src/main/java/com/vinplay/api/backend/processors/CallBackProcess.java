@@ -1,24 +1,18 @@
 package com.vinplay.api.backend.processors;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.vinplay.api.backend.models.CallBackModel;
 import com.vinplay.api.backend.processors.cashout.NapRutGame;
 import com.vinplay.api.backend.processors.cashout.NapRutModel;
-import com.vinplay.api.backend.processors.rutbank.CallAutoTransMomo;
 import com.vinplay.common.notification.SendToWS;
 import com.vinplay.common.report.EventactionAdminObj;
 import com.vinplay.dal.common.BroadCastUserMoney;
-import com.vinplay.dichvuthe.dao.CashoutDao;
 import com.vinplay.dichvuthe.dao.RechargeDao;
-import com.vinplay.dichvuthe.dao.impl.CashoutDaoImpl;
 import com.vinplay.dichvuthe.dao.impl.RechargeDaoImpl;
 import com.vinplay.dichvuthe.entities.DepositBankModel;
 import com.vinplay.dichvuthe.entities.DepositMomoModel;
 import com.vinplay.dichvuthe.service.impl.RechargeServiceImpl;
-import com.vinplay.dichvuthe.utils.CashoutUtil;
 import com.vinplay.dichvuthe.utils.DvtConst;
 import com.vinplay.lognaprut.HistoryTransConst;
 import com.vinplay.lognaprut.HistoryTransDao;
@@ -26,8 +20,6 @@ import com.vinplay.lognaprut.entities.HistoryTransModel;
 import com.vinplay.lognaprut.impl.HistoryTransDaoImpl;
 import com.vinplay.lognaprut.service.HistoryTransService;
 import com.vinplay.lognaprut.service.impl.HistoryTransServiceImpl;
-import com.vinplay.payment.entities.UserWithdraw;
-import com.vinplay.payment.entities.UserWithdrawMomo;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.usercore.utils.GameCommon;
 import com.vinplay.vbee.common.cp.BaseProcessor;
@@ -56,11 +48,11 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
         if ("momo".equals(chargeType)) {
             ApproveDepositMomoProcessor(callBackModel);
         } else if ("momoout".equals(chargeType)) {
-            cashOutByMomo(callBackModel);
+
         } else if ("bank".equals(chargeType)) {
             ApproveDepositBankProcessor(callBackModel);
         } else if ("bankout".equals(chargeType)) {
-            cashOutByBank(callBackModel);
+
         } else if ("usdt".equals(chargeType)) {
 
         }
@@ -149,6 +141,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
                 RechargeServiceImpl rechargeService = new RechargeServiceImpl();
                 DepositBankModel trans = rechargeService.finMoMoDepositByTransactionId(transId);
 
+
                 // update trans in db
                 int status = type == 1 ? DvtConst.STATUS_APPROVE : DvtConst.STATUS_REJECT;
                 boolean resultUpdateTrans = dao.UpdateDepositBankManualStatus(transId, status, trans.getDescription(), userApprove);
@@ -180,7 +173,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
                 }
                 HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
 
-                historyTransDao.insertTransaction(new HistoryTransModel(transId + "|" + "test bank", "CodePay", "N?p ti?n", "", "ThÃ nh cÃ´ng", "N?p ti?n ThÃ nh cÃ´ng ", trans.Nickname, HistoryTransConst.BANK, transId));
+                historyTransDao.insertTransaction(new HistoryTransModel(transId + "|" + "test bank", "CodePay", "N?p ti?n", "", "Thành công", "N?p ti?n Thành công ", trans.Nickname, HistoryTransConst.BANK, transId));
 
                 updateMoneyCodePayMomoSun(transId, tien);
                 updateMoneyCodePayMomoSun2(transId, String.valueOf(tien));
@@ -212,96 +205,6 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
         }
     }
 
-    private String cashOutByBank(CallBackModel callBackModel) {
-
-        //find trans
-        CashoutDao cashoutDao = new CashoutDaoImpl();
-        UserWithdraw userWithdraw = cashoutDao.FindCashoutBankById(callBackModel.getChargeId());
-        if (userWithdraw == null) {
-            return "";
-        }
-        if (userWithdraw.Status.equals(CashoutUtil.STATUS_REJECT) || userWithdraw.Status.equals(CashoutUtil.STATUS_SUCCESS)) {
-            return "";
-        }
-        this.sendMesToAdmin(callBackModel.getChargeId(), 102);
-        UserServiceImpl userService = new UserServiceImpl();
-        String status;
-        int type;
-        if (callBackModel.getChargeType().equals("success")) {
-            status = CashoutUtil.STATUS_SUCCESS;
-            type = 2;
-        } else {
-            status = CashoutUtil.STATUS_ERROR;
-            type = 2;
-        }
-
-        cashoutDao.UpdateCashoutBank(callBackModel.getChargeId(), status, "AutoBank");
-        HistoryTransService historyTransService = new HistoryTransServiceImpl();
-        historyTransService.update(callBackModel.getChargeId(), userWithdraw.Username, HistoryTransConst.RUT_BANK, this.getTrangthai(type), this.getTrangthaiDes(type));
-
-        if (status.equals(CashoutUtil.STATUS_ERROR)) {
-            this.sendMesToAdmin(callBackModel.getChargeId(), 2); // gá»­i mes tá»« chá»‘i
-            long fee = userWithdraw.AmountReal - userWithdraw.Amount;
-            boolean refund = userService.refundWhenError(userWithdraw.Username, userWithdraw.AmountReal, fee);
-            if (!refund) {
-                return "";
-            }
-        }
-        BroadCastUserMoney.pushBroadCast(userWithdraw.Username);
-        NapRutGame nrg = new NapRutGame();
-        String codedl = nrg.getMaDaily(userWithdraw.Username);
-        long SoTien = userWithdraw.AmountReal * (-1);
-        if (!status.equals(CashoutUtil.STATUS_ERROR) && !status.equals(CashoutUtil.STATUS_REJECT)) {
-            NapRutModel napgame = new NapRutModel(callBackModel.getChargeId(), userWithdraw.Username, codedl, SoTien, "Rut Bank", userWithdraw.CreatedAt);
-            if (!nrg.getTransID(callBackModel.getChargeId())) {
-                nrg.NapRut(napgame);
-            }
-        }
-        return "true";
-    }
-
-
-    private String cashOutByMomo(CallBackModel callBackModel) {
-
-        CashoutDao cashoutDao = new CashoutDaoImpl();
-        String transid = callBackModel.getChargeId();
-        //find trans
-        UserWithdrawMomo userWithdraw = cashoutDao.FindCashoutMomoById(transid);
-        if (userWithdraw == null) {
-            return "";
-        }
-        String status;
-        if (callBackModel.getChargeType().equals("success")) {
-            status = CashoutUtil.STATUS_SUCCESS;
-        } else {
-            status = CashoutUtil.STATUS_ERROR;
-        }
-
-        cashoutDao.UpdateCashoutMomo(transid, status, "AutoBank");
-
-        if (status.equals(CashoutUtil.STATUS_ERROR) || status.equals(CashoutUtil.STATUS_REJECT)) {
-            UserServiceImpl userService = new UserServiceImpl();
-            long fee = userWithdraw.AmountReal - userWithdraw.Amount;
-            boolean refund = userService.refundWhenError(userWithdraw.Nickname, userWithdraw.AmountReal, fee);
-            if (!refund) {
-                return "";
-            }
-        }
-        return "true";
-    }
-
-    String sendMesToAdmin(String transID, int status) {
-        EventactionAdminObj model = new EventactionAdminObj();
-        model.setId(transID);
-        model.setStatus(status);
-        model.setType("CASH_OUT_BANK");
-        try {
-            SendToWS.sendBEExcEventaction(model);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return "true";
-    }
 
     private void updateMoneyCodePayMomoSun(String TrainID, long tien) {
         try {
@@ -333,25 +236,25 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
     String getTrangthai(int status) {
         switch (status) {
             case 1:
-                return "Äang xá»­ lÃ½";
+                return "?ang x? lý";
             case 2:
-                return "Tá»« chá»‘i";
+                return "T? ch?i";
             case 100:
-                return "ThÃ nh cÃ´ng";
+                return "Thành công";
         }
-        return "Äang xá»­ lÃ½";
+        return "?ang x? lý";
     }
 
     String getTrangthaiDes(int status) {
         switch (status) {
             case 1:
-                return "H? th?ng ?ang x? lÃ½ giao d?ch c?a b?n";
+                return "H? th?ng ?ang x? lý giao d?ch c?a b?n";
             case 2:
                 return "Giao d?ch c?a b?n b? t? ch?i";
             case 100:
-                return "Giao d?ch thÃ nh cÃ´ng ThÃ nh cÃ´ng";
+                return "Giao d?ch thành công Thành công";
         }
-        return "?ang x? lÃ½";
+        return "?ang x? lý";
     }
 
     public void updateCodepay(String nickname, boolean use, String codepay, String bankname) {
@@ -397,7 +300,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
             MongoDatabase db = MongoDBConnectionFactory.getDB();
             MongoCollection col = db.getCollection("History_User_transaction");
             Document doc = new Document();
-            doc.append("trangthai", "ThÃ nh cÃ´ng");
+            doc.append("trangthai", "Thành công");
             col.updateOne(new Document("transId", TrainID), new Document("$set", doc));
         } catch (Exception e) {
             e.printStackTrace();
