@@ -295,7 +295,7 @@ public class ChatMd5Module
             Thread.sleep(500);
         } catch (Exception e) {
             //   sendLogToTele(e.getMessage());
-            Debug.trace(e.getMessage());
+//            Debug.trace(e.getMessage());
         }
     }
 
