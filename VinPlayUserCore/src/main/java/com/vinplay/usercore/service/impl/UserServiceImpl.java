@@ -2367,7 +2367,6 @@ public class UserServiceImpl
             if (!moneyRes.isSuccess()) {
                 response.setSuccess(moneyRes.isSuccess());
                 response.setErrorCode(moneyRes.getErrorCode());
-
                 return response;
             }
 

@@ -10,6 +10,7 @@ import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.utils.TelegramUtil;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
+import com.vinplay.vbee.common.response.BaseResponseModel;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URLEncoder;
@@ -32,20 +33,19 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
             naptmp ntmp = checknap.tongnapThe(nickname);
             long tiennap = ntmp.getTongnap();
             int yeu_cau_rut_1 = Integer.parseInt(amount);
+            BaseResponseModel baseResponseModel = new BaseResponseModel(false, "1001");
             if (tiennap >= 0) {
                 if ("momo".equalsIgnoreCase(type)) {
                     UserWithdrawMomo userWithdrawMomo = new UserWithdrawMomo(nickname, yeu_cau_rut_1, banknum);
-                    this.userService.UpdateMoneyWhenWithdrawMomo(userWithdrawMomo);
+                    baseResponseModel = this.userService.UpdateMoneyWhenWithdrawMomo(userWithdrawMomo);
                 } else if ("bank".equalsIgnoreCase(type)) {
                     UserWithdraw userWithdraw = new UserWithdraw(nickname, yeu_cau_rut_1, banknum, bankacc, bankname);
-                    this.userService.UpdateMoneyWhenWithdrawBank(userWithdraw);
+                    baseResponseModel = this.userService.UpdateMoneyWhenWithdrawBank(userWithdraw);
                 }
                 BroadCastUserMoney.pushBroadCast(nickname);
-                return "{\"error\":200,\"}";
-            } else {
-                return "{\"error\":300}";
+                return baseResponseModel.toJson();
             }
-
+            return baseResponseModel.toJson();
         } catch (Exception e) {
             e.printStackTrace();
             return e.getMessage();
