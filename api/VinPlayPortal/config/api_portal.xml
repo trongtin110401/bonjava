@@ -967,5 +967,15 @@
             <name>Get list bank code</name>
             <path>com.vinplay.api.processors.AutoXuLyBank.GetListBankTypeProcessor</path>
         </command>
+        <command>
+            <id>4117</id>
+            <name>Save tk momo</name>
+            <path>com.vinplay.api.processors.RutBankSTK.SaveSTKMomoProcess</path>
+        </command>
+        <command>
+            <id>4118</id>
+            <name>Get tk momo</name>
+            <path>com.vinplay.api.processors.RutBankSTK.CheckSTKMomoProcess</path>
+        </command>
     </commands>
 </portal>
