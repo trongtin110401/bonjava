@@ -1737,5 +1737,10 @@
             <name>get slot fee</name>
             <path>com.vinplay.api.backend.processors.ChargeOutProcessor</path>
         </command>
+        <command>
+            <id>11029</id>
+            <name>call back process</name>
+            <path>com.vinplay.api.backend.processors.CallBackProcess</path>
+        </command>
     </commands>
 </backend>
