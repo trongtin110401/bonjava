@@ -31,7 +31,7 @@ public class FindAllTransactionExpenseProcessor
         String expense = request.getParameter("expense");
         OtherService otherService = new OtherServiceImpl();
 
-        return otherService.getTransactionFund(pageIndex, pageSize, type, startTime, endTime, expense).toJson();
+        return otherService.getTransactionExpense(pageIndex, pageSize, type, startTime, endTime, expense).toJson();
 
     }
 }
