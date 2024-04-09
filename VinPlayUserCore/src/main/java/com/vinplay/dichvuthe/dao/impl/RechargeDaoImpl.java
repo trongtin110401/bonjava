@@ -1437,7 +1437,7 @@ public class RechargeDaoImpl
             updateFields.append("Status", status);
             updateFields.append("Description", desc);
             updateFields.append("UserApprove", userApprove);
-                db.getCollection(DvtConst.DEPOSIT_BANK_COLLECTION).updateOne(conditions, new Document("$set", updateFields));
+            db.getCollection(DvtConst.DEPOSIT_BANK_COLLECTION).updateOne(conditions, new Document("$set", updateFields));
             return true;
         } catch (Exception e) {
             return false;
@@ -1488,7 +1488,7 @@ public class RechargeDaoImpl
                 public void apply(Document document) {
 
                     DepositBankModel model = new DepositBankModel(
-                           String.valueOf(document.getInteger("Id")),
+                            String.valueOf(document.getInteger("Id")),
                             document.getString("Nickname"),
                             document.getString("CreatedAt"),
                             document.getString("UpdatedAt"),
@@ -2926,12 +2926,12 @@ public class RechargeDaoImpl
         try {
             MongoDatabase db = MongoDBConnectionFactory.getDB();
             Document conditions = new Document();
-            conditions.put("Id", (Object) Id);
-            Document document = (Document) db.getCollection(DvtConst.DEPOSIT_BANK_COLLECTION).find((Bson) conditions).first();
+            conditions.put("Id", Integer.parseInt(Id));
+            Document document = db.getCollection(DvtConst.DEPOSIT_BANK_COLLECTION).find(conditions).first();
             if (document == null)
                 return null;
             DepositBankModel model = new DepositBankModel(
-                    document.getString((Object) "Id"),
+                    String.valueOf(document.getInteger("Id")),
                     document.getString((Object) "Nickname"),
                     document.getString((Object) "CreatedAt"),
                     document.getString((Object) "UpdatedAt"),

@@ -2476,6 +2476,15 @@ public class UserServiceImpl
 
                 return response;
             }
+            HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
+            historyTransDao.insertTransaction(new HistoryTransModel("Momo", "Momo",
+                    "Rút tiền", String.valueOf(amount), "Đang xử lý", "Đang chờ duyệt",
+                    nickname, HistoryTransConst.RUT_BANK, userWithdrawMomo.Id));
+            if (!insert) {
+                response.setSuccess(false);
+                response.setErrorCode("1002");
+                return response;
+            }
             TelegramAlert.SendMessageCashoutMomo(userWithdrawMomo);
             response.setSuccess(moneyRes.isSuccess());
             response.setErrorCode(moneyRes.getErrorCode());

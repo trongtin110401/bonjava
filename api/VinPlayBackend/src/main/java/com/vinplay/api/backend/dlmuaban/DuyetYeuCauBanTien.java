@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 
 public class DuyetYeuCauBanTien implements BaseProcessor<HttpServletRequest, String> {
     public String execute(Param<HttpServletRequest> param) {
-        HttpServletRequest request = (HttpServletRequest)param.get();
+        HttpServletRequest request = (HttpServletRequest) param.get();
         String trainid = request.getParameter("trainid");
         long tien_final = 0;
         MuaBanTien muaban = new MuaBanTien();
@@ -31,8 +31,8 @@ public class DuyetYeuCauBanTien implements BaseProcessor<HttpServletRequest, Str
             service.updateMoneyFromAdmin(trans.getNickname(), tien_final, "vin",
                     Consts.RECHARGE_BY_BANK, "Bán Tiền",
                     "Duyệt đơn bán tiền", totalFee);
-        }catch (Exception e) {
-            return "{\"errorcode\":\"500\",\"des\":\"That Bai, Exception "+e+"\"}";
+        } catch (Exception e) {
+            return "{\"errorcode\":\"500\",\"des\":\"That Bai, Exception " + e + "\"}";
         }
         return "{\"errorcode\":\"200\",\"des\":\"Thanh Cong\"}";
     }
