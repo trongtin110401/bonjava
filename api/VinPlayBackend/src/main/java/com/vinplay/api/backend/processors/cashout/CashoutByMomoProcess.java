@@ -24,13 +24,14 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 public class CashoutByMomoProcess implements BaseProcessor<HttpServletRequest, String> {
-    private static final Logger logger = Logger.getLogger((String)"backend");
+    private static final Logger logger = Logger.getLogger((String) "backend");
 
     private static final String URL_CALL_BACK = "https://lunglinhlalenluons.store/api?c=4009";
+
     public String execute(Param<HttpServletRequest> param) {
         ResultCashOutByBankResponse response = new ResultCashOutByBankResponse(false, "1001");
-        try{
-            HttpServletRequest request = (HttpServletRequest)param.get();
+        try {
+            HttpServletRequest request = (HttpServletRequest) param.get();
             String nickName = request.getParameter("nn");
             String phoneNumber = request.getParameter("phone");
             String phoneName = request.getParameter("name");
@@ -48,53 +49,53 @@ public class CashoutByMomoProcess implements BaseProcessor<HttpServletRequest, S
             String act = request.getParameter("action");
             act = act == null || act.isEmpty() ? "getList" : act;
             CashoutDao cashoutDao = new CashoutDaoImpl();
-            if(act.equals("getList")){
+            if (act.equals("getList")) {
 
                 UserWithdrawMomo userWithdraw = new UserWithdrawMomo(transid, nickName, phoneNumber, status);
                 CashoutMomoResponse res = cashoutDao.GetListCashoutMomo(userWithdraw, page, 50, timeEnd, timeStart);
 
                 return res.toJson();
-            }else if(act.equals("get")){
-                if(transid == null || transid.isEmpty()){
+            } else if (act.equals("get")) {
+                if (transid == null || transid.isEmpty()) {
                     return "";
                 }
                 UserWithdrawMomo userWithdraw = cashoutDao.FindCashoutMomoById(transid);
                 ObjectMapper mapper = new ObjectMapper();
-                return mapper.writeValueAsString((Object)userWithdraw);
-            } else if(act.equals("update")){
-                if(transid == null || transid.isEmpty()){
+                return mapper.writeValueAsString((Object) userWithdraw);
+            } else if (act.equals("update")) {
+                if (transid == null || transid.isEmpty()) {
                     return "";
                 }
-                if(status == null || status.isEmpty()){
+                if (status == null || status.isEmpty()) {
                     return "";
                 }
                 //find trans
                 UserWithdrawMomo userWithdraw = cashoutDao.FindCashoutMomoById(transid);
-                if(userWithdraw == null){
+                if (userWithdraw == null) {
                     return "";
                 }
-                if(!userWithdraw.Status.equals(CashoutUtil.STATUS_PENDING)){
+                if (!userWithdraw.Status.equals(CashoutUtil.STATUS_PENDING)) {
                     this.sendMesToAdmin(transid, 102);
                     CallAutoTransMomo callAutoTransMomo = new CallAutoTransMomo();
                     String output = callAutoTransMomo.CallAPI(userWithdraw, URL_CALL_BACK); //Product
                     Gson gson = new Gson();
                     JsonObject jsonObject = gson.fromJson(output, JsonObject.class);
                     if (jsonObject.get("ex_stt").equals("-2.3")) {
-                        this.sendMesToAdmin(transid, 3); // S? d? tài kho?n không ?? ?? th?c hi?n
+                        this.sendMesToAdmin(transid, 3);
                     }
                     return "";
                 }
                 // update trans
                 boolean updateTrans = cashoutDao.UpdateCashoutMomo(transid, status, userAprrove);
-                if(!updateTrans){
+                if (!updateTrans) {
                     return "";
                 }
                 // refund
-                if(status.equals(CashoutUtil.STATUS_ERROR) || status.equals(CashoutUtil.STATUS_REJECT)){
+                if (status.equals(CashoutUtil.STATUS_ERROR) || status.equals(CashoutUtil.STATUS_REJECT)) {
                     UserServiceImpl userService = new UserServiceImpl();
                     long fee = userWithdraw.AmountReal - userWithdraw.Amount;
                     boolean refund = userService.refundWhenError(userWithdraw.Nickname, userWithdraw.AmountReal, fee);
-                    if(!refund){
+                    if (!refund) {
                         return "";
                     }
                 }
@@ -103,7 +104,7 @@ public class CashoutByMomoProcess implements BaseProcessor<HttpServletRequest, S
             }
             return "";
 
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.debug(e.getMessage());
             return response.toJson();
         }

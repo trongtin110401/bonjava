@@ -1,18 +1,23 @@
 package com.vinplay.api.backend.processors;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.vinplay.api.backend.models.CallBackModel;
 import com.vinplay.api.backend.processors.cashout.NapRutGame;
 import com.vinplay.api.backend.processors.cashout.NapRutModel;
+import com.vinplay.api.backend.processors.rutbank.CallAutoTransMomo;
 import com.vinplay.common.notification.SendToWS;
 import com.vinplay.common.report.EventactionAdminObj;
 import com.vinplay.dal.common.BroadCastUserMoney;
+import com.vinplay.dichvuthe.dao.CashoutDao;
 import com.vinplay.dichvuthe.dao.RechargeDao;
+import com.vinplay.dichvuthe.dao.impl.CashoutDaoImpl;
 import com.vinplay.dichvuthe.dao.impl.RechargeDaoImpl;
 import com.vinplay.dichvuthe.entities.DepositBankModel;
 import com.vinplay.dichvuthe.entities.DepositMomoModel;
-import com.vinplay.dichvuthe.service.impl.RechargeServiceImpl;
+import com.vinplay.dichvuthe.utils.CashoutUtil;
 import com.vinplay.dichvuthe.utils.DvtConst;
 import com.vinplay.lognaprut.HistoryTransConst;
 import com.vinplay.lognaprut.HistoryTransDao;
@@ -20,6 +25,8 @@ import com.vinplay.lognaprut.entities.HistoryTransModel;
 import com.vinplay.lognaprut.impl.HistoryTransDaoImpl;
 import com.vinplay.lognaprut.service.HistoryTransService;
 import com.vinplay.lognaprut.service.impl.HistoryTransServiceImpl;
+import com.vinplay.payment.entities.UserWithdraw;
+import com.vinplay.payment.entities.UserWithdrawMomo;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.usercore.utils.GameCommon;
 import com.vinplay.vbee.common.cp.BaseProcessor;
@@ -48,11 +55,11 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
         if ("momo".equals(chargeType)) {
             ApproveDepositMomoProcessor(callBackModel);
         } else if ("momoout".equals(chargeType)) {
-
+            cashOutByMomo(callBackModel);
         } else if ("bank".equals(chargeType)) {
             ApproveDepositBankProcessor(callBackModel);
         } else if ("bankout".equals(chargeType)) {
-
+            cashOutByBank(callBackModel);
         } else if ("usdt".equals(chargeType)) {
 
         }
@@ -60,13 +67,72 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
     }
 
 
+    public String cashOutByMomo(CallBackModel callBackModel) {
+        CashoutDao cashoutDao = new CashoutDaoImpl();
+        UserWithdrawMomo userWithdraw = cashoutDao.FindCashoutMomoById(callBackModel.getChargeId());
+        if (userWithdraw == null) {
+            return "";
+        }
+        HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
+        HistoryTransModel historyTransModel = historyTransDao.findTransaction(callBackModel.getChargeId(), userWithdraw.Nickname, "RUT_BANK");
+        if (callBackModel.getStatus().equals("success")) {
+            cashoutDao.UpdateCashoutMomo(callBackModel.getChargeId(), CashoutUtil.STATUS_SUCCESS, "Auto_Bank");
+            historyTransModel.setTrangthai("Thành công");
+            historyTransModel.setGhiChu("Thành công");
+        } else {
+            UserServiceImpl userService = new UserServiceImpl();
+            long fee = userWithdraw.AmountReal - userWithdraw.Amount;
+            boolean refund = userService.refundWhenError(userWithdraw.Nickname, userWithdraw.AmountReal, fee);
+            cashoutDao.UpdateCashoutMomo(callBackModel.getChargeId(), CashoutUtil.STATUS_ERROR, "Auto_Bank");
+            historyTransModel.setTrangthai("Thất bại");
+            historyTransModel.setGhiChu("Thất bại");
+            if (!refund) {
+                return "";
+            }
+        }
+
+        return "true";
+    }
+
+    public String cashOutByBank(CallBackModel callBackModel) {
+        CashoutDao cashoutDao = new CashoutDaoImpl();
+        UserWithdraw userWithdraw = cashoutDao.FindCashoutBankById(callBackModel.getChargeId());
+        if (userWithdraw == null) {
+            return "";
+        }
+        HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
+        HistoryTransModel historyTransModel = historyTransDao.findTransaction(callBackModel.getChargeId(), userWithdraw.Username, "RUT_BANK");
+        if (historyTransModel == null) {
+            return "";
+        }
+        if (callBackModel.getStatus().equals("success")) {
+            historyTransModel.setTrangthai("Thành công");
+            historyTransModel.setGhiChu("Thành công");
+            cashoutDao.UpdateCashoutBank(callBackModel.getChargeId(), CashoutUtil.STATUS_SUCCESS, "Auto_Bank");
+        } else {
+            UserServiceImpl userService = new UserServiceImpl();
+            long fee = userWithdraw.AmountReal - userWithdraw.Amount;
+            boolean refund = userService.refundWhenError(userWithdraw.Username, userWithdraw.AmountReal, fee);
+            cashoutDao.UpdateCashoutMomo(callBackModel.getChargeId(), CashoutUtil.STATUS_ERROR, "Auto_Bank");
+            historyTransModel.setTrangthai("Thất bại");
+            historyTransModel.setGhiChu("Thất bại");
+            if (!refund) {
+                return "";
+            }
+        }
+
+        historyTransDao.updateTransaction(historyTransModel);
+
+        return "true";
+    }
+
     public String ApproveDepositMomoProcessor(CallBackModel callBackModel) {
         BaseResponseModel response = new BaseResponseModel(false, "1001");
         HistoryTransService historyTransService = new HistoryTransServiceImpl();
         try {
             String transId = callBackModel.getChargeId();
             int type;
-            if (callBackModel.getChargeType().equals("success")) {
+            if (callBackModel.getStatus().equals("success")) {
                 type = 0;
             } else {
                 type = 1;
@@ -128,7 +194,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
                 String transId = callBackModel.getChargeId();
 
                 int type;
-                if (callBackModel.getChargeType().equals("success")) {
+                if (callBackModel.getStatus().equals("success")) {
                     type = 0;
                 } else {
                     type = 1;
@@ -138,9 +204,10 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
 
                 RechargeDao dao = new RechargeDaoImpl();
 
-                RechargeServiceImpl rechargeService = new RechargeServiceImpl();
-                DepositBankModel trans = rechargeService.finMoMoDepositByTransactionId(transId);
-
+                DepositBankModel trans = dao.FindDepositBankById(transId);
+                if (trans == null) {
+                    return response.toJson();
+                }
 
                 // update trans in db
                 int status = type == 1 ? DvtConst.STATUS_APPROVE : DvtConst.STATUS_REJECT;
@@ -151,7 +218,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
                 if (type == 0) {
                     BroadCastUserMoney.pushBroadTime2(trans.getNickname());
                     response.setSuccess(true);
-                    historyTransService.update(transId, trans.getNickname(), HistoryTransConst.BANK, "T? ch?i", "Giao d?ch b? t? ch?i");
+                    historyTransService.update(transId, trans.getNickname(), HistoryTransConst.BANK, "Từ chối", "Giao dịch bị từ chối");
                     EventactionAdminObj model = new EventactionAdminObj();
                     model.setId(transId);
                     model.setStatus(2);
@@ -173,7 +240,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
                 }
                 HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
 
-                historyTransDao.insertTransaction(new HistoryTransModel(transId + "|" + "test bank", "CodePay", "N?p ti?n", "", "Th�nh c�ng", "N?p ti?n Th�nh c�ng ", trans.Nickname, HistoryTransConst.BANK, transId));
+                historyTransDao.insertTransaction(new HistoryTransModel(transId, "CodePay", "Nạp tiền", "", "Thành công", "N?p ti?n Thành công ", trans.Nickname, HistoryTransConst.BANK, transId));
 
                 updateMoneyCodePayMomoSun(transId, tien);
                 updateMoneyCodePayMomoSun2(transId, String.valueOf(tien));
@@ -197,6 +264,8 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
                 String codedl = nrg.getMaDaily(trans.Nickname);
                 NapRutModel napgame = new NapRutModel(transId, trans.getNickname(), codedl, tien, "Bank", trans.CreatedAt);
                 nrg.NapRut(napgame);
+                response.setErrorCode("200");
+                response.setSuccess(true);
                 return response.toJson();
             } catch (Exception e) {
                 return response.toJson();
@@ -236,25 +305,25 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
     String getTrangthai(int status) {
         switch (status) {
             case 1:
-                return "?ang x? l�";
+                return "Đang xử lý";
             case 2:
-                return "T? ch?i";
+                return "Từ chối";
             case 100:
-                return "Th�nh c�ng";
+                return "Thành công";
         }
-        return "?ang x? l�";
+        return "Đang xử lý";
     }
 
     String getTrangthaiDes(int status) {
         switch (status) {
             case 1:
-                return "H? th?ng ?ang x? l� giao d?ch c?a b?n";
+                return "Hệ thống đang xử lý";
             case 2:
-                return "Giao d?ch c?a b?n b? t? ch?i";
+                return "Giao dịch bị từ chối";
             case 100:
-                return "Giao d?ch th�nh c�ng Th�nh c�ng";
+                return "Giao dịch thành công";
         }
-        return "?ang x? l�";
+        return "Đang xử lý";
     }
 
     public void updateCodepay(String nickname, boolean use, String codepay, String bankname) {
@@ -300,7 +369,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
             MongoDatabase db = MongoDBConnectionFactory.getDB();
             MongoCollection col = db.getCollection("History_User_transaction");
             Document doc = new Document();
-            doc.append("trangthai", "Th�nh c�ng");
+            doc.append("trangthai", "Thành công");
             col.updateOne(new Document("transId", TrainID), new Document("$set", doc));
         } catch (Exception e) {
             e.printStackTrace();
