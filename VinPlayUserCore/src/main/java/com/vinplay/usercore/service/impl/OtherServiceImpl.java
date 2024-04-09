@@ -92,6 +92,13 @@ public class OtherServiceImpl implements OtherService {
     }
 
     @Override
+    public void saveExpenseTransaction(Document document) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection col = db.getCollection("expense_transaction");
+        col.insertOne(document);
+    }
+
+    @Override
     public TransactionFundResponse getTransactionFund(int pageIndex, int pageSize, String type, String startTime, String endTime, String fundName) {
         TransactionFundResponse response = new TransactionFundResponse(true, "0");
 

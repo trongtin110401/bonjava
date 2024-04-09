@@ -15,6 +15,8 @@ public interface OtherService {
 
     void saveTransactionUpdateFund(Document document);
 
+    void saveExpenseTransaction(Document document);
+
     TransactionFundResponse getTransactionFund(int pageIndex, int pageSize, String type, String startTime, String endTime, String fundName);
 }
 

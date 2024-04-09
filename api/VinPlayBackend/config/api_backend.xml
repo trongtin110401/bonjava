@@ -1742,5 +1742,10 @@
             <name>call back process</name>
             <path>com.vinplay.api.backend.processors.CallBackProcess</path>
         </command>
+        <command>
+            <id>11030</id>
+            <name>save expense</name>
+            <path>com.vinplay.api.backend.processors.ExpenseTransactionProcessor</path>
+        </command>
     </commands>
 </backend>
