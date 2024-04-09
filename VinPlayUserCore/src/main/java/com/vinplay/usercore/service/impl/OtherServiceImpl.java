@@ -10,9 +10,9 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.UpdateOptions;
 import com.vinplay.usercore.service.OtherService;
-import com.vinplay.vbee.common.dto.GiftCodeDto;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.response.LinkSocialResponse;
+import com.vinplay.vbee.common.response.TransactionExpenseResponse;
 import com.vinplay.vbee.common.response.TransactionFundResponse;
 import org.bson.Document;
 
@@ -147,6 +147,48 @@ public class OtherServiceImpl implements OtherService {
         response.setTotalWithdraw(totalWithdraw);
         response.setProfit(totalWithdraw - totalDeposit);
 
+        return response;
+    }
+
+    @Override
+    public TransactionExpenseResponse getTransactionExpense(int pageIndex, int pageSize, String type, String startTime, String endTime, String expense) {
+        TransactionExpenseResponse response = new TransactionExpenseResponse(true, "0");
+
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection col = db.getCollection("expense_transaction");
+
+        Document query = new Document();
+        int skip = (pageIndex - 1) * pageSize;
+        if ((startTime != null && !startTime.isEmpty()) && (endTime != null && !endTime.isEmpty())) {
+            query.append("time_log", new Document("$gte", startTime).append("$lte", endTime));
+        }
+        if (type != null && !type.isEmpty()) {
+            query.append("type", type);
+        }
+        if (expense != null && !expense.isEmpty()) {
+            query.append("expense", expense);
+        }
+        MongoCursor<Document> cursor = col.find(query).skip(skip).limit(pageSize).iterator();
+
+        long totalCount = col.count(query);
+
+        List<Document> transactions = new ArrayList<>();
+        double totalAmount = 0;
+        while (cursor.hasNext()) {
+            Document document = cursor.next();
+            Document fund = new Document();
+            fund.put("expense", document.getString("expense"));
+            fund.put("amount", document.getString("amount"));
+            totalAmount += Integer.parseInt(document.getString("amount"));
+            fund.put("type", document.getString("type"));
+            fund.put("createdTime", document.getString("time_log"));
+            transactions.add(fund);
+        }
+        response.setTransactions(transactions);
+        response.setTotal((int) totalCount);
+        response.setPageIndex(pageIndex);
+        response.setPageSize(pageSize);
+        response.setTotalExpense(totalAmount);
         return response;
     }
 }

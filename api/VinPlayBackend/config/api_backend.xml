@@ -1747,5 +1747,10 @@
             <name>save expense</name>
             <path>com.vinplay.api.backend.processors.ExpenseTransactionProcessor</path>
         </command>
+        <command>
+            <id>11031</id>
+            <name>get expense</name>
+            <path>com.vinplay.api.backend.processors.FindAllTransactionExpenseProcessor</path>
+        </command>
     </commands>
 </backend>
