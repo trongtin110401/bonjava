@@ -11,6 +11,9 @@ public class TransactionFundResponse extends BaseResponseModel {
     private int pageIndex;
 
     private int pageSize;
+    private double totalWithdraw;
+    private double totalDeposit;
+    private double profit;
 
     private List<Document> transactions;
 
@@ -48,6 +51,30 @@ public class TransactionFundResponse extends BaseResponseModel {
 
     public TransactionFundResponse(boolean success, String errorCode) {
         super(success, errorCode);
+    }
+
+    public double getTotalWithdraw() {
+        return totalWithdraw;
+    }
+
+    public void setTotalWithdraw(double totalWithdraw) {
+        this.totalWithdraw = totalWithdraw;
+    }
+
+    public double getTotalDeposit() {
+        return totalDeposit;
+    }
+
+    public void setTotalDeposit(double totalDeposit) {
+        this.totalDeposit = totalDeposit;
+    }
+
+    public double getProfit() {
+        return profit;
+    }
+
+    public void setProfit(double profit) {
+        this.profit = profit;
     }
 }
 

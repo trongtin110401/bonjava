@@ -81,7 +81,7 @@ public class OtherServiceImpl implements OtherService {
 
         Document update = new Document("$set", document);
         col.updateOne(filter, update, new UpdateOptions().upsert(true));
-}
+    }
 
 
     @Override
@@ -115,12 +115,20 @@ public class OtherServiceImpl implements OtherService {
         long totalCount = col.count(query);
 
         List<Document> transactions = new ArrayList<>();
+        double totalWithdraw = 0;
+        double totalDeposit = 0;
         while (cursor.hasNext()) {
             Document document = cursor.next();
             Document fund = new Document();
             fund.put("fundName", document.getString("fund_name"));
             fund.put("amount", document.getInteger("amount"));
             fund.put("type", document.getString("type"));
+            if (document.getString("type").equals("deposit")) {
+                totalDeposit += document.getInteger("amount");
+            } else {
+                totalWithdraw += document.getInteger("amount");
+            }
+
             fund.put("createdTime", document.getString("time_log"));
             transactions.add(fund);
         }
@@ -128,6 +136,9 @@ public class OtherServiceImpl implements OtherService {
         response.setTotal((int) totalCount);
         response.setPageIndex(pageIndex);
         response.setPageSize(pageSize);
+        response.setTotalDeposit(totalDeposit);
+        response.setTotalWithdraw(totalWithdraw);
+        response.setProfit(totalWithdraw - totalDeposit);
 
         return response;
     }
