@@ -9,7 +9,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class CallAutoTransMomo {
-    public String CallAPI(UserWithdrawMomo uwd, String urlCallBack) {
+    public String CallAPI(UserWithdrawMomo uwd) {
         try {
             String phoneNumber = uwd.PhoneNumber;
             String amount = uwd.Amount + "";
@@ -19,7 +19,7 @@ public class CallAutoTransMomo {
             String url = autoBank.getUrl() + ":" + autoBank.getPort() + autoBank.getApiChargeOut()
                     + "?apiKey=" + autoBank.getApiKey() + "&account="
                     + phoneNumber + "&amount=" + amount + "&signature=" + signature
-                    + "&requestId=" + TransId + "&msg=" + TransId + "&callback=" + urlCallBack;
+                    + "&requestId=" + TransId + "&msg=" + TransId;
             return APIProcess.responseGetAPI(url, null);
 
         } catch (Exception e) {

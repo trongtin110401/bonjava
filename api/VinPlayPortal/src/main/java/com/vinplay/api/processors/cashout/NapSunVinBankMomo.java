@@ -94,7 +94,7 @@ public class NapSunVinBankMomo {
             String url = autoBank.getUrl() + ":" + autoBank.getPort() + autoBank.getApiRegCharge()
                     + "?apiKey=" + autoBank.getApiKey() + "&chargeType="+type+"&amount="+amount+
                     "&requestId="+requestId+"&subType="+bankCode+
-                    "&callback=https://iwspay.apisieunhangao.net/api/bank/xxxxfaddf2wefdasdf&sign="+sign;
+                    "&sign="+sign;
             Request request = new Request.Builder()
                     .url(url)
                     .method("GET", null)
