@@ -19,7 +19,7 @@ public class TelegramAlert {
     public static boolean SendMessageRut(String message) {
         try {
             TelegramUtil telegramUtil = new TelegramUtil();
-            telegramUtil.sendMessageNap(message);
+            telegramUtil.sendMessageRut(message);
         } catch (Exception e) {
             return false;
         }
@@ -33,7 +33,7 @@ public class TelegramAlert {
             message += "\n Ngân hàng: <b>" + userWithdraw.BankName + "</b>";
             message += "\nTên tài khoản <b>" + userWithdraw.BankAccountName + "</b>";
             message += "\n Số tài khoản: <b>" + userWithdraw.BankAccountNumber + "</b>";
-            return SendMessageNap(message);
+            return SendMessageRut(message);
         } catch (Exception e) {
             return false;
         }
@@ -57,7 +57,7 @@ public class TelegramAlert {
             String message = "<b>Yêu cầu rút tiền Momo từ User " + userWithdraw.Nickname + "</b>";
             message += "\n Số tiền <b>" + userWithdraw.Amount + "</b>";
             message += "\n Số điện thoại nhận : <b>" + userWithdraw.PhoneNumber + "</b>";
-            return SendMessageNap(message);
+            return SendMessageRut(message);
         } catch (Exception e) {
             return false;
         }
