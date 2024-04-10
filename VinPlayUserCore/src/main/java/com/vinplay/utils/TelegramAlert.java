@@ -4,64 +4,85 @@ import com.vinplay.dichvuthe.entities.DepositBankModel;
 import com.vinplay.dichvuthe.entities.DepositMomoModel;
 import com.vinplay.payment.entities.UserWithdraw;
 import com.vinplay.payment.entities.UserWithdrawMomo;
-import com.vinplay.usercore.utils.GameCommon;
-
-import java.net.URLEncoder;
 
 public class TelegramAlert {
-    public static boolean SendMessage(String message){
-        try{
-            String messageEncode = URLEncoder.encode(message);
+    public static boolean SendMessageNap(String message) {
+        try {
             TelegramUtil telegramUtil = new TelegramUtil();
-            telegramUtil.sendMessageNapRut(messageEncode);
-        }catch (Exception e){
+            telegramUtil.sendMessageNap(message);
+        } catch (Exception e) {
             return false;
         }
         return true;
     }
-    public static boolean SendMessageCashout(UserWithdraw userWithdraw){
-        try{
+
+    public static boolean SendMessageRut(String message) {
+        try {
+            TelegramUtil telegramUtil = new TelegramUtil();
+            telegramUtil.sendMessageNap(message);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean SendMessageCashout(UserWithdraw userWithdraw) {
+        try {
             String message = "<b>Yêu cầu rút tiền từ User " + userWithdraw.Username + "</b>";
-            message += "\n Số tiền <b>"+ userWithdraw.Amount+ "</b>";
-            message += "\n Ngân hàng: <b>"+ userWithdraw.BankName+ "</b>";
-            message += "\nTên tài khoản <b>"+ userWithdraw.BankAccountName+ "</b>";
-            message += "\n Số tài khoản: <b>"+ userWithdraw.BankAccountNumber+ "</b>";
-            return SendMessage(message);
-        }catch (Exception e){
+            message += "\n Số tiền <b>" + userWithdraw.Amount + "</b>";
+            message += "\n Ngân hàng: <b>" + userWithdraw.BankName + "</b>";
+            message += "\nTên tài khoản <b>" + userWithdraw.BankAccountName + "</b>";
+            message += "\n Số tài khoản: <b>" + userWithdraw.BankAccountNumber + "</b>";
+            return SendMessageNap(message);
+        } catch (Exception e) {
             return false;
         }
     }
-    public static boolean SendMessageDepositBank(DepositBankModel model){
-        try{
-            String message = "<b>Yêu cầu nạp tiền qua bank  từ User " + model.Nickname+ "</b>";
-            message += "\n Số tiền <b>"+ model.Amount+ "</b>";
-            message += "\n Ngân hàng: <b>"+ model.BankBrandName+ "</b>";
-            message += "\n Tên tài khoản <b>"+ model.BankAccountName+ "</b>";
-            message += "\n Số tài khoản: <b>"+ model.BankAccountNumber+ "</b>";
-            return SendMessage(message);
-        }catch (Exception e){
+
+    public static boolean SendMessageDepositBank(DepositBankModel model) {
+        try {
+            String message = "<b>Yêu cầu nạp tiền qua bank  từ User " + model.Nickname + "</b>";
+            message += "\n Số tiền <b>" + model.Amount + "</b>";
+            message += "\n Ngân hàng: <b>" + model.BankBrandName + "</b>";
+            message += "\n Tên tài khoản <b>" + model.BankAccountName + "</b>";
+            message += "\n Số tài khoản: <b>" + model.BankAccountNumber + "</b>";
+            return SendMessageNap(message);
+        } catch (Exception e) {
             return false;
         }
     }
-    public static boolean SendMessageCashoutMomo(UserWithdrawMomo userWithdraw){
-        try{
+
+    public static boolean SendMessageCashoutMomo(UserWithdrawMomo userWithdraw) {
+        try {
             String message = "<b>Yêu cầu rút tiền Momo từ User " + userWithdraw.Nickname + "</b>";
-            message += "\n Số tiền <b>"+ userWithdraw.Amount+ "</b>";
-            message += "\n Số điện thoại nhận : <b>"+ userWithdraw.PhoneNumber+ "</b>";
-            return SendMessage(message);
-        }catch (Exception e){
+            message += "\n Số tiền <b>" + userWithdraw.Amount + "</b>";
+            message += "\n Số điện thoại nhận : <b>" + userWithdraw.PhoneNumber + "</b>";
+            return SendMessageNap(message);
+        } catch (Exception e) {
             return false;
         }
     }
 
-    public static boolean  SendMessageDepositMomo(DepositMomoModel model){
-        try{
-            String message = "Yêu cầu nạp tiền qua momo  từ User <b>" + model.Nickname+ "</b>";
-            message += "\n Số tiền <b>"+ model.Amount+ "</b>";
-            message += "\n Số điện thoại: <b>"+ model.ReceivedPhoneNumber+ "</b>";
+    public static boolean SendMessageDepositMomo(DepositMomoModel model) {
+        try {
+            String message = "Yêu cầu nạp tiền qua momo  từ User <b>" + model.Nickname + "</b>";
+            message += "\n Số tiền <b>" + model.Amount + "</b>";
+            message += "\n Số điện thoại: <b>" + model.ReceivedPhoneNumber + "</b>";
 
-            return SendMessage(message);
-        }catch (Exception e){
+            return SendMessageNap(message);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public static boolean SendMessageDepositMomo(DepositBankModel model) {
+        try {
+            String message = "Yêu cầu nạp tiền qua momo  từ User <b>" + model.Nickname + "</b>";
+            message += "\n Số tiền <b>" + model.Amount + "</b>";
+            message += "\n Số điện thoại: <b>" + model.getBankAccountNumber() + "</b>";
+
+            return SendMessageNap(message);
+        } catch (Exception e) {
             return false;
         }
     }

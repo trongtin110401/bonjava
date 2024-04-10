@@ -57,13 +57,4 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
         return userExtraService.getModelFromToken(accessToken).getNickname();
     }
 
-    public void sendMessage(String message) {
-        try {
-            String messageEncode = URLEncoder.encode(message);
-            TelegramUtil telegramUtil = new TelegramUtil();
-            telegramUtil.sendMessageNapRut(messageEncode);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }

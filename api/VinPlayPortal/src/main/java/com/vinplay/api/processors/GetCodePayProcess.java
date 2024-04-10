@@ -11,7 +11,6 @@ import com.vinplay.dichvuthe.dao.impl.RechargeDaoImpl;
 import com.vinplay.dichvuthe.entities.DepositBankModel;
 import com.vinplay.dichvuthe.service.impl.RechargeServiceImpl;
 import com.vinplay.dichvuthe.utils.DvtConst;
-import com.vinplay.lognaprut.HistoryTransConst;
 import com.vinplay.lognaprut.service.HistoryTransService;
 import com.vinplay.lognaprut.service.impl.HistoryTransServiceImpl;
 import com.vinplay.usercore.service.UserExtraService;
@@ -43,7 +42,7 @@ public class GetCodePayProcess implements BaseProcessor<HttpServletRequest, Stri
             String accessToken = request.getParameter("at");
             String nickName = this.getUserNameByAccessToken(accessToken);
             TelegramUtil telegramUtil = new TelegramUtil();
-            telegramUtil.sendMessageNapRut(nickName + " Thực hiện nạp tiền qua Bank");
+            telegramUtil.sendMessageNap(nickName + " Thực hiện nạp tiền qua Bank");
             String bankcode = "";
             if (bank.equalsIgnoreCase("techcombank")) {
                 bankcode = "10040";

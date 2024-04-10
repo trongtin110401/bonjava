@@ -47,7 +47,6 @@ import java.util.LinkedList;
 public class CashOutByBankProcessor implements BaseProcessor<HttpServletRequest, String> {
     private static final Logger logger = Logger.getLogger((String) "backend");
     private static final int MAX_ITEM = 15;
-    private static final String URL_CALL_BACK = "https://lunglinhlalenluons.store/api?c=4009";
     private static LinkedList<BlockByTran> listTranBlock = new LinkedList<BlockByTran>();
 
     public synchronized String execute(Param<HttpServletRequest> param) {
@@ -109,7 +108,7 @@ public class CashOutByBankProcessor implements BaseProcessor<HttpServletRequest,
                 UserServiceImpl userService = new UserServiceImpl();
                 if (status.equals(CashoutUtil.STATUS_SENDING)) {
                     CallAutoTransBank callBank = new CallAutoTransBank();
-                    String output = callBank.CallAPI(userWithdraw, URL_CALL_BACK); //Product
+                    String output = callBank.CallAPI(userWithdraw); //Product
                     JSONObject jsonObject = new JSONObject(output);
                     if (jsonObject.get("ex_stt").equals("-2.3")) {
                         this.sendMesToAdmin(transid, 3);

@@ -5,12 +5,12 @@ import com.mongodb.Block;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.vinplay.api.processors.cashout.GenCommentBank;
 import com.vinplay.api.processors.cashout.NapSunVinBankMomo;
 import com.vinplay.dichvuthe.entities.DepositBankModel;
 import com.vinplay.dichvuthe.service.impl.RechargeServiceImpl;
 import com.vinplay.usercore.service.UserExtraService;
 import com.vinplay.usercore.service.impl.UserExtraServiceImpl;
+import com.vinplay.utils.TelegramAlert;
 import com.vinplay.utils.TelegramUtil;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
@@ -29,6 +29,7 @@ import java.util.HashMap;
 
 public class GetMomoSunProcress implements BaseProcessor<HttpServletRequest, String> {
     private static final Logger logger = Logger.getLogger((String) "api");
+
     public synchronized String execute(Param<HttpServletRequest> param) {
         try {
             HttpServletRequest request = (HttpServletRequest) param.get();
@@ -39,14 +40,14 @@ public class GetMomoSunProcress implements BaseProcessor<HttpServletRequest, Str
             String nickname = this.getUserNameByAccessToken(accessToken);
             DepositBankModel depositBankModel = rechargeService.finMoMoDeposit(nickname);
             SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            if(depositBankModel != null) {
+            if (depositBankModel != null) {
                 Date currentDate = new Date();
                 Date dateCreate = sim.parse(depositBankModel.getCreatedAt());
-                Long time_con = (currentDate.getTime() - dateCreate.getTime())/1000;
-                if(time_con > 720) {
+                Long time_con = (currentDate.getTime() - dateCreate.getTime()) / 1000;
+                if (time_con > 720) {
                     //qua thoi gian
                     rechargeService.cancelMomoById(depositBankModel.getId());
-                }else {
+                } else {
                     //con han
                     BankPartnerModel requestTaoCode = new BankPartnerModel();
                     requestTaoCode.id = Integer.parseInt(depositBankModel.getId());
@@ -63,13 +64,12 @@ public class GetMomoSunProcress implements BaseProcessor<HttpServletRequest, Str
 
                 }
             }
-            TelegramUtil telegramUtil = new TelegramUtil();
-            telegramUtil.sendMessageNapRut(nickname + " Thực hiện yêu cầu nạp tiền qua momo");
+            TelegramAlert.SendMessageDepositMomo(depositBankModel);
             NapSunVinBankMomo napsun = new NapSunVinBankMomo();
             String TranID = String.valueOf(VinPlayUtils.generateTransId());
             BankPartnerModel requestTaoCode = napsun.sendBenThuBaTaoCodePay("momo", "momo", 1, TranID);
             RechargeServiceImpl reg = new RechargeServiceImpl();
-            reg.rechargeByAutoMomo(nickname,  requestTaoCode, TranID);
+            reg.rechargeByAutoMomo(nickname, requestTaoCode, TranID);
             return requestTaoCode.toJson();
         } catch (Exception e) {
             e.printStackTrace();

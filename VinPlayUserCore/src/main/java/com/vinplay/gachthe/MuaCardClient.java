@@ -142,7 +142,7 @@ public class MuaCardClient {
             sCardType = "mobi";
         }
         String endpoint = "https://muacard.vn/api/charging?api_key="+ PartnerConfig.MuaCardSecretKey +"&code="+ pin +"&serial="+ seri +"&charge_type=1&amount="
-                    + amount +"&trans_id=" + transId + "&provider=" + sCardType + "&callback=" + PartnerConfig.MuaCardCallback;
+                    + amount +"&trans_id=" + transId + "&provider=" + sCardType;
         URL url = new URL(endpoint);
         HttpURLConnection request = (HttpURLConnection)url.openConnection();
         request.setConnectTimeout(90000);

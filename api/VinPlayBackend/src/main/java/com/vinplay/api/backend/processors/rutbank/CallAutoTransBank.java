@@ -12,7 +12,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class CallAutoTransBank {
-    public String CallAPI(UserWithdraw uwd, String urlCallBack) {
+    public String CallAPI(UserWithdraw uwd) {
         try {
             String BankName = uwd.BankName;
             String bankAccountName = uwd.BankAccountName;
@@ -25,7 +25,7 @@ public class CallAutoTransBank {
             String url = autoBank.getUrl() + ":" + autoBank.getPort() + autoBank.getApiChargeOut()
                     + "?apiKey=" + autoBank.getApiKey() + "&bank_code=" + BankName + "&bank_account="
                     + bankAccount + "&bank_accountName=" + bankAccountName + "&amount=" + amount + "&signature=" + signature
-                    + "&requestId=" + TransId + "&msg=" + TransId + "&callback=" + urlCallBack;
+                    + "&requestId=" + TransId + "&msg=" + TransId;
             ;
             return APIProcess.responseGetAPI(url, null);
 
