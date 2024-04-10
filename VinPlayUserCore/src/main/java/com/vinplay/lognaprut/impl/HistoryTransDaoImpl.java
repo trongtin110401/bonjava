@@ -26,7 +26,6 @@ public class HistoryTransDaoImpl implements HistoryTransDao {
     @Override
     public void insertTransaction(HistoryTransModel historyTransModel) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
-        InsertELK elk = new InsertELK();
         MongoCollection col = db.getCollection("History_User_transaction");
         Document doc = new Document();
         long idelk = VinPlayUtils.generateTransId();
@@ -43,8 +42,6 @@ public class HistoryTransDaoImpl implements HistoryTransDao {
         doc.append("transId", historyTransModel.transId);
         doc.append("createAt", timeAt);
         col.insertOne(doc);
-//        elk.InsertHistoryUserTransOK(historyTransModel, idelk, timeAt);
-
     }
 
     @Override

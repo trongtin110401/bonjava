@@ -55,8 +55,5 @@ public class StringUtils {
         }
         return true;
     }
-    public static boolean validateAlphabet(String target){
-        return validateRegex("^[A-Za-z0-9 ]+$",target);
-    }
 }
 

@@ -2320,10 +2320,10 @@ public class UserServiceImpl
                 response.setErrorCode("5");
                 return response;
             }
-            if (!StringUtils.validateAlphabet(userWithdraw.BankAccountName) || !StringUtils.validateAlphabet(userWithdraw.BankAccountNumber) || !StringUtils.validateAlphabet(userWithdraw.BankName)) {
-                response.setErrorCode("5");
-                return response;
-            }
+//            if (!StringUtils.validateAlphabet(userWithdraw.BankAccountName) || !StringUtils.validateAlphabet(userWithdraw.BankAccountNumber) || !StringUtils.validateAlphabet(userWithdraw.BankName)) {
+//                response.setErrorCode("5");
+//                return response;
+//            }
 
 
             int minCashout = GameCommon.getValueInt("CASHOUT_BANK_MIN");
@@ -2420,10 +2420,10 @@ public class UserServiceImpl
                 response.setErrorCode("5");
                 return response;
             }
-            if (!StringUtils.validateAlphabet(userWithdrawMomo.PhoneNumber)) {
-                response.setErrorCode("5");
-                return response;
-            }
+//            if (!StringUtils.validateAlphabet(userWithdrawMomo.PhoneNumber)) {
+//                response.setErrorCode("5");
+//                return response;
+//            }
             int minCashout = GameCommon.getValueInt("CASHOUT_MOMO_MIN");
             if (userWithdrawMomo.Amount < minCashout) {
 

@@ -4,6 +4,7 @@ import com.vinplay.dichvuthe.entities.DepositBankModel;
 import com.vinplay.dichvuthe.entities.DepositMomoModel;
 import com.vinplay.payment.entities.UserWithdraw;
 import com.vinplay.payment.entities.UserWithdrawMomo;
+import com.vinplay.vbee.common.dto.UseGiftCodeDto;
 
 public class TelegramAlert {
     public static boolean SendMessageNap(String message) {
@@ -75,6 +76,18 @@ public class TelegramAlert {
         }
     }
 
+
+    public static boolean SendMessageDepositGiftCode(UseGiftCodeDto userGiftCode) {
+        try {
+            String message = "Thực hiện nạp tiền qua giftcode  từ User <b>" + userGiftCode.getNickname() + "</b>";
+            message += "\n Số tiền <b>" + userGiftCode.getPrice() + "</b>";
+            message += "\n mã code: <b>" + userGiftCode.getCode() + "</b>";
+
+            return SendMessageNap(message);
+        } catch (Exception e) {
+            return false;
+        }
+    }
     public static boolean SendMessageDepositMomo(DepositBankModel model) {
         try {
             String message = "Yêu cầu nạp tiền qua momo  từ User <b>" + model.Nickname + "</b>";

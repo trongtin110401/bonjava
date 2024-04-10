@@ -7,13 +7,11 @@ import com.vinplay.usercore.service.UserExtraService;
 import com.vinplay.usercore.service.UserService;
 import com.vinplay.usercore.service.impl.UserExtraServiceImpl;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
-import com.vinplay.utils.TelegramUtil;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.response.BaseResponseModel;
 
 import javax.servlet.http.HttpServletRequest;
-import java.net.URLEncoder;
 
 public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, String> {
     private UserService userService = new UserServiceImpl();
