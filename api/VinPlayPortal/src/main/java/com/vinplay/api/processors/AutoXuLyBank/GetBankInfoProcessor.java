@@ -5,6 +5,8 @@ import com.vinplay.common.notification.SendToWS;
 import com.vinplay.dichvuthe.dao.impl.RechargeDaoImpl;
 import com.vinplay.dichvuthe.entities.DepositBankModel;
 import com.vinplay.dichvuthe.utils.DvtConst;
+import com.vinplay.utils.TelegramAlert;
+import com.vinplay.utils.TelegramUtil;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
@@ -14,8 +16,6 @@ import org.json.simple.parser.ParseException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.UUID;
 
@@ -63,9 +63,11 @@ public class GetBankInfoProcessor implements BaseProcessor<HttpServletRequest, S
                 + "?apiKey=" + autoBank.getApiKey() + "&chargeType=" + chargeType + "&amount=" + amount + "&subType=" + subType + "&requestId=" + UUID.randomUUID();
         depositBankModel = processResponse(APIProcess.responseGetAPI(url, null), nickName);
         rechargeDao.InsertDepositBankManual(depositBankModel);
+
         NotificationAdminObj obj = new NotificationAdminObj();
         obj.setNapBank(true);
         try {
+            TelegramAlert.SendMessageDepositBank(depositBankModel);
             SendToWS.sendBEExcRechargebybank(depositBankModel);
             SendToWS.sendBEExcNotification(obj);
         } catch (Exception e) {
@@ -116,12 +118,12 @@ public class GetBankInfoProcessor implements BaseProcessor<HttpServletRequest, S
 
             Date now = new Date();
 
-            boolean isExpired = now.getTime() - createdAt.getTime() > 900000; // 900 gi‚y = 900000 mili gi‚y
+            boolean isExpired = now.getTime() - createdAt.getTime() > 900000; // 900 gi√¢y = 900000 mili gi√¢y
 
             if (isExpired) {
-                System.out.println("?„ qu· 900 gi‚y.");
+                System.out.println("?√£ qu√° 900 gi√¢y.");
             } else {
-                System.out.println("Ch?a qu· 900 gi‚y.");
+                System.out.println("Ch?a qu√° 900 gi√¢y.");
             }
         } catch (Exception e) {
             e.printStackTrace();
