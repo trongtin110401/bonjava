@@ -29,6 +29,7 @@ import com.vinplay.payment.entities.UserWithdraw;
 import com.vinplay.payment.entities.UserWithdrawMomo;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.usercore.utils.GameCommon;
+import com.vinplay.utils.TelegramAlert;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
@@ -174,7 +175,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
                 long totalFee = Math.round(tien - amount);
                 totalFee = totalFee > 0 ? totalFee : 0;
                 response = service.updateMoneyFromAdmin(trans.Nickname, tien, "vin", Consts.RECHARGE_BY_MOMO, "Deposit Momo", "Deposit Momo", totalFee);
-
+                TelegramAlert.SendMessageDepositMomo(trans);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -257,6 +258,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                TelegramAlert.SendMessageDepositBank(trans);
                 BroadCastUserMoney.pushBroadCast(trans.getNickname());
                 BroadCastUserMoney.pushBroadTime(trans.getNickname());
                 updateCodepay(trans.getNickname(), true, trans.getDescription(), trans.getBankBrandName());

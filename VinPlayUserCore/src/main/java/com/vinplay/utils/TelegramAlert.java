@@ -44,7 +44,7 @@ public class TelegramAlert {
         try {
             String message = "<b>Yêu cầu nạp tiền qua bank  từ User " + model.Nickname + "</b>";
             message += "\n Số tiền <b>" + model.Amount + "</b>";
-            message += "\n Ngân hàng: <b>" + model.BankBrandName + "</b>";
+            message += "\n Ngân hàng: <b>" + model.getSubType() + "</b>";
             message += "\n Tên tài khoản <b>" + model.BankAccountName + "</b>";
             message += "\n Số tài khoản: <b>" + model.BankAccountNumber + "</b>";
             return SendMessageNap(message);
