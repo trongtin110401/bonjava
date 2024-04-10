@@ -77,7 +77,7 @@ public class CashoutByMomoProcess implements BaseProcessor<HttpServletRequest, S
                 if (!userWithdraw.Status.equals(CashoutUtil.STATUS_PENDING)) {
                     this.sendMesToAdmin(transid, 102);
                     CallAutoTransMomo callAutoTransMomo = new CallAutoTransMomo();
-                    String output = callAutoTransMomo.CallAPI(userWithdraw, URL_CALL_BACK); //Product
+                    String output = callAutoTransMomo.CallAPI(userWithdraw); //Product
                     Gson gson = new Gson();
                     JsonObject jsonObject = gson.fromJson(output, JsonObject.class);
                     if (jsonObject.get("ex_stt").equals("-2.3")) {
