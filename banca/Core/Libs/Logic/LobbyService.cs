@@ -2953,7 +2953,7 @@ namespace BanCa.Libs
                     string urlCallBack = "http://123.31.12.133:8080/bancaapi/push247callback";
                     const string apiKey = "ec8eed35d7434e541842c22b723ae378";
                     string type = telCode; // vt, mb, vn
-                    string param = "apiKey=" + apiKey + "&type=" + type + "&code=" + code + "&serial=" + serial + "&money=" + money + "&tranid=" + tranID + "&realtime=false";
+                    string param = "apiKey=" + apiKey + "&type=" + type + "&code=" + code + "&serial=" + serial + "&money=" + money + "&callbackurl=" + urlCallBack + "&tranid=" + tranID + "&realtime=false";
                     string response = await EpicApi.Get(urlPush, param, apiKey);
 
                     var jdata = JSON.Parse(response);
