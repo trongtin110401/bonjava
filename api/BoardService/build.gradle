@@ -13,7 +13,10 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
     implementation group: 'org.redisson', name: 'redisson', version: '3.25.2'
+    implementation group: 'org.telegram', name: 'telegrambots', version: '6.9.7.1'
+    implementation group: 'org.mongodb', name: 'mongo-java-driver', version: '3.12.14'
     compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.20'
     annotationProcessor 'org.projectlombok:lombok:1.18.30'
 }
