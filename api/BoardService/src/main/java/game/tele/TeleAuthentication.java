@@ -151,7 +151,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
         document.put("nickname", nickname);
         document.put("chatID", chatId);
         document.put("phoneNumber", "");
-        document.put("isActive", false);
+        document.put("isActive", true);
         document.put("otp", "");
         document.put("timeToExpired", 0);
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
