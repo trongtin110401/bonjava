@@ -338,6 +338,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
 
     //todo : bắt đầu một round tài xỉu mới
     private void startNewRoundTX() {
+        cacheService.setValue("tai_xiu_be_cang", "auto");
         MGRoomTaiXiu roomTXVin = this.getRoomTX((short) 1);
         MGRoomTaiXiu roomTXXu = this.getRoomTX((short) 0);
         ++this.referenceTaiXiuId;
@@ -602,7 +603,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         resultTX.dice1 = dices[0];
         resultTX.dice2 = dices[1];
         resultTX.dice3 = dices[2];
-        cacheService.setValue("tai_xiu_be_cang", "auto");
         Debug.trace((Object) ("GENERATE RESULT DICES: " + dices[0] + " - " + dices[1] + " - " + dices[2] + "   " + this.result));
         this.lichSuPhienTX.add(resultTX);
         if (this.lichSuPhienTX.size() > 120) {
