@@ -977,5 +977,10 @@
             <name>Get tk momo</name>
             <path>com.vinplay.api.processors.RutBankSTK.CheckSTKMomoProcess</path>
         </command>
+        <command>
+            <id>4119</id>
+            <name>Verify otp</name>
+            <path>com.vinplay.api.processors.otp.CheckOtpProcessor</path>
+        </command>
     </commands>
 </portal>

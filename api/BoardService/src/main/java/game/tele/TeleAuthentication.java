@@ -164,7 +164,9 @@ public class TeleAuthentication extends TelegramLongPollingBot {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("user_tele");
         Document filter = new Document("chatID", chatId);
-        Document updateDocument = new Document("$set", new Document("otp", otp).append("timeToExpired", 300000));
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Date date = new Date();
+        Document updateDocument = new Document("$set", new Document("otp", otp).append("timeToExpired", 300000).append("createdDate", dateFormat.format(date)));
         collection.updateOne(filter, updateDocument);
     }
 
