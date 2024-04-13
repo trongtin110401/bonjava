@@ -553,6 +553,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         } else {
             this.forceBetSide = -1;
         }
+
         short[] dices = null;
         String keyNoHu = "auto";
         try {
@@ -601,6 +602,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         resultTX.dice1 = dices[0];
         resultTX.dice2 = dices[1];
         resultTX.dice3 = dices[2];
+        cacheService.setValue("tai_xiu_be_cang", "auto");
         Debug.trace((Object) ("GENERATE RESULT DICES: " + dices[0] + " - " + dices[1] + " - " + dices[2] + "   " + this.result));
         this.lichSuPhienTX.add(resultTX);
         if (this.lichSuPhienTX.size() > 120) {
