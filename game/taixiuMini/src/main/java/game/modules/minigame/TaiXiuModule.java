@@ -497,7 +497,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         String keyBeCang = "auto";
         try {
             keyBeCang = cacheService.getValueStr("tai_xiu_be_cang");
-
+            Debug.info((Object) ("Key Be Cang ============== " + keyBeCang));
         } catch (Exception r) {
             sendLogToTele(r.getMessage());
             Debug.info("Loi get key becang");
