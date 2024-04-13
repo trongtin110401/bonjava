@@ -6,6 +6,7 @@ import com.vinplay.lognaprut.HistoryTransDao;
 import com.vinplay.lognaprut.entities.HistoryTransModel;
 import com.vinplay.lognaprut.impl.HistoryTransDaoImpl;
 import com.vinplay.usercore.service.impl.GiftCodeServiceImpl;
+import com.vinplay.utils.TelegramAlert;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.dto.GiftCodeDto;
@@ -59,8 +60,6 @@ public class UserNapGiftCodeProcessor
             giftCodeDto.setUsedTime(VinPlayUtils.getCurrentDateTime());
             giftCodeDto.setActive(false);
 
-
-
             UseGiftCodeDto userGiftCode = new UseGiftCodeDto();
 
             userGiftCode.setCode(code);
@@ -75,7 +74,7 @@ public class UserNapGiftCodeProcessor
             historyTransDao.insertTransaction(new HistoryTransModel("Nạp Tiền Từ Gift Code", "Hệ Thống",
                     "Nạp tiền", String.valueOf(giftCodeDto.getPrice()), "Thành công",code , nickName, "GIFT_CODE", UUID.randomUUID().toString()));
             userService.updateMoney(nickName, giftCodeDto.getPrice(), "vin", giftCodeDto.getType(), giftCodeDto.getType(), "Mã: " + code, 0L, null, TransType.NO_VIPPOINT);
-
+            TelegramAlert.SendMessageDepositGiftCode(userGiftCode);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }

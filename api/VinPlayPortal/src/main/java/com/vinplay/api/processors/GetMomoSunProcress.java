@@ -64,7 +64,6 @@ public class GetMomoSunProcress implements BaseProcessor<HttpServletRequest, Str
 
                 }
             }
-            TelegramAlert.SendMessageDepositMomo(depositBankModel);
             NapSunVinBankMomo napsun = new NapSunVinBankMomo();
             String TranID = String.valueOf(VinPlayUtils.generateTransId());
             BankPartnerModel requestTaoCode = napsun.sendBenThuBaTaoCodePay("momo", "momo", 1, TranID);

@@ -29,7 +29,7 @@ public class GetBankInfoProcessor implements BaseProcessor<HttpServletRequest, S
         String chargeType = request.getParameter("chargeType");
         String amount = request.getParameter("amount");
         String subType = request.getParameter("subType");
-        String nickName = request.getParameter("nickName");
+        String nickName = request.getParameter("nn");
 
         if (chargeType.isEmpty()) {
             return "{\"error\":400,\"data\":" + "chargeType invalid " + "}";
@@ -67,7 +67,6 @@ public class GetBankInfoProcessor implements BaseProcessor<HttpServletRequest, S
         NotificationAdminObj obj = new NotificationAdminObj();
         obj.setNapBank(true);
         try {
-            TelegramAlert.SendMessageDepositBank(depositBankModel);
             SendToWS.sendBEExcRechargebybank(depositBankModel);
             SendToWS.sendBEExcNotification(obj);
         } catch (Exception e) {
