@@ -593,7 +593,7 @@ public class TaiXiuModule
         Debug.info((Object) ("FORCE==============" + this.forceBetSide));
         String keyBeCang = "auto";
         try {
-            keyBeCang = cacheService.getValueStr("tai_xiu_be_cang");
+//            keyBeCang = cacheService.getValueStr("tai_xiu_be_cang");
 
         } catch (Exception r) {
             sendLogToTele(r.getMessage());
