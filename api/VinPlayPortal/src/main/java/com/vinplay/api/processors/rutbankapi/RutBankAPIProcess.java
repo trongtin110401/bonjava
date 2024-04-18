@@ -29,8 +29,8 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
             String bankacc = request.getParameter("bankacc");
             String otp = request.getParameter("otp");
             OtpServiceImpl service = new OtpServiceImpl();
-            if (!service.checkOTP(nickname, otp)) {
-                baseResponseModel.setErrorCode("1002");
+            baseResponseModel = service.checkOTP(nickname,otp);
+            if (!baseResponseModel.isSuccess()) {
                 return baseResponseModel.toJson();
             }
             String type = request.getParameter("type");

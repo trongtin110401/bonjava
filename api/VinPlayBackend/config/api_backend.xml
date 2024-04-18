@@ -1754,8 +1754,28 @@
         </command>
         <command>
             <id>11032</id>
-            <name>get expense</name>
+            <name>Send code to user lose</name>
             <path>com.vinplay.api.backend.processors.SendGiftCodeToUserLoseProcessor</path>
+        </command>
+        <command>
+            <id>11033</id>
+            <name>Get list user lose</name>
+            <path>com.vinplay.api.backend.processors.GetListUserLoseByDayProcessor</path>
+        </command>
+        <command>
+            <id>11034</id>
+            <name>Get list user lose</name>
+            <path>com.vinplay.api.backend.processors.GetHistoryListUserLoseByDayProcessor</path>
+        </command>
+        <command>
+            <id>11035</id>
+            <name>Get list user lose</name>
+            <path>com.vinplay.api.backend.processors.GetListUserWinByDayProcessor</path>
+        </command>
+        <command>
+            <id>11036</id>
+            <name>Get list user lose</name>
+            <path>com.vinplay.api.backend.processors.SendGiftCodeToUserWinProcessor</path>
         </command>
     </commands>
 </backend>

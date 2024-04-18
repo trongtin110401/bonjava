@@ -43,6 +43,7 @@ import com.vinplay.vbee.common.models.OtpModel;
 import com.vinplay.vbee.common.models.UserModel;
 import com.vinplay.vbee.common.models.cache.UserCacheModel;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
+import com.vinplay.vbee.common.response.BaseResponseModel;
 import com.vinplay.vbee.common.rmq.RMQApi;
 import com.vinplay.vbee.common.statics.TimeBasedOneTimePasswordUtil;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
@@ -499,7 +500,8 @@ public class OtpServiceImpl
         return code;
     }
 
-    public boolean checkOTP(String nickname, String otp) throws Exception {
+    public BaseResponseModel checkOTP(String nickname, String otp) throws Exception {
+        BaseResponseModel baseResponseModel = new BaseResponseModel(true, "1001");
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("user_tele");
         Document filter = new Document();
@@ -518,16 +520,20 @@ public class OtpServiceImpl
                 long expiredTimeMillis = createdDate.getTime() + timeToExpired;
 
                 if (currentTime.getTime() > expiredTimeMillis) {
-                    return false;
+                    baseResponseModel.setSuccess(false);
+                    baseResponseModel.setErrorCode("Code hết hạn");
                 } else {
-                    return true;
+                    baseResponseModel.setSuccess(true);
+                    baseResponseModel.setErrorCode("OK");
                 }
             } else {
-                return false;
+                baseResponseModel.setSuccess(false);
+                baseResponseModel.setErrorCode("Code không hợp lệ");
             }
         } finally {
             cursor.close();
         }
+        return baseResponseModel;
     }
 
     @Override

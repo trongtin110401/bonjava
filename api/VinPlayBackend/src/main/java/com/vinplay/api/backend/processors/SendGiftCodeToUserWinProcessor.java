@@ -33,22 +33,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServletRequest, String> {
+public class SendGiftCodeToUserWinProcessor implements BaseProcessor<HttpServletRequest, String> {
 
     public String execute(Param<HttpServletRequest> param) {
         HttpServletRequest request = param.get();
         String timeStart = request.getParameter("timeStart");
         String timeEnd = request.getParameter("timeEnd");
         String message = request.getParameter("message");
-        long percent;
+        String nickname = request.getParameter("nickname");
+
+        int price;
         try {
-            percent = Long.parseLong(request.getParameter("percent"));
+            price = Integer.parseInt(request.getParameter("price"));
         } catch (Exception e) {
-            percent = 3;
+            price = 50000;
         }
         LogMoneyUserDaoImpl dao = new LogMoneyUserDaoImpl();
         Map<String, Long> users = new HashMap<>();
-        List<LogUserMoneyResponse> list = dao.getLogMoneyUser(timeStart, timeEnd);
+        List<LogUserMoneyResponse> list = dao.getLogMoneyUserByNickname(timeStart, timeEnd, nickname);
 
         for (LogUserMoneyResponse response : list) {
             users.merge(response.nickName, response.moneyExchange, Long::sum);
@@ -56,10 +58,9 @@ public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServle
 
         OtherService otherService = new OtherServiceImpl();
         for (Map.Entry<String, Long> entry : users.entrySet()) {
-            if (entry.getValue() < 0) {
+            if (entry.getValue() > 0) {
                 UserTele userTele = otherService.getUserTeleInfoByNickname(entry.getKey());
                 if (userTele != null && userTele.getChatID() != null) {
-                    int price = (int) (entry.getValue() * percent / 100 * -1);
                     String giftCode = VinPlayUtils.genGiftCode(10);
                     String content = message + " : " + genCode(price, giftCode);
                     sendMessage(userTele.getChatID(), content);

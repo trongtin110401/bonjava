@@ -220,6 +220,48 @@ public class LogMoneyUserDaoImpl
         return results;
     }
 
+
+    public List<LogUserMoneyResponse> getLogMoneyUserByNickname(String timeStart, String timeEnd, String nickname) {
+        final ArrayList<LogUserMoneyResponse> results = new ArrayList<LogUserMoneyResponse>();
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        HashMap<String, Object> conditions = new HashMap<>();
+        FindIterable iterable;
+        BasicDBObject obj = new BasicDBObject();
+        conditions.put("is_bot", false);
+        if (timeStart != null && !timeStart.equals("") && timeEnd != null && !timeEnd.equals("")) {
+            try {
+                obj.put("$gte", VinPlayUtils.getDateTimeStr(VinPlayUtils.getDateTimeFromDate(timeStart + " 00:00:00")));
+                obj.put("$lte", VinPlayUtils.getDateTimeStr(VinPlayUtils.getDateTimeFromDate(timeEnd + " 23:59:59")));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
+            conditions.put("trans_time", obj);
+        }
+        if (!nickname.equals("")) {
+            conditions.put("nick_name", nickname);
+        }
+        iterable = db.getCollection("log_money_user_vin").find(new Document(conditions));
+
+        iterable.forEach((Block) new Block<Document>() {
+
+            public void apply(Document document) {
+                LogUserMoneyResponse tranlogmoney = new LogUserMoneyResponse();
+                tranlogmoney.nickName = document.getString((Object) "nick_name");
+                tranlogmoney.serviceName = document.getString((Object) "service_name");
+                tranlogmoney.currentMoney = document.getLong((Object) "current_money");
+                tranlogmoney.moneyExchange = document.getLong((Object) "money_exchange");
+                tranlogmoney.description = document.getString((Object) "description");
+                tranlogmoney.transactionTime = document.getString((Object) "trans_time");
+                tranlogmoney.actionName = document.getString((Object) "action_name");
+                tranlogmoney.fee = document.getLong((Object) "fee");
+                results.add(tranlogmoney);
+            }
+        });
+        return results;
+    }
+
     @Override
     public LogUserMoneyResponse searchLastLogMoneyUser(String nick_name, String type, ArrayList<String> agents) {
         final ArrayList<LogUserMoneyResponse> results = new ArrayList<LogUserMoneyResponse>();
