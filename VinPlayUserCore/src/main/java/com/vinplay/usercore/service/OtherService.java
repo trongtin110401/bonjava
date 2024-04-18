@@ -3,10 +3,7 @@
  */
 package com.vinplay.usercore.service;
 
-import com.vinplay.vbee.common.response.ExpenseInfoResponse;
-import com.vinplay.vbee.common.response.LinkSocialResponse;
-import com.vinplay.vbee.common.response.TransactionExpenseResponse;
-import com.vinplay.vbee.common.response.TransactionFundResponse;
+import com.vinplay.vbee.common.response.*;
 import org.bson.Document;
 
 public interface OtherService {
@@ -22,5 +19,8 @@ public interface OtherService {
     TransactionFundResponse getTransactionFund(int pageIndex, int pageSize, String type, String startTime, String endTime, String fundName);
 
     TransactionExpenseResponse getTransactionExpense(int pageIndex, int pageSize, String type, String startTime, String endTime, String expense);
+
+    UserTele getUserTeleInfoByNickname(String nickname);
+
 }
 

@@ -14,6 +14,7 @@ import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.response.LinkSocialResponse;
 import com.vinplay.vbee.common.response.TransactionExpenseResponse;
 import com.vinplay.vbee.common.response.TransactionFundResponse;
+import com.vinplay.vbee.common.response.UserTele;
 import org.bson.Document;
 
 import java.util.ArrayList;
@@ -190,6 +191,47 @@ public class OtherServiceImpl implements OtherService {
         response.setPageSize(pageSize);
         response.setTotalExpense(totalAmount);
         return response;
+    }
+
+    @Override
+    public UserTele getUserTeleInfoByNickname(String nickname) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("user_tele");
+        Document filter = new Document("nickname", nickname);
+        MongoCursor<Document> cursor = collection.find(filter).iterator();
+
+        try {
+            if (cursor.hasNext()) {
+                Document doc = cursor.next();
+                UserTele user = extractUserInfo(doc);
+                return user;
+            } else {
+                return null;
+            }
+        } finally {
+            cursor.close();
+        }
+    }
+
+    private UserTele extractUserInfo(Document doc) {
+        String id = doc.getObjectId("_id").toString();
+        String nickname = doc.getString("nickname");
+        String phoneNumber = doc.getString("phoneNumber");
+        boolean isActive = doc.getBoolean("isActive");
+        String otp = doc.getString("otp");
+        long timeToExpired = doc.getInteger("timeToExpired");
+        String createdDate = doc.getString("createdDate");
+        String chatID = doc.getString("chatID");
+        UserTele user = new UserTele();
+        user.setId(id);
+        user.setNickname(nickname);
+        user.setPhoneNumber(phoneNumber);
+        user.setActive(isActive);
+        user.setOtp(otp);
+        user.setTimeToExpired(timeToExpired);
+        user.setCreatedDate(createdDate);
+        user.setChatID(chatID);
+        return user;
     }
 }
 
