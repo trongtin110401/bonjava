@@ -78,7 +78,7 @@ public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServle
                 if (entry.getValue() < 0) {
                     UserTele userTele = otherService.getUserTeleInfoByNickname(entry.getKey());
                     if (userTele != null && userTele.getChatID() != null) {
-                        String content = message + " : Code " + genCode(entry.getValue());
+                        String content = message + " : " + genCode(entry.getValue());
                         sendMessage(userTele.getChatID(), content);
                     }
                 }
