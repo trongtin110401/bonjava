@@ -1777,5 +1777,10 @@
             <name>Get list user lose</name>
             <path>com.vinplay.api.backend.processors.SendGiftCodeToUserWinProcessor</path>
         </command>
+        <command>
+            <id>11037</id>
+            <name>Get list user lose</name>
+            <path>com.vinplay.api.backend.processors.report.GetFeeProcessor</path>
+        </command>
     </commands>
 </backend>
