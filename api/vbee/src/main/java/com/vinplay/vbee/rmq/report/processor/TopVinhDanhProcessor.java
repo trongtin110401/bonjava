@@ -30,7 +30,7 @@ public class TopVinhDanhProcessor {
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, topVinhDanh.toJson());
                 Request request = new Request.Builder()
-                        .url("http://45.76.178.154:8087/leaderboard?boardName")
+                        .url("http://localhost:8087/leaderboard?boardName")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();
