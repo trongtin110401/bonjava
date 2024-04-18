@@ -23,6 +23,7 @@ import com.vinplay.vbee.common.response.UserCodeReponse;
 import com.vinplay.vbee.common.response.UserTele;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
 import okhttp3.*;
+import org.bson.Document;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
@@ -30,70 +31,62 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServletRequest, String> {
 
     public String execute(Param<HttpServletRequest> param) {
-        UserCodeReponse userCodeResponse = new UserCodeReponse(false, "1001");
-        CompletableFuture<String> futureResult = process(param)
-                .exceptionally(e -> {
-                    e.printStackTrace();
-                    return userCodeResponse.toJson();
-                });
-        try {
-            return futureResult.get();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return userCodeResponse.toJson();
-    }
-
-
-    public CompletableFuture<String> process(Param<HttpServletRequest> param) {
         HttpServletRequest request = param.get();
         String timeStart = request.getParameter("timeStart");
         String timeEnd = request.getParameter("timeEnd");
         String message = request.getParameter("message");
+        long percent;
+        try {
+            percent = Long.parseLong(request.getParameter("percent"));
+        } catch (Exception e) {
+            percent = 3;
+        }
         LogMoneyUserDaoImpl dao = new LogMoneyUserDaoImpl();
         Map<String, Long> users = new HashMap<>();
+        List<LogUserMoneyResponse> list = dao.getLogMoneyUser(timeStart, timeEnd);
 
-        CompletableFuture<UserCodeReponse> userCodeResponseFuture = CompletableFuture.supplyAsync(() -> {
-            List<LogUserMoneyResponse> list = dao.getLogMoneyUser(timeStart, timeEnd);
+        for (LogUserMoneyResponse response : list) {
+            users.merge(response.nickName, response.moneyExchange, Long::sum);
+        }
 
-            for (LogUserMoneyResponse response : list) {
-                users.merge(response.nickName, response.moneyExchange, Long::sum);
-            }
-
-            OtherService otherService = new OtherServiceImpl();
-            for (Map.Entry<String, Long> entry : users.entrySet()) {
-                if (entry.getValue() < 0) {
-                    UserTele userTele = otherService.getUserTeleInfoByNickname(entry.getKey());
-                    if (userTele != null && userTele.getChatID() != null) {
-                        String content = message + " : " + genCode(entry.getValue());
-                        sendMessage(userTele.getChatID(), content);
-                    }
+        OtherService otherService = new OtherServiceImpl();
+        for (Map.Entry<String, Long> entry : users.entrySet()) {
+            if (entry.getValue() < 0) {
+                UserTele userTele = otherService.getUserTeleInfoByNickname(entry.getKey());
+                if (userTele != null && userTele.getChatID() != null) {
+                    int price = (int) (entry.getValue() * percent / 100 * -1);
+                    String giftCode = VinPlayUtils.genGiftCode(10);
+                    String content = message + " : " + genCode(price, giftCode);
+                    sendMessage(userTele.getChatID(), content);
+                    saveUserTeleCashBack(userTele, giftCode, price, entry.getValue());
                 }
             }
+        }
 
-            UserCodeReponse userCodeResponse = new UserCodeReponse(true, "200");
-            Map<String, Long> filteredUsers = users.entrySet().stream()
-                    .filter(entry -> entry.getValue() < 0)
-                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-            userCodeResponse.setUsers(filteredUsers);
-
-            return userCodeResponse;
-        });
-
-        CompletableFuture<String> jsonResponseFuture = userCodeResponseFuture.thenApplyAsync(UserCodeReponse::toJson);
-
-        return jsonResponseFuture.thenApplyAsync(json -> {
-            return json; // Return the JSON representation or process further if needed
-        });
+        UserCodeReponse userCodeResponse = new UserCodeReponse(true, "200");
+        Map<String, Long> filteredUsers = users.entrySet().stream()
+                .filter(entry -> entry.getValue() < 0)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        userCodeResponse.setUsers(filteredUsers);
+        return userCodeResponse.toJson();
     }
 
+    public void saveUserTeleCashBack(UserTele userTele, String code, int price, long money) {
+        OtherService otherService = new OtherServiceImpl();
+        Document document = new Document();
+        document.put("nickname", userTele.getNickname());
+        document.put("chatID", userTele.getChatID());
+        document.put("money", money);
+        document.put("code", code);
+        document.put("cashBack", price);
+        document.put("createdDate", VinPlayUtils.getCurrentDateTime());
+        otherService.saveUserTeleCashBack(document);
+    }
 
     public static void sendMessage(String chatId, String message) {
         try {
@@ -118,26 +111,23 @@ public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServle
         }
     }
 
-    public String genCode(long value) {
+    public String genCode(int price, String giftCode) {
         LocalDate currentDate = LocalDate.now();
         LocalDate newDate = currentDate.plusDays(10);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String expirationTime = newDate.format(formatter);
         String createdDate = currentDate.format(formatter);
-
         GiftCodeServiceImpl service = new GiftCodeServiceImpl();
-        String giftCode;
         GiftCodeDto giftCodeDto = new GiftCodeDto();
-        giftCode = VinPlayUtils.genGiftCode(10);
         giftCodeDto.setType(createdDate);
-        giftCodeDto.setPrice((int) (value * 0.3 * -1));
+        giftCodeDto.setPrice(price);
         giftCodeDto.setQuantity(1);
         giftCodeDto.setLength(10);
         giftCodeDto.setCreatedDate(createdDate);
         giftCodeDto.setExpirationTime(expirationTime);
         giftCodeDto.setCode(giftCode);
         giftCodeDto.setActive(true);
-        giftCodeDto.setExpirationDate(10);
+        giftCodeDto.setExpirationDate(3);
         service.saveGiftCode(giftCodeDto);
         return giftCode;
     }
