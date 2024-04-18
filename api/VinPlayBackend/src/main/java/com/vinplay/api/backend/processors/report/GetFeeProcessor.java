@@ -20,6 +20,7 @@
  */
 package com.vinplay.api.backend.processors.report;
 
+import com.vinplay.api.backend.response.FeeResponse;
 import com.vinplay.dal.dao.impl.ReportDaoImpl;
 import com.vinplay.dal.entities.report.ReportMoneySystemModel;
 import com.vinplay.vbee.common.cp.BaseProcessor;
@@ -32,7 +33,7 @@ public class GetFeeProcessor
         implements BaseProcessor<HttpServletRequest, String> {
 
     public String execute(Param<HttpServletRequest> param) {
-
+        FeeResponse feeResponse = new FeeResponse(false, "1001");
         HttpServletRequest request = param.get();
         String startTime = request.getParameter("ts");
         String endTime = request.getParameter("te");
@@ -46,9 +47,12 @@ public class GetFeeProcessor
             }
         } catch (Exception e) {
             e.printStackTrace();
+            return feeResponse.toJson();
         }
-
-        return String.valueOf(totalFee);
+        feeResponse.setTotalFee(totalFee);
+        feeResponse.setSuccess(true);
+        feeResponse.setErrorCode("Ok");
+        return feeResponse.toJson();
     }
 }
 
