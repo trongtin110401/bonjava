@@ -41,10 +41,8 @@ public class GetListUserLoseByDayProcessor implements BaseProcessor<HttpServletR
         String timeEnd = request.getParameter("timeEnd");
         LogMoneyUserDaoImpl dao = new LogMoneyUserDaoImpl();
 
-        // L?y danh sách LogUserMoneyResponse
         List<LogUserMoneyResponse> list = dao.getLogMoneyUser(timeStart, timeEnd);
 
-        // Tính t?ng ti?n m?t c?a t?ng ng??i và l?c ra nh?ng ng??i m?t ti?n
         List<UserLoseByDay> userLoseByDays = list.stream()
                 .collect(Collectors.groupingBy(LogUserMoneyResponse::getNickName,
                         Collectors.summingLong(LogUserMoneyResponse::getMoneyExchange)))
@@ -59,6 +57,7 @@ public class GetListUserLoseByDayProcessor implements BaseProcessor<HttpServletR
                 .collect(Collectors.toList());
 
         userCodeResponse.setUsers(userLoseByDays);
+        userCodeResponse.setTotalRecord(userLoseByDays.size());
 
         return userCodeResponse.toJson();
     }
