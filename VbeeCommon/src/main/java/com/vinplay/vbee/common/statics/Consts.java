@@ -149,7 +149,7 @@ public class Consts {
     public static final String VQVIP = "VQVIP";
     public static final String TAI_XIU = "TaiXiu";
     public static final String TAI_XIU_MD5 = "TaiXiuMd5";
-    public static final String BAU_CUA = "BauCua";
+    public static final String BAU_CUA = "BauCuaTo";
     public static final String MINI_POKER = "MiniPoker";
     public static final String CAO_THAP = "CaoThap";
     public static final String POKE_GO = "PokeGo";

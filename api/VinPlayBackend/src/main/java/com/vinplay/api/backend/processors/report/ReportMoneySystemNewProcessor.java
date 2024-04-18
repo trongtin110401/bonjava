@@ -99,7 +99,7 @@ implements BaseProcessor<HttpServletRequest, String> {
             //
             for(LogUserMoneyResponse log : list){
 
-                if(Consts.GAMES_SLOT.contains(log.actionName)){
+                if(Consts.GAMES.contains(log.actionName)){
                     listReport = processListGame(listReport, log);
                 }else if(Consts.VIN_IN_USER.contains(log.actionName)){
                     listUserIn = processListMoney(listUserIn, log);

@@ -338,7 +338,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
 
     //todo : bắt đầu một round tài xỉu mới
     private void startNewRoundTX() {
-        cacheService.setValue("tai_xiu_be_cang", "auto");
         MGRoomTaiXiu roomTXVin = this.getRoomTX((short) 1);
         MGRoomTaiXiu roomTXXu = this.getRoomTX((short) 0);
         ++this.referenceTaiXiuId;

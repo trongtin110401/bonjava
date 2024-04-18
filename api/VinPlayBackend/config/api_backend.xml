@@ -1752,5 +1752,10 @@
             <name>get expense</name>
             <path>com.vinplay.api.backend.processors.FindAllTransactionExpenseProcessor</path>
         </command>
+        <command>
+            <id>11032</id>
+            <name>get expense</name>
+            <path>com.vinplay.api.backend.processors.SendGiftCodeToUserLoseProcessor</path>
+        </command>
     </commands>
 </backend>
