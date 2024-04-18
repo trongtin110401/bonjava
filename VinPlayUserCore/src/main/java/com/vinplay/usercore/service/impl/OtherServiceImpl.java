@@ -245,7 +245,7 @@ public class OtherServiceImpl implements OtherService {
             userLoseByDay.setMoney(document.getLong("money"));
             userLoseByDay.setChatId(document.getString("chatID"));
             userLoseByDay.setCode(document.getString("code"));
-            userLoseByDay.setMoneyCashBack(document.getInteger("cashBack"));
+            userLoseByDay.setMoneyCashBack(document.getLong("cashBack"));
             users.add(userLoseByDay);
         }
         userLoseByDayResponse.setUsers(users);
