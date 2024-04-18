@@ -35,7 +35,7 @@ implements BaseProcessor<byte[], Boolean> {
                 addTopVinhDanh(message);
             }
             dao.saveTransactionTaiXiu(message);
-            saveToElk(message);
+//            saveToElk(message);
             logger.debug((Object)("Handle message : " + message.referenceId));
         }
         catch (Exception e) {

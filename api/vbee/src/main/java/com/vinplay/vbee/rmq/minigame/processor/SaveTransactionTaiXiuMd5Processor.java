@@ -36,7 +36,7 @@ public class SaveTransactionTaiXiuMd5Processor
             }
 
             dao.saveTransactionTaiXiu(message);
-            saveToElk(message);
+//            saveToElk(message);
             logger.debug((Object) ("Handle message : " + message.referenceId));
         } catch (Exception e) {
             logger.error((Object) "Handle save transaction error ", (Throwable) e);
