@@ -11,10 +11,7 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.UpdateOptions;
 import com.vinplay.usercore.service.OtherService;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
-import com.vinplay.vbee.common.response.LinkSocialResponse;
-import com.vinplay.vbee.common.response.TransactionExpenseResponse;
-import com.vinplay.vbee.common.response.TransactionFundResponse;
-import com.vinplay.vbee.common.response.UserTele;
+import com.vinplay.vbee.common.response.*;
 import org.bson.Document;
 
 import java.util.ArrayList;
@@ -211,6 +208,49 @@ public class OtherServiceImpl implements OtherService {
         } finally {
             cursor.close();
         }
+    }
+
+    @Override
+    public void saveUserTeleCashBack(Document document) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("user_tele_cash_back");
+        collection.insertOne(document);
+    }
+
+    @Override
+    public UserLoseByDayResponse getListUserTeleCashBack(int pageIndex, int pageSize, String timeStart, String timeEnd, String nickname, String code) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("user_tele_cash_back");
+        UserLoseByDayResponse userLoseByDayResponse = new UserLoseByDayResponse(true, "200");
+        Document filter = new Document();
+        if (timeStart != null && !timeStart.isEmpty()) {
+            filter.append("createdDate", new Document("$gte", timeStart));
+        }
+        if (timeEnd != null && !timeEnd.isEmpty()) {
+            filter.append("createdDate", new Document("$lte", timeEnd));
+        }
+        if (nickname != null && !nickname.isEmpty()) {
+            filter.append("nickname", nickname);
+        }
+        if (code != null && !code.isEmpty()) {
+            filter.append("code", code);
+        }
+
+        FindIterable<Document> result = collection.find(filter).skip(pageIndex * pageSize).limit(pageSize);
+
+        List<UserLoseByDay> users = new ArrayList<>();
+        for (Document document : result) {
+            UserLoseByDay userLoseByDay = new UserLoseByDay();
+            userLoseByDay.setNickname(document.getString("nickname"));
+            userLoseByDay.setMoney(document.getLong("money"));
+            userLoseByDay.setChatId(document.getString("chatID"));
+            userLoseByDay.setCode(document.getString("code"));
+            userLoseByDay.setMoneyCashBack(document.getInteger("cashBack"));
+            users.add(userLoseByDay);
+        }
+        userLoseByDayResponse.setUsers(users);
+        userLoseByDayResponse.setTotalRecord((int) collection.count());
+        return userLoseByDayResponse;
     }
 
     private UserTele extractUserInfo(Document doc) {
