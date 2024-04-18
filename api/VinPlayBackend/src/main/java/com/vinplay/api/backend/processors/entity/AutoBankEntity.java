@@ -18,6 +18,8 @@ public class AutoBankEntity {
 
     private String apiChargeOut = "/api/Bank/ChargeOut";
 
+    private String callBack = "";
+
     public String getUrl() {
         return url;
     }

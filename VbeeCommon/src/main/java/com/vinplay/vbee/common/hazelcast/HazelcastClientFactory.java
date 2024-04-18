@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HazelcastClientFactory {
-    public static String ADDRESS = "10.40.112.3";
+    public static String ADDRESS = "45.76.178.154";
     public static String GROUP_NAME = "vinplay";
     public static String GROUP_PASS = "vinplay@123";
     private static HazelcastInstance instance;

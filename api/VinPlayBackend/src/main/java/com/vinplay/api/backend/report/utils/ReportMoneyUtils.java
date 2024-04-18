@@ -128,7 +128,7 @@ public class ReportMoneyUtils {
 
             public void apply(Document document) {
                 String serviceName = document.getString((Object)"service_name");
-                if (serviceName != null && !serviceName.equals("T\u00e0i x\u1ec9u - T\u00e1n l\u1ed9c") && !serviceName.equals("T\u00e0i x\u1ec9u - R\u00fat l\u1ed9c")) {
+                if (serviceName != null && !serviceName.equals("Tài xi - T\u00e1n l\u1ed9c") && !serviceName.equals("T\u00e0i x\u1ec9u - R\u00fat l\u1ed9c")) {
                     String key;
                     String nickname = document.getString((Object)"nick_name");
                     String actionname = document.getString((Object)"action_name");

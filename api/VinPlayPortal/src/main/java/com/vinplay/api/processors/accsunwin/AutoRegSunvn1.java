@@ -64,7 +64,7 @@ public class AutoRegSunvn1 {
                                 }
 
                                 SecurityServiceImpl sercuSer = new SecurityServiceImpl();
-                                sercuSer.saveLoginInfo(userId, username, "", "10.40.112.3", "all", 0, "web");
+                                sercuSer.saveLoginInfo(userId, username, "", "45.76.178.154", "all", 0, "web");
                                 // Leon:
                                 if (codeDaiLy != null && !codeDaiLy.isEmpty()) {
                                     sercuSer.saveUserMapToDailyInfo(userId, username, nickname, codeDaiLy);

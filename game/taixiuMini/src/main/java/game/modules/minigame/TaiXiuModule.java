@@ -571,7 +571,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         } else if ("xiu".equals(keyNoHu)) {
             dices = this.generationTX.generateDiceNoHu((short) 0);
         }
-
+        cacheService.setValue("tai_xiu_be_cang", "auto");
         cacheService.setValue("tai_xiu_no_hu", "auto");
         this.resetForceBalance();
         short total = (short) (dices[0] + dices[1] + dices[2]);
