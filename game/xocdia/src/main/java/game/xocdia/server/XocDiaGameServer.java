@@ -1063,14 +1063,12 @@ public class XocDiaGameServer
                             res = true;
                         } else {
                             msg.currentMoney = userService.getCurrentMoneyUserCache(user.getName(), "vin");
-                            ;
                             msg.potMoney = gPot.totalMoney;
                             msg.Error = 2;
                             MsgUtils.send(msg, user, gp.revMsg);
                         }
                     } else {
                         msg.currentMoney = userService.getCurrentMoneyUserCache(user.getName(), "vin");
-                        ;
                         msg.potMoney = gPot.totalMoney;
                         msg.Error = 1;
                         MsgUtils.send(msg, user, gp.revMsg);
@@ -1673,6 +1671,7 @@ public class XocDiaGameServer
             msg.bankerReqDestroy = bankerReqDestroy;
             msg.bossReqDestroy = bossReqDestroy;
             msg.roomType = this.roomType;
+            msg.totalTime = 33;
             MsgUtils.send(msg, gamePlayer.user, gamePlayer.revMsg);
         } catch (Exception e) {
             Debug.trace((Object) e);
