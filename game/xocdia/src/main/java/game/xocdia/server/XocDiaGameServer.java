@@ -193,7 +193,8 @@ public class XocDiaGameServer
 
     private static long fundXd = 0;
 
-    private final short TOTAL_BETTING_TIME = 25;
+    private final short STOP_BETTING_TIME = 22;
+    private final short START_BETTING_TIME = 2;
 
     public void init(GameRoom room) {
         try {
@@ -416,7 +417,7 @@ public class XocDiaGameServer
                     this.finishStep = true;
                     break;
                 }
-                case 5: {
+                case START_BETTING_TIME: {
                     if (this.finishStep) {
                         this.finishStep = false;
                         this.startBetting();
@@ -426,13 +427,13 @@ public class XocDiaGameServer
                     --this.countTime;
                     break;
                 }
-                case TOTAL_BETTING_TIME: {
+                case STOP_BETTING_TIME: {
                     this.stopBetting();
                     this.finishStep = true;
                     break;
                 }
 
-                case 28: {
+                case 23: {
                     if (this.finishStep) {
                         this.finishStep = false;
                         this.startReward();
@@ -443,7 +444,7 @@ public class XocDiaGameServer
                     --this.countTime;
                     break;
                 }
-                case 35: {
+                case 33: {
                     if (this.finishStep) {
                         this.finish();
                         break;
@@ -563,7 +564,7 @@ public class XocDiaGameServer
             this.isBankerReject = false;
             this.timeSellPot = 0L;
             this.gameState = 1;
-            this.notifyActionGamme((byte) 1, (byte) 5);
+            this.notifyActionGamme((byte) 1, (byte) 2);
             this.notifyStartGame();
         } catch (Exception e) {
             String content = "Xoc Dia exception: " + e.getMessage() + ", function: startNewGame() " + this.roomId + " " + this.gameId;
@@ -1605,7 +1606,7 @@ public class XocDiaGameServer
                 case 4:
                 case 3:
                 case 5: {
-                    cnt = 35 - this.countTime;
+                    cnt = 33 - this.countTime;
                     break;
                 }
                 case 6: {
@@ -1665,9 +1666,9 @@ public class XocDiaGameServer
             msg.bankerReqDestroy = bankerReqDestroy;
             msg.bossReqDestroy = bossReqDestroy;
             msg.roomType = this.roomType;
-            msg.totalBettingTime = TOTAL_BETTING_TIME - 5;
+            msg.totalBettingTime = STOP_BETTING_TIME - 5;
             if (this.gameState == 2) {
-                msg.betTimeRemain = (short) (TOTAL_BETTING_TIME - countTime);
+                msg.betTimeRemain = (short) (STOP_BETTING_TIME - countTime);
             }
             MsgUtils.send(msg, gamePlayer.user, gamePlayer.revMsg);
         } catch (Exception e) {
