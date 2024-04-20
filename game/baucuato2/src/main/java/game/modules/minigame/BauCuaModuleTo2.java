@@ -174,9 +174,10 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
 
 
     boolean genResult = false;
-    public final byte TOTAL_TIME = 30;
+    public final byte TOTAL_TIME = 33;
 
     private synchronized void gameLoop() {
+
         this.count = (byte) (this.count + 1);
         updateGameStatePerSecond();
 
