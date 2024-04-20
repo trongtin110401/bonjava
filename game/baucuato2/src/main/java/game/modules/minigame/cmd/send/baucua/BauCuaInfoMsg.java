@@ -11,8 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class BauCuaInfoMsg
-extends BaseMsgEx {
+public class BauCuaInfoMsg extends BaseMsgEx {
     public long referenceId;
     public byte remainTime;
     public boolean bettingState;
@@ -29,6 +28,8 @@ extends BaseMsgEx {
     public long funds;
     public boolean isNohu;
     public List<BauCuaRealtimeTransaction> allTransaction;
+    public byte totalTime = 0;
+
     public BauCuaInfoMsg() {
         super(5005);
     }
@@ -61,6 +62,9 @@ extends BaseMsgEx {
             this.putStr(bf,bauCuaRealtimeTransaction.getUsername());
             this.putStr(bf,bauCuaRealtimeTransaction.getBetStr());
         }
+
+        bf.put(totalTime);
+
         return this.packBuffer(bf);
     }
 }

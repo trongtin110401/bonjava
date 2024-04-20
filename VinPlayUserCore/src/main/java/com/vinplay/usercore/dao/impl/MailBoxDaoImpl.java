@@ -122,7 +122,8 @@ public class MailBoxDaoImpl
     public int updateStatusMailBox(String mailId) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection colmail = db.getCollection("mail_box");
-        colmail.updateOne((Bson) new Document("mail_id", (Object) mailId), (Bson) new Document("$set", (Object) new Document("status", (Object) 1)));
+        colmail.updateOne((Bson) new Document("mail_id", (Object) mailId),
+                (Bson) new Document("$set", (Object) new Document("status", (Object) 1)));
         return 0;
     }
 

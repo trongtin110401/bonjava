@@ -6,9 +6,9 @@ package game.modules.minigame.cmd.send.baucua;
 import game.BaseMsgEx;
 import java.nio.ByteBuffer;
 
-public class StartNewGameBauCuaMsg
-extends BaseMsgEx {
+public class StartNewGameBauCuaMsg extends BaseMsgEx {
     public long referenceId;
+    public byte totalTime = 0;
 
     public StartNewGameBauCuaMsg() {
         super(5007);
@@ -17,6 +17,7 @@ extends BaseMsgEx {
     public byte[] createData() {
         ByteBuffer bf = this.makeBuffer();
         this.putLong(bf, this.referenceId);
+        bf.put(totalTime);
         return this.packBuffer(bf);
     }
 }

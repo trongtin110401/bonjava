@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  bitzero.server.extensions.data.BaseMsg
  *  game.entities.PlayerInfo
@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.Vector;
 
 public class JoinRoomMsg
-extends BaseMsg {
+        extends BaseMsg {
     public int moneyBet;
     public int roomId;
     public int gameId;
@@ -37,9 +37,10 @@ extends BaseMsg {
     public boolean bankerReqDestroy;
     public boolean bossReqDestroy;
     public int roomType;
+    public short totalTime = 0;
 
     public JoinRoomMsg() {
-        super((short)3101);
+        super((short) 3101);
     }
 
     public byte[] createData() {
@@ -50,10 +51,10 @@ extends BaseMsg {
         bf.put(this.moneyType);
         bf.put(this.gameState);
         bf.putInt(this.countTime);
-        bf.put((byte)(this.playerList.size() - 1));
+        bf.put((byte) (this.playerList.size() - 1));
         for (GamePot pot : this.potList) {
             bf.put(pot.id);
-            bf.putInt((int)Math.round(pot.ratio * 100.0));
+            bf.putInt((int) Math.round(pot.ratio * 100.0));
             bf.putLong(pot.maxMoneyBet);
             bf.putLong(pot.totalMoney);
             long moneyBet = pot.betMap.containsKey(this.me.gameMoneyInfo.nickName) ? pot.betMap.get(this.me.gameMoneyInfo.nickName) : 0L;
@@ -61,8 +62,8 @@ extends BaseMsg {
             this.putBoolean(bf, Boolean.valueOf(false));
         }
         for (Map.Entry entry : this.playerList.entrySet()) {
-            if (((String)entry.getKey()).equals(this.me.gameMoneyInfo.nickName)) continue;
-            GamePlayer gp = (GamePlayer)entry.getValue();
+            if (((String) entry.getKey()).equals(this.me.gameMoneyInfo.nickName)) continue;
+            GamePlayer gp = (GamePlayer) entry.getValue();
             PlayerInfo pInfo = gp.pInfo;
             this.putStr(bf, pInfo.nickName);
             this.putStr(bf, pInfo.avatarUrl);
@@ -81,12 +82,13 @@ extends BaseMsg {
         bf.putLong(this.moneyRemain);
         bf.putInt(this.subBankerList.size());
         for (Map.Entry entry : this.subBankerList.entrySet()) {
-            this.putStr(bf, (String)entry.getKey());
-            bf.putLong((Long)entry.getValue());
+            this.putStr(bf, (String) entry.getKey());
+            bf.putLong((Long) entry.getValue());
         }
         this.putBoolean(bf, Boolean.valueOf(this.bankerReqDestroy));
         this.putBoolean(bf, Boolean.valueOf(this.bossReqDestroy));
         bf.putInt(this.roomType);
+        bf.putShort(totalTime);
         return this.packBuffer(bf);
     }
 }
