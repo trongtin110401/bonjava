@@ -174,7 +174,7 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
 
 
     boolean genResult = false;
-    public final byte TOTAL_BETTING_TIME = 33;
+    public final byte TOTAL_BETTING_TIME = 20;
 
     private synchronized void gameLoop() {
 
@@ -200,7 +200,7 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
             case 28: {
                 this.broadcastMessage();
             }
-            case TOTAL_BETTING_TIME: {
+            case 33: {
                 this.startNewRound();
                 break;
             }
