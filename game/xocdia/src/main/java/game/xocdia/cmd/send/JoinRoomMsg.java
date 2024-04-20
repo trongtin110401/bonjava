@@ -37,7 +37,7 @@ public class JoinRoomMsg
     public boolean bankerReqDestroy;
     public boolean bossReqDestroy;
     public int roomType;
-    public short totalTime = 0;
+    public short totalBettingTime = 0;
 
     public JoinRoomMsg() {
         super((short) 3101);
@@ -88,7 +88,7 @@ public class JoinRoomMsg
         this.putBoolean(bf, Boolean.valueOf(this.bankerReqDestroy));
         this.putBoolean(bf, Boolean.valueOf(this.bossReqDestroy));
         bf.putInt(this.roomType);
-        bf.putShort(totalTime);
+        bf.putShort(totalBettingTime);
         return this.packBuffer(bf);
     }
 }

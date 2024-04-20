@@ -193,6 +193,8 @@ public class XocDiaGameServer
 
     private static long fundXd = 0;
 
+    private final short TOTAL_BETTING_TIME = 20;
+
     public void init(GameRoom room) {
         try {
             try {
@@ -424,7 +426,7 @@ public class XocDiaGameServer
                     --this.countTime;
                     break;
                 }
-                case 20: {
+                case TOTAL_BETTING_TIME: {
                     this.stopBetting();
                     this.finishStep = true;
                     break;
@@ -1671,7 +1673,7 @@ public class XocDiaGameServer
             msg.bankerReqDestroy = bankerReqDestroy;
             msg.bossReqDestroy = bossReqDestroy;
             msg.roomType = this.roomType;
-            msg.totalTime = 33;
+            msg.totalBettingTime = TOTAL_BETTING_TIME;
             MsgUtils.send(msg, gamePlayer.user, gamePlayer.revMsg);
         } catch (Exception e) {
             Debug.trace((Object) e);
