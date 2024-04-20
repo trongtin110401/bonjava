@@ -386,18 +386,20 @@ public class MGRoomBauCuaTo2 extends MGRoom {
         this.sendMessageToUser(msg, user);
     }
 
-    public void updateBauCuaPerSecond(byte remainTime, boolean bettingState) { // todo : update mỗi giây
+    public void updateBauCuaPerSecond(byte remainTime, boolean bettingState, boolean realTimeBetProcess) { // todo : update mỗi giây
         UpdateBauCuaPerSecondMsg msg = new UpdateBauCuaPerSecondMsg();
         msg.potData = this.buildPotData();
         msg.remainTime = remainTime;
         msg.bettingState = bettingState;
         msg.listBet = new ArrayList<>();
-        msg.listBet.addAll(transactionsMapRealtime);
-        try {
-            lock.lock();
-            transactionsMapRealtime.clear();
-        } finally {
-            lock.unlock();
+        if(realTimeBetProcess) {
+            msg.listBet.addAll(transactionsMapRealtime);
+            try {
+                lock.lock();
+                transactionsMapRealtime.clear();
+            } finally {
+                lock.unlock();
+            }
         }
         cacheService.setValue("BauCuaRemainTime", String.valueOf(remainTime));
         cacheService.setObject("bettingStateBauCua", bettingState);

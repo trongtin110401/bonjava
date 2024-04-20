@@ -82,7 +82,7 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
     public void init() {
         super.init();
         this.loadData();
-        this.rooms.put("BauCuaTo_vin_1000", new MGRoomBauCuaTo2("BauCuaTo_vin_1000", 100, (byte) 1, (byte) 0, this.funds[0],jackPot[0]));
+        this.rooms.put("BauCuaTo_vin_1000", new MGRoomBauCuaTo2("BauCuaTo_vin_1000", 100, (byte) 1, (byte) 0, this.funds[0], jackPot[0]));
 //        this.rooms.put("BauCuaTo_vin_10000", new MGRoomBauCuaTo2("BauCuaTo_vin_10000", 1000, (byte) 1, (byte) 1, this.funds[1],jackPot[1]));
 //        this.rooms.put("BauCuaTo_vin_100000", new MGRoomBauCuaTo2("BauCuaTo_vin_100000", 10000, (byte) 1, (byte) 2, this.funds[2],jackPot[2]));
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
@@ -174,13 +174,12 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
     }
 
 
-
     boolean genResult = false;
     public final byte TOTAL_TIME = 30;
 
     private synchronized void gameLoop() {
         this.count = (byte) (this.count + 1);
-        updateGameStatePerSecond();
+        updateGameStatePerSecond(false);
 
         switch (this.count) {
             case 19: {
@@ -208,11 +207,11 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
         }
     }
 
-    private void updateGameStatePerSecond() {
+    public void updateGameStatePerSecond(boolean realTimeBetProcess) {
         for (MGRoom entry : this.rooms.values()) {
             MGRoomBauCuaTo2 room = (MGRoomBauCuaTo2) entry;
             room.botBet(60 - this.count, this.isBettingRound);
-            room.updateBauCuaPerSecond(this.getRemainTime(), this.isBettingRound);
+            room.updateBauCuaPerSecond(this.getRemainTime(), this.isBettingRound, realTimeBetProcess);
         }
     }
 
@@ -276,6 +275,8 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
         BetBauCuaCmd cmd = new BetBauCuaCmd(dataCmd);
         MGRoomBauCuaTo2 room = (MGRoomBauCuaTo2) user.getProperty("MGROOM_BAU_CUA_TO2_INFO");
         room.bet(user, cmd.betValue, this.isBettingRound);
+
+        updateGameStatePerSecond(true);
     }
 
     private void generateResult() {
