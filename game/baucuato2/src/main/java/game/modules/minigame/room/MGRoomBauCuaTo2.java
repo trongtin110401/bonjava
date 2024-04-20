@@ -51,6 +51,7 @@ import com.vinplay.vbee.common.statics.TransType;
 import com.vinplay.vbee.common.utils.CommonUtils;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
 import game.entities.PlayerInfo;
+import game.modules.minigame.BauCuaModuleTo2;
 import game.modules.minigame.cmd.send.baucua.*;
 import game.modules.minigame.entities.*;
 
@@ -192,10 +193,13 @@ public class MGRoomBauCuaTo2 extends MGRoom {
     }
 
 
-    public void botBet(int time, boolean bettingState) {
+    public void botBet(int time, boolean bettingState, BauCuaModuleTo2 module) {
         for (BotBauCua b : this.botBC) {
-            if (b.getTimeBetting() != time) continue;
+            if (b.getTimeBetting() != time)
+                continue;
+
             this.bet(b.getNickname(), b.getBetStr(), bettingState);
+
             if (bettingState) {
                 allTransactionsMapRealtime.add(new BauCuaRealtimeTransaction(b.getNickname(), b.getBetStr()));
                 try {
@@ -204,6 +208,9 @@ public class MGRoomBauCuaTo2 extends MGRoom {
                 } finally {
                     lock.unlock();
                 }
+
+                // broadcast to clients
+                updateBauCuaPerSecond(module.getRemainTime(), module.isBettingRound, true);
             }
         }
     }
@@ -392,7 +399,7 @@ public class MGRoomBauCuaTo2 extends MGRoom {
         msg.remainTime = remainTime;
         msg.bettingState = bettingState;
         msg.listBet = new ArrayList<>();
-        if(realTimeBetProcess) {
+        if (realTimeBetProcess) {
             msg.listBet.addAll(transactionsMapRealtime);
             try {
                 lock.lock();

@@ -67,7 +67,7 @@ import java.util.concurrent.TimeUnit;
 public class BauCuaModuleTo2 extends BaseClientRequestHandler {
     private Map<String, MGRoom> rooms = new HashMap<String, MGRoom>();
     private long referenceId;
-    private boolean isBettingRound;
+    public boolean isBettingRound;
     private byte count = 0;
     private long[] funds = new long[3];
     private long[] jackPot = new long[3];
@@ -210,8 +210,7 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
     public void updateGameStatePerSecond(boolean realTimeBetProcess) {
         for (MGRoom entry : this.rooms.values()) {
             MGRoomBauCuaTo2 room = (MGRoomBauCuaTo2) entry;
-            room.botBet(60 - this.count, this.isBettingRound);
-            room.updateBauCuaPerSecond(this.getRemainTime(), this.isBettingRound, realTimeBetProcess);
+            room.botBet(60 - this.count, this.isBettingRound, this);
         }
     }
 
@@ -296,7 +295,7 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
         }
     }
 
-    private byte getRemainTime() {
+    public byte getRemainTime() {
         if (this.genResult) {
             return (byte) (20 - this.count);
         }
