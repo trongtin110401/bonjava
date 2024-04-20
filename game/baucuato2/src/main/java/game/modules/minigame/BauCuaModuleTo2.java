@@ -46,7 +46,6 @@ import com.vinplay.dal.service.impl.BauCuaServiceImpl;
 import com.vinplay.dal.service.impl.BroadcastMessageServiceImpl;
 import com.vinplay.dal.service.impl.MiniGameServiceImpl;
 import com.vinplay.vbee.common.enums.Games;
-import com.vinplay.vbee.common.utils.CommonUtils;
 import com.vinplay.vbee.common.utils.DateTimeUtils;
 import game.modules.lobby.cmd.send.BroadcastMessageMsg;
 import game.modules.minigame.cmd.rev.baucua.*;
@@ -179,7 +178,7 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
 
     private synchronized void gameLoop() {
         this.count = (byte) (this.count + 1);
-        updateGameStatePerSecond(false);
+        updateGameStatePerSecond();
 
         switch (this.count) {
             case 19: {
@@ -207,7 +206,7 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
         }
     }
 
-    public void updateGameStatePerSecond(boolean realTimeBetProcess) {
+    public void updateGameStatePerSecond() {
         for (MGRoom entry : this.rooms.values()) {
             MGRoomBauCuaTo2 room = (MGRoomBauCuaTo2) entry;
             room.botBet(60 - this.count, this.isBettingRound, this);
@@ -275,7 +274,7 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
         MGRoomBauCuaTo2 room = (MGRoomBauCuaTo2) user.getProperty("MGROOM_BAU_CUA_TO2_INFO");
         room.bet(user, cmd.betValue, this.isBettingRound);
 
-        updateGameStatePerSecond(true);
+        room.updateBauCuaPerSecond(getRemainTime(), this.isBettingRound, true);
     }
 
     private void generateResult() {
