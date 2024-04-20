@@ -135,7 +135,7 @@ public class MGRoomBauCuaTo2 extends MGRoom {
     }
 
 
-    public void updateBauCuaInfoToUser(User user, byte remainTime, boolean bettingState, byte totalTime) {
+    public void updateBauCuaInfoToUser(User user, byte countTime, byte remainTime, boolean bettingState, byte totalBetTime, boolean isBettingState) {
         BauCuaInfoMsg msg = new BauCuaInfoMsg();
         msg.referenceId = this.referenceId;
         msg.remainTime = remainTime;
@@ -153,7 +153,9 @@ public class MGRoomBauCuaTo2 extends MGRoom {
         msg.funds = this.jackPot;
         msg.isNohu = false;
         msg.allTransaction = allTransactionsMapRealtime;
-        msg.totalTime = totalTime;
+        msg.totalTime = totalBetTime;
+        if (isBettingState)
+            msg.betTimeRemain = (byte) (20 - countTime);
         cacheService.setValue("BauCuareferenceId", (int) this.referenceId);
         this.sendMessageToUser((BaseMsg) msg, user);
     }

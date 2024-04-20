@@ -174,7 +174,7 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
 
 
     boolean genResult = false;
-    public final byte TOTAL_TIME = 33;
+    public final byte TOTAL_BETTING_TIME = 33;
 
     private synchronized void gameLoop() {
 
@@ -200,7 +200,7 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
             case 28: {
                 this.broadcastMessage();
             }
-            case TOTAL_TIME: {
+            case TOTAL_BETTING_TIME: {
                 this.startNewRound();
                 break;
             }
@@ -219,7 +219,7 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
         ++this.referenceId;
         StartNewGameBauCuaMsg msg = new StartNewGameBauCuaMsg();
         msg.referenceId = this.referenceId;
-        msg.totalTime = TOTAL_TIME;
+        msg.totalTime = TOTAL_BETTING_TIME;
         this.sendMessageBauCuaNewThread(msg);
         for (MGRoom entry : this.rooms.values()) {
             MGRoomBauCuaTo2 room = (MGRoomBauCuaTo2) entry;
@@ -236,7 +236,7 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
         MGRoomBauCuaTo2 room = this.getRoom(cmd.roomId);
         if (room != null) {
             room.joinRoom(user);
-            room.updateBauCuaInfoToUser(user, this.getRemainTime(), this.isBettingRound, TOTAL_TIME);
+            room.updateBauCuaInfoToUser(user, this.count, this.getRemainTime(), this.isBettingRound, TOTAL_BETTING_TIME, isBettingRound);
         }
     }
 
@@ -266,7 +266,7 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
             roomLeaved.NotifyUser();
             roomLeaved.quitRoom(user);
             roomJoined.joinRoom(user);
-            roomJoined.updateBauCuaInfoToUser(user, this.getRemainTime(), this.isBettingRound, TOTAL_TIME);
+            roomJoined.updateBauCuaInfoToUser(user, count, this.getRemainTime(), this.isBettingRound, TOTAL_BETTING_TIME, isBettingRound);
         }
     }
 

@@ -29,6 +29,7 @@ public class BauCuaInfoMsg extends BaseMsgEx {
     public boolean isNohu;
     public List<BauCuaRealtimeTransaction> allTransaction;
     public byte totalTime = 0;
+    public byte betTimeRemain = 0;
 
     public BauCuaInfoMsg() {
         super(5005);
@@ -64,6 +65,7 @@ public class BauCuaInfoMsg extends BaseMsgEx {
         }
 
         bf.put(totalTime);
+        bf.put(betTimeRemain);
 
         return this.packBuffer(bf);
     }
