@@ -193,7 +193,7 @@ public class XocDiaGameServer
 
     private static long fundXd = 0;
 
-    private final short TOTAL_BETTING_TIME = 20;
+    private final short TOTAL_BETTING_TIME = 25;
 
     public void init(GameRoom room) {
         try {
@@ -416,7 +416,7 @@ public class XocDiaGameServer
                     this.finishStep = true;
                     break;
                 }
-                case 2: {
+                case 5: {
                     if (this.finishStep) {
                         this.finishStep = false;
                         this.startBetting();
@@ -432,7 +432,7 @@ public class XocDiaGameServer
                     break;
                 }
 
-                case 23: {
+                case 28: {
                     if (this.finishStep) {
                         this.finishStep = false;
                         this.startReward();
@@ -443,7 +443,7 @@ public class XocDiaGameServer
                     --this.countTime;
                     break;
                 }
-                case 33: {
+                case 35: {
                     if (this.finishStep) {
                         this.finish();
                         break;
@@ -1600,18 +1600,9 @@ public class XocDiaGameServer
                     cnt = 2 - this.countTime;
                     break;
                 }
-                case 2: {
-                    cnt = 35 - this.countTime;
-                    break;
-                }
-                case 3: {
-                    cnt = 35 - this.countTime;
-                    break;
-                }
-                case 4: {
-                    cnt = 35 - this.countTime;
-                    break;
-                }
+                case 2:
+                case 4:
+                case 3:
                 case 5: {
                     cnt = 35 - this.countTime;
                     break;
@@ -1674,6 +1665,9 @@ public class XocDiaGameServer
             msg.bossReqDestroy = bossReqDestroy;
             msg.roomType = this.roomType;
             msg.totalBettingTime = TOTAL_BETTING_TIME;
+            if (this.gameState == 2) {
+                msg.betTimeRemain = (short) (TOTAL_BETTING_TIME - countTime);
+            }
             MsgUtils.send(msg, gamePlayer.user, gamePlayer.revMsg);
         } catch (Exception e) {
             Debug.trace((Object) e);
