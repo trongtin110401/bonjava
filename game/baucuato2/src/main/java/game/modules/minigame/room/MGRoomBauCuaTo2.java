@@ -193,7 +193,7 @@ public class MGRoomBauCuaTo2 extends MGRoom {
     }
 
 
-    public void botBet(int time, boolean bettingState, BauCuaModuleTo2 module) {
+    public void botBet(int time, boolean bettingState) {
         for (BotBauCua b : this.botBC) {
             if (b.getTimeBetting() != time)
                 continue;
@@ -210,7 +210,7 @@ public class MGRoomBauCuaTo2 extends MGRoom {
                 }
 
                 // broadcast to clients
-                updateBauCuaPerSecond(module.getRemainTime(), module.isBettingRound, true);
+                updateBauCuaPerSecond((byte) time, bettingState, true);
             }
         }
     }
