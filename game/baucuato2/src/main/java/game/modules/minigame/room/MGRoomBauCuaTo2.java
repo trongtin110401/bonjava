@@ -62,8 +62,7 @@ import java.util.*;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class MGRoomBauCuaTo2
-        extends MGRoom {
+public class MGRoomBauCuaTo2 extends MGRoom {
     private static final double RATE_NO_HU = 0.3;
     public byte id;
     public long fund;
@@ -135,7 +134,7 @@ public class MGRoomBauCuaTo2
     }
 
 
-    public void updateBauCuaInfoToUser(User user, byte remainTime, boolean bettingState) {
+    public void updateBauCuaInfoToUser(User user, byte remainTime, boolean bettingState, byte totalTime) {
         BauCuaInfoMsg msg = new BauCuaInfoMsg();
         msg.referenceId = this.referenceId;
         msg.remainTime = remainTime;
@@ -153,6 +152,7 @@ public class MGRoomBauCuaTo2
         msg.funds = this.jackPot;
         msg.isNohu = false;
         msg.allTransaction = allTransactionsMapRealtime;
+        msg.totalTime = totalTime;
         cacheService.setValue("BauCuareferenceId", (int) this.referenceId);
         this.sendMessageToUser((BaseMsg) msg, user);
     }

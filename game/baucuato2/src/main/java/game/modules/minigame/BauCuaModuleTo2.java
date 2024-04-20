@@ -140,7 +140,7 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
                 break;
             }
             case 5003: {
-                this.changeRoomBauCua(user, dataCmd);
+//                this.changeRoomBauCua(user, dataCmd);
                 break;
             }
             case 5018: {
@@ -173,7 +173,10 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
         room.sendMessageToRoom(msg);
     }
 
+
+
     boolean genResult = false;
+    public final byte TOTAL_TIME = 30;
 
     private synchronized void gameLoop() {
         this.count = (byte) (this.count + 1);
@@ -198,7 +201,7 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
             case 28: {
                 this.broadcastMessage();
             }
-            case 30: {
+            case TOTAL_TIME: {
                 this.startNewRound();
                 break;
             }
@@ -218,6 +221,7 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
         ++this.referenceId;
         StartNewGameBauCuaMsg msg = new StartNewGameBauCuaMsg();
         msg.referenceId = this.referenceId;
+        msg.totalTime = TOTAL_TIME;
         this.sendMessageBauCuaNewThread(msg);
         for (MGRoom entry : this.rooms.values()) {
             MGRoomBauCuaTo2 room = (MGRoomBauCuaTo2) entry;
@@ -234,7 +238,7 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
         MGRoomBauCuaTo2 room = this.getRoom(cmd.roomId);
         if (room != null) {
             room.joinRoom(user);
-            room.updateBauCuaInfoToUser(user, this.getRemainTime(), this.isBettingRound);
+            room.updateBauCuaInfoToUser(user, this.getRemainTime(), this.isBettingRound, TOTAL_TIME);
         }
     }
 
@@ -264,7 +268,7 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
             roomLeaved.NotifyUser();
             roomLeaved.quitRoom(user);
             roomJoined.joinRoom(user);
-            roomJoined.updateBauCuaInfoToUser(user, this.getRemainTime(), this.isBettingRound);
+            roomJoined.updateBauCuaInfoToUser(user, this.getRemainTime(), this.isBettingRound, TOTAL_TIME);
         }
     }
 

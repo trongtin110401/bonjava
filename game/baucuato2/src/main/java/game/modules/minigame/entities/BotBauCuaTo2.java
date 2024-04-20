@@ -19,6 +19,7 @@ import com.vinplay.dal.service.impl.BotServiceImpl;
 import com.vinplay.usercore.service.UserService;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.vbee.common.config.VBeePath;
+import com.vinplay.vbee.common.models.UserModel;
 import com.vinplay.vbee.common.utils.DateTimeUtils;
 import game.utils.ConfigGame;
 
@@ -51,8 +52,9 @@ public class BotBauCuaTo2 {
             service = new BotServiceImpl();
             while ((botName = br22.readLine()) != null) {
                 try {
-                    service.login(botName);
-                    bots.add(botName);
+                    UserModel userModel = service.login(botName);
+                    if (userModel.getVin() > 0)
+                        bots.add(botName);
                 } catch (NoSuchAlgorithmException | SQLException e) {
                     Debug.trace((Object[]) new Object[]{"Load bot " + botName + " error: ", e});
                 }
@@ -68,8 +70,9 @@ public class BotBauCuaTo2 {
             service = new BotServiceImpl();
             while ((botName = br22.readLine()) != null) {
                 try {
-                    service.login(botName);
-                    botsVip.add(botName);
+                    UserModel userModel = service.login(botName);
+                    if (userModel.getVin() > 0)
+                        botsVip.add(botName);
                 } catch (NoSuchAlgorithmException | SQLException e) {
                     Debug.trace((Object[]) new Object[]{"Load vip bot " + botName + " error: ", e});
                 }
