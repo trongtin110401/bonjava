@@ -704,6 +704,7 @@ public class XocDiaGameServer
         try {
             Debug.trace((Object[]) new Object[]{"STOP BETTING", VinPlayUtils.getCurrentDateTime(), this.roomId, this.gameId});
             this.enableBetting = false;
+            this.gameState = 3;
             int logSize = this.logBettingList.size();
             if (logSize > 0) {
                 this.isBetting = true;
@@ -1664,7 +1665,7 @@ public class XocDiaGameServer
             msg.bankerReqDestroy = bankerReqDestroy;
             msg.bossReqDestroy = bossReqDestroy;
             msg.roomType = this.roomType;
-            msg.totalBettingTime = TOTAL_BETTING_TIME;
+            msg.totalBettingTime = TOTAL_BETTING_TIME - 5;
             if (this.gameState == 2) {
                 msg.betTimeRemain = (short) (TOTAL_BETTING_TIME - countTime);
             }
