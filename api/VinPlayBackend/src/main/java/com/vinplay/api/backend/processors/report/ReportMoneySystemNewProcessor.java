@@ -129,10 +129,10 @@ public class ReportMoneySystemNewProcessor
 
                 OtherService otherService = new OtherServiceImpl();
 
-                LocalDate dateStart = LocalDate.parse(startTime, DateTimeFormatter.ofPattern("MM-dd-yyyy"));
+                LocalDate dateStart = LocalDate.parse(startTime, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
                 String sqlDateStart = dateStart.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
-                LocalDate dateEnd = LocalDate.parse(endTime, DateTimeFormatter.ofPattern("MM-dd-yyyy"));
+                LocalDate dateEnd = LocalDate.parse(endTime, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
                 String sqlDateEnd = dateEnd.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
                 reportMoneyModel.totalShootFishProfit = otherService.getTotalShootFishByNickname(sqlDateStart, sqlDateEnd, nickName);

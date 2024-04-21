@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  com.hazelcast.core.HazelcastInstance
  *  com.hazelcast.core.IMap
@@ -26,6 +26,8 @@ import com.vinplay.api.backend.response.ReportMoneyUserResponse;
 import com.vinplay.dal.dao.impl.ReportDaoImpl;
 import com.vinplay.dal.entities.report.ReportMoneySystemModel;
 import com.vinplay.dal.entities.report.ReportMoneyUserModel;
+import com.vinplay.usercore.service.OtherService;
+import com.vinplay.usercore.service.impl.OtherServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
@@ -33,29 +35,35 @@ import com.vinplay.vbee.common.models.cache.ReportModel;
 import com.vinplay.vbee.common.models.cache.UserCacheModel;
 import com.vinplay.vbee.common.statics.Consts;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
+
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
+
 import org.apache.log4j.Logger;
 
 public class ReportMoneyUserProcessor
-implements BaseProcessor<HttpServletRequest, String> {
-    private static final Logger logger = Logger.getLogger((String)"report");
+        implements BaseProcessor<HttpServletRequest, String> {
+    private static final Logger logger = Logger.getLogger((String) "report");
 
     public String execute(Param<HttpServletRequest> param) {
         ReportMoneyUserResponse res;
-        block15 : {
-            HttpServletRequest request = (HttpServletRequest)param.get();
+        block15:
+        {
+            HttpServletRequest request = (HttpServletRequest) param.get();
             String nickname = request.getParameter("nn");
             String startTime = request.getParameter("ts");
             String endTime = request.getParameter("te");
             res = new ReportMoneyUserResponse(false, "1001");
             try {
-                if (startTime == null || endTime == null || nickname == null || nickname.isEmpty() || startTime.isEmpty() || endTime.isEmpty()) break block15;
+                if (startTime == null || endTime == null || nickname == null || nickname.isEmpty() || startTime.isEmpty() || endTime.isEmpty())
+                    break block15;
                 HazelcastInstance client = HazelcastClientFactory.getInstance();
                 ReportDaoImpl dao = new ReportDaoImpl();
                 boolean isBot = false;
@@ -63,8 +71,8 @@ implements BaseProcessor<HttpServletRequest, String> {
                 long safeMoney = 0L;
                 long totalMoney = 0L;
                 IMap userMap = client.getMap("users");
-                if (userMap.containsKey((Object)nickname)) {
-                    UserCacheModel user = (UserCacheModel)userMap.get((Object)nickname);
+                if (userMap.containsKey((Object) nickname)) {
+                    UserCacheModel user = (UserCacheModel) userMap.get((Object) nickname);
                     isBot = user.isBot();
                     currentMoney = user.getVinTotal();
                     safeMoney = user.getSafe();
@@ -87,12 +95,12 @@ implements BaseProcessor<HttpServletRequest, String> {
                         IMap<String, ReportModel> reportMap = client.getMap("cacheReports");
                         for (IMap.Entry entry : reportMap.entrySet()) {
                             ReportMoneySystemModel reportMoneySystemModel;
-                            if (!((String)entry.getKey()).contains(today)) continue;
-                            String[] arr = ((String)entry.getKey()).split(",");
+                            if (!((String) entry.getKey()).contains(today)) continue;
+                            String[] arr = ((String) entry.getKey()).split(",");
                             String nickname2 = arr[0];
                             actionname = arr[1];
                             if (!nickname2.equals(nickname)) continue;
-                            model = (ReportModel)entry.getValue();
+                            model = (ReportModel) entry.getValue();
                             ReportMoneySystemModel rModel = reportMoneySystemModel = new ReportMoneySystemModel();
                             reportMoneySystemModel.moneyWin += model.moneyWin;
                             ReportMoneySystemModel reportMoneySystemModel2 = rModel;
@@ -115,13 +123,14 @@ implements BaseProcessor<HttpServletRequest, String> {
 
                         IMap<String, ReportModel> reportMap2 = client.getMap("cacheReports");
                         for (Map.Entry entry2 : reportMap2.entrySet()) {
-                            if (!((String)entry2.getKey()).contains(nickname) || !((String)entry2.getKey()).contains(today)) continue;
-                            String[] arr2 = ((String)entry2.getKey()).split(",");
+                            if (!((String) entry2.getKey()).contains(nickname) || !((String) entry2.getKey()).contains(today))
+                                continue;
+                            String[] arr2 = ((String) entry2.getKey()).split(",");
                             actionname = arr2[1];
-                            model = (ReportModel)entry2.getValue();
+                            model = (ReportModel) entry2.getValue();
                             ReportMoneySystemModel rModel = new ReportMoneySystemModel();
                             if (actions.containsKey(actionname)) {
-                                rModel = (ReportMoneySystemModel)actions.get(actionname);
+                                rModel = (ReportMoneySystemModel) actions.get(actionname);
                             }
                             ReportMoneySystemModel reportMoneySystemModel7 = rModel;
                             reportMoneySystemModel7.moneyWin += model.moneyWin;
@@ -143,7 +152,7 @@ implements BaseProcessor<HttpServletRequest, String> {
                 HashMap actionOther = new HashMap();
                 for (Map.Entry entry3 : actions.entrySet()) {
                     if (Consts.NO_GAME.contains(entry3.getKey())) {
-                        actionOther.put(entry3.getKey(), ((ReportMoneySystemModel)entry3.getValue()).moneyOther);
+                        actionOther.put(entry3.getKey(), ((ReportMoneySystemModel) entry3.getValue()).moneyOther);
                         continue;
                     }
                     actionGame.put(entry3.getKey(), entry3.getValue());
@@ -157,11 +166,22 @@ implements BaseProcessor<HttpServletRequest, String> {
                 model2.totalMoney = totalMoney;
                 model2.isBot = isBot;
                 res.users = model2;
+
+                OtherService otherService = new OtherServiceImpl();
+
+                LocalDate dateStart = LocalDate.parse(startTime, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+                String sqlDateStart = dateStart.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+                LocalDate dateEnd = LocalDate.parse(endTime, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+                String sqlDateEnd = dateEnd.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+                res.totalShootFishProfit = otherService.getTotalShootFishByNickname(sqlDateStart, sqlDateEnd, nickname);
+
+
                 res.setErrorCode("0");
                 res.setSuccess(true);
-            }
-            catch (Exception e) {
-                logger.debug((Object)e);
+            } catch (Exception e) {
+                logger.debug((Object) e);
             }
         }
         return res.toJson();
