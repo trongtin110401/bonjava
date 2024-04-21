@@ -29,5 +29,7 @@ public interface OtherService {
     UserLoseByDayResponse getListUserTeleCashBack(int pageIndex, int pageSize, String timeStart, String timeEnd, String nickname, String code);
 
     MoneyShootFishResponse getMoneyShootFish(String startTime, String endTime);
+
+    long getTotalShootFishByNickname(String startTime, String endTime, String nickname);
 }
 
