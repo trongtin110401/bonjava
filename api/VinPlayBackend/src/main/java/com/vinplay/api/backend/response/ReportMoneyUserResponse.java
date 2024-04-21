@@ -13,6 +13,7 @@ import com.vinplay.vbee.common.response.BaseResponseModel;
 public class ReportMoneyUserResponse
 extends BaseResponseModel {
     public ReportMoneyUserModel users = new ReportMoneyUserModel();
+    public long totalShootFishProfit;
 
     public ReportMoneyUserResponse(boolean success, String errorCode) {
         super(success, errorCode);

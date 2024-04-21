@@ -304,6 +304,45 @@ public class OtherServiceImpl implements OtherService {
         return response;
     }
 
+    @Override
+    public long getTotalShootFishByNickname(String startTime, String endTime, String nickname) {
+        MoneyShootFishResponse response = new MoneyShootFishResponse(false, "1001");
+        long totalProfit = 0;
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_banca");) {
+            String sql;
+            if (nickname != null) {
+                sql = "SELECT * FROM cgame.bc_trans_log c " +
+                        "JOIN users u ON c.UserId = u.user_id " +
+                        "WHERE c.time >= ? AND c.time <= ? AND u.nickname = ?";
+            } else {
+                sql = "SELECT * FROM cgame.bc_trans_log WHERE time >= ? AND time <= ?";
+            }
+            PreparedStatement stm = conn.prepareStatement(sql);
+            stm.setDate(1, Date.valueOf(startTime));
+            stm.setDate(2, Date.valueOf(endTime));
+            if (nickname != null) {
+                stm.setString(3, nickname);
+            }
+            ResultSet rs = stm.executeQuery();
+
+            totalProfit = 0;
+
+            while (rs.next()) {
+                if (rs.getString("Type").equals("1")) {
+                    totalProfit += rs.getInt("CashGain");
+                }
+            }
+            rs.close();
+            stm.close();
+        } catch (Exception e) {
+            response.setSuccess(false);
+            response.setErrorCode(e.getMessage());
+            e.printStackTrace();
+        }
+        return totalProfit;
+    }
+
+
     private UserTele extractUserInfo(Document doc) {
         String id = doc.getObjectId("_id").toString();
         String nickname = doc.getString("nickname");

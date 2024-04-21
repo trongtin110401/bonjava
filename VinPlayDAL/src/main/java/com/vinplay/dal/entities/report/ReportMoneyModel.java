@@ -13,6 +13,7 @@ public class ReportMoneyModel {
     public HashMap<String, Long> AgentMoney;
     public MoneyInOut AgentMoneyIn;
     public MoneyInOut AgentMoneyOut;
+    public long totalShootFishProfit;
     public ReportMoneyModel(List<ReportMoneySystemModelNew> listReportGame, List<MoneyInOut> listUserIn, List<MoneyInOut> listUserInEvent, List<MoneyInOut> listUserOut, List<MoneyInOut> listOther) {
         ListReportGame = listReportGame;
         ListUserIn = listUserIn;

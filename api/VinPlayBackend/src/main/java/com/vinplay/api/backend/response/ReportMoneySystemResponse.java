@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  com.vinplay.dal.entities.report.ReportMoneySystemModel
  *  com.vinplay.dal.entities.report.ReportTXModel
@@ -16,7 +16,7 @@ import org.json.JSONObject;
 import java.util.Map;
 
 public class ReportMoneySystemResponse
-extends BaseResponseModel {
+        extends BaseResponseModel {
     public ReportTXModel taiXiu;
     public ReportTXModel taiXiuBot;
     public Map<String, ReportMoneySystemModel> actionGame;
@@ -36,6 +36,7 @@ extends BaseResponseModel {
     public Map<String, ReportMoneySystemModel> actionGameBot;
     public Map<String, Long> bot;
     public String billConfig;
+    private long totalShootFishProfit;
 
     public ReportMoneySystemResponse(boolean success, String errorCode) {
         super(success, errorCode);
@@ -61,6 +62,14 @@ extends BaseResponseModel {
         this.user = user;
         this.actionGameBot = actionGameBot;
         this.bot = bot;
+    }
+
+    public long getTotalShootFishProfit() {
+        return totalShootFishProfit;
+    }
+
+    public void setTotalShootFishProfit(long totalShootFishProfit) {
+        this.totalShootFishProfit = totalShootFishProfit;
     }
 }
 
