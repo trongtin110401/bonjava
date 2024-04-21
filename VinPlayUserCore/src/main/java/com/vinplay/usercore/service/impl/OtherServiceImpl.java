@@ -184,14 +184,14 @@ public class OtherServiceImpl implements OtherService {
         long totalCount = col.count(query);
 
         List<Document> transactions = new ArrayList<>();
-        double totalAmount = 0;
+        long totalAmount = 0;
         while (cursor.hasNext()) {
             Document document = cursor.next();
             Document fund = new Document();
             fund.put("_id", document.getObjectId("_id").toString());
             fund.put("expense", document.getString("expense"));
             fund.put("amount", document.getString("amount"));
-            totalAmount += Integer.parseInt(document.getString("amount"));
+            totalAmount += Long.parseLong(document.getString("amount"));
             fund.put("type", document.getString("type"));
             fund.put("createdTime", document.getString("time_log"));
             transactions.add(fund);
