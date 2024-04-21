@@ -15,24 +15,23 @@ import com.vinplay.usercore.service.OtherService;
 import com.vinplay.usercore.service.impl.OtherServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
+import com.vinplay.vbee.common.response.MoneyShootFishResponse;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class FindAllTransactionFundProcessor
-        implements BaseProcessor<HttpServletRequest, String> {
+public class GetMoneyShootFishProcessor implements BaseProcessor<HttpServletRequest, String> {
 
     public String execute(Param<HttpServletRequest> param) {
+        MoneyShootFishResponse response;
         HttpServletRequest request = param.get();
-        int pageIndex = Integer.parseInt(request.getParameter("pageIndex"));
-        int pageSize = Integer.parseInt(request.getParameter("pageSize"));
-        String type = request.getParameter("type");
-        String startTime = request.getParameter("startTime");
-        String endTime = request.getParameter("endTime");
-        String fundName = request.getParameter("fundName");
+        String timeStart = request.getParameter("timeStart");
+        String timeEnd = request.getParameter("timeEnd");
+
         OtherService otherService = new OtherServiceImpl();
+        response = otherService.getMoneyShootFish(timeStart, timeEnd);
 
-        return otherService.getTransactionFund(pageIndex, pageSize, type, startTime, endTime, fundName).toJson();
-
+        return response.toJson();
     }
+
 }
 

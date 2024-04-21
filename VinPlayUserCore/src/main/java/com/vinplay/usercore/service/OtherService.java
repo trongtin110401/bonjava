@@ -28,5 +28,6 @@ public interface OtherService {
     void saveUserTeleCashBack(Document document);
     UserLoseByDayResponse getListUserTeleCashBack(int pageIndex, int pageSize, String timeStart, String timeEnd, String nickname, String code);
 
+    MoneyShootFishResponse getMoneyShootFish(String startTime, String endTime);
 }
 

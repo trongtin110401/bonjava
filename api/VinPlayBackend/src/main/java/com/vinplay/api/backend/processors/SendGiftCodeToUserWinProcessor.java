@@ -15,6 +15,7 @@ import com.vinplay.dal.dao.impl.LogMoneyUserDaoImpl;
 import com.vinplay.usercore.service.OtherService;
 import com.vinplay.usercore.service.impl.GiftCodeServiceImpl;
 import com.vinplay.usercore.service.impl.OtherServiceImpl;
+import com.vinplay.usercore.utils.GameCommon;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.dto.GiftCodeDto;
@@ -91,7 +92,7 @@ public class SendGiftCodeToUserWinProcessor implements BaseProcessor<HttpServlet
 
     public static void sendMessage(String chatId, String message) {
         try {
-//            String bootToken = GameCommon.getValueStr("Telegram_boot_bon_token");
+            String bootToken = GameCommon.getValueStr("Telegram_boot_bon_token");
             String bot = "6831621160:AAHPfkEON1-u2e44F8WAVdu5vT9ySql8ztA";
             RequestBody requestBody = new FormBody.Builder()
                     .add("chat_id", chatId)
