@@ -12,13 +12,9 @@
 package com.vinplay.api.backend.processors;
 
 import com.vinplay.usercore.service.OtherService;
-import com.vinplay.usercore.service.impl.GiftCodeServiceImpl;
 import com.vinplay.usercore.service.impl.OtherServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
-import com.vinplay.vbee.common.dto.FindAllGiftCodeDto;
-import com.vinplay.vbee.common.response.TransactionFundResponse;
-import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
