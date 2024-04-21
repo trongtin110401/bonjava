@@ -31,5 +31,7 @@ public interface OtherService {
     MoneyShootFishResponse getMoneyShootFish(String startTime, String endTime);
 
     long getTotalShootFishByNickname(String startTime, String endTime, String nickname);
+
+    void deleteExpenseById(String id);
 }
 

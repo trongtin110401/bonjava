@@ -23,6 +23,7 @@ import org.bson.Document;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class ExpenseTransactionProcessor implements BaseProcessor<HttpServletRequest, String> {
 

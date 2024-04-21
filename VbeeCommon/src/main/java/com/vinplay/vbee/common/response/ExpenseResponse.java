@@ -7,5 +7,6 @@ public class ExpenseResponse {
     public String type;
     public long amount;
     public String expense;
+    public String id;
 }
 

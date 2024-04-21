@@ -1779,13 +1779,18 @@
         </command>
         <command>
             <id>11037</id>
-            <name>Get list user lose</name>
+            <name>Get fee</name>
             <path>com.vinplay.api.backend.processors.report.GetFeeProcessor</path>
         </command>
         <command>
             <id>11038</id>
-            <name>Get list user lose</name>
+            <name>Get money ban ca</name>
             <path>com.vinplay.api.backend.processors.GetMoneyShootFishProcessor</path>
+        </command>
+        <command>
+            <id>11039</id>
+            <name>delete expense by id</name>
+            <path>com.vinplay.api.backend.processors.DeleteExpenseTransactionProcessor</path>
         </command>
     </commands>
 </backend>
