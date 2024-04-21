@@ -9,11 +9,17 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.UpdateOptions;
+import com.vinplay.usercore.entities.UserFish;
 import com.vinplay.usercore.service.OtherService;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
+import com.vinplay.vbee.common.pools.ConnectionPool;
 import com.vinplay.vbee.common.response.*;
 import org.bson.Document;
 
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -251,6 +257,51 @@ public class OtherServiceImpl implements OtherService {
         userLoseByDayResponse.setUsers(users);
         userLoseByDayResponse.setTotalRecord((int) collection.count());
         return userLoseByDayResponse;
+    }
+
+    @Override
+    public MoneyShootFishResponse getMoneyShootFish(String startTime, String endTime) {
+        MoneyShootFishResponse response = new MoneyShootFishResponse(false, "1001");
+        long totalCashIn = 0;
+        long totalCashOut = 0;
+        long totalProfit = 0;
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_banca");) {
+            String sql = "SELECT * FROM cgame.bc_trans_log where time >= ? and time <= ?";
+            PreparedStatement stm = conn.prepareStatement(sql);
+            stm.setDate(1, Date.valueOf(startTime));
+            stm.setDate(2, Date.valueOf(endTime));
+            ResultSet rs = stm.executeQuery();
+
+            totalCashIn = 0;
+            totalCashOut = 0;
+            totalProfit = 0;
+
+            while (rs.next()) {
+                if (rs.getString("Type").equals("50")) {
+                    if (rs.getString("Extra").equals("xxeng cashout")) {
+                        totalCashOut += (rs.getInt("CashGain") * -1);
+                    } else {
+                        totalCashIn += (rs.getInt("CashGain"));
+                    }
+                }
+                if (rs.getString("Type").equals("1")) {
+                    totalProfit += (rs.getInt("CashGain"));
+                }
+            }
+            rs.close();
+            stm.close();
+        } catch (Exception e) {
+            response.setSuccess(false);
+            response.setErrorCode(e.getMessage());
+            e.printStackTrace();
+        }
+        totalProfit = totalProfit * -1;
+        response.setTotalCashIn(totalCashIn);
+        response.setTotalCashOut(totalCashOut);
+        response.setTotalProfit(totalProfit);
+        response.setSuccess(true);
+        response.setErrorCode("Ok");
+        return response;
     }
 
     private UserTele extractUserInfo(Document doc) {

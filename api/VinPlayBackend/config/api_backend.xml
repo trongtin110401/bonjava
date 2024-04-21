@@ -1782,5 +1782,10 @@
             <name>Get list user lose</name>
             <path>com.vinplay.api.backend.processors.report.GetFeeProcessor</path>
         </command>
+        <command>
+            <id>11038</id>
+            <name>Get list user lose</name>
+            <path>com.vinplay.api.backend.processors.GetMoneyShootFishProcessor</path>
+        </command>
     </commands>
 </backend>
