@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  com.vinplay.vbee.common.messages.BaseMessage
  *  com.vinplay.vbee.common.messages.minigame.LogCaoThapMessage
@@ -23,13 +23,14 @@ import com.vinplay.vbee.common.messages.minigame.LogCaoThapWinMessage;
 import com.vinplay.vbee.common.messages.minigame.UpdateFundMessage;
 import com.vinplay.vbee.common.messages.minigame.UpdatePotMessage;
 import com.vinplay.vbee.common.rmq.RMQApi;
+
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 public class CaoThapServiceImpl
-implements CaoThapService {
+        implements CaoThapService {
     CaoThapDAO dao = new CaoThapDAOImpl();
 
     @Override
@@ -47,7 +48,7 @@ implements CaoThapService {
         UpdatePotMessage message = new UpdatePotMessage();
         message.potName = potName;
         message.newValue = newValue;
-        RMQApi.publishMessage((String)"queue_pot", (BaseMessage)message, (int)106);
+        RMQApi.publishMessage((String) "queue_pot", (BaseMessage) message, (int) 106);
     }
 
     @Override
@@ -55,7 +56,7 @@ implements CaoThapService {
         UpdateFundMessage message = new UpdateFundMessage();
         message.fundName = fundName;
         message.newValue = newValue;
-        RMQApi.publishMessage((String)"queue_fund", (BaseMessage)message, (int)110);
+        RMQApi.publishMessage((String) "queue_fund", (BaseMessage) message, (int) 110);
     }
 
     @Override
@@ -72,7 +73,7 @@ implements CaoThapService {
         message.moneyType = moneyType;
         message.potBet = potBet;
         message.step = step;
-        RMQApi.publishMessage((String)"queue_caothap", (BaseMessage)message, (int)112);
+        RMQApi.publishMessage((String) "queue_caothap", (BaseMessage) message, (int) 112);
     }
 
     @Override
@@ -85,12 +86,12 @@ implements CaoThapService {
         message.prize = prize;
         message.cards = cards;
         message.moneyType = moneyType;
-        RMQApi.publishMessage((String)"queue_caothap", (BaseMessage)message, (int)113);
+        RMQApi.publishMessage((String) "queue_caothap", (BaseMessage) message, (int) 113);
     }
 
     @Override
-    public List<LSGDCaoThap> getLichSuGiaoDich(String nickname, int pageNumber, int moneyType) {
-        return this.dao.getLichSuGiaoDich(nickname, pageNumber, moneyType);
+    public List<LSGDCaoThap> getLichSuGiaoDich(String nickname, int pageNumber, int moneyType, int pageSize) {
+        return this.dao.getLichSuGiaoDich(nickname, pageNumber, moneyType, pageSize);
     }
 
     @Override
@@ -121,9 +122,8 @@ implements CaoThapService {
     @Override
     public void insertBotEvent(String nickname, long betValue, long prize, String cards) {
         try {
-            this.logCaoThapWin(-1L, nickname, betValue, (short)4, prize, cards, 1);
-        }
-        catch (IOException | InterruptedException | TimeoutException ex2) {
+            this.logCaoThapWin(-1L, nickname, betValue, (short) 4, prize, cards, 1);
+        } catch (IOException | InterruptedException | TimeoutException ex2) {
             Exception e = ex2;
             e.printStackTrace();
         }

@@ -3,18 +3,22 @@
  */
 package com.vinplay.usercore.service.impl;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.Block;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.UpdateOptions;
+import com.vinplay.bongda.utils.BongDaUtils;
 import com.vinplay.usercore.entities.UserFish;
 import com.vinplay.usercore.service.OtherService;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.pools.ConnectionPool;
 import com.vinplay.vbee.common.response.*;
 import org.bson.Document;
+import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -23,6 +27,9 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
+
+import static com.mongodb.client.model.Filters.eq;
 
 public class OtherServiceImpl implements OtherService {
     @Override
@@ -177,13 +184,14 @@ public class OtherServiceImpl implements OtherService {
         long totalCount = col.count(query);
 
         List<Document> transactions = new ArrayList<>();
-        double totalAmount = 0;
+        long totalAmount = 0;
         while (cursor.hasNext()) {
             Document document = cursor.next();
             Document fund = new Document();
+            fund.put("_id", document.getObjectId("_id").toString());
             fund.put("expense", document.getString("expense"));
             fund.put("amount", document.getString("amount"));
-            totalAmount += Integer.parseInt(document.getString("amount"));
+            totalAmount += Long.parseLong(document.getString("amount"));
             fund.put("type", document.getString("type"));
             fund.put("createdTime", document.getString("time_log"));
             transactions.add(fund);
@@ -340,6 +348,14 @@ public class OtherServiceImpl implements OtherService {
             e.printStackTrace();
         }
         return totalProfit;
+    }
+
+    @Override
+    public void deleteExpenseById(String id) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> col = db.getCollection("expense_transaction");
+        ObjectId objectId = new ObjectId(id);
+        col.deleteOne(eq("_id", objectId));
     }
 
 

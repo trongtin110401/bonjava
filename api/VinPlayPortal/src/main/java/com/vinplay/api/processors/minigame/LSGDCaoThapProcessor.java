@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  com.vinplay.dal.entities.caothap.LSGDCaoThap
  *  com.vinplay.dal.service.impl.CaoThapServiceImpl
@@ -15,27 +15,35 @@ import com.vinplay.dal.entities.caothap.LSGDCaoThap;
 import com.vinplay.dal.service.impl.CaoThapServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
+
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 public class LSGDCaoThapProcessor
-implements BaseProcessor<HttpServletRequest, String> {
+        implements BaseProcessor<HttpServletRequest, String> {
     public String execute(Param<HttpServletRequest> param) {
         LSGDCaoThapResponse response = new LSGDCaoThapResponse(false, "1001");
-        HttpServletRequest request = (HttpServletRequest)param.get();
+        HttpServletRequest request = (HttpServletRequest) param.get();
         String nickname = request.getParameter("nn");
         int page = Integer.parseInt(request.getParameter("p"));
         int moneyType = Integer.parseInt(request.getParameter("mt"));
+        int pageSize = 10;
+        if (request.getParameter("pageSize") != null) {
+            try {
+                pageSize = Integer.parseInt(request.getParameter("pageSize"));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         CaoThapServiceImpl service = new CaoThapServiceImpl();
         try {
             int totalRows = service.countLichSuGiaoDich(nickname, moneyType);
-            List results = service.getLichSuGiaoDich(nickname, page, moneyType);
-            response.setTotalPages(totalRows / 10 + 1);
+            List results = service.getLichSuGiaoDich(nickname, page, moneyType, pageSize);
+            response.setTotalPages((totalRows + pageSize - 1) / pageSize);
             response.setResults(results);
             response.setSuccess(true);
             response.setErrorCode("0");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return e.getMessage();
         }
         return response.toJson();

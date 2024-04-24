@@ -11,7 +11,7 @@ public class TransactionExpenseResponse extends BaseResponseModel {
     private int pageIndex;
 
     private int pageSize;
-    private double totalExpense;
+    private long totalExpense;
 
     private List<Document> transactions;
 
@@ -51,11 +51,11 @@ public class TransactionExpenseResponse extends BaseResponseModel {
         super(success, errorCode);
     }
 
-    public double getTotalExpense() {
+    public long getTotalExpense() {
         return totalExpense;
     }
 
-    public void setTotalExpense(double totalExpense) {
+    public void setTotalExpense(long totalExpense) {
         this.totalExpense = totalExpense;
     }
 }
