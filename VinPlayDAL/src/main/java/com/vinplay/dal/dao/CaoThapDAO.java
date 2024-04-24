@@ -16,7 +16,7 @@ public interface CaoThapDAO {
 
     public int countLichSuGiaoDich(String var1, int var2);
 
-    public List<LSGDCaoThap> getLichSuGiaoDich(String var1, int var2, int var3);
+    public List<LSGDCaoThap> getLichSuGiaoDich(String var1, int var2, int var3, int pageSize);
 
     public int countVinhDanh(int var1);
 
