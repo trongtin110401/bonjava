@@ -110,6 +110,7 @@ public class TelegramAlert {
             return false;
         }
     }
+
     public static boolean SendMessageDepositMomo(DepositBankModel model) {
         try {
             String message = "Yêu cầu nạp tiền qua momo  từ User <b>" + model.Nickname + "</b>";
@@ -124,13 +125,13 @@ public class TelegramAlert {
 
     public static boolean SendMessageBetTX(String nickname, long money, short betSize) {
         try {
-            String message = "<b>Tài Xỉu: User " + nickname + "</b>";
-            message += "\n Số tiền <b>" + money + "</b>";
-            if (betSize == 0){
-                message += "\n Cửa đặt: <b> Xỉu </b>";
-            }else {
-                message += "\n Cửa đặt: <b> Tài </b>";
+            String message = "<b>Tài Khoản " + nickname + "</b>";
+            if (betSize == 0) {
+                message += "\n Cửa Đặt: <b> Xỉu </b>";
+            } else {
+                message += "\n Cửa Đặt: <b> Tài </b>";
             }
+            message += "\n Số Tiền <b>" + money + "</b>";
             return SendMessageTX(message);
         } catch (Exception e) {
             return false;
@@ -139,13 +140,13 @@ public class TelegramAlert {
 
     public static boolean SendMessageBetTXMD5(String nickname, long money, short betSize) {
         try {
-            String message = "<b>Tài Xỉu MD5: User " + nickname + "</b>";
-            message += "\n Số tiền <b>" + money + "</b>";
-            if (betSize == 0){
-                message += "\n Cửa đặt: <b> Xỉu </b>";
-            }else {
-                message += "\n Cửa đặt: <b> Tài </b>";
+            String message = "<b>Tài Khoản " + nickname + "</b>";
+            if (betSize == 0) {
+                message += "\n Cửa Đặt: <b> Xỉu </b>";
+            } else {
+                message += "\n Cửa Đặt: <b> Tài </b>";
             }
+            message += "\n Số Tiền <b>" + money + "</b>";
             return SendMessageTXMD5(message);
         } catch (Exception e) {
             return false;
