@@ -125,13 +125,13 @@ public class TelegramAlert {
 
     public static boolean SendMessageBetTX(String nickname, long money, short betSize) {
         try {
-            String message = "<b>Tài Khoản " + nickname + "</b>";
+            String message = "Tài Khoản : <b> " + nickname + "</b>";
             if (betSize == 0) {
                 message += "\n Cửa Đặt: <b> Xỉu </b>";
             } else {
                 message += "\n Cửa Đặt: <b> Tài </b>";
             }
-            message += "\n Số Tiền <b>" + money + "</b>";
+            message += "\n Số Tiền : <b>" + money + "</b>";
             return SendMessageTX(message);
         } catch (Exception e) {
             return false;
@@ -140,13 +140,13 @@ public class TelegramAlert {
 
     public static boolean SendMessageBetTXMD5(String nickname, long money, short betSize) {
         try {
-            String message = "<b>Tài Khoản " + nickname + "</b>";
+            String message = "Tài Khoản : <b> " + nickname + "</b>";
             if (betSize == 0) {
                 message += "\n Cửa Đặt: <b> Xỉu </b>";
             } else {
                 message += "\n Cửa Đặt: <b> Tài </b>";
             }
-            message += "\n Số Tiền <b>" + money + "</b>";
+            message += "\n Số Tiền : <b>" + money + "</b>";
             return SendMessageTXMD5(message);
         } catch (Exception e) {
             return false;
