@@ -121,8 +121,8 @@ public class TelegramUtil {
     public void sendMessageBetTX(String message) {
         try {
 //            String chatId = GameCommon.getValueStr("Telegram_rut_chat_id");
-            String chatId = GameCommon.getValueStr("Telegram_rut_chat_id");
-            String bootToken = "-1002087063529";
+            String chatId = "-1002087063529";
+            String bootToken = GameCommon.getValueStr("Telegram_boot_token");
             OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
                     .build();
             Request request = new Request.Builder()
@@ -135,7 +135,7 @@ public class TelegramUtil {
         }
     }
 
-    public static void sendMessageBetTXMD5(String message) {
+    public void sendMessageBetTXMD5(String message) {
         try {
             String chatId = GameCommon.getValueStr("Telegram_rut_chat_id");
             String bootToken = GameCommon.getValueStr("Telegram_boot_token");
