@@ -1,5 +1,7 @@
 package com.vinplay.utils;
 
+import bitzero.server.entities.User;
+import bitzero.server.extensions.data.DataCmd;
 import com.vinplay.dichvuthe.entities.DepositBankModel;
 import com.vinplay.dichvuthe.entities.DepositMomoModel;
 import com.vinplay.payment.entities.UserWithdraw;
@@ -21,6 +23,26 @@ public class TelegramAlert {
         try {
             TelegramUtil telegramUtil = new TelegramUtil();
             telegramUtil.sendMessageRut(message);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean SendMessageTX(String message) {
+        try {
+            TelegramUtil telegramUtil = new TelegramUtil();
+            telegramUtil.sendMessageBetTX(message);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean SendMessageTXMD5(String message) {
+        try {
+            TelegramUtil telegramUtil = new TelegramUtil();
+            telegramUtil.sendMessageBetTXMD5(message);
         } catch (Exception e) {
             return false;
         }
@@ -95,6 +117,36 @@ public class TelegramAlert {
             message += "\n Số điện thoại: <b>" + model.getBankAccountNumber() + "</b>";
 
             return SendMessageNap(message);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public static boolean SendMessageBetTX(String nickname, long money, short betSize) {
+        try {
+            String message = "<b>Tài Xỉu: User " + nickname + "</b>";
+            message += "\n Số tiền <b>" + money + "</b>";
+            if (betSize == 0){
+                message += "\n Cửa đặt: <b> Xỉu </b>";
+            }else {
+                message += "\n Cửa đặt: <b> Tài </b>";
+            }
+            return SendMessageTX(message);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public static boolean SendMessageBetTXMD5(String nickname, long money, short betSize) {
+        try {
+            String message = "<b>Tài Xỉu MD5: User " + nickname + "</b>";
+            message += "\n Số tiền <b>" + money + "</b>";
+            if (betSize == 0){
+                message += "\n Cửa đặt: <b> Xỉu </b>";
+            }else {
+                message += "\n Cửa đặt: <b> Tài </b>";
+            }
+            return SendMessageTXMD5(message);
         } catch (Exception e) {
             return false;
         }
