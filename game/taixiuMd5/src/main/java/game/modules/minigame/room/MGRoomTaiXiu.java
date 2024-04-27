@@ -40,6 +40,7 @@ import com.vinplay.dal.service.impl.CacheServiceImpl;
 import com.vinplay.dal.service.impl.TaiXiuMd5ServiceImpl;
 import com.vinplay.usercore.service.UserService;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
+import com.vinplay.utils.TelegramAlert;
 import com.vinplay.vbee.common.enums.Games;
 import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
 import com.vinplay.vbee.common.models.cache.UserCacheModel;
@@ -183,6 +184,8 @@ public class MGRoomTaiXiu extends MGRoom {
     public void betTaiXiu(User user, BetTaiXiuCmd cmd) {
         BetTaiXiuMsg msg = this.betTaiXiu(user.getName(), cmd.userId, cmd.betValue, cmd.inputTime, cmd.moneyType, cmd.betSide, false);
         this.sendMessageToUser((BaseMsg) msg, user); // todo : gửi message về client
+        TelegramAlert.SendMessageBetTXMD5(user.getName(), cmd.betValue, cmd.betSide);
+
     }
 
     // todo : đặt tài xỉu
@@ -373,7 +376,7 @@ public class MGRoomTaiXiu extends MGRoom {
                                 totalCashIn += tran.betValue;
                             }
 
-                            tran.prize =Math.round( (long) ((float) tran.betValue * (100.0f - this.tax) / 100.0f) + tran.betValue);
+                            tran.prize = Math.round((long) ((float) tran.betValue * (100.0f - this.tax) / 100.0f) + tran.betValue);
                             rs.totalPrize += tran.prize;
                             if (tran.userId != 0) {
                                 totalCashOut += tran.prize;
@@ -669,7 +672,7 @@ public class MGRoomTaiXiu extends MGRoom {
                             if (txt.totalRefund > 0L) {
                                 transType = TransType.IN_TRANS;
                             }
-                            long fee =Math.round( (long) (MGRoomTaiXiu.this.tax * (float) txt.totalPrize / (200.0f - MGRoomTaiXiu.this.tax)));
+                            long fee = Math.round((long) (MGRoomTaiXiu.this.tax * (float) txt.totalPrize / (200.0f - MGRoomTaiXiu.this.tax)));
                             MoneyResponse res2 = new MoneyResponse(false, "1001");
                             if (!MGRoomTaiXiu.this.isBot(username)) {
                                 if (username.equals("banhday"))

@@ -118,4 +118,37 @@ public class TelegramUtil {
         }
     }
 
+    public void sendMessageBetTX(String message) {
+        try {
+//            String chatId = GameCommon.getValueStr("Telegram_rut_chat_id");
+            String chatId = GameCommon.getValueStr("Telegram_rut_chat_id");
+            String bootToken = "-1002087063529";
+            OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
+                    .build();
+            Request request = new Request.Builder()
+                    .url("https://api.telegram.org/bot" + bootToken + "/sendMessage?text=" + encodeValue(message) + "&chat_id=" + chatId + "&parse_mode=HTML")
+                    .method("GET", null)
+                    .build();
+            Response response = client.newCall(request).execute();
+        } catch (Exception e) {
+
+        }
+    }
+
+    public static void sendMessageBetTXMD5(String message) {
+        try {
+            String chatId = GameCommon.getValueStr("Telegram_rut_chat_id");
+            String bootToken = GameCommon.getValueStr("Telegram_boot_token");
+            OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
+                    .build();
+            Request request = new Request.Builder()
+                    .url("https://api.telegram.org/bot" + bootToken + "/sendMessage?text=" + encodeValue(message) + "&chat_id=" + chatId + "&parse_mode=HTML")
+                    .method("GET", null)
+                    .build();
+            Response response = client.newCall(request).execute();
+        } catch (Exception e) {
+
+        }
+    }
+
 }

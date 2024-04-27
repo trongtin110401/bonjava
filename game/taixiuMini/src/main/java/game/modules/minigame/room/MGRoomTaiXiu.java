@@ -43,6 +43,7 @@ import com.vinplay.dal.service.impl.TaiXiuServiceImpl;
 import com.vinplay.usercore.service.UserService;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.utils.AdminSocketAlert;
+import com.vinplay.utils.TelegramAlert;
 import com.vinplay.vbee.common.enums.Games;
 import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
 import com.vinplay.vbee.common.models.UserModel;
@@ -194,6 +195,7 @@ public class MGRoomTaiXiu
     public void betTaiXiu(User user, BetTaiXiuCmd cmd) {
         BetTaiXiuMsg msg = this.betTaiXiu(user.getName(), cmd.userId, cmd.betValue, cmd.inputTime, cmd.moneyType, cmd.betSide, false);
         this.sendMessageToUser((BaseMsg) msg, user); // todo : gửi message về client
+        TelegramAlert.SendMessageBetTX(user.getName(), cmd.betValue, cmd.betSide);
     }
 
     private boolean CheckQuota(String nick_name, boolean seven_days) {
