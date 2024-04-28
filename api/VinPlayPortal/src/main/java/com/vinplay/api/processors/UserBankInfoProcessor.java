@@ -22,25 +22,32 @@ public class UserBankInfoProcessor
         String bankAccount = request.getParameter("bankAccount");
         String bankName = request.getParameter("bankName");
         String accountName = request.getParameter("accountName");
-        UserBankInfoDto userBankInfoDto = new UserBankInfoDto(nickName, bankAccount, bankName, accountName, DateTimeUtils.getCurrentTime((String)"yyyy-MM-dd HH:mm:ss"));
+        if (nickName.isEmpty() || bankAccount.isEmpty() || bankName.isEmpty() || accountName.isEmpty()) {
+            response.setSuccess(false);
+            response.setErrorCode("Thông tin không hợp lệ");
+            return response.toJson();
+        }
+        UserBankInfoDto userBankInfoDto = new UserBankInfoDto(nickName, bankAccount, bankName, accountName, DateTimeUtils.getCurrentTime((String) "yyyy-MM-dd HH:mm:ss"));
 
         UserServiceImpl service = new UserServiceImpl();
 
         List<UserBankInfoDto> banks = service.getListBankByNickname(nickName);
         if (banks.size() > 5) {
             response.setSuccess(false);
-            response.setErrorCode("Bank toi da la 5");
+            response.setErrorCode("Chỉ được tạo tối đa 5 bank");
             return response.toJson();
         }
         if (!banks.isEmpty() && !banks.get(0).getAccountName().equals(accountName)) {
             response.setSuccess(false);
-            response.setErrorCode("Ten tai khoan khong hop le");
+            response.setErrorCode("Tên tài khoản không hợp lệ");
             return response.toJson();
         }
-        if (!banks.isEmpty() && banks.get(0).getBankName().equals(bankName)) {
-            response.setSuccess(false);
-            response.setErrorCode("Tai khoan ngan hang trung lap");
-            return response.toJson();
+        for (UserBankInfoDto bankInfoDto : banks) {
+            if (bankName.equals(bankInfoDto.getBankName())) {
+                response.setSuccess(false);
+                response.setErrorCode("Ngân hàng đã được tạo");
+                return response.toJson();
+            }
         }
         service.saveBankInfo(userBankInfoDto);
         banks.add(userBankInfoDto);

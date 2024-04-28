@@ -74,6 +74,7 @@ import com.vinplay.utils.TelegramAlert;
 import com.vinplay.utils.TelegramUtil;
 import com.vinplay.vbee.common.dto.GiftCodeDto;
 import com.vinplay.vbee.common.dto.UserBankInfoDto;
+import com.vinplay.vbee.common.dto.UserMomoInfoDto;
 import com.vinplay.vbee.common.enums.Games;
 import com.vinplay.vbee.common.enums.StatusGames;
 import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
@@ -2676,6 +2677,40 @@ public class UserServiceImpl
         document.put("nick_name", userBankInfoDto.getNickName());
         document.put("created_date", userBankInfoDto.getCreatedDate());
         collection.insertOne(document);
+    }
+
+    public void saveMomoInfo(UserMomoInfoDto userMomoInfoDto) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("user_momo_info");
+        Document document = new Document();
+        document.put("phone_number", userMomoInfoDto.getPhoneNumber());
+        document.put("phone_name", userMomoInfoDto.getPhoneName());
+        document.put("nick_name", userMomoInfoDto.getNickName());
+        document.put("created_date", userMomoInfoDto.getCreatedDate());
+        collection.insertOne(document);
+    }
+
+    public List<UserMomoInfoDto> getListMomoByNickname(String nickName) {
+        List<UserMomoInfoDto> results = new ArrayList<>();
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("user_momo_info");
+        Document conditions = new Document();
+        conditions.put("nick_name", nickName);
+        BasicDBObject sortCondtions = new BasicDBObject();
+        sortCondtions.put("created_date", -1);
+
+        MongoCursor<Document> cursor = collection.find(conditions).iterator();
+
+        while (cursor.hasNext()) {
+            Document document = cursor.next();
+            UserMomoInfoDto userBankInfoDto = new UserMomoInfoDto();
+            userBankInfoDto.setPhoneName(document.getString("phone_name"));
+            userBankInfoDto.setPhoneNumber(document.getString("phone_number"));
+            userBankInfoDto.setCreatedDate(document.getString("created_date"));
+            userBankInfoDto.setNickName(nickName);
+            results.add(userBankInfoDto);
+        }
+        return results;
     }
 
 }

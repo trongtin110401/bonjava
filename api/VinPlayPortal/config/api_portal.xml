@@ -982,5 +982,15 @@
             <name>Verify otp</name>
             <path>com.vinplay.api.processors.otp.CheckOtpProcessor</path>
         </command>
+        <command>
+            <id>4120</id>
+            <name>create user momo</name>
+            <path>com.vinplay.api.processors.UserMomoInfoProcessor</path>
+        </command>
+        <command>
+            <id>4121</id>
+            <name>create user momo</name>
+            <path>com.vinplay.api.processors.GetUserMomoInfoProcessor</path>
+        </command>
     </commands>
 </portal>
