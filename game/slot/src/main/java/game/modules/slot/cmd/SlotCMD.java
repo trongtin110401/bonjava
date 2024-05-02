@@ -79,6 +79,22 @@ public class SlotCMD {
     public static final short LADY_NIGHT_MINIMIZE = 5013;
     public static final short LADY_NIGHT_RESULT_MINIMIZE = 5014;
 
+    // Fast And Furious
+    public static final short PLAY_SEXY_DANCE = 6001;
+    public static final short UPDATE_POT_SEXY_DANCE = 6002;
+    public static final short SUBSCRIBE_SEXY_DANCE = 6003;
+    public static final short UNSUBSCRIBE_SEXY_DANCE = 6004;
+    public static final short CHANGE_ROOM_SEXY_DANCE = 6005;
+    public static final short AUTO_PLAY_SEXY_DANCE = 6006;
+    public static final short STOP_PLAY_SEXY_DANCE = 6007;
+    public static final short FORCE_STOP_PLAY_SEXY_DANCE = 6008;
+    public static final short SEXY_DANCE_INFO = 6009;
+    public static final short BIG_WIN_SEXY_DANCE = 6010;
+    public static final short SEXY_DANCE_TOTAL_FREE_SPIN = 6011;
+    public static final short SEXY_DANCE_FREE_DAILY = 6012;
+    public static final short SEXY_DANCE_MINIMIZE = 6013;
+    public static final short SEXY_DANCE_RESULT_MINIMIZE = 6014;
+
 
 
     public static final short PLAY_VQV = 5001;
