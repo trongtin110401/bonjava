@@ -37,6 +37,7 @@ implements PokeGoDao {
         doc.append("money_type", (Object)message.moneyType);
         doc.append("time_log", (Object)message.time);
         doc.append("create_time", VinPlayUtils.getCurrentDateTime());
+        doc.append("matrix", message.matrix);
         col.insertOne((Object)doc);
     }
 }

@@ -145,8 +145,7 @@ public class MGRoomCandy extends MGRoom {
      * WARNING - Removed try catching itself - possible behaviour change.
      */
     public void forceStopAutoPlay(User user) {
-        Map<String, AutoUserPokeGo> map;
-        Map<String, AutoUserPokeGo> map2 = map = this.usersAuto;
+        Map<String, AutoUserPokeGo> map2 = this.usersAuto;
         synchronized (map2) {
             this.usersAuto.remove(user.getName());
             ForceStopAutoPlayPokeGoMsg msg = new ForceStopAutoPlayPokeGoMsg();
@@ -157,7 +156,7 @@ public class MGRoomCandy extends MGRoom {
     public synchronized ResultPokeGoMsg play(String username, String linesStr) {
         long startTime = System.currentTimeMillis();
         String currentTimeStr = DateTimeUtils.getCurrentTime();
-        long refernceId = CandyModule.getNewRefenceId();
+        long referenceId = CandyModule.getNewRefenceId();
         short result = 0;
         int soLanNoHu = ConfigGame.getIntValue(this.gameName + "_so_lan_no_hu");
         Random rd;
@@ -166,20 +165,20 @@ public class MGRoomCandy extends MGRoom {
         UserCacheModel u = this.userService.getUser(username);
         long totalBetValue = lineArr.length * this.betValue;
         ResultPokeGoMsg msg = new ResultPokeGoMsg();
-//        String userForce = "";
-//        String betValueCache = "";
+        String userForce = "";
+        String betValueCache = "";
         boolean forceJackpotByUser = false;
-//        try {
-//            userForce = sv.getValueStr(CACHE_NAME_USER_SPOT + this.gameName);
-//            betValueCache = sv.getValueStr(CACHE_BET_VALUE_SLOT + this.gameName);
-//        } catch (Exception e) {
-//            userForce = "";
-//            betValueCache = "";
-//        }
+        try {
+            userForce = sv.getValueStr(CACHE_NAME_USER_SPOT + this.gameName);
+            betValueCache = sv.getValueStr(CACHE_BET_VALUE_SLOT + this.gameName);
+        } catch (Exception e) {
+            userForce = "";
+            betValueCache = "";
+        }
         if (lineArr.length > 0 && !linesStr.isEmpty()) {
             if (totalBetValue > 0L) {
                 if (totalBetValue <= currentMoney) {
-                    MoneyResponse moneyRes = this.userService.updateMoney(username, -totalBetValue, this.moneyTypeStr, Games.CANDY.getName(), "Quay " + this.gameName, "\u0110\u1eb7t c\u01b0\u1ee3c Quay " + this.gameName, 0L, Long.valueOf(refernceId), TransType.START_TRANS);
+                    MoneyResponse moneyRes = this.userService.updateMoney(username, -totalBetValue, this.moneyTypeStr, Games.CANDY.getName(), "Quay " + this.gameName, "\u0110\u1eb7t c\u01b0\u1ee3c Quay " + this.gameName, 0L, Long.valueOf(referenceId), TransType.START_TRANS);
                     if (moneyRes != null && moneyRes.isSuccess()) {
                         long fee = totalBetValue * 2L / 100L;
                         long moneyToPot = totalBetValue / 100L;
@@ -201,18 +200,17 @@ public class MGRoomCandy extends MGRoom {
                             String prizesOnLine = "";
                             boolean forceNoHu = false;
 
-//                            if (userForce.equals(username) && betValueCache.equals(String.valueOf(this.betValue))) {
-//                                forceNoHu = true;
-//                                forceJackpotByUser = true;
-//                            }
-
-                            if (lineArr.length >= 5) {
+                            if (userForce.equals(username) && betValueCache.equals(String.valueOf(this.betValue))) {
+                                forceNoHu = true;
+                                forceJackpotByUser = true;
+                            } else if (lineArr.length >= 5) {
                                 if ((soLanNoHu > 0) && (fund > pot * 2L)) {
                                     rd = new Random();
                                     if (rd.nextInt(soLanNoHu) == 0)
                                         forceNoHu = true;
                                 }
                             }
+
                             Item[][] matrix = forceNoHu ? PokeGoUtils.generateMatrixNoHu(lineArr) : PokeGoUtils.generateMatrix();
                             for (int i = 0; i < lineArr.length; ++i) {
                                 String entry = lineArr[i];
@@ -267,27 +265,23 @@ public class MGRoomCandy extends MGRoom {
                                         totalPrizes += this.pot;
                                         result = 4;
                                     }
-//                                    this.noHuX2();
-//                                    if (this.moneyType == 1) {
-//                                        GameUtils.sendSMSToUser(username, "Chuc mung " + username + " da no hu game Kim Cuong phong " + this.betValue + ". So tien no hu: " + totalPrizes + " Vin");
-//                                    }
                                     this.pot = this.initPotValue;
                                     this.fund -= this.initPotValue;
-//                                    if (forceNoHu) {
-//                                        try {
-//                                            sv.removeKey(CACHE_NAME_USER_SPOT + this.gameName);
-//                                            sv.removeKey(CACHE_BET_VALUE_SLOT + this.gameName);
-//                                        } catch (Exception e) {
-//                                            e.printStackTrace();
-//                                        }
-//                                    }
+                                    if (forceNoHu) {
+                                        try {
+                                            sv.removeKey(CACHE_NAME_USER_SPOT + this.gameName);
+                                            sv.removeKey(CACHE_BET_VALUE_SLOT + this.gameName);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
                                 } else {
                                     if (!u.isBot())
                                         this.fund -= totalPrizes;
                                     result = totalPrizes >= (this.betValue * 100L) ? (short) 2 : 1;
                                 }
                             }
-                            moneyRes = this.userService.updateMoney(username, totalPrizes, this.moneyTypeStr, Games.CANDY.getName(), "Quay " + this.gameName, this.buildDescription(totalBetValue, totalPrizes, result), fee, Long.valueOf(refernceId), TransType.END_TRANS);
+                            moneyRes = this.userService.updateMoney(username, totalPrizes, this.moneyTypeStr, Games.CANDY.getName(), "Quay " + this.gameName, this.buildDescription(totalBetValue, totalPrizes, result), fee, Long.valueOf(referenceId), TransType.END_TRANS);
                             long moneyExchange = totalPrizes - (long) this.betValue;
                             if (moneyRes != null && moneyRes.isSuccess()) {
                                 currentMoney = moneyRes.getCurrentMoney();
@@ -302,7 +296,7 @@ public class MGRoomCandy extends MGRoom {
                             msg.prize = totalPrizes;
                             try {
                                 if (!u.isBot()) {
-                                    this.pgService.logPokeGo(refernceId, username, this.betValue, linesStr, linesWin, prizesOnLine, result, totalPrizes, this.moneyType, currentTimeStr);
+                                    this.pgService.logPokeGo(referenceId, username, this.betValue, linesStr, linesWin, prizesOnLine, result, totalPrizes, this.moneyType, currentTimeStr, msg.matrix);
                                 }
                                 if (result == 3 || result == 4) {
                                     this.pgService.addTop(username, this.betValue, totalPrizes, this.moneyType, currentTimeStr, result);
@@ -328,7 +322,7 @@ public class MGRoomCandy extends MGRoom {
         long endTime = System.currentTimeMillis();
         long handleTime = endTime - startTime;
         String ratioTime = CommonUtils.getRatioTime(handleTime);
-        PokeGoUtils.log(refernceId, username, this.betValue, msg.matrix, result, this.moneyType, handleTime, ratioTime, currentTimeStr);
+        PokeGoUtils.log(referenceId, username, this.betValue, msg.matrix, result, this.moneyType, handleTime, ratioTime, currentTimeStr);
 
         // Update cache tien hu
         sv.setValue(this.name, this.pot);
