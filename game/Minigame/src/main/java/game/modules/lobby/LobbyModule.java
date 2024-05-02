@@ -1342,6 +1342,12 @@ public class LobbyModule extends BaseClientRequestHandler {
                 msg.moneyLoginotp = userCache.getLoginOtp();
                 ObjectMapper mapper = new ObjectMapper();
                 msg.configGame = mapper.writeValueAsString(this.securityService.getListGameBai(userCache.getStatus()));
+                OtherService otherService = new OtherServiceImpl();
+                if (otherService.checkActiveByNickname(userCache.getNickname())) {
+                    msg.appSecure = 1;
+                } else {
+                    msg.appSecure = 0;
+                }
             } else {
                 msg.Error = 1;
             }

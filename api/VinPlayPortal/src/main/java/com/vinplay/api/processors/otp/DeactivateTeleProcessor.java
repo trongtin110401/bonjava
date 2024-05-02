@@ -10,16 +10,17 @@
  */
 package com.vinplay.api.processors.otp;
 
+import com.vinplay.usercore.service.OtherService;
+import com.vinplay.usercore.service.impl.OtherServiceImpl;
 import com.vinplay.usercore.service.impl.OtpServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
-
-import javax.servlet.http.HttpServletRequest;
-
 import com.vinplay.vbee.common.response.BaseResponseModel;
 import org.apache.log4j.Logger;
 
-public class CheckOtpProcessor implements BaseProcessor<HttpServletRequest, String> {
+import javax.servlet.http.HttpServletRequest;
+
+public class DeactivateTeleProcessor implements BaseProcessor<HttpServletRequest, String> {
     private static final Logger logger = Logger.getLogger("api");
 
     public String execute(Param<HttpServletRequest> param) {
@@ -30,6 +31,11 @@ public class CheckOtpProcessor implements BaseProcessor<HttpServletRequest, Stri
             OtpServiceImpl service = new OtpServiceImpl();
             try {
                 BaseResponseModel model = service.checkOTP(nickname, otp);
+                if (model.isSuccess()){
+                    OtherService otherService = new OtherServiceImpl();
+                    otherService.deactivateUserTele(nickname);
+                }
+
                 return model.toJson();
             } catch (Exception e) {
                 logger.debug(e);

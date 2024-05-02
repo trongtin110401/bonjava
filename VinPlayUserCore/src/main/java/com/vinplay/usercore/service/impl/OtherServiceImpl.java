@@ -3,21 +3,17 @@
  */
 package com.vinplay.usercore.service.impl;
 
-import com.mongodb.BasicDBObject;
 import com.mongodb.Block;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.UpdateOptions;
-import com.vinplay.bongda.utils.BongDaUtils;
-import com.vinplay.usercore.entities.UserFish;
 import com.vinplay.usercore.service.OtherService;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.pools.ConnectionPool;
 import com.vinplay.vbee.common.response.*;
 import org.bson.Document;
-import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
 import java.sql.Connection;
@@ -27,7 +23,6 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -222,6 +217,39 @@ public class OtherServiceImpl implements OtherService {
         } finally {
             cursor.close();
         }
+    }
+
+    @Override
+    public boolean checkActiveByNickname(String nickname) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("user_tele");
+        Document filter = new Document("nickname", nickname)
+                .append("isActive", true);
+        MongoCursor<Document> cursor = collection.find(filter).iterator();
+
+        try {
+            return cursor.hasNext();
+        } finally {
+            cursor.close();
+        }
+    }
+
+    @Override
+    public void activeUserTele(String nickname) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("user_tele");
+        Document filter = new Document("nickname", nickname);
+        Document update = new Document("$set", new Document("isActive", true));
+        collection.updateOne(filter, update);
+    }
+
+    @Override
+    public void deactivateUserTele(String nickname) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("user_tele");
+        Document filter = new Document("nickname", nickname);
+        Document update = new Document("$set", new Document("isActive", false));
+        collection.updateOne(filter, update);
     }
 
     @Override

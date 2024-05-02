@@ -28,6 +28,7 @@ import com.vinplay.usercore.dao.impl.OtpDaoImpl;
 import com.vinplay.usercore.dao.impl.UserDaoImpl;
 import com.vinplay.usercore.entities.MessageMTResponse;
 import com.vinplay.usercore.logger.MoneyLogger;
+import com.vinplay.usercore.service.OtherService;
 import com.vinplay.usercore.service.OtpService;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.usercore.utils.GameCommon;
@@ -524,6 +525,8 @@ public class OtpServiceImpl
                     baseResponseModel.setErrorCode("Code hết hạn");
                 } else {
                     baseResponseModel.setSuccess(true);
+                    OtherService otherService = new OtherServiceImpl();
+                    otherService.activeUserTele(nickname);
                     baseResponseModel.setErrorCode("OK");
                 }
             } else {
