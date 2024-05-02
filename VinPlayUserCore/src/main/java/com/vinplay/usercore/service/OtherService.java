@@ -35,5 +35,7 @@ public interface OtherService {
     void deleteExpenseById(String id);
 
     boolean checkActiveByNickname(String nickName);
+
+    void activeUserTele(String nickname);
 }
 

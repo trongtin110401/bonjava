@@ -16,6 +16,7 @@ import com.vinplay.vbee.common.cp.Param;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.vinplay.vbee.common.response.BaseResponseModel;
 import org.apache.log4j.Logger;
 
 public class CheckOtpProcessor implements BaseProcessor<HttpServletRequest, String> {
@@ -28,7 +29,8 @@ public class CheckOtpProcessor implements BaseProcessor<HttpServletRequest, Stri
         if (nickname != null && otp != null && !otp.isEmpty()) {
             OtpServiceImpl service = new OtpServiceImpl();
             try {
-                return String.valueOf(service.checkOTP(nickname, otp));
+                BaseResponseModel model = service.checkOTP(nickname, otp);
+                return model.toJson();
             } catch (Exception e) {
                 logger.debug(e);
             }

@@ -151,7 +151,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
         document.put("nickname", nickname);
         document.put("chatID", chatId);
         document.put("phoneNumber", "");
-        document.put("isActive", true);
+        document.put("isActive", false);
         document.put("otp", "");
         document.put("timeToExpired", 0);
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -213,7 +213,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
 
     @Override
     public String getBotUsername() {
-        return "BonClub";
+        return "BonWin";
     }
 
     @Override
