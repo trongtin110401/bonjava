@@ -85,7 +85,7 @@ public class PokeGoDaoImpl
         conditions.put("user_name", (Object) username);
         conditions.put("money_type", (Object) moneyType);
         iterable = db.getCollection("log_candy").find((Bson) conditions)
-                .sort(Sorts.descending("time_log")).skip(skipNumber).limit(10);
+                .sort(Sorts.descending("_id")).skip(skipNumber).limit(10);
         iterable.forEach((Block) new Block<Document>() {
 
             public void apply(Document document) {
