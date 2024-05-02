@@ -37,7 +37,7 @@ implements PokeGoService {
     private PokeGoDAO dao = new PokeGoDaoImpl();
 
     @Override
-    public void logPokeGo(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, short moneyType, String time) throws IOException, TimeoutException, InterruptedException {
+    public void logPokeGo(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, short moneyType, String time, String matrix) throws IOException, TimeoutException, InterruptedException {
         LogPokeGoMessage message = new LogPokeGoMessage();
         message.referenceId = referenceId;
         message.username = username;
@@ -49,6 +49,7 @@ implements PokeGoService {
         message.totalPrizes = totalPrizes;
         message.moneyType = moneyType;
         message.time = time;
+        message.matrix = matrix;
         RMQApi.publishMessage((String)"queue_pokego", (BaseMessage)message, (int)134);
     }
 

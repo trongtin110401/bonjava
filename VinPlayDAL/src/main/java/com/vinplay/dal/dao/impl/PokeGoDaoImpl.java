@@ -96,6 +96,7 @@ implements PokeGoDAO {
                 entry.lw = document.getString((Object)"lines_win");
                 entry.ps = document.getString((Object)"prizes_on_line");
                 entry.ts = document.getString((Object)"time_log");
+                entry.matrix = document.getString((Object)"matrix");
                 results.add(entry);
             }
         });

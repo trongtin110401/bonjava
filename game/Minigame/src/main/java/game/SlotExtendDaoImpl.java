@@ -68,6 +68,7 @@ public class SlotExtendDaoImpl implements PokeGoDAO {
                 entry.lw = document.getString("lines_win");
                 entry.ps = document.getString("prizes_on_line");
                 entry.ts = document.getString("time_log");
+                entry.matrix = document.getString("matrix");
                 results.add(entry);
             }
         });

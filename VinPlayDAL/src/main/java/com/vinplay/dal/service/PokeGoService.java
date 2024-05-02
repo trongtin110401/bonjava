@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 public interface PokeGoService {
-    public void logPokeGo(long var1, String var3, long var4, String var6, String var7, String var8, short var9, long var10, short var12, String var13) throws IOException, TimeoutException, InterruptedException;
+    public void logPokeGo(long var1, String var3, long var4, String var6, String var7, String var8, short var9, long var10, short var12, String var13, String var14) throws IOException, TimeoutException, InterruptedException;
 
     public int countLSDG(String var1, int var2);
 
