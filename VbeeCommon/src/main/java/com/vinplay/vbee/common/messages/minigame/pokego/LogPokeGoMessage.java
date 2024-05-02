@@ -5,8 +5,7 @@ package com.vinplay.vbee.common.messages.minigame.pokego;
 
 import com.vinplay.vbee.common.messages.BaseMessage;
 
-public class LogPokeGoMessage
-extends BaseMessage {
+public class LogPokeGoMessage extends BaseMessage {
     private static final long serialVersionUID = 1L;
     public long referenceId;
     public String username;

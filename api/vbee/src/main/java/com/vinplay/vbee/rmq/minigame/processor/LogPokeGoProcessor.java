@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  com.vinplay.vbee.common.cp.BaseProcessor
  *  com.vinplay.vbee.common.cp.Param
@@ -16,9 +16,10 @@ import com.vinplay.vbee.common.messages.minigame.pokego.LogPokeGoMessage;
 import com.vinplay.vbee.dao.impl.PokeGoDaoImpl;
 
 public class LogPokeGoProcessor
-implements BaseProcessor<byte[], Boolean> {
+        implements BaseProcessor<byte[], Boolean> {
     public Boolean execute(Param<byte[]> param) {
-        LogPokeGoMessage message = (LogPokeGoMessage)BaseMessage.fromBytes((byte[])((byte[])param.get()));
+        LogPokeGoMessage message = (LogPokeGoMessage) BaseMessage.fromBytes(param.get());
+        System.out.println("MATRIX ===> " + message.matrix);
         PokeGoDaoImpl dao = new PokeGoDaoImpl();
         dao.log(message);
         return true;
