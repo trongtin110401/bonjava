@@ -33,5 +33,7 @@ public interface OtherService {
     long getTotalShootFishByNickname(String startTime, String endTime, String nickname);
 
     void deleteExpenseById(String id);
+
+    boolean checkActiveByNickname(String nickName);
 }
 

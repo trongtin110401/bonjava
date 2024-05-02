@@ -225,6 +225,22 @@ public class OtherServiceImpl implements OtherService {
     }
 
     @Override
+    public boolean checkActiveByNickname(String nickname) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("user_tele");
+        Document filter = new Document("nickname", nickname)
+                .append("isActive", true);
+        MongoCursor<Document> cursor = collection.find(filter).iterator();
+
+        try {
+            return cursor.hasNext();
+        } finally {
+            cursor.close();
+        }
+    }
+
+
+    @Override
     public void saveUserTeleCashBack(Document document) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("user_tele_cash_back");
