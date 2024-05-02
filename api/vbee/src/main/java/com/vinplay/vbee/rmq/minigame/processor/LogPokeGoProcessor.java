@@ -19,7 +19,7 @@ public class LogPokeGoProcessor
         implements BaseProcessor<byte[], Boolean> {
     public Boolean execute(Param<byte[]> param) {
         LogPokeGoMessage message = (LogPokeGoMessage) BaseMessage.fromBytes(param.get());
-        System.out.println("MATRIX ===> " + message.matrix);
+        System.out.println("ref: " + message.referenceId + " - MATRIX ===> " + message.matrix);
         PokeGoDaoImpl dao = new PokeGoDaoImpl();
         dao.log(message);
         return true;
