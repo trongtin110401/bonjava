@@ -15,11 +15,9 @@ import com.vinplay.vbee.common.messages.BaseMessage;
 import com.vinplay.vbee.common.messages.minigame.pokego.LogPokeGoMessage;
 import com.vinplay.vbee.dao.impl.PokeGoDaoImpl;
 
-public class LogPokeGoProcessor
-        implements BaseProcessor<byte[], Boolean> {
+public class LogPokeGoProcessor implements BaseProcessor<byte[], Boolean> {
     public Boolean execute(Param<byte[]> param) {
         LogPokeGoMessage message = (LogPokeGoMessage) BaseMessage.fromBytes(param.get());
-        System.out.println("ref: " + message.referenceId + " - MATRIX ===> " + message.matrix);
         PokeGoDaoImpl dao = new PokeGoDaoImpl();
         dao.log(message);
         return true;
