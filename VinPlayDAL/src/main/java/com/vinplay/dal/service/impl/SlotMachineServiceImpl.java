@@ -111,6 +111,12 @@ public class SlotMachineServiceImpl implements SlotMachineService {
     }
 
     @Override
+    public void logSexyDance(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) throws IOException, TimeoutException, InterruptedException {
+        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.SEXY_DANCE.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
+        this.publishSlotMsg("queue_benley", msg, 8006);
+    }
+
+    @Override
     public void logLadyNight(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) throws IOException, TimeoutException, InterruptedException {
         LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.LADY_NIGHT.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
         this.publishSlotMsg("queue_benley", msg, 8006);
