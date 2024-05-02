@@ -243,6 +243,14 @@ public class OtherServiceImpl implements OtherService {
         collection.updateOne(filter, update);
     }
 
+    @Override
+    public void deactivateUserTele(String nickname) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("user_tele");
+        Document filter = new Document("nickname", nickname);
+        Document update = new Document("$set", new Document("isActive", false));
+        collection.updateOne(filter, update);
+    }
 
     @Override
     public void saveUserTeleCashBack(Document document) {

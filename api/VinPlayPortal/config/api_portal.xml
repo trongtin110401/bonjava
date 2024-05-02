@@ -992,5 +992,10 @@
             <name>create user momo</name>
             <path>com.vinplay.api.processors.GetUserMomoInfoProcessor</path>
         </command>
+        <command>
+            <id>4122</id>
+            <name>deactivate user tele</name>
+            <path>com.vinplay.api.processors.otp.DeactivateTeleProcessor</path>
+        </command>
     </commands>
 </portal>

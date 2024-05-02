@@ -37,5 +37,7 @@ public interface OtherService {
     boolean checkActiveByNickname(String nickName);
 
     void activeUserTele(String nickname);
+
+    void deactivateUserTele(String nickname);
 }
 
