@@ -201,6 +201,12 @@
             <path>com.vinplay.api.backend.processors.taixiu.GetUserInfoTaiXiuMd5Processor</path>
         </command>
 
+        <command>
+            <id>6669</id>
+            <name>Send message admin chat bot to user</name>
+            <path>com.vinplay.api.backend.processors.taixiu.TaiXiuAdminChatProcessor</path>
+        </command>
+
         <!--        MD5-->
         <command>
             <id>556669</id>
