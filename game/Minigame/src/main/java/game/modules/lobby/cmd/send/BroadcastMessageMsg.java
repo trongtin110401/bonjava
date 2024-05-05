@@ -6,8 +6,8 @@ package game.modules.lobby.cmd.send;
 import game.BaseMsgEx;
 import java.nio.ByteBuffer;
 
-public class BroadcastMessageMsg
-extends BaseMsgEx {
+public class BroadcastMessageMsg extends BaseMsgEx {
+
     public String message;
 
     public BroadcastMessageMsg() {

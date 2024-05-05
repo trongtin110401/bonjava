@@ -84,8 +84,10 @@ import com.vinplay.common.HttpCommon;
 import com.vinplay.dal.common.BroadCastUserMoney;
 import com.vinplay.dal.dao.LogMoneyUserDao;
 import com.vinplay.dal.dao.impl.LogMoneyUserDaoImpl;
+import com.vinplay.dal.service.BroadcastMessageService;
 import com.vinplay.dal.service.CacheService;
 import com.vinplay.dal.service.impl.AgentServiceImpl;
+import com.vinplay.dal.service.impl.BroadcastMessageServiceImpl;
 import com.vinplay.dal.service.impl.CacheServiceImpl;
 import com.vinplay.dal.service.impl.CardBanMoneyService;
 import com.vinplay.dichvuthe.dao.CashoutDao;
@@ -198,11 +200,13 @@ public class LobbyModule extends BaseClientRequestHandler {
     Map<String, String> mapUserOnePay = new HashMap<>();
 
     private CacheService cacheService = new CacheServiceImpl();
+    private BroadcastMessageService broadcastMessageService = new BroadcastMessageServiceImpl();
 
     private final CheckMoMoTransStatusTask checkOnePayStatusTask = new CheckMoMoTransStatusTask();
     private final CheckCodePayTransStatusTask checkCodePayStatusTask = new CheckCodePayTransStatusTask();
     private final CheckOutGameTask checkOutGameTask = new CheckOutGameTask();
     private final CheckCodePayHuyStatusTask checkCodePayHuyStatusTask = new CheckCodePayHuyStatusTask();
+    private final BroadcastMessageTask broadcastMessageTask = new BroadcastMessageTask();
     private final CheckMoneyUser checkMoneyUser = new CheckMoneyUser();
 
     private static final org.apache.log4j.Logger logger = Logger.getLogger((String) "recharge");
@@ -217,6 +221,7 @@ public class LobbyModule extends BaseClientRequestHandler {
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.checkCodePayStatusTask, 1, 1, TimeUnit.SECONDS);
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.checkOutGameTask, 1, 500, TimeUnit.MILLISECONDS);
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.checkCodePayHuyStatusTask, 1, 1, TimeUnit.SECONDS);
+        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.broadcastMessageTask, 1, 70, TimeUnit.SECONDS);
         try {
             this.initVP();
             MongoDBConnectionFactory.init();
@@ -3270,6 +3275,31 @@ public class LobbyModule extends BaseClientRequestHandler {
             }
 
         }
+    }
+
+    private final class BroadcastMessageTask implements Runnable {
+        @Override
+        public void run() {
+            try {
+                LobbyModule.this.broadcastMessageService();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
+    private void broadcastMessageService() {
+
+        String message = broadcastMessageService.toJson();
+        BroadcastMessageMsg msg = new BroadcastMessageMsg();
+        msg.message = message;
+        List users = ExtensionUtility.globalUserManager.getAllUsers();
+        if (users != null) {
+            this.send(msg, users);
+        }
+        broadcastMessageService.clearMessage();
+
     }
 
     private final class CheckCodePayHuyStatusTask
