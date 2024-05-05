@@ -294,6 +294,8 @@ public class Slot20ExtendRoom extends SlotRoom {
                                         }
                                         moneyOnLine = this.pot;
                                         result = ResultSlot.JACKPOT;
+
+                                        System.out.println("MONEY: "  + moneyOnLine + " - result: " + result);
                                     } else {
                                         moneyOnLine = (long) (award.getRatio() * this.betValue);
                                     }
@@ -321,6 +323,8 @@ public class Slot20ExtendRoom extends SlotRoom {
                                     isGetJackpotNaturally = true;
                                 }
                             }
+
+                            System.out.println("TOTAL prize: " + totalPrizes);
 
                             if (builderLinesWin.length() > 0) {
                                 builderLinesWin.deleteCharAt(0);
