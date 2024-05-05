@@ -280,7 +280,7 @@ public class Slot20Room extends SlotRoom {
                                 builderLinesWin.append(award.getLineId());
                                 builderPrizesOnLine.append(",");
                                 builderPrizesOnLine.append(award.getMoney());
-                                if (result != ResultSlot.JACKPOT && award.getAward() == Slot25BasicAward.PENTA_JACKPOT) {
+                                if (!isForceJackpot && award.getAward() == Slot25BasicAward.PENTA_JACKPOT) {
                                     result = ResultSlot.JACKPOT;
                                     isGetJackpotNaturally = true;
                                 }
