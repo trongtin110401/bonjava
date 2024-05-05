@@ -317,7 +317,7 @@ public class Slot20ExtendRoom extends SlotRoom {
                                 builderPrizesOnLine.append(",");
                                 builderPrizesOnLine.append(award.getMoney());
 
-                                if (result != ResultSlot.JACKPOT && award.getAward() == Slot20ExtendAward.JACKPOT) {
+                                if (!isForceJackpot && award.getAward() == Slot20ExtendAward.JACKPOT) {
                                     result = ResultSlot.JACKPOT;
                                     isGetJackpotNaturally = true;
                                 }
