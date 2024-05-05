@@ -133,11 +133,11 @@ public class TelegramAlert {
             String message = "Phiên : <b> " + referenceId + "</b>";
             message += "\nTài Khoản : <b> " + nickname + "</b> / <b>" + userId + "</b>";
             if (betSize == 0) {
-                message += "\nCửa Đặt: <b> Xỉu </b>";
+                message += "\nCửa Đặt : <b> Xỉu </b>";
             } else {
-                message += "\nCửa Đặt: <b> Tài </b>";
+                message += "\nCửa Đặt : <b> Tài </b>";
             }
-            message += "\nSố Tiền Đặt: <b>" + formattedNumber + "</b>";
+            message += "\nSố Tiền Đặt : <b>" + formattedNumber + "</b>";
             return SendMessageTX(message);
         } catch (Exception e) {
             return false;
@@ -151,11 +151,11 @@ public class TelegramAlert {
             String message = "Phiên : <b> " + referenceId + "</b>";
             message += "\nTài Khoản : <b> " + nickname + "</b> / <b>" + userId + "</b>";
             if (betSize == 0) {
-                message += "\nCửa Đặt: <b> Xỉu </b>";
+                message += "\nCửa Đặt : <b> Xỉu </b>";
             } else {
-                message += "\nCửa Đặt: <b> Tài </b>";
+                message += "\nCửa Đặt : <b> Tài </b>";
             }
-            message += "\nSố Tiền Đặt: <b>" + formattedNumber + "</b>";
+            message += "\nSố Tiền Đặt : <b>" + formattedNumber + "</b>";
             return SendMessageTXMD5(message);
         } catch (Exception e) {
             return false;
