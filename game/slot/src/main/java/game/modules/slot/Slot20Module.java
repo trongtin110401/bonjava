@@ -79,7 +79,7 @@ public abstract class Slot20Module extends SlotModule {
             this.rooms.put(this.gameName + "_vin_1000",
                     new Slot20Room(this, commandCollection, logListener, gameName, (byte) 1, this.gameName + "_vin_1000", (short) 1, this.jackpots[1], funds[1], 1000, initPotValues[1]));
             this.rooms.put(this.gameName + "_vin_10000",
-                    new Slot20Room(this, commandCollection, logListener, gameName, (byte) 2, this.gameName + "_vin_10000", (short) 1, this.jackpots[2], funds[3], 10000, initPotValues[3]));
+                    new Slot20Room(this, commandCollection, logListener, gameName, (byte) 2, this.gameName + "_vin_10000", (short) 1, this.jackpots[2], funds[2], 10000, initPotValues[3]));
 
             // FORCE - R
 //            this.rooms.put(this.gameName + "_vin_100",
@@ -247,6 +247,9 @@ public abstract class Slot20Module extends SlotModule {
 
     protected void play(User user, DataCmd dataCmd) {
         Slot20PlayCmd cmd = new Slot20PlayCmd(dataCmd);
+
+        Debug.info("=====> LIEN MINH BETVALUE: " + cmd.betValue);
+
         Slot20Room room = (Slot20Room) user.getProperty("MGROOM_" + this.gameName + "_INFO");
         if (room != null) {
             room.play(user, cmd.lines);

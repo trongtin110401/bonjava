@@ -281,7 +281,7 @@ public class MGRoomCandy extends MGRoom {
                                     result = totalPrizes >= (this.betValue * 100L) ? (short) 2 : 1;
                                 }
                             }
-                            moneyRes = this.userService.updateMoney(username, totalPrizes, this.moneyTypeStr, "Quay Whisky", "Quay " + this.gameName, this.buildDescription(totalBetValue, totalPrizes, result), fee, Long.valueOf(referenceId), TransType.END_TRANS);
+                            moneyRes = this.userService.updateMoney(username, totalPrizes, this.moneyTypeStr, Games.CANDY.getName(), "Quay Whisky", this.buildDescription(totalBetValue, totalPrizes, result), fee, Long.valueOf(referenceId), TransType.END_TRANS);
                             long moneyExchange = totalPrizes - (long) this.betValue;
                             if (moneyRes != null && moneyRes.isSuccess()) {
                                 currentMoney = moneyRes.getCurrentMoney();
