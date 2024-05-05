@@ -367,7 +367,7 @@ public class OtherServiceImpl implements OtherService {
             PreparedStatement stm = conn.prepareStatement(sql);
             stm.setDate(1, Date.valueOf(startTime));
             stm.setDate(2, Date.valueOf(endTime));
-            if (nickname != null) {
+            if (nickname != null && !nickname.isEmpty()) {
                 stm.setString(3, nickname);
             }
             ResultSet rs = stm.executeQuery();
@@ -433,7 +433,7 @@ public class OtherServiceImpl implements OtherService {
         Iterator<Document> iterator = result.iterator();
         if (iterator.hasNext()) {
             Document document = iterator.next();
-            return document.getString("phoneNumber");
+            return document.getString("phone");
         } else {
             return "";
         }
