@@ -4,11 +4,8 @@ package game.modules.slot.room;
 import bitzero.server.BitZeroServer;
 import bitzero.server.entities.User;
 import bitzero.util.common.business.Debug;
-
-import com.google.gson.Gson;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
-
 import com.vinplay.dal.service.impl.BroadcastMessageServiceImpl;
 import com.vinplay.dal.service.impl.CacheServiceImpl;
 import com.vinplay.usercore.dao.impl.UserDaoImpl;
@@ -21,15 +18,14 @@ import com.vinplay.vbee.common.models.slot.SlotFreeSpin;
 import com.vinplay.vbee.common.response.MoneyResponse;
 import com.vinplay.vbee.common.statics.TransType;
 import com.vinplay.vbee.common.utils.DateTimeUtils;
-
 import game.modules.slot.Slot20Module;
 import game.modules.slot.SlotModule;
 import game.modules.slot.cmd.Slot20CommandCollection;
 import game.modules.slot.cmd.send.slot20line.*;
 import game.modules.slot.entities.slot.*;
-import game.modules.slot.entities.slot.line20basic.Slot20Line;
 import game.modules.slot.entities.slot.line20basic.Slot20Award;
 import game.modules.slot.entities.slot.line20basic.Slot20Item;
+import game.modules.slot.entities.slot.line20basic.Slot20Line;
 import game.modules.slot.entities.slot.line20basic.Slot20Lines;
 import game.modules.slot.entities.slot.line25basic.Slot25BasicAward;
 import game.modules.slot.listener.SlotLogListener;
@@ -38,7 +34,10 @@ import game.modules.slot.utils.SlotUtils;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -64,7 +63,6 @@ public class Slot20Room extends SlotRoom {
     public Slot20Room(SlotModule module, Slot20CommandCollection commandCollection, SlotLogListener slotLogListener,
                       String gameName, byte id, String room, short moneyType, long pot, long fund, int betValue, long initPotValue) {
         // FORCE - R
-//        super(id, room, betValue, moneyType, pot, fund - 1000000000, initPotValue);
         super(id, room, betValue, moneyType, pot, fund, initPotValue);
         this.commandCollection = commandCollection;
         this.slotLogListener = slotLogListener;
@@ -159,7 +157,7 @@ public class Slot20Room extends SlotRoom {
                     }
                     if (moneyRes != null && moneyRes.isSuccess()) {
                         // 2 phần trăm cho vào hũ JACKPOT
-                        long moneyToPot = !isSpinningFree ? totalBetValue * 2 / 100L : 0;
+                        long moneyToPot = !isSpinningFree ? totalBetValue * 1 / 100L : 0;
                         this.pot += moneyToPot;
 
                         // số tiền còn lại sau khi trừ phế và 2% POT cho vào quỹ thưởng
