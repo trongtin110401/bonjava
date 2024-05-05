@@ -276,7 +276,7 @@ public class Slot25BasicRoom extends SlotRoom {
                                 Line line = Slot25BasicUtil.getLine(this.lines, matrixWild, lineNumber);
                                 Slot25BasicUtil.calculateMoneyAwardInLine(line, awardList);
                                 for (Slot25BasicAward award : awardList) {
-                                    long moneyOnLine = 0;
+                                    long moneyOnLine;
                                     if (award == Slot25BasicAward.PENTA_JACKPOT) {
                                         // đảm bảo chỉ duy nhất 1 dòng trúng JACKPOT
                                         // nếu trùng lặp, bắt đầu lại dòng vòng lặp while (continue block4)

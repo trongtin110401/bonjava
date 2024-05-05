@@ -30,6 +30,7 @@ import game.modules.slot.entities.slot.line20extend.Slot20ExtendAward;
 import game.modules.slot.entities.slot.line20extend.Slot20ExtendAwards;
 import game.modules.slot.entities.slot.line20extend.Slot20ExtendItem;
 import game.modules.slot.entities.slot.line20extend.Slot20ExtendLines;
+import game.modules.slot.entities.slot.line25extend.Slot25ExtendAward;
 import game.modules.slot.listener.SlotLogListener;
 import game.modules.slot.utils.Slot20ExtendUtil;
 import game.modules.slot.utils.SlotUtils;
@@ -194,6 +195,7 @@ public class Slot20ExtendRoom extends SlotRoom {
                         ArrayList<AwardsOnLine<Slot20ExtendAward>> awardsOnLines = new ArrayList<>();
 
                         // BẮT ĐẦU QUÁ TRÌNH SINH MA TRẬN KẾT QUẢ VÀ TÍNH TOÁN GIẢI THƯỞNG
+                        block4:
                         while (!enoughPair) {
                             // khởi tạo lại các giá trị mặc định sau mỗi lần lặp
                             result = ResultSlot.MISSED;
@@ -281,7 +283,21 @@ public class Slot20ExtendRoom extends SlotRoom {
                                 Line line = Slot20ExtendUtil.getLine(this.lines, matrixWild, lineNumber);
                                 Slot20ExtendUtil.calculateMoneyAwardInLine(line, awardList);
                                 for (Slot20ExtendAward award : awardList) {
-                                    long moneyOnLine = (long) (award.getRatio() * this.betValue);
+                                    long moneyOnLine;
+                                    if (award == Slot20ExtendAward.JACKPOT) {
+                                        // đảm bảo chỉ duy nhất 1 dòng trúng JACKPOT
+                                        // nếu trùng lặp, bắt đầu lại dòng vòng lặp while (continue block4)
+                                        for (AwardsOnLine e : awardsOnLines) {
+                                            if (e.getAward() != Slot20ExtendAward.JACKPOT) {
+                                                continue;
+                                            }
+                                            continue block4;
+                                        }
+                                        moneyOnLine = this.pot;
+                                        result = ResultSlot.JACKPOT;
+                                    } else {
+                                        moneyOnLine = (long) (award.getRatio() * this.betValue);
+                                    }
                                     AwardsOnLine<Slot20ExtendAward> aol2 = new AwardsOnLine<>(award, moneyOnLine, line.getName());
                                     awardsOnLines.add(aol2);
                                 }
