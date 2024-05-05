@@ -45,5 +45,7 @@ public interface OtherService {
     boolean activePhoneNumber(String nickname, String phoneNumber);
 
     String getPhoneByNickname(String nickname);
+
+    UserPhone getUserPhoneInfoByPhoneNumber(String nickname);
 }
 
