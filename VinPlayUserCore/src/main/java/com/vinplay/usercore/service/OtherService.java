@@ -43,5 +43,7 @@ public interface OtherService {
     void deactivateUserTele(String nickname);
 
     boolean activePhoneNumber(String nickname, String phoneNumber);
+
+    String getPhoneByNickname(String nickname);
 }
 

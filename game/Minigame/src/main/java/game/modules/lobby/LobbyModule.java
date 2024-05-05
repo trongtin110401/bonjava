@@ -1353,6 +1353,7 @@ public class LobbyModule extends BaseClientRequestHandler {
                 } else {
                     msg.appSecure = 0;
                 }
+                msg.mobile = otherService.getPhoneByNickname(userCache.getNickname());
             } else {
                 msg.Error = 1;
             }
