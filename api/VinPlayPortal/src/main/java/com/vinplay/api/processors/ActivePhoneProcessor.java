@@ -5,12 +5,15 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.result.UpdateResult;
 import com.vinplay.api.processors.AutoXuLyBank.APIProcess;
+import com.vinplay.usercore.service.OtherService;
 import com.vinplay.usercore.service.UserService;
+import com.vinplay.usercore.service.impl.OtherServiceImpl;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.response.ActivePhoneResponse;
+import com.vinplay.vbee.common.response.UserPhone;
 import com.vinplay.vbee.common.statics.Consts;
 import com.vinplay.vbee.common.statics.TransType;
 import org.bson.Document;
@@ -32,6 +35,13 @@ public class ActivePhoneProcessor implements BaseProcessor<HttpServletRequest, S
         HttpServletRequest request = param.get();
         String nickName = request.getParameter("nickname");
         String phoneNumber = request.getParameter("phoneNumber");
+        OtherService otherService = new OtherServiceImpl();
+        UserPhone userPhone = otherService.getUserPhoneInfoByPhoneNumber(phoneNumber);
+        if (userPhone != null && userPhone.isActive() && userPhone.getNickname() != nickName) {
+            response.setSuccess(false);
+            response.setErrorCode("Số điện thoại đã kích hoạt cho tài khoản khác");
+            return response.toJson();
+        }
         String otp = generateOTP();
         if (sendOTP(phoneNumber, otp)) {
             response.setSuccess(true);
