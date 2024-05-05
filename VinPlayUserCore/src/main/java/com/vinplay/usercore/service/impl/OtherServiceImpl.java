@@ -357,7 +357,7 @@ public class OtherServiceImpl implements OtherService {
         long totalProfit = 0;
         try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_banca");) {
             String sql;
-            if (nickname != null) {
+            if (nickname != null && !nickname.isEmpty()) {
                 sql = "SELECT * FROM cgame.bc_trans_log c " +
                         "JOIN users u ON c.UserId = u.user_id " +
                         "WHERE c.time >= ? AND c.time <= ? AND u.nickname = ?";
