@@ -195,7 +195,7 @@ public class MGRoomTaiXiu
     public void betTaiXiu(User user, BetTaiXiuCmd cmd) {
         BetTaiXiuMsg msg = this.betTaiXiu(user.getName(), cmd.userId, cmd.betValue, cmd.inputTime, cmd.moneyType, cmd.betSide, false);
         this.sendMessageToUser((BaseMsg) msg, user); // todo : gửi message về client
-        TelegramAlert.SendMessageBetTX(user.getName(), cmd.betValue, cmd.betSide);
+        TelegramAlert.SendMessageBetTX(user.getName(), cmd.betValue, cmd.betSide,cmd.referenceId , user.getId());
     }
 
     private boolean CheckQuota(String nick_name, boolean seven_days) {

@@ -184,7 +184,7 @@ public class MGRoomTaiXiu extends MGRoom {
     public void betTaiXiu(User user, BetTaiXiuCmd cmd) {
         BetTaiXiuMsg msg = this.betTaiXiu(user.getName(), cmd.userId, cmd.betValue, cmd.inputTime, cmd.moneyType, cmd.betSide, false);
         this.sendMessageToUser((BaseMsg) msg, user); // todo : gửi message về client
-        TelegramAlert.SendMessageBetTXMD5(user.getName(), cmd.betValue, cmd.betSide);
+        TelegramAlert.SendMessageBetTXMD5(user.getName(), cmd.betValue, cmd.betSide, cmd.referenceId, user.getId());
 
     }
 
