@@ -8,6 +8,9 @@ import com.vinplay.payment.entities.UserWithdraw;
 import com.vinplay.payment.entities.UserWithdrawMomo;
 import com.vinplay.vbee.common.dto.UseGiftCodeDto;
 
+import java.text.NumberFormat;
+import java.util.Locale;
+
 public class TelegramAlert {
     public static boolean SendMessageNap(String message) {
         try {
@@ -123,30 +126,36 @@ public class TelegramAlert {
         }
     }
 
-    public static boolean SendMessageBetTX(String nickname, long money, short betSize) {
+    public static boolean SendMessageBetTX(String nickname, long money, short betSize, long referenceId, int userId) {
         try {
-            String message = "Tài Khoản : <b> " + nickname + "</b>";
+            NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.forLanguageTag("vi-VN"));
+            String formattedNumber = numberFormat.format(money);
+            String message = "Phiên : <b> " + referenceId + "</b>";
+            message += "\nTài Khoản : <b> " + nickname + "</b> / <b>" + userId + "</b>";
             if (betSize == 0) {
-                message += "\n Cửa Đặt: <b> Xỉu </b>";
+                message += "\nCửa Đặt : <b> Xỉu </b>";
             } else {
-                message += "\n Cửa Đặt: <b> Tài </b>";
+                message += "\nCửa Đặt : <b> Tài </b>";
             }
-            message += "\n Số Tiền : <b>" + money + "</b>";
+            message += "\nSố Tiền Đặt : <b>" + formattedNumber + "</b>";
             return SendMessageTX(message);
         } catch (Exception e) {
             return false;
         }
     }
 
-    public static boolean SendMessageBetTXMD5(String nickname, long money, short betSize) {
+    public static boolean SendMessageBetTXMD5(String nickname, long money, short betSize, long referenceId, int userId) {
         try {
-            String message = "Tài Khoản : <b> " + nickname + "</b>";
+            NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.forLanguageTag("vi-VN"));
+            String formattedNumber = numberFormat.format(money);
+            String message = "Phiên : <b> " + referenceId + "</b>";
+            message += "\nTài Khoản : <b> " + nickname + "</b> / <b>" + userId + "</b>";
             if (betSize == 0) {
-                message += "\n Cửa Đặt: <b> Xỉu </b>";
+                message += "\nCửa Đặt : <b> Xỉu </b>";
             } else {
-                message += "\n Cửa Đặt: <b> Tài </b>";
+                message += "\nCửa Đặt : <b> Tài </b>";
             }
-            message += "\n Số Tiền : <b>" + money + "</b>";
+            message += "\nSố Tiền Đặt : <b>" + formattedNumber + "</b>";
             return SendMessageTXMD5(message);
         } catch (Exception e) {
             return false;
