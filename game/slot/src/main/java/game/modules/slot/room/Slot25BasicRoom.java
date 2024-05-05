@@ -28,6 +28,7 @@ import game.modules.slot.entities.slot.AutoUser;
 import game.modules.slot.entities.slot.AwardsOnLine;
 import game.modules.slot.entities.slot.Line;
 import game.modules.slot.entities.slot.MiniGameSlotResponse;
+import game.modules.slot.entities.slot.line20basic.Slot20Award;
 import game.modules.slot.entities.slot.line25basic.Slot25BasicAward;
 import game.modules.slot.entities.slot.line25basic.Slot25BasicAwards;
 import game.modules.slot.entities.slot.line25basic.SlotBasic25Item;
@@ -192,6 +193,8 @@ public class Slot25BasicRoom extends SlotRoom {
                         MiniGameSlotResponse bonusGameResponse;
                         // danh sách giải thưởng được tính toán trên toàn bộ Lines được chọn
                         ArrayList<AwardsOnLine<Slot25BasicAward>> awardsOnLines = new ArrayList<>();
+
+                        block4:
                         while (!enoughPair) {
                             // khởi tạo lại các giá trị mặc định sau mỗi lần lặp
                             result = ResultSlot.MISSED;
@@ -254,7 +257,7 @@ public class Slot25BasicRoom extends SlotRoom {
                             if (isSpinningFree && (countScatter >= 3 || countBonus >= 3)) {
                                 continue;
                             }
-                            
+
                             // Tính toán phần thưởng cho BONUS GAME
                             if (countBonus >= 3) {
                                 bonusGameResponse = Slot25BasicUtil.buildBonusGameData(this.betValue, countBonus);
@@ -273,9 +276,23 @@ public class Slot25BasicRoom extends SlotRoom {
                                 Line line = Slot25BasicUtil.getLine(this.lines, matrixWild, lineNumber);
                                 Slot25BasicUtil.calculateMoneyAwardInLine(line, awardList);
                                 for (Slot25BasicAward award : awardList) {
-                                    long moneyOnLine = (long) (award.getRatio() * this.betValue);
-                                    AwardsOnLine<Slot25BasicAward> aol2 = new AwardsOnLine<>(award, moneyOnLine, line.getName());
-                                    awardsOnLines.add(aol2);
+                                    long moneyOnLine = 0;
+                                    if (award == Slot25BasicAward.PENTA_JACKPOT) {
+                                        // đảm bảo chỉ duy nhất 1 dòng trúng JACKPOT
+                                        // nếu trùng lặp, bắt đầu lại dòng vòng lặp while (continue block4)
+                                        for (AwardsOnLine e : awardsOnLines) {
+                                            if (e.getAward() != Slot25BasicAward.PENTA_JACKPOT) {
+                                                continue;
+                                            }
+                                            continue block4;
+                                        }
+                                        moneyOnLine = this.pot;
+                                        result = ResultSlot.JACKPOT;
+                                    } else {
+                                        moneyOnLine = (long) (award.getRatio() * this.betValue);
+                                    }
+                                    AwardsOnLine aol = new AwardsOnLine(award, moneyOnLine, line.getName());
+                                    awardsOnLines.add(aol);
                                 }
                             }
 
@@ -292,7 +309,7 @@ public class Slot25BasicRoom extends SlotRoom {
                                 builderPrizesOnLine.append(",");
                                 builderPrizesOnLine.append(award.getMoney());
 
-                                if (result != ResultSlot.JACKPOT && award.getAward() == Slot25BasicAward.PENTA_JACKPOT) {
+                                if (!isForceJackpot && award.getAward() == Slot25BasicAward.PENTA_JACKPOT) {
                                     result = ResultSlot.JACKPOT;
                                     isGetJackpotNaturally = true;
                                 }
