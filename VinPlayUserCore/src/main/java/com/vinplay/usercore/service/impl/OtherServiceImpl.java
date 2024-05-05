@@ -244,6 +244,15 @@ public class OtherServiceImpl implements OtherService {
     }
 
     @Override
+    public void activeUserPhone(String nickname) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("user_phone");
+        Document filter = new Document("nickname", nickname);
+        Document update = new Document("$set", new Document("isActive", true));
+        collection.updateOne(filter, update);
+    }
+
+    @Override
     public void deactivateUserTele(String nickname) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("user_tele");
@@ -251,6 +260,7 @@ public class OtherServiceImpl implements OtherService {
         Document update = new Document("$set", new Document("isActive", false));
         collection.updateOne(filter, update);
     }
+
 
     @Override
     public void saveUserTeleCashBack(Document document) {
@@ -406,6 +416,11 @@ public class OtherServiceImpl implements OtherService {
         user.setCreatedDate(createdDate);
         user.setChatID(chatID);
         return user;
+    }
+
+    @Override
+    public boolean activePhoneNumber(String nickname, String phoneNumber) {
+        return false;
     }
 }
 

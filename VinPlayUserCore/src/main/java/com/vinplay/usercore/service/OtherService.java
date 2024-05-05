@@ -38,6 +38,10 @@ public interface OtherService {
 
     void activeUserTele(String nickname);
 
+    void activeUserPhone(String nickname);
+
     void deactivateUserTele(String nickname);
+
+    boolean activePhoneNumber(String nickname, String phoneNumber);
 }
 
