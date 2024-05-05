@@ -386,6 +386,7 @@ public class OtherServiceImpl implements OtherService {
             response.setErrorCode(e.getMessage());
             e.printStackTrace();
         }
+        totalProfit = totalProfit * -1;
         return totalProfit;
     }
 
