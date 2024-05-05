@@ -63,7 +63,6 @@ public class Slot25ExtendRoom extends SlotRoom {
     public Slot25ExtendRoom(SlotModule module, Slot25CommandCollection commandCollection, SlotLogListener logListener, String gameName, byte id, String room, short moneyType, long pot, long fund, int betValue, long initJackpotValue) {
 
         // FORCE - R
-//        super(id, room, betValue, moneyType, pot, fund - 1000000000, initJackpotValue);
         super(id, room, betValue, moneyType, pot, fund, initJackpotValue);
 
         this.module = module;
@@ -170,7 +169,7 @@ public class Slot25ExtendRoom extends SlotRoom {
                     if (moneyRes != null && moneyRes.isSuccess()) {
 
                         // 2 phần trăm cho vào hũ JACKPOT
-                        long moneyToPot = totalBetValue * 2 / 100L;
+                        long moneyToPot = totalBetValue * 1 / 100L;
                         this.pot += moneyToPot;
 
                         // số tiền còn lại sau khi trừ phế và 2% POT cho vào quỹ thưởng
