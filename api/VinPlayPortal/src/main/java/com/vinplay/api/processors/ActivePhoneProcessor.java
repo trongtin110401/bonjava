@@ -43,7 +43,7 @@ public class ActivePhoneProcessor implements BaseProcessor<HttpServletRequest, S
         response.setPhoneNumber(phoneNumber);
         if (checkUserPhone(nickName)) {
             UserService userService = new UserServiceImpl();
-            userService.updateMoney(nickName, -1000, "vin", Consts.CHARGE_SMS, Consts.CHARGE_SMS, "charge sms", 0, null, TransType.NO_VIPPOINT);
+            userService.updateMoney(nickName, -1000, "vin", Consts.CHARGE_SMS, Consts.CHARGE_SMS, "SMS OTP", 0, null, TransType.NO_VIPPOINT);
         }
         return response.toJson();
     }
