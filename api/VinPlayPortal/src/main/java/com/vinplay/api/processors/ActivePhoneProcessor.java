@@ -6,11 +6,14 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.result.UpdateResult;
 import com.vinplay.api.processors.AutoXuLyBank.APIProcess;
 import com.vinplay.usercore.service.OtherService;
+import com.vinplay.usercore.service.UserExtraService;
 import com.vinplay.usercore.service.UserService;
 import com.vinplay.usercore.service.impl.OtherServiceImpl;
+import com.vinplay.usercore.service.impl.UserExtraServiceImpl;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
+import com.vinplay.vbee.common.models.cache.UserExtraInfoModel;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.response.ActivePhoneResponse;
 import com.vinplay.vbee.common.response.UserPhone;
@@ -25,6 +28,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Objects;
 
 public class ActivePhoneProcessor implements BaseProcessor<HttpServletRequest, String> {
     private SecureRandom random = new SecureRandom();
@@ -33,11 +37,19 @@ public class ActivePhoneProcessor implements BaseProcessor<HttpServletRequest, S
 
         ActivePhoneResponse response = new ActivePhoneResponse(false, "1001");
         HttpServletRequest request = param.get();
-        String nickName = request.getParameter("nickname");
         String phoneNumber = request.getParameter("phoneNumber");
+        String accessToken = request.getParameter("at");
+        UserExtraService userExtraService = new UserExtraServiceImpl();
+        UserExtraInfoModel model = userExtraService.getModelFromToken(accessToken);
+        if (model == null) {
+            response.setSuccess(false);
+            response.setErrorCode("accessToken không hợp lệ");
+            return response.toJson();
+        }
+        String nickName = model.getNickname();
         OtherService otherService = new OtherServiceImpl();
         UserPhone userPhone = otherService.getUserPhoneInfoByPhoneNumber(phoneNumber);
-        if (userPhone != null && userPhone.isActive() && userPhone.getNickname() != nickName) {
+        if (userPhone != null && userPhone.isActive() && !Objects.equals(userPhone.getNickname(), nickName)) {
             response.setSuccess(false);
             response.setErrorCode("Số điện thoại đã kích hoạt cho tài khoản khác");
             return response.toJson();
