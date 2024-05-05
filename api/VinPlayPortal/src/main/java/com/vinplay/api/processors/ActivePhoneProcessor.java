@@ -1,13 +1,18 @@
 package com.vinplay.api.processors;
 
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.result.UpdateResult;
 import com.vinplay.api.processors.AutoXuLyBank.APIProcess;
+import com.vinplay.usercore.service.UserService;
+import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.response.ActivePhoneResponse;
+import com.vinplay.vbee.common.statics.Consts;
+import com.vinplay.vbee.common.statics.TransType;
 import org.bson.Document;
 import org.json.JSONObject;
 
@@ -16,6 +21,7 @@ import java.security.SecureRandom;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
 
 public class ActivePhoneProcessor implements BaseProcessor<HttpServletRequest, String> {
     private SecureRandom random = new SecureRandom();
@@ -35,6 +41,10 @@ public class ActivePhoneProcessor implements BaseProcessor<HttpServletRequest, S
         response.setActive(false);
         response.setNickname(nickName);
         response.setPhoneNumber(phoneNumber);
+        if (checkUserPhone(nickName)) {
+            UserService userService = new UserServiceImpl();
+            userService.updateMoney(nickName, -1000, "vin", Consts.CHARGE_SMS, Consts.CHARGE_SMS, "charge sms", 0, null, TransType.NO_VIPPOINT);
+        }
         return response.toJson();
     }
 
@@ -68,7 +78,8 @@ public class ActivePhoneProcessor implements BaseProcessor<HttpServletRequest, S
         Document filter = new Document("nickname", nickname);
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Date date = new Date();
-        Document updateDocument = new Document("$set", new Document("otp", otp).append("timeToExpired", 300000).append("createdDate", dateFormat.format(date)));
+        Document updateDocument = new Document("$set", new Document("otp", otp)
+                .append("timeToExpired", 300000).append("createdDate", dateFormat.format(date)));
 
         UpdateResult result = collection.updateOne(filter, updateDocument);
         if (result.getMatchedCount() == 0) {
@@ -80,6 +91,15 @@ public class ActivePhoneProcessor implements BaseProcessor<HttpServletRequest, S
                     .append("createdDate", dateFormat.format(date));
             collection.insertOne(newDocument);
         }
+    }
+
+    public boolean checkUserPhone(String nickname) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("user_phone");
+        Document filter = new Document("nickname", nickname);
+        FindIterable<Document> result = collection.find(filter);
+        Iterator<Document> iterator = result.iterator();
+        return iterator.hasNext();
     }
 
 }
