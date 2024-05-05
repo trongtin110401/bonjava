@@ -237,7 +237,6 @@ public class Slot20ExtendRoom extends SlotRoom {
                             // Trong trường hợp này (Slot Machine 25Line Basic thì không áp dụng)
                             Slot20ExtendItem[][] matrixWild = Slot20ExtendUtil.revertMatrix(matrix);
 
-
                             // Đếm số lượng BONUS và SCATTER
                             for (int i = 0; i < ROW; ++i) {
                                 for (int j = 0; j < COLUMN; ++j) {
@@ -298,8 +297,8 @@ public class Slot20ExtendRoom extends SlotRoom {
                                     } else {
                                         moneyOnLine = (long) (award.getRatio() * this.betValue);
                                     }
-                                    AwardsOnLine<Slot20ExtendAward> aol2 = new AwardsOnLine<>(award, moneyOnLine, line.getName());
-                                    awardsOnLines.add(aol2);
+                                    AwardsOnLine aol = new AwardsOnLine(award, moneyOnLine, line.getName());
+                                    awardsOnLines.add(aol);
                                 }
                             }
 
@@ -379,6 +378,7 @@ public class Slot20ExtendRoom extends SlotRoom {
                                         } catch (SQLException ignored) {
                                         }
                                     }
+
                                     if (forceJackpotToUser) {
                                         try {
                                             cacheService.removeKey(CACHE_NAME_USER_SPOT + gameName);
