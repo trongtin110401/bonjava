@@ -539,6 +539,45 @@ public class OtpServiceImpl
         return baseResponseModel;
     }
 
+
+    public BaseResponseModel checkOTPPhone(String nickname, String otp) throws Exception {
+        BaseResponseModel baseResponseModel = new BaseResponseModel(true, "1001");
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("user_phone");
+        Document filter = new Document();
+        filter.put("nickname", nickname);
+        filter.put("otp", otp);
+        MongoCursor<Document> cursor = collection.find(filter).iterator();
+
+        try {
+            if (cursor.hasNext()) {
+                Document doc = cursor.next();
+                long timeToExpired = doc.getInteger("timeToExpired");
+                String createdDateStr = doc.getString("createdDate");
+                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                Date createdDate = dateFormat.parse(createdDateStr);
+                Date currentTime = new Date();
+                long expiredTimeMillis = createdDate.getTime() + timeToExpired;
+
+                if (currentTime.getTime() > expiredTimeMillis) {
+                    baseResponseModel.setSuccess(false);
+                    baseResponseModel.setErrorCode("Code hết hạn");
+                } else {
+                    baseResponseModel.setSuccess(true);
+                    OtherService otherService = new OtherServiceImpl();
+                    otherService.activeUserPhone(nickname);
+                    baseResponseModel.setErrorCode("OK");
+                }
+            } else {
+                baseResponseModel.setSuccess(false);
+                baseResponseModel.setErrorCode("Code không hợp lệ");
+            }
+        } finally {
+            cursor.close();
+        }
+        return baseResponseModel;
+    }
+
     @Override
     public int checkOtpSmsForApp(String nickname, String otp) throws Exception {
         if (GameCommon.getValueStr("OTP_DEFAULT").isEmpty()) {
