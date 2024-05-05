@@ -8,6 +8,9 @@ import com.vinplay.payment.entities.UserWithdraw;
 import com.vinplay.payment.entities.UserWithdrawMomo;
 import com.vinplay.vbee.common.dto.UseGiftCodeDto;
 
+import java.text.NumberFormat;
+import java.util.Locale;
+
 public class TelegramAlert {
     public static boolean SendMessageNap(String message) {
         try {
@@ -125,14 +128,16 @@ public class TelegramAlert {
 
     public static boolean SendMessageBetTX(String nickname, long money, short betSize, long referenceId, int userId) {
         try {
+            NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.forLanguageTag("vi-VN"));
+            String formattedNumber = numberFormat.format(money);
             String message = "Phiên : <b> " + referenceId + "</b>";
-            message += "\nTài Khoản : <b> " + nickname + "</b> - <b>" + userId + "</b>";
+            message += "\nTài Khoản : <b> " + nickname + "</b> / <b>" + userId + "</b>";
             if (betSize == 0) {
                 message += "\nCửa Đặt: <b> Xỉu </b>";
             } else {
                 message += "\nCửa Đặt: <b> Tài </b>";
             }
-            message += "\n Số Tiền Đặt: <b>" + money + "</b>";
+            message += "\nSố Tiền Đặt: <b>" + formattedNumber + "</b>";
             return SendMessageTX(message);
         } catch (Exception e) {
             return false;
@@ -141,14 +146,16 @@ public class TelegramAlert {
 
     public static boolean SendMessageBetTXMD5(String nickname, long money, short betSize, long referenceId, int userId) {
         try {
+            NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.forLanguageTag("vi-VN"));
+            String formattedNumber = numberFormat.format(money);
             String message = "Phiên : <b> " + referenceId + "</b>";
-            message += "\nTài Khoản : <b> " + nickname + "</b> - <b>" + userId + "</b>";
+            message += "\nTài Khoản : <b> " + nickname + "</b> / <b>" + userId + "</b>";
             if (betSize == 0) {
                 message += "\nCửa Đặt: <b> Xỉu </b>";
             } else {
                 message += "\nCửa Đặt: <b> Tài </b>";
             }
-            message += "\n Số Tiền Đặt: <b>" + money + "</b>";
+            message += "\nSố Tiền Đặt: <b>" + formattedNumber + "</b>";
             return SendMessageTXMD5(message);
         } catch (Exception e) {
             return false;
