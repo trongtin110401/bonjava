@@ -433,7 +433,7 @@ public class OtherServiceImpl implements OtherService {
         Iterator<Document> iterator = result.iterator();
         if (iterator.hasNext()) {
             Document document = iterator.next();
-            return document.getString("phoneNumber");
+            return document.getString("phone");
         } else {
             return "";
         }
