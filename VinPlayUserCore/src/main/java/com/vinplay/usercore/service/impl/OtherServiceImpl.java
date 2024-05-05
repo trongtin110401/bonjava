@@ -22,6 +22,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import static com.mongodb.client.model.Filters.eq;
@@ -421,6 +422,21 @@ public class OtherServiceImpl implements OtherService {
     @Override
     public boolean activePhoneNumber(String nickname, String phoneNumber) {
         return false;
+    }
+
+    @Override
+    public String getPhoneByNickname(String nickname) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("user_phone");
+        Document filter = new Document("nickname", nickname);
+        FindIterable<Document> result = collection.find(filter);
+        Iterator<Document> iterator = result.iterator();
+        if (iterator.hasNext()) {
+            Document document = iterator.next();
+            return document.getString("phoneNumber");
+        } else {
+            return "";
+        }
     }
 }
 

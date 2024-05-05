@@ -36,16 +36,23 @@ public class TeleAuthentication extends TelegramLongPollingBot {
             Message message = update.getMessage();
             String chatId = message.getChatId().toString();
             String text = message.getText();
+            String textMessage = "";
             if (text.contains("/start")) {
                 String[] parts = text.split("\\s+");
                 String nickname = parts[1];
-                UserTele userTele = getInfoByNickname(nickname);
-                String textMessage = "Xin chào bạn đến với Bon.win";
-                if (userTele != null) {
-                    textMessage = "Xin chào " + userTele.getNickname() + " đến với Bon.win";
+                UserTele u = getInfoByChatID(chatId);
+                if (u.getNickname() != nickname) {
+                    textMessage = "Tele đã liên kết với 1 tài khoản khác, hãy thử bằng 1 tele khác";
                 } else {
-                    saveUserInfo(nickname, chatId);
+                    UserTele userTele = getInfoByNickname(nickname);
+                    if (userTele != null) {
+                        textMessage = "Xin chào " + userTele.getNickname() + " đến với Bon.win";
+                    } else {
+                        textMessage = "Xin chào bạn đến với Bon.win";
+                        saveUserInfo(nickname, chatId);
+                    }
                 }
+
                 sendPhoneAndOTPRequest(chatId, textMessage);
 
             }
@@ -119,6 +126,24 @@ public class TeleAuthentication extends TelegramLongPollingBot {
             cursor.close();
         }
 
+    }
+
+    private UserTele getInfoByChatID(String chatID) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("user_tele");
+        Document filter = new Document("chatID", chatID);
+        MongoCursor<Document> cursor = collection.find(filter).iterator();
+        try {
+            if (cursor.hasNext()) {
+                Document doc = cursor.next();
+                UserTele user = extractUserInfo(doc);
+                return user;
+            } else {
+                return null;
+            }
+        } finally {
+            cursor.close();
+        }
     }
 
     private UserTele extractUserInfo(Document doc) {
