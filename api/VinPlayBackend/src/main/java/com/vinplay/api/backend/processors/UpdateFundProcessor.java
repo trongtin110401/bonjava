@@ -24,6 +24,8 @@ import com.vinplay.vbee.common.utils.VinPlayUtils;
 import org.bson.Document;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
 public class UpdateFundProcessor
         implements BaseProcessor<HttpServletRequest, String> {
@@ -32,7 +34,11 @@ public class UpdateFundProcessor
 
     private final static String WITHDRAW = "withdraw";
 
+
     public String execute(Param<HttpServletRequest> param) {
+        Map<String, String> games = new HashMap<>();
+        games.put("TaiXiu","");
+
         FundInfoResponse response = new FundInfoResponse(true, "200");
 
         HttpServletRequest request = param.get();
