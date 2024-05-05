@@ -997,5 +997,15 @@
             <name>deactivate user tele</name>
             <path>com.vinplay.api.processors.otp.DeactivateTeleProcessor</path>
         </command>
+        <command>
+            <id>4123</id>
+            <name>active phone number</name>
+            <path>com.vinplay.api.processors.ActivePhoneProcessor</path>
+        </command>
+        <command>
+            <id>4124</id>
+            <name>active phone number</name>
+            <path>com.vinplay.api.processors.otp.CheckOtpPhoneProcessor</path>
+        </command>
     </commands>
 </portal>

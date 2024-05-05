@@ -20,6 +20,7 @@
  */
 package game.modules.slot.room;
 
+import bitzero.server.BitZeroServer;
 import bitzero.server.entities.User;
 import bitzero.server.extensions.data.BaseMsg;
 import bitzero.util.ExtensionUtility;
@@ -43,6 +44,9 @@ import game.modules.slot.entities.slot.AutoUser;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 public abstract class SlotRoom {
@@ -94,6 +98,34 @@ public abstract class SlotRoom {
         try {
             this.miniGameService.savePot(name, pot, this.huX2);
         } catch (InterruptedException | TimeoutException | IOException ignored) {
+        }
+
+        // rút quỹ
+        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(() -> {
+            try {
+                long backup = SlotRoom.this.fund;
+                long value = cacheService.getValueLong(gameName + "_" + moneyTypeStr + "_" + name, 0);
+                value = SlotRoom.this.fund - value;
+                if (value <= 0) {
+                    SlotRoom.this.fund = 0;
+                } else {
+                    SlotRoom.this.fund = value;
+                }
+                // only update db when has changing
+                if (backup != fund) {
+                    SlotRoom.this.saveFund();
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }, 1, 1, TimeUnit.SECONDS);
+    }
+
+    private void saveFund() {
+        try {
+            this.miniGameService.saveFund(this.name, this.fund);
+        } catch (IOException | InterruptedException | TimeoutException e) {
+            Debug.trace(this.gameName + ": update fund error ", e.getMessage());
         }
     }
 
