@@ -37,10 +37,14 @@ public class UserNapGiftCodeProcessor
             ManageGiftCodeDAO dao = new ManageGiftCodeDAO();
             GiftCodeDto giftCodeDto = service.findActiveByCode(code);
             if (giftCodeDto.getCode() == null) {
+                response.setSuccess(false);
+                response.setErrorCode("Gift code không hợp lệ");
                 return response.toJson();
             }
 
             if (service.checkUserUseGiftCode(nickName, giftCodeDto.getType())) {
+                response.setSuccess(false);
+                response.setErrorCode("Đã nhập loại giftcode");
                 return response.toJson();
             }
 
@@ -49,13 +53,11 @@ public class UserNapGiftCodeProcessor
             Date currentDate = new Date();
 
             if (expirationDate.before(currentDate)) {
+                response.setSuccess(false);
+                response.setErrorCode("Gift code hết hạn");
                 return response.toJson();
             }
 
-            UserOTP usotp = dao.getUserActiveOTP(nickName);
-            if (usotp.getActive() != 1) {
-                return response.toJson();
-            }
             giftCodeDto.setNickName(nickName);
             giftCodeDto.setUsedTime(VinPlayUtils.getCurrentDateTime());
             giftCodeDto.setActive(false);
