@@ -75,7 +75,7 @@ public class UserNapGiftCodeProcessor
             HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
             historyTransDao.insertTransaction(new HistoryTransModel("Nạp Tiền Từ Gift Code", "Hệ Thống",
                     "Nạp tiền", String.valueOf(giftCodeDto.getPrice()), "Thành công",code , nickName, "GIFT_CODE", UUID.randomUUID().toString()));
-            userService.updateMoney(nickName, giftCodeDto.getPrice(), "vin", giftCodeDto.getType(), giftCodeDto.getType(), "Mã: " + code, 0L, null, TransType.NO_VIPPOINT);
+            userService.updateMoney(nickName, giftCodeDto.getPrice(), "vin", "Gift Code", "Gift Code", "Mã: " + code, 0L, null, TransType.NO_VIPPOINT);
             TelegramAlert.SendMessageDepositGiftCode(userGiftCode);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
