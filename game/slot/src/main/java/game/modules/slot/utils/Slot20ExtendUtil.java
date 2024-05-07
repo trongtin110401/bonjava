@@ -83,7 +83,7 @@ public class Slot20ExtendUtil {
                     genRandom = false;
                     if (col == 0 || col == 2 || col == 4)
                         matrix[row][col] = Slot20ExtendItem.JACKPOT;
-                    else if (row == 1)
+                    else if (col == 1)
                         matrix[row][col] = Slot20ExtendItem.WILD;
                     else
                         matrix[row][col] = Slot20ExtendItem.WILD2;

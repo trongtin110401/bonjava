@@ -115,6 +115,8 @@ public abstract class SlotRoom {
                 if (backup != fund) {
                     SlotRoom.this.saveFund();
                 }
+
+                cacheService.removeKey(gameName + "_" + moneyTypeStr + "_" + name);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
