@@ -49,6 +49,7 @@ public class OtherServiceImpl implements OtherService {
                 linkSocialResponse.setLinkDownload(document.getString("link_download"));
                 linkSocialResponse.setHome(document.getString("home"));
                 linkSocialResponse.setChatId(document.getString("chat_id"));
+                linkSocialResponse.setMd5(document.getString("md5"));
             }
         });
         return linkSocialResponse;
@@ -85,7 +86,9 @@ public class OtherServiceImpl implements OtherService {
         if (response.getChatId() != null && !response.getChatId().trim().isEmpty()) {
             document.put("chat_id", response.getChatId());
         }
-
+        if (response.getMd5() != null && !response.getMd5().trim().isEmpty()) {
+            document.put("md5", response.getMd5());
+        }
         Document update = new Document("$set", document);
         col.updateOne(filter, update, new UpdateOptions().upsert(true));
     }
