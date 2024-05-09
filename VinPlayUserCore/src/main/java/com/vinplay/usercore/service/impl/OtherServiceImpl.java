@@ -474,5 +474,66 @@ public class OtherServiceImpl implements OtherService {
             cursor.close();
         }
     }
+
+    @Override
+    public UserActivePhoneResponse getAllUserActivePhone(String nickname, String phone, int pageIndex, int pageSize) {
+        UserActivePhoneResponse userActivePhoneResponse = new UserActivePhoneResponse(true, "0");
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("user_phone");
+
+        Document query = new Document();
+
+        if (nickname != null && !nickname.isEmpty()) {
+            query.append("nickname", nickname);
+        }
+        if (phone != null && !phone.isEmpty()) {
+            query.append("phone", phone);
+        }
+        Document sort = new Document("createdDate", -1);
+        List<UserPhone> result = new ArrayList<>();
+        MongoCursor<Document> cursor = collection.find(query).sort(sort).skip(pageIndex * pageSize).limit(pageSize).iterator();
+        while (cursor.hasNext()) {
+            Document doc = cursor.next();
+            UserPhone userPhone = new UserPhone();
+            userPhone.setActive(doc.getBoolean("isActive"));
+            userPhone.setNickname(doc.getString("nickname"));
+            userPhone.setPhoneNumber(doc.getString("phone"));
+            userPhone.setCreatedDate(doc.getString("createdDate"));
+            userPhone.setId(doc.getObjectId("_id").toString());
+            result.add(userPhone);
+        }
+        userActivePhoneResponse.setUsers(result);
+        userActivePhoneResponse.setTotalPage(Integer.parseInt(String.valueOf(collection.count(query))));
+        return userActivePhoneResponse;
+    }
+
+    @Override
+    public UserActiveTeleResponse getAllUserActiveTele(String nickname, int pageIndex, int pageSize) {
+        UserActiveTeleResponse userActivePhoneResponse = new UserActiveTeleResponse(true, "0");
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("user_tele");
+
+        Document query = new Document();
+
+        if (nickname != null && !nickname.isEmpty()) {
+            query.append("nickname", nickname);
+        }
+        Document sort = new Document("createdDate", -1);
+        List<UserTele> result = new ArrayList<>();
+        MongoCursor<Document> cursor = collection.find(query).sort(sort).skip(pageIndex * pageSize).limit(pageSize).iterator();
+        while (cursor.hasNext()) {
+            Document doc = cursor.next();
+            UserTele userPhone = new UserTele();
+            userPhone.setActive(doc.getBoolean("isActive"));
+            userPhone.setNickname(doc.getString("nickname"));
+            userPhone.setPhoneNumber(doc.getString("phoneNumber"));
+            userPhone.setCreatedDate(doc.getString("createdDate"));
+            userPhone.setId(doc.getObjectId("_id").toString());
+            result.add(userPhone);
+        }
+        userActivePhoneResponse.setUsers(result);
+        userActivePhoneResponse.setTotalPage(Integer.parseInt(String.valueOf(collection.count(query))));
+        return userActivePhoneResponse;
+    }
 }
 

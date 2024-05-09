@@ -26,6 +26,7 @@ public interface OtherService {
     UserTele getUserTeleInfoByNickname(String nickname);
 
     void saveUserTeleCashBack(Document document);
+
     UserLoseByDayResponse getListUserTeleCashBack(int pageIndex, int pageSize, String timeStart, String timeEnd, String nickname, String code);
 
     MoneyShootFishResponse getMoneyShootFish(String startTime, String endTime);
@@ -47,5 +48,9 @@ public interface OtherService {
     String getPhoneByNickname(String nickname);
 
     UserPhone getUserPhoneInfoByPhoneNumber(String nickname);
+
+    UserActivePhoneResponse getAllUserActivePhone(String nickname, String phone, int pageIndex, int pageSize);
+
+    UserActiveTeleResponse getAllUserActiveTele(String nickname, int pageIndex, int pageSize);
 }
 
