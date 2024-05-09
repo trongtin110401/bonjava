@@ -1803,5 +1803,10 @@
             <name>get all user active phone</name>
             <path>com.vinplay.api.backend.processors.GetAllUserActivePhoneProcessor</path>
         </command>
+        <command>
+            <id>11041</id>
+            <name>get all user active phone</name>
+            <path>com.vinplay.api.backend.processors.GetAllUserActiveTeleProcessor</path>
+        </command>
     </commands>
 </backend>
