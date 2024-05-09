@@ -71,6 +71,7 @@ public class Slot20ExtendUtil {
         Random rd = new Random();
         int n = rd.nextInt(lineArr.length);
         int indexLineNoHu = Integer.parseInt(lineArr[n]) - 1;
+        System.out.println("SLot25Extend Jackpot Line: " + indexLineNoHu);
         Slot20ExtendLines lines = new Slot20ExtendLines();
         Slot20ExtendItems items = new Slot20ExtendItems();
         Line<Slot20ExtendItem> lineNoHu = lines.get(indexLineNoHu);
@@ -163,12 +164,12 @@ public class Slot20ExtendUtil {
      */
     public static void calculateMoneyAwardInLine(Line line, List<Slot20ExtendAward> awardList) {
         // kiểm tra jackpot trước
-        List cels = line.getCells();
-        if (cels.get(0) == Slot20ExtendItem.JACKPOT
-                && (cels.get(1) == Slot20ExtendItem.WILD)
-                && cels.get(2) == Slot20ExtendItem.JACKPOT
-                && cels.get(3) == Slot20ExtendItem.WILD2
-                && cels.get(4) == Slot20ExtendItem.JACKPOT) {
+        List cells = line.getCells();
+        if (cells.get(0) == Slot20ExtendItem.JACKPOT
+                && (cells.get(1) == Slot20ExtendItem.WILD)
+                && cells.get(2) == Slot20ExtendItem.JACKPOT
+                && cells.get(3) == Slot20ExtendItem.WILD2
+                && cells.get(4) == Slot20ExtendItem.JACKPOT) {
             awardList.add(Slot20ExtendAward.JACKPOT);
             return;
         }
