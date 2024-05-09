@@ -92,13 +92,17 @@ public class CacheServiceImpl
 
     @Override
     public boolean removeKey(String key) throws KeyNotFoundException {
-        HazelcastInstance instance = HazelcastClientFactory.getInstance();
-        IMap map = instance.getMap("cacheConfig");
-        if (map.containsKey((Object) key)) {
-            map.remove((Object) key);
+        try {
+            HazelcastInstance instance = HazelcastClientFactory.getInstance();
+            IMap map = instance.getMap("cacheConfig");
+            if (map.containsKey((Object) key)) {
+                map.remove((Object) key);
+                return true;
+            }
+            return true;
+        } catch (Exception ex) {
             return true;
         }
-        throw new KeyNotFoundException();
     }
 
     @Override
