@@ -220,33 +220,61 @@ public class Slot20ExtendUtil {
         });
     }
 
+//    /**
+//     * Thay thế items trong 1 cột bằng WILD
+//     *
+//     * @param m
+//     * @return
+//     */
+//    public static Slot20ExtendItem[][] revertMatrix(Slot20ExtendItem[][] m) {
+//        Slot20ExtendItem[][] matrix = new Slot20ExtendItem[3][5];
+//        for (int row = 0; row < 3; ++row) {
+//            for (int col = 0; col < 5; ++col) {
+//                if (matrix[row][col] != null) continue;
+//
+//                matrix[row][col] = m[row][col];
+//                if (matrix[row][col] != Slot20ExtendItem.WILD && matrix[row][col] != Slot20ExtendItem.WILD2) continue;
+//
+//                if (matrix[row][col] == Slot20ExtendItem.WILD) {
+//                    matrix[0][col] = Slot20ExtendItem.WILD;
+//                    matrix[1][col] = Slot20ExtendItem.WILD;
+//                    matrix[2][col] = Slot20ExtendItem.WILD;
+//                } else if (matrix[row][col] == Slot20ExtendItem.WILD2) {
+//                    matrix[0][col] = Slot20ExtendItem.WILD2;
+//                    matrix[1][col] = Slot20ExtendItem.WILD2;
+//                    matrix[2][col] = Slot20ExtendItem.WILD2;
+//                }
+//            }
+//        }
+//        return matrix;
+//    }
+
     /**
      * Thay thế items trong 1 cột bằng WILD
      *
-     * @param m
+     * @param matrix
      * @return
      */
-    public static Slot20ExtendItem[][] revertMatrix(Slot20ExtendItem[][] m) {
-        Slot20ExtendItem[][] matrix = new Slot20ExtendItem[3][5];
-        for (int row = 0; row < 3; ++row) {
-            for (int col = 0; col < 5; ++col) {
-                if (matrix[row][col] != null) continue;
-
-                matrix[row][col] = m[row][col];
-                if (matrix[row][col] != Slot20ExtendItem.WILD && matrix[row][col] != Slot20ExtendItem.WILD2) continue;
-
-                if (matrix[row][col] == Slot20ExtendItem.WILD) {
-                    matrix[0][col] = Slot20ExtendItem.WILD;
-                    matrix[1][col] = Slot20ExtendItem.WILD;
-                    matrix[2][col] = Slot20ExtendItem.WILD;
-                } else if (matrix[row][col] == Slot20ExtendItem.WILD2) {
-                    matrix[0][col] = Slot20ExtendItem.WILD2;
-                    matrix[1][col] = Slot20ExtendItem.WILD2;
-                    matrix[2][col] = Slot20ExtendItem.WILD2;
+    public static Slot20ExtendItem[][] revertMatrix(Slot20ExtendItem[][] matrix) {
+        Slot20ExtendItem[][] newMatrix = new Slot20ExtendItem[3][5];
+        for (int col = 0; col < 5; col++) {
+            for (int row = 0; row < 3; row++) {
+                if (newMatrix[row][col] != null) continue;
+                newMatrix[row][col] = matrix[row][col];
+                if (col == 1 || col == 3) {
+                    if (matrix[row][col] == Slot20ExtendItem.WILD) {
+                        matrix[0][col] = Slot20ExtendItem.WILD;
+                        matrix[1][col] = Slot20ExtendItem.WILD;
+                        matrix[2][col] = Slot20ExtendItem.WILD;
+                    } else if (matrix[row][col] == Slot20ExtendItem.WILD2) {
+                        matrix[0][col] = Slot20ExtendItem.WILD2;
+                        matrix[1][col] = Slot20ExtendItem.WILD2;
+                        matrix[2][col] = Slot20ExtendItem.WILD2;
+                    }
                 }
             }
         }
-        return matrix;
+        return newMatrix;
     }
 }
 
