@@ -106,6 +106,8 @@ public class LogMoneyUserDaoImpl
         }
         if (moneyType.equals("vin")) {
             iterable = db.getCollection("log_money_user_vin").find((Bson) new Document(conditions)).skip(numStart).limit(totalRecord);
+            BasicDBObject objsort = new BasicDBObject();
+            objsort.put("_id", -1);
         } else if (moneyType.equals("xu")) {
             BasicDBObject objsort = new BasicDBObject();
             objsort.put("_id", -1);

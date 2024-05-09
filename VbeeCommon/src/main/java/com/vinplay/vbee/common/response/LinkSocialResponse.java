@@ -27,6 +27,7 @@ public class LinkSocialResponse
     private String home;
 
     private String chatId;
+    private String md5;
 
     public String getFanPage() {
         return fanPage;
@@ -106,6 +107,14 @@ public class LinkSocialResponse
 
     public void setChatId(String chatId) {
         this.chatId = chatId;
+    }
+
+    public String getMd5() {
+        return md5;
+    }
+
+    public void setMd5(String md5) {
+        this.md5 = md5;
     }
 }
 
