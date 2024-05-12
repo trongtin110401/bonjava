@@ -1808,5 +1808,15 @@
             <name>get all user active phone</name>
             <path>com.vinplay.api.backend.processors.GetAllUserActiveTeleProcessor</path>
         </command>
+        <command>
+            <id>11042</id>
+            <name>deactivate user tele</name>
+            <path>com.vinplay.api.backend.processors.DeActiveUserTeleProcessor</path>
+        </command>
+        <command>
+            <id>11043</id>
+            <name>deactivate user tele</name>
+            <path>com.vinplay.api.backend.processors.DeActiveUserPhoneProcessor</path>
+        </command>
     </commands>
 </backend>
