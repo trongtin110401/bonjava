@@ -14,7 +14,7 @@ public class DeActiveUserPhoneProcessor
         HttpServletRequest request = param.get();
         String nickname = request.getParameter("nickname");
         OtherService otherService = new OtherServiceImpl();
-        otherService.deactivateUserTele(nickname);
+        otherService.deactivateUserPhone(nickname);
         return "ok";
 
     }
