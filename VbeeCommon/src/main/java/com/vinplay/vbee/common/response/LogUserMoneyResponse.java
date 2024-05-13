@@ -4,6 +4,7 @@
 package com.vinplay.vbee.common.response;
 
 public class LogUserMoneyResponse {
+    public long transId;
     public String userName;
     public String nickName;
     public String serviceName;
