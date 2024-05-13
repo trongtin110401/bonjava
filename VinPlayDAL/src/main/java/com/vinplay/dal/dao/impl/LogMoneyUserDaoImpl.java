@@ -107,10 +107,10 @@ public class LogMoneyUserDaoImpl
         if (moneyType.equals("vin")) {
             iterable = db.getCollection("log_money_user_vin").find((Bson) new Document(conditions)).skip(numStart).limit(totalRecord);
             BasicDBObject objsort = new BasicDBObject();
-            objsort.put("_id", -1);
+            objsort.put("trans_time", -1);
         } else if (moneyType.equals("xu")) {
             BasicDBObject objsort = new BasicDBObject();
-            objsort.put("_id", -1);
+            objsort.put("trans_time", -1);
             iterable = db.getCollection("log_money_user_xu").find((Bson) new Document(conditions)).sort((Bson) objsort).skip(numStart).limit(totalRecord);
         }
         iterable.forEach((Block) new Block<Document>() {
