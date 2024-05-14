@@ -7,6 +7,7 @@ import game.modules.slot.entities.slot.Cell;
 import game.modules.slot.entities.slot.Line;
 import game.modules.slot.entities.slot.MiniGameSlotResponse;
 import game.modules.slot.entities.slot.line20extend.*;
+import game.modules.slot.entities.slot.line25extend.Slot25ExtendItem;
 
 import java.util.*;
 
@@ -162,7 +163,15 @@ public class Slot20ExtendUtil {
      * @param line
      * @param awardList
      */
-    public static void calculateMoneyAwardInLine(Line line, List<Slot20ExtendAward> awardList) {
+    public static void calculateMoneyAwardInLine(Line<Slot20ExtendItem> line, List<Slot20ExtendAward> awardList) {
+
+        StringBuilder builder = new StringBuilder();
+        line.getCells().forEach(o -> {
+            builder.append(o.getItem().getName())
+                    .append(" ");
+        });
+        System.out.println(builder);
+
         // kiểm tra jackpot trước
         List cells = line.getCells();
         if (cells.get(0) == Slot20ExtendItem.JACKPOT
@@ -178,7 +187,7 @@ public class Slot20ExtendUtil {
         Map<Byte, Integer> item2Count = new HashMap<>();
         for (int i = 0; i < line.getCells().size(); i++) {
             int count = 1; // Biến đếm số lượng trùng lặp
-            Slot20ExtendItem currentItem = (Slot20ExtendItem) line.getCell(i).getItem(); // item hiện tại
+            Slot20ExtendItem currentItem = line.getCell(i).getItem(); // item hiện tại
             // Bỏ qua không đếm do các items này không có phần thưởng hệ số
             if (currentItem == Slot20ExtendItem.WILD
                     || currentItem == Slot20ExtendItem.WILD2
@@ -188,7 +197,7 @@ public class Slot20ExtendUtil {
             }
             // So sánh item hiện tại với item tiếp theo
             for (int j = i + 1; j < line.getCells().size(); j++) {
-                Slot20ExtendItem nextItem = (Slot20ExtendItem) line.getCell(j).getItem();
+                Slot20ExtendItem nextItem = line.getCell(j).getItem();
                 if (currentItem == nextItem) {
                     count += 1;
                 } else if (nextItem == Slot20ExtendItem.WILD || nextItem == Slot20ExtendItem.WILD2 || nextItem == Slot20ExtendItem.JACKPOT) {
