@@ -27,9 +27,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
-public class UpdateFundProcessor
-        implements BaseProcessor<HttpServletRequest, String> {
-    private MiniGameServiceImpl service = new MiniGameServiceImpl();
+public class UpdateFundProcessor implements BaseProcessor<HttpServletRequest, String> {
+    CacheService cacheService = new CacheServiceImpl();
+//    private MiniGameServiceImpl service = new MiniGameServiceImpl();
     private final static String DEPOSIT = "deposit";
 
     private final static String WITHDRAW = "withdraw";
@@ -37,24 +37,38 @@ public class UpdateFundProcessor
 
     public String execute(Param<HttpServletRequest> param) {
         Map<String, String> games = new HashMap<>();
-        games.put("TaiXiu","");
+        games.put("TaiXiu", "update_fund_tx_auto");
+        games.put("TaiXiuMd5", "update_fund_tx_md5_auto");
+        games.put("XocDia", "update_fund_xd_auto");
+        games.put("BauCuaTo_vin_1000", "update_fund_bau_cua_to");
+
 
         FundInfoResponse response = new FundInfoResponse(true, "200");
 
         HttpServletRequest request = param.get();
 
         String fundName = request.getParameter("fundName");
-        int amount = Integer.parseInt(request.getParameter("amount"));
+        long amount = Long.parseLong(request.getParameter("amount"));
         String type = request.getParameter("type");
         try {
-            long fund = service.getFund(fundName);
-            if (type.equals(DEPOSIT)) {
-                fund += amount;
+//            long fund = service.getFund(fundName);
+//            if (type.equals(DEPOSIT)) {
+//                fund += amount;
+//            }
+//            if (type.equals(WITHDRAW)) {
+//                fund -= amount;
+//            }
+
+            if (games.containsKey(fundName)) {
+                if (type.equals(DEPOSIT)) {
+                    cacheService.setValue(games.get(fundName), amount);
+                }
+                if (type.equals(WITHDRAW)) {
+                    cacheService.setValue(games.get(fundName), amount * -1);
+                }
             }
-            if (type.equals(WITHDRAW)) {
-                fund -= amount;
-            }
-            service.saveFund(fundName, fund);
+
+//            service.saveFund(fundName, fund);
 
             Document document = new Document();
             document.put("fund_name", fundName);

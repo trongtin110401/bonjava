@@ -442,6 +442,13 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                 case 35: {
                     try {
                         this.startNewRoundTX();
+                        long updateFund = 0;
+                        try {
+                            updateFund = Long.parseLong(cacheService.getValueStr("update_fund_tx_md5_auto"));
+                        } catch (Exception e) {
+                            updateFund = 0;
+                        }
+                        fundTxMD5 += updateFund;
                         mgService.saveFund(Games.TAI_XIU_MD5.getName(),fundTxMD5);
                         amountBotTaiFake = 0;
                         amountBotXiuFake = 0;
