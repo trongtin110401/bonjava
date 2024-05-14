@@ -280,11 +280,9 @@ public class Slot20ExtendRoom extends SlotRoom {
                                 ArrayList<Slot20ExtendAward> awardList = new ArrayList<>();
                                 int lineNumber = Integer.parseInt(selectedLine);
                                 Line line = Slot20ExtendUtil.getLine(this.lines, matrixWild, lineNumber);
-                                Slot20ExtendUtil.calculateMoneyAwardInLine(line, awardList, u);
+                                Slot20ExtendUtil.calculateMoneyAwardInLine(line, awardList);
                                 for (Slot20ExtendAward award : awardList) {
                                     long moneyOnLine;
-                                    if (!u.isBot())
-                                        System.out.println("====> AWARD: " + award.name());
                                     if (award == Slot20ExtendAward.JACKPOT) {
                                         // đảm bảo chỉ duy nhất 1 dòng trúng JACKPOT
                                         // nếu trùng lặp, bắt đầu lại dòng vòng lặp while (continue block4)
@@ -297,7 +295,6 @@ public class Slot20ExtendRoom extends SlotRoom {
                                         moneyOnLine = this.pot;
                                         result = ResultSlot.JACKPOT;
 
-                                        System.out.println("MONEY: " + moneyOnLine + " - result: " + result);
                                     } else {
                                         moneyOnLine = (long) (award.getRatio() * this.betValue);
                                     }
@@ -325,9 +322,6 @@ public class Slot20ExtendRoom extends SlotRoom {
                                     isGetJackpotNaturally = true;
                                 }
                             }
-
-                            if (!u.isBot())
-                                System.out.println("TOTAL prize: " + totalPrizes);
 
                             if (builderLinesWin.length() > 0) {
                                 builderLinesWin.deleteCharAt(0);
@@ -466,8 +460,6 @@ public class Slot20ExtendRoom extends SlotRoom {
                             this.saveFund();
                             // lưu thông tin HŨ
                             this.savePot();
-
-//                            System.out.println(gameName + ": Total Prize: " + totalPrizes + " - Fun: " + fund);
                         }
                     }
                 } else {
@@ -487,9 +479,6 @@ public class Slot20ExtendRoom extends SlotRoom {
         if (result == ResultSlot.JACKPOT) {
             this.sendNotifyNoHu(username, (byte) 1, playResponse.prize, gameName);
         }
-//        if (!u.isBot()) {
-//            System.out.println(new Gson().toJson(playResponse));
-//        }
         return playResponse;
     }
 

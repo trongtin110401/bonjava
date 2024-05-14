@@ -165,28 +165,15 @@ public class Slot20ExtendUtil {
      * @param line
      * @param awardList
      */
-    public static void calculateMoneyAwardInLine(Line<Slot20ExtendItem> line, List<Slot20ExtendAward> awardList, UserCacheModel user) {
-
-        if (!user.isBot()) {
-            StringBuilder builder = new StringBuilder();
-            builder.append(line.getName()).append(" ");
-            line.getCells().forEach(o -> {
-                builder.append(o.getItem().getName())
-                        .append(" ");
-            });
-            System.out.println(builder);
-        }
-
-
+    public static void calculateMoneyAwardInLine(Line<Slot20ExtendItem> line, List<Slot20ExtendAward> awardList) {
         // kiểm tra jackpot trước
-        List cells = line.getCells();
-        if (cells.get(0) == Slot20ExtendItem.JACKPOT
-                && (cells.get(1) == Slot20ExtendItem.WILD)
-                && cells.get(2) == Slot20ExtendItem.JACKPOT
-                && cells.get(3) == Slot20ExtendItem.WILD2
-                && cells.get(4) == Slot20ExtendItem.JACKPOT) {
+        List<Cell<Slot20ExtendItem>> cells = line.getCells();
+        if (cells.get(0).getItem() == Slot20ExtendItem.JACKPOT
+                && (cells.get(1).getItem() == Slot20ExtendItem.WILD)
+                && cells.get(2).getItem() == Slot20ExtendItem.JACKPOT
+                && cells.get(3).getItem() == Slot20ExtendItem.WILD2
+                && cells.get(4).getItem() == Slot20ExtendItem.JACKPOT) {
             awardList.add(Slot20ExtendAward.JACKPOT);
-            System.out.println("ADD JACKPOT AWARD_________");
             return;
         }
 
