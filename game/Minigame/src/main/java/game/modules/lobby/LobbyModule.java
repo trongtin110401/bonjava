@@ -3304,7 +3304,7 @@ public class LobbyModule extends BaseClientRequestHandler {
 
     }
 
-    private void loginFromOtherDevice() {
+    private synchronized void loginFromOtherDevice() {
         String nickname;
         while ((nickname = cacheService.getQueueElement("LOGIN_OTHER_DEVICE_QUEUE")) != null) {
             if (StringUtils.isNotEmpty(nickname)) {
