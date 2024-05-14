@@ -280,7 +280,7 @@ public class Slot20ExtendRoom extends SlotRoom {
                                 ArrayList<Slot20ExtendAward> awardList = new ArrayList<>();
                                 int lineNumber = Integer.parseInt(selectedLine);
                                 Line line = Slot20ExtendUtil.getLine(this.lines, matrixWild, lineNumber);
-                                Slot20ExtendUtil.calculateMoneyAwardInLine(line, awardList);
+                                Slot20ExtendUtil.calculateMoneyAwardInLine(line, awardList, u);
                                 for (Slot20ExtendAward award : awardList) {
                                     long moneyOnLine;
                                     if (!u.isBot())
