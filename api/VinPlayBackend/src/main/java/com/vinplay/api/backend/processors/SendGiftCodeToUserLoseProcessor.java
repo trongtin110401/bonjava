@@ -80,7 +80,6 @@ public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServle
         OtherService otherService = new OtherServiceImpl();
         Document document = new Document();
         document.put("nickname", userTele.getNickname());
-        document.put("chatID", userTele.getChatID());
         document.put("money", money);
         document.put("code", code);
         document.put("cashBack", price);

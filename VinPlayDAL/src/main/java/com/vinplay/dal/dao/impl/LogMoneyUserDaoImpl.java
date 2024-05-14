@@ -105,16 +105,20 @@ public class LogMoneyUserDaoImpl
             conditions.put("trans_time", obj);
         }
         if (moneyType.equals("vin")) {
-            iterable = db.getCollection("log_money_user_vin").find((Bson) new Document(conditions)).skip(numStart).limit(totalRecord);
+            BasicDBObject objsort = new BasicDBObject();
+            objsort.put("trans_id", -1);
+            iterable = db.getCollection("log_money_user_vin").find((Bson) new Document(conditions)).sort(objsort).skip(numStart).limit(totalRecord);
+
         } else if (moneyType.equals("xu")) {
             BasicDBObject objsort = new BasicDBObject();
-            objsort.put("_id", -1);
-            iterable = db.getCollection("log_money_user_xu").find((Bson) new Document(conditions)).sort((Bson) objsort).skip(numStart).limit(totalRecord);
+            objsort.put("trans_time", -1);
+            iterable = db.getCollection("log_money_user_xu").find((Bson) new Document(conditions)).sort(objsort).skip(numStart).limit(totalRecord);
         }
         iterable.forEach((Block) new Block<Document>() {
 
             public void apply(Document document) {
                 LogUserMoneyResponse tranlogmoney = new LogUserMoneyResponse();
+                tranlogmoney.transId = document.getLong("trans_id");
                 tranlogmoney.nickName = document.getString((Object) "nick_name");
                 tranlogmoney.serviceName = document.getString((Object) "service_name");
                 tranlogmoney.currentMoney = document.getLong((Object) "current_money");

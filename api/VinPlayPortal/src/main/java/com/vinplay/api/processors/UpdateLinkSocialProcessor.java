@@ -21,6 +21,7 @@ public class UpdateLinkSocialProcessor
         String linkDownload = request.getParameter("linkDownload");
         String home = request.getParameter("home");
         String chatId = request.getParameter("chatId");
+        String md5 = request.getParameter("md5");
         LinkSocialResponse linkSocialResponse = new LinkSocialResponse(true, "1001");
         linkSocialResponse.setFanPage(fanPage);
         linkSocialResponse.setGroupFacebook(groupFacebook);
@@ -31,6 +32,7 @@ public class UpdateLinkSocialProcessor
         linkSocialResponse.setLinkDownload(linkDownload);
         linkSocialResponse.setHome(home);
         linkSocialResponse.setChatId(chatId);
+        linkSocialResponse.setMd5(md5);
         OtherServiceImpl otherService = new OtherServiceImpl();
         otherService.updateLinkSocial(linkSocialResponse);
         return otherService.getLinkSocial().toJson();
