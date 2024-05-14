@@ -3314,6 +3314,8 @@ public class LobbyModule extends BaseClientRequestHandler {
                     LoginOtherDeviceMsg msg = new LoginOtherDeviceMsg();
                     this.send(msg, users);
                 }
+                // remove map
+                cacheService.getMap("LOGIN_OTHER_DEVICE_MAP").remove(nickname);
             }
         }
     }

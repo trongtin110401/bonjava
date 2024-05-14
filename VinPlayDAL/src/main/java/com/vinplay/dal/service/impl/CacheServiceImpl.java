@@ -182,5 +182,11 @@ public class CacheServiceImpl implements CacheService {
         IQueue<Object> queue = instance.getQueue(queueName);
         return queue.size();
     }
+
+    @Override
+    public IMap getMap(String mapName) {
+        HazelcastInstance instance = HazelcastClientFactory.getInstance();
+        return instance.getMap(mapName);
+    }
 }
 

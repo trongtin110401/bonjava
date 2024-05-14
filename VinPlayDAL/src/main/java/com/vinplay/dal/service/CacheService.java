@@ -6,6 +6,7 @@
  */
 package com.vinplay.dal.service;
 
+import com.hazelcast.core.IMap;
 import com.vinplay.vbee.common.exceptions.KeyNotFoundException;
 
 import java.util.Map;
@@ -45,5 +46,7 @@ public interface CacheService {
     <T> T getQueueElement(String queueName);
 
     int queueSize(String queueName);
+
+    IMap getMap(String mapName);
 }
 
