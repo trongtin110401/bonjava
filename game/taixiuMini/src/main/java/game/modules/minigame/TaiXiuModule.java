@@ -472,7 +472,15 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                 case 40: { // 75
                     try {
                         this.startNewRoundTX();
+                        long updateFund = 0;
+                        try {
+                            updateFund = Long.parseLong(cacheService.getValueStr("update_fund_tx_auto"));
+                        } catch (Exception e) {
+                            updateFund = 0;
+                        }
+                        fundTx += updateFund;
                         miniGameService.saveFund(Games.TAI_XIU.getName(), fundTx);
+                        cacheService.setValue("update_fund_tx_auto", 0);
                         amountBotTaiFake = 0;
                         amountBotXiuFake = 0;
                         this.count = 0;
