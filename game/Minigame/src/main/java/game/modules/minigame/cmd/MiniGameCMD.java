@@ -119,6 +119,7 @@ public class MiniGameCMD {
     public static final short STOP_PLAY_POKEGO = 7007;
     public static final short FORCE_STOP_PLAY_POKEGO = 7008;
     public static final short POKEGO_X2 = 7009;
+    public static final short LOGIN_OTHER_DEVICE = 20111;
 
     //Diamond New
     public static final short CMD_SLOT_EXTEND_SUB= 8001;

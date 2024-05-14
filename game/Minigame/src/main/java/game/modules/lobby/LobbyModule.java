@@ -151,6 +151,8 @@ import game.utils.GameUtils;
 import game.utils.HuVangConfig;
 import game.utils.ServerUtil;
 import okhttp3.*;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -222,6 +224,7 @@ public class LobbyModule extends BaseClientRequestHandler {
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.checkOutGameTask, 1, 500, TimeUnit.MILLISECONDS);
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.checkCodePayHuyStatusTask, 1, 1, TimeUnit.SECONDS);
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.broadcastMessageTask, 1, 70, TimeUnit.SECONDS);
+        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this::loginFromOtherDevice, 1, 100, TimeUnit.SECONDS);
         try {
             this.initVP();
             MongoDBConnectionFactory.init();
@@ -2789,14 +2792,9 @@ public class LobbyModule extends BaseClientRequestHandler {
 
     private synchronized void broadCastMoney() {
         CacheService cacheService = new CacheServiceImpl();
-        // tutl
-//        Debug.info("list user iss vao day");
-
         ArrayList<String> listUser = null;
         try {
             listUser = (ArrayList<String>) cacheService.getObject("List_Money_Change");
-            // tutl
-//            Debug.info("list user iss" + listUser.size());
             if (null != listUser) {
                 for (String username : listUser) {
                     BroadcastMoneyChangeMsg msg = new BroadcastMoneyChangeMsg();
@@ -2810,14 +2808,11 @@ public class LobbyModule extends BaseClientRequestHandler {
                 }
                 listUser = new ArrayList<>();
                 cacheService.setObject("List_Money_Change", listUser);
-                // tutl
-//                Debug.info("list user  after send iss" + listUser.size());
             }
         } catch (KeyNotFoundException e) {
             listUser = new ArrayList<>();
             cacheService.setObject("List_Money_Change", listUser);
             Debug.info("Call exception user  after send iss" + listUser.size());
-            // e.printStackTrace();
         }
     }
 
@@ -3307,6 +3302,20 @@ public class LobbyModule extends BaseClientRequestHandler {
         }
         broadcastMessageService.clearMessage();
 
+    }
+
+    private void loginFromOtherDevice() {
+        String nickname;
+        while ((nickname = cacheService.getQueueElement("LOGIN_OTHER_DEVICE_QUEUE")) != null) {
+            if (StringUtils.isNotEmpty(nickname)) {
+                System.out.println("KICK SESSION: " + nickname);
+                List<User> users = ExtensionUtility.globalUserManager.getUserByName(nickname);
+                if (CollectionUtils.isNotEmpty(users)) {
+                    LoginOtherDeviceMsg msg = new LoginOtherDeviceMsg();
+                    this.send(msg, users);
+                }
+            }
+        }
     }
 
     private final class CheckCodePayHuyStatusTask

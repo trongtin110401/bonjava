@@ -11,6 +11,7 @@ package com.vinplay.dal.service.impl;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
+import com.hazelcast.core.IQueue;
 import com.vinplay.dal.service.CacheService;
 import com.vinplay.vbee.common.exceptions.KeyNotFoundException;
 import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
@@ -19,8 +20,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-public class CacheServiceImpl
-        implements CacheService {
+public class CacheServiceImpl implements CacheService {
     @Override
     public void setValue(String key, String value) {
         HazelcastInstance instance = HazelcastClientFactory.getInstance();
@@ -159,6 +159,21 @@ public class CacheServiceImpl
         HazelcastInstance instance = HazelcastClientFactory.getInstance();
         IMap map = instance.getMap("cacheGameBai");
         map.put((Object) key, obj, (long) expireTime, TimeUnit.SECONDS);
+    }
+
+    @Override
+    public <T> T getQueueElement(String queueName) {
+        try {
+            HazelcastInstance instance = HazelcastClientFactory.getInstance();
+            IQueue<Object> queue = instance.getQueue(queueName);
+            if (queue == null) {
+                return null;
+            }
+            Object o = queue.poll();
+            return o != null ? (T) o : null;
+        } catch (Exception ex) {
+            return null;
+        }
     }
 }
 

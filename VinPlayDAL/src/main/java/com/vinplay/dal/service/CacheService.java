@@ -1,12 +1,13 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  com.vinplay.vbee.common.exceptions.KeyNotFoundException
  */
 package com.vinplay.dal.service;
 
 import com.vinplay.vbee.common.exceptions.KeyNotFoundException;
+
 import java.util.Map;
 import java.util.Set;
 
@@ -40,5 +41,7 @@ public interface CacheService {
     public int getValueIntWithDefault(String key);
 
     public Map<String, Object> getBulk(Set<String> var1);
+
+    <T> T getQueueElement(String queueName);
 }
 

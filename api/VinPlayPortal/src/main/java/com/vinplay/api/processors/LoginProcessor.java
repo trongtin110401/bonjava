@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  com.hazelcast.core.IMap
  *  com.vinplay.usercore.service.impl.MarketingServiceImpl
@@ -56,18 +56,19 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
+
 import org.apache.log4j.Logger;
 
 public class LoginProcessor
-implements BaseProcessor<HttpServletRequest, String> {
-    private static final Logger logger = Logger.getLogger((String)"api");
+        implements BaseProcessor<HttpServletRequest, String> {
+    private static final Logger logger = Logger.getLogger((String) "api");
 
     public String execute(Param<HttpServletRequest> param) {
-        HttpServletRequest request = (HttpServletRequest)param.get();
+        HttpServletRequest request = (HttpServletRequest) param.get();
         String username = request.getParameter("un");
         String password = request.getParameter("pw");
         String realpass = "";
-        if(password.length() != 32) {
+        if (password.length() != 32) {
             try {
                 password = new String(Base64.getDecoder().decode(password)); // todo bỏ command khi
                 realpass = this.getRealPass(password, username);
@@ -81,25 +82,24 @@ implements BaseProcessor<HttpServletRequest, String> {
             } catch (Exception e) {
                 realpass = password;
             }
-        }else {
+        } else {
             realpass = password;
         }
-        System.out.println(realpass);
         String social = request.getParameter("s");
         String accessToken = request.getParameter("at");
         String cp = request.getParameter("cp");
         request.getHeader("user-agent");
-        logger.debug((Object)("Request login: username: " + username + ", password: " + password + ", social: " + social + ", accessToken: " + accessToken));
+        logger.debug((Object) ("Request login: username: " + username + ", password: " + password + ", social: " + social + ", accessToken: " + accessToken));
         if (username != null && password != null || social != null && (social.equals("fb") || social.equals("gg")) && accessToken != null) {
             LoginResponse res = new LoginResponse(false, "1009");
-            if(username == null || username.length() > 20 || username.length() < 6) {
+            if (username == null || username.length() > 20 || username.length() < 6) {
                 return res.toJson();
             }
             try {
-                int statusGame = GameCommon.getValueInt((String)"STATUS_GAME");
+                int statusGame = GameCommon.getValueInt((String) "STATUS_GAME");
                 if (statusGame == StatusGames.MAINTAIN.getId()) {
                     res.setErrorCode("1114");
-                    logger.debug((Object)("Response login: " + res.toJson()));
+                    logger.debug((Object) ("Response login: " + res.toJson()));
                     return res.toJson();
                 }
                 CacheService cacheService = new CacheServiceImpl();
@@ -108,14 +108,14 @@ implements BaseProcessor<HttpServletRequest, String> {
                 if (social != null && (social.equals("fb") || social.equals("gg"))) {
                     String cache = social.equals("fb") ? "cacheFacebook" : "cacheGoogle";
                     IMap socialMap = HazelcastClientFactory.getInstance().getMap(cache);
-                    String socialId = SocialUtils.getSocialId((IMap<String, SocialModel>)socialMap, accessToken, social);
+                    String socialId = SocialUtils.getSocialId((IMap<String, SocialModel>) socialMap, accessToken, social);
                     if (socialId == null) {
-                        logger.debug((Object)("Response login: " + res.toJson()));
+                        logger.debug((Object) ("Response login: " + res.toJson()));
                         return res.toJson();
                     }
                     if (socialId.isEmpty()) {
                         res.setErrorCode("1009");
-                        logger.debug((Object)("Response login: " + res.toJson()));
+                        logger.debug((Object) ("Response login: " + res.toJson()));
                         return res.toJson();
                     }
                     UserModel userModel = userService.getUserBySocialId(socialId, social);
@@ -124,12 +124,12 @@ implements BaseProcessor<HttpServletRequest, String> {
                             res.setErrorCode("1114");
                             return res.toJson();
                         }
-                        if(userModel.isBot()){
+                        if (userModel.isBot()) {
                             res.setErrorCode("1114");
                             return res.toJson();
                         }
                         if (userService.insertUserBySocial(socialId, social)) {
-                            socialMap.put((Object)socialId, (Object)new SocialModel(accessToken, socialId, new Date()));
+                            socialMap.put((Object) socialId, (Object) new SocialModel(accessToken, socialId, new Date()));
                             String campaign = request.getParameter("utm_campaign");
                             String medium = request.getParameter("utm_medium");
                             String source = request.getParameter("utm_source");
@@ -137,14 +137,14 @@ implements BaseProcessor<HttpServletRequest, String> {
                                 MarketingServiceImpl mktService = new MarketingServiceImpl();
                                 UserMarketingMessage message = new UserMarketingMessage(username, "", 0, VinPlayUtils.getCurrentDateMarketing(), campaign, medium, source);
                                 mktService.saveUserMarketing(message);
-                                UserMakertingUtil.newRegisterUser((String)campaign, (String)medium, (String)source);
+                                UserMakertingUtil.newRegisterUser((String) campaign, (String) medium, (String) source);
                             }
                             res.setErrorCode("2001");
                         }
                     } else {
                         if (statusGame == StatusGames.SANDBOX.getId() && !userModel.isCanLoginSandbox()) {
                             res.setErrorCode("1114");
-                            logger.debug((Object)("Response login: " + res.toJson()));
+                            logger.debug((Object) ("Response login: " + res.toJson()));
                             return res.toJson();
                         }
                         if (!userModel.isBanLogin()) {
@@ -153,14 +153,14 @@ implements BaseProcessor<HttpServletRequest, String> {
                                     // send otp
                                     OtpService otpService = new OtpServiceImpl();
                                     int ret = otpService.sendVoiceOtp(userModel.getNickname(), "", true);
-                                    if(ret != 0){
-                                         Debug.trace("Cannot send OTP message!");
-                                         res.setErrorCode("116");
-                                         return res.toJson();
+                                    if (ret != 0) {
+                                        Debug.trace("Cannot send OTP message!");
+                                        res.setErrorCode("116");
+                                        return res.toJson();
                                     }
-                                    res.setErrorCode("1012");                                    
+                                    res.setErrorCode("1012");
                                 } else {
-                                    SocialUtils.socialSuccess((IMap<String, SocialModel>)socialMap, socialId, accessToken);
+                                    SocialUtils.socialSuccess((IMap<String, SocialModel>) socialMap, socialId, accessToken);
                                     res = PortalUtils.loginSuccess(userModel, request);
                                 }
                             } else {
@@ -173,14 +173,13 @@ implements BaseProcessor<HttpServletRequest, String> {
                 } else {
                     UserModel userModel2 = userService.getUserByUserName(username);
                     if (userModel2 != null) {
-                        if(userModel2.isBot()){
+                        if (userModel2.isBot()) {
                             res.setErrorCode("1114");
-                            //logger.debug((Object)("Response login: " + res.toJson()));
                             return res.toJson();
                         }
                         if (statusGame == StatusGames.SANDBOX.getId() && !userModel2.isCanLoginSandbox()) {
                             res.setErrorCode("1114");
-                            logger.debug((Object)("Response login: " + res.toJson()));
+                            logger.debug((Object) ("Response login: " + res.toJson()));
                             return res.toJson();
                         }
                         if (!userModel2.isBanLogin()) {
@@ -189,11 +188,11 @@ implements BaseProcessor<HttpServletRequest, String> {
                                     if (userModel2.isHasLoginSecurity() && userModel2.getLoginOtp() >= 0L && userModel2.getLoginOtp() <= userModel2.getVinTotal()) {
                                         // send otp
                                         OtpService otpService = new OtpServiceImpl();
-                                   int ret = otpService.sendVoiceOtp(userModel2.getNickname(), "", true);
-                                        if(ret != 0){
-                                             Debug.trace("Cannot send OTP message!");
-                                             res.setErrorCode("116");
-                                             return res.toJson();
+                                        int ret = otpService.sendVoiceOtp(userModel2.getNickname(), "", true);
+                                        if (ret != 0) {
+                                            Debug.trace("Cannot send OTP message!");
+                                            res.setErrorCode("116");
+                                            return res.toJson();
                                         }
                                         res.setErrorCode("1012");
                                     } else {
@@ -212,20 +211,19 @@ implements BaseProcessor<HttpServletRequest, String> {
                         res.setErrorCode("1007");
                     }
                 }
+            } catch (Exception e1) {
+                logger.info((Object) e1);
             }
-            catch (Exception e1) {
-                logger.info((Object)e1);
-            }
-            logger.debug((Object)("Response login: " + res.toJson()));
+            logger.debug((Object) ("Response login: " + res.toJson()));
             return res.toJson();
         }
         return "MISSING PARAMETTER";
     }
 
-    public String getRealPass(String encryptPass, String username){
-        String realpass="";
+    public String getRealPass(String encryptPass, String username) {
+        String realpass = "";
         try {
-            realpass = decrypt(encryptPass,"12345");
+            realpass = decrypt(encryptPass, "12345");
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         } catch (NoSuchPaddingException e) {
@@ -259,6 +257,7 @@ implements BaseProcessor<HttpServletRequest, String> {
         String decryptedText = new String(decryptedData, StandardCharsets.UTF_8);
         return decryptedText;
     }
+
     public static byte[][] GenerateKeyAndIV(int keyLength, int ivLength, int iterations, byte[] salt, byte[] password, MessageDigest md) {
 
         int digestLength = md.getDigestLength();
@@ -302,7 +301,7 @@ implements BaseProcessor<HttpServletRequest, String> {
 
         } finally {
             // Clean out temporary data
-            Arrays.fill(generatedData, (byte)0);
+            Arrays.fill(generatedData, (byte) 0);
         }
     }
 }

@@ -38,6 +38,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hazelcast.client.HazelcastClientNotActiveException;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
+import com.hazelcast.core.IQueue;
 import com.vinplay.api.processors.GetAppConfigProcesscor;
 import com.vinplay.dal.service.impl.AceMoneyService;
 import com.vinplay.dal.service.impl.CardBanMoneyService;
@@ -83,6 +84,9 @@ public class PortalUtils {
     private static MarketingService mktService = new MarketingServiceImpl();
 
     public static LoginResponse loginSuccess(UserModel userModel, HttpServletRequest request) throws NoSuchAlgorithmException, UnsupportedEncodingException, JsonProcessingException, SQLException {
+        // kick user logging in other device
+        kickSession(userModel);
+
         boolean success = true;
         String accessToken = "";
         String sessionKey = "";
@@ -170,7 +174,7 @@ public class PortalUtils {
             sessionKey = VinPlayUtils.genSessionKey((UserClientInfo) userInfo);
             try {
                 SecurityServiceImpl sercuSer = new SecurityServiceImpl();
-                if(!ip.contains("45.76.178.154")) {
+                if (!ip.contains("45.76.178.154")) {
                     sercuSer.saveLoginInfo(userCache.getId(), userCache.getUsername(), userCache.getNickname(), ip, PortalUtils.getUserAgent(request), 1, platform);
                 }
                 UserExtraInfoModel userExtraModel = new UserExtraInfoModel(userCache.getNickname(), platform);
@@ -180,14 +184,21 @@ public class PortalUtils {
                 logger.error((Object) e2);
             }
         } catch (HazelcastClientNotActiveException he) {
-//            AlertServiceImpl alert = new AlertServiceImpl();
-//            alert.sendSMS2One("0984574749", "Hazelcast is shutdown, " + DateTimeUtils.getCurrentTime(), true);
             success = false;
         }
         if (success) {
             return new LoginResponse(true, "0", sessionKey, accessToken);
         }
         return new LoginResponse(false, "1001");
+    }
+
+    private static void kickSession(UserModel userModel) {
+        String nickname = userModel.getNickname();
+        HazelcastInstance instance = HazelcastClientFactory.getInstance();
+        IQueue queue = instance.getQueue("LOGIN_OTHER_DEVICE_QUEUE");
+        if (queue != null) {
+            queue.offer(nickname);
+        }
     }
 
     public static String getIpAddress(HttpServletRequest request) {
@@ -233,6 +244,7 @@ public class PortalUtils {
         }
         return allow;
     }
+
     public static List<String> parseStringToList(String urlHelp) {
         ArrayList<String> res = new ArrayList<String>();
         if (urlHelp != null && !urlHelp.isEmpty()) {
