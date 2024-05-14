@@ -197,6 +197,7 @@ public class PortalUtils {
         HazelcastInstance instance = HazelcastClientFactory.getInstance();
         IQueue queue = instance.getQueue("LOGIN_OTHER_DEVICE_QUEUE");
         if (queue != null) {
+            System.out.println("KICK SESSION: " + nickname);
             queue.offer(nickname);
         }
     }

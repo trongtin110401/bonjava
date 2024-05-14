@@ -175,5 +175,12 @@ public class CacheServiceImpl implements CacheService {
             return null;
         }
     }
+
+    @Override
+    public int queueSize(String queueName) {
+        HazelcastInstance instance = HazelcastClientFactory.getInstance();
+        IQueue<Object> queue = instance.getQueue(queueName);
+        return queue.size();
+    }
 }
 

@@ -43,5 +43,7 @@ public interface CacheService {
     public Map<String, Object> getBulk(Set<String> var1);
 
     <T> T getQueueElement(String queueName);
+
+    int queueSize(String queueName);
 }
 
