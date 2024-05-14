@@ -30,9 +30,9 @@ public class CheckUpdateSecretCodeProcessor implements BaseProcessor<HttpServlet
                 mess = response.getString("mess");
                 mess2 = response.getString("mess2");
             } catch (JSONException e) {
-                e.printStackTrace();
+//                e.printStackTrace();
             } catch (KeyNotFoundException e) {
-                e.printStackTrace();
+//                e.printStackTrace();
             }
             if(userSecretService.findCode(username)!=null){
                 return "{\"ok\":0,\"notify\":"+isNotify+",\"text\":\""+mess+"\",\"text2\":\""+mess2+"\"}";
