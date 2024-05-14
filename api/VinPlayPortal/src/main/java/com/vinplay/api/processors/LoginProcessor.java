@@ -68,7 +68,7 @@ public class LoginProcessor
         String password = request.getParameter("pw");
 
 
-        System.out.println("executing login request: u=" + username + " reqTime: " + request.getHeader("COUNT_IDX"));
+        System.out.println("executing login request: u=" + username + " reqTime: " + request.getParameter("countIdx"));
 
 
         String realpass = "";

@@ -116,7 +116,10 @@ public abstract class SlotRoom {
                     SlotRoom.this.saveFund();
                 }
 
-                cacheService.removeKey(gameName + "_" + moneyTypeStr + "_" + name);
+                try {
+                    cacheService.removeKey(gameName + "_" + moneyTypeStr + "_" + name);
+                } catch (Exception ex) {
+                }
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
