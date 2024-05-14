@@ -14,7 +14,7 @@
             <path>com.vinplay.api.processors.LoginTokenProcessor</path>
         </command>
         <command>
-            <id>3</id>
+            <id>3000</id>
             <name>login</name>
             <path>com.vinplay.api.processors.LoginProcessor</path>
         </command>
