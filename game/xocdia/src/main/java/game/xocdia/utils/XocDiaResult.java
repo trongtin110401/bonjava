@@ -231,8 +231,17 @@ public class XocDiaResult {
             String hu_tx = cacheService.getValueStr("fund_xd_auto");
             huTx = Long.parseLong(hu_tx);
             huTx =chenhLechTien+huTx;
-            cacheService.setValue("fund_xd_auto", String.valueOf(huTx));
+
+
+            long updateFund = 0;
+            try {
+                updateFund = Long.parseLong(cacheService.getValueStr("update_fund_xd_auto"));
+            } catch (Exception e) {
+                updateFund = 0;
+            }
+            huTx += updateFund;
             mgService.saveFund(Games.XOC_DIA.getName(),huTx );
+            cacheService.setValue("fund_xd_auto", String.valueOf(huTx));
         }catch (Exception e){
             e.printStackTrace();
         }

@@ -544,6 +544,13 @@ public class MGRoomBauCuaTo2 extends MGRoom {
 
 
         try {
+            long updateFund = 0;
+            try {
+                updateFund = Long.parseLong(cacheService.getValueStr("update_fund_bau_cua_to"));
+            } catch (Exception e) {
+                updateFund = 0;
+            }
+            this.fund += updateFund;
             this.mgService.saveFund(this.name, this.fund);
             this.mgService.savePot(this.name, jackPot, false);
         } catch (IOException | InterruptedException | TimeoutException response) {
