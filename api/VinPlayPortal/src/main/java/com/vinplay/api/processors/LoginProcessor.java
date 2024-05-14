@@ -42,22 +42,21 @@ import com.vinplay.vbee.common.models.SocialModel;
 import com.vinplay.vbee.common.models.UserModel;
 import com.vinplay.vbee.common.response.LoginResponse;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
+import org.apache.log4j.Logger;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.KeySpec;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
-import javax.crypto.*;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.PBEKeySpec;
-import javax.crypto.spec.SecretKeySpec;
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.log4j.Logger;
 
 public class LoginProcessor
         implements BaseProcessor<HttpServletRequest, String> {
@@ -68,7 +67,8 @@ public class LoginProcessor
         String username = request.getParameter("un");
         String password = request.getParameter("pw");
 
-        System.out.println("executing login request: u=" + username);
+
+        System.out.println("executing login request: u=" + username + " reqTime: " + request.getHeader("COUNT_IDX"));
 
 
         String realpass = "";
