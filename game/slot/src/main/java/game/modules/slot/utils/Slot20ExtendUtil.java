@@ -3,6 +3,8 @@
  */
 package game.modules.slot.utils;
 
+import bitzero.server.entities.User;
+import com.vinplay.vbee.common.models.cache.UserCacheModel;
 import game.modules.slot.entities.slot.Cell;
 import game.modules.slot.entities.slot.Line;
 import game.modules.slot.entities.slot.MiniGameSlotResponse;
@@ -163,14 +165,17 @@ public class Slot20ExtendUtil {
      * @param line
      * @param awardList
      */
-    public static void calculateMoneyAwardInLine(Line<Slot20ExtendItem> line, List<Slot20ExtendAward> awardList) {
+    public static void calculateMoneyAwardInLine(Line<Slot20ExtendItem> line, List<Slot20ExtendAward> awardList, UserCacheModel user) {
 
-        StringBuilder builder = new StringBuilder();
-        line.getCells().forEach(o -> {
-            builder.append(o.getItem().getName())
-                    .append(" ");
-        });
-        System.out.println(builder);
+        if (!user.isBot()) {
+            StringBuilder builder = new StringBuilder();
+            line.getCells().forEach(o -> {
+                builder.append(o.getItem().getName())
+                        .append(" ");
+            });
+            System.out.println(builder);
+        }
+
 
         // kiểm tra jackpot trước
         List cells = line.getCells();
