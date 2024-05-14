@@ -78,6 +78,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.json.JSONException;
+import org.python.parser.ast.Str;
 
 public class PortalUtils {
     private static final Logger logger = Logger.getLogger((String) "api");
@@ -195,10 +196,22 @@ public class PortalUtils {
     private static void kickSession(UserModel userModel) {
         String nickname = userModel.getNickname();
         HazelcastInstance instance = HazelcastClientFactory.getInstance();
+
+        IMap<String, String> map = instance.getMap("LOGIN_OTHER_DEVICE_MAP");
+        map.put(nickname, nickname);
+
         IQueue queue = instance.getQueue("LOGIN_OTHER_DEVICE_QUEUE");
         if (queue != null) {
             System.out.println("KICK SESSION: " + nickname);
             queue.offer(nickname);
+        }
+
+        while (map.containsKey(nickname)) {
+            try {
+                Thread.sleep(50);
+            } catch (Exception ex) {
+                logger.error(ex.getMessage(), ex);
+            }
         }
     }
 
