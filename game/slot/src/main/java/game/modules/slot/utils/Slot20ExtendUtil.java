@@ -169,6 +169,7 @@ public class Slot20ExtendUtil {
 
         if (!user.isBot()) {
             StringBuilder builder = new StringBuilder();
+            builder.append(line.getName()).append(" ");
             line.getCells().forEach(o -> {
                 builder.append(o.getItem().getName())
                         .append(" ");
@@ -185,6 +186,7 @@ public class Slot20ExtendUtil {
                 && cells.get(3) == Slot20ExtendItem.WILD2
                 && cells.get(4) == Slot20ExtendItem.JACKPOT) {
             awardList.add(Slot20ExtendAward.JACKPOT);
+            System.out.println("ADD JACKPOT AWARD_________");
             return;
         }
 
