@@ -233,7 +233,10 @@ public class MGRoomCandy extends MGRoom {
                                         money = (long) (award.getRatio() * (float) this.betValue);
                                     } else {
                                         for (AwardsOnLine e : awardsOnLines) {
-                                            if (e.getAward() == Award.TRIPLE_POKER_BALL) continue block4;
+                                            if (e.getAward() == Award.TRIPLE_POKER_BALL) {
+                                                System.out.println("LOOP 1");
+                                                continue block4;
+                                            }
                                         }
                                         if (forceNoHu) {
                                             result = 3;
@@ -260,7 +263,10 @@ public class MGRoomCandy extends MGRoom {
                             if (builderPrizesOnLine.length() > 0) {
                                 builderPrizesOnLine.deleteCharAt(0);
                             }
-                            if (result == 3 ? this.fund - 2 * pot < 0L : this.fund - totalPrizes < 0L) continue;
+
+                            System.out.println("LOOP 2");
+                            if (result == 3 ? this.fund - 2 * pot < 0L : this.fund - totalPrizes < 0L)
+                                continue;
                             enoughPair = true;
                             if (totalPrizes > 0L) {
                                 if (result == 3) {
