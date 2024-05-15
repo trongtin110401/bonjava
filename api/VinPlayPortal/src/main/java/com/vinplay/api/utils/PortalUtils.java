@@ -202,13 +202,11 @@ public class PortalUtils {
 
         IQueue queue = instance.getQueue("LOGIN_OTHER_DEVICE_QUEUE");
         if (queue != null) {
-            System.out.println("KICK SESSION: " + nickname);
             queue.offer(nickname);
         }
 
         while (map.containsKey(nickname)) {
             try {
-                System.out.println("Login block.... " + nickname);
                 Thread.sleep(50);
             } catch (Exception ex) {
                 logger.error(ex.getMessage(), ex);
