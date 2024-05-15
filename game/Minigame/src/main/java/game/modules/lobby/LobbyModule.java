@@ -2664,13 +2664,7 @@ public class LobbyModule extends BaseClientRequestHandler {
             long spartan1000 = cacheService.getValueLong(Games.LADY_NIGHT.getName() + "_vin_1000", 0);
             long spartan5000 = cacheService.getValueLong(Games.LADY_NIGHT.getName() + "_vin_5000", 0);
             long spartan10000 = cacheService.getValueLong(Games.LADY_NIGHT.getName() + "_vin_10000", 0);
-            long baucauto = 500000;
-            try {
-                ///
-                baucauto = cacheService.getValueLong("Hu_Bau_cua_to20", 0);
-            } catch (Exception e) {
-                logger.error(" Set bau cua hu error " + e.getMessage());
-            }
+            long baucauto = cacheService.getValueLong("Hu_Bau_cua_to21", 0);
 
             UpdateJackpotMsg msg = new UpdateJackpotMsg();
 
@@ -2713,9 +2707,6 @@ public class LobbyModule extends BaseClientRequestHandler {
             msg.potCaoThap50000 = caoThap100000;
             msg.potCaoThap100000 = caoThap50000;
             msg.potCaoThap500000 = caoThap500000;
-
-//            System.out.println(new Gson().toJson(msg));
-
             for (User user : this.usersSubJackpot) {
                 if (user == null) continue;
                 this.send(msg, user);
@@ -2740,7 +2731,7 @@ public class LobbyModule extends BaseClientRequestHandler {
         ++this.countUpdateJackpot;
         if (this.countUpdateJackpot >= (long) ConfigGame.getIntValue("update_jackpot_time")) {
             this.updateJackpot();
-            this.bauCuaJackpot();
+//            this.bauCuaJackpot();
             this.txJackpot();
             this.txMd5Jackpot();
             this.countUpdateJackpot = 0L;
@@ -3309,7 +3300,7 @@ public class LobbyModule extends BaseClientRequestHandler {
         while ((nickname = cacheService.getQueueElement("LOGIN_OTHER_DEVICE_QUEUE")) != null) {
             try {
                 if (StringUtils.isNotEmpty(nickname)) {
-                    System.out.println("KICK SESSION: " + nickname);
+                    logger.debug("Kick user " + nickname + " due to login other device");
                     List<User> users = ExtensionUtility.globalUserManager.getUserByName(nickname);
                     if (CollectionUtils.isNotEmpty(users)) {
                         LoginOtherDeviceMsg msg = new LoginOtherDeviceMsg();
