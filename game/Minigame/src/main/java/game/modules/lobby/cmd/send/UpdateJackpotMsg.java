@@ -45,6 +45,7 @@ public class UpdateJackpotMsg extends BaseMsgEx {
     public long potCaoThap100000 = 0L;
     public long potCaoThap500000 = 0L;
 
+
     public UpdateJackpotMsg() {
         super(20101);
     }
