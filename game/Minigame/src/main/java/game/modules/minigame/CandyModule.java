@@ -214,7 +214,6 @@ public class CandyModule
         PlayPokeGoCmd cmd = new PlayPokeGoCmd(dataCmd);
         MGRoomCandy room = (MGRoomCandy) user.getProperty((Object) "MGROOM_" + this.gameName + "_INFO");
         if (room != null) {
-            System.out.println("Play Candy: 1");
             room.play(user, cmd.lines);
         }
     }
