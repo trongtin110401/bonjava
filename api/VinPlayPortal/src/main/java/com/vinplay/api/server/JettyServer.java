@@ -37,6 +37,9 @@
  */
 package com.vinplay.api.server;
 
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.IMap;
+import com.hazelcast.core.IQueue;
 import com.vinplay.api.processors.vippoint.TopVippoint;
 import com.vinplay.api.server.CorsFilter;
 import com.vinplay.api.utils.PortalUtils;
@@ -48,6 +51,7 @@ import com.vinplay.vbee.common.config.VBeePath;
 import com.vinplay.vbee.common.cp.BaseController;
 import com.vinplay.vbee.common.cp.NoCommandRegistered;
 import com.vinplay.vbee.common.cp.Param;
+import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
 import com.vinplay.vbee.common.hazelcast.HazelcastLoader;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.rmq.RMQApi;
@@ -159,6 +163,11 @@ public class JettyServer {
         catch (Exception e) {
             logger.info((Object)("PORTAL API SERVER Start error: " + e.getMessage()));
             e.printStackTrace();
+        } finally {
+            // Xóa cache
+            HazelcastInstance instance = HazelcastClientFactory.getInstance();
+            IMap<String, String> map = instance.getMap("LOGIN_OTHER_DEVICE_MAP");
+            map.clear();
         }
     }
 
