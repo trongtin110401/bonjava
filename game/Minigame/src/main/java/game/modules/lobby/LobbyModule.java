@@ -2664,7 +2664,7 @@ public class LobbyModule extends BaseClientRequestHandler {
             long spartan1000 = cacheService.getValueLong(Games.LADY_NIGHT.getName() + "_vin_1000", 0);
             long spartan5000 = cacheService.getValueLong(Games.LADY_NIGHT.getName() + "_vin_5000", 0);
             long spartan10000 = cacheService.getValueLong(Games.LADY_NIGHT.getName() + "_vin_10000", 0);
-            long baucauto = cacheService.getValueLong("Hu_Bau_cua_to21", 0);
+            long baucauto = cacheService.getValueLong("Hu_Bau_cua_to20", 0);
 
             UpdateJackpotMsg msg = new UpdateJackpotMsg();
 

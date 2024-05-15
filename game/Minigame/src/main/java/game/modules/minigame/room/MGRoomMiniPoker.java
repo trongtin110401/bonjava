@@ -207,8 +207,7 @@ public class MGRoomMiniPoker extends MGRoom {
                         }
 
                         if ((groupType = CardLibUtils.calculateTypePoker(cards)) == null) continue;
-                        if (!u.isBot())
-                            System.out.println("Play Mini Poker: 4");
+
                         switch (groupType) {
                             case HighCard: {
                                 result = ResultPoker.BAI_CAO;
@@ -289,7 +288,7 @@ public class MGRoomMiniPoker extends MGRoom {
                         }
 
                         // Phần thưởng quá lớn, random lại
-                        if (prize > 0 && fund < prize) {
+                        if (!forceNoHu && prize > 0 && fund < prize) {
                             continue;
                         }
 
