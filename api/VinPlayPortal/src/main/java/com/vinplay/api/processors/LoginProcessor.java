@@ -66,6 +66,7 @@ public class LoginProcessor
         HttpServletRequest request = (HttpServletRequest) param.get();
         String username = request.getParameter("un");
         String password = request.getParameter("pw");
+        String platform = request.getParameter("pf");
         String realpass = "";
         if (password.length() != 32) {
             try {
