@@ -211,11 +211,16 @@ public class CandyModule
     }
 
     private void playPokeGo(User user, DataCmd dataCmd) {
+
+        System.out.println("Request Play Candy: " + user.getName());
+
         PlayPokeGoCmd cmd = new PlayPokeGoCmd(dataCmd);
         MGRoomCandy room = (MGRoomCandy) user.getProperty((Object) "MGROOM_" + this.gameName + "_INFO");
         if (room != null) {
             room.play(user, cmd.lines);
         }
+
+        System.out.println("Response Play Candy: " + user.getName());
     }
 
     private void autoPlay(User user, DataCmd dataCMD) {
