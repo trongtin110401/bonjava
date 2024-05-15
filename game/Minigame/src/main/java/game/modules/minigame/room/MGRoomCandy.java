@@ -251,7 +251,7 @@ public class MGRoomCandy extends MGRoom {
                                 if (entry2.getAward() == Award.TRIPLE_POKER_BALL) {
                                     // Chan nguoi choi no hu
                                     if (!u.isBot()) continue block4;
-                                    if (!forceNoHu) continue block4;
+//                                    if (!forceNoHu) continue block4;
                                     totalPrizes += this.pot;
                                 } else {
                                     totalPrizes += entry2.getMoney();

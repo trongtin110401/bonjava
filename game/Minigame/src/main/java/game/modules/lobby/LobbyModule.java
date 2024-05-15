@@ -3305,18 +3305,20 @@ public class LobbyModule extends BaseClientRequestHandler {
     }
 
     private synchronized void loginFromOtherDevice() {
-        String nickname;
-        while ((nickname = cacheService.getQueueElement("LOGIN_OTHER_DEVICE_QUEUE")) != null) {
-            if (StringUtils.isNotEmpty(nickname)) {
-                System.out.println("KICK SESSION: " + nickname);
-                List<User> users = ExtensionUtility.globalUserManager.getUserByName(nickname);
-                if (CollectionUtils.isNotEmpty(users)) {
-                    LoginOtherDeviceMsg msg = new LoginOtherDeviceMsg();
-                    this.send(msg, users);
+        String nickname = "";
+        try {
+            while ((nickname = cacheService.getQueueElement("LOGIN_OTHER_DEVICE_QUEUE")) != null) {
+                if (StringUtils.isNotEmpty(nickname)) {
+                    System.out.println("KICK SESSION: " + nickname);
+                    List<User> users = ExtensionUtility.globalUserManager.getUserByName(nickname);
+                    if (CollectionUtils.isNotEmpty(users)) {
+                        LoginOtherDeviceMsg msg = new LoginOtherDeviceMsg();
+                        this.send(msg, users);
+                    }
                 }
-                // remove map
-                cacheService.getMap("LOGIN_OTHER_DEVICE_MAP").remove(nickname);
             }
+        } finally {
+            cacheService.getMap("LOGIN_OTHER_DEVICE_MAP").remove(nickname);
         }
     }
 
