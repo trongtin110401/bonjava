@@ -188,7 +188,8 @@ public class MGRoomMiniPoker extends MGRoom {
                         this.fund += moneyToFund;
                     }
                     while (!enoughToPair) {
-                        System.out.println("Play Mini Poker: 3");
+                        if (!u.isBot())
+                            System.out.println("Play Mini Poker: 3");
                         GroupType groupType;
                         prize = 0L;
                         tienThuongX2 = 0L;
