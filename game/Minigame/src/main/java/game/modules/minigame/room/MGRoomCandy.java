@@ -233,13 +233,12 @@ public class MGRoomCandy extends MGRoom {
                                         money = (long) (award.getRatio() * (float) this.betValue);
                                     } else {
                                         for (AwardsOnLine e : awardsOnLines) {
-                                            if (e.getAward() != Award.TRIPLE_POKER_BALL) continue;
-                                            System.out.println("LOOP 1");
-                                            continue block4;
+                                            if (e.getAward() == Award.TRIPLE_POKER_BALL) continue block4;
                                         }
                                         if (forceNoHu) {
                                             result = 3;
-                                            money = this.huX2 ? this.pot * 2L : this.pot;
+//                                            money = this.huX2 ? this.pot * 2L : this.pot;
+                                            money = this.pot;
                                         }
                                     }
                                     AwardsOnLine aol = new AwardsOnLine(award, money, line.getName());
@@ -249,15 +248,7 @@ public class MGRoomCandy extends MGRoom {
                             StringBuilder builderLinesWin = new StringBuilder();
                             StringBuilder builderPrizesOnLine = new StringBuilder();
                             for (AwardsOnLine entry2 : awardsOnLines) {
-                                if (entry2.getAward() == Award.TRIPLE_POKER_BALL) {
-                                    // Chan nguoi choi no hu
-                                    System.out.println("LOOP 2");
-                                    if (!u.isBot()) continue block4;
-//                                    if (!forceNoHu) continue block4;
-                                    totalPrizes += this.pot;
-                                } else {
-                                    totalPrizes += entry2.getMoney();
-                                }
+                                totalPrizes += entry2.getMoney();
                                 builderLinesWin.append(",");
                                 builderLinesWin.append(entry2.getLineId());
                                 builderPrizesOnLine.append(",");
