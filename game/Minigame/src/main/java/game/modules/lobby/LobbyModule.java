@@ -3326,7 +3326,6 @@ public class LobbyModule extends BaseClientRequestHandler {
         @Override
         public void run() {
             try {
-
                 LobbyModule.this.broadCastTime2();
             } catch (Exception e) {
                 CacheService cacheService = new CacheServiceImpl();
