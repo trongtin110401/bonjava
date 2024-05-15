@@ -85,8 +85,14 @@ public class PortalUtils {
     private static MarketingService mktService = new MarketingServiceImpl();
 
     public static LoginResponse loginSuccess(UserModel userModel, HttpServletRequest request) throws NoSuchAlgorithmException, UnsupportedEncodingException, JsonProcessingException, SQLException {
+
         // kick user logging in other device
-        kickSession(userModel);
+        String pf = request.getParameter("pf");
+        if (pf != null && pf.equalsIgnoreCase("FISH")) {
+            // do nothing
+        } else {
+            kickSession(userModel);
+        }
 
         boolean success = true;
         String accessToken = "";
