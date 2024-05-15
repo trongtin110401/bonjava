@@ -265,8 +265,8 @@ public class MGRoomCandy extends MGRoom {
                             }
 
                             System.out.println("LOOP 2");
-                            if (result == 3 ? this.fund - 2 * pot < 0L : this.fund - totalPrizes < 0L)
-                                continue;
+//                            if (result == 3 ? this.fund - 2 * pot < 0L : this.fund - totalPrizes < 0L)
+//                                continue;
                             enoughPair = true;
                             if (totalPrizes > 0L) {
                                 if (result == 3) {
