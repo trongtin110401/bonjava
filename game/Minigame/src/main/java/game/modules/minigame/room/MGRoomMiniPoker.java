@@ -207,6 +207,7 @@ public class MGRoomMiniPoker extends MGRoom {
                         }
 
                         if ((groupType = CardLibUtils.calculateTypePoker(cards)) == null) continue;
+                        System.out.println("Play Mini Poker: 4");
                         switch (groupType) {
                             case HighCard: {
                                 result = ResultPoker.BAI_CAO;
@@ -290,6 +291,8 @@ public class MGRoomMiniPoker extends MGRoom {
                         if (prize > 0 && fund < prize) {
                             continue;
                         }
+
+                        System.out.println("Play Mini Poker: 5");
 
                         long fundExchange = Math.max(prize, 0L);
                         enoughToPair = true;
