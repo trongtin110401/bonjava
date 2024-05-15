@@ -208,6 +208,7 @@ public class PortalUtils {
 
         while (map.containsKey(nickname)) {
             try {
+                System.out.println("Login block.... " + nickname);
                 Thread.sleep(50);
             } catch (Exception ex) {
                 logger.error(ex.getMessage(), ex);
