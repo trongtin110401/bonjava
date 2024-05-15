@@ -178,11 +178,11 @@ public class MGRoomCandy extends MGRoom {
         if (lineArr.length > 0 && !linesStr.isEmpty()) {
             if (totalBetValue > 0L) {
                 if (totalBetValue <= currentMoney) {
-                    if(!u.isBot()) {
+                    if (!u.isBot()) {
                         System.out.println("Play Candy: 3");
                     }
                     MoneyResponse moneyRes = this.userService.updateMoney(username, -totalBetValue, this.moneyTypeStr, Games.CANDY.getName(), "Quay Whisky", "\u0110\u1eb7t c\u01b0\u1ee3c Quay " + this.gameName, 0L, Long.valueOf(referenceId), TransType.START_TRANS);
-                    if(!u.isBot()) {
+                    if (!u.isBot()) {
                         System.out.println("Play Candy: 4");
                     }
                     if (moneyRes != null && moneyRes.isSuccess()) {
@@ -200,7 +200,7 @@ public class MGRoomCandy extends MGRoom {
                         long totalPrizes = 0L;
                         block4:
                         while (!enoughPair) {
-                            if(!u.isBot()) {
+                            if (!u.isBot()) {
                                 System.out.println("Play Candy: 6");
                             }
                             result = 0;
@@ -234,6 +234,7 @@ public class MGRoomCandy extends MGRoom {
                                     } else {
                                         for (AwardsOnLine e : awardsOnLines) {
                                             if (e.getAward() != Award.TRIPLE_POKER_BALL) continue;
+                                            System.out.println("LOOP 1");
                                             continue block4;
                                         }
                                         if (forceNoHu) {
@@ -250,6 +251,7 @@ public class MGRoomCandy extends MGRoom {
                             for (AwardsOnLine entry2 : awardsOnLines) {
                                 if (entry2.getAward() == Award.TRIPLE_POKER_BALL) {
                                     // Chan nguoi choi no hu
+                                    System.out.println("LOOP 2");
                                     if (!u.isBot()) continue block4;
 //                                    if (!forceNoHu) continue block4;
                                     totalPrizes += this.pot;
@@ -291,7 +293,7 @@ public class MGRoomCandy extends MGRoom {
                                     result = totalPrizes >= (this.betValue * 100L) ? (short) 2 : 1;
                                 }
                             }
-                            if(!u.isBot()) {
+                            if (!u.isBot()) {
                                 System.out.println("Play Candy: 7");
                             }
                             moneyRes = this.userService.updateMoney(username, totalPrizes, this.moneyTypeStr, Games.CANDY.getName(), "Quay Whisky", this.buildDescription(totalBetValue, totalPrizes, result), fee, Long.valueOf(referenceId), TransType.END_TRANS);
@@ -302,20 +304,20 @@ public class MGRoomCandy extends MGRoom {
                                     this.broadcastMsgService.putMessage(Games.CANDY.getId(), username, moneyExchange);
                                 }
                             }
-                            if(!u.isBot()) {
+                            if (!u.isBot()) {
                                 System.out.println("Play Candy: 8");
                             }
                             linesWin = builderLinesWin.toString();
                             prizesOnLine = builderPrizesOnLine.toString();
                             msg.matrix = PokeGoUtils.matrixToString(matrix);
-                            if(!u.isBot()) {
+                            if (!u.isBot()) {
                                 System.out.println("Play Candy: 9");
                             }
                             msg.linesWin = linesWin;
                             msg.prize = totalPrizes;
                             try {
                                 if (!u.isBot()) {
-                                    if(!u.isBot()) {
+                                    if (!u.isBot()) {
                                         System.out.println("Play Candy: 10");
                                     }
                                     this.pgService.logPokeGo(referenceId, username, this.betValue, linesStr, linesWin, prizesOnLine, result, totalPrizes, this.moneyType, currentTimeStr, msg.matrix);
@@ -326,15 +328,15 @@ public class MGRoomCandy extends MGRoom {
                             } catch (InterruptedException | TimeoutException | IOException exception) {
                                 exception.printStackTrace();
                             }
-                            if(!u.isBot()) {
+                            if (!u.isBot()) {
                                 System.out.println("Play Candy: 11");
                             }
                             this.saveFund();
-                            if(!u.isBot()) {
+                            if (!u.isBot()) {
                                 System.out.println("Play Candy: 12");
                             }
                             this.savePot();
-                            if(!u.isBot()) {
+                            if (!u.isBot()) {
                                 System.out.println("Play Candy: 13");
                             }
                         }
@@ -353,7 +355,7 @@ public class MGRoomCandy extends MGRoom {
         long endTime = System.currentTimeMillis();
         long handleTime = endTime - startTime;
         String ratioTime = CommonUtils.getRatioTime(handleTime);
-        if(!u.isBot()) {
+        if (!u.isBot()) {
             System.out.println("Play Candy: 14");
         }
         PokeGoUtils.log(referenceId, username, this.betValue, msg.matrix, result, this.moneyType, handleTime, ratioTime, currentTimeStr);
@@ -364,7 +366,7 @@ public class MGRoomCandy extends MGRoom {
         if (forceJackpotByUser) {
             this.sendNotifyNoHu(username, (byte) 1, msg.prize, this.gameName);
         }
-        if(!u.isBot()) {
+        if (!u.isBot()) {
             System.out.println("Play Candy: 15");
         }
         return msg;
