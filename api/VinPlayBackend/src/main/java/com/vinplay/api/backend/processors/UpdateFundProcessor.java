@@ -42,6 +42,52 @@ public class UpdateFundProcessor implements BaseProcessor<HttpServletRequest, St
         games.put("XocDia", "update_fund_xd_auto");
         games.put("BauCuaTo_vin_1000", "update_fund_bau_cua_to");
 
+        games.put("MiniPoker_vin_100", "MiniPoker_vin_100");
+        games.put("MiniPoker_vin_1000", "MiniPoker_vin_1000");
+        games.put("MiniPoker_vin_10000", "MiniPoker_vin_10000");
+
+        games.put("cao_thap_vin_1000", "cao_thap_vin_1000");
+        games.put("cao_thap_vin_10000", "cao_thap_vin_10000");
+        games.put("cao_thap_vin_50000", "cao_thap_vin_50000");
+        games.put("cao_thap_vin_100000", "cao_thap_vin_100000");
+        games.put("cao_thap_vin_500000", "cao_thap_vin_500000");
+
+        games.put("Cowboy_vin_1000", "Cowboy_vin_1000");
+        games.put("Cowboy_vin_10000", "Cowboy_vin_10000");
+        games.put("Cowboy_vin_100", "Cowboy_vin_100");
+
+        games.put("FastAndFurious_vin_100", "FastAndFurious_vin_100");
+        games.put("FastAndFurious_vin_1000", "FastAndFurious_vin_1000");
+        games.put("FastAndFurious_vin_10000", "FastAndFurious_vin_10000");
+
+        games.put("LadyNight_vin_100", "LadyNight_vin_100");
+        games.put("LadyNight_vin_1000", "LadyNight_vin_1000");
+        games.put("LadyNight_vin_10000", "LadyNight_vin_10000");
+
+        games.put("Caribe_vin_100", "Caribe_vin_100");
+        games.put("Caribe_vin_1000", "Caribe_vin_1000");
+        games.put("Caribe_vin_10000", "Caribe_vin_10000");
+
+        games.put("BongLaiCac_vin_1000", "BongLaiCac_vin_1000");
+        games.put("BongLaiCac_vin_10000", "BongLaiCac_vin_10000");
+        games.put("BongLaiCac_vin_100000", "BongLaiCac_vin_100000");
+
+        games.put("Halloween_vin_100", "Halloween_vin_100");
+        games.put("Halloween_vin_1000", "Halloween_vin_1000");
+        games.put("Halloween_vin_10000", "Halloween_vin_10000");
+
+        games.put("LasVegas_vin_100", "LasVegas_vin_100");
+        games.put("LasVegas_vin_1000", "LasVegas_vin_1000");
+        games.put("LasVegas_vin_10000", "LasVegas_vin_10000");
+
+        games.put("SexyDance_vin_100", "SexyDance_vin_100");
+        games.put("SexyDance_vin_1000", "SexyDance_vin_1000");
+        games.put("SexyDance_vin_10000", "SexyDance_vin_10000");
+
+        games.put("LienMinh_vin_100", "LienMinh_vin_100");
+        games.put("LienMinh_vin_1000", "LienMinh_vin_1000");
+        games.put("LienMinh_vin_10000", "LienMinh_vin_10000");
+
 
         FundInfoResponse response = new FundInfoResponse(true, "200");
 
