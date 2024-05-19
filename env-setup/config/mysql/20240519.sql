@@ -5554,5 +5554,3 @@ USE `vinplay_minigame`;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2024-05-19  8:22:24
-
-SET GLOBAL max_connections = 5000;
