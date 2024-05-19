@@ -22,7 +22,7 @@ extends BaseMsg {
         ByteBuffer bf = this.makeBuffer();
         this.putByteArray(bf, this.cards);
         bf.putInt(this.gameId);
-        bf.put((byte)20);
+        bf.put((byte)10);
         return this.packBuffer(bf);
     }
 }

@@ -142,7 +142,7 @@ public class GameManager {
         }
         this.gameServer.chiabai();
         this.gameAction = 2;
-        this.countDown = 20;
+        this.countDown = 10;
     }
 
     private GroupCard getThenRemoveRandomGroupCard(List<GroupCard> cards) {
@@ -205,7 +205,7 @@ public class GameManager {
         }
         this.gameServer.chiabai();
         this.gameAction = 2;
-        this.countDown = 20;
+        this.countDown = 10;
     }
 
     public void chiaBai() {

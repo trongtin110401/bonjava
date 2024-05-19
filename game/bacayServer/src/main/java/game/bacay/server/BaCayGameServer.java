@@ -748,7 +748,8 @@ extends GameServer {
         this.moiVaoCuoc();
         this.logStartGame();
         this.gameMgr.gameAction = 1;
-        this.gameMgr.countDown = 4 * this.playingCount;
+//        this.gameMgr.countDown = 4 * this.playingCount;
+        this.gameMgr.countDown = 10;
         this.botStartGame();
     }
 
@@ -808,7 +809,8 @@ extends GameServer {
 
     public void moiVaoCuoc() {
         SendMoiDatCuoc msg = new SendMoiDatCuoc();
-        msg.countDownTime = (byte)(4 * this.playingCount);
+//        msg.countDownTime = (byte)(4 * this.playingCount);
+        msg.countDownTime = 10;
         this.sendMsgToPlayingUser(msg);
     }
 
