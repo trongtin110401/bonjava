@@ -1356,7 +1356,7 @@ public class LobbyModule extends BaseClientRequestHandler {
                 } else {
                     msg.appSecure = 0;
                 }
-                String phone = otherService.getPhoneByNickname(userCache.getNickname());
+                String phone = otherService.getPhoneActiveByNickname(userCache.getNickname());
                 msg.mobile = phone;
                 if (phone.isEmpty()) {
                     msg.mobileSecure = 0;
