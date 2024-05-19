@@ -1,0 +1,6 @@
+- Create identifier user if it dose not exist
+GRANT ALL ON *.* TO 'vakagame'@'%' IDENTIFIED BY 'AVeAQbajvRtXQ9Twk7AjMRgy73Mq';
+FLUSH PRIVILEGES;
+
+- execute command to dump
+docker exec 634c91b5004a /usr/bin/mysqldump --default-character-set=utf8 --single-transaction --routines --events --databases -u root --password=AVeAQbajvRtXQ9Twk7AjMRgy73Mq@CD6S --databases cgame vinplay vinplay_admin vinplay_gamebai vinplay_minigame > 20240519.sql

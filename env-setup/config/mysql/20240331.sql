@@ -2428,7 +2428,7 @@ CREATE TABLE `users` (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE KEY `id_UNIQUE` (`id`) USING BTREE,
   UNIQUE KEY `user_name_UNIQUE` (`user_name`) USING BTREE,
-  UNIQUE KEY `nick_name_UNIQUE` (`nick_name`) USING BTREE,
+  -- UNIQUE KEY `nick_name_2_UNIQUE` (`nick_name`) USING BTREE,
   UNIQUE KEY `facebook_id_UNIQUE` (`facebook_id`) USING BTREE,
   UNIQUE KEY `google_id_UNIQUE` (`google_id`) USING BTREE,
   KEY `user_name_index` (`user_name`) USING BTREE,
