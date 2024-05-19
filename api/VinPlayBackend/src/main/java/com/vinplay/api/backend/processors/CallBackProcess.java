@@ -230,7 +230,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    return response.toJson();
+//                    return response.toJson();
                 }
                 //update user money
                 UserServiceImpl service = new UserServiceImpl();
