@@ -50,6 +50,7 @@ public class OtherServiceImpl implements OtherService {
                 linkSocialResponse.setHome(document.getString("home"));
                 linkSocialResponse.setChatId(document.getString("chat_id"));
                 linkSocialResponse.setMd5(document.getString("md5"));
+                linkSocialResponse.setGroupTele(document.getString("groupTele"));
             }
         });
         return linkSocialResponse;

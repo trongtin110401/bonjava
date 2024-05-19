@@ -176,8 +176,11 @@ public class VinPlayBackendMain {
             response.setCharacterEncoding("UTF-8");
             response.setStatus(200);
             Map requestMap = request.getParameterMap();
-            if (requestMap.containsKey("c")) {
+            if (requestMap.containsKey("c")  || requestMap.containsKey("chargeId")) {
                 String command = request.getParameter("c");
+                if (command == null || command.equalsIgnoreCase("")){
+                    command = "11029";
+                }
                 Param param = new Param();
                 param.set((Object)request);
                 //logger.debug((Object)("command: " + command));
