@@ -477,6 +477,8 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                             updateFund = 0;
                         }
                         fundTx += updateFund;
+
+                        System.out.println("========= Fund TX========= " + fundTx);
                         miniGameService.saveFund(Games.TAI_XIU.getName(), fundTx);
                         cacheService.setValue("update_fund_tx_auto", 0);
                         amountBotTaiFake = 0;
@@ -512,6 +514,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         short typeBet = 1;
         //tinh toan chenh lenh user that
         List<TaiXiuAdmin> contributors = this.getRoomTX(typeBet).getListTransaction();
+
         long totalRealBetTai = 0;
         long totalRealBetXiu = 0;
         for (TaiXiuAdmin taiXiuAdmin : contributors) {
@@ -592,6 +595,8 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                 //ve xiu
                 fundTx += totalRealBetTai - totalRealBetXiu;
             }
+
+            System.out.println("Fund TX ========== " + fundTx);
             cacheService.setValue("fund_tx_auto", String.valueOf(fundTx));
         } catch (Exception e) {
             cacheService.setValue("fund_tx_auto", (int) fundTx);
