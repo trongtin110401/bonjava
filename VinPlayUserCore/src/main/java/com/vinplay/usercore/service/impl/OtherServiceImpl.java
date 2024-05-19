@@ -454,6 +454,21 @@ public class OtherServiceImpl implements OtherService {
     }
 
     @Override
+    public String getPhoneActiveByNickname(String nickname) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("user_phone");
+        Document filter = new Document("nickname", nickname).append("isActive", true);
+        FindIterable<Document> result = collection.find(filter);
+        Iterator<Document> iterator = result.iterator();
+        if (iterator.hasNext()) {
+            Document document = iterator.next();
+            return document.getString("phone");
+        } else {
+            return "";
+        }
+    }
+
+    @Override
     public UserPhone getUserPhoneInfoByPhoneNumber(String phoneNumber) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("user_phone");
