@@ -46,12 +46,14 @@ import com.vinplay.utils.AdminSocketAlert;
 import com.vinplay.utils.TelegramAlert;
 import com.vinplay.vbee.common.enums.Games;
 import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
+import com.vinplay.vbee.common.messages.BetTXMD5Message;
 import com.vinplay.vbee.common.models.UserModel;
 import com.vinplay.vbee.common.models.cache.UserCacheModel;
 import com.vinplay.vbee.common.response.AgentResponse;
 import com.vinplay.vbee.common.response.LogUserMoneyResponse;
 import com.vinplay.vbee.common.response.MoneyResponse;
 import com.vinplay.vbee.common.response.minigame.TaiXiuAdmin;
+import com.vinplay.vbee.common.rmq.RMQApi;
 import com.vinplay.vbee.common.statics.TransType;
 import game.modules.minigame.TaiXiuModule;
 import game.modules.minigame.cmd.rev.BetTaiXiuCmd;
@@ -195,7 +197,20 @@ public class MGRoomTaiXiu
     public void betTaiXiu(User user, BetTaiXiuCmd cmd) {
         BetTaiXiuMsg msg = this.betTaiXiu(user.getName(), cmd.userId, cmd.betValue, cmd.inputTime, cmd.moneyType, cmd.betSide, false);
         this.sendMessageToUser((BaseMsg) msg, user); // todo : gửi message về client
-        TelegramAlert.SendMessageBetTX(user.getName(), cmd.betValue, cmd.betSide,cmd.referenceId , user.getId());
+        try {
+            if (cmd.betValue <= 0) {
+                return;
+            }
+            BetTXMD5Message message = new BetTXMD5Message();
+            message.setBetSide(cmd.betSide);
+            message.setNickname(user.getName());
+            message.setBetValue(cmd.betValue);
+            message.setReferenceId(cmd.referenceId);
+            message.setUserId(user.getId());
+            RMQApi.publishMessage("queue_message_tx", message, 50);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private boolean CheckQuota(String nick_name, boolean seven_days) {
