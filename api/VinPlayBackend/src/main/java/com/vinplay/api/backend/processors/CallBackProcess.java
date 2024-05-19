@@ -241,7 +241,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
                 }
                 HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
 
-                historyTransDao.insertTransaction(new HistoryTransModel(transId, "CodePay", "Nạp tiền", "", "Thành công", "N?p ti?n Thành công ", trans.Nickname, HistoryTransConst.BANK, transId));
+                historyTransDao.insertTransaction(new HistoryTransModel(transId, "Ngân Hàng", "Nạp tiền", String.valueOf(tien), "Thành công", "Nạp Tiền Thành công ", trans.Nickname, HistoryTransConst.BANK, transId));
 
                 updateMoneyCodePayMomoSun(transId, tien);
                 updateMoneyCodePayMomoSun2(transId, String.valueOf(tien));
