@@ -51,6 +51,9 @@ public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServle
         List<LogUserMoneyResponse> list = dao.getLogMoneyUser(timeStart, timeEnd);
 
         for (LogUserMoneyResponse response : list) {
+            if ("Gift Code".equalsIgnoreCase(response.serviceName)) {
+                continue;
+            }
             users.merge(response.nickName, response.moneyExchange, Long::sum);
         }
 
@@ -60,6 +63,9 @@ public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServle
                 UserTele userTele = otherService.getUserTeleInfoByNickname(entry.getKey());
                 if (userTele != null && userTele.getChatID() != null) {
                     int price = (int) (entry.getValue() * percent / 100 * -1);
+                    if (price < 0) {
+                        price = price * -1;
+                    }
                     String giftCode = VinPlayUtils.genGiftCode(10);
                     String content = message + " : " + genCode(price, giftCode);
                     sendMessage(userTele.getChatID(), content);
