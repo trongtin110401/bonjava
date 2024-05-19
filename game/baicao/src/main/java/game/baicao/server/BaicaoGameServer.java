@@ -831,7 +831,8 @@ public class BaicaoGameServer
 
     public void moiVaoCuoc() {
         SendMoiDatCuoc msg = new SendMoiDatCuoc();
-        msg.countDownTime = (byte) (4 * this.playingCount);
+//        msg.countDownTime = (byte) (4 * this.playingCount);
+        msg.countDownTime = (byte) (10);
         this.sendMsgToPlayingUser(msg);
     }
 
