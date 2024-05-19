@@ -181,14 +181,14 @@ public class MGRoomTaiXiu
         int remainTime = (int) ((currentTime - this.startTime) / 1000L);
         if (remainTime < 0) {
             remainTime = 0;
-        } else if (remainTime > 25) {
-            remainTime = 25;
+        } else if (remainTime > 55) {
+            remainTime = 55;
         }
 
         if (this.bettingRound) {
-            return (short) (25 - this.module.count);
+            return (short) (55 - this.module.count);
         }
-        return (short) (40 - this.module.count);
+        return (short) (70 - this.module.count);
     }
 
     // todo : bet tài xỉu
