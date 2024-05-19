@@ -3,7 +3,7 @@ services:
   mysql:
     image: mysql:5.7
     restart: always
-    container_name: game-db
+    container_name: mysql-game-db2
     environment:
       MYSQL_PASSWORD: 'AVeAQbajvRtXQ9Twk7AjMRgy73Mq@CD6S'
       MYSQL_ROOT_PASSWORD: 'AVeAQbajvRtXQ9Twk7AjMRgy73Mq@CD6S'
@@ -11,8 +11,8 @@ services:
       - '3306:3306'
     volumes:
       - /home/data/mysql:/var/lib/mysql
-      - ./config/mysql/conf.d:/etc/mysql/conf.d:ro
-      - ./config/mysql/db:/docker-entrypoint-initdb.d/:ro
+#      - ./config/mysql/conf.d:/etc/mysql/conf.d:ro
+      - ./config/mysql/db1:/docker-entrypoint-initdb.d/:ro
 
   mongo:
     image: mongo:4.0.16-xenial
