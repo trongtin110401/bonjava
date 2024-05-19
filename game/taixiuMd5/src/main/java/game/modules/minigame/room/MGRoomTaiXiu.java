@@ -43,9 +43,11 @@ import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.utils.TelegramAlert;
 import com.vinplay.vbee.common.enums.Games;
 import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
+import com.vinplay.vbee.common.messages.BetTXMD5Message;
 import com.vinplay.vbee.common.models.cache.UserCacheModel;
 import com.vinplay.vbee.common.response.MoneyResponse;
 import com.vinplay.vbee.common.response.minigame.TaiXiuAdmin;
+import com.vinplay.vbee.common.rmq.RMQApi;
 import com.vinplay.vbee.common.statics.TransType;
 import game.modules.minigame.TaiXiuModule;
 import game.modules.minigame.cmd.rev.BetTaiXiuCmd;
@@ -184,7 +186,17 @@ public class MGRoomTaiXiu extends MGRoom {
     public void betTaiXiu(User user, BetTaiXiuCmd cmd) {
         BetTaiXiuMsg msg = this.betTaiXiu(user.getName(), cmd.userId, cmd.betValue, cmd.inputTime, cmd.moneyType, cmd.betSide, false);
         this.sendMessageToUser((BaseMsg) msg, user); // todo : gửi message về client
-        TelegramAlert.SendMessageBetTXMD5(user.getName(), cmd.betValue, cmd.betSide, cmd.referenceId, user.getId());
+        try {
+            BetTXMD5Message message = new BetTXMD5Message();
+            message.setBetSide(cmd.betSide);
+            message.setNickname(user.getName());
+            message.setBetValue(cmd.betValue);
+            message.setReferenceId(cmd.referenceId);
+            message.setUserId(user.getId());
+            RMQApi.publishMessage("queue_message_tx", message, 55);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 

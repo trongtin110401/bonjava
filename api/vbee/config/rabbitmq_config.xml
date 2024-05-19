@@ -469,6 +469,25 @@
         </queue>
 
         <queue>
+            <name>queue_message_tx</name>
+            <threads>50</threads>
+            <commands>
+                <command>
+                    <id>55</id>
+                    <name>Send bet message to tele</name>
+                    <path>com.vinplay.vbee.rmq.log.processor.SendMessageBetTXMD5ToTeleProcessor
+                    </path>
+                </command>
+                <command>
+                    <id>602</id>
+                    <name>log chuyen tien dai ly</name>
+                    <path>com.vinplay.vbee.rmq.log.processor.LogChuyenTienDaiLyProcessor
+                    </path>
+                </command>
+            </commands>
+        </queue>
+
+        <queue>
             <name>queue_log_chuyen_tien_dai_ly</name>
             <threads>10</threads>
             <commands>
