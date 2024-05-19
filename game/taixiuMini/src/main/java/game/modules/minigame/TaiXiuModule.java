@@ -473,6 +473,8 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                         long updateFund = 0;
                         try {
                             updateFund = Long.parseLong(cacheService.getValueStr("update_fund_tx_auto"));
+
+                            System.out.println(" -------------  update_fund_tx_auto :" + updateFund);
                         } catch (Exception e) {
                             updateFund = 0;
                         }
