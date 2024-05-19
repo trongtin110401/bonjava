@@ -171,13 +171,13 @@ public class MGRoomTaiXiu extends MGRoom {
         int remainTime = (int) ((currentTime - this.startTime) / 1000L);
         if (remainTime < 0) {
             remainTime = 0;
-        } else if (remainTime > 25) {
-            remainTime = 25;
+        } else if (remainTime > 55) {
+            remainTime = 55;
         }
         if (this.bettingRound) {
-            return (short) (25 - this.module.count);
+            return (short) (55 - this.module.count);
         }
-        return (short) (35 - this.module.count);
+        return (short) (65 - this.module.count);
     }
 
     // todo : bet tài xỉu

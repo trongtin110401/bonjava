@@ -131,7 +131,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         cacheService.setObject("admin_msg_md5", taiXiuChatMsg);
         Debug.info("referentTaiXiuId là " + this.referenceTaiXiuId);
         this.rooms.put(MGRoomTaiXiu.getKeyRoom((short) 1), new MGRoomTaiXiu("TaiXiu_1", this.referenceTaiXiuId, (byte) 1, this));
-//        this.rooms.put(MGRoomTaiXiu.getKeyRoom((short) 0), new MGRoomTaiXiu("TaiXiu_0", this.referenceTaiXiuId, (byte) 0, this));
 
         this.loadData();
 
@@ -299,12 +298,10 @@ public class TaiXiuModule extends BaseClientRequestHandler {
     //todo : bắt đầu một round tài xỉu mới
     private void startNewRoundTX() {
         MGRoomTaiXiu roomTXVin = this.getRoomTX((short) 1);
-//        MGRoomTaiXiu roomTXXu = this.getRoomTX((short) 0);
         ++this.referenceTaiXiuId;
 
         //update referenceId
         roomTXVin.startNewGame(this.referenceTaiXiuId);
-//        roomTXXu.startNewGame(this.referenceTaiXiuId);
         StartNewGameTaiXiuMsg msg = new StartNewGameTaiXiuMsg();
         msg.referenceId = this.referenceTaiXiuId;
         msg.moneyHu = moneyHu;
@@ -332,7 +329,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
 
     private void botBet(int count) {
         MGRoomTaiXiu roomVin = this.getRoomTX((short) 1);
-        MGRoomTaiXiu roomXu = this.getRoomTX((short) 0);
         String[] strs = {"Jocelyn", "Kelsey", "Fallon", "Maynard", "Mildred", "Aubrey"};
         for (BotTaiXiu b : this.botsVin) {
             if (b.getTimeBetting() != 60 - count) continue;
@@ -355,7 +351,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
     // todo : lấy số tiền thực tế người dùng dặt
     public void getUserPotTaiXiu() {
         short typeBet = 1;
-        // this.getRoomTX((short) 1).getPotTai(); // tổng số tiền bên tài
         // lấy người chơi đặt tài
         TaiXiuAdminReportObj taiXiuAdminReportObj = new TaiXiuAdminReportObj(this.getRoomTX(typeBet).getUserBetTai(),
                 this.getRoomTX(typeBet).getUserBetXiu(), this.getRoomTX(typeBet).getNumberUserRealTai(), this.getRoomTX(typeBet).getNumberUserRealXiu(),
@@ -403,43 +398,37 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                 amountBotTaiFake = 0;
             }
 
-//            roomTXXu.updateTaiXiuPerSecond(amountBotTaiFake, amountBotXiuFake, count);
             roomTXVin.updateTaiXiuPerSecond(amountBotTaiFake, amountBotXiuFake, count);
-
 
             // lưu toàn bộ trạng thái của game vào cache service
             // trạng thái này phục vụ cho APIs và module wsreport
             this.getUserPotTaiXiu();
             this.sendTXTime(roomTXVin.getRemainTime(), roomTXVin.isBetting()); // todo tinh thoi gian con lai
             switch (this.count) {
-                case 20: {
+                case 50: {
                     roomTXVin.disableBetting();
-//                    roomTXXu.disableBetting();
                     break;
                 }
-                case 23: {
+                case 53: {
                     roomTXVin.finish();
-//                    roomTXXu.finish();
-
                     break;
                 }
-                case 25: {
+                case 55: {
                     this.generateTaiXiuDicesMD5(roomTXVin);
                     break;
                 }
-                case 26: {
+                case 56: {
                     BitZeroServer.getInstance().getTaskScheduler().schedule(this.calculatingTXVinTask, 1, TimeUnit.SECONDS);
-//                    BitZeroServer.getInstance().getTaskScheduler().schedule(this.calculatingTXXuTask, 1, TimeUnit.SECONDS);
                     amountBotTaiFake = 0;
                     amountBotXiuFake = 0;
                     break;
                 }
-                case 28: {
+                case 58: {
                     ScheduleBotTask t = new ScheduleBotTask();
                     this.executor.execute(t);
                     break;
                 }
-                case 35: {
+                case 65: {
                     try {
                         this.startNewRoundTX();
                         long updateFund = 0;
@@ -515,7 +504,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
             dices = this.generationTX.generateResult(this.forceBetSide);
             String result = generationTX.buildResultText(dices);
             roomTXVin.resultTX.setPlantTextResult(result);
-//            roomTXXu.resultTX.setPlantTextResult(result);
         } else {
             dices[0] = (short) roomTXVin.resultTX.dice1;
             dices[1] = (short) roomTXVin.resultTX.dice2;
@@ -530,7 +518,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
          * Show ket qua ra man
          */
         roomTXVin.updateResultDices(dices, this.result);
-//        roomTXXu.updateResultDices(dices, this.result);
         ResultTaiXiuMd5 resultTX = roomTXVin.resultTX;
         resultTX.referenceId = this.referenceTaiXiuId;
         resultTX.result = this.result;
@@ -575,15 +562,15 @@ public class TaiXiuModule extends BaseClientRequestHandler {
     private void getLichSuPhienTX(User user) {
         LichSuPhienMsg msg = new LichSuPhienMsg();
         msg.data = TaiXiuUtils.buildLichSuPhien(this.lichSuPhienTX, 22);
-        Debug.trace((Object) ("LSDG: " + TaiXiuUtils.logLichSuPhien(this.lichSuPhienTX, 120)));
-        this.send((BaseMsg) msg, user);
+        Debug.trace("LSDG: " + TaiXiuUtils.logLichSuPhien(this.lichSuPhienTX, 120));
+        this.send(msg, user);
     }
 
     private boolean updateFundRutLoc(long moneyExchagne) {
         boolean success = false;
         this.fundRutLoc += moneyExchagne;
         if (this.fundRutLoc < 0L) {
-            Debug.trace((Object) ("Quy rut loc " + this.fundRutLoc + " < 0"));
+            Debug.trace("Quy rut loc " + this.fundRutLoc + " < 0");
         }
         try {
             this.txService.updatePotTanLoc(this.fundRutLoc);
@@ -593,7 +580,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
             success = true;
         } catch (Exception e) {
             sendLogToTele(e.getMessage());
-            Debug.trace((Object[]) new Object[]{"Update fund tan loc error ", e.getMessage()});
+            Debug.trace("Update fund tan loc error ", e.getMessage());
         }
         return success;
     }
@@ -635,9 +622,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         MGRoomTaiXiu roomTXVin = this.getRoomTX((short) 1);
         // todo : gửi message đến room
         roomTXVin.sendMessageToRoom(msg);
-//        MGRoomTaiXiu roomTXXu = this.getRoomTX((short) 0);
         // todo : gửi message đến room xu ( CÁI NÀY KO DÙNG TRONG GAME HIỆN TẠI)
-//        roomTXXu.sendMessageToRoom(msg);
     }
 
     public MGRoom getGame(String key) {
@@ -697,10 +682,10 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                 TaiXiuModule.this.getRoomTX(this.roomId).calculatePrize(referenceTaiXiuId);
             } catch (Exception e) {
                 sendLogToTele(e.getMessage() + "Calculate TX " + this.roomId + ", phien= " + TaiXiuModule.this.referenceTaiXiuId + " error: ");
-                Debug.trace((Object) ("Calculate TX " + this.roomId + ", phien= " + TaiXiuModule.this.referenceTaiXiuId + " error: " + e.getMessage()));
+                Debug.trace("Calculate TX " + this.roomId + ", phien= " + TaiXiuModule.this.referenceTaiXiuId + " error: " + e.getMessage());
             } finally {
                 long endTime = System.currentTimeMillis();
-                Debug.trace((Object) ("CALCUALTE PRIZE, time handle= " + (endTime - startTime) + " (ms)") + " Room " + (roomId == 1 ? "vin" : "xu"));
+                Debug.trace("CALCUALTE PRIZE, time handle= " + (endTime - startTime) + " (ms)" + " Room " + (roomId == 1 ? "vin" : "xu"));
             }
         }
     }

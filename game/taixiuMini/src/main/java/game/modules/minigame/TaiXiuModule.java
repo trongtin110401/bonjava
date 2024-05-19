@@ -440,36 +440,36 @@ public class TaiXiuModule extends BaseClientRequestHandler {
             this.getUserPotTaiXiu();
             this.sendTXTime(roomTXVin.getRemainTime(), roomTXVin.isBetting()); // todo tinh thoi gian con lai
             switch (this.count) {
-                case 20: { // 55
+                case 50: { // 55
                     roomTXVin.disableBetting();
                     roomTXXu.disableBetting();
                     break;
                 }
-                case 23: { // 58
+                case 53: { // 58
                     this.forceBetSide = roomTXVin.suggestResult();
                     break;
                 }
-                case 25: { // 60
+                case 55: { // 60
                     roomTXVin.finish();
                     roomTXXu.finish();
                     break;
                 }
-                case 26: { // 61
+                case 56: { // 61
                     this.generateTaiXiuDices(roomTXVin, roomTXXu);
                     break;
                 }
-                case 28: { // 63
+                case 58: { // 63
                     BitZeroServer.getInstance().getTaskScheduler().schedule(this.calculatingTXVinTask, 1, TimeUnit.SECONDS);
                     amountBotTaiFake = 0;
                     amountBotXiuFake = 0;
                     break;
                 }
-                case 30: { /// 70
+                case 60: { /// 70
                     ScheduleBotTask t = new ScheduleBotTask();
                     this.executor.execute(t);
                     break;
                 }
-                case 40: { // 75
+                case 70: { // 75
                     try {
                         this.startNewRoundTX();
                         long updateFund = 0;
