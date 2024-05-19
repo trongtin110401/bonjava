@@ -175,6 +175,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
                 long totalFee = Math.round(tien - amount);
                 totalFee = totalFee > 0 ? totalFee : 0;
                 response = service.updateMoneyFromAdmin(trans.Nickname, tien, "vin", Consts.RECHARGE_BY_MOMO, "Deposit Momo", "Deposit Momo", totalFee);
+                trans.Amount = tien;
                 TelegramAlert.SendMessageDepositMomo(trans);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -258,6 +259,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                trans.setAmount(tien);
                 TelegramAlert.SendMessageDepositBank(trans);
                 BroadCastUserMoney.pushBroadCast(trans.getNickname());
                 BroadCastUserMoney.pushBroadTime(trans.getNickname());
