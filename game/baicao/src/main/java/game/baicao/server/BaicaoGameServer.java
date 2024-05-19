@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  bitzero.server.BitZeroServer
  *  bitzero.server.core.BZEvent
@@ -96,6 +96,7 @@ import game.modules.gameRoom.entities.ListGameMoneyInfo;
 import game.modules.gameRoom.entities.MoneyException;
 import game.modules.gameRoom.entities.ThongTinThangLon;
 import game.utils.GameUtils;
+
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -105,13 +106,14 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class BaicaoGameServer
-extends GameServer {
+        extends GameServer {
     public volatile boolean isRegisterLoop = false;
     private ScheduledFuture<?> task;
     public static final int gsNoPlay = 0;
@@ -127,7 +129,7 @@ extends GameServer {
     LogGameService dao = new LogGameServiceImpl();
     public int chuongChair = 0;
     public int newChuongChair = -1;
-    private final Logger logger = LoggerFactory.getLogger((String)"SamLogic");
+    private final Logger logger = LoggerFactory.getLogger((String) "SamLogic");
     private final Runnable gameLoopTask = new GameLoopTask();
     public ThongTinThangLon thongTinNoHu = null;
 
@@ -138,8 +140,7 @@ extends GameServer {
                 return json.toString();
             }
             return "{}";
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return "{}";
         }
     }
@@ -152,18 +153,17 @@ extends GameServer {
             JSONArray arr = new JSONArray();
             for (int i = 0; i < 8; ++i) {
                 GamePlayer gp = this.getPlayerByChair(i);
-                arr.put((Object)gp.toJSONObject());
+                arr.put((Object) gp.toJSONObject());
             }
-            json.put("players", (Object)arr);
+            json.put("players", (Object) arr);
             return json;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return null;
         }
     }
 
     public synchronized void onGameMessage(User user, DataCmd dataCmd) {
-        this.logger.info("onGameMessage: ", (Object)dataCmd.getId(), (Object)user.getName());
+        this.logger.info("onGameMessage: ", (Object) dataCmd.getId(), (Object) user.getName());
         switch (dataCmd.getId()) {
             case 3101: {
                 this.moBai(user, dataCmd);
@@ -222,8 +222,8 @@ extends GameServer {
                 this.notifyDatCuocThanhCong(gp, rate);
             } else {
                 SendDatCuoc msg = new SendDatCuoc();
-                msg.Error = (byte)e;
-                this.send((BaseMsg)msg, user);
+                msg.Error = (byte) e;
+                this.send((BaseMsg) msg, user);
             }
         }
     }
@@ -261,7 +261,7 @@ extends GameServer {
         long maxLost;
         long currentMoney = gp.gameMoneyInfo.getCurrentMoneyFromCache();
         long remain = currentMoney - (maxLost = gp.spRes.tongTienDatCuocTreo() * this.getMoneyBet());
-        return remain >= (require = (long)rate * this.getMoneyBet());
+        return remain >= (require = (long) rate * this.getMoneyBet());
     }
 
     private void vaoGa(User user, DataCmd data) {
@@ -281,11 +281,11 @@ extends GameServer {
                     this.send(msg);
                 } else {
                     msg.Error = 2;
-                    this.send((BaseMsg)msg, user);
+                    this.send((BaseMsg) msg, user);
                 }
             } else {
                 msg.Error = 1;
-                this.send((BaseMsg)msg, user);
+                this.send((BaseMsg) msg, user);
             }
         }
     }
@@ -317,10 +317,10 @@ extends GameServer {
             this.gameLog.append(">");
             SendDongYDanhBien msg1 = new SendDongYDanhBien();
             msg1.chair = me.chair;
-            this.send((BaseMsg)msg1, enemy.getUser());
+            this.send((BaseMsg) msg1, enemy.getUser());
             SendDongYDanhBien msg2 = new SendDongYDanhBien();
             msg2.chair = enemy.chair;
-            this.send((BaseMsg)msg2, me.getUser());
+            this.send((BaseMsg) msg2, me.getUser());
         }
     }
 
@@ -329,7 +329,7 @@ extends GameServer {
             return false;
         }
         long tongTienCuoc = gp.spRes.tongTienDatCuocTreo();
-        return gp.gameMoneyInfo.getCurrentMoneyFromCache() >= tongTienCuoc + (long)(rate * 4) * this.getMoneyBet();
+        return gp.gameMoneyInfo.getCurrentMoneyFromCache() >= tongTienCuoc + (long) (rate * 4) * this.getMoneyBet();
     }
 
     private boolean kiemTraQuyenDongYDanhBien(GamePlayer gp, int rate) {
@@ -356,20 +356,20 @@ extends GameServer {
                 if (enemy.getUser().isBot()) {
                     enemy.yeuCauBotDanhBien = msg.chair;
                 } else {
-                    this.send((BaseMsg)msg, enemy.getUser());
+                    this.send((BaseMsg) msg, enemy.getUser());
                 }
             } else {
                 msg.Error = 1;
                 msg.chair = enemy.chair;
                 msg.rate = rate;
-                this.send((BaseMsg)msg, me.getUser());
+                this.send((BaseMsg) msg, me.getUser());
             }
         } else {
             SendYeuCauDanhBien msg = new SendYeuCauDanhBien();
             msg.chair = chair;
             msg.rate = rate;
             msg.Error = 2;
-            this.send((BaseMsg)msg, me.getUser());
+            this.send((BaseMsg) msg, me.getUser());
         }
     }
 
@@ -403,7 +403,7 @@ extends GameServer {
         }
         long totalBet = gp.spRes.tongTienDatCuocTreo();
         long remain = gp.gameMoneyInfo.getCurrentMoneyFromCache() - totalBet * this.getMoneyBet();
-        if (remain < (long)(rate * 4) * this.getMoneyBet()) {
+        if (remain < (long) (rate * 4) * this.getMoneyBet()) {
             return 2;
         }
         return 0;
@@ -414,11 +414,11 @@ extends GameServer {
         msg.fromChair = gp.chair;
         msg.toChair = chair;
         msg.rate = rate;
-        msg.Error = (byte)e;
+        msg.Error = (byte) e;
         if (e == 0) {
             this.send(msg);
         } else {
-            this.send((BaseMsg)msg, gp.getUser());
+            this.send((BaseMsg) msg, gp.getUser());
         }
     }
 
@@ -486,11 +486,11 @@ extends GameServer {
     }
 
     private void logEndGame() {
-        GameUtils.logEndGame((int)this.gameMgr.game.id, (String)this.gameLog.toString(), (long)this.gameMgr.game.logTime);
+        GameUtils.logEndGame((int) this.gameMgr.game.id, (String) this.gameLog.toString(), (long) this.gameMgr.game.logTime);
     }
 
     public byte getPlayerCount() {
-        return (byte)this.playerCount;
+        return (byte) this.playerCount;
     }
 
     public boolean checkPlayerChair(int chair) {
@@ -498,7 +498,7 @@ extends GameServer {
     }
 
     public synchronized void onGameUserExit(User user) {
-        Integer chair = (Integer)user.getProperty((Object)USER_CHAIR);
+        Integer chair = (Integer) user.getProperty((Object) USER_CHAIR);
         if (chair == null) {
             return;
         }
@@ -554,14 +554,14 @@ extends GameServer {
                 GamePlayer gp = this.playerList.get(i);
                 if (gp.getPlayerStatus() == 0 || gp.pInfo == null || gp.pInfo.userId != user.getId()) continue;
                 this.gameLog.append("RE<").append(i).append(">");
-                GameMoneyInfo moneyInfo = (GameMoneyInfo)user.getProperty((Object)"GAME_MONEY_INFO");
+                GameMoneyInfo moneyInfo = (GameMoneyInfo) user.getProperty((Object) "GAME_MONEY_INFO");
                 if (moneyInfo != null && gp.gameMoneyInfo.sessionId != moneyInfo.sessionId) {
                     ListGameMoneyInfo.instance().removeGameMoneyInfo(moneyInfo, -1);
                 }
-                user.setProperty((Object)USER_CHAIR, (Object)gp.chair);
+                user.setProperty((Object) USER_CHAIR, (Object) gp.chair);
                 gp.user = user;
                 gp.reqQuitRoom = false;
-                user.setProperty((Object)"GAME_MONEY_INFO", (Object)gp.gameMoneyInfo);
+                user.setProperty((Object) "GAME_MONEY_INFO", (Object) gp.gameMoneyInfo);
                 this.sendGameInfo(gp.chair);
                 break;
             }
@@ -569,7 +569,7 @@ extends GameServer {
     }
 
     public void onGameUserDis(User user) {
-        Integer chair = (Integer)user.getProperty((Object)USER_CHAIR);
+        Integer chair = (Integer) user.getProperty((Object) USER_CHAIR);
         if (chair == null) {
             return;
         }
@@ -592,11 +592,11 @@ extends GameServer {
         if (user == null) {
             return;
         }
-        PlayerInfo pInfo = PlayerInfo.getInfo((User)user);
+        PlayerInfo pInfo = PlayerInfo.getInfo((User) user);
         if (pInfo == null) {
             return;
         }
-        GameMoneyInfo moneyInfo = (GameMoneyInfo)user.getProperty((Object)"GAME_MONEY_INFO");
+        GameMoneyInfo moneyInfo = (GameMoneyInfo) user.getProperty((Object) "GAME_MONEY_INFO");
         if (moneyInfo == null) {
             return;
         }
@@ -607,10 +607,10 @@ extends GameServer {
             if (moneyInfo != null && gp.gameMoneyInfo.sessionId != moneyInfo.sessionId) {
                 ListGameMoneyInfo.instance().removeGameMoneyInfo(moneyInfo, -1);
             }
-            user.setProperty((Object)USER_CHAIR, (Object)gp.chair);
+            user.setProperty((Object) USER_CHAIR, (Object) gp.chair);
             gp.user = user;
             gp.reqQuitRoom = false;
-            user.setProperty((Object)"GAME_MONEY_INFO", (Object)gp.gameMoneyInfo);
+            user.setProperty((Object) "GAME_MONEY_INFO", (Object) gp.gameMoneyInfo);
             if (this.serverState == 1) {
                 this.sendGameInfo(gp.chair);
             } else {
@@ -668,7 +668,7 @@ extends GameServer {
         gp.camChuong = true;
         for (int i = 0; i < 8; ++i) {
             if (i == gp.chair) continue;
-            this.getPlayerByChair((int)i).camChuong = false;
+            this.getPlayerByChair((int) i).camChuong = false;
         }
         if (notify) {
             SendDoiChuong msg = new SendDoiChuong();
@@ -738,7 +738,7 @@ extends GameServer {
             this.gameLog.append(gp.chair).append("/");
             this.gameLog.append(gp.spInfo.handCards.toString()).append("/");
             this.gameLog.append(gp.spInfo.handCards.kiemTraBo()).append(";");
-            this.send((BaseMsg)msg, user);
+            this.send((BaseMsg) msg, user);
         }
         this.gameLog.append(">");
     }
@@ -756,7 +756,7 @@ extends GameServer {
             gp.setPlayerStatus(3);
             ++this.playingCount;
             gp.pInfo.setIsHold(true);
-            PlayerInfo.setRoomId((String)gp.pInfo.nickName, (int)this.room.getId());
+            PlayerInfo.setRoomId((String) gp.pInfo.nickName, (int) this.room.getId());
             this.gameLog.append(gp.pInfo.nickName).append("/");
             this.gameLog.append(i).append(";");
             gp.choiTiepVanSau = false;
@@ -768,7 +768,8 @@ extends GameServer {
         this.moiVaoCuoc();
         this.logStartGame();
         this.gameMgr.gameAction = 1;
-        this.gameMgr.countDown = 4 * this.playingCount;
+//        this.gameMgr.countDown = 4 * this.playingCount;
+        this.gameMgr.countDown = 10;
         this.botStartGame();
     }
 
@@ -800,7 +801,8 @@ extends GameServer {
                 if (hour < 11 || hour > 23) {
                     num = 7;
                 }
-                if (bot.count < 5 && this.playerCount < num || (x = BotManager.instance().getRandomNumber(5)) != 0) continue;
+                if (bot.count < 5 && this.playerCount < num || (x = BotManager.instance().getRandomNumber(5)) != 0)
+                    continue;
                 gp.yeuCauBotRoiPhong = x = BotManager.instance().getRandomNumber(5);
                 --botCount;
                 continue;
@@ -823,13 +825,13 @@ extends GameServer {
         for (int i = 0; i < 8; ++i) {
             GamePlayer gp = this.getPlayerByChair(i);
             if (!gp.isPlaying()) continue;
-            GameUtils.logStartGame((int)this.gameMgr.game.id, (String)gp.pInfo.nickName, (long)this.gameMgr.game.logTime, (int)this.room.setting.moneyType);
+            GameUtils.logStartGame((int) this.gameMgr.game.id, (String) gp.pInfo.nickName, (long) this.gameMgr.game.logTime, (int) this.room.setting.moneyType);
         }
     }
 
     public void moiVaoCuoc() {
         SendMoiDatCuoc msg = new SendMoiDatCuoc();
-        msg.countDownTime = (byte)(4 * this.playingCount);
+        msg.countDownTime = (byte) (4 * this.playingCount);
         this.sendMsgToPlayingUser(msg);
     }
 
@@ -874,9 +876,9 @@ extends GameServer {
         gp.choiTiepVanSau = true;
         this.notifyUserExit(gp, disconnect);
         if (gp.user != null) {
-            gp.user.removeProperty((Object)USER_CHAIR);
-            gp.user.removeProperty((Object)"GAME_ROOM");
-            gp.user.removeProperty((Object)"GAME_MONEY_INFO");
+            gp.user.removeProperty((Object) USER_CHAIR);
+            gp.user.removeProperty((Object) "GAME_ROOM");
+            gp.user.removeProperty((Object) "GAME_MONEY_INFO");
         }
         gp.user = null;
         gp.pInfo = null;
@@ -902,7 +904,7 @@ extends GameServer {
         msg.uStatus = gamePlayer.getPlayerStatus();
         msg.setBaseInfo(gamePlayer.pInfo);
         msg.uChair = gamePlayer.chair;
-        this.sendMsgExceptMe((BaseMsg)msg, user);
+        this.sendMsgExceptMe((BaseMsg) msg, user);
         this.notifyJoinRoomSuccess(gamePlayer);
     }
 
@@ -916,27 +918,27 @@ extends GameServer {
         msg.moneyBet = this.gameMgr.gameServer.room.setting.moneyBet;
         for (int i = 0; i < 8; ++i) {
             GamePlayer gp = this.getPlayerByChair(i);
-            msg.playerStatus[i] = (byte)gp.getPlayerStatus();
+            msg.playerStatus[i] = (byte) gp.getPlayerStatus();
             msg.playerList[i] = gp.getPlayerInfo();
             msg.moneyInfoList[i] = gp.gameMoneyInfo;
         }
-        msg.gameAction = (byte)this.gameMgr.gameAction;
-        msg.countDownTime = (byte)this.gameMgr.countDown;
-        this.send((BaseMsg)msg, gamePlayer.getUser());
+        msg.gameAction = (byte) this.gameMgr.gameAction;
+        msg.countDownTime = (byte) this.gameMgr.countDown;
+        this.send((BaseMsg) msg, gamePlayer.getUser());
     }
 
     private void notifyUserExit(GamePlayer gamePlayer, boolean disconnect) {
         if (gamePlayer.pInfo != null) {
             gamePlayer.pInfo.setIsHold(false);
             SendUserExitRoom msg = new SendUserExitRoom();
-            msg.nChair = (byte)gamePlayer.chair;
+            msg.nChair = (byte) gamePlayer.chair;
             msg.nickName = gamePlayer.pInfo.nickName;
             this.send(msg);
         }
     }
 
     public GamePlayer getPlayerByUser(User user) {
-        Integer chair = (Integer)user.getProperty((Object)USER_CHAIR);
+        Integer chair = (Integer) user.getProperty((Object) USER_CHAIR);
         if (chair != null) {
             GamePlayer gp = this.getPlayerByChair(chair);
             if (gp != null && gp.pInfo != null && gp.pInfo.nickName.equalsIgnoreCase(user.getName())) {
@@ -954,8 +956,8 @@ extends GameServer {
         msg.isAutoStart = this.gameMgr.isAutoStart;
         msg.gameAction = this.gameMgr.gameAction;
         msg.countdownTime = this.gameMgr.countDown;
-        msg.chair = (byte)gamePlayer.chair;
-        msg.chuongChair = (byte)this.chuongChair;
+        msg.chair = (byte) gamePlayer.chair;
+        msg.chuongChair = (byte) this.chuongChair;
         msg.roomId = this.room.getId();
         msg.comissionRate = this.room.setting.commisionRate;
         msg.jackpotRate = this.room.setting.rule;
@@ -972,7 +974,7 @@ extends GameServer {
             }
             msg.hasInfoAtChair[i] = false;
         }
-        this.send((BaseMsg)msg, gamePlayer.getUser());
+        this.send((BaseMsg) msg, gamePlayer.getUser());
         this.resendEndGame(gamePlayer);
     }
 
@@ -994,7 +996,7 @@ extends GameServer {
 
     private void notifyRegisterOutRoom(GamePlayer gp) {
         SendNotifyReqQuitRoom msg = new SendNotifyReqQuitRoom();
-        msg.chair = (byte)gp.chair;
+        msg.chair = (byte) gp.chair;
         msg.reqQuitRoom = gp.reqQuitRoom;
         this.send(msg);
     }
@@ -1006,9 +1008,9 @@ extends GameServer {
         score.moneyType = this.room.setting.moneyType;
         UserScore newScore = score.clone();
         HashMap<GameEventParam, Object> evtParams = new HashMap<GameEventParam, Object>();
-        evtParams.put(GameEventParam.USER, (Object)user);
-        evtParams.put(GameEventParam.USER_SCORE, (Object)newScore);
-        ExtensionUtility.dispatchEvent((IBZEvent)new BZEvent((IBZEventType)GameEventType.EVENT_ADD_SCORE, evtParams));
+        evtParams.put(GameEventParam.USER, (Object) user);
+        evtParams.put(GameEventParam.USER_SCORE, (Object) newScore);
+        ExtensionUtility.dispatchEvent((IBZEvent) new BZEvent((IBZEventType) GameEventType.EVENT_ADD_SCORE, evtParams));
     }
 
     public boolean[] hasInfoAt() {
@@ -1022,8 +1024,8 @@ extends GameServer {
 
     private void notifyKickRoom(GamePlayer gp, int reason) {
         SendKickRoom msg = new SendKickRoom();
-        msg.reason = (byte)reason;
-        this.send((BaseMsg)msg, gp.getUser());
+        msg.reason = (byte) reason;
+        this.send((BaseMsg) msg, gp.getUser());
     }
 
     public void pPrepareNewGame() {
@@ -1061,8 +1063,8 @@ extends GameServer {
         for (i = 0; i < 8; ++i) {
             gp = this.getPlayerByChair(i);
             if (!msg.hasInfoAtChair[i]) continue;
-            msg.chair = (byte)i;
-            this.send((BaseMsg)msg, gp.getUser());
+            msg.chair = (byte) i;
+            this.send((BaseMsg) msg, gp.getUser());
         }
         this.kiemTraDoiChuong(false);
         this.gameMgr.prepareNewGame();
@@ -1115,7 +1117,7 @@ extends GameServer {
         this.tinhTienKetThuc();
         this.notifyEndGame();
         this.logEndGame();
-        this.gameMgr.countDown = 12;
+        this.gameMgr.countDown = 10;
         this.gameMgr.gameState = 2;
         this.gameMgr.gameAction = 0;
         this.kiemTraNoHuThangLon();
@@ -1152,7 +1154,8 @@ extends GameServer {
         for (int i = 0; i < 8; ++i) {
             GroupCard newGc;
             GamePlayer gp = this.getPlayerByChair(i);
-            if (!gp.isPlaying() || (newGc = gp.spInfo.handCards).kiemTraBo() != 1 || gc != null && BaicaoRule.soSanhBai(newGc, gc) <= 0) continue;
+            if (!gp.isPlaying() || (newGc = gp.spInfo.handCards).kiemTraBo() != 1 || gc != null && BaicaoRule.soSanhBai(newGc, gc) <= 0)
+                continue;
             gc = newGc;
             this.newChuongChair = i;
         }
@@ -1181,10 +1184,9 @@ extends GameServer {
             score.lostCount += 0;
             try {
                 tienChuong = gp.gameMoneyInfo.chargeMoneyInGame(score, this.room.getId(), this.gameMgr.game.id);
-            }
-            catch (MoneyException e) {
+            } catch (MoneyException e) {
                 tienChuong = 0L;
-                CommonHandle.writeErrLog((String)("ERROR WHEN CHARGE MONEY INGAME" + gp.gameMoneyInfo.toString()));
+                CommonHandle.writeErrLog((String) ("ERROR WHEN CHARGE MONEY INGAME" + gp.gameMoneyInfo.toString()));
                 gp.reqQuitRoom = true;
             }
             gp.spRes.tongTienCuoiVan = gp.spRes.tienThangChuong = tienChuong;
@@ -1217,9 +1219,9 @@ extends GameServer {
         if (sum == 0L) {
             return 0L;
         }
-        double doubleRate = 1.0 * (double)tienChuong / (double)sum;
+        double doubleRate = 1.0 * (double) tienChuong / (double) sum;
         rate = Math.round(doubleRate);
-        if ((double)rate > doubleRate) {
+        if ((double) rate > doubleRate) {
             --rate;
         }
         return rate;
@@ -1233,7 +1235,7 @@ extends GameServer {
             score.money = gp.spRes.tongTienCuoiVan;
             if (gp.camChuong && score.money < 0L) continue;
             if (score.money >= 0L) {
-                score.wastedMoney = (long)((double)(score.money * (long)this.room.setting.commisionRate) / 100.0);
+                score.wastedMoney = (long) ((double) (score.money * (long) this.room.setting.commisionRate) / 100.0);
                 score.money -= score.wastedMoney;
                 ++score.winCount;
             } else {
@@ -1242,10 +1244,9 @@ extends GameServer {
             }
             try {
                 score.money = gp.gameMoneyInfo.chargeMoneyInGame(score, this.room.getId(), this.gameMgr.game.id);
-            }
-            catch (MoneyException e) {
+            } catch (MoneyException e) {
                 score.money = 0L;
-                CommonHandle.writeErrLog((String)("ERROR WHEN CHARGE MONEY INGAME" + gp.gameMoneyInfo.toString()));
+                CommonHandle.writeErrLog((String) ("ERROR WHEN CHARGE MONEY INGAME" + gp.gameMoneyInfo.toString()));
                 gp.reqQuitRoom = true;
             }
             gp.spRes.tongTienCuoiVan = score.money;
@@ -1267,10 +1268,10 @@ extends GameServer {
                 msg.tongKetThangThua.add(gp.spRes.tongTienCuoiVan);
                 msg.currentMoneyList.add(gp.gameMoneyInfo.getCurrentMoneyFromCache());
                 msg.gamePlayers[i] = gp;
-                msg.playerStatus[i] = (byte)gp.getPlayerStatus();
+                msg.playerStatus[i] = (byte) gp.getPlayerStatus();
                 continue;
             }
-            msg.playerStatus[i] = (byte)gp.getPlayerStatus();
+            msg.playerStatus[i] = (byte) gp.getPlayerStatus();
         }
         this.gameLog.append("KT<");
         this.gameLog.append(0).append(";");
@@ -1283,13 +1284,13 @@ extends GameServer {
             this.gameLog.append(gp.spInfo.handCards).append(";");
             SendEndGame newMsg = new SendEndGame();
             newMsg.copyData(msg);
-            this.send((BaseMsg)newMsg, gp.getUser());
+            this.send((BaseMsg) newMsg, gp.getUser());
         }
         this.gameLog.append(">");
     }
 
     private boolean dispatchEventThangLon(GamePlayer gp, boolean isNoHu) {
-        boolean result = GameUtils.dispatchEventThangLon((User)gp.getUser(), (GameRoom)this.room, (int)this.gameMgr.game.id, (GameMoneyInfo)gp.gameMoneyInfo, (long)this.getMoneyBet(), (boolean)isNoHu, (byte[])gp.getHandCards());
+        boolean result = GameUtils.dispatchEventThangLon((User) gp.getUser(), (GameRoom) this.room, (int) this.gameMgr.game.id, (GameMoneyInfo) gp.gameMoneyInfo, (long) this.getMoneyBet(), (boolean) isNoHu, (byte[]) gp.getHandCards());
         return result;
     }
 
@@ -1321,15 +1322,15 @@ extends GameServer {
                 msg.tongKetThangThua.add(gp.spRes.tongTienCuoiVan);
                 msg.currentMoneyList.add(gp.gameMoneyInfo.getCurrentMoneyFromCache());
                 msg.gamePlayers[i] = gp;
-                msg.playerStatus[i] = (byte)gp.getPlayerStatus();
+                msg.playerStatus[i] = (byte) gp.getPlayerStatus();
                 continue;
             }
-            msg.playerStatus[i] = (byte)gp.getPlayerStatus();
+            msg.playerStatus[i] = (byte) gp.getPlayerStatus();
         }
         SendEndGame newMsg = new SendEndGame();
         msg.result = reconnectPlayer.spRes;
         newMsg.copyData(msg);
-        this.send((BaseMsg)newMsg, reconnectPlayer.getUser());
+        this.send((BaseMsg) newMsg, reconnectPlayer.getUser());
     }
 
     private void soBaiHaiNguoiChoi(GamePlayer gp1, GamePlayer gp2) {
@@ -1364,7 +1365,8 @@ extends GameServer {
         chuongRes.thangChuong -= v * res.cuocChuong;
         for (int i = 0; i < 8; ++i) {
             GamePlayer gpKe;
-            if (i == gp.chair || i == chuong.chair || !(gpKe = this.getPlayerByChair(i)).isPlaying() || gpKe.spRes.cuocKeCua[gp.chair] == 0) continue;
+            if (i == gp.chair || i == chuong.chair || !(gpKe = this.getPlayerByChair(i)).isPlaying() || gpKe.spRes.cuocKeCua[gp.chair] == 0)
+                continue;
             gpKe.spRes.thangKeCua[gp.chair] = v * gpKe.spRes.cuocKeCua[gp.chair];
             chuong.spRes.thangChuong -= gpKe.spRes.thangKeCua[gp.chair];
         }
@@ -1422,7 +1424,8 @@ extends GameServer {
                     }
                 }
             }
-            if (!gp.isPlaying() || gp.getUser() == null || !gp.getUser().isBot() || this.gameMgr.gameAction != 2 || (ran = BotManager.instance().getRandomNumber(5)) != 1 || this.gameMgr.countDown > 14) continue;
+            if (!gp.isPlaying() || gp.getUser() == null || !gp.getUser().isBot() || this.gameMgr.gameAction != 2 || (ran = BotManager.instance().getRandomNumber(5)) != 1 || this.gameMgr.countDown > 14)
+                continue;
             this.moBai(gp.getUser(), null);
         }
     }
@@ -1439,23 +1442,22 @@ extends GameServer {
             if (this.thongTinNoHu != null) {
                 for (int i = 0; i < 8; ++i) {
                     GamePlayer gp = this.getPlayerByChair(i);
-                    if (!gp.gameMoneyInfo.sessionId.equalsIgnoreCase(this.thongTinNoHu.moneySessionId) || !gp.gameMoneyInfo.nickName.equalsIgnoreCase(this.thongTinNoHu.nickName)) continue;
+                    if (!gp.gameMoneyInfo.sessionId.equalsIgnoreCase(this.thongTinNoHu.moneySessionId) || !gp.gameMoneyInfo.nickName.equalsIgnoreCase(this.thongTinNoHu.nickName))
+                        continue;
                     gp.gameMoneyInfo.currentMoney = this.thongTinNoHu.currentMoney;
                     break;
                 }
                 SendNoHu msg = new SendNoHu();
                 msg.info = this.thongTinNoHu;
                 for (Map.Entry entry : this.room.userManager.entrySet()) {
-                    User u = (User)entry.getValue();
+                    User u = (User) entry.getValue();
                     if (u == null) continue;
-                    this.send((BaseMsg)msg, u);
+                    this.send((BaseMsg) msg, u);
                 }
             }
-        }
-        catch (Exception e) {
-            CommonHandle.writeErrLog((Throwable)e);
-        }
-        finally {
+        } catch (Exception e) {
+            CommonHandle.writeErrLog((Throwable) e);
+        } finally {
             this.thongTinNoHu = null;
         }
     }
@@ -1471,10 +1473,9 @@ extends GameServer {
     private synchronized void gameLoop() {
         try {
             this.gameMgr.gameLoop();
-        }
-        catch (Exception e) {
-            CommonHandle.writeErrLog((String)"Error in game loop");
-            CommonHandle.writeErrLog((Throwable)e);
+        } catch (Exception e) {
+            CommonHandle.writeErrLog((String) "Error in game loop");
+            CommonHandle.writeErrLog((Throwable) e);
         }
     }
 
@@ -1499,13 +1500,12 @@ extends GameServer {
     }
 
     private final class GameLoopTask
-    implements Runnable {
+            implements Runnable {
         @Override
         public void run() {
             try {
                 BaicaoGameServer.this.gameLoop();
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
