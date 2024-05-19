@@ -54,6 +54,9 @@ public class SendGiftCodeToUserWinProcessor implements BaseProcessor<HttpServlet
         List<LogUserMoneyResponse> list = dao.getLogMoneyUserByNickname(timeStart, timeEnd, nickname);
 
         for (LogUserMoneyResponse response : list) {
+            if ("Gift Code".equalsIgnoreCase(response.serviceName)) {
+                continue;
+            }
             users.merge(response.nickName, response.moneyExchange, Long::sum);
         }
 
