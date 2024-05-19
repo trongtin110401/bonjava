@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class TeleAuthentication extends TelegramLongPollingBot {
@@ -41,7 +42,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
                 String[] parts = text.split("\\s+");
                 String nickname = parts[1];
                 UserTele u = getInfoByChatID(chatId);
-                if (u.getNickname() != nickname) {
+                if (u != null && !Objects.equals(u.getNickname(), nickname)) {
                     textMessage = "Tele đã liên kết với 1 tài khoản khác, hãy thử bằng 1 tele khác";
                 } else {
                     UserTele userTele = getInfoByNickname(nickname);
