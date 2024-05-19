@@ -355,7 +355,7 @@ public class MGRoomTaiXiu extends MGRoom {
 
                             // Update giao dịch
                             this.saveTransactionDetailTX(tran);
-                            TaiXiuModule.fundTxMD5 -= tran.refund;
+                            if (!isBot(tran.username)) TaiXiuModule.fundTxMD5 -= tran.refund;
                         } catch (Exception e) {
                             Debug.trace((Object) ("Error calculate prize user " + tran.username + " error: " + e.getMessage()));
                         }
@@ -403,7 +403,7 @@ public class MGRoomTaiXiu extends MGRoom {
 
                             // Update giao dịch
                             this.saveTransactionDetailTX(tran);
-                            TaiXiuModule.fundTxMD5 -= tran.refund;
+                            if (!isBot(tran.username)) TaiXiuModule.fundTxMD5 -= tran.refund;
                         } catch (Exception e) {
                             Debug.trace((Object) ("Error calculate prize user " + tran.username + " error: " + e.getMessage()));
                         }

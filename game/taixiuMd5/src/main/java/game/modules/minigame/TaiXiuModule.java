@@ -122,6 +122,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
     public void init() {
         try {
             fundTxMD5 = miniGameService.getFund(Games.TAI_XIU_MD5.getName());
+            cacheService.setValue("fund_tx_md5_auto", fundTxMD5);
         } catch (Exception e) {
             fundTxMD5 = 0;
         }

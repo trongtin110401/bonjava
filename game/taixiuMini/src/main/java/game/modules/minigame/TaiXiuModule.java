@@ -132,13 +132,14 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         cacheService.setObject("admin_msg", taiXiuChatMsg);
         try {
             fundTx = miniGameService.getFund(Games.TAI_XIU.getName());
+            cacheService.setValue("fund_tx_auto", fundTx);
         } catch (Exception e) {
             fundTx = 0;
         }
 
         Debug.info("referentTaiXiuId là " + this.referenceTaiXiuId);
         this.rooms.put(MGRoomTaiXiu.getKeyRoom((short) 1), new MGRoomTaiXiu("TaiXiu_1", this.referenceTaiXiuId, (byte) 1, this));
-        this.rooms.put(MGRoomTaiXiu.getKeyRoom((short) 0), new MGRoomTaiXiu("TaiXiu_0", this.referenceTaiXiuId, (byte) 0, this));
+//        this.rooms.put(MGRoomTaiXiu.getKeyRoom((short) 0), new MGRoomTaiXiu("TaiXiu_0", this.referenceTaiXiuId, (byte) 0, this));
 
         //Debug.info("referentTaiXiuId là " + this.referenceTaiXiuId);
         this.loadData();
@@ -478,13 +479,14 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                         }
                         fundTx += updateFund;
                         miniGameService.saveFund(Games.TAI_XIU.getName(), fundTx);
-                        cacheService.setValue("update_fund_tx_auto", 0);
                         amountBotTaiFake = 0;
                         amountBotXiuFake = 0;
                         this.count = 0;
                     } catch (Exception e) {
                         sendLogToTele(e.getMessage());
                         Debug.trace("got bug", e.getCause());
+                    } finally {
+                        cacheService.setValue("update_fund_tx_auto", 0);
                     }
                 }
             }

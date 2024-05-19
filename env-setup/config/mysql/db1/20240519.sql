@@ -5556,3 +5556,4 @@ USE `vinplay_minigame`;
 -- Dump completed on 2024-05-19  8:22:24
 
 SET GLOBAL max_connections = 5000;
+SET GLOBAL time_zone = 'Asia/Ho_Chi_Minh';
