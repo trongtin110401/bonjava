@@ -49,7 +49,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
         String chargeId = request.getParameter("chargeId");
         String chargeType = request.getParameter("chargeType");
         String chargeCode = request.getParameter("chargeCode");
-        String regAmount = request.getParameter("regAmount");
+        String regAmount = request.getParameter("chargeAmount");
         String status = request.getParameter("status");
         CallBackModel callBackModel = new CallBackModel(chargeId, chargeType, chargeCode, regAmount, status);
 
