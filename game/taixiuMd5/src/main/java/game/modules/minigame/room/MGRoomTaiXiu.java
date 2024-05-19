@@ -187,6 +187,9 @@ public class MGRoomTaiXiu extends MGRoom {
         BetTaiXiuMsg msg = this.betTaiXiu(user.getName(), cmd.userId, cmd.betValue, cmd.inputTime, cmd.moneyType, cmd.betSide, false);
         this.sendMessageToUser((BaseMsg) msg, user); // todo : gửi message về client
         try {
+            if (cmd.betValue <= 0) {
+                return;
+            }
             BetTXMD5Message message = new BetTXMD5Message();
             message.setBetSide(cmd.betSide);
             message.setNickname(user.getName());

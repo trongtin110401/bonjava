@@ -474,14 +474,14 @@
             <commands>
                 <command>
                     <id>55</id>
-                    <name>Send bet message to tele</name>
+                    <name>Send bet tx md5 message to tele</name>
                     <path>com.vinplay.vbee.rmq.log.processor.SendMessageBetTXMD5ToTeleProcessor
                     </path>
                 </command>
                 <command>
-                    <id>602</id>
-                    <name>log chuyen tien dai ly</name>
-                    <path>com.vinplay.vbee.rmq.log.processor.LogChuyenTienDaiLyProcessor
+                    <id>50</id>
+                    <name>Send bet tx message to tele</name>
+                    <path>com.vinplay.vbee.rmq.log.processor.SendMessageBetTXToTeleProcessor
                     </path>
                 </command>
             </commands>
