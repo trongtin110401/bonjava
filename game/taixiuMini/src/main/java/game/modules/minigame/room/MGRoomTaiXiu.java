@@ -186,9 +186,9 @@ public class MGRoomTaiXiu
         }
 
         if (this.bettingRound) {
-            return (short) (50 - this.module.count);
+            return (short) (51 - this.module.count);
         }
-        return (short) (60 - this.module.count);
+        return (short) (65 - this.module.count);
     }
 
     // todo : bet tài xỉu

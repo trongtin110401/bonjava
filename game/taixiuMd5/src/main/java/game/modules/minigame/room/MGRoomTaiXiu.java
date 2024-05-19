@@ -175,9 +175,9 @@ public class MGRoomTaiXiu extends MGRoom {
             remainTime = 50;
         }
         if (this.bettingRound) {
-            return (short) (50 - this.module.count);
+            return (short) (52 - this.module.count);
         }
-        return (short) (60 - this.module.count);
+        return (short) (65 - this.module.count);
     }
 
     // todo : bet tài xỉu

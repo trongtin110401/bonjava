@@ -341,14 +341,12 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         MGRoomTaiXiu roomTXVin = this.getRoomTX((short) 1);
         MGRoomTaiXiu roomTXXu = this.getRoomTX((short) 0);
         ++this.referenceTaiXiuId;
-        //update referenceId
 
         roomTXVin.startNewGame(this.referenceTaiXiuId);
         roomTXXu.startNewGame(this.referenceTaiXiuId);
         StartNewGameTaiXiuMsg msg = new StartNewGameTaiXiuMsg();
         msg.referenceId = this.referenceTaiXiuId;
         msg.moneyHu = moneyHu;
-//        msg.remainTimeRutLoc = this.getRemainTimeRutLoc();
         this.sendMessageToTaiXiuNewThread(msg);
         this.saveReferences();
         this.cacheService.setValue("allow_betting_" + this.referenceTaiXiuId, 1);
@@ -469,7 +467,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                     this.executor.execute(t);
                     break;
                 }
-                case 60: { // 75
+                case 65: { // 75
                     try {
                         this.startNewRoundTX();
                         long updateFund = 0;

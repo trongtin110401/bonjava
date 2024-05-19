@@ -428,7 +428,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                     this.executor.execute(t);
                     break;
                 }
-                case 60: {
+                case 65: {
                     try {
                         this.startNewRoundTX();
                         long updateFund = 0;
