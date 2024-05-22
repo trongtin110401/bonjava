@@ -15,7 +15,6 @@ import com.vinplay.dal.dao.impl.LogMoneyUserDaoImpl;
 import com.vinplay.usercore.service.OtherService;
 import com.vinplay.usercore.service.impl.GiftCodeServiceImpl;
 import com.vinplay.usercore.service.impl.OtherServiceImpl;
-import com.vinplay.usercore.utils.GameCommon;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.dto.GiftCodeDto;
@@ -27,11 +26,11 @@ import okhttp3.*;
 import org.bson.Document;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class SendGiftCodeToUserWinProcessor implements BaseProcessor<HttpServletRequest, String> {
@@ -89,13 +88,41 @@ public class SendGiftCodeToUserWinProcessor implements BaseProcessor<HttpServlet
         document.put("money", money);
         document.put("code", code);
         document.put("cashBack", price);
+        document.put("status", false);
         document.put("createdDate", VinPlayUtils.getCurrentDateTime());
+        String expirationDateString = calculateExpirationDate(VinPlayUtils.getCurrentDateTime());
+        document.put("expirationDate", expirationDateString);
         otherService.saveUserTeleCashBack(document);
+    }
+
+    public static String calculateExpirationDate(String createdDateString) {
+        Date createdDate = parseDate(createdDateString);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(createdDate);
+
+        calendar.add(Calendar.DAY_OF_MONTH, 3);
+
+        Date expirationDate = calendar.getTime();
+
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return format.format(expirationDate);
+    }
+
+    // Ph??ng th?c ?? chuy?n ??i chu?i thành Date
+    public static Date parseDate(String dateString) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            return format.parse(dateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public static void sendMessage(String chatId, String message) {
         try {
-            String bootToken = GameCommon.getValueStr("Telegram_boot_bon_token");
+//            String bootToken = GameCommon.getValueStr("Telegram_boot_bon_token");
             String bot = "6831621160:AAHPfkEON1-u2e44F8WAVdu5vT9ySql8ztA";
             RequestBody requestBody = new FormBody.Builder()
                     .add("chat_id", chatId)

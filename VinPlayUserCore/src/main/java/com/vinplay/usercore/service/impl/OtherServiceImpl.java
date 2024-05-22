@@ -13,6 +13,7 @@ import com.vinplay.usercore.service.OtherService;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.pools.ConnectionPool;
 import com.vinplay.vbee.common.response.*;
+import com.vinplay.vbee.common.utils.VinPlayUtils;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
@@ -281,6 +282,17 @@ public class OtherServiceImpl implements OtherService {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("user_tele_cash_back");
         collection.insertOne(document);
+    }
+
+    @Override
+    public void updateCodeCallBack(String code) {
+
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+
+        MongoCollection<Document> collection = db.getCollection("user_tele_cash_back");
+        Document updateQuery = new Document("$set", new Document("status", true)
+                .append("activeDate", VinPlayUtils.getCurrentDateTime()));
+        collection.updateOne(new Document("code", code), updateQuery);
     }
 
     @Override
