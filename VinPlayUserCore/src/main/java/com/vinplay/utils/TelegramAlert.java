@@ -67,7 +67,9 @@ public class TelegramAlert {
 
     public static boolean SendMessageDepositBank(DepositBankModel model) {
         try {
-            String message = "<b>Tài Khoản  " + model.Nickname + "</b> Nạp Bank số tiền : " + model.Amount;
+            NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.forLanguageTag("vi-VN"));
+            String formattedNumber = numberFormat.format(model.Amount);
+            String message = "<b>Tài Khoản  " + model.Nickname + "</b> Nạp Bank số tiền : " + formattedNumber;
             return SendMessageNap(message);
         } catch (Exception e) {
             return false;
@@ -87,7 +89,9 @@ public class TelegramAlert {
 
     public static boolean SendMessageDepositMomo(DepositMomoModel model) {
         try {
-            String message = "<b>Tài Khoản  " + model.Nickname + "</b> Nạp Momo số tiền : " + model.Amount;
+            NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.forLanguageTag("vi-VN"));
+            String formattedNumber = numberFormat.format(model.Amount);
+            String message = "<b>Tài Khoản  " + model.Nickname + "</b> Nạp Momo số tiền : " + formattedNumber;
             return SendMessageNap(message);
         } catch (Exception e) {
             return false;
@@ -96,8 +100,10 @@ public class TelegramAlert {
 
 
     public static boolean SendMessageDepositGiftCode(UseGiftCodeDto userGiftCode) {
+        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.forLanguageTag("vi-VN"));
+        String formattedNumber = numberFormat.format(userGiftCode.getPrice());
         try {
-            String message = "Tài khoản <b>" + userGiftCode.getNickname() + "</b> Nhập mã gift code " + userGiftCode.getCode() +" với số B là " + userGiftCode.getPrice();
+            String message = "Tài khoản <b>" + userGiftCode.getNickname() + "</b> Nhập mã gift code " + userGiftCode.getCode() +" với số B là " + formattedNumber;
             return SendMessageNap(message);
         } catch (Exception e) {
             return false;
