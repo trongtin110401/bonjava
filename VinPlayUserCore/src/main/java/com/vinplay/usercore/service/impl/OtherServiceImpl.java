@@ -133,8 +133,8 @@ public class OtherServiceImpl implements OtherService {
         long totalCount = col.count(query);
 
         List<Document> transactions = new ArrayList<>();
-        double totalWithdraw = 0;
-        double totalDeposit = 0;
+        long totalWithdraw = 0;
+        long totalDeposit = 0;
         while (cursor.hasNext()) {
             Document document = cursor.next();
             Document fund = new Document();
