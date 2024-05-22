@@ -139,12 +139,12 @@ public class OtherServiceImpl implements OtherService {
             Document document = cursor.next();
             Document fund = new Document();
             fund.put("fundName", document.getString("fund_name"));
-            fund.put("amount", document.getInteger("amount"));
+            fund.put("amount", document.getLong("amount"));
             fund.put("type", document.getString("type"));
             if (document.getString("type").equals("deposit")) {
-                totalDeposit += document.getInteger("amount");
+                totalDeposit += document.getLong("amount");
             } else {
-                totalWithdraw += document.getInteger("amount");
+                totalWithdraw += document.getLong("amount");
             }
 
             fund.put("createdTime", document.getString("time_log"));
