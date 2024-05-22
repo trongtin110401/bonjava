@@ -90,10 +90,8 @@ public class TelegramAlert {
 
     public static boolean SendMessageDepositMomo(DepositMomoModel model) {
         try {
-            String message = "Yêu cầu nạp tiền qua momo  từ User <b>" + model.Nickname + "</b>";
+            String message = "Nạp tiền qua momo từ User <b>" + model.Nickname + "</b>";
             message += "\n Số tiền <b>" + model.Amount + "</b>";
-            message += "\n Số điện thoại: <b>" + model.ReceivedPhoneNumber + "</b>";
-
             return SendMessageNap(message);
         } catch (Exception e) {
             return false;
