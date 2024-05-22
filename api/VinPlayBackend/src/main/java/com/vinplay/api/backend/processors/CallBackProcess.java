@@ -170,17 +170,19 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
             //update user money
             UserServiceImpl service = new UserServiceImpl();
             try {
-                double fee = GameCommon.getValueDouble("RATIO_RECHARGE_MOMO");
-                double amount = fee * tien;
-                long totalFee = Math.round(tien - amount);
-                totalFee = totalFee > 0 ? totalFee : 0;
-                response = service.updateMoneyFromAdmin(trans.Nickname, tien, "vin", Consts.RECHARGE_BY_MOMO, "Deposit Momo", "Deposit Momo", totalFee);
-                trans.Amount = tien;
-                TelegramAlert.SendMessageDepositMomo(trans);
+                if (type == 0) {
+                    double fee = GameCommon.getValueDouble("RATIO_RECHARGE_MOMO");
+                    double amount = fee * tien;
+                    long totalFee = Math.round(tien - amount);
+                    totalFee = totalFee > 0 ? totalFee : 0;
+                    response = service.updateMoneyFromAdmin(trans.Nickname, tien, "vin", Consts.RECHARGE_BY_MOMO, "Deposit Momo", "Deposit Momo", totalFee);
+                    trans.Amount = tien;
+                    TelegramAlert.SendMessageDepositMomo(trans);
+                    BroadCastUserMoney.pushBroadCast(trans.Nickname);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            BroadCastUserMoney.pushBroadCast(trans.Nickname);
             return response.toJson();
         } catch (Exception e) {
             return response.toJson();
@@ -259,15 +261,17 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                trans.setAmount(tien);
-                TelegramAlert.SendMessageDepositBank(trans);
-                BroadCastUserMoney.pushBroadCast(trans.getNickname());
-                BroadCastUserMoney.pushBroadTime(trans.getNickname());
-                updateCodepay(trans.getNickname(), true, trans.getDescription(), trans.getBankBrandName());
-                NapRutGame nrg = new NapRutGame();
-                String codedl = nrg.getMaDaily(trans.Nickname);
-                NapRutModel napgame = new NapRutModel(transId, trans.getNickname(), codedl, tien, "Bank", trans.CreatedAt);
-                nrg.NapRut(napgame);
+                if (type == 0) {
+                    trans.setAmount(tien);
+                    TelegramAlert.SendMessageDepositBank(trans);
+                    BroadCastUserMoney.pushBroadCast(trans.getNickname());
+                    BroadCastUserMoney.pushBroadTime(trans.getNickname());
+                    updateCodepay(trans.getNickname(), true, trans.getDescription(), trans.getBankBrandName());
+                    NapRutGame nrg = new NapRutGame();
+                    String codedl = nrg.getMaDaily(trans.Nickname);
+                    NapRutModel napgame = new NapRutModel(transId, trans.getNickname(), codedl, tien, "Bank", trans.CreatedAt);
+                    nrg.NapRut(napgame);
+                }
                 response.setErrorCode("200");
                 response.setSuccess(true);
                 return response.toJson();

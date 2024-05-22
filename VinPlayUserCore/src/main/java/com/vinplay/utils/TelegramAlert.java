@@ -67,8 +67,7 @@ public class TelegramAlert {
 
     public static boolean SendMessageDepositBank(DepositBankModel model) {
         try {
-            String message = "<b>Nạp tiền qua bank  từ User " + model.Nickname + "</b>";
-            message += "\n Số tiền <b>" + model.Amount + "</b>";
+            String message = "<b>Tài Khoản  " + model.Nickname + "</b> Nạp Bank số tiền : " + model.Amount;
             return SendMessageNap(message);
         } catch (Exception e) {
             return false;
@@ -88,8 +87,7 @@ public class TelegramAlert {
 
     public static boolean SendMessageDepositMomo(DepositMomoModel model) {
         try {
-            String message = "Nạp tiền qua momo từ User <b>" + model.Nickname + "</b>";
-            message += "\n Số tiền <b>" + model.Amount + "</b>";
+            String message = "<b>Tài Khoản  " + model.Nickname + "</b> Nạp Momo số tiền : " + model.Amount;
             return SendMessageNap(message);
         } catch (Exception e) {
             return false;
