@@ -97,10 +97,7 @@ public class TelegramAlert {
 
     public static boolean SendMessageDepositGiftCode(UseGiftCodeDto userGiftCode) {
         try {
-            String message = "Thực hiện nạp tiền qua giftcode  từ User <b>" + userGiftCode.getNickname() + "</b>";
-            message += "\n Số tiền <b>" + userGiftCode.getPrice() + "</b>";
-            message += "\n mã code: <b>" + userGiftCode.getCode() + "</b>";
-
+            String message = "Tài khoản <b>" + userGiftCode.getNickname() + "</b> Nhập mã gift code " + userGiftCode.getCode() +" với số B là " + userGiftCode.getPrice();
             return SendMessageNap(message);
         } catch (Exception e) {
             return false;
