@@ -92,6 +92,7 @@ public class SendGiftCodeToUserWinProcessor implements BaseProcessor<HttpServlet
         document.put("createdDate", VinPlayUtils.getCurrentDateTime());
         String expirationDateString = calculateExpirationDate(VinPlayUtils.getCurrentDateTime());
         document.put("expirationDate", expirationDateString);
+        document.put("activeDate","");
         otherService.saveUserTeleCashBack(document);
     }
 

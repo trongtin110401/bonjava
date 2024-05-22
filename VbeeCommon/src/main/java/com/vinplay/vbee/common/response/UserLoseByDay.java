@@ -10,6 +10,10 @@ public class UserLoseByDay {
     private String chatId;
     private String code;
     private long moneyCashBack;
+    private boolean active;
+    private String createdDate;
+    private String expirationDate;
+    private String activeDate;
 
     public String getNickname() {
         return nickname;
@@ -49,6 +53,38 @@ public class UserLoseByDay {
 
     public void setMoneyCashBack(long moneyCashBack) {
         this.moneyCashBack = moneyCashBack;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public String getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(String createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public String getExpirationDate() {
+        return expirationDate;
+    }
+
+    public void setExpirationDate(String expirationDate) {
+        this.expirationDate = expirationDate;
+    }
+
+    public String getActiveDate() {
+        return activeDate;
+    }
+
+    public void setActiveDate(String activeDate) {
+        this.activeDate = activeDate;
     }
 }
 
