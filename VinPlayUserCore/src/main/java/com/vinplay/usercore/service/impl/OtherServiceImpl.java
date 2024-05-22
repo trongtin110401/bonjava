@@ -327,6 +327,7 @@ public class OtherServiceImpl implements OtherService {
             userLoseByDay.setCreatedDate(document.getString("createdDate"));
             userLoseByDay.setExpirationDate(document.getString("expirationDate"));
             userLoseByDay.setStatus(document.getBoolean("status"));
+
             userLoseByDay.setActiveDate(document.getString("activeDate"));
             users.add(userLoseByDay);
         }
