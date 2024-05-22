@@ -22,7 +22,7 @@ public class GetCacheResultTaiXiuMd5Processor implements BaseProcessor<HttpServl
             hashMap.put("tai_xiu_be_cang",cacheService.getValueStr("tai_xiu_be_cang_md5"));
             hashMap.put("min_fund_tx_auto",cacheService.getValueStr("min_fund_tx_auto_md5"));
             hashMap.put("max_fund_tx_auto",cacheService.getValueStr("max_fund_tx_auto_md5"));
-            hashMap.put("fund_tx_auto",cacheService.getValueStr("fund_tx_auto_md5"));
+            hashMap.put("fund_tx_md5_auto",cacheService.getValueStr("fund_tx_auto_md5"));
 
 
             hashMap.put("my_debug",cacheService.getValueStr("my_debug_md5"));
