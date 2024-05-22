@@ -5,7 +5,9 @@ import com.vinplay.api.entities.UserOTP;
 import com.vinplay.lognaprut.HistoryTransDao;
 import com.vinplay.lognaprut.entities.HistoryTransModel;
 import com.vinplay.lognaprut.impl.HistoryTransDaoImpl;
+import com.vinplay.usercore.service.OtherService;
 import com.vinplay.usercore.service.impl.GiftCodeServiceImpl;
+import com.vinplay.usercore.service.impl.OtherServiceImpl;
 import com.vinplay.utils.TelegramAlert;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
@@ -77,6 +79,8 @@ public class UserNapGiftCodeProcessor
                     "Nạp tiền", String.valueOf(giftCodeDto.getPrice()), "Thành công",code , nickName, "GIFT_CODE", UUID.randomUUID().toString()));
             userService.updateMoney(nickName, giftCodeDto.getPrice(), "vin", "Gift Code", "Gift Code", "Mã: " + code, 0L, null, TransType.NO_VIPPOINT);
             TelegramAlert.SendMessageDepositGiftCode(userGiftCode);
+            OtherService otherService = new OtherServiceImpl();
+            otherService.updateCodeCallBack(code);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }

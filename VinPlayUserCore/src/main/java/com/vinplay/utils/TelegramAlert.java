@@ -54,7 +54,7 @@ public class TelegramAlert {
 
     public static boolean SendMessageCashout(UserWithdraw userWithdraw) {
         try {
-            String message = "<b>Yêu cầu rút tiền từ User " + userWithdraw.Username + "</b>";
+            String message = "<b>YRút tiền bank từ User " + userWithdraw.Username + "</b>";
             message += "\n Số tiền <b>" + userWithdraw.Amount + "</b>";
             message += "\n Ngân hàng: <b>" + userWithdraw.BankName + "</b>";
             message += "\nTên tài khoản <b>" + userWithdraw.BankAccountName + "</b>";
@@ -67,10 +67,8 @@ public class TelegramAlert {
 
     public static boolean SendMessageDepositBank(DepositBankModel model) {
         try {
-            String message = "<b>Yêu cầu nạp tiền qua bank  từ User " + model.Nickname + "</b>";
+            String message = "<b>Nạp tiền qua bank  từ User " + model.Nickname + "</b>";
             message += "\n Số tiền <b>" + model.Amount + "</b>";
-            message += "\n Tên tài khoản <b>" + model.BankAccountName + "</b>";
-            message += "\n Số tài khoản: <b>" + model.BankAccountNumber + "</b>";
             return SendMessageNap(message);
         } catch (Exception e) {
             return false;
@@ -79,7 +77,7 @@ public class TelegramAlert {
 
     public static boolean SendMessageCashoutMomo(UserWithdrawMomo userWithdraw) {
         try {
-            String message = "<b>Yêu cầu rút tiền Momo từ User " + userWithdraw.Nickname + "</b>";
+            String message = "<b>Rút tiền Momo từ User " + userWithdraw.Nickname + "</b>";
             message += "\n Số tiền <b>" + userWithdraw.Amount + "</b>";
             message += "\n Số điện thoại nhận : <b>" + userWithdraw.PhoneNumber + "</b>";
             return SendMessageRut(message);
