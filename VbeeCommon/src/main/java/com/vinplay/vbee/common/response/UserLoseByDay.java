@@ -10,7 +10,7 @@ public class UserLoseByDay {
     private String chatId;
     private String code;
     private long moneyCashBack;
-    private boolean active;
+    private boolean status;
     private String createdDate;
     private String expirationDate;
     private String activeDate;
@@ -55,12 +55,12 @@ public class UserLoseByDay {
         this.moneyCashBack = moneyCashBack;
     }
 
-    public boolean isActive() {
-        return active;
+    public boolean isStatus() {
+        return status;
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 
     public String getCreatedDate() {
