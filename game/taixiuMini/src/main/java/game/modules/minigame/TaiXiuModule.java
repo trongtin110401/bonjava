@@ -475,13 +475,11 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                         try {
                             updateFund = Long.parseLong(cacheService.getValueStr("update_fund_tx_auto"));
 
-                            System.out.println(" -------------  update_fund_tx_auto :" + updateFund);
                         } catch (Exception e) {
                             updateFund = 0;
                         }
                         fundTx += updateFund;
 
-                        System.out.println("========= Fund TX========= " + fundTx);
                         miniGameService.saveFund(Games.TAI_XIU.getName(), fundTx);
                         amountBotTaiFake = 0;
                         amountBotXiuFake = 0;
@@ -600,7 +598,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                 fundTx += totalRealBetTai - totalRealBetXiu;
             }
 
-            System.out.println("Fund TX ========== " + fundTx);
             cacheService.setValue("fund_tx_auto", String.valueOf(fundTx));
         } catch (Exception e) {
             cacheService.setValue("fund_tx_auto", (int) fundTx);

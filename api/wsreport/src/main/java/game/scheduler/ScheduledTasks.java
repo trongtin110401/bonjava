@@ -6,7 +6,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import game.bean.MapperUtils;
 import game.config.HttpCommon;
-import game.entity.entitynotification.NotificationAdminObj;
 import game.entity.entitytaixiu.TaiXiuAdmin;
 import game.entity.entitytaixiu.TaiXiuAdminReportObj;
 import game.entity.entitytaixiu.TaiXiuAdminReportResponse;
@@ -190,9 +189,6 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             cacheService.removeKey(USER_TAI_XIU);
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println(e.getMessage());
-            System.out.println("Loi senTXAdmin CU");
-
         }
     }
 
@@ -231,8 +227,6 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             cacheService.removeKey(USER_TAI_XIU_MD5);
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Loi senTXMD5Admin MOI");
-            System.out.println(e.getMessage());
 
         }
     }
@@ -641,15 +635,4 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
         }
         return topWins;
     }
-
-    public static void main(String[] args) {
-        List<BauCuaUserInfomation> list = new ArrayList<>();
-        BauCuaUserInfomation a = new BauCuaUserInfomation("testacc123", 1, 1);
-        BauCuaUserInfomation b = new BauCuaUserInfomation("Ngapvuvo", 1, 1);
-        ScheduledTasks scheduledTasks = new ScheduledTasks();
-        list.add(a);
-        list.add(b);
-        scheduledTasks.getUserBauCua(list, "BauCua");
-    }
-
 }
