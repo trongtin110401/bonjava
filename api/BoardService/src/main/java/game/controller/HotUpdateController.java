@@ -34,7 +34,7 @@ public class HotUpdateController {
     DatabaseReader dbReader;
 
     @PostConstruct
-    public void init() {
+    public void init() throws IOException {
         allowedCountries.forEach(s -> allowedCountriesMap.put(s, s));
         rejectedCountries.forEach(s -> rejectedCountriesMap.put(s, s));
 
