@@ -2,6 +2,7 @@ package game.controller;
 
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.exception.GeoIp2Exception;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,10 +45,23 @@ public class HotUpdateController {
 
 
     @GetMapping("/check")
-    public ResponseEntity<String> check(HttpServletRequest request, HttpServletResponse response) throws IOException, GeoIp2Exception {
+    public ResponseEntity<Boolean> check(HttpServletRequest request, HttpServletResponse response) throws IOException, GeoIp2Exception {
         String ip = request.getRemoteAddr();
         String country = dbReader.country(InetAddress.getByName(ip)).getCountry().getIsoCode();
-        return ResponseEntity.ok(country);
+
+        if (StringUtils.isEmpty(country)) {
+            return ResponseEntity.ok(false);
+        }
+
+        if (!allowedCountriesMap.containsKey(country) && !allowedCountriesMap.containsKey("*")) {
+            return ResponseEntity.ok(false);
+        }
+
+        if (rejectedCountriesMap.containsKey(country)) {
+            return ResponseEntity.ok(false);
+        }
+
+        return ResponseEntity.ok(true);
     }
 
 }
