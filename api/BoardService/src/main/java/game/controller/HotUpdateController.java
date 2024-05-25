@@ -35,9 +35,10 @@ public class HotUpdateController {
 
     @PostConstruct
     public void init() {
-
         allowedCountries.forEach(s -> allowedCountriesMap.put(s, s));
         rejectedCountries.forEach(s -> rejectedCountriesMap.put(s, s));
+
+        File database = new File(System.getProperty("user.dir") + File.separator + "db" + File.separator + "GeoLite2-Country.mmdb");
         dbReader = new DatabaseReader.Builder(database).build();
     }
 
