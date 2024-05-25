@@ -19,9 +19,9 @@ import java.net.InetAddress;
 public class HotUpdateController {
 
     @GetMapping("/check")
-    public ResponseEntity<String> getByUsernameAndGameName(HttpServletRequest request, HttpServletResponse response) throws IOException, GeoIp2Exception {
+    public ResponseEntity<String> check(HttpServletRequest request, HttpServletResponse response) throws IOException, GeoIp2Exception {
         String ip = request.getRemoteAddr();
-        File database = new File(getClass().getResource("GeoLite2-Country.mmdb").getFile());
+        File database = new File(HotUpdateController.class.getResource("GeoLite2-Country.mmdb").getFile());
         DatabaseReader dbReader = new DatabaseReader.Builder(database).build();
         String country = dbReader.country(InetAddress.getByName(ip)).getCountry().getIsoCode();
 
