@@ -22,7 +22,7 @@ import java.util.Map;
 @RequestMapping(path = "/hotupdate")
 public class HotUpdateController {
 
-    @Value("${hotupdate.allowed.countrie}")
+    @Value("${hotupdate.allowed.countries}")
     private List<String> allowedCountries;
 
     @Value("${hotupdate.rejected.countries}")
