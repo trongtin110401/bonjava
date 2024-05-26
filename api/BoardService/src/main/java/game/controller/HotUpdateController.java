@@ -47,6 +47,8 @@ public class HotUpdateController {
     @GetMapping("/check")
     public ResponseEntity<Boolean> check(HttpServletRequest request, HttpServletResponse response) throws IOException, GeoIp2Exception {
 
+        System.out.println("country code: " + request.getHeader("CF-IPCountry"));
+
         if (rejectedCountriesMap.containsKey("*")) {
             return ResponseEntity.ok(false);
         }
