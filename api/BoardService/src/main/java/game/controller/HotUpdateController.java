@@ -47,14 +47,16 @@ public class HotUpdateController {
     @GetMapping("/check")
     public ResponseEntity<Boolean> check(HttpServletRequest request, HttpServletResponse response) throws IOException, GeoIp2Exception {
 
-        System.out.println("country code: " + request.getHeader("CF-IPCountry"));
 
         if (rejectedCountriesMap.containsKey("*")) {
             return ResponseEntity.ok(false);
         }
 
-        String ip = request.getRemoteAddr();
-        String country = dbReader.country(InetAddress.getByName(ip)).getCountry().getIsoCode();
+//        String ip = request.getRemoteAddr();
+//        String country = dbReader.country(InetAddress.getByName(ip)).getCountry().getIsoCode();
+
+
+        String country = request.getHeader("CF-IPCountry");
 
         if (StringUtils.isEmpty(country)) {
             return ResponseEntity.ok(false);
