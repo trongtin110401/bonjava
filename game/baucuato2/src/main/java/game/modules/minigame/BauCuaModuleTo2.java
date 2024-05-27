@@ -199,6 +199,7 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
             }
             case 28: {
                 this.broadcastMessage();
+                break;
             }
             case 33: {
                 this.startNewRound();
@@ -210,7 +211,6 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
     public void updateGameStatePerSecond() {
         for (MGRoom entry : this.rooms.values()) {
             MGRoomBauCuaTo2 room = (MGRoomBauCuaTo2) entry;
-            System.out.println("COUNT DOWN: " + (33-count) + ", COUNT UP " + count);
             room.storeTimeToCache((byte) (33 - this.count), this.isBettingRound);
             room.botBet(33 - this.count, this.isBettingRound);
         }
@@ -407,8 +407,7 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
         }
     }
 
-    private final class ServerReadyTask
-            implements Runnable {
+    private final class ServerReadyTask implements Runnable {
         private ServerReadyTask() {
         }
 
