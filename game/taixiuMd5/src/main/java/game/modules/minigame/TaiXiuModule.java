@@ -354,14 +354,14 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         short typeBet = 1;
         MGRoomTaiXiu roomVin = this.getRoomTX(typeBet);
         // lấy người chơi đặt tài
-        TaiXiuAdminReportObj taiXiuAdminReportObj = new TaiXiuAdminReportObj(this.getRoomTX(typeBet).getUserBetTai(),
-                this.getRoomTX(typeBet).getUserBetXiu(), this.getRoomTX(typeBet).getNumberUserRealTai(), this.getRoomTX(typeBet).getNumberUserRealXiu(),
-                this.getRoomTX(typeBet).getTotalMoneyTai(), this.getRoomTX(typeBet).getTotalMoneyXiu(), this.referenceTaiXiuId);
-        taiXiuAdminReportObj.setNumberUserAndBotBetTai(this.getRoomTX(typeBet).getNumberUerAndBotTai());
-        taiXiuAdminReportObj.setNumberUserAndBotBetXiu(this.getRoomTX(typeBet).getNumberUerAndBotXiu());
-        taiXiuAdminReportObj.setContributors(this.getRoomTX(typeBet).getListTransaction());
-        taiXiuAdminReportObj.setRealTime(this.getRoomTX(typeBet).getRemainTime());
-        taiXiuAdminReportObj.setBettingRound(this.getRoomTX(typeBet).bettingRound);
+        TaiXiuAdminReportObj taiXiuAdminReportObj = new TaiXiuAdminReportObj(roomVin.getUserBetTai(),
+                this.getRoomTX(typeBet).getUserBetXiu(), roomVin.getNumberUserRealTai(), this.getRoomTX(typeBet).getNumberUserRealXiu(),
+                this.getRoomTX(typeBet).getTotalMoneyTai(), roomVin.getTotalMoneyXiu(), this.referenceTaiXiuId);
+        taiXiuAdminReportObj.setNumberUserAndBotBetTai(roomVin.getNumberUerAndBotTai());
+        taiXiuAdminReportObj.setNumberUserAndBotBetXiu(roomVin.getNumberUerAndBotXiu());
+        taiXiuAdminReportObj.setContributors(roomVin.getListTransaction());
+        taiXiuAdminReportObj.setRealTime(roomVin.getRemainTime());
+        taiXiuAdminReportObj.setBettingRound(roomVin.bettingRound);
         List<TaiXiuChatMsg> listChat = new ArrayList<>();
         try {
             listChat = (List<TaiXiuChatMsg>) cacheService.getObject("lstTaiXiuAdminMsg");
@@ -378,8 +378,8 @@ public class TaiXiuModule extends BaseClientRequestHandler {
 
         taiXiuAdminReportObj.setLstMsg(listChat);
         taiXiuAdminReportObj.setGetListChatUsers(this.getListChatUsers());
-        taiXiuAdminReportObj.setTaiXiuMd5Hash(this.getRoomTX(typeBet).resultTX.getMd5TextResult());
-        taiXiuAdminReportObj.setTaiXiuPlainResult(this.getRoomTX(typeBet).resultTX.getPlantTextResult());
+        taiXiuAdminReportObj.setTaiXiuMd5Hash(roomVin.resultTX.getMd5TextResult());
+        taiXiuAdminReportObj.setTaiXiuPlainResult(roomVin.resultTX.getPlantTextResult());
         cacheService.setValue("user_tai_xiu_md5", taiXiuAdminReportObj.toJson());
         cacheService.setObject("lstTaiXiuAdminMsg", new ArrayList<>());
     }
@@ -447,7 +447,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                             updateFund = 0;
                         }
                         fundTxMD5 += updateFund;
-                        mgService.saveFund(Games.TAI_XIU_MD5.getName(),fundTxMD5);
+                        mgService.saveFund(Games.TAI_XIU_MD5.getName(), fundTxMD5);
                         amountBotTaiFake = 0;
                         amountBotXiuFake = 0;
                         this.count = 0;
