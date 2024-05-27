@@ -197,9 +197,6 @@ public class MGRoomBauCuaTo2 extends MGRoom {
 
     public void botBet(int time, boolean bettingState) {
 
-        // broadcast to clients
-        updateBauCuaPerSecond((byte) time, bettingState, true);
-
         for (BotBauCua b : this.botBC) {
             if (b.getTimeBetting() != time) continue;
 
@@ -413,9 +410,12 @@ public class MGRoomBauCuaTo2 extends MGRoom {
                 lock.unlock();
             }
         }
+        this.sendMessageToRoom(msg);
+    }
+
+    public void storeTimeToCache(byte remainTime, boolean bettingState) {
         cacheService.setValue("BauCuaRemainTime", String.valueOf(remainTime));
         cacheService.setObject("bettingStateBauCua", bettingState);
-        this.sendMessageToRoom(msg);
     }
 
     public long calculatePrizes() {
