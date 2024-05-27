@@ -196,9 +196,12 @@ public class MGRoomBauCuaTo2 extends MGRoom {
 
 
     public void botBet(int time, boolean bettingState) {
+
+        // broadcast to clients
+        updateBauCuaPerSecond((byte) time, bettingState, true);
+
         for (BotBauCua b : this.botBC) {
-            if (b.getTimeBetting() != time)
-                continue;
+            if (b.getTimeBetting() != time) continue;
 
             this.bet(b.getNickname(), b.getBetStr(), bettingState);
 
