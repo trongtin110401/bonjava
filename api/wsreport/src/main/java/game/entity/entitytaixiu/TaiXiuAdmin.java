@@ -8,7 +8,7 @@ public class TaiXiuAdmin implements Serializable {
   long money;
 
   long reportMoneyToday;
-
+  long totalMoney;
   public TaiXiuAdmin(String username, int cuaDat, long money) {
     this.username = username;
     this.cuaDat = cuaDat;
@@ -65,5 +65,13 @@ public class TaiXiuAdmin implements Serializable {
             ", money=" + money +
             ", reportMoneyToday=" + reportMoneyToday +
             '}';
+  }
+
+  public long getTotalMoney() {
+    return totalMoney;
+  }
+
+  public void setTotalMoney(long totalMoney) {
+    this.totalMoney = totalMoney;
   }
 }
