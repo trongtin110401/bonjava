@@ -19,6 +19,7 @@ import game.models.UserModel;
 import game.models.baucuato2.BauCuaListUserResponse;
 import game.models.baucuato2.BauCuaToReportResponse;
 import game.models.baucuato2.BauCuaUserInfomation;
+import game.models.cache.UserCacheModel;
 import game.models.minigame.TopWin;
 import game.service.CacheService;
 import game.ws.*;
@@ -563,8 +564,16 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
                                 taiXiuAdmin.setReportMoneyToday(topWin.getMoney());
                                 if (cache != null) {
                                     userMap = cache.getMap("users");
-                                    taiXiuAdmin.setTotalMoney(userMap.get(topWin.getUsername()).getCurrentMoney("vin"));
-                                } else {
+                                    UserCacheModel user = (UserCacheModel) userMap.get(topWin.getUsername());
+                                    if (user != null) {
+                                        System.out.println("********** User not null and money is " + user.getVinTotal());
+                                        taiXiuAdmin.setTotalMoney(userMap.get(topWin.getUsername()).getCurrentMoney("vin"));
+                                    }
+                                    else {
+                                        System.out.println("********** User Null");
+                                    }
+                                }
+                                else {
                                     System.out.println("********** Cache Null");
                                 }
                             });
