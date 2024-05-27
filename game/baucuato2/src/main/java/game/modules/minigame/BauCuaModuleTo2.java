@@ -177,6 +177,8 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
     private synchronized void gameLoop() {
 
         this.count = (byte) (this.count + 1);
+
+        // update game state each second
         updateGameStatePerSecond();
 
         switch (this.count) {
@@ -206,8 +208,10 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
     }
 
     public void updateGameStatePerSecond() {
+
         for (MGRoom entry : this.rooms.values()) {
             MGRoomBauCuaTo2 room = (MGRoomBauCuaTo2) entry;
+            room.storeTimeToCache((byte) (33 - this.count), this.isBettingRound);
             room.botBet(33 - this.count, this.isBettingRound);
         }
     }
