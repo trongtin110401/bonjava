@@ -430,7 +430,7 @@ public class TaiXiuModule
         taiXiuAdminReportObj.setContributors(this.getRoomTX(typeBet).getListTransaction());
         taiXiuAdminReportObj.setRealTime(this.getRoomTX(typeBet).getRemainTime());
         taiXiuAdminReportObj.setBettingRound(this.getRoomTX(typeBet).bettingRound);
-        List<TaiXiuChatMsg> listChat = new ArrayList<>();
+        List<TaiXiuChatMsg> listChat;
         try {
             listChat = (List<TaiXiuChatMsg>) cacheService.getObject("lstTaiXiuAdminMsg");
         } catch (KeyNotFoundException e) {

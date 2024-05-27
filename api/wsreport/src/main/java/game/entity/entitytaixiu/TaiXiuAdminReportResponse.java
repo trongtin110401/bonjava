@@ -27,6 +27,11 @@ public class TaiXiuAdminReportResponse implements Serializable {
 
   String taiXiuPlainResult;
 
+  Integer dice1;
+  Integer dice2;
+  Integer dice3;
+  String sessionResult;
+
 
   public List<TaiXiuAdmin> getContributors() {
     return contributors;
@@ -168,6 +173,38 @@ public class TaiXiuAdminReportResponse implements Serializable {
 
   public void setTaiXiuPlainResult(String taiXiuPlainResult) {
     this.taiXiuPlainResult = taiXiuPlainResult;
+  }
+
+  public Integer getDice1() {
+    return dice1;
+  }
+
+  public void setDice1(Integer dice1) {
+    this.dice1 = dice1;
+  }
+
+  public Integer getDice2() {
+    return dice2;
+  }
+
+  public void setDice2(Integer dice2) {
+    this.dice2 = dice2;
+  }
+
+  public Integer getDice3() {
+    return dice3;
+  }
+
+  public void setDice3(Integer dice3) {
+    this.dice3 = dice3;
+  }
+
+  public String getSessionResult() {
+    return sessionResult;
+  }
+
+  public void setSessionResult(String sessionResult) {
+    this.sessionResult = sessionResult;
   }
 
   @Override

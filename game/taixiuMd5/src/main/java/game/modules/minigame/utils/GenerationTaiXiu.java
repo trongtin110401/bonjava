@@ -34,9 +34,7 @@ public class GenerationTaiXiu {
     }
 
     public short[] generateResult(short forceBetSide) {
-        int genResult;
         short[] dices;
-        int totalDices;
         int result = forceBetSide;
         Random rd = new Random();
         if (this.cauTX != null && result == -1) {
@@ -50,7 +48,7 @@ public class GenerationTaiXiu {
                 this.cauTX = new CauTaiXiu();
                 String data = this.listCau.get(cau);
                 this.cauTX.setData(data);
-                Debug.trace((Object) ("gd= " + this.cauTX.data));
+                Debug.trace("gd= " + this.cauTX.data);
                 result = this.cauTX.getResultTX();
             } else {
                 dices = this.generateDices();
@@ -65,7 +63,7 @@ public class GenerationTaiXiu {
                 return this.generateResult(forceBetSide);
             return dices; // đoạn này check mới cho return;
         }
-        while ((genResult = (totalDices = (dices = this.generateDices())[0] + dices[1] + dices[2]) > 10 ? 1 : 0) != result) {
+        while (((dices = this.generateDices())[0] + dices[1] + dices[2] > 10 ? 1 : 0) != result) {
         }
         if ((dices[0] + dices[1] + dices[2]) == 18 || (dices[0] + dices[1] + dices[2]) == 3)
             return this.generateResult(forceBetSide);

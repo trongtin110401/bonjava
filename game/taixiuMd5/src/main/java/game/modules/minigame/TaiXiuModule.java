@@ -352,6 +352,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
     // todo : lấy số tiền thực tế người dùng dặt
     public void getUserPotTaiXiu() {
         short typeBet = 1;
+        MGRoomTaiXiu roomVin = this.getRoomTX(typeBet);
         // lấy người chơi đặt tài
         TaiXiuAdminReportObj taiXiuAdminReportObj = new TaiXiuAdminReportObj(this.getRoomTX(typeBet).getUserBetTai(),
                 this.getRoomTX(typeBet).getUserBetXiu(), this.getRoomTX(typeBet).getNumberUserRealTai(), this.getRoomTX(typeBet).getNumberUserRealXiu(),
@@ -366,6 +367,13 @@ public class TaiXiuModule extends BaseClientRequestHandler {
             listChat = (List<TaiXiuChatMsg>) cacheService.getObject("lstTaiXiuAdminMsg");
         } catch (KeyNotFoundException e) {
             listChat = new ArrayList<>();
+        }
+
+        if (roomVin.resultTX != null) {
+            taiXiuAdminReportObj.setDice1(roomVin.resultTX.dice1);
+            taiXiuAdminReportObj.setDice2(roomVin.resultTX.dice2);
+            taiXiuAdminReportObj.setDice3(roomVin.resultTX.dice3);
+            taiXiuAdminReportObj.setSessionResult(roomVin.resultTX.dice1 + roomVin.resultTX.dice2 + roomVin.resultTX.dice3 > 10 ? "TAI" : "XIU");
         }
 
         taiXiuAdminReportObj.setLstMsg(listChat);
