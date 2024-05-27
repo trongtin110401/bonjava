@@ -19,7 +19,6 @@ import game.models.UserModel;
 import game.models.baucuato2.BauCuaListUserResponse;
 import game.models.baucuato2.BauCuaToReportResponse;
 import game.models.baucuato2.BauCuaUserInfomation;
-import game.models.cache.UserCacheModel;
 import game.models.minigame.TopWin;
 import game.service.CacheService;
 import game.ws.*;
