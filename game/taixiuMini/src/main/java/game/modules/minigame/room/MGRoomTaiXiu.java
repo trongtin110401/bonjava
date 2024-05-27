@@ -142,8 +142,6 @@ public class MGRoomTaiXiu
 
     // todo :kết thúc 1 game
     public void finish() {
-        System.out.println("==== Gán Result Null");
-        this.resultTX = null;
         this.startTime = System.currentTimeMillis();
         this.bettingRound = false;
         try {
