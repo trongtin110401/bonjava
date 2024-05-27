@@ -4,6 +4,8 @@ package game.scheduler;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.IMap;
 import game.bean.MapperUtils;
 import game.config.HttpCommon;
 import game.entity.entitytaixiu.TaiXiuAdmin;
@@ -12,9 +14,12 @@ import game.entity.entitytaixiu.TaiXiuAdminReportResponse;
 import game.entity.report.*;
 import game.entity.response.*;
 import game.exceptions.KeyNotFoundException;
+import game.hazelcast.HazelcastClientFactory;
+import game.models.UserModel;
 import game.models.baucuato2.BauCuaListUserResponse;
 import game.models.baucuato2.BauCuaToReportResponse;
 import game.models.baucuato2.BauCuaUserInfomation;
+import game.models.cache.UserCacheModel;
 import game.models.minigame.TopWin;
 import game.service.CacheService;
 import game.ws.*;
@@ -53,10 +58,12 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
     private static final String RECHARGEBYAUTOCARD_ADMIN = "rechargebyautocard_admin";
     private static final String NOTIFY_ADMIN = "notify_admin";
     private static final String EVENTACTION_ADMIN = "eventaction_admin";
-
+    HazelcastInstance cache;
+    IMap<String, UserModel> userMap;
 
     @Autowired
     CacheService cacheService;
+
 
     @Scheduled(fixedRate = 800)
     public void getCacheXocDia() {
@@ -139,7 +146,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             ArrayList<BauCuaUserInfomation> list = MapperUtils.mapper.readValue(cacheService.getValueStr("baucualist"), new TypeReference<ArrayList<BauCuaUserInfomation>>() {
             });
 
-            response.setListBauCuaInformation(getUserBauCua(list,"BauCua"));
+            response.setListBauCuaInformation(getUserBauCua(list, "BauCua"));
             this.sendMessToAdminBauCua(response.toJson());
 
         } catch (KeyNotFoundException e) {
@@ -548,12 +555,21 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             Response response = client.newCall(request).execute();
             if (response.body() != null) {
                 List<TopWin> topWins = getTopWin(response.body().string());
-
+                cache = HazelcastClientFactory.getInstance();
                 for (TopWin topWin : topWins) {
                     userList.stream()
                             .filter(taiXiuAdmin -> taiXiuAdmin.getUsername().equals(topWin.getUsername()))
                             .findFirst()
-                            .ifPresent(taiXiuAdmin -> taiXiuAdmin.setReportMoneyToday(topWin.getMoney()));
+                            .ifPresent(taiXiuAdmin -> {
+                                taiXiuAdmin.setReportMoneyToday(topWin.getMoney());
+                                if (cache != null) {
+                                    userMap = cache.getMap("users");
+                                    UserCacheModel user = (UserCacheModel) userMap.get(topWin.getUsername());
+                                    if (user != null) {
+                                        taiXiuAdmin.setTotalMoney(user.getCurrentMoney("vin"));
+                                    }
+                                }
+                            });
                 }
             }
         } catch (Exception e) {
