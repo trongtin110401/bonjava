@@ -563,21 +563,13 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
                             .ifPresent(taiXiuAdmin -> {
                                 taiXiuAdmin.setReportMoneyToday(topWin.getMoney());
                                 if (cache != null) {
-                                    System.out.println("##################### before get map users");
                                     userMap = cache.getMap("users");
-                                    System.out.println("##################### after get map users");
                                     UserCacheModel user = userMap.get(topWin.getUsername());
                                     System.out.println("@@@@@@@@ " + user.toString());
                                     if (user != null) {
-                                        System.out.println("********** User not null and money is " + user.getVinTotal());
                                         taiXiuAdmin.setTotalMoney(user.getVinTotal());
                                     }
-                                    else {
-                                        System.out.println("********** User Null");
-                                    }
-                                }
-                                else {
-                                    System.out.println("********** Cache Null");
+                                    System.out.println("xxxxxxxxxx money " + taiXiuAdmin.getTotalMoney());
                                 }
                             });
                 }
@@ -619,6 +611,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             e.printStackTrace();
         }
 
+        System.out.println("llllllllllllllll List users " + userList.toString());
         return userList;
     }
 
