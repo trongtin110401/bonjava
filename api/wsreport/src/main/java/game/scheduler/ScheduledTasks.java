@@ -566,8 +566,15 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
                                     userMap = cache.getMap("users");
                                     UserCacheModel user = (UserCacheModel) userMap.get(topWin.getUsername());
                                     if (user != null) {
-                                        taiXiuAdmin.setTotalMoney(user.getCurrentMoney("vin"));
+                                        System.out.println("********** User not null and money is " + user.getVinTotal());
+                                        taiXiuAdmin.setTotalMoney(user.getVinTotal());
                                     }
+                                    else {
+                                        System.out.println("********** User Null");
+                                    }
+                                }
+                                else {
+                                    System.out.println("********** Cache Null");
                                 }
                             });
                 }
