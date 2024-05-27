@@ -406,5 +406,53 @@ implements Serializable {
     public void setCodeGameFailTime(Date codeGameFailTime) {
         this.codeGameFailTime = codeGameFailTime;
     }
+
+    @Override
+    public String toString() {
+        return "UserCacheModel{" +
+                "accessToken='" + accessToken + '\'' +
+                ", lastActive=" + lastActive +
+                ", lastMessageId=" + lastMessageId +
+                ", online=" + online +
+                ", cashout=" + cashout +
+                ", cashoutTime=" + cashoutTime +
+                ", rechargeFail=" + rechargeFail +
+                ", rechargeFailTime=" + rechargeFailTime +
+                ", rechargeMegaCardFail=" + rechargeMegaCardFail +
+                ", rechargeMegaCardFailTime=" + rechargeMegaCardFailTime +
+                ", rechargeVCFail=" + rechargeVCFail +
+                ", rechargeVCFailTime=" + rechargeVCFailTime +
+                ", rechargeVCInDay=" + rechargeVCInDay +
+                ", rechargeVCTime=" + rechargeVCTime +
+                ", apiOTPFail=" + apiOTPFail +
+                ", apiOTPFailTime=" + apiOTPFailTime +
+                ", apiOTPTime=" + apiOTPTime +
+                ", ip='" + ip + '\'' +
+                ", otpApp='" + otpApp + '\'' +
+                ", campaign='" + campaign + '\'' +
+                ", medium='" + medium + '\'' +
+                ", source='" + source + '\'' +
+                ", iapInDay=" + iapInDay +
+                ", iapTime=" + iapTime +
+                ", codeGameFail=" + codeGameFail +
+                ", codeGameFailTime=" + codeGameFailTime +
+                ", addVPTime=" + addVPTime +
+                ", subVPTime=" + subVPTime +
+                ", addVPVinTime=" + addVPVinTime +
+                ", vpEvent=" + vpEvent +
+                ", vpEventReal=" + vpEventReal +
+                ", vpAdd=" + vpAdd +
+                ", vpSub=" + vpSub +
+                ", numAdd=" + numAdd +
+                ", numSub=" + numSub +
+                ", place=" + place +
+                ", placeMax=" + placeMax +
+                ", lastActiveVin=" + lastActiveVin +
+                ", lastActiveXu=" + lastActiveXu +
+                ", Platfrom='" + Platfrom + '\'' +
+                ", exchangeMoneyInDay=" + exchangeMoneyInDay +
+                ", exchangeMoneyTime=" + exchangeMoneyTime +
+                '}';
+    }
 }
 
