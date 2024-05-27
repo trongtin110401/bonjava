@@ -567,7 +567,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
                                     UserModel user = userMap.get(topWin.getUsername());
                                     if (user != null) {
                                         System.out.println("********** User not null and money is " + user.getVinTotal());
-                                        taiXiuAdmin.setTotalMoney(userMap.get(topWin.getUsername()).getCurrentMoney("vin"));
+                                        taiXiuAdmin.setTotalMoney(user.getVinTotal());
                                     }
                                     else {
                                         System.out.println("********** User Null");
