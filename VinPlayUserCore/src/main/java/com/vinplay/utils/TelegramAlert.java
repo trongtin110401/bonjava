@@ -22,6 +22,16 @@ public class TelegramAlert {
         return true;
     }
 
+    public static boolean SendMessageGiftCode(String message) {
+        try {
+            TelegramUtil telegramUtil = new TelegramUtil();
+            telegramUtil.sendMessageNapGiftCode(message);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
     public static boolean SendMessageRut(String message) {
         try {
             TelegramUtil telegramUtil = new TelegramUtil();
@@ -104,7 +114,7 @@ public class TelegramAlert {
         String formattedNumber = numberFormat.format(userGiftCode.getPrice());
         try {
             String message = "Tài khoản <b>" + userGiftCode.getNickname() + "</b> Nhập mã gift code " + userGiftCode.getCode() +" với số B là " + formattedNumber;
-            return SendMessageNap(message);
+            return SendMessageGiftCode(message);
         } catch (Exception e) {
             return false;
         }

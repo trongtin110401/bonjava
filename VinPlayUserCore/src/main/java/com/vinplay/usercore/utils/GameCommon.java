@@ -361,8 +361,10 @@ public class GameCommon {
 
         String telegramToken = alertObj.getString("Telegram_boot_token");
         String telegramChatId = alertObj.getString("Telegram_chat_id");
+        String telegramGiftCodeChatId = alertObj.getString("Telegram_giftcode_id");
         map.put("Telegram_boot_token", (Object)telegramToken);
         map.put("Telegram_chat_id", (Object)telegramChatId);
+        map.put("Telegram_giftcode_id", telegramGiftCodeChatId);
 
 
         JSONObject _1PayObj = new JSONObject(dao.getGameCommon("1pay"));

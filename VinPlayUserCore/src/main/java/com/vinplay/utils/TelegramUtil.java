@@ -102,6 +102,22 @@ public class TelegramUtil {
         }
     }
 
+    public void sendMessageNapGiftCode(String message) {
+        try {
+            String chatId = GameCommon.getValueStr("Telegram_giftcode_id");
+            String bootToken = GameCommon.getValueStr("Telegram_boot_token");
+            OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
+                    .build();
+            Request request = new Request.Builder()
+                    .url("https://api.telegram.org/bot" + bootToken + "/sendMessage?text=" + encodeValue(message) + "&chat_id=" + chatId + "&parse_mode=HTML")
+                    .method("GET", null)
+                    .build();
+            Response response = client.newCall(request).execute();
+        } catch (Exception e) {
+
+        }
+    }
+
     public void sendMessageRut(String message) {
         try {
             String chatId = GameCommon.getValueStr("Telegram_rut_chat_id");

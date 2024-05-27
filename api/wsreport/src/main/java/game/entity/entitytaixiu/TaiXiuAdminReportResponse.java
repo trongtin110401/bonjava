@@ -30,7 +30,7 @@ public class TaiXiuAdminReportResponse implements Serializable {
   Integer dice1;
   Integer dice2;
   Integer dice3;
-  String sessionResult;
+  String sessionResult; // Accept 2 values: TAI | XIU
 
 
   public List<TaiXiuAdmin> getContributors() {
