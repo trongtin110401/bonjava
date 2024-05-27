@@ -451,7 +451,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                         amountBotTaiFake = 0;
                         amountBotXiuFake = 0;
                         this.count = 0;
-
+                        roomTXVin.resultTX = null;
                     } catch (Exception e) {
                         sendLogToTele(e.getMessage());
                         Debug.trace("got bug", e.getCause());
