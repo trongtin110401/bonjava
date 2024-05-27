@@ -563,7 +563,9 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
                             .ifPresent(taiXiuAdmin -> {
                                 taiXiuAdmin.setReportMoneyToday(topWin.getMoney());
                                 if (cache != null) {
+                                    System.out.println("##################### before get map users");
                                     userMap = cache.getMap("users");
+                                    System.out.println("##################### after get map users");
                                     UserModel user = userMap.get(topWin.getUsername());
                                     if (user != null) {
                                         System.out.println("********** User not null and money is " + user.getVinTotal());
