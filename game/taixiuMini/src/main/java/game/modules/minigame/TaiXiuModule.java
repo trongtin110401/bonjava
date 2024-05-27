@@ -443,6 +443,11 @@ public class TaiXiuModule extends BaseClientRequestHandler {
             }
             MGRoomTaiXiu roomTXVin = this.getRoomTX((short) 1);
             roomTXVin.updateTaiXiuPerSecond(amountBotTaiFake, amountBotXiuFake);
+            if(roomTXVin.resultTX == null) {
+                System.out.println("========> RS null");
+            } else {
+                System.out.println("=========> TS not null");
+            }
             MGRoomTaiXiu roomTXXu = this.getRoomTX((short) 0);
             roomTXXu.updateTaiXiuPerSecond(amountBotTaiFake, amountBotXiuFake);
             this.getUserPotTaiXiu();
