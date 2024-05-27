@@ -77,8 +77,6 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             cacheService.removeKey("XocDia_Flag_session");
         } catch (KeyNotFoundException | JsonProcessingException e) {
             e.printStackTrace();
-            System.out.println("loi");
-
         }
     }
 
@@ -96,8 +94,6 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
 
         } catch (KeyNotFoundException | JsonProcessingException e) {
             e.printStackTrace();
-            System.out.println("loi");
-
         }
     }
 
@@ -179,6 +175,10 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             response.setNumberUserAndBotBetXiu(obj.getNumberUserAndBotBetXiu());
             response.setRealTime(obj.getRealTime());
             response.setBettingRound(obj.isBettingRound());
+            response.setDice1(obj.getDice1());
+            response.setDice2(obj.getDice2());
+            response.setDice3(obj.getDice3());
+            response.setSessionResult(obj.getSessionResult());
             if (obj.getLstMsg().size() > 10)
                 obj.getLstMsg().subList(0, obj.getLstMsg().size() - 10).clear();
             response.setLstMsg(obj.getLstMsg());
@@ -217,6 +217,10 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             response.setBettingRound(obj.isBettingRound());
             response.setTaiXiuMd5Hash(obj.getTaiXiuMd5Hash());
             response.setTaiXiuPlainResult(obj.getTaiXiuPlainResult());
+            response.setDice1(obj.getDice1());
+            response.setDice2(obj.getDice2());
+            response.setDice3(obj.getDice3());
+            response.setSessionResult(obj.getSessionResult());
             if (obj.getLstMsg().size() > 10)
                 obj.getLstMsg().subList(0, obj.getLstMsg().size() - 10).clear();
             response.setLstMsg(obj.getLstMsg());
@@ -272,8 +276,6 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             cacheService.removeKey(CASHOUTBYBANK_ADMIN);
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Loi sendCashoutbybankAdmin");
-
         }
 
     }
@@ -301,8 +303,6 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             cacheService.removeKey(CASHOUTBYCARDMANUAL_ADMIN);
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Loi sendCashoutbycardmanualAdmin");
-
         }
 
     }
@@ -330,8 +330,6 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             cacheService.removeKey(RECHARGEBYBANK_ADMIN);
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Loi sendRechargebybankAdmin");
-
         }
 
     }
@@ -359,8 +357,6 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             cacheService.removeKey(RECHARGEBYMOMOSUNVIN_ADMIN);
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Loi RECHARGEBYMOMOSUNVIN_ADMIN");
-
         }
 
     }
@@ -388,8 +384,6 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             cacheService.removeKey(RECHARGEBYONEPAY_ADMIN);
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Loi sendRechargebyonepayAdmin");
-
         }
 
     }
@@ -417,8 +411,6 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             cacheService.removeKey(RECHARGEBYMOMO_ADMIN);
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Loi sendRechargebymomoAdmin");
-
         }
 
     }
@@ -447,8 +439,6 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             cacheService.removeKey(RECHARGEBYONEPAYOTP_ADMIN);
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Loi sendRechargebyonepayAdmin");
-
         }
 
     }
@@ -476,8 +466,6 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             cacheService.removeKey(RECHARGEBYAUTOCARD_ADMIN);
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Loi sendRechargebyautocardAdmin");
-
         }
 
     }
@@ -571,8 +559,6 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        System.out.println("=============== List report TX " + userList);
         return userList;
     }
 
@@ -607,7 +593,6 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             e.printStackTrace();
         }
 
-        System.out.println("=============== List report BauCua " + userList);
         return userList;
     }
 
@@ -616,7 +601,6 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
     }
 
     public List<TopWin> getTopWin(String response) {
-        System.out.println("=============== List response " + response);
         List<TopWin> topWins = new ArrayList<>();
         try {
             JSONObject jsonObject = new JSONObject(response);
