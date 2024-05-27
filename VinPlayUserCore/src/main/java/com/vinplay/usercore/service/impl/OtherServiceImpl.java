@@ -70,6 +70,9 @@ public class OtherServiceImpl implements OtherService {
         if (response.getFanPage() != null && !response.getFanPage().trim().isEmpty()) {
             document.put("fan_page", response.getFanPage());
         }
+        if (response.getGroupTele() != null && !response.getGroupTele().trim().isEmpty()) {
+            document.put("groupTele", response.getGroupTele());
+        }
         if (response.getGroupFacebook() != null && !response.getGroupFacebook().trim().isEmpty()) {
             document.put("group_facebook", response.getGroupFacebook());
         }
