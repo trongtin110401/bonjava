@@ -182,6 +182,10 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
         updateGameStatePerSecond();
 
         switch (this.count) {
+            case 2: {
+                this.isBettingRound = true;
+                break;
+            }
             case 19: {
                 this.isBettingRound = false;
                 genResult = true;
@@ -229,7 +233,6 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
         }
         this.count = 0;
         genResult = true;
-        this.isBettingRound = true;
         this.saveReferences();
     }
 
