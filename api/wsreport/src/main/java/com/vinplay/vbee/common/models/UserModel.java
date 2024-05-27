@@ -437,6 +437,50 @@ implements Serializable {
     public void setManual_quota(long manual_quota) {
         this.manual_quota = manual_quota;
     }
+
+    @Override
+    public String toString() {
+        return "UserModel{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", nickname='" + nickname + '\'' +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                ", facebookId='" + facebookId + '\'' +
+                ", googleId='" + googleId + '\'' +
+                ", mobile='" + mobile + '\'' +
+                ", birthday='" + birthday + '\'' +
+                ", gender=" + gender +
+                ", address='" + address + '\'' +
+                ", vin=" + vin +
+                ", xu=" + xu +
+                ", vinTotal=" + vinTotal +
+                ", xuTotal=" + xuTotal +
+                ", safe=" + safe +
+                ", rechargeMoney=" + rechargeMoney +
+                ", vippoint=" + vippoint +
+                ", daily=" + daily +
+                ", createTime=" + createTime +
+                ", status=" + status +
+                ", banLogin=" + banLogin +
+                ", banCashOut=" + banCashOut +
+                ", canLoginSandbox=" + canLoginSandbox +
+                ", banTransferMoney=" + banTransferMoney +
+                ", hasMobileSecurity=" + hasMobileSecurity +
+                ", hasEmailSecurity=" + hasEmailSecurity +
+                ", hasAppSecurity=" + hasAppSecurity +
+                ", hasLoginSecurity=" + hasLoginSecurity +
+                ", avatar='" + avatar + '\'' +
+                ", identification='" + identification + '\'' +
+                ", vippointSave=" + vippointSave +
+                ", moneyVP=" + moneyVP +
+                ", securityTime=" + securityTime +
+                ", loginOtp=" + loginOtp +
+                ", bot=" + bot +
+                ", client='" + client + '\'' +
+                ", manual_quota=" + manual_quota +
+                '}';
+    }
 }
 
 
