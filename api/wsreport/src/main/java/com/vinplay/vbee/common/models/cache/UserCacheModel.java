@@ -458,7 +458,10 @@ implements Serializable {
                 ", Platfrom='" + Platfrom + '\'' +
                 ", exchangeMoneyInDay=" + exchangeMoneyInDay +
                 ", exchangeMoneyTime=" + exchangeMoneyTime +
-                '}';
+                '}'
+                + "------------------ super ---------------- "
+                + super.toString()
+                ;
     }
 }
 
