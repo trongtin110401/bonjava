@@ -59,7 +59,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
     private static final String NOTIFY_ADMIN = "notify_admin";
     private static final String EVENTACTION_ADMIN = "eventaction_admin";
     HazelcastInstance cache;
-    IMap<String, UserModel> userMap;
+    IMap<String, UserCacheModel> userMap;
 
     @Autowired
     CacheService cacheService;
@@ -566,7 +566,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
                                     System.out.println("##################### before get map users");
                                     userMap = cache.getMap("users");
                                     System.out.println("##################### after get map users");
-                                    UserCacheModel user =(UserCacheModel) userMap.get(topWin.getUsername());
+                                    UserCacheModel user = userMap.get(topWin.getUsername());
                                     System.out.println("@@@@@@@@ " + user.toString());
                                     if (user != null) {
                                         System.out.println("********** User not null and money is " + user.getVinTotal());
