@@ -362,11 +362,11 @@ public class GameCommon {
         String telegramToken = alertObj.getString("Telegram_boot_token");
         String telegramChatId = alertObj.getString("Telegram_chat_id");
         String telegramGiftCodeChatId = alertObj.getString("Telegram_giftcode_id");
-        String urlLeaderBoard = alertObj.getString("url_leaderboard");
+//        String urlLeaderBoard = alertObj.getString("url_leaderboard");
         map.put("Telegram_boot_token", (Object)telegramToken);
         map.put("Telegram_chat_id", (Object)telegramChatId);
         map.put("Telegram_giftcode_id", telegramGiftCodeChatId);
-        map.put("url_leaderboard",urlLeaderBoard);
+//        map.put("url_leaderboard",urlLeaderBoard);
 
 
         JSONObject _1PayObj = new JSONObject(dao.getGameCommon("1pay"));
