@@ -44,7 +44,7 @@ public class HotUpdateController {
     }
 
 
-    @GetMapping("/check")
+    @GetMapping("/config.plist")
     public ResponseEntity<Boolean> check(HttpServletRequest request, HttpServletResponse response) throws IOException, GeoIp2Exception {
 
 
