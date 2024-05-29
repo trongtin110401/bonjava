@@ -6,7 +6,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
-import com.vinplay.vbee.common.models.UserModel;
 import com.vinplay.vbee.common.models.cache.UserCacheModel;
 import game.bean.MapperUtils;
 import game.config.HttpCommon;
@@ -83,7 +82,6 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             cacheService.removeKey("XocDia_Flag_betting");
             cacheService.removeKey("XocDia_Flag_session");
         } catch (KeyNotFoundException | JsonProcessingException e) {
-            e.printStackTrace();
         }
     }
 
@@ -336,6 +334,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             String json = MapperUtils.mapper.writeValueAsString(oResponse);
             this.sendMessRechargebybankToAdmin(json);
             cacheService.removeKey(RECHARGEBYBANK_ADMIN);
+        } catch (KeyNotFoundException e) {
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -363,6 +362,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             String json = MapperUtils.mapper.writeValueAsString(oResponse);
             this.sendMessRechargebymomosunvinToAdmin(json);
             cacheService.removeKey(RECHARGEBYMOMOSUNVIN_ADMIN);
+        } catch (KeyNotFoundException ignored) {
         } catch (Exception e) {
             e.printStackTrace();
         }
