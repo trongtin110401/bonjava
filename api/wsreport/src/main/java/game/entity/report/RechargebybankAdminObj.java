@@ -19,10 +19,12 @@ public class RechargebybankAdminObj implements Serializable {
     public String UserApprove;
     public String UserSender;
 
+    public String QRCode;
+
     public RechargebybankAdminObj() {
     }
 
-    public RechargebybankAdminObj(String id, String nickname, String createdAt, String updatedAt, long amount, int status, String bankBrandName, String bankAccountNumber, String bankAccountName, String description, String userApprove, String userSender) {
+    public RechargebybankAdminObj(String id, String nickname, String createdAt, String updatedAt, long amount, int status, String bankBrandName, String bankAccountNumber, String bankAccountName, String description, String userApprove, String userSender, String QRCode) {
         Id = id;
         Nickname = nickname;
         CreatedAt = createdAt;
@@ -35,6 +37,7 @@ public class RechargebybankAdminObj implements Serializable {
         Description = description;
         UserApprove = userApprove;
         UserSender = userSender;
+        this.QRCode = QRCode;
     }
 
     public String getId() {
@@ -131,6 +134,14 @@ public class RechargebybankAdminObj implements Serializable {
 
     public void setUserSender(String userSender) {
         UserSender = userSender;
+    }
+
+    public String getQRCode() {
+        return QRCode;
+    }
+
+    public void setQRCode(String QRCode) {
+        this.QRCode = QRCode;
     }
 
     public String toJson() {
