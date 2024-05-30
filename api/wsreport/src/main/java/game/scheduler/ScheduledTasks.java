@@ -46,8 +46,8 @@ import java.util.stream.Collectors;
 public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho nhung cai thay doi lien tuc nhu thoi gian cua game thoi ko nen dung cho nhung thang co event
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
     private static final String USER_TAI_XIU = "user_tai_xiu";
-    private static final String SC_TAI_XIU = "sc_tai_xiu";
-    private static final String SC_TAI_XIU_MD5 = "sc_tai_xiu_md5";
+    private static final String SC_TAI_XIU = "SC_TAI_XIU";
+    private static final String SC_TAI_XIU_MD5 = "SC_TAI_XIU_MD5";
     private static final String USER_TAI_XIU_MD5 = "user_tai_xiu_md5";
     private static final String CASHOUTBYBANK_ADMIN = "cashoutbybank_admin";
     private static final String CASHOUTBYCARDMANUAL_ADMIN = "cashoutbycardmanual_admin";
