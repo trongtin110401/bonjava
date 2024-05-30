@@ -8,6 +8,7 @@ import java.util.ArrayList;
 public class TaiXiuReportResponse {
     String code;
     ArrayList<TaiXiuAdminReportResponse> reportResponses;
+    String resultStats;
 
     public TaiXiuReportResponse() {
     }
@@ -20,9 +21,10 @@ public class TaiXiuReportResponse {
         this.reportResponses = reportResponses;
     }
 
-    public TaiXiuReportResponse(String code, ArrayList<TaiXiuAdminReportResponse> taiXiuAdminReportObjs) {
+    public TaiXiuReportResponse(String code, ArrayList<TaiXiuAdminReportResponse> taiXiuAdminReportObjs, String resultStats) {
         this.code = code;
         this.reportResponses = taiXiuAdminReportObjs;
+        this.resultStats = resultStats;
     }
 
     public String getCode() {

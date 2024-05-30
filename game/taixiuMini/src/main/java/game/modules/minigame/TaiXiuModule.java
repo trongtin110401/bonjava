@@ -78,14 +78,12 @@ import org.apache.log4j.Logger;
 
 import java.io.*;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class TaiXiuModule extends BaseClientRequestHandler {
     private static final Logger logger = Logger.getLogger(TaiXiuModule.class);
@@ -420,6 +418,13 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         taiXiuAdminReportObj.setGetListChatUsers(this.getListChatUsers());
         cacheService.setValue("user_tai_xiu", taiXiuAdminReportObj.toJson());
         cacheService.setObject("lstTaiXiuAdminMsg", new ArrayList<>());
+
+        // thông tin soi cầu
+        String sc = lichSuPhienTX.stream()
+                .skip(Math.max(0, lichSuPhienTX.size() - 20))
+                .map(resultTaiXiu -> resultTaiXiu.dice1 + resultTaiXiu.dice2 + resultTaiXiu.dice3 > 10 ? "T" : "X")
+                .collect(Collectors.joining(","));
+        cacheService.setValue("SC_TAI_XIU", sc);
     }
 
     public List<String> getListChatUsers() {

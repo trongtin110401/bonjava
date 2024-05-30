@@ -82,6 +82,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class TaiXiuModule extends BaseClientRequestHandler {
     private Map<String, MGRoom> rooms = new HashMap<String, MGRoom>();
@@ -382,6 +383,13 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         taiXiuAdminReportObj.setTaiXiuPlainResult(roomVin.resultTX.getPlantTextResult());
         cacheService.setValue("user_tai_xiu_md5", taiXiuAdminReportObj.toJson());
         cacheService.setObject("lstTaiXiuAdminMsg", new ArrayList<>());
+
+        // thông tin soi cầu
+        String sc = lichSuPhienTX.stream()
+                .skip(Math.max(0, lichSuPhienTX.size() - 20))
+                .map(resultTaiXiu -> resultTaiXiu.dice1 + resultTaiXiu.dice2 + resultTaiXiu.dice3 > 10 ? "T" : "X")
+                .collect(Collectors.joining(","));
+        cacheService.setValue("SC_TAI_XIU_MD5", sc);
     }
 
     public List<String> getListChatUsers() {
