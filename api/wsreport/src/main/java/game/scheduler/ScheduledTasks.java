@@ -198,8 +198,6 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             } catch (Exception ex) {
             }
 
-            System.out.println("=====> SC: " + sc);
-
             TaiXiuReportResponse oResponse = new TaiXiuReportResponse("2", lstTaiXiuAdminReportObjs, sc);
 
             String json = MapperUtils.mapper.writeValueAsString(oResponse);
