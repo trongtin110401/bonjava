@@ -194,22 +194,8 @@ public class MGRoomTaiXiu
 
     // todo : bet tài xỉu
     public void betTaiXiu(User user, BetTaiXiuCmd cmd) {
-        BetTaiXiuMsg msg = this.betTaiXiu(user.getName(), cmd.userId, cmd.betValue, cmd.inputTime, cmd.moneyType, cmd.betSide, false);
+        BetTaiXiuMsg msg = this.betTaiXiu(user.getName(), cmd.userId, cmd.betValue, cmd.inputTime, cmd.moneyType, cmd.betSide, false, cmd.referenceId);
         this.sendMessageToUser((BaseMsg) msg, user); // todo : gửi message về client
-        try {
-            if (cmd.betValue <= 0) {
-                return;
-            }
-            BetTXMD5Message message = new BetTXMD5Message();
-            message.setBetSide(cmd.betSide);
-            message.setNickname(user.getName());
-            message.setBetValue(cmd.betValue);
-            message.setReferenceId(cmd.referenceId);
-            message.setUserId(user.getId());
-            RMQApi.publishMessage("queue_message_tx", message, 50);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     private boolean CheckQuota(String nick_name, boolean seven_days) {
@@ -274,7 +260,7 @@ public class MGRoomTaiXiu
     }
 
     // todo : đặt tài xỉu
-    public BetTaiXiuMsg betTaiXiu(String nickname, int userId, long betValue, short inputTime, short moneyType, short betSide, boolean isBot) {
+    public BetTaiXiuMsg betTaiXiu(String nickname, int userId, long betValue, short inputTime, short moneyType, short betSide, boolean isBot, long referenceId) {
         if (!isBot && moneyType == 1) {
             if (betSide == 1) {
                 soTienNguoiChoiDatTai += betValue; // người chơi đặt tài
@@ -300,6 +286,17 @@ public class MGRoomTaiXiu
                         if (!isBot) { // trừ tiền đặt cược
                             res = this.userService.updateMoney(nickname, -betValue, this.moneyTypeStr, "TaiXiu", "T\u00e0i x\u1ec9u: \u0110\u1eb7t c\u01b0\u1ee3c", "Phii\u00ean " + this.referenceId + ": \u0111\u1eb7t " + betSideStr + " (" + inputTime + ")", 0L, Long.valueOf(this.referenceId), TransType.START_TRANS);
 
+                            try {
+                                BetTXMD5Message message = new BetTXMD5Message();
+                                message.setBetSide(betSide);
+                                message.setNickname(nickname);
+                                message.setBetValue(betValue);
+                                message.setReferenceId(referenceId);
+                                message.setUserId(userId);
+                                RMQApi.publishMessage("queue_message_tx", message, 50);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         } else {
                             res.setSuccess(true);
                         }
