@@ -8,6 +8,7 @@ import java.util.ArrayList;
 public class TaiXiuReportResponse {
     String code;
     ArrayList<TaiXiuAdminReportResponse> reportResponses;
+
     String resultStats;
 
     public TaiXiuReportResponse() {
@@ -35,5 +36,11 @@ public class TaiXiuReportResponse {
         this.code = code;
     }
 
+    public String getResultStats() {
+        return resultStats;
+    }
 
+    public void setResultStats(String resultStats) {
+        this.resultStats = resultStats;
+    }
 }
