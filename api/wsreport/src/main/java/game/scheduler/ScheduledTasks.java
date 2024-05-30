@@ -46,6 +46,8 @@ import java.util.stream.Collectors;
 public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho nhung cai thay doi lien tuc nhu thoi gian cua game thoi ko nen dung cho nhung thang co event
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
     private static final String USER_TAI_XIU = "user_tai_xiu";
+    private static final String SC_TAI_XIU = "sc_tai_xiu";
+    private static final String SC_TAI_XIU_MD5 = "sc_tai_xiu_md5";
     private static final String USER_TAI_XIU_MD5 = "user_tai_xiu_md5";
     private static final String CASHOUTBYBANK_ADMIN = "cashoutbybank_admin";
     private static final String CASHOUTBYCARDMANUAL_ADMIN = "cashoutbycardmanual_admin";
@@ -164,6 +166,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
     @Scheduled(fixedRate = 1000)
     public void sendTXAdmin() {
         try {
+            // Thông tin phiên
             ArrayList<TaiXiuAdminReportResponse> lstTaiXiuAdminReportObjs = new ArrayList<>();
             TaiXiuAdminReportObj obj = MapperUtils.mapper.readValue(cacheService.getValueStr(USER_TAI_XIU), TaiXiuAdminReportObj.class);
             TaiXiuAdminReportResponse response = new TaiXiuAdminReportResponse();
@@ -187,9 +190,19 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
                 obj.getLstMsg().subList(0, obj.getLstMsg().size() - 10).clear();
             response.setLstMsg(obj.getLstMsg());
             lstTaiXiuAdminReportObjs.add(response);
-            TaiXiuReportResponse oResponse = new TaiXiuReportResponse("2", lstTaiXiuAdminReportObjs);
+
+            // thông tin soi cầu
+            String sc = null;
+            try {
+                sc = cacheService.getValueStr(SC_TAI_XIU);
+            } catch (Exception ex) {
+            }
+
+            TaiXiuReportResponse oResponse = new TaiXiuReportResponse("2", lstTaiXiuAdminReportObjs, sc);
+
             String json = MapperUtils.mapper.writeValueAsString(oResponse);
             this.sendMessTXToAdmin(json);
+
             cacheService.removeKey(USER_TAI_XIU);
         } catch (Exception e) {
             e.printStackTrace();
@@ -204,6 +217,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
     @Scheduled(fixedRate = 1000)
     public void sendTXMD5Admin() {
         try {
+            // thông tin phiên
             ArrayList<TaiXiuAdminReportResponse> lstTaiXiuAdminReportObjs = new ArrayList<>();
             TaiXiuAdminReportObj obj = MapperUtils.mapper.readValue(cacheService.getValueStr(USER_TAI_XIU_MD5), TaiXiuAdminReportObj.class);
             TaiXiuAdminReportResponse response = new TaiXiuAdminReportResponse();
@@ -229,7 +243,16 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
                 obj.getLstMsg().subList(0, obj.getLstMsg().size() - 10).clear();
             response.setLstMsg(obj.getLstMsg());
             lstTaiXiuAdminReportObjs.add(response);
-            TaiXiuReportResponse oResponse = new TaiXiuReportResponse("2", lstTaiXiuAdminReportObjs);
+
+            // thông tin soi cầu
+            // thông tin soi cầu
+            String sc = null;
+            try {
+                sc = cacheService.getValueStr(SC_TAI_XIU_MD5);
+            } catch (Exception ex) {
+            }
+            TaiXiuReportResponse oResponse = new TaiXiuReportResponse("2", lstTaiXiuAdminReportObjs, sc);
+
             String json = MapperUtils.mapper.writeValueAsString(oResponse);
             this.sendMessTXMd5ToAdmin(json);
             cacheService.removeKey(USER_TAI_XIU_MD5);
