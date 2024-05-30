@@ -6,7 +6,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
-import com.vinplay.vbee.common.models.UserModel;
 import com.vinplay.vbee.common.models.cache.UserCacheModel;
 import game.bean.MapperUtils;
 import game.config.HttpCommon;
@@ -83,7 +82,6 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             cacheService.removeKey("XocDia_Flag_betting");
             cacheService.removeKey("XocDia_Flag_session");
         } catch (KeyNotFoundException | JsonProcessingException e) {
-            e.printStackTrace();
         }
     }
 
@@ -132,7 +130,6 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             cacheService.removeKey("BauCuareferenceId");
             cacheService.removeKey("BauCuaRemainTime");
         } catch (KeyNotFoundException e) {
-            e.printStackTrace();
         }
 
 
@@ -281,6 +278,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             String json = MapperUtils.mapper.writeValueAsString(oResponse);
             this.sendMessCashoutbybankToAdmin(json);
             cacheService.removeKey(CASHOUTBYBANK_ADMIN);
+        } catch (KeyNotFoundException e) {
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -308,6 +306,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             String json = MapperUtils.mapper.writeValueAsString(oResponse);
             this.sendMessCashoutbycardmanualToAdmin(json);
             cacheService.removeKey(CASHOUTBYCARDMANUAL_ADMIN);
+        } catch (KeyNotFoundException e) {
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -335,6 +334,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             String json = MapperUtils.mapper.writeValueAsString(oResponse);
             this.sendMessRechargebybankToAdmin(json);
             cacheService.removeKey(RECHARGEBYBANK_ADMIN);
+        } catch (KeyNotFoundException e) {
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -362,6 +362,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             String json = MapperUtils.mapper.writeValueAsString(oResponse);
             this.sendMessRechargebymomosunvinToAdmin(json);
             cacheService.removeKey(RECHARGEBYMOMOSUNVIN_ADMIN);
+        } catch (KeyNotFoundException ignored) {
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -389,6 +390,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             String json = MapperUtils.mapper.writeValueAsString(oResponse);
             this.sendMessRechargebyonepayToAdmin(json);
             cacheService.removeKey(RECHARGEBYONEPAY_ADMIN);
+        } catch (KeyNotFoundException e) {
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -416,6 +418,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             String json = MapperUtils.mapper.writeValueAsString(oResponse);
             this.sendMessRechargebymomoToAdmin(json);
             cacheService.removeKey(RECHARGEBYMOMO_ADMIN);
+        } catch (KeyNotFoundException e) {
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -444,6 +447,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             String json = MapperUtils.mapper.writeValueAsString(oResponse);
             this.sendMessRechargebyonepayotpToAdmin(json);
             cacheService.removeKey(RECHARGEBYONEPAYOTP_ADMIN);
+        } catch (KeyNotFoundException e) {
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -464,17 +468,16 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
      */
     @Scheduled(fixedRate = 1000)
     public void sendRechargebyautocardAdmin() {
-
         try {
             RechargebyautocardAdminObj obj = MapperUtils.mapper.readValue(cacheService.getValueStr(RECHARGEBYAUTOCARD_ADMIN), RechargebyautocardAdminObj.class);
             RechargebyautocardReportResponse oResponse = new RechargebyautocardReportResponse("2", obj);
             String json = MapperUtils.mapper.writeValueAsString(oResponse);
             this.sendMessRechargebyautocardToAdmin(json);
             cacheService.removeKey(RECHARGEBYAUTOCARD_ADMIN);
+        } catch (KeyNotFoundException e) {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     private void sendMessRechargebyautocardToAdmin(String mess) {

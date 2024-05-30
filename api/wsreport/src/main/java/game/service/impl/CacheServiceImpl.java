@@ -56,8 +56,9 @@ public class CacheServiceImpl
         if (map.containsKey((Object) key)) {
             map.remove((Object) key);
             return true;
+        } else {
+            return false;
         }
-        throw new KeyNotFoundException();
     }
 
     @Override
