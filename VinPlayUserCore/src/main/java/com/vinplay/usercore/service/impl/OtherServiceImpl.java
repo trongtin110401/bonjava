@@ -329,7 +329,11 @@ public class OtherServiceImpl implements OtherService {
             userLoseByDay.setMoneyCashBack(document.getInteger("cashBack"));
             userLoseByDay.setCreatedDate(document.getString("createdDate"));
             userLoseByDay.setExpirationDate(document.getString("expirationDate"));
-            userLoseByDay.setStatus(document.getBoolean("status"));
+            if (document.getBoolean("status") == null){
+                userLoseByDay.setStatus(false);
+            }else {
+                userLoseByDay.setStatus(document.getBoolean("status"));
+            }
             userLoseByDay.setActiveDate(document.getString("activeDate"));
             users.add(userLoseByDay);
         }

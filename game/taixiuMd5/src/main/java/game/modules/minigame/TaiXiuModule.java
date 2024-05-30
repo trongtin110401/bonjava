@@ -334,7 +334,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         for (BotTaiXiu b : this.botsVin) {
             if (b.getTimeBetting() != 60 - count) continue;
             if (!ArrayUtils.contains(strs, b.getNickname())) {
-                roomVin.betTaiXiu(b.getNickname(), 0, b.getBetValue(), b.getTimeBetting(), (short) 1, b.getBetSide(), true);
+                roomVin.betTaiXiu(b.getNickname(), 0, b.getBetValue(), b.getTimeBetting(), (short) 1, b.getBetSide(), true, 0);
             }
         }
     }
