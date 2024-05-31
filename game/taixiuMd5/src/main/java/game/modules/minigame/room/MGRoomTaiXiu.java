@@ -184,15 +184,12 @@ public class MGRoomTaiXiu extends MGRoom {
 
     // todo : bet tài xỉu
     public void betTaiXiu(User user, BetTaiXiuCmd cmd) {
-        BetTaiXiuMsg msg = this.betTaiXiu(user.getName(), cmd.userId, cmd.betValue, cmd.inputTime, cmd.moneyType, cmd.betSide, false, referenceId);
+        BetTaiXiuMsg msg = this.betTaiXiu(user.getName(), user.getId(), cmd.betValue, cmd.inputTime, cmd.moneyType, cmd.betSide, false, referenceId);
         this.sendMessageToUser((BaseMsg) msg, user); // todo : gửi message về client
     }
 
     // todo : đặt tài xỉu
     public BetTaiXiuMsg betTaiXiu(String nickname, int userId, long betValue, short inputTime, short moneyType, short betSide, boolean isBot, long referenceId) {
-        if (!isBot){
-            System.out.println("TESTTTTTTTTTTTTT USERID " + userId);
-        }
         long currentMoney = 0L;
         int result = 2;
         if (this.enableBetting) {
