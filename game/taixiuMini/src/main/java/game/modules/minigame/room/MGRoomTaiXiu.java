@@ -194,7 +194,7 @@ public class MGRoomTaiXiu
 
     // todo : bet tài xỉu
     public void betTaiXiu(User user, BetTaiXiuCmd cmd) {
-        BetTaiXiuMsg msg = this.betTaiXiu(user.getName(), cmd.userId, cmd.betValue, cmd.inputTime, cmd.moneyType, cmd.betSide, false, cmd.referenceId);
+        BetTaiXiuMsg msg = this.betTaiXiu(user.getName(), user.getId(), cmd.betValue, cmd.inputTime, cmd.moneyType, cmd.betSide, false, cmd.referenceId);
         this.sendMessageToUser((BaseMsg) msg, user); // todo : gửi message về client
     }
 
