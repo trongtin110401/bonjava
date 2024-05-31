@@ -44,20 +44,21 @@ public class TeleAuthentication extends TelegramLongPollingBot {
                 UserTele u = getInfoByChatID(chatId);
                 if (u != null && !Objects.equals(u.getNickname(), nickname)) {
                     textMessage = "Tele đã liên kết với 1 tài khoản khác, hãy thử bằng 1 tele khác";
+                    sendPhoneAndOTPRequest(chatId, textMessage);
                 } else {
+                    textMessage = "Chào mừng bạn " + nickname + " đến với Bon.win";
+                    sendPhoneAndOTPRequest(chatId, textMessage);
                     UserTele userTele = getInfoByNickname(nickname);
-                    if (userTele != null) {
-                        textMessage = "Xin chào " + userTele.getNickname() + " đến với Bon.win";
-                    } else {
-                        textMessage = "Xin chào bạn đến với Bon.win";
+                    if (userTele == null) {
                         saveUserInfo(nickname, chatId);
                     }
+                    String otp = generateOTP();
+                    sendOTP(chatId, otp);
+                    saveOTP(chatId, otp);
                 }
 
-                sendPhoneAndOTPRequest(chatId, textMessage);
-
             }
-            if (message.getText().equals("Nhận OTP")) {
+            if (message.getText().equals("Lấy lại mã kích hoạt")) {
                 String otp = generateOTP();
                 sendOTP(chatId, otp);
                 saveOTP(chatId, otp);
@@ -95,7 +96,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
         keyboard.add(phoneRow);
         KeyboardRow otpRow = new KeyboardRow();
         KeyboardButton otpButton = new KeyboardButton();
-        otpButton.setText("Nhận OTP");
+        otpButton.setText("Lấy lại mã kích hoạt");
         otpRow.add(otpButton);
         keyboard.add(otpRow);
         keyboardMarkup.setKeyboard(keyboard);
@@ -229,7 +230,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
     private void sendOTP(String chatId, String otp) {
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
-        message.setText("Mã OTP của bạn là: " + otp + " và có hiệu lực trong vòng 5 phút.");
+        message.setText("Mã OTP của bạn là : " + otp + " và có hiệu lực trong vòng 5 phút.");
         try {
             execute(message);
         } catch (TelegramApiException e) {
