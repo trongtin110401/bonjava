@@ -190,6 +190,9 @@ public class MGRoomTaiXiu extends MGRoom {
 
     // todo : đặt tài xỉu
     public BetTaiXiuMsg betTaiXiu(String nickname, int userId, long betValue, short inputTime, short moneyType, short betSide, boolean isBot, long referenceId) {
+        if (!isBot){
+            System.out.println("TESTTTTTTTTTTTTT USERID " + userId);
+        }
         long currentMoney = 0L;
         int result = 2;
         if (this.enableBetting) {
