@@ -114,8 +114,6 @@ public class BentleyModule extends SlotModule {
 
     @Override
     public void handleClientRequest(User user, DataCmd dataCmd) {
-        Debug.trace("Avenger handleClientRequest " + dataCmd.getId());
-
         switch (dataCmd.getId()) {
             case 4003: {
                 this.subScribe(user, dataCmd);

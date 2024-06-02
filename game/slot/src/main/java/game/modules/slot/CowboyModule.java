@@ -47,7 +47,6 @@ public class CowboyModule extends Slot25BasicModule {
 
     @Override
     public void handleClientRequest(User user, DataCmd dataCmd) {
-        Debug.trace("COWBOY handleClientRequest " + dataCmd.getId());
         switch (dataCmd.getId()) {
             case SlotCMD.SUBSCRIBE_COWBOY: {
                 this.subScribe(user, dataCmd);

@@ -47,7 +47,6 @@ public class LadyNightModule extends Slot20ExtendModule {
 
     @Override
     public void handleClientRequest(User user, DataCmd dataCmd) {
-        Debug.trace("LadyNight handleClientRequest " + dataCmd.getId());
         switch (dataCmd.getId()) {
             case SlotCMD.SUBSCRIBE_LADY_NIGHT: {
                 this.subScribe(user, dataCmd);

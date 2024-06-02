@@ -162,8 +162,6 @@ public class TamHungModule
 
     @Override
     public void handleClientRequest(User user, DataCmd dataCmd) {
-        Debug.trace("TamHung handleClientRequest " + dataCmd.getId());
-
         switch (dataCmd.getId()) {
             case 14003: {
                 this.subScribe(user, dataCmd);

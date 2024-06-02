@@ -101,7 +101,6 @@ public class Slot3x3ExtendModule extends BaseClientRequestHandler {
     }
 
     public void handleClientRequest(User user, DataCmd dataCmd) {
-        System.out.println("handleClientRequest " + dataCmd.getId());
         switch (dataCmd.getId()) {
             case MiniGameCMD.CMD_SLOT_EXTEND_SUB:
                 subScribeSlotExtend(user, dataCmd);

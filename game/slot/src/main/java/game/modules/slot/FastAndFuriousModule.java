@@ -47,7 +47,6 @@ public class FastAndFuriousModule extends Slot25ExtendModule {
 
     @Override
     public void handleClientRequest(User user, DataCmd dataCmd) {
-        Debug.trace("FastAndFurious handleClientRequest " + dataCmd.getId());
         switch (dataCmd.getId()) {
             case SlotCMD.SUBSCRIBE_FAST_AND_FURIOUS: {
                 this.subScribe(user, dataCmd);
