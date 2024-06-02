@@ -1,6 +1,7 @@
 package com.vinplay.vbee.rmq.report.processor;
 
 import com.vinplay.common.HttpCommon;
+import com.vinplay.usercore.utils.GameCommon;
 import com.vinplay.vbee.dto.TopVinhDanhDto;
 import okhttp3.*;
 
@@ -29,8 +30,10 @@ public class TopVinhDanhProcessor {
                         .build();
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, topVinhDanh.toJson());
+                String host = GameCommon.getValueStr("url_leaderboard");
+
                 Request request = new Request.Builder()
-                        .url("http://localhost:8087/leaderboard?boardName")
+                        .url("http://"+host+":8087/leaderboard?boardName")
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();

@@ -2,6 +2,7 @@ package com.vinplay.api.processors;
 
 import com.vinplay.api.constants.TypeVinhDanhConstants;
 import com.vinplay.api.processors.minigame.response.TopVinhDanhResponse;
+import com.vinplay.usercore.utils.GameCommon;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.models.minigame.TopWin;
@@ -48,8 +49,8 @@ public class GetTopVinhDanhByGameNameProcessor
             OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
                     .build();
             String typeDate = getDate(type);
-
-            String url = "http://localhost:8087/leaderboard?boardName=" + boardName + "_" + typeDate + "&pageIndex=" + pageIndex + "&pageSize=" + pageSize;
+            String host = GameCommon.getValueStr("url_leaderboard");
+            String url = "http://" + host + ":8087/leaderboard?boardName=" + boardName + "_" + typeDate + "&pageIndex=" + pageIndex + "&pageSize=" + pageSize;
             Request rq = new Request.Builder()
                     .url(url)
                     .method("GET", null)
