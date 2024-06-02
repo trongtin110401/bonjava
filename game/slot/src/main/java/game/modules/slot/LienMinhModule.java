@@ -47,7 +47,6 @@ public class LienMinhModule extends Slot20Module {
 
     @Override
     public void handleClientRequest(User user, DataCmd dataCmd) {
-        Debug.trace("LienMinhHuyenThoai handleClientRequest " + dataCmd.getId());
         switch (dataCmd.getId()) {
             case SlotCMD.SUBSCRIBE_LIEN_MINH: {
                 this.subScribe(user, dataCmd);

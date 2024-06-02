@@ -47,7 +47,6 @@ public class BongLaiCacModule extends Slot25ExtendModule {
 
     @Override
     public void handleClientRequest(User user, DataCmd dataCmd) {
-        Debug.trace("LadyNight handleClientRequest " + dataCmd.getId());
         switch (dataCmd.getId()) {
             case SlotCMD.SUBSCRIBE_BLC: {
                 this.subScribe(user, dataCmd);

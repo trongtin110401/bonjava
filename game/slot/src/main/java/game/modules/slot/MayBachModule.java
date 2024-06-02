@@ -138,8 +138,6 @@ public class MayBachModule extends SlotModule {
 
     @Override
     public void handleClientRequest(User user, DataCmd dataCmd) {
-        Debug.trace(this.gameName + " handleClientRequest " + dataCmd.getId());
-
         switch (dataCmd.getId()) {
             case 3003: {
                 this.subScribe(user, dataCmd);

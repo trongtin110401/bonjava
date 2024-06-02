@@ -47,7 +47,6 @@ public class SexyDanceModule extends Slot25ExtendModule {
 
     @Override
     public void handleClientRequest(User user, DataCmd dataCmd) {
-        Debug.trace("SexyDance handleClientRequest " + dataCmd.getId());
         switch (dataCmd.getId()) {
             case SlotCMD.SUBSCRIBE_SEXY_DANCE: {
                 this.subScribe(user, dataCmd);

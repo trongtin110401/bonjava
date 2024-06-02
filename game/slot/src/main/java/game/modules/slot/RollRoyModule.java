@@ -162,8 +162,6 @@ public class RollRoyModule extends SlotModule {
 
     @Override
     public void handleClientRequest(User user, DataCmd dataCmd) {
-        Debug.trace(this.gameName + "handleClientRequest " + dataCmd.getId());
-
         switch (dataCmd.getId()) {
             case 5003: {
                 this.subScribe(user, dataCmd);

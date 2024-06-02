@@ -112,7 +112,6 @@ public class SpartanModule
 
     @Override
     public void handleClientRequest(User user, DataCmd dataCmd) {
-        Debug.trace("Spartan  handleClientRequest " + dataCmd.getId());
         switch (dataCmd.getId()) {
             case 12003: {
                 this.subScribe(user, dataCmd);

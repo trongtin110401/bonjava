@@ -158,8 +158,6 @@ public class RangeRoverModule
 
     @Override
     public void handleClientRequest(User user, DataCmd dataCmd) {
-        Debug.trace("audition handleClientRequest " + dataCmd.getId());
-
         switch (dataCmd.getId()) {
             case 13003: {
                 this.subScribe(user, dataCmd);

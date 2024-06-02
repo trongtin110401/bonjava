@@ -140,9 +140,6 @@ public class AuditionModule
 
     @Override
     public void handleClientRequest(User user, DataCmd dataCmd) {
-        Debug.trace("audition handleClientRequest " + dataCmd.getId());
-        System.out.println("Game name : " + this.gameName);
-
         switch (dataCmd.getId()) {
             case 2003: {
                 this.subScribe(user, dataCmd);
