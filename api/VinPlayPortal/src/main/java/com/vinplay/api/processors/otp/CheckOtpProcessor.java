@@ -39,7 +39,7 @@ public class CheckOtpProcessor implements BaseProcessor<HttpServletRequest, Stri
                 BaseResponseModel model = service.checkOTP(nickname, otp);
                 if (model.isSuccess()){
                     UserTele userTele = getInfoByNickname(nickname);
-                    sendMessage(userTele.getChatID(), "Xin chào " + nickname + " b?n ?ã kích ho?t telegram OTP thành công");
+                    sendMessage(userTele.getChatID(), "Xin chÃ o " + nickname + " báº¡n Ä‘Ã£ kÃ­ch hoáº¡t telegram OTP thÃ nh cÃ´ng");
                 }
                 return model.toJson();
             } catch (Exception e) {
