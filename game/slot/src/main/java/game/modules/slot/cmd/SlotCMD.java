@@ -79,7 +79,7 @@ public class SlotCMD {
     public static final short LADY_NIGHT_MINIMIZE = 5013;
     public static final short LADY_NIGHT_RESULT_MINIMIZE = 5014;
 
-    // Fast And Furious
+    // Sexy Dance
     public static final short PLAY_SEXY_DANCE = 6001;
     public static final short UPDATE_POT_SEXY_DANCE = 6002;
     public static final short SUBSCRIBE_SEXY_DANCE = 6003;
@@ -95,6 +95,21 @@ public class SlotCMD {
     public static final short SEXY_DANCE_MINIMIZE = 6013;
     public static final short SEXY_DANCE_RESULT_MINIMIZE = 6014;
 
+    // Bong Lai Cac
+    public static final short PLAY_BLC = 7001;
+    public static final short UPDATE_POT_BLC = 7002;
+    public static final short SUBSCRIBE_BLC = 7003;
+    public static final short UNSUBSCRIBE_BLC = 7004;
+    public static final short CHANGE_ROOM_BLC = 7005;
+    public static final short AUTO_PLAY_BLC = 7006;
+    public static final short STOP_PLAY_BLC = 7007;
+    public static final short FORCE_STOP_PLAY_BLC = 7008;
+    public static final short BLC_INFO = 7009;
+    public static final short BIG_WIN_BLC = 7010;
+    public static final short BLC_TOTAL_FREE_SPIN = 7011;
+    public static final short BLC_FREE_DAILY = 7012;
+    public static final short BLC_MINIMIZE = 7013;
+    public static final short BLC_RESULT_MINIMIZE = 7014;
 
 
     public static final short PLAY_VQV = 5001;

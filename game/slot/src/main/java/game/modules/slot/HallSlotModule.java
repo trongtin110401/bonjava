@@ -110,6 +110,9 @@ public class HallSlotModule extends BaseClientRequestHandler {
         JSONObject jsonSexyDance = this.buildGameSlotInfo(Games.SEXY_DANCE.getName());
         json.put(Games.SEXY_DANCE.getName(), jsonSexyDance);
 
+        JSONObject jsonBLC = this.buildGameSlotInfo(Games.BONG_LAI_CAC.getName());
+        json.put(Games.BONG_LAI_CAC.getName(), jsonBLC);
+
         return json.toJSONString();
     }
 

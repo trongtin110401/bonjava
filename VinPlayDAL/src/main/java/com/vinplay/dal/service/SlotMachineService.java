@@ -53,6 +53,8 @@ public interface SlotMachineService {
 
     void logLadyNight(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) throws IOException, TimeoutException, InterruptedException;
 
+    void logBLC(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) throws IOException, TimeoutException, InterruptedException;
+
     public int countLSDG(String var1, String var2);
 
     public List<LSGDPokeGo> getLSGD(String var1, String var2, int var3);
