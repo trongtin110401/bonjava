@@ -39,24 +39,28 @@ public class TeleAuthentication extends TelegramLongPollingBot {
             String text = message.getText();
             String textMessage = "";
             if (text.contains("/start")) {
-                String[] parts = text.split("\\s+");
-                String nickname = parts[1];
                 UserTele u = getInfoByChatID(chatId);
-                if (u != null && !Objects.equals(u.getNickname(), nickname)) {
-                    textMessage = "Tele đã liên kết với 1 tài khoản khác, hãy thử bằng 1 tele khác";
+                String[] parts = text.split("\\s+");
+                if (parts.length > 1) {
+                    String nickname = parts[1];
+                    if (u != null && !Objects.equals(u.getNickname(), nickname)) {
+                        textMessage = "Tele đã liên kết với 1 tài khoản khác, hãy thử bằng 1 tele khác";
+                        sendPhoneAndOTPRequest(chatId, textMessage);
+                    }
+                    textMessage = "Xin chào " + message.getFrom().getFirstName();
                     sendPhoneAndOTPRequest(chatId, textMessage);
-                } else {
-                    textMessage = "Chào mừng bạn " + nickname + " đến với Bon.win";
-                    sendPhoneAndOTPRequest(chatId, textMessage);
-                    UserTele userTele = getInfoByNickname(nickname);
+                    UserTele userTele = getInfoByChatID(chatId);
                     if (userTele == null) {
                         saveUserInfo(nickname, chatId);
                     }
                     String otp = generateOTP();
                     sendOTP(chatId, otp);
                     saveOTP(chatId, otp);
+                } else {
+                    String otp = generateOTP();
+                    sendOTP(chatId, otp);
+                    saveOTP(chatId, otp);
                 }
-
             }
             if (message.getText().equals("Lấy lại mã kích hoạt")) {
                 String otp = generateOTP();
