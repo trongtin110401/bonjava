@@ -122,6 +122,12 @@ public class SlotMachineServiceImpl implements SlotMachineService {
         this.publishSlotMsg("queue_benley", msg, 8006);
     }
 
+    @Override
+    public void logBLC(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) throws IOException, TimeoutException, InterruptedException {
+        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.BONG_LAI_CAC.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
+        this.publishSlotMsg("queue_benley", msg, 8006);
+    }
+
     private LogSlotMachineMessage buildLogSlotMsg(String gameName, long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) {
         LogSlotMachineMessage message = new LogSlotMachineMessage();
         message.gameName = gameName;
