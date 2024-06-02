@@ -13,7 +13,7 @@ import game.modules.slot.listener.SlotLogListener;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
-public class BongLaiCacModule extends Slot20ExtendModule {
+public class BongLaiCacModule extends Slot25ExtendModule {
 
     public BongLaiCacModule() {
         super(Games.BONG_LAI_CAC.getName());
