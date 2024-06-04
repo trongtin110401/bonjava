@@ -970,7 +970,7 @@ public class UserDaoImpl
     public boolean updateUserPhone(String nickName, String phone) throws SQLException {
         boolean res = false;
         try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            String sql = "update users set phone =  ? where nickname = ?";
+            String sql = "update users set mobile =  ? where nick_name = ?";
             PreparedStatement stm = conn.prepareStatement(sql);
             stm.setString(1, phone);
             stm.setString(2, nickName);
