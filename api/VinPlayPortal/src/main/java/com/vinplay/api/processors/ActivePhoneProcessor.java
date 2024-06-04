@@ -104,7 +104,7 @@ public class ActivePhoneProcessor implements BaseProcessor<HttpServletRequest, S
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Date date = new Date();
         Document updateDocument = new Document("$set", new Document("otp", otp)
-                .append("timeToExpired", 300000).append("createdDate", dateFormat.format(date)));
+                .append("timeToExpired", 300000).append("createdDate", dateFormat.format(date)).append("phone", phone));
 
         UpdateResult result = collection.updateOne(filter, updateDocument);
         if (result.getMatchedCount() == 0) {
