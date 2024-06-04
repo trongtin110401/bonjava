@@ -56,13 +56,13 @@ public class ActivePhoneProcessor implements BaseProcessor<HttpServletRequest, S
             return response.toJson();
         }
         String otp = generateOTP();
-        if (sendOTP(phoneNumber, otp)) {
-            response.setSuccess(true);
-            response.setErrorCode("0");
-        } else {
-            response.setSuccess(false);
-            response.setErrorCode("Số điện thoại không hợp lệ");
-        }
+//        if (sendOTP(phoneNumber, otp)) {
+//            response.setSuccess(true);
+//            response.setErrorCode("0");
+//        } else {
+//            response.setSuccess(false);
+//            response.setErrorCode("Số điện thoại không hợp lệ");
+//        }
         saveOTP(nickName, otp, phoneNumber);
         response.setActive(false);
         response.setNickname(nickName);
@@ -119,7 +119,7 @@ public class ActivePhoneProcessor implements BaseProcessor<HttpServletRequest, S
         }
         UserDaoImpl userDao = new UserDaoImpl();
         try {
-            userDao.updateUserPhone(phone, nickname);
+            userDao.updateUserPhone(nickname, phone);
         } catch (Exception e) {
             e.printStackTrace();
         }
