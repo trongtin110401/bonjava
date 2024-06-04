@@ -967,6 +967,21 @@ public class UserDaoImpl
         return res;
     }
 
+    public boolean updateUserPhone(String nickName, String phone) throws SQLException {
+        boolean res = false;
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
+            String sql = "update users set phone =  ? where nickname = ?";
+            PreparedStatement stm = conn.prepareStatement(sql);
+            stm.setString(1, phone);
+            stm.setString(2, nickName);
+            if (stm.executeUpdate() == 1) {
+                res = true;
+            }
+            stm.close();
+        }
+        return res;
+    }
+
     @Override
     public UserFish GetUserFishByNickname(String nickName) throws SQLException {
         UserFish user = null;

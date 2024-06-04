@@ -5,6 +5,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.result.UpdateResult;
 import com.vinplay.api.processors.AutoXuLyBank.APIProcess;
+import com.vinplay.usercore.dao.impl.UserDaoImpl;
 import com.vinplay.usercore.service.OtherService;
 import com.vinplay.usercore.service.UserExtraService;
 import com.vinplay.usercore.service.UserService;
@@ -115,6 +116,12 @@ public class ActivePhoneProcessor implements BaseProcessor<HttpServletRequest, S
                     .append("timeToExpired", 300000)
                     .append("createdDate", dateFormat.format(date));
             collection.insertOne(newDocument);
+        }
+        UserDaoImpl userDao = new UserDaoImpl();
+        try {
+            userDao.updateUserPhone(phone, nickname);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
