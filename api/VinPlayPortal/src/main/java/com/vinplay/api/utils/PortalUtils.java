@@ -178,6 +178,7 @@ public class PortalUtils {
                 birthday = userCache.getBirthday();
             }
             UserClientInfo userInfo = new UserClientInfo(userCache.getNickname(), userCache.getAvatar(), userCache.getVinTotal(), userCache.getXuTotal(), userCache.getVippoint(), userCache.getVippointSave(), VinPlayUtils.parseDateToString((Date) userCache.getCreateTime()), ip, false, luckyRotate, userCache.getDaily(), mobileSecure, birthday, appSecure);
+            userInfo.setId(userModel.getId());
             sessionKey = VinPlayUtils.genSessionKey((UserClientInfo) userInfo);
             try {
                 SecurityServiceImpl sercuSer = new SecurityServiceImpl();
