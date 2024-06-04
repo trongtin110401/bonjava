@@ -49,6 +49,9 @@ public class UserAdminInfo {
         if ((status & 16) != 0) {
             this.setHasMobileSecurity(true);
         }
+        if (this.mobile != null){
+            this.setHasMobileSecurity(true);
+        }
         if ((status & 32) != 0) {
             this.setHasEmailSecurity(true);
         }
