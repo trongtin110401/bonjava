@@ -74,16 +74,11 @@ public class LoginProcessor
                 realpass = this.getRealPass(password, username);
                 try {
                     password = VinPlayUtils.getMD5Hash(realpass);
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                } catch (NoSuchAlgorithmException e) {
+                } catch (UnsupportedEncodingException | NoSuchAlgorithmException e) {
                     e.printStackTrace();
                 }
-            } catch (Exception e) {
-                realpass = password;
+            } catch (Exception ignored) {
             }
-        } else {
-            realpass = password;
         }
         String social = request.getParameter("s");
         String accessToken = request.getParameter("at");

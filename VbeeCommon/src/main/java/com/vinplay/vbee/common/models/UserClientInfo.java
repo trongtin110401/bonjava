@@ -18,6 +18,7 @@ public class UserClientInfo {
     private int mobileSecure;
     private String birthday;
     private int appSecure;
+    private int id;
 
     public UserClientInfo(String nickname, String avatar, long vinTotal, long xuTotal, int vippoint, int vippointSave, String createTime, String ipAddress, boolean certificate, int luckyRotate, int daiLy, int mobileSecure, String birthday, int appSecure) {
         this.nickname = nickname;
@@ -144,6 +145,14 @@ public class UserClientInfo {
     }
     public int getAppSecure(){
         return this.appSecure;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }
 
