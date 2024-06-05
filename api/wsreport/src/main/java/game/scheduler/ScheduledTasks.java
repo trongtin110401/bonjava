@@ -164,7 +164,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
     public void sendTXAdmin() {
         try {
             // Thông tin phiên
-            ArrayList<TaiXiuAdminReportResponse> lstTaiXiuAdminReportObjs = new ArrayList<>();
+            ArrayList<TaiXiuAdminReportResponse> lstTaiXiuAdminReportObjs =  new ArrayList<>();
             TaiXiuAdminReportObj obj = MapperUtils.mapper.readValue(cacheService.getValueStr(USER_TAI_XIU), TaiXiuAdminReportObj.class);
             TaiXiuAdminReportResponse response = new TaiXiuAdminReportResponse();
             response.setMoneyTai(obj.getMoneyTai());
