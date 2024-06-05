@@ -150,7 +150,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             this.sendMessToAdminBauCua(response.toJson());
 
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            e.printStackTrace();
         }
     }
 
