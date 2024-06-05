@@ -84,14 +84,14 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
         this.rooms.put("BauCuaTo_vin_1000", new MGRoomBauCuaTo2("BauCuaTo_vin_1000", 100, (byte) 1, (byte) 0, this.funds[0], jackPot[0]));
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
         BitZeroServer.getInstance().getTaskScheduler().schedule(this.serverReadyTask, 10, TimeUnit.SECONDS);
-        this.getParentExtension().addEventListener((IBZEventType) BZEventType.USER_DISCONNECT, (IBZEventListener) this);
+        this.getParentExtension().addEventListener(BZEventType.USER_DISCONNECT, this);
         try {
             int remainTimeRewardToiChonCa = MiniGameUtils.calculateTimeRewardOnNextDay("");
             BitZeroServer.getInstance().getTaskScheduler().schedule(this.rewardToiChonCaTask, remainTimeRewardToiChonCa, TimeUnit.SECONDS);
         } catch (ParseException e) {
-            Debug.trace(new Object[]{"Calculate time reward Toi chon ca error ", e.getMessage()});
+            Debug.trace("Calculate time reward Toi chon ca error ", e.getMessage());
         }
-        String msg = "Start MiniGame " + DateTimeUtils.getCurrentTime((String) "HH-mm-ss yyyy-MM-dd");
+        String msg = "Start MiniGame " + DateTimeUtils.getCurrentTime("HH-mm-ss yyyy-MM-dd");
         GameUtils.sendAlert(msg);
     }
 
@@ -105,7 +105,7 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
         }
     }
 
-    public void handleServerEvent(IBZEvent ibzevent) throws BZException {
+    public void handleServerEvent(IBZEvent ibzevent) {
         if (ibzevent.getType() == BZEventType.USER_DISCONNECT) {
             User user = (User) ibzevent.getParameter(BZEventParam.USER);
             this.userDis(user);
