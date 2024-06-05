@@ -344,29 +344,7 @@ public class Slot25BasicRoom extends SlotRoom {
                                     this.fund -= initJackpotValues;
 
                                     // get user cache
-                                    HazelcastInstance client = HazelcastClientFactory.getInstance();
-                                    IMap<String, UserModel> userMap = client.getMap("users");
-                                    UserModel model;
                                     String displayName = username;
-                                    if (userMap.containsKey(username)) {
-                                        model = userMap.get(displayName);
-                                        if (model.getClient() != null && !Objects.equals(model.getClient(), "")) {
-                                            displayName = "[" + model.getClient() + "] " + username;
-                                        } else {
-                                            displayName = "[X] " + username;
-                                        }
-                                    } else {
-                                        UserDaoImpl dao = new UserDaoImpl();
-                                        try {
-                                            model = dao.getUserByNickName(username);
-                                            if (model.getClient() != null && !Objects.equals(model.getClient(), "")) {
-                                                displayName = "[" + model.getClient() + "] " + username;
-                                            } else {
-                                                displayName = "[X] " + username;
-                                            }
-                                        } catch (SQLException ignored) {
-                                        }
-                                    }
                                     if (forceJackpotToUser) {
                                         try {
                                             cacheService.removeKey(CACHE_NAME_USER_SPOT + gameName);
