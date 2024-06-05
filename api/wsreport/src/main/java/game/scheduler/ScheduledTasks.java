@@ -634,8 +634,6 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        System.out.println("llllllllllllllll List users " + userList.toString());
         return userList;
     }
 

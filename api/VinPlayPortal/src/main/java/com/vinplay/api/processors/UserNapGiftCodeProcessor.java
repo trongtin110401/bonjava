@@ -36,7 +36,13 @@ public class UserNapGiftCodeProcessor
         GiftCodeServiceImpl service = new GiftCodeServiceImpl();
 
         try {
-            ManageGiftCodeDAO dao = new ManageGiftCodeDAO();
+            OtherService otherService = new OtherServiceImpl();
+            if (otherService.getPhoneActiveByNickname(nickName).isEmpty()) {
+                response.setSuccess(false);
+                response.setErrorCode("Tài khoản chưa liên kêt số điện thoại");
+                return response.toJson();
+            }
+
             GiftCodeDto giftCodeDto = service.findActiveByCode(code);
             if (giftCodeDto.getCode() == null) {
                 response.setSuccess(false);
@@ -76,10 +82,9 @@ public class UserNapGiftCodeProcessor
             service.updateGiftCode(giftCodeDto);
             HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
             historyTransDao.insertTransaction(new HistoryTransModel("Nạp Tiền Từ Gift Code", "Hệ Thống",
-                    "Nạp tiền", String.valueOf(giftCodeDto.getPrice()), "Thành công",code , nickName, "GIFT_CODE", UUID.randomUUID().toString()));
+                    "Nạp tiền", String.valueOf(giftCodeDto.getPrice()), "Thành công", code, nickName, "GIFT_CODE", UUID.randomUUID().toString()));
             userService.updateMoney(nickName, giftCodeDto.getPrice(), "vin", "Gift Code", "Gift Code", "Mã: " + code, 0L, null, TransType.NO_VIPPOINT);
             TelegramAlert.SendMessageDepositGiftCode(userGiftCode);
-            OtherService otherService = new OtherServiceImpl();
             otherService.updateCodeCallBack(code);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
