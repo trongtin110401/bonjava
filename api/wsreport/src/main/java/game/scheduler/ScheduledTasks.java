@@ -110,7 +110,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
         }
     }
 
-    @Scheduled(fixedRate = 900)
+    @Scheduled(fixedRate = 1000)
     public void executeBauCuaInfo() {
         try {
 
@@ -129,7 +129,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
 
 
             cacheService.removeKey("bettingStateBauCua");
-            cacheService.removeKey("BauCuareferenceId");
+//            cacheService.removeKey("BauCuareferenceId");
             cacheService.removeKey("BauCuaRemainTime");
         } catch (KeyNotFoundException e) {
             e.printStackTrace();
