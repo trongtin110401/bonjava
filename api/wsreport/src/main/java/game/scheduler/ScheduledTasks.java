@@ -131,7 +131,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             cacheService.removeKey("bettingStateBauCua");
             cacheService.removeKey("BauCuareferenceId");
             cacheService.removeKey("BauCuaRemainTime");
-        } catch (KeyNotFoundException e) {git
+        } catch (KeyNotFoundException e) {
             log.error(e.getMessage(), e);
             e.printStackTrace();
         }
