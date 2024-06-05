@@ -48,8 +48,6 @@ public class ServerGame {
 
     @OnOpen
     public void onOpen(Session session) {
-        System.out.println("new connection");
-        //System.out.println(req);
 
     }
 
@@ -97,7 +95,6 @@ public class ServerGame {
     @OnBinary
     public void onBinary(Session session, byte[] bytes) {
         for (byte b : bytes) {
-            System.out.println(b);
         }
         session.sendBinary(bytes);
     }
@@ -108,13 +105,10 @@ public class ServerGame {
             IdleStateEvent idleStateEvent = (IdleStateEvent) evt;
             switch (idleStateEvent.state()) {
                 case READER_IDLE:
-                    System.out.println("read idle");
                     break;
                 case WRITER_IDLE:
-                    System.out.println("write idle");
                     break;
                 case ALL_IDLE:
-                    System.out.println("all idle");
                     break;
                 default:
                     break;

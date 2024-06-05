@@ -38,8 +38,6 @@ public class ServerStateGame {
 
     @OnOpen
     public void onOpen(Session session) {
-        System.out.println("new connection");
-        //System.out.println(req);
 
     }
 
@@ -49,7 +47,6 @@ public class ServerStateGame {
         // remove session connect
         // mapUser.remove()
         sessions.remove(session);
-        System.out.println("one connection closed");
     }
 
     @OnError
@@ -98,13 +95,10 @@ public class ServerStateGame {
             IdleStateEvent idleStateEvent = (IdleStateEvent) evt;
             switch (idleStateEvent.state()) {
                 case READER_IDLE:
-                    System.out.println("read idle");
                     break;
                 case WRITER_IDLE:
-                    System.out.println("write idle");
                     break;
                 case ALL_IDLE:
-                    System.out.println("all idle");
                     break;
                 default:
                     break;
