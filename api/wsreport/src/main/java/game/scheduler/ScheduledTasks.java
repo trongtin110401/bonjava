@@ -128,9 +128,9 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             this.sendMessToAdminBauCua(response.toJson());
 
 
-            cacheService.removeKey("bettingStateBauCua");
+//            cacheService.removeKey("bettingStateBauCua");
 //            cacheService.removeKey("BauCuareferenceId");
-            cacheService.removeKey("BauCuaRemainTime");
+//            cacheService.removeKey("BauCuaRemainTime");
         } catch (KeyNotFoundException e) {
             e.printStackTrace();
         }
