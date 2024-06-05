@@ -131,7 +131,9 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             cacheService.removeKey("bettingStateBauCua");
             cacheService.removeKey("BauCuareferenceId");
             cacheService.removeKey("BauCuaRemainTime");
-        } catch (KeyNotFoundException e) {
+        } catch (KeyNotFoundException e) {git
+            log.error(e.getMessage(), e);
+            e.printStackTrace();
         }
 
 
@@ -148,14 +150,9 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             response.setListBauCuaInformation(getUserBauCua(list, "BauCua"));
             this.sendMessToAdminBauCua(response.toJson());
 
-        } catch (KeyNotFoundException e) {
-
-        } catch (JsonMappingException e) {
-            e.printStackTrace();
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
         }
-
     }
 
     /**
