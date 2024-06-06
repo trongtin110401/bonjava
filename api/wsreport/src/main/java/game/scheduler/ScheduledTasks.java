@@ -21,6 +21,7 @@ import game.models.baucuato2.BauCuaToReportResponse;
 import game.models.baucuato2.BauCuaUserInfomation;
 import game.models.minigame.TopWin;
 import game.service.CacheService;
+import game.service.impl.CacheServiceImpl;
 import game.ws.*;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
@@ -562,8 +563,10 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
         if (userList.isEmpty()) {
             return userList;
         }
-        final String BASE_URL = "http://localhost:8087/leaderboard/get_by_name";
         try {
+            CacheService service = new CacheServiceImpl();
+            String host = service.getValueStr("url_leader_board");
+            final String BASE_URL = "http://"+host+":8087/leaderboard/get_by_name";
             String users = convertListToString(userList.stream().map(TaiXiuAdmin::getUsername).collect(Collectors.toList()));
             String typeDate = "DAY_" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
             String url = String.format("%s?boardName=%s_%s&users=%s", BASE_URL, boardName, typeDate, users);
@@ -604,8 +607,10 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
         if (userList.isEmpty()) {
             return userList;
         }
-        final String BASE_URL = "http://localhost:8087/leaderboard/get_by_name";
         try {
+            CacheService service = new CacheServiceImpl();
+            String host = service.getValueStr("url_leader_board");
+            final String BASE_URL = "http://"+host+":8087/leaderboard/get_by_name";
             String users = convertListToString(userList.stream().map(BauCuaUserInfomation::getUsername).collect(Collectors.toList()));
             String typeDate = "DAY_" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
             String url = String.format("%s?boardName=%s_%s&users=%s", BASE_URL, boardName, typeDate, users);
