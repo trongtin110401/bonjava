@@ -1,6 +1,8 @@
 package game;
 
 
+//import com.vinplay.vbee.common.config.VBeePath;
+import game.config.VBeePath;
 import game.service.CacheService;
 import game.service.impl.CacheServiceImpl;
 import org.springframework.boot.SpringApplication;
@@ -20,6 +22,7 @@ public class GameApplication {
     public static void main(String[] args) {
         SpringApplication.run(GameApplication.class, args);
         try {
+            VBeePath.initBasePath(GameApplication.class);
             init();
         }
         catch (Exception e){
@@ -29,7 +32,7 @@ public class GameApplication {
 
     public static void init() throws IOException {
         Properties prop = new Properties();
-        FileInputStream input = new FileInputStream("config/cluster.properties");
+        FileInputStream input = new FileInputStream(VBeePath.basePath.concat("config/cluster.properties"));
         prop.load(input);
         CacheService service = new CacheServiceImpl();
         service.setValue("url_leader_board", prop.getProperty("url_leader_board"));
