@@ -221,7 +221,7 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
     }
 
     private void startNewRound() {
-        Debug.trace((Object) "START NEW ROUND BAU CUA");
+        Debug.trace("START NEW ROUND BAU CUA");
         ++this.referenceId;
         StartNewGameBauCuaMsg msg = new StartNewGameBauCuaMsg();
         msg.referenceId = this.referenceId;
