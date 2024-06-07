@@ -921,5 +921,39 @@ public class LogMoneyUserDaoImpl
         return true;
     }
 
+    public List<LogUserMoneyResponse> getMoneyCashInAndCashOutByNickname(String nickName, List<String> actionNames) {
+        final ArrayList<LogUserMoneyResponse> results = new ArrayList<>();
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("log_money_user_vin");
+
+        // Create conditions
+        BasicDBObject query = new BasicDBObject();
+        if (nickName != null && !nickName.equals("")) {
+            query.put("nick_name", nickName);
+        }
+        if (actionNames != null && !actionNames.isEmpty()) {
+            query.put("action_name", new BasicDBObject("$in", actionNames));
+        }
+
+        // Execute the query
+        FindIterable<Document> iterable = collection.find(query);
+
+        // Process the results
+        iterable.forEach((Block<Document>) document -> {
+            LogUserMoneyResponse tranlogmoney = new LogUserMoneyResponse();
+            tranlogmoney.transId = document.getLong("trans_id");
+            tranlogmoney.nickName = document.getString("nick_name");
+            tranlogmoney.serviceName = document.getString("service_name");
+            tranlogmoney.currentMoney = document.getLong("current_money");
+            tranlogmoney.moneyExchange = document.getLong("money_exchange");
+            tranlogmoney.description = document.getString("description");
+            tranlogmoney.transactionTime = document.getString("trans_time");
+            tranlogmoney.actionName = document.getString("action_name");
+            tranlogmoney.fee = document.getLong("fee");
+            results.add(tranlogmoney);
+        });
+
+        return results;
+    }
 }
 
