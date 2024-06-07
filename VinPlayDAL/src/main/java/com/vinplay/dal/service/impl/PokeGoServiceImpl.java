@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  com.hazelcast.core.HazelcastInstance
  *  com.hazelcast.core.IMap
@@ -28,12 +28,13 @@ import com.vinplay.vbee.common.models.cache.TopPokeGoModel;
 import com.vinplay.vbee.common.models.minigame.pokego.LSGDPokeGo;
 import com.vinplay.vbee.common.models.minigame.pokego.TopPokeGo;
 import com.vinplay.vbee.common.rmq.RMQApi;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 public class PokeGoServiceImpl
-implements PokeGoService {
+        implements PokeGoService {
     private PokeGoDAO dao = new PokeGoDaoImpl();
 
     @Override
@@ -50,7 +51,7 @@ implements PokeGoService {
         message.moneyType = moneyType;
         message.time = time;
         message.matrix = matrix;
-        RMQApi.publishMessage((String)"queue_pokego", (BaseMessage)message, (int)134);
+        RMQApi.publishMessage((String) "queue_pokego", (BaseMessage) message, (int) 134);
     }
 
     @Override
@@ -67,7 +68,7 @@ implements PokeGoService {
     public void addTop(String username, int betValue, long totalPrizes, int moneyType, String time, int result) throws IOException, TimeoutException, InterruptedException {
         HazelcastInstance client = HazelcastClientFactory.getInstance();
         IMap topMap = client.getMap("cacheTop");
-        TopPokeGoModel topPokeGo = (TopPokeGoModel)topMap.get((Object)(Games.POKE_GO.getName() + "_" + moneyType));
+        TopPokeGoModel topPokeGo = (TopPokeGoModel) topMap.get(Games.POKE_GO.getName() + "_" + moneyType);
         if (topPokeGo == null) {
             topPokeGo = new TopPokeGoModel();
         }
@@ -78,7 +79,7 @@ implements PokeGoService {
         entry.ts = time;
         entry.rs = result;
         topPokeGo.put(entry);
-        topMap.put((Object)(Games.POKE_GO.getName() + "_" + moneyType), (Object)topPokeGo);
+        topMap.put(Games.POKE_GO.getName() + "_" + moneyType, topPokeGo);
     }
 
     @Override
@@ -86,14 +87,14 @@ implements PokeGoService {
         if (page <= 10) {
             HazelcastInstance client = HazelcastClientFactory.getInstance();
             IMap topMap = client.getMap("cacheTop");
-            TopPokeGoModel topPokeGo = (TopPokeGoModel)topMap.get((Object)(Games.POKE_GO.getName() + "_" + moneyType));
+            TopPokeGoModel topPokeGo = (TopPokeGoModel) topMap.get((Object) (Games.POKE_GO.getName() + "_" + moneyType));
             if (topPokeGo == null) {
                 topPokeGo = new TopPokeGoModel();
             }
             if (topPokeGo.getResults().size() == 0) {
                 List<TopPokeGo> results = this.dao.getTop(moneyType, 100);
                 topPokeGo.setResults(results);
-                topMap.put((Object)(Games.POKE_GO.getName() + "_" + moneyType), (Object)topPokeGo);
+                topMap.put((Object) (Games.POKE_GO.getName() + "_" + moneyType), (Object) topPokeGo);
             }
             return topPokeGo.getResults(page, 10);
         }
