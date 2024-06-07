@@ -239,6 +239,9 @@ public class XocDiaResult {
             } catch (Exception e) {
                 updateFund = 0;
             }
+            finally {
+                cacheService.setValue("update_fund_xd_auto",0);
+            }
             huTx += updateFund;
             mgService.saveFund(Games.XOC_DIA.getName(),huTx );
             cacheService.setValue("fund_xd_auto", String.valueOf(huTx));
