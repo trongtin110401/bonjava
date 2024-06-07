@@ -317,6 +317,7 @@ public class MGRoomCandy extends MGRoom {
                                     this.pgService.logPokeGo(referenceId, username, this.betValue, linesStr, linesWin, prizesOnLine, result, totalPrizes, this.moneyType, currentTimeStr, msg.matrix);
                                 }
                                 if (result == 3 || result == 4) {
+                                    System.out.println(">>>>>>> WISHKY, total jackpot prize: " + totalPrizes);
                                     this.pgService.addTop(username, this.betValue, totalPrizes, this.moneyType, currentTimeStr, result);
                                 }
                             } catch (InterruptedException | TimeoutException | IOException exception) {
