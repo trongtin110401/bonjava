@@ -3,11 +3,8 @@ package com.vinplay.vbee.common.response;
 public class UserCCUResponse {
 
     private String nickName;
-
-    private String gameName;
-
-    private long lastLoginTime;
-
+    private long totalDeposit;
+    private long totalCashOut;
 
     public String getNickName() {
         return nickName;
@@ -17,19 +14,19 @@ public class UserCCUResponse {
         this.nickName = nickName;
     }
 
-    public String getGameName() {
-        return gameName;
+    public long getTotalDeposit() {
+        return totalDeposit;
     }
 
-    public void setGameName(String gameName) {
-        this.gameName = gameName;
+    public void setTotalDeposit(long totalDeposit) {
+        this.totalDeposit = totalDeposit;
     }
 
-    public long getLastLoginTime() {
-        return lastLoginTime;
+    public long getTotalCashOut() {
+        return totalCashOut;
     }
 
-    public void setLastLoginTime(long lastLoginTime) {
-        this.lastLoginTime = lastLoginTime;
+    public void setTotalCashOut(long totalCashOut) {
+        this.totalCashOut = totalCashOut;
     }
 }
