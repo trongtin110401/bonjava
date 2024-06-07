@@ -364,6 +364,7 @@ public class MGRoomMiniPoker extends MGRoom {
         }
 
         sv.setValue(name, (int) pot);
+        sv.setValue(CACHE_JACK_POT_VALUE_SLOT + "_" + this.betValue + "_" + gameName, String.valueOf(this.pot));
 
         if (forceJackpotByUser) {
             this.sendNotifyNoHu(username, (byte) 1, resultMiniPokerMsg.prize, this.gameName);
