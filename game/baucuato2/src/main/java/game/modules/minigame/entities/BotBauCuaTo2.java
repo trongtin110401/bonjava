@@ -241,22 +241,19 @@ public class BotBauCuaTo2 {
     private static long getBetValue(int roomId) {
         switch (roomId) {
             case 0: {
-                return 50000L;
+                return 1000;
             }
             case 1: {
-                return 100000L;
+                return 5000;
             }
             case 2: {
-                return 1000000L;
+                return 10000L;
             }
             case 3: {
-                return 500000L;
+                return 50000L;
             }
             case 4: {
-                return 800000L;
-            }
-            case 5: {
-                return 120000L;
+                return 100000L;
             }
 
         }
