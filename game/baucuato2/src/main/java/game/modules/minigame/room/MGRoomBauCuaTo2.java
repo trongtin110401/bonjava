@@ -488,12 +488,12 @@ public class MGRoomBauCuaTo2 extends MGRoom {
                 }
 
                 totalBetValues += tran.betValues[i];
-                this.jackPot += totalBetValues / 100;
+
                 arrl = totalBetValuesInRoom;
                 n = i;
                 arrl[n] = arrl[n] + tran.betValues[i];
-
             }
+
             if (totalPrize > 0L) {
                 MoneyResponse response;
                 if (this.moneyType == 1) {
@@ -534,6 +534,8 @@ public class MGRoomBauCuaTo2 extends MGRoom {
                 fund -= tran.totalExchange;
             }
         }
+
+        this.jackPot += totalUserBetInRoom / 100;
 
         // update fund BauCua
 
