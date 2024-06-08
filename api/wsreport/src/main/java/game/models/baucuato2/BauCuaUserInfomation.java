@@ -1,12 +1,15 @@
 package game.models.baucuato2;
 
 import java.io.Serializable;
+import java.util.HashMap;
 
 public class BauCuaUserInfomation implements Serializable {
     private String username;
     private long totalBet;
     private long totalCurrentMoney;
     private  long reportMoneyToday;
+
+    private HashMap<Integer, Long> betDetail = new HashMap<>();
 
     public BauCuaUserInfomation(String username, long totalBet, long totalCurrentMoney) {
         this.username = username;
@@ -57,5 +60,13 @@ public class BauCuaUserInfomation implements Serializable {
 
     public void setReportMoneyToday(long reportMoneyToday) {
         this.reportMoneyToday = reportMoneyToday;
+    }
+
+    public HashMap<Integer, Long> getBetDetail() {
+        return betDetail;
+    }
+
+    public void setBetDetail(HashMap<Integer, Long> betDetail) {
+        this.betDetail = betDetail;
     }
 }

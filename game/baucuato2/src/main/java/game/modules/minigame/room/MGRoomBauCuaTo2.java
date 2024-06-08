@@ -309,7 +309,32 @@ public class MGRoomBauCuaTo2 extends MGRoom {
                             } catch (IOException | InterruptedException | TimeoutException arrl) {
                                 // empty catch block
                             }
+
+                            // thống kê user online
+                            try {
+                                if (!isBot(username)) {
+                                    BauCuaUserInfomation bauCuaUserInfomation = listBauCuaInformation.get(username);
+                                    long total = 0;
+                                    for (int potId = 0; potId < transactionsMap.get(username).betValues.length; potId++) {
+                                        total += transactionsMap.get(username).betValues[potId];
+                                    }
+                                    bauCuaUserInfomation.setTotalBet(total);
+
+                                    for (i = 0; i < 6; ++i) {
+                                        betValues[i] = Long.parseLong(arr[i]);
+                                        if (betValues[i] > 0) {
+                                            bauCuaUserInfomation.increaseBettingValueByPot(i, betValues[i]);
+                                        }
+                                    }
+
+                                    bauCuaUserInfomation.setTotalCurrentMoney(this.userService.getMoneyUserCache(username, this.moneyTypeStr));
+                                    listBauCuaInformation.put(username, bauCuaUserInfomation);
+                                }
+                            } catch (Exception e) {
+                            }
+
                             result = 1;
+
                             break block15;
                         }
                         result = 102;
@@ -317,26 +342,9 @@ public class MGRoomBauCuaTo2 extends MGRoom {
                         Debug.trace((Object) ("Bet value: " + betStr + " incorrect: " + e.getMessage()));
                     }
                 }
-
             } else {
                 result = 101;
             }
-        }
-        try {
-            if (!isBot(username)) {
-                BauCuaUserInfomation bauCuaUserInfomation = listBauCuaInformation.get(username);
-                long total = 0;
-                for (int i = 0; i < transactionsMap.get(username).betValues.length; i++) {
-                    total += transactionsMap.get(username).betValues[i];
-                }
-                bauCuaUserInfomation.setTotalBet(total);
-                bauCuaUserInfomation.setTotalCurrentMoney(this.userService.getMoneyUserCache(username, this.moneyTypeStr));
-                listBauCuaInformation.put(username, bauCuaUserInfomation);
-
-
-            }
-        } catch (Exception e) {
-
         }
 
         msg.result = (byte) result;
@@ -353,7 +361,13 @@ public class MGRoomBauCuaTo2 extends MGRoom {
             lock.unlock();
         }
         allTransactionsMapRealtime.add(new BauCuaRealtimeTransaction(user.getName(), betStr));
-        this.sendMessageToUser((BaseMsg) msg, user);
+        this.sendMessageToUser(msg, user);
+
+        // list of betting users
+        saveBettingUserList();
+    }
+
+    void saveBettingUserList() {
         Collection<BauCuaUserInfomation> values = listBauCuaInformation.values();
         ArrayList<BauCuaUserInfomation> baucualist = new ArrayList<>(values);
         try {
@@ -372,15 +386,11 @@ public class MGRoomBauCuaTo2 extends MGRoom {
             BauCuaUserInfomation bauCuaUserInfomation = listBauCuaInformation.get(name);
             bauCuaUserInfomation.setTotalBet(0);
             bauCuaUserInfomation.setTotalCurrentMoney(this.userService.getMoneyUserCache(name, this.moneyTypeStr));
+            bauCuaUserInfomation.resetDetailedBettingValue();
             listBauCuaInformation.put(name, bauCuaUserInfomation);
-            Collection<BauCuaUserInfomation> values = listBauCuaInformation.values();
-            ArrayList<BauCuaUserInfomation> baucualist = new ArrayList<>(values);
 
-            try {
-                cacheService.setValue("baucualist", objectMapper.writeValueAsString(baucualist));
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
+            // list of betting users
+            saveBettingUserList();
         }
     }
 
@@ -517,13 +527,8 @@ public class MGRoomBauCuaTo2 extends MGRoom {
                 userWinHuBauCuaList.add(new UserWinHuBauCua(Base64.getEncoder().encodeToString((tran.username.getBytes())), totalHuPrize));
             }
 
-            //if (!isBot(tran.username)) { // check user is bot or not to calculate profit of session
             totalPrizesUser += totalPrize; // calculate total prizes in current room
             totalUserBetInRoom += totalBetValues; // calculate total bet value
-//            } else {
-//                totalBotBetInRoom += totalBetValues;
-//                totalPrizesBot += totalPrize;
-//            }
 
             if (!isBot(tran.username)) {
                 fund -= tran.totalExchange;
@@ -663,13 +668,9 @@ public class MGRoomBauCuaTo2 extends MGRoom {
         }
         NotifyUser();
         listBauCuaInformation.put(user.getName(), new BauCuaUserInfomation(user.getName(), 0, this.userService.getMoneyUserCache(user.getName(), this.moneyTypeStr)));
-        Collection<BauCuaUserInfomation> values = listBauCuaInformation.values();
-        ArrayList<BauCuaUserInfomation> baucualist = new ArrayList<>(values);
-        try {
-            cacheService.setValue("baucualist", objectMapper.writeValueAsString(baucualist));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
+
+        // list of betting users
+        saveBettingUserList();
 
         return result;
     }
@@ -686,17 +687,11 @@ public class MGRoomBauCuaTo2 extends MGRoom {
             user.setProperty((Object) "PLAYER_INFO", (Object) pInfo);
         }
         listBauCuaInformation.remove(user.getName());
-        Collection<BauCuaUserInfomation> values = listBauCuaInformation.values();
-        ArrayList<BauCuaUserInfomation> baucualist = new ArrayList<>(values);
 
-        try {
-            cacheService.setValue("baucualist", objectMapper.writeValueAsString(baucualist));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
+        // list of betting users
+        saveBettingUserList();
+
         userRoomInfoList.remove(user.getName());
-
-
     }
 
     public float getTax() {
