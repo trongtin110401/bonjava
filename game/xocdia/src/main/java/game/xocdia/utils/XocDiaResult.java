@@ -63,7 +63,6 @@ public class XocDiaResult {
 
         SetBauCuaKetqua setBauCuaKetqua = null;
 
-        List<Integer> isDinces = null;
         try {
             try {
                 setBauCuaKetqua = (SetBauCuaKetqua) cacheService.getObject("BeCauXocDia");
@@ -162,25 +161,16 @@ public class XocDiaResult {
 
     public void autoGenerateValue2(List<Integer> rsCheat, XocDiaForceResult xdForce, Vector<GamePot> potList) {
         //tinh toan hu
-        long minHu = 0;
-        long maxHu = 0;
-        long huTx = 0;
-        //cacheService.setValue("loi_fund_xd_auto","co vao day k");
+        long fund = 0;
         try {
-            String min_hu = cacheService.getValueStr("min_fund_xd_auto");
-            String max_hu = cacheService.getValueStr("max_fund_xd_auto");
             String hu_tx = cacheService.getValueStr("fund_xd_auto");
-            minHu = Long.parseLong(min_hu);
-            maxHu = Long.parseLong(max_hu);
-            huTx = Long.parseLong(hu_tx);
+            fund = Long.parseLong(hu_tx);
         } catch (Exception e) {
             cacheService.setValue("min_fund_xd_auto", 0);
             cacheService.setValue("max_fund_xd_auto", 0);
             cacheService.setValue("fund_xd_auto", 0);
-            //cacheService.setValue("loi_fund_xd_auto",e.getMessage()+"loi o get");
         }
         ArrayList<List<Integer>> listDiceRandom = listDicesRandom();
-        Collections.shuffle(listDiceRandom);
         for (int index = 0; index < 16; index++) {
             //random ket qua
             this.dinces = listDiceRandom.get(index);
@@ -208,10 +198,10 @@ public class XocDiaResult {
                 long chenhLechTien = tinhToanTienChechLech(potList);
 //                if (maxHu > minHu) {
 //                    //neu ma hu am
-//                    if (huTx + chenhLechTien < minHu && chenhLechTien < 0) {
+//                    if (fund + chenhLechTien < minHu && chenhLechTien < 0) {
 //                        //random lai tiep
 //                        continue;
-//                    } else if (huTx + chenhLechTien > maxHu && chenhLechTien > 0) {
+//                    } else if (fund + chenhLechTien > maxHu && chenhLechTien > 0) {
 //                        //random tiep de be lai
 //                        continue;
 //                    } else {
@@ -223,11 +213,14 @@ public class XocDiaResult {
 //                    break;
 //                }
 
-                if (chenhLechTien > huTx) {
-                    continue;
-                } else {
+                if (chenhLechTien >= 0) {
                     break;
+                } else if (fund >= chenhLechTien) {
+                    break;
+                } else {
+                    continue;
                 }
+
             } catch (Exception e) {
                 break;
             }
@@ -237,8 +230,8 @@ public class XocDiaResult {
         try {
             long chenhLechTien = tinhToanTienChechLech(potList);
             String hu_tx = cacheService.getValueStr("fund_xd_auto");
-            huTx = Long.parseLong(hu_tx);
-            huTx = chenhLechTien + huTx;
+            fund = Long.parseLong(hu_tx);
+            fund = chenhLechTien + fund;
 
 
             long updateFund = 0;
@@ -249,9 +242,9 @@ public class XocDiaResult {
             } finally {
                 cacheService.setValue("update_fund_xd_auto", 0);
             }
-            huTx += updateFund;
-            mgService.saveFund(Games.XOC_DIA.getName(), huTx);
-            cacheService.setValue("fund_xd_auto", String.valueOf(huTx));
+            fund += updateFund;
+            mgService.saveFund(Games.XOC_DIA.getName(), fund);
+            cacheService.setValue("fund_xd_auto", String.valueOf(fund));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -259,46 +252,43 @@ public class XocDiaResult {
     }
 
     public static ArrayList<List<Integer>> listDicesRandom() {
-        try {
-            List<Integer> array1 = Arrays.asList(new Integer[]{0, 0, 0, 0});
-            List<Integer> array2 = Arrays.asList(new Integer[]{0, 0, 0, 1});
-            List<Integer> array3 = Arrays.asList(new Integer[]{0, 0, 1, 0});
-            List<Integer> array4 = Arrays.asList(new Integer[]{0, 0, 1, 1});
-            List<Integer> array5 = Arrays.asList(new Integer[]{0, 1, 0, 0});
-            List<Integer> array6 = Arrays.asList(new Integer[]{0, 1, 0, 1});
-            List<Integer> array7 = Arrays.asList(new Integer[]{0, 1, 1, 0});
-            List<Integer> array8 = Arrays.asList(new Integer[]{0, 1, 1, 1});
-            List<Integer> array9 = Arrays.asList(new Integer[]{1, 0, 0, 0});
-            List<Integer> array10 = Arrays.asList(new Integer[]{1, 0, 0, 1});
-            List<Integer> array11 = Arrays.asList(new Integer[]{1, 0, 1, 0});
-            List<Integer> array12 = Arrays.asList(new Integer[]{1, 0, 1, 1});
-            List<Integer> array13 = Arrays.asList(new Integer[]{1, 1, 0, 0});
-            List<Integer> array14 = Arrays.asList(new Integer[]{1, 1, 0, 1});
-            List<Integer> array15 = Arrays.asList(new Integer[]{1, 1, 1, 0});
-            List<Integer> array16 = Arrays.asList(new Integer[]{1, 1, 1, 1});
 
-            ArrayList<List<Integer>> list = new ArrayList<>();
-            list.add(array1);
-            list.add(array2);
-            list.add(array3);
-            list.add(array4);
-            list.add(array5);
-            list.add(array6);
-            list.add(array7);
-            list.add(array8);
-            list.add(array9);
-            list.add(array10);
-            list.add(array11);
-            list.add(array12);
-            list.add(array13);
-            list.add(array14);
-            list.add(array15);
-            list.add(array16);
-            return list;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return new ArrayList<>();
+        List<Integer> array1 = Arrays.asList(0, 0, 0, 0);
+        List<Integer> array2 = Arrays.asList(0, 0, 0, 1);
+        List<Integer> array3 = Arrays.asList(0, 0, 1, 0);
+        List<Integer> array4 = Arrays.asList(0, 0, 1, 1);
+        List<Integer> array5 = Arrays.asList(0, 1, 0, 0);
+        List<Integer> array6 = Arrays.asList(0, 1, 0, 1);
+        List<Integer> array7 = Arrays.asList(0, 1, 1, 0);
+        List<Integer> array8 = Arrays.asList(0, 1, 1, 1);
+        List<Integer> array9 = Arrays.asList(1, 0, 0, 0);
+        List<Integer> array10 = Arrays.asList(1, 0, 0, 1);
+        List<Integer> array11 = Arrays.asList(1, 0, 1, 0);
+        List<Integer> array12 = Arrays.asList(1, 0, 1, 1);
+        List<Integer> array13 = Arrays.asList(1, 1, 0, 0);
+        List<Integer> array14 = Arrays.asList(1, 1, 0, 1);
+        List<Integer> array15 = Arrays.asList(1, 1, 1, 0);
+        List<Integer> array16 = Arrays.asList(1, 1, 1, 1);
+
+        ArrayList<List<Integer>> list = new ArrayList<>();
+        list.add(array1);
+        list.add(array2);
+        list.add(array3);
+        list.add(array4);
+        list.add(array5);
+        list.add(array6);
+        list.add(array7);
+        list.add(array8);
+        list.add(array9);
+        list.add(array10);
+        list.add(array11);
+        list.add(array12);
+        list.add(array13);
+        list.add(array14);
+        list.add(array15);
+        list.add(array16);
+        Collections.shuffle(list);
+        return list;
     }
 
     public long tinhToanTienChechLech(Vector<GamePot> potList) {
@@ -320,17 +310,16 @@ public class XocDiaResult {
                     //tinh toan tien lo
                     Map<String, Long> dataUser = potList.get(indexDoor).userBetMap;
                     for (String key : dataUser.keySet()) {
-                        if (indexDoor == 0 || indexDoor == 1) {
+                        if (indexDoor == 0 || indexDoor == 1) {         // s?p ?ôi
                             totalLo += dataUser.get(key) * 2;
-                        } else if (indexDoor == 2 || indexDoor == 3) {
+                        } else if (indexDoor == 2 || indexDoor == 3) { // t? t?
                             totalLo += dataUser.get(key) * 16;
-                        } else if (indexDoor == 4 || indexDoor == 5) {
+                        } else if (indexDoor == 4 || indexDoor == 5) {  // s?p 3
                             totalLo += dataUser.get(key) * 4;
                         }
                     }
-                } else {
-
                 }
+
                 //tinh toan tien lai
                 Map<String, Long> dataUser = potList.get(indexDoor).userBetMap;
                 for (String key : dataUser.keySet()) {
@@ -357,7 +346,7 @@ public class XocDiaResult {
     }
 
     public List<Byte> getPotsWin() {
-        ArrayList<Byte> potsId = new ArrayList<Byte>();
+        ArrayList<Byte> potsId = new ArrayList<>();
         switch (this.count) {
             case 0: {
                 potsId.add(PotType.EVEN.getId());
