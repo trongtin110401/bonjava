@@ -72,4 +72,6 @@ public class HuBauCuaWinTransaction {
     public void setUserWinHuBauCuaList(List<UserWinHuBauCua> userWinHuBauCuaList) {
         this.userWinHuBauCuaList = userWinHuBauCuaList;
     }
+
+
 }

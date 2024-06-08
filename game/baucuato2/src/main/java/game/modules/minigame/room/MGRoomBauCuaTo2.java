@@ -131,7 +131,13 @@ public class MGRoomBauCuaTo2 extends MGRoom {
         cacheService.setObject("mapReportBet", mapReportBet);
 
         this.lichSuPhien = this.bcService.getLichSuPhien(30, id);
-        Debug.trace((Object) ("Lich su phien " + this.buildLichSuPhien()));
+        Debug.trace("Lich su phien " + this.buildLichSuPhien());
+
+        try {
+            list50WinHu = (List<HuBauCuaWinTransaction>) cacheService.getObject("LICH_SU_HU_BAU_CUA");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
 
@@ -185,7 +191,7 @@ public class MGRoomBauCuaTo2 extends MGRoom {
         }
         this.updateBauCuaInformation();
         this.NotifyUser();
-        Debug.trace((Object) ("BOT BAU CUA ROOM " + this.id + ", size= " + this.botBC.size()));
+        Debug.trace("BOT BAU CUA ROOM " + this.id + ", size= " + this.botBC.size());
     }
 
     private void removeOldBot() {
@@ -531,6 +537,13 @@ public class MGRoomBauCuaTo2 extends MGRoom {
             if (list50WinHu.size() >= 50) {
                 list50WinHu.remove(0);
             }
+
+            try {
+                cacheService.setObject("LICH_SU_HU_BAU_CUA", list50WinHu);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
             this.jackPot -= (totalPrizesUser); // tru di tong giai trong game
             if (this.jackPot < 500000) {
                 this.jackPot = 500000;
@@ -538,23 +551,14 @@ public class MGRoomBauCuaTo2 extends MGRoom {
 
         }
 
-//        else {
-//            long profit = totalUserBetInRoom - totalPrizesUser;
-//            if (profit > 0) { // nếu là bot thì không tính vào hũ
-//                this.jackPot += profit * RATE_NO_HU;
-//            }
-//        }
-
-
         try {
             long updateFund = 0;
             try {
                 updateFund = Long.parseLong(cacheService.getValueStr("update_fund_bau_cua_to"));
             } catch (Exception e) {
                 updateFund = 0;
-            }
-            finally {
-                cacheService.setValue("update_fund_bau_cua_to",0);
+            } finally {
+                cacheService.setValue("update_fund_bau_cua_to", 0);
             }
             this.fund += updateFund;
             this.mgService.saveFund(this.name, this.fund);
@@ -703,27 +707,7 @@ public class MGRoomBauCuaTo2 extends MGRoom {
         return this.moneyType;
     }
 
-    //    private byte[] generateDices() {
-//        byte[] dices;
-//        block1:
-//        {
-//            int num = 0;
-//            do {
-//                Random rd = new Random();
-//                dices = new byte[]{(byte) rd.nextInt(6), (byte) rd.nextInt(6), (byte) rd.nextInt(6)};
-//                this.xPot = 1;
-//                this.xValue = 1;
-//                int[] tiLe = this.calculateTiLe(dices);
-//                if (checkNohu(tiLe)) {
-//                    return generateDices();
-//                }
-//                long totalPrizes = this.tryCalculatePrizes(tiLe);
-//                if (this.jackPot - totalPrizes > 0L) break block1;
-//            } while (++num <= 3);
-//            return this.traGiaiBeNhat();
-//        }
-//        return dices;
-//    }
+
     private byte[] generateDices() {
         byte[] dices;
         int num = 0;
