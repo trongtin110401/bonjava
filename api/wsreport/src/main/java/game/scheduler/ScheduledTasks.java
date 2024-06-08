@@ -3,7 +3,6 @@ package game.scheduler;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.vinplay.vbee.common.models.cache.UserCacheModel;
@@ -71,10 +70,10 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
     public void getCacheXocDia() {
         try {
 
-            String timmer = (String) cacheService.getValueStr("XocDia_Flag_Time");
+            String timmer = cacheService.getValueStr("XocDia_Flag_Time");
             int gameState = cacheService.getValueInt("XocDia_Flag_GameState");
-            String isBetting = (String) cacheService.getValueStr("XocDia_Flag_betting");
-            String session = (String) cacheService.getValueStr("XocDia_Flag_session");
+            String isBetting = cacheService.getValueStr("XocDia_Flag_betting");
+            String session = cacheService.getValueStr("XocDia_Flag_session");
 
             XocDiaGameStatus xocDiaGameStatus = new XocDiaGameStatus("1", timmer, String.valueOf(gameState), isBetting, session);
             String json = MapperUtils.mapper.writeValueAsString(xocDiaGameStatus);
@@ -84,7 +83,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             cacheService.removeKey("XocDia_Flag_GameState");
             cacheService.removeKey("XocDia_Flag_betting");
             cacheService.removeKey("XocDia_Flag_session");
-        } catch (KeyNotFoundException | JsonProcessingException e) {
+        } catch (KeyNotFoundException | JsonProcessingException ignored) {
         }
     }
 
@@ -164,7 +163,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
     public void sendTXAdmin() {
         try {
             // Thông tin phiên
-            ArrayList<TaiXiuAdminReportResponse> lstTaiXiuAdminReportObjs =  new ArrayList<>();
+            ArrayList<TaiXiuAdminReportResponse> lstTaiXiuAdminReportObjs = new ArrayList<>();
             TaiXiuAdminReportObj obj = MapperUtils.mapper.readValue(cacheService.getValueStr(USER_TAI_XIU), TaiXiuAdminReportObj.class);
             TaiXiuAdminReportResponse response = new TaiXiuAdminReportResponse();
             response.setMoneyTai(obj.getMoneyTai());
@@ -566,7 +565,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
         try {
             CacheService service = new CacheServiceImpl();
             String host = service.getValueStr("url_leader_board");
-            final String BASE_URL = "http://"+host+":8087/leaderboard/get_by_name";
+            final String BASE_URL = "http://" + host + ":8087/leaderboard/get_by_name";
             String users = convertListToString(userList.stream().map(TaiXiuAdmin::getUsername).collect(Collectors.toList()));
             String typeDate = "DAY_" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
             String url = String.format("%s?boardName=%s_%s&users=%s", BASE_URL, boardName, typeDate, users);
@@ -610,7 +609,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
         try {
             CacheService service = new CacheServiceImpl();
             String host = service.getValueStr("url_leader_board");
-            final String BASE_URL = "http://"+host+":8087/leaderboard/get_by_name";
+            final String BASE_URL = "http://" + host + ":8087/leaderboard/get_by_name";
             String users = convertListToString(userList.stream().map(BauCuaUserInfomation::getUsername).collect(Collectors.toList()));
             String typeDate = "DAY_" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
             String url = String.format("%s?boardName=%s_%s&users=%s", BASE_URL, boardName, typeDate, users);
