@@ -1,8 +1,9 @@
 package game.modules.minigame.entities;
 
+import java.io.Serializable;
 import java.util.Base64;
 
-public class UserWinHuBauCua {
+public class UserWinHuBauCua implements Serializable {
     String userName;
     long moneyWin;
 
@@ -20,6 +21,9 @@ public class UserWinHuBauCua {
 
     public void setMoneyWin(long moneyWin) {
         this.moneyWin = moneyWin;
+    }
+
+    public UserWinHuBauCua() {
     }
 
     public UserWinHuBauCua(String userName, long moneyWin) {

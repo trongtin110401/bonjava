@@ -2,9 +2,10 @@ package game.modules.minigame.entities;
 
 import org.python.parser.ast.Str;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class HuBauCuaWinTransaction {
+public class HuBauCuaWinTransaction implements Serializable {
     long session;
     String time;
     int potId;
