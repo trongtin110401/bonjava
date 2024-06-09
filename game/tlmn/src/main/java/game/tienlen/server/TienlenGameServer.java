@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.150.
- * 
+ *
  * Could not load the following classes:
  *  bitzero.server.BitZeroServer
  *  bitzero.server.entities.User
@@ -293,11 +293,11 @@ extends GameServer {
         if (user == null) {
             return;
         }
-        PlayerInfo pInfo = PlayerInfo.getInfo((User)user);
+        PlayerInfo pInfo = PlayerInfo.getInfo(user);
         if (pInfo == null) {
             return;
         }
-        GameMoneyInfo moneyInfo = (GameMoneyInfo)user.getProperty((Object)"GAME_MONEY_INFO");
+        GameMoneyInfo moneyInfo = (GameMoneyInfo)user.getProperty("GAME_MONEY_INFO");
         if (moneyInfo == null) {
             return;
         }
@@ -308,11 +308,11 @@ extends GameServer {
             if (moneyInfo != null && gp.gameMoneyInfo.sessionId != moneyInfo.sessionId) {
                 ListGameMoneyInfo.instance().removeGameMoneyInfo(moneyInfo, -1);
             }
-            user.setProperty((Object)USER_CHAIR, (Object)gp.chair);
+            user.setProperty(USER_CHAIR, gp.chair);
             gp.user = user;
             gp.reqQuitRoom = false;
-            user.setProperty((Object)"GAME_MONEY_INFO", (Object)gp.gameMoneyInfo);
-            gp.user.setProperty((Object)USER_CHAIR, (Object)gp.chair);
+            user.setProperty("GAME_MONEY_INFO", gp.gameMoneyInfo);
+            gp.user.setProperty(USER_CHAIR, gp.chair);
             if (this.serverState == 1) {
                 this.sendGameInfo(gp.chair);
             } else {
