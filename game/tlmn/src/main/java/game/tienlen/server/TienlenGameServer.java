@@ -1060,6 +1060,7 @@ extends GameServer {
                             GameRoomManager.instance().leaveRoom(gp.getUser());
                         }
                     } else {
+                        System.out.println("==============> user: " + gp.getUser().getName() + " is kicked by pPrepareNewGame");
                         this.removePlayerAtChair(i, false);
                     }
                     msg.hasInfoAtChair[i] = false;
