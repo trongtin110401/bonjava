@@ -38,7 +38,9 @@ implements BaseProcessor<HttpServletRequest, String> {
         SlotMachineServiceImpl service = new SlotMachineServiceImpl();
         try {
             List results = service.getLSGD(gameName, username, page);
-            response.setTotalPages(100);
+            int totalRecord = service.countLSDG(gameName,username);
+            int totalPages = (int) Math.ceil((double) totalRecord / page);
+            response.setTotalPages(totalPages);
             response.setResults(results);
             response.setSuccess(true);
             response.setErrorCode("0");

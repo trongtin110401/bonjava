@@ -11,6 +11,8 @@
 package com.vinplay.api.processors.slot;
 
 import com.vinplay.api.processors.slot.response.LSNoHuResponse;
+import com.vinplay.dal.dao.SlotMachineDAO;
+import com.vinplay.dal.dao.impl.SlotMachineDAOImpl;
 import com.vinplay.dal.service.impl.SlotMachineServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
@@ -27,7 +29,10 @@ implements BaseProcessor<HttpServletRequest, String> {
         int page = Integer.parseInt(request.getParameter("p"));
         SlotMachineServiceImpl service = new SlotMachineServiceImpl();
         List results = service.getLogNoHu(gameName, page);
-        response.setTotalPages(10);
+        SlotMachineDAO dao = new SlotMachineDAOImpl();
+        int totalRecord = dao.countListNoHu(gameName);
+        int totalPages = (int) Math.ceil((double) totalRecord / page);
+        response.setTotalPages(totalPages);
         response.setResults(results);
         response.setSuccess(true);
         response.setErrorCode("0");
