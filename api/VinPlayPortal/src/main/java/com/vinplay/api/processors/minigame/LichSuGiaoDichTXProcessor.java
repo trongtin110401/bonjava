@@ -11,6 +11,9 @@
 package com.vinplay.api.processors.minigame;
 
 import com.vinplay.api.processors.minigame.response.LichSuGiaoDichTXResponse;
+import com.vinplay.dal.dao.TaiXiuDAO;
+import com.vinplay.dal.dao.impl.TaiXiuDAOImpl;
+import com.vinplay.dal.dao.impl.TaiXiuMd5DAOImpl;
 import com.vinplay.dal.service.impl.OverUnderServiceImpl;
 import com.vinplay.dal.service.impl.TaiXiuServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
@@ -58,8 +61,10 @@ implements BaseProcessor<HttpServletRequest, String> {
             OverUnderServiceImpl service = new OverUnderServiceImpl();
             try {
                 List trans = service.getLichSuGiaoDich(username, page, moneyType);
-                int totalPages = 10;
-                response.setTotalPages(10);
+                TaiXiuDAO dao = new TaiXiuDAOImpl();
+                int totalRecord = dao.countLichSuGiaoDichTX(username,moneyType);
+                int totalPages = (int) Math.ceil((double) totalRecord / page);
+                response.setTotalPages(totalPages);
                 response.setTransactions(trans);
                 response.setSuccess(true);
                 response.setErrorCode("0");
