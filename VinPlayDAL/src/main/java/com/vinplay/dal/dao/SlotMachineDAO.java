@@ -28,5 +28,7 @@ public interface SlotMachineDAO {
     public boolean updateSlotFreeDaily(String var1, String var2, int var3, int var4) throws SQLException;
 
     public List<NoHuModel> getListNoHu(String var1, int var2);
+
+    public int countListNoHu(String gameName);
 }
 

@@ -21,6 +21,7 @@ package com.vinplay.dal.dao.impl;
 import com.mongodb.BasicDBObject;
 import com.mongodb.Block;
 import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.vinplay.dal.dao.SlotMachineDAO;
 import com.vinplay.vbee.common.enums.Games;
@@ -205,5 +206,15 @@ public class SlotMachineDAOImpl
         return results;
     }
 
+    @Override
+    public int countListNoHu(String gameName) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("log_no_hu_slot");
+        Document conditions = new Document();
+        conditions.append("game_name", gameName);
+        long totalRecords = collection.count(conditions);
+
+        return (int) totalRecords;
+    }
 }
 
