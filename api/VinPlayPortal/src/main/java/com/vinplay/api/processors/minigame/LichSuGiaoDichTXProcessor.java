@@ -36,24 +36,20 @@ implements BaseProcessor<HttpServletRequest, String> {
             return response.toJson();
         }
         int moneyType = Integer.parseInt(request.getParameter("mt"));
-        logger.debug("vao day"+ moneyType);
         String txType = request.getParameter("txType");
-        logger.debug("vao day"+ txType);
         if(txType == null || txType.equals("1")){
             TaiXiuServiceImpl service = new TaiXiuServiceImpl();
-            logger.debug("vao day ok"+ moneyType);
             try {
-                logger.debug("vao day ok kkkk "+ username + " | "+page+ " | " +moneyType);
                 List trans = service.getLichSuGiaoDich(username, page, moneyType);
-                logger.debug("vao day"+ username + " | "+page+ " | " +moneyType);
-                int totalPages = 10;
-                response.setTotalPages(10);
+                TaiXiuDAO dao = new TaiXiuDAOImpl();
+                int totalRecord = dao.countLichSuGiaoDichTX(username,moneyType);
+                int totalPages = (int) Math.ceil((double) totalRecord / page);
+                response.setTotalPages(totalPages);
                 response.setTransactions(trans);
                 response.setSuccess(true);
                 response.setErrorCode("0");
             }
             catch (SQLException e) {
-                logger.debug("vao error"+ e.getMessage());
                 e.printStackTrace();
             }
         }
