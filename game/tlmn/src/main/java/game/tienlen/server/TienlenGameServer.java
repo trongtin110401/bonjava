@@ -540,7 +540,7 @@ extends GameServer {
             } else {
                 this.gameMgr.makeAutoStart(after);
                 if (count > 2) {
-                    this.xuLiDanhCap(count);
+//                    this.xuLiDanhCap(count);
                 }
             }
         }
