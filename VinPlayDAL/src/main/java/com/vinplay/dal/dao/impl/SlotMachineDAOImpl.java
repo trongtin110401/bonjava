@@ -189,10 +189,9 @@ public class SlotMachineDAOImpl
         iterable.forEach((Block) new Block<Document>() {
 
             public void apply(Document document) {
-                String nick_name = document.getString((Object) "nick_name");
                 NoHuModel entry = new NoHuModel();
                 entry.rf = document.getLong((Object) "reference_id");
-                entry.nn = nick_name.contains("[R] ") ? nick_name : "[R] " + nick_name;
+                entry.nn = document.getString((Object) "nick_name");
                 entry.bv = document.getInteger((Object) "bet_value").intValue();
                 entry.pz = document.getLong((Object) "prize");
                 entry.mx = document.getString((Object) "matrix");
