@@ -39,7 +39,7 @@ implements BaseProcessor<HttpServletRequest, String> {
         try {
             List results = service.getLSGD(gameName, username, page);
             int totalRecord = service.countLSDG(gameName,username);
-            int totalPages = (int) Math.ceil((double) totalRecord / page);
+            int totalPages = (int) Math.ceil((double) totalRecord / 10);
             response.setTotalPages(totalPages);
             response.setResults(results);
             response.setSuccess(true);

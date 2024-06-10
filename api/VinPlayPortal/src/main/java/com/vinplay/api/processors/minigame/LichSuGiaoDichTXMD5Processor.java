@@ -40,21 +40,17 @@ implements BaseProcessor<HttpServletRequest, String> {
         logger.debug("vao day"+ txType);
         if(txType == null || txType.equals("1")){
             TaiXiuMd5ServiceImpl service = new TaiXiuMd5ServiceImpl();
-            logger.debug("vao day ok"+ moneyType);
             try {
-                logger.debug("vao day ok kkkk "+ username + " | "+page+ " | " +moneyType);
                 List trans = service.getLichSuGiaoDich(username, page, moneyType);
                 TaiXiuDAO dao = new TaiXiuMd5DAOImpl();
                 int totalRecord = dao.countLichSuGiaoDichTX(username,moneyType);
-                int totalPages = (int) Math.ceil((double) totalRecord / page);
-                logger.debug("vao day"+ username + " | "+page+ " | " +moneyType);
+                int totalPages = (int) Math.ceil((double) totalRecord / 10);
                 response.setTotalPages(totalPages);
                 response.setTransactions(trans);
                 response.setSuccess(true);
                 response.setErrorCode("0");
             }
             catch (SQLException e) {
-                logger.debug("vao error"+ e.getMessage());
                 e.printStackTrace();
             }
         }
