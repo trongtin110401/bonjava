@@ -2,7 +2,9 @@ package com.vinplay.api.backend.processors;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
+import com.vinplay.dal.dao.ReportDAO;
 import com.vinplay.dal.dao.impl.LogMoneyUserDaoImpl;
+import com.vinplay.dal.dao.impl.ReportDaoImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
@@ -37,6 +39,7 @@ public class GetUserOnlineProcessor implements BaseProcessor<HttpServletRequest,
 
         List<UserCCUResponse> userOnlineResponse = usernames.stream()
                 .map(username -> createUserCCUResponse(username, dao))
+                .sorted((u1, u2) -> Double.compare(u2.getTotalMoney(), u1.getTotalMoney()))
                 .collect(Collectors.toList());
 
         response.setUsers(userOnlineResponse);
@@ -45,7 +48,13 @@ public class GetUserOnlineProcessor implements BaseProcessor<HttpServletRequest,
 
     private UserCCUResponse createUserCCUResponse(String username, LogMoneyUserDaoImpl dao) {
         List<LogUserMoneyResponse> responses = dao.getMoneyCashInAndCashOutByNickname(username, ACTION_NAME);
-
+        ReportDAO reportDAO = new ReportDaoImpl();
+        long currentMoeny = 0;
+        try {
+            currentMoeny = reportDAO.getCurrentMoney(username);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         long totalDeposit = 0;
         long totalCashOut = 0;
 
@@ -61,6 +70,7 @@ public class GetUserOnlineProcessor implements BaseProcessor<HttpServletRequest,
 
         UserCCUResponse userCCUResponse = new UserCCUResponse();
         userCCUResponse.setNickName(username);
+        userCCUResponse.setTotalMoney(currentMoeny);
         userCCUResponse.setTotalCashOut(totalCashOut);
         userCCUResponse.setTotalDeposit(totalDeposit);
 
