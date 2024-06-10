@@ -59,7 +59,7 @@ implements BaseProcessor<HttpServletRequest, String> {
                 List trans = service.getLichSuGiaoDich(username, page, moneyType);
                 TaiXiuDAO dao = new TaiXiuDAOImpl();
                 int totalRecord = dao.countLichSuGiaoDichTX(username,moneyType);
-                int totalPages = (int) Math.ceil((double) totalRecord / page);
+                int totalPages = (int) Math.ceil((double) totalRecord / 10);
                 response.setTotalPages(totalPages);
                 response.setTransactions(trans);
                 response.setSuccess(true);

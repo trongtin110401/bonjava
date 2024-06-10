@@ -31,7 +31,7 @@ implements BaseProcessor<HttpServletRequest, String> {
         List results = service.getLogNoHu(gameName, page);
         SlotMachineDAO dao = new SlotMachineDAOImpl();
         int totalRecord = dao.countListNoHu(gameName);
-        int totalPages = (int) Math.ceil((double) totalRecord / page);
+        int totalPages = (int) Math.ceil((double) totalRecord / 10);
         response.setTotalPages(totalPages);
         response.setResults(results);
         response.setSuccess(true);
