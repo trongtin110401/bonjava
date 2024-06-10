@@ -35,10 +35,6 @@ implements BaseProcessor<HttpServletRequest, String> {
             return response.toJson();
         }
         int moneyType = Integer.parseInt(request.getParameter("mt"));
-        logger.debug("vao day"+ moneyType);
-        String txType = request.getParameter("txType");
-        logger.debug("vao day"+ txType);
-        if(txType == null || txType.equals("1")){
             TaiXiuMd5ServiceImpl service = new TaiXiuMd5ServiceImpl();
             try {
                 List trans = service.getLichSuGiaoDich(username, page, moneyType);
@@ -53,20 +49,6 @@ implements BaseProcessor<HttpServletRequest, String> {
             catch (SQLException e) {
                 e.printStackTrace();
             }
-        }
-        else{
-            OverUnderServiceImpl service = new OverUnderServiceImpl();
-            try {
-                List trans = service.getLichSuGiaoDich(username, page, moneyType);
-                response.setTotalPages(10);
-                response.setTransactions(trans);
-                response.setSuccess(true);
-                response.setErrorCode("0");
-            }
-            catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
         return response.toJson();
     }
 }
