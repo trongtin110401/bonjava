@@ -30,5 +30,7 @@ public interface XocDiaDao {
     public List<BossXocDiaModel> getListRoomBoss(String var1, int var2, int var3, int var4) throws SQLException, JSONException;
 
     List<TransactionXocDia> getLichSuXocDia(String username, int page);
+
+    int countLichSuXocDia(String username);
 }
 

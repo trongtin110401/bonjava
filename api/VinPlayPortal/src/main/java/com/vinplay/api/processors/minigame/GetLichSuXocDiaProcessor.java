@@ -19,7 +19,7 @@ import com.vinplay.vbee.common.cp.Param;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-public class GetLichSuXocDiaProcessor
+public class    GetLichSuXocDiaProcessor
         implements BaseProcessor<HttpServletRequest, String> {
 
     public String execute(Param<HttpServletRequest> param) {
@@ -38,10 +38,11 @@ public class GetLichSuXocDiaProcessor
 
         XocDiaDaoImpl xocDiaDao = new XocDiaDaoImpl();
         List<TransactionXocDia> transactionXocDias = xocDiaDao.getLichSuXocDia(username, page);
-
+        int totalRecord = xocDiaDao.countLichSuXocDia(username);
+        int totalPages = (int) Math.ceil((double) totalRecord / 10);
         response.setSuccess(true);
         response.setErrorCode("0");
-        response.setTotalPages(page);
+        response.setTotalPages(totalPages);
         response.setTransactions(transactionXocDias);
 
         return response;
