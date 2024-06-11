@@ -12,6 +12,7 @@ package com.vinplay.usercore.dao.impl;
 import com.mongodb.BasicDBObject;
 import com.mongodb.Block;
 import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.vinplay.dal.entities.taixiu.BetResult;
 import com.vinplay.dal.entities.taixiu.TransactionXocDia;
@@ -271,6 +272,15 @@ implements XocDiaDao {
             }
         });
         return results;
+    }
+
+    @Override
+    public int countLichSuXocDia(String username) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("xoc_dia_transaction");
+        Document conditions = new Document();
+        conditions.put("user_name", username);
+       return (int) collection.count(conditions);
     }
 }
 
