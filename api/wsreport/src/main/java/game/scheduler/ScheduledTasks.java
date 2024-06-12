@@ -119,12 +119,13 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             Map<Integer, Long> mapReportBet = (Map<Integer, Long>) cacheService.getObject("mapReportBet");
             long referentId = cacheService.getValueInt("BauCuareferenceId");
             String remainTime = cacheService.getValueStr("BauCuaRemainTime");
+            int iRemainTime = Integer.parseInt(remainTime);
             boolean bettingState = (boolean) cacheService.getObject("bettingStateBauCua");
             response.setMapReportBet(mapReportBet);
             response.setMapBotReportBet(mapBotReportBet);
             response.setBetting(bettingState);
             response.setReferenceId(referentId);
-            response.setRemainingTime(bettingState ? String.valueOf((Integer.parseInt(remainTime) - 13)) : remainTime);
+            response.setRemainingTime(String.valueOf(iRemainTime >= 13 ? iRemainTime - 13 : iRemainTime));
             this.sendMessToAdminBauCua(response.toJson());
         } catch (KeyNotFoundException e) {
             e.printStackTrace();
