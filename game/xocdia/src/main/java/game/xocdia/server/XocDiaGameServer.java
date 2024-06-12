@@ -424,7 +424,7 @@ public class XocDiaGameServer
                         break;
                     }
                     Debug.trace((Object[]) new Object[]{"Waiting START NEW GAME", this.roomId, this.gameId});
-                    --this.countTime;
+//                    --this.countTime;
                     break;
                 }
                 case STOP_BETTING_TIME: {
@@ -441,7 +441,7 @@ public class XocDiaGameServer
                         break;
                     }
                     Debug.trace((Object[]) new Object[]{"Waiting BALANCE", this.roomId, this.gameId});
-                    --this.countTime;
+//                    --this.countTime;
                     break;
                 }
                 case 33: {
@@ -450,7 +450,7 @@ public class XocDiaGameServer
                         break;
                     }
                     Debug.trace((Object[]) new Object[]{"Waiting REWARD", this.roomId, this.gameId});
-                    --this.countTime;
+//                    --this.countTime;
                     break;
                 }
             }
