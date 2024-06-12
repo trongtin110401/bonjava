@@ -223,16 +223,22 @@ extends GameServer {
     }
 
     public boolean buyIn(GamePlayer gp, long moneyBuyIn, boolean autoBuyIn) {
+        System.out.println("Money Buy In: " + moneyBuyIn);
+        System.out.println("Auto Buy In: " + autoBuyIn);
         if (this.canBuyIn(gp)) {
+            System.out.println("======> 1");
             if (!this.checkBuyInMoney(moneyBuyIn)) {
+                System.out.println("======> 2");
                 GameRoomManager.instance().leaveRoom(gp.getUser(), this.room);
                 this.notifyKickRoom(gp, (byte)3);
                 return false;
             }
+            System.out.println("======> 3");
             SendBuyIn msg = new SendBuyIn();
             ListGameMoneyInfo.instance().removeGameMoneyInfo(gp.gameMoneyInfo, this.room.getId());
             boolean result = gp.gameMoneyInfo.freezeMoneyBegining(moneyBuyIn);
             if (result) {
+                System.out.println("======> 4");
                 msg.buyInMoney = gp.gameMoneyInfo.freezeMoney;
                 PokerPlayerInfo pokerInfo = gp.spInfo.pokerInfo;
                 pokerInfo.currentMoney = msg.buyInMoney;
@@ -245,10 +251,12 @@ extends GameServer {
                 gp.lastTimeBuyIn = System.currentTimeMillis();
                 return true;
             }
+            System.out.println("======> 5");
             GameRoomManager.instance().leaveRoom(gp.getUser(), this.room);
             this.notifyKickRoom(gp, (byte)3);
             return false;
         }
+        System.out.println("======> 6");
         return false;
     }
 
