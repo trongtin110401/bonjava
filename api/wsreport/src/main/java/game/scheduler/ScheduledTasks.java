@@ -66,23 +66,24 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
     CacheService cacheService;
 
 
-    @Scheduled(fixedRate = 800)
+    @Scheduled(fixedRate = 1000)
     public void getCacheXocDia() {
         try {
 
             String timmer = cacheService.getValueStr("XocDia_Flag_Time");
+            int iTimer = Integer.parseInt(timmer);
             int gameState = cacheService.getValueInt("XocDia_Flag_GameState");
             String isBetting = cacheService.getValueStr("XocDia_Flag_betting");
             String session = cacheService.getValueStr("XocDia_Flag_session");
 
-            XocDiaGameStatus xocDiaGameStatus = new XocDiaGameStatus("1", timmer, String.valueOf(gameState), isBetting, session);
+            XocDiaGameStatus xocDiaGameStatus = new XocDiaGameStatus("1", String.valueOf(iTimer >= 11 ? iTimer - 11 : iTimer) , String.valueOf(gameState), isBetting, session);
             String json = MapperUtils.mapper.writeValueAsString(xocDiaGameStatus);
             this.sendMessToAdmin(json);
 
-            cacheService.removeKey("XocDia_Flag_Time");
-            cacheService.removeKey("XocDia_Flag_GameState");
-            cacheService.removeKey("XocDia_Flag_betting");
-            cacheService.removeKey("XocDia_Flag_session");
+//            cacheService.removeKey("XocDia_Flag_Time");
+//            cacheService.removeKey("XocDia_Flag_GameState");
+//            cacheService.removeKey("XocDia_Flag_betting");
+//            cacheService.removeKey("XocDia_Flag_session");
         } catch (KeyNotFoundException | JsonProcessingException ignored) {
         }
     }
