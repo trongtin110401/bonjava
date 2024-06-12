@@ -50,7 +50,7 @@ public class GameManager {
     public void prepareNewGame() {
         this.game.reset();
         this.isAutoStart = false;
-        this.gameServer.kiemTraTuDongBatDau(2);
+        this.gameServer.kiemTraTuDongBatDau(5);
     }
 
     public void gameLoop() {
@@ -62,7 +62,7 @@ public class GameManager {
             }
         } else if (this.gameState == 0 && !this.isAutoStart) {
             if (this.gameServer.playerCount > 1) {
-                this.gameServer.kiemTraTuDongBatDau(2);
+                this.gameServer.kiemTraTuDongBatDau(5);
             }
         } else if (this.gameState == 1) {
             --this.countDown;

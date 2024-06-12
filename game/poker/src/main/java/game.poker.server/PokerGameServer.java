@@ -452,7 +452,7 @@ extends GameServer {
                 break;
             }
         }
-        this.kiemTraTuDongBatDau(2);
+        this.kiemTraTuDongBatDau(5);
     }
 
     public int getNumTotalPlayer() {
@@ -672,7 +672,7 @@ extends GameServer {
         gp.gameMoneyInfo = null;
         gp.setPlayerStatus(0);
         --this.playerCount;
-        this.kiemTraTuDongBatDau(2);
+        this.kiemTraTuDongBatDau(5);
     }
 
     public void notifyUserEnter(GamePlayer gamePlayer) {
@@ -1129,7 +1129,7 @@ extends GameServer {
                 ++gp.countToOutRoom;
             }
             if (this.gameMgr.gameState == 3) {
-                this.kiemTraTuDongBatDau(2);
+                this.kiemTraTuDongBatDau(5);
             }
             gp.spInfo.pokerInfo.currentMoney = 0L;
             SendRequestBuyIn msg = new SendRequestBuyIn();
