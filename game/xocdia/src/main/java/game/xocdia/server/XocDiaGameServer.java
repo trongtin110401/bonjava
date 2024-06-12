@@ -405,7 +405,8 @@ public class XocDiaGameServer
     private synchronized void gameLoop() {
         try {
             ++this.countTime;
-            cacheService.setValue("XocDia_Flag_Time", String.valueOf(33 - this.getCountTime())); // get all time
+//            cacheService.setValue("XocDia_Flag_Time", String.valueOf(this.getCountTime())); // get all time
+            cacheService.setValue("XocDia_Flag_Time", String.valueOf(33 - this.countTime)); // get all time
             cacheService.setValue("XocDia_Flag_GameState", this.gameState); // get all time
             cacheService.setValue("XocDia_Flag_betting", String.valueOf(this.isBetting));
             cacheService.setValue("XocDia_Flag_session", String.valueOf(this.gameId));
