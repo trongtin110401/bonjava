@@ -223,6 +223,11 @@ extends GameServer {
     }
 
     public boolean buyIn(GamePlayer gp, long moneyBuyIn, boolean autoBuyIn) {
+
+        if(true) {
+            throw new RuntimeException("============> test");
+        }
+
         StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
         StackTraceElement caller = stackTraceElements[stackTraceElements.length - 2];
         System.out.println("methodB() được gọi từ: " + caller.getMethodName() + " của lớp " + caller.getClassName());
