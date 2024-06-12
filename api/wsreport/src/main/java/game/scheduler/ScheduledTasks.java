@@ -124,13 +124,8 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             response.setMapBotReportBet(mapBotReportBet);
             response.setBetting(bettingState);
             response.setReferenceId(referentId);
-            response.setRemainingTime((remainTime));
+            response.setRemainingTime(bettingState ? String.valueOf((Integer.parseInt(remainTime) - 13)) : remainTime);
             this.sendMessToAdminBauCua(response.toJson());
-
-
-//            cacheService.removeKey("bettingStateBauCua");
-//            cacheService.removeKey("BauCuareferenceId");
-//            cacheService.removeKey("BauCuaRemainTime");
         } catch (KeyNotFoundException e) {
             e.printStackTrace();
         }
