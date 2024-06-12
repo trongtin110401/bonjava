@@ -405,7 +405,7 @@ public class XocDiaGameServer
     private synchronized void gameLoop() {
         try {
             ++this.countTime;
-            cacheService.setValue("XocDia_Flag_Time", String.valueOf(this.getCountTime())); // get all time
+            cacheService.setValue("XocDia_Flag_Time", String.valueOf(33 - this.getCountTime())); // get all time
             cacheService.setValue("XocDia_Flag_GameState", this.gameState); // get all time
             cacheService.setValue("XocDia_Flag_betting", String.valueOf(this.isBetting));
             cacheService.setValue("XocDia_Flag_session", String.valueOf(this.gameId));
@@ -424,7 +424,7 @@ public class XocDiaGameServer
                         break;
                     }
                     Debug.trace((Object[]) new Object[]{"Waiting START NEW GAME", this.roomId, this.gameId});
-//                    --this.countTime;
+                    --this.countTime;
                     break;
                 }
                 case STOP_BETTING_TIME: {
@@ -441,7 +441,7 @@ public class XocDiaGameServer
                         break;
                     }
                     Debug.trace((Object[]) new Object[]{"Waiting BALANCE", this.roomId, this.gameId});
-//                    --this.countTime;
+                    --this.countTime;
                     break;
                 }
                 case 33: {
@@ -450,7 +450,7 @@ public class XocDiaGameServer
                         break;
                     }
                     Debug.trace((Object[]) new Object[]{"Waiting REWARD", this.roomId, this.gameId});
-//                    --this.countTime;
+                    --this.countTime;
                     break;
                 }
             }
