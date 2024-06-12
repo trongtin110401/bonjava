@@ -223,6 +223,10 @@ extends GameServer {
     }
 
     public boolean buyIn(GamePlayer gp, long moneyBuyIn, boolean autoBuyIn) {
+        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+        StackTraceElement caller = stackTraceElements[stackTraceElements.length - 2];
+        System.out.println("methodB() được gọi từ: " + caller.getMethodName() + " của lớp " + caller.getClassName());
+
         System.out.println("Money Buy In: " + moneyBuyIn);
         System.out.println("Auto Buy In: " + autoBuyIn);
         if (this.canBuyIn(gp)) {
