@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  bitzero.server.BitZeroServer
  *  bitzero.server.core.BZEvent
@@ -95,6 +95,7 @@ import game.poker.server.logic.Round;
 import game.poker.server.logic.Turn;
 import game.poker.server.sPlayerInfo;
 import game.utils.GameUtils;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -106,13 +107,14 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PokerGameServer
-extends GameServer {
+        extends GameServer {
     public volatile boolean isRegisterLoop = false;
     public ScheduledFuture<?> task;
     public static final int gsNoPlay = 0;
@@ -129,14 +131,14 @@ extends GameServer {
     public volatile int groupIndex;
     public volatile int playerCount;
     StringBuilder gameLog = new StringBuilder();
-    public final Logger logger = LoggerFactory.getLogger((String)"debug");
+    public final Logger logger = LoggerFactory.getLogger((String) "debug");
     public final Runnable gameLoopTask = new GameLoopTask();
     public List<Turn> cheatTurns = new LinkedList<Turn>();
     public int turnIndex = 0;
     public ThongTinThangLon thongTinNoHu = null;
 
     public synchronized void onGameMessage(User user, DataCmd dataCmd) {
-        this.logger.info("onGameMessage: ", (Object)dataCmd.getId(), (Object)user.getName());
+        this.logger.info("onGameMessage: ", (Object) dataCmd.getId(), (Object) user.getName());
         switch (dataCmd.getId()) {
             case 3111: {
                 this.pOutRoom(user, dataCmd);
@@ -174,7 +176,7 @@ extends GameServer {
             gp.standUp = !gp.standUp;
             SendStandUp msg = new SendStandUp();
             msg.standUp = gp.standUp;
-            this.send((BaseMsg)msg, user);
+            this.send((BaseMsg) msg, user);
             PokerPlayerInfo info = gp.spInfo.pokerInfo;
             if (!(!info.fold && gp.isPlaying() || this.gameMgr.isAutoStart)) {
                 this.requestBuyIn(gp);
@@ -186,7 +188,7 @@ extends GameServer {
         SendShowCard msg = new SendShowCard();
         GamePlayer gp = this.getPlayerByUser(user);
         if (gp != null && gp.isPlaying() && this.gameMgr.gameState == 3 && !gp.spInfo.pokerInfo.fold) {
-            msg.chair = (byte)gp.chair;
+            msg.chair = (byte) gp.chair;
             this.send(msg);
         }
     }
@@ -224,9 +226,9 @@ extends GameServer {
 
     public boolean buyIn(GamePlayer gp, long moneyBuyIn, boolean autoBuyIn) {
 
-        if(true) {
-            throw new RuntimeException("============> test");
-        }
+//        if (true) {
+//            throw new RuntimeException("============> test");
+//        }
 
         StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
         StackTraceElement caller = stackTraceElements[stackTraceElements.length - 2];
@@ -239,7 +241,7 @@ extends GameServer {
             if (!this.checkBuyInMoney(moneyBuyIn)) {
                 System.out.println("======> 2");
                 GameRoomManager.instance().leaveRoom(gp.getUser(), this.room);
-                this.notifyKickRoom(gp, (byte)3);
+                this.notifyKickRoom(gp, (byte) 3);
                 return false;
             }
             System.out.println("======> 3");
@@ -252,7 +254,7 @@ extends GameServer {
                 PokerPlayerInfo pokerInfo = gp.spInfo.pokerInfo;
                 pokerInfo.currentMoney = msg.buyInMoney;
                 pokerInfo.lastBuyInMoney = msg.buyInMoney;
-                Debug.trace((Object[])new Object[]{"buyIn: Freeze=;Current=;", gp.pInfo.nickName, gp.gameMoneyInfo.freezeMoney, pokerInfo.currentMoney});
+                Debug.trace((Object[]) new Object[]{"buyIn: Freeze=;Current=;", gp.pInfo.nickName, gp.gameMoneyInfo.freezeMoney, pokerInfo.currentMoney});
                 msg.chair = gp.chair;
                 gp.autoBuyIn = autoBuyIn;
                 this.send(msg);
@@ -262,7 +264,7 @@ extends GameServer {
             }
             System.out.println("======> 5");
             GameRoomManager.instance().leaveRoom(gp.getUser(), this.room);
-            this.notifyKickRoom(gp, (byte)3);
+            this.notifyKickRoom(gp, (byte) 3);
             return false;
         }
         System.out.println("======> 6");
@@ -272,14 +274,14 @@ extends GameServer {
     public boolean buyInAuTo(GamePlayer gp) {
         if (this.canBuyIn(gp)) {
             if (!this.checkBuyInMoney(gp.spInfo.pokerInfo.lastBuyInMoney) || !gp.autoBuyIn) {
-                Debug.trace((Object[])new Object[]{"buyInAuTo failed", gp.gameMoneyInfo.freezeMoney, gp.autoBuyIn});
+                Debug.trace((Object[]) new Object[]{"buyInAuTo failed", gp.gameMoneyInfo.freezeMoney, gp.autoBuyIn});
                 return false;
             }
             PokerPlayerInfo pokerInfo = gp.spInfo.pokerInfo;
             this.buyIn(gp, pokerInfo.lastBuyInMoney, true);
             return true;
         }
-        Debug.trace((Object)"buyInAuTo failed gameplayer null");
+        Debug.trace((Object) "buyInAuTo failed gameplayer null");
         return false;
     }
 
@@ -316,7 +318,7 @@ extends GameServer {
     }
 
     public byte getPlayerCount() {
-        return (byte)this.playerCount;
+        return (byte) this.playerCount;
     }
 
     public boolean checkPlayerChair(int chair) {
@@ -324,9 +326,9 @@ extends GameServer {
     }
 
     public synchronized void onGameUserExit(User user) {
-        Integer chair = (Integer)user.getProperty((Object)USER_CHAIR);
+        Integer chair = (Integer) user.getProperty((Object) USER_CHAIR);
         if (chair == null) {
-            Debug.trace((Object[])new Object[]{"onGameUserExit", "chair null", user.getName()});
+            Debug.trace((Object[]) new Object[]{"onGameUserExit", "chair null", user.getName()});
             return;
         }
         GamePlayer gp = this.getPlayerByChair(chair);
@@ -358,9 +360,9 @@ extends GameServer {
     }
 
     public void onGameUserDis(User user) {
-        Integer chair = (Integer)user.getProperty((Object)USER_CHAIR);
+        Integer chair = (Integer) user.getProperty((Object) USER_CHAIR);
         if (chair == null) {
-            Debug.trace((Object[])new Object[]{"onGameUserExit", "chair null", user.getName()});
+            Debug.trace((Object[]) new Object[]{"onGameUserExit", "chair null", user.getName()});
             return;
         }
         GamePlayer gp = this.getPlayerByChair(chair);
@@ -383,15 +385,15 @@ extends GameServer {
             GamePlayer gp = this.playerList.get(i);
             if (gp.getPlayerStatus() == 0 || gp.pInfo == null || gp.pInfo.userId != user.getId()) continue;
             this.gameLog.append("RE<").append(i).append(">");
-            GameMoneyInfo moneyInfo = (GameMoneyInfo)user.getProperty((Object)"GAME_MONEY_INFO");
+            GameMoneyInfo moneyInfo = (GameMoneyInfo) user.getProperty((Object) "GAME_MONEY_INFO");
             if (moneyInfo != null && gp.gameMoneyInfo.sessionId != moneyInfo.sessionId) {
                 ListGameMoneyInfo.instance().removeGameMoneyInfo(moneyInfo, -1);
             }
-            user.setProperty((Object)USER_CHAIR, (Object)gp.chair);
+            user.setProperty((Object) USER_CHAIR, (Object) gp.chair);
             gp.user = user;
             gp.reqQuitRoom = false;
-            user.setProperty((Object)"GAME_MONEY_INFO", (Object)gp.gameMoneyInfo);
-            gp.user.setProperty((Object)USER_CHAIR, (Object)gp.chair);
+            user.setProperty((Object) "GAME_MONEY_INFO", (Object) gp.gameMoneyInfo);
+            gp.user.setProperty((Object) USER_CHAIR, (Object) gp.chair);
             this.sendGameInfo(gp.chair);
             break;
         }
@@ -403,11 +405,11 @@ extends GameServer {
         if (user == null) {
             return;
         }
-        PlayerInfo pInfo = PlayerInfo.getInfo((User)user);
+        PlayerInfo pInfo = PlayerInfo.getInfo((User) user);
         if (pInfo == null) {
             return;
         }
-        GameMoneyInfo moneyInfo = (GameMoneyInfo)user.getProperty((Object)"GAME_MONEY_INFO");
+        GameMoneyInfo moneyInfo = (GameMoneyInfo) user.getProperty((Object) "GAME_MONEY_INFO");
         if (moneyInfo == null) {
             return;
         }
@@ -415,14 +417,14 @@ extends GameServer {
             gp = this.playerList.get(i);
             if (gp.getPlayerStatus() == 0 || gp.pInfo == null || gp.pInfo.userId != user.getId()) continue;
             this.gameLog.append("RE<").append(i).append(">");
-            if (moneyInfo != null && gp.gameMoneyInfo.sessionId != moneyInfo.sessionId) {
+            if (gp.gameMoneyInfo.sessionId != moneyInfo.sessionId) {
                 ListGameMoneyInfo.instance().removeGameMoneyInfo(moneyInfo, -1);
             }
-            user.setProperty((Object)USER_CHAIR, (Object)gp.chair);
+            user.setProperty((Object) USER_CHAIR, (Object) gp.chair);
             gp.user = user;
             gp.reqQuitRoom = false;
-            user.setProperty((Object)"GAME_MONEY_INFO", (Object)gp.gameMoneyInfo);
-            gp.user.setProperty((Object)USER_CHAIR, (Object)gp.chair);
+            user.setProperty((Object) "GAME_MONEY_INFO", (Object) gp.gameMoneyInfo);
+            gp.user.setProperty((Object) USER_CHAIR, (Object) gp.chair);
             if (this.serverState == 1) {
                 this.sendGameInfo(gp.chair);
             } else {
@@ -505,8 +507,8 @@ extends GameServer {
             this.gameLog.append(gp.chair).append("/");
             this.gameLog.append(gp.spInfo.handCards.toString()).append("/");
             this.gameLog.append(gp.spInfo.handCards.kiemtraBo()).append(";");
-            Debug.trace((Object[])new Object[]{"chiabai:", gp.pInfo.nickName, gp.spInfo.handCards});
-            this.send((BaseMsg)msg, user);
+            Debug.trace((Object[]) new Object[]{"chiabai:", gp.pInfo.nickName, gp.spInfo.handCards});
+            this.send((BaseMsg) msg, user);
         }
         this.gameLog.append(">");
         this.gameLog.append("PC<");
@@ -527,7 +529,7 @@ extends GameServer {
             gp.setPlayerStatus(3);
             ++this.playingCount;
             gp.pInfo.setIsHold(true);
-            PlayerInfo.setRoomId((String)gp.pInfo.nickName, (int)this.room.getId());
+            PlayerInfo.setRoomId((String) gp.pInfo.nickName, (int) this.room.getId());
             this.gameLog.append(gp.pInfo.nickName).append("/");
             this.gameLog.append(i).append(";");
             gp.choiTiepVanSau = false;
@@ -559,8 +561,8 @@ extends GameServer {
         for (int i = 0; i < 9; ++i) {
             GamePlayer gp = this.getPlayerByChair(i);
             if (!gp.isPlaying()) continue;
-            Debug.trace((Object[])new Object[]{"logStartGame", gp.chair, gp.pInfo.nickName});
-            GameUtils.logStartGame((int)this.gameMgr.game.id, (String)gp.pInfo.nickName, (long)this.gameMgr.game.logTime, (int)this.room.setting.moneyType);
+            Debug.trace((Object[]) new Object[]{"logStartGame", gp.chair, gp.pInfo.nickName});
+            GameUtils.logStartGame((int) this.gameMgr.game.id, (String) gp.pInfo.nickName, (long) this.gameMgr.game.logTime, (int) this.room.setting.moneyType);
         }
     }
 
@@ -608,7 +610,8 @@ extends GameServer {
             if (gp1.getUser() == null) continue;
             for (j = i + 1; j < 9; ++j) {
                 gp2 = this.getPlayerByChair(j);
-                if (gp2.getUser() == null || gp1.getUser().getIpAddress().equalsIgnoreCase(gp2.getUser().getIpAddress())) continue;
+                if (gp2.getUser() == null || gp1.getUser().getIpAddress().equalsIgnoreCase(gp2.getUser().getIpAddress()))
+                    continue;
                 checkIp = true;
             }
         }
@@ -627,8 +630,8 @@ extends GameServer {
     }
 
     private boolean kiemTraDuocDanhCungNhau(GamePlayer gp1, GamePlayer gp2, boolean checkIp) {
-        Debug.trace((Object[])new Object[]{"kiemTraDuocDanhCungNhau1", gp1.getUser().getName(), gp1.reqQuitRoom, gp1.timeJoinRoom, checkIp, gp1.getUser().getIpAddress()});
-        Debug.trace((Object[])new Object[]{"kiemTraDuocDanhCungNhau2", gp2.getUser().getName(), gp2.reqQuitRoom, gp2.timeJoinRoom, checkIp, gp2.getUser().getIpAddress()});
+        Debug.trace((Object[]) new Object[]{"kiemTraDuocDanhCungNhau1", gp1.getUser().getName(), gp1.reqQuitRoom, gp1.timeJoinRoom, checkIp, gp1.getUser().getIpAddress()});
+        Debug.trace((Object[]) new Object[]{"kiemTraDuocDanhCungNhau2", gp2.getUser().getName(), gp2.reqQuitRoom, gp2.timeJoinRoom, checkIp, gp2.getUser().getIpAddress()});
         if (gp1.reqQuitRoom || gp2.reqQuitRoom) {
             return false;
         }
@@ -643,7 +646,7 @@ extends GameServer {
             return false;
         }
         long delta = Math.abs(gp1.timeJoinRoom - gp2.timeJoinRoom);
-        if ((double)delta < 1500.0) {
+        if ((double) delta < 1500.0) {
             if (gp1.timeJoinRoom > gp2.timeJoinRoom) {
                 GameRoomManager.instance().leaveRoom(gp1.getUser(), this.room);
                 gp1.reqQuitRoom = true;
@@ -666,7 +669,7 @@ extends GameServer {
 
     public synchronized void removePlayerAtChair(int chair, boolean disconnect) {
         if (!this.checkPlayerChair(chair)) {
-            Debug.trace((Object[])new Object[]{"removePlayerAtChair error", chair});
+            Debug.trace((Object[]) new Object[]{"removePlayerAtChair error", chair});
             return;
         }
         GamePlayer gp = this.playerList.get(chair);
@@ -676,9 +679,9 @@ extends GameServer {
         gp.lastGameId = -1;
         this.notifyUserExit(gp, disconnect);
         if (gp.user != null) {
-            gp.user.removeProperty((Object)USER_CHAIR);
-            gp.user.removeProperty((Object)"GAME_ROOM");
-            gp.user.removeProperty((Object)"GAME_MONEY_INFO");
+            gp.user.removeProperty((Object) USER_CHAIR);
+            gp.user.removeProperty((Object) "GAME_ROOM");
+            gp.user.removeProperty((Object) "GAME_MONEY_INFO");
         }
         gp.spInfo.pokerInfo.clearOutGame();
         gp.user = null;
@@ -703,11 +706,11 @@ extends GameServer {
         msg.uStatus = gamePlayer.getPlayerStatus();
         msg.setBaseInfo(gamePlayer.pInfo);
         msg.uChair = gamePlayer.chair;
-        this.sendMsgExceptMe((BaseMsg)msg, user);
+        this.sendMsgExceptMe((BaseMsg) msg, user);
         this.notifyJoinRoomSuccess(gamePlayer);
-        if (GameUtils.isBot && !user.isPlayer()) {
-            this.buyIn(gamePlayer, 40L * this.getMoneyBet(), true);
-        }
+//        if (GameUtils.isBot && !user.isPlayer()) {
+//            this.buyIn(gamePlayer, 40L * this.getMoneyBet(), true);
+//        }
     }
 
     public void notifyJoinRoomSuccess(GamePlayer gamePlayer) {
@@ -720,38 +723,38 @@ extends GameServer {
         msg.rule = this.room.setting.rule;
         msg.gameId = this.gameMgr.game.id;
         msg.moneyBet = this.room.setting.moneyBet;
-        msg.roomOwner = (byte)this.gameMgr.roomOwnerChair;
+        msg.roomOwner = (byte) this.gameMgr.roomOwnerChair;
         for (int i = 0; i < 9; ++i) {
             GamePlayer gp = this.getPlayerByChair(i);
-            msg.playerStatus[i] = (byte)gp.getPlayerStatus();
+            msg.playerStatus[i] = (byte) gp.getPlayerStatus();
             msg.playerList[i] = gp.getPlayerInfo();
             msg.moneyInfoList[i] = gp.spInfo.pokerInfo;
             if (gp.getUser() == null || gp.spInfo.handCards == null) continue;
             msg.handCardSize[i] = 2;
         }
-        msg.gameAction = (byte)this.gameMgr.gameState;
-        msg.gameAction = (byte)this.gameMgr.gameAction;
-        msg.curentChair = (byte)this.gameMgr.currentChair();
-        msg.countDownTime = (byte)this.gameMgr.countDown;
-        this.send((BaseMsg)msg, gamePlayer.getUser());
+        msg.gameAction = (byte) this.gameMgr.gameState;
+        msg.gameAction = (byte) this.gameMgr.gameAction;
+        msg.curentChair = (byte) this.gameMgr.currentChair();
+        msg.countDownTime = (byte) this.gameMgr.countDown;
+        this.send((BaseMsg) msg, gamePlayer.getUser());
     }
 
     public void notifyUserExit(GamePlayer gamePlayer, boolean disconnect) {
         if (gamePlayer.pInfo != null) {
-            Debug.trace((Object[])new Object[]{gamePlayer.pInfo.nickName, gamePlayer.chair, "exit room ", disconnect});
+            Debug.trace((Object[]) new Object[]{gamePlayer.pInfo.nickName, gamePlayer.chair, "exit room ", disconnect});
             gamePlayer.pInfo.setIsHold(false);
             SendUserExitRoom msg = new SendUserExitRoom();
-            msg.nChair = (byte)gamePlayer.chair;
+            msg.nChair = (byte) gamePlayer.chair;
             msg.nickName = gamePlayer.pInfo.nickName;
             this.send(msg);
         } else {
-            Debug.trace((Object[])new Object[]{gamePlayer.chair, "exit room playerInfo null"});
+            Debug.trace((Object[]) new Object[]{gamePlayer.chair, "exit room playerInfo null"});
         }
     }
 
     public GamePlayer getPlayerByUser(User user) {
-        Integer chair = (Integer)user.getProperty((Object)USER_CHAIR);
-        Debug.trace((Object[])new Object[]{"getPlayerByUser: ", user.getName(), chair});
+        Integer chair = (Integer) user.getProperty((Object) USER_CHAIR);
+        Debug.trace((Object[]) new Object[]{"getPlayerByUser: ", user.getName(), chair});
         if (chair != null) {
             GamePlayer gp = this.getPlayerByChair(chair);
             if (gp != null && gp.pInfo != null && gp.pInfo.nickName.equalsIgnoreCase(user.getName())) {
@@ -790,7 +793,7 @@ extends GameServer {
                 msg.hasInfoAtChair[i] = false;
             }
             msg.initPrivateInfo(me);
-            this.send((BaseMsg)msg, me.getUser());
+            this.send((BaseMsg) msg, me.getUser());
         }
     }
 
@@ -802,7 +805,7 @@ extends GameServer {
     }
 
     public void pOutRoom(User user, DataCmd dataCmd) {
-        Debug.trace((Object[])new Object[]{"pOutRoom", user.getName()});
+        Debug.trace((Object[]) new Object[]{"pOutRoom", user.getName()});
         GamePlayer gp = this.getPlayerByUser(user);
         if (gp != null) {
             if (gp.isPlaying()) {
@@ -816,7 +819,7 @@ extends GameServer {
 
     private void notifyRegisterOutRoom(GamePlayer gp) {
         SendNotifyReqQuitRoom msg = new SendNotifyReqQuitRoom();
-        msg.chair = (byte)gp.chair;
+        msg.chair = (byte) gp.chair;
         msg.reqQuitRoom = gp.reqQuitRoom;
         this.send(msg);
     }
@@ -830,7 +833,7 @@ extends GameServer {
         if (this.gameMgr.gameState != 1) {
             return false;
         }
-        Debug.trace((Object[])new Object[]{"registerTakeTurn", user.getName()});
+        Debug.trace((Object[]) new Object[]{"registerTakeTurn", user.getName()});
         GamePlayer gp = this.getPlayerByUser(user);
         if (gp != null && this.gameMgr.gameAction == 4 && gp.chair == this.gameMgr.currentChair && this.gameMgr.countDown >= 1) {
             PokerPlayerInfo info = gp.spInfo.pokerInfo;
@@ -842,17 +845,17 @@ extends GameServer {
                 this.takeTurn();
                 return true;
             }
-            Debug.trace((Object)"register take turn failed");
+            Debug.trace((Object) "register take turn failed");
             return false;
         }
-        Debug.trace((Object)"Take turn invalid order");
+        Debug.trace((Object) "Take turn invalid order");
         return false;
     }
 
     public void endGame() {
         this.gameMgr.gameState = 3;
-        this.gameMgr.countDown = (int)(10.0 + Math.ceil(1.5 * (double)this.playingCount));
-        Debug.trace((Object)"endGame");
+        this.gameMgr.countDown = (int) (10.0 + Math.ceil(1.5 * (double) this.playingCount));
+        Debug.trace((Object) "endGame");
         this.gomTienVaoHu();
         this.sortUserRanking();
         this.tinhTraTien();
@@ -873,9 +876,9 @@ extends GameServer {
             PokerRank rank = listRank.get(i);
             msg.ketQuaTinhTien[rank.chair] = rank.finalMoney;
             msg.winLost[rank.chair] = rank.win;
-            msg.rank[rank.chair] = rank.fold ? 10L : (long)rank.rank;
+            msg.rank[rank.chair] = rank.fold ? 10L : (long) rank.rank;
             msg.maxCards[rank.chair] = rank.cards.toByteArray();
-            msg.groupCardName[rank.chair] = (byte)rank.cards.kiemtraBo();
+            msg.groupCardName[rank.chair] = (byte) rank.cards.kiemtraBo();
         }
         for (i = 0; i < 9; ++i) {
             GamePlayer gp = this.getPlayerByChair(i);
@@ -922,7 +925,7 @@ extends GameServer {
                 score.money = rank.finalMoney;
                 if (score.money > info.totalBet) {
                     long moneyWin = score.money - info.totalBet;
-                    score.wastedMoney = (long)((double)(moneyWin * (long)this.room.setting.commisionRate) / 100.0);
+                    score.wastedMoney = (long) ((double) (moneyWin * (long) this.room.setting.commisionRate) / 100.0);
                     score.money -= score.wastedMoney;
                     score.winCount = 1;
                     if (this.room.setting.moneyType == 1) {
@@ -937,9 +940,8 @@ extends GameServer {
                 }
                 try {
                     rank.finalMoney = gp.gameMoneyInfo.chargeMoneyInGame(score, this.room.getId(), this.gameMgr.game.id);
-                }
-                catch (MoneyException e) {
-                    CommonHandle.writeErrLog((String)("ERROR WHEN CHARGE MONEY INGAME" + gp.gameMoneyInfo.toString()));
+                } catch (MoneyException e) {
+                    CommonHandle.writeErrLog((String) ("ERROR WHEN CHARGE MONEY INGAME" + gp.gameMoneyInfo.toString()));
                     gp.reqQuitRoom = true;
                 }
                 score.money = rank.finalMoney;
@@ -966,12 +968,12 @@ extends GameServer {
         int size = listRank.size();
         LinkedList<PokerRank> winList = new LinkedList<PokerRank>();
         LinkedList<PokerRank> lostList = new LinkedList<PokerRank>();
-        Debug.trace((Object)"=================================================tinhTraTien1==================================================");
+        Debug.trace((Object) "=================================================tinhTraTien1==================================================");
         for (i = 0; i < listRank.size(); ++i) {
             rank = listRank.get(i);
-            Debug.trace((Object)rank);
+            Debug.trace((Object) rank);
         }
-        Debug.trace((Object)"=================================================tinhTraTien2==================================================");
+        Debug.trace((Object) "=================================================tinhTraTien2==================================================");
         while (index < size) {
             try {
                 winList.clear();
@@ -999,38 +1001,37 @@ extends GameServer {
                 }
                 long winShare = totalLost;
                 if (winSize != 0) {
-                    winShare = (long)Math.floor((double)totalLost * 1.0 / (double)winSize);
+                    winShare = (long) Math.floor((double) totalLost * 1.0 / (double) winSize);
                     for (int i4 = 0; i4 < winList.size(); ++i4) {
-                        PokerRank winRank = (PokerRank)winList.get(i4);
+                        PokerRank winRank = (PokerRank) winList.get(i4);
                         winRank.totalMoneyWin += winShare;
                     }
                 }
                 ++index;
-            }
-            catch (Exception e) {
-                CommonHandle.writeErrLog((Throwable)e);
-                CommonHandle.writeErrLog((String)this.gameLog.toString());
+            } catch (Exception e) {
+                CommonHandle.writeErrLog((Throwable) e);
+                CommonHandle.writeErrLog((String) this.gameLog.toString());
                 break;
             }
         }
         for (i = 0; i < listRank.size(); ++i) {
             rank = listRank.get(i);
-            Debug.trace((Object)rank);
+            Debug.trace((Object) rank);
         }
-        Debug.trace((Object)"============================================tinhTraTien3=======================================================");
+        Debug.trace((Object) "============================================tinhTraTien3=======================================================");
     }
 
     public void dispatchAddEventScore(User user, UserScore score) {
         if (user == null) {
             return;
         }
-        Debug.trace((Object[])new Object[]{"Change money user:", user.getName(), GameUtils.toJsonString((Object)score)});
+        Debug.trace((Object[]) new Object[]{"Change money user:", user.getName(), GameUtils.toJsonString((Object) score)});
         score.moneyType = this.room.setting.moneyType;
         UserScore newScore = score.clone();
         HashMap<GameEventParam, Object> evtParams = new HashMap<GameEventParam, Object>();
-        evtParams.put(GameEventParam.USER, (Object)user);
-        evtParams.put(GameEventParam.USER_SCORE, (Object)newScore);
-        ExtensionUtility.dispatchEvent((IBZEvent)new BZEvent((IBZEventType)GameEventType.EVENT_ADD_SCORE, evtParams));
+        evtParams.put(GameEventParam.USER, (Object) user);
+        evtParams.put(GameEventParam.USER_SCORE, (Object) newScore);
+        ExtensionUtility.dispatchEvent((IBZEvent) new BZEvent((IBZEventType) GameEventType.EVENT_ADD_SCORE, evtParams));
     }
 
     public void sortUserRanking() {
@@ -1053,7 +1054,7 @@ extends GameServer {
         int rank = 1;
         PokerRank prev = null;
         for (i = 0; i < listRank.size(); ++i) {
-            PokerRank current = (PokerRank)listRank.get(i);
+            PokerRank current = (PokerRank) listRank.get(i);
             if (prev == null || PokerRule.soSanhBoBai(prev.cards, current.cards) != 0) {
                 // empty if block
             }
@@ -1063,12 +1064,12 @@ extends GameServer {
         result.ranking = listRank;
         for (i = 0; i < result.ranking.size(); ++i) {
             PokerRank r = result.ranking.get(i);
-            Debug.trace((Object[])new Object[]{"sortUserRanking:", r});
+            Debug.trace((Object[]) new Object[]{"sortUserRanking:", r});
         }
     }
 
     public boolean dispatchEventThangLon(GamePlayer gp, boolean isNoHu) {
-        boolean result = GameUtils.dispatchEventThangLon((User)gp.getUser(), (GameRoom)this.room, (int)this.gameMgr.game.id, (GameMoneyInfo)gp.gameMoneyInfo, (long)this.getMoneyBet(), (boolean)isNoHu, (byte[])gp.getHandCards());
+        boolean result = GameUtils.dispatchEventThangLon((User) gp.getUser(), (GameRoom) this.room, (int) this.gameMgr.game.id, (GameMoneyInfo) gp.gameMoneyInfo, (long) this.getMoneyBet(), (boolean) isNoHu, (byte[]) gp.getHandCards());
         return result;
     }
 
@@ -1088,7 +1089,7 @@ extends GameServer {
     public void notifyKickRoom(GamePlayer gp, byte reason) {
         SendKickRoom msg = new SendKickRoom();
         msg.reason = reason;
-        this.send((BaseMsg)msg, gp.getUser());
+        this.send((BaseMsg) msg, gp.getUser());
     }
 
     public boolean checkMoneyPlayer(GamePlayer gp) {
@@ -1106,10 +1107,10 @@ extends GameServer {
             if (gp.getPlayerStatus() != 0) {
                 if (GameUtils.isMainTain || !this.coTheOLaiBan(gp) && gp.isPlaying()) {
                     if (GameUtils.isMainTain) {
-                        this.notifyKickRoom(gp, (byte)2);
+                        this.notifyKickRoom(gp, (byte) 2);
                     }
                     if (gp.getUser() != null && this.room != null) {
-                        GameRoom gameRoom = (GameRoom)gp.getUser().getProperty((Object)"GAME_ROOM");
+                        GameRoom gameRoom = (GameRoom) gp.getUser().getProperty((Object) "GAME_ROOM");
                         if (gameRoom == this.room) {
                             GameRoomManager.instance().leaveRoom(gp.getUser());
                         }
@@ -1133,8 +1134,8 @@ extends GameServer {
         for (i = 0; i < 9; ++i) {
             gp = this.getPlayerByChair(i);
             if (!msg.hasInfoAtChair[i]) continue;
-            msg.chair = (byte)i;
-            this.send((BaseMsg)msg, gp.getUser());
+            msg.chair = (byte) i;
+            this.send((BaseMsg) msg, gp.getUser());
         }
         this.gameMgr.prepareNewGame();
         this.serverState = 0;
@@ -1150,7 +1151,7 @@ extends GameServer {
             }
             gp.spInfo.pokerInfo.currentMoney = 0L;
             SendRequestBuyIn msg = new SendRequestBuyIn();
-            this.send((BaseMsg)msg, gp.getUser());
+            this.send((BaseMsg) msg, gp.getUser());
         }
     }
 
@@ -1177,7 +1178,7 @@ extends GameServer {
     }
 
     public void logEndGame() {
-        GameUtils.logEndGame((int)this.gameMgr.game.id, (String)this.gameLog.toString(), (long)this.gameMgr.game.logTime);
+        GameUtils.logEndGame((int) this.gameMgr.game.id, (String) this.gameLog.toString(), (long) this.gameMgr.game.logTime);
     }
 
     public synchronized void tudongChoi1() {
@@ -1186,7 +1187,7 @@ extends GameServer {
         }
         GamePlayer gp = this.getPlayerByChair(this.gameMgr.currentChair);
         if (gp != null && !gp.getUser().isPlayer()) {
-            Debug.trace((Object[])new Object[]{"TU DONG CHOI =========================", gp.pInfo.nickName, " BEGIN ====================="});
+            Debug.trace((Object[]) new Object[]{"TU DONG CHOI =========================", gp.pInfo.nickName, " BEGIN ====================="});
             PokerPlayerInfo pokerInfo = gp.spInfo.pokerInfo;
             Round round = this.gameMgr.game.getCurrentRound();
             PokerGameInfo gameInfo = this.gameMgr.game.pokerGameInfo;
@@ -1212,7 +1213,7 @@ extends GameServer {
                 }
                 res = this.registerTakeTurn(gp.getUser(), cmd);
             }
-            Debug.trace((Object[])new Object[]{"TU DONG CHOI **********************", gp.pInfo.nickName, " END **********************"});
+            Debug.trace((Object[]) new Object[]{"TU DONG CHOI **********************", gp.pInfo.nickName, " END **********************"});
         }
     }
 
@@ -1221,13 +1222,13 @@ extends GameServer {
             return;
         }
         GamePlayer gp = this.getPlayerByChair(this.gameMgr.currentChair);
-        Debug.trace((Object[])new Object[]{"TU DONG CHOI =========================", gp.pInfo.nickName, " BEGIN ====================="});
+        Debug.trace((Object[]) new Object[]{"TU DONG CHOI =========================", gp.pInfo.nickName, " BEGIN ====================="});
         if (gp != null) {
             ++gp.countToOutRoom;
             PokerPlayerInfo pokerInfo = gp.spInfo.pokerInfo;
             pokerInfo.registerFold = true;
             this.changeTurn();
-            Debug.trace((Object[])new Object[]{"TU DONG CHOI **********************", gp.pInfo.nickName, " END **********************"});
+            Debug.trace((Object[]) new Object[]{"TU DONG CHOI **********************", gp.pInfo.nickName, " END **********************"});
         }
     }
 
@@ -1236,20 +1237,20 @@ extends GameServer {
             return;
         }
         GamePlayer gp = this.getPlayerByChair(this.gameMgr.currentChair);
-        Debug.trace((Object[])new Object[]{"TU DONG CHOI =========================", gp.pInfo.nickName, " BEGIN ====================="});
+        Debug.trace((Object[]) new Object[]{"TU DONG CHOI =========================", gp.pInfo.nickName, " BEGIN ====================="});
         if (gp != null && this.cheatTurns.size() == 0) {
             PokerPlayerInfo pokerInfo = gp.spInfo.pokerInfo;
             pokerInfo.registerFold = true;
             this.changeTurn();
-            Debug.trace((Object[])new Object[]{"TU DONG CHOI **********************", gp.pInfo.nickName, " END **********************"});
+            Debug.trace((Object[]) new Object[]{"TU DONG CHOI **********************", gp.pInfo.nickName, " END **********************"});
         } else {
             Turn turn = this.cheatTurns.get(this.turnIndex % this.cheatTurns.size());
-            Debug.trace((Object[])new Object[]{"Turn:", this.turnIndex, turn.chair, turn.action, turn.raiseAmount});
+            Debug.trace((Object[]) new Object[]{"Turn:", this.turnIndex, turn.chair, turn.action, turn.raiseAmount});
             ++this.turnIndex;
             PokerPlayerInfo pokerInfo = gp.spInfo.pokerInfo;
             pokerInfo.register(turn);
             this.changeTurn();
-            Debug.trace((Object[])new Object[]{"TU DONG CHOI ********************************************", "**"});
+            Debug.trace((Object[]) new Object[]{"TU DONG CHOI ********************************************", "**"});
         }
     }
 
@@ -1292,23 +1293,22 @@ extends GameServer {
             if (this.thongTinNoHu != null) {
                 for (int i = 0; i < 9; ++i) {
                     GamePlayer gp = this.getPlayerByChair(i);
-                    if (!gp.gameMoneyInfo.sessionId.equalsIgnoreCase(this.thongTinNoHu.moneySessionId) || !gp.gameMoneyInfo.nickName.equalsIgnoreCase(this.thongTinNoHu.nickName)) continue;
+                    if (!gp.gameMoneyInfo.sessionId.equalsIgnoreCase(this.thongTinNoHu.moneySessionId) || !gp.gameMoneyInfo.nickName.equalsIgnoreCase(this.thongTinNoHu.nickName))
+                        continue;
                     gp.gameMoneyInfo.currentMoney = this.thongTinNoHu.currentMoney;
                     break;
                 }
                 SendNoHu msg = new SendNoHu();
                 msg.info = this.thongTinNoHu;
                 for (Map.Entry entry : this.room.userManager.entrySet()) {
-                    User u = (User)entry.getValue();
+                    User u = (User) entry.getValue();
                     if (u == null) continue;
-                    this.send((BaseMsg)msg, u);
+                    this.send((BaseMsg) msg, u);
                 }
             }
-        }
-        catch (Exception e) {
-            CommonHandle.writeErrLog((Throwable)e);
-        }
-        finally {
+        } catch (Exception e) {
+            CommonHandle.writeErrLog((Throwable) e);
+        } finally {
             this.thongTinNoHu = null;
         }
     }
@@ -1368,7 +1368,7 @@ extends GameServer {
     }
 
     public void initSmallAndBigBlind(SendSelectDealer msg) {
-        Debug.trace((Object[])new Object[]{"============VAO CUOC SMALL BLIND:", "begin"});
+        Debug.trace((Object[]) new Object[]{"============VAO CUOC SMALL BLIND:", "begin"});
         PokerGameInfo pokerGameInfo = this.gameMgr.game.pokerGameInfo;
         GamePlayer sPlayer = this.getPlayerByChair(pokerGameInfo.smallBlind);
         PokerPlayerInfo smallBlindInfo = sPlayer.spInfo.pokerInfo;
@@ -1391,8 +1391,8 @@ extends GameServer {
         }
         turn = bigBlindInfo.take(pokerGameInfo, round, true);
         this.logTakeTurn(bPlayer, turn);
-        Debug.trace((Object[])new Object[]{"============VAO CUOC SMALL BLIND:", "end"});
-        Debug.trace((Object[])new Object[]{"============VAO CUOC REQUIRE BIG BLIND:", "begin"});
+        Debug.trace((Object[]) new Object[]{"============VAO CUOC SMALL BLIND:", "end"});
+        Debug.trace((Object[]) new Object[]{"============VAO CUOC REQUIRE BIG BLIND:", "begin"});
         for (int i = 0; i < 9; ++i) {
             GamePlayer gp = this.getPlayerByChair(i);
             if (!gp.isPlaying() || !gp.requireBigBlind) continue;
@@ -1404,7 +1404,7 @@ extends GameServer {
             ++round.requireBigBlindCount;
             this.logTakeTurn(gp, turn);
         }
-        Debug.trace((Object[])new Object[]{"============VAO CUOC REQUIRE BIG BLIND:", "end"});
+        Debug.trace((Object[]) new Object[]{"============VAO CUOC REQUIRE BIG BLIND:", "end"});
     }
 
     public void notifyDealder(SendSelectDealer msg) {
@@ -1434,7 +1434,7 @@ extends GameServer {
             this.endGame();
         } else {
             round = this.gameMgr.game.makeRound();
-            Debug.trace((Object[])new Object[]{"======================NEW ROUND", round.roundId, "========================="});
+            Debug.trace((Object[]) new Object[]{"======================NEW ROUND", round.roundId, "========================="});
             if (round.roundId != 0) {
                 this.gameMgr.currentChair = this.findFirstChairNewRound();
             }
@@ -1464,7 +1464,7 @@ extends GameServer {
             }
             ++i;
         }
-        Debug.trace((Object[])new Object[]{"findFirstChairNewRound", startChair});
+        Debug.trace((Object[]) new Object[]{"findFirstChairNewRound", startChair});
         return startChair;
     }
 
@@ -1493,8 +1493,8 @@ extends GameServer {
             msg.cards = gameInfo.getPublicCard(round.roundId);
             byte[] publicCard = gameInfo.getCurrentPublicCard(round.roundId);
             GroupCard gc = PokerRule.findMaxGroup(gp.spInfo.handCards, new GroupCard(publicCard));
-            msg.cards_name = (byte)gc.kiemtraBo();
-            this.send((BaseMsg)msg, gp.getUser());
+            msg.cards_name = (byte) gc.kiemtraBo();
+            this.send((BaseMsg) msg, gp.getUser());
         }
         this.gameMgr.gameAction = 5;
         this.gameMgr.countDown = 1;
@@ -1515,7 +1515,7 @@ extends GameServer {
         msg.roundId = round.roundId;
         msg.curentChair = this.gameMgr.currentChair;
         msg.countDownTime = this.gameMgr.countDown;
-        Debug.trace((Object[])new Object[]{"notifyChangeTurn", GameUtils.toJsonString((Object)((Object)msg))});
+        Debug.trace((Object[]) new Object[]{"notifyChangeTurn", GameUtils.toJsonString((Object) ((Object) msg))});
         this.send(msg);
     }
 
@@ -1554,7 +1554,7 @@ extends GameServer {
         msg.raiseAmount = turn.raiseAmount;
         msg.raiseStep = gameInfo.lastRaise > gameInfo.bigBlindMoney ? gameInfo.lastRaise : gameInfo.bigBlindMoney;
         msg.raiseBlock = gameInfo.raiseBlock;
-        Debug.trace((Object[])new Object[]{"notifyTakeTurn:", GameUtils.toJsonString((Object)((Object)msg))});
+        Debug.trace((Object[]) new Object[]{"notifyTakeTurn:", GameUtils.toJsonString((Object) ((Object) msg))});
         this.findNextChair();
         this.logTakeTurn(gp, turn);
         this.send(msg);
@@ -1569,7 +1569,7 @@ extends GameServer {
     }
 
     public boolean checkEndGameByFoldAndAllIn() {
-        Debug.trace((Object)"checkEndGameByFoldAndAllIn");
+        Debug.trace((Object) "checkEndGameByFoldAndAllIn");
         PokerGameInfo potInfo = this.gameMgr.game.pokerGameInfo;
         int foldCount = 0;
         int allInCount = 0;
@@ -1589,11 +1589,11 @@ extends GameServer {
             ++followCount;
         }
         if (allInCount == this.playingCount - foldCount || allInCount == this.playingCount - foldCount - 1 && followCount == 1) {
-            Debug.trace((Object[])new Object[]{"Tat ca all in", "allInCount=", allInCount, "playingCount=", this.playingCount, "foldCount=", foldCount});
+            Debug.trace((Object[]) new Object[]{"Tat ca all in", "allInCount=", allInCount, "playingCount=", this.playingCount, "foldCount=", foldCount});
             return true;
         }
         if (foldCount == this.playingCount - 1) {
-            Debug.trace((Object[])new Object[]{"Tat ca up bai", "allInCount=", allInCount, "playingCount=", this.playingCount, "foldCount=", foldCount});
+            Debug.trace((Object[]) new Object[]{"Tat ca up bai", "allInCount=", allInCount, "playingCount=", this.playingCount, "foldCount=", foldCount});
             return true;
         }
         return false;
@@ -1643,7 +1643,7 @@ extends GameServer {
             GamePlayer gp = this.getPlayerByChair(currentChair);
             if (!gp.isPlaying() || gp.spInfo.pokerInfo.fold || gp.spInfo.pokerInfo.allIn) continue;
             this.gameMgr.currentChair = currentChair;
-            Debug.trace((Object[])new Object[]{"Find next chair", this.gameMgr.currentChair});
+            Debug.trace((Object[]) new Object[]{"Find next chair", this.gameMgr.currentChair});
             break;
         }
     }
@@ -1651,10 +1651,9 @@ extends GameServer {
     public synchronized void gameLoop() {
         try {
             this.gameMgr.gameLoop();
-        }
-        catch (Exception e) {
-            CommonHandle.writeErrLog((String)"Error in game loop");
-            CommonHandle.writeErrLog((Throwable)e);
+        } catch (Exception e) {
+            CommonHandle.writeErrLog((String) "Error in game loop");
+            CommonHandle.writeErrLog((Throwable) e);
         }
     }
 
@@ -1685,8 +1684,7 @@ extends GameServer {
                 return json.toString();
             }
             return "{}";
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return "{}";
         }
     }
@@ -1695,31 +1693,29 @@ extends GameServer {
         try {
             JSONObject json = new JSONObject();
             if (this.gameMgr.game.pokerGameInfo.publicCard != null) {
-                json.put("pokerGameInfo", (Object)this.gameMgr.game.pokerGameInfo.publicCard.toString());
+                json.put("pokerGameInfo", (Object) this.gameMgr.game.pokerGameInfo.publicCard.toString());
             }
             json.put("gameState", this.gameMgr.gameState);
             json.put("gameAction", this.gameMgr.gameAction);
             JSONArray arr = new JSONArray();
             for (int i = 0; i < 9; ++i) {
                 GamePlayer gp = this.getPlayerByChair(i);
-                arr.put((Object)gp.toJSONObject());
+                arr.put((Object) gp.toJSONObject());
             }
-            json.put("players", (Object)arr);
+            json.put("players", (Object) arr);
             return json;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return null;
         }
     }
 
     public final class GameLoopTask
-    implements Runnable {
+            implements Runnable {
         @Override
         public void run() {
             try {
                 PokerGameServer.this.gameLoop();
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
