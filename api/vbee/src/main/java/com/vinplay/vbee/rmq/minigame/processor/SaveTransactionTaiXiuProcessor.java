@@ -63,7 +63,7 @@ implements BaseProcessor<byte[], Boolean> {
         try {
             TopVinhDanhDto topVinhDanhDto = new TopVinhDanhDto();
             topVinhDanhDto.setUsername(message.username);
-            topVinhDanhDto.setScore(message.prize - message.betValue);
+            topVinhDanhDto.setScore(message.prize - message.betValue - message.refund);
             topVinhDanhDto.setBoardName(Games.TAI_XIU.getName());
             TopVinhDanhProcessor.addTopVinhDanh(topVinhDanhDto);
         } catch (Exception e) {
