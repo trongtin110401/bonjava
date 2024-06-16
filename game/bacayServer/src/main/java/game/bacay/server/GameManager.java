@@ -59,27 +59,27 @@ public class GameManager {
     }
 
     public void gameLoop() {
-        if (this.gameState == 0 && this.isAutoStart) {
+        if (this.gameState == GS_NO_START && this.isAutoStart) {
             --this.countDown;
             if (this.countDown <= 0) {
-                this.gameState = 1;
+                this.gameState = GS_GAME_PLAYING;
                 this.gameServer.start();
             }
-        } else if (this.gameState == 1) {
-            if (this.gameAction != 0) {
+        } else if (this.gameState == GS_GAME_PLAYING) {
+            if (this.gameAction != NO_ACTION) {
                 --this.countDown;
                 if (GameUtils.isBot) {
                     this.gameServer.botAutoPlay();
                 }
                 if (this.countDown <= 0) {
-                    if (this.gameAction == 1) {
+                    if (this.gameAction == CHIA_BAI) {
                         this.chiaBai();
-                    } else if (this.gameAction == 2) {
+                    } else if (this.gameAction == MO_BAI) {
                         this.moBai();
                     }
                 }
             }
-        } else if (this.gameState == 2) {
+        } else if (this.gameState == GS_GAME_END) {
             --this.countDown;
             if (this.countDown == 5) {
                 this.gameServer.notifyNoHu();
@@ -113,7 +113,7 @@ public class GameManager {
     }
 
     public void makeAutoStart(int after) {
-        if (this.gameState != 0) {
+        if (this.gameState != GS_NO_START) {
             return;
         }
         if (!this.isAutoStart) {
