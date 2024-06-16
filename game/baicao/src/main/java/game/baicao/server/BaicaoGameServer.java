@@ -587,61 +587,66 @@ public class BaicaoGameServer
     }
 
     public synchronized void onGameUserEnter(User user) {
-        int i;
-        GamePlayer gp;
-        if (user == null) {
-            return;
-        }
-        PlayerInfo pInfo = PlayerInfo.getInfo((User) user);
-        if (pInfo == null) {
-            return;
-        }
-        GameMoneyInfo moneyInfo = (GameMoneyInfo) user.getProperty((Object) "GAME_MONEY_INFO");
-        if (moneyInfo == null) {
-            return;
-        }
-        for (i = 0; i < 8; ++i) {
-            gp = this.playerList.get(i);
-            if (gp.getPlayerStatus() == 0 || gp.pInfo == null || gp.pInfo.userId != user.getId()) continue;
-            this.gameLog.append("RE<").append(i).append(">");
-            if (moneyInfo != null && gp.gameMoneyInfo.sessionId != moneyInfo.sessionId) {
-                ListGameMoneyInfo.instance().removeGameMoneyInfo(moneyInfo, -1);
+        try {
+            int i;
+            GamePlayer gp;
+            if (user == null) {
+                return;
             }
-            user.setProperty((Object) USER_CHAIR, (Object) gp.chair);
-            gp.user = user;
-            gp.reqQuitRoom = false;
-            user.setProperty((Object) "GAME_MONEY_INFO", (Object) gp.gameMoneyInfo);
-            if (this.serverState == 1) {
-                this.sendGameInfo(gp.chair);
-            } else {
+            PlayerInfo pInfo = PlayerInfo.getInfo((User) user);
+            if (pInfo == null) {
+                return;
+            }
+            GameMoneyInfo moneyInfo = (GameMoneyInfo) user.getProperty((Object) "GAME_MONEY_INFO");
+            if (moneyInfo == null) {
+                return;
+            }
+            for (i = 0; i < 8; ++i) {
+                gp = this.playerList.get(i);
+                if (gp.getPlayerStatus() == 0 || gp.pInfo == null || gp.pInfo.userId != user.getId()) continue;
+                this.gameLog.append("RE<").append(i).append(">");
+                if (moneyInfo != null && gp.gameMoneyInfo.sessionId != moneyInfo.sessionId) {
+                    ListGameMoneyInfo.instance().removeGameMoneyInfo(moneyInfo, -1);
+                }
+                user.setProperty((Object) USER_CHAIR, (Object) gp.chair);
+                gp.user = user;
+                gp.reqQuitRoom = false;
+                user.setProperty((Object) "GAME_MONEY_INFO", (Object) gp.gameMoneyInfo);
+                if (this.serverState == 1) {
+                    this.sendGameInfo(gp.chair);
+                } else {
+                    this.notifyUserEnter(gp);
+                }
+                return;
+            }
+            for (i = 0; i < 8; ++i) {
+                gp = this.playerList.get(i);
+                if (gp.getPlayerStatus() != 0) continue;
+                if (this.serverState == 0) {
+                    gp.setPlayerStatus(2);
+                } else {
+                    gp.setPlayerStatus(1);
+                }
+                gp.takeChair(user, pInfo, moneyInfo);
+                ++this.playerCount;
+                if (this.playerCount == 1) {
+                    this.gameMgr.roomCreatorUserId = user.getId();
+                    this.gameMgr.roomOwnerChair = i;
+                    this.doiChuong(gp, false);
+                    this.chuongChair = gp.chair;
+                }
+                if (this.playerCount == 2) {
+                    this.gameMgr.roomCreatorUserId = user.getId();
+                    this.gameMgr.roomOwnerChair = i;
+                }
                 this.notifyUserEnter(gp);
+                break;
             }
-            return;
+            this.kiemTraTuDongBatDau(5);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw new RuntimeException("BaiCaoGameServer.onGameUserEnter error", ex);
         }
-        for (i = 0; i < 8; ++i) {
-            gp = this.playerList.get(i);
-            if (gp.getPlayerStatus() != 0) continue;
-            if (this.serverState == 0) {
-                gp.setPlayerStatus(2);
-            } else {
-                gp.setPlayerStatus(1);
-            }
-            gp.takeChair(user, pInfo, moneyInfo);
-            ++this.playerCount;
-            if (this.playerCount == 1) {
-                this.gameMgr.roomCreatorUserId = user.getId();
-                this.gameMgr.roomOwnerChair = i;
-                this.doiChuong(gp, false);
-                this.chuongChair = gp.chair;
-            }
-            if (this.playerCount == 2) {
-                this.gameMgr.roomCreatorUserId = user.getId();
-                this.gameMgr.roomOwnerChair = i;
-            }
-            this.notifyUserEnter(gp);
-            break;
-        }
-        this.kiemTraTuDongBatDau(5);
     }
 
     private GamePlayer timNguoiNhieuTien() {
