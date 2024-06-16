@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  bitzero.server.entities.User
  *  bitzero.server.extensions.data.BaseMsg
@@ -26,6 +26,7 @@ import game.modules.bot.BotManager;
 import game.modules.gameRoom.entities.GameRoom;
 import game.modules.gameRoom.entities.GameRoomSetting;
 import game.utils.GameUtils;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -69,7 +70,12 @@ public class GameManager {
             if (this.gameAction != NO_ACTION) {
                 --this.countDown;
                 if (GameUtils.isBot) {
-                    this.gameServer.botAutoPlay();
+                    try {
+                        this.gameServer.botAutoPlay();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        throw new RuntimeException(ex);
+                    }
                 }
                 if (this.countDown <= 0) {
                     if (this.gameAction == CHIA_BAI) {
@@ -103,7 +109,7 @@ public class GameManager {
     public void notifyAutoStartToUsers(int after) {
         SendUpdateAutoStart msg = new SendUpdateAutoStart();
         msg.isAutoStart = this.isAutoStart;
-        msg.autoStartTime = (byte)after;
+        msg.autoStartTime = (byte) after;
         this.gameServer.send(msg);
     }
 
@@ -161,7 +167,7 @@ public class GameManager {
         boolean isUp = BotManager.instance().balanceMode == 1;
         List<GroupCard> cards = this.game.suit.dealCards(false);
         Collections.sort(cards, GroupCard.groupCardComparator);
-        Debug.trace((Object[])new Object[]{"Chia bai can bang: ", cards.get(0), cards.get(2), cards.get(3)});
+        Debug.trace((Object[]) new Object[]{"Chia bai can bang: ", cards.get(0), cards.get(2), cards.get(3)});
         LinkedList<GroupCard> highGroups = new LinkedList<GroupCard>();
         LinkedList<GroupCard> lowGroups = new LinkedList<GroupCard>();
         for (i = 0; i < 4; ++i) {
@@ -173,7 +179,7 @@ public class GameManager {
         for (i = 0; i < 8; ++i) {
             GroupCard gc;
             GamePlayer gp = this.gameServer.playerList.get(i);
-            if (gp.hasUser() && ((User)gp.getUser()).isBot()) {
+            if (gp.hasUser() && ((User) gp.getUser()).isBot()) {
                 if (isUp) {
                     gc = this.getThenRemoveRandomGroupCard(highGroups);
                     if (gc == null) {
