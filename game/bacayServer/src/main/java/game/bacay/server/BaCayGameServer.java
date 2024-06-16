@@ -1461,6 +1461,7 @@ public class BaCayGameServer
         try {
             this.gameMgr.gameLoop();
         } catch (Exception e) {
+            e.printStackTrace();
             CommonHandle.writeErrLog((String) "Error in game loop");
             CommonHandle.writeErrLog((Throwable) e);
         }
