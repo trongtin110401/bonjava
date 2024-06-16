@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  bitzero.server.entities.User
  *  bitzero.server.extensions.data.BaseMsg
@@ -24,6 +24,7 @@ import game.modules.bot.BotManager;
 import game.modules.gameRoom.entities.GameRoom;
 import game.modules.gameRoom.entities.GameRoomSetting;
 import game.utils.GameUtils;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -68,7 +69,12 @@ public class GameManager {
             if (this.gameAction != 0) {
                 --this.countDown;
                 if (GameUtils.isBot) {
-                    this.gameServer.botAutoPlay();
+                    try {
+                        this.gameServer.botAutoPlay();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        throw new RuntimeException(ex);
+                    }
                 }
                 if (this.countDown <= 0) {
                     if (this.gameAction == 1) {
@@ -102,7 +108,7 @@ public class GameManager {
     public void notifyAutoStartToUsers(int after) {
         SendUpdateAutoStart msg = new SendUpdateAutoStart();
         msg.isAutoStart = this.isAutoStart;
-        msg.autoStartTime = (byte)after;
+        msg.autoStartTime = (byte) after;
         this.gameServer.send(msg);
     }
 
