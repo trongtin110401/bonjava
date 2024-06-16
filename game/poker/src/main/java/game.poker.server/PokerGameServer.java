@@ -42,76 +42,29 @@ import bitzero.server.core.IBZEventType;
 import bitzero.server.entities.User;
 import bitzero.server.extensions.data.BaseMsg;
 import bitzero.server.extensions.data.DataCmd;
-import bitzero.server.util.TaskScheduler;
 import bitzero.util.ExtensionUtility;
 import bitzero.util.common.business.CommonHandle;
 import bitzero.util.common.business.Debug;
-//import com.vinplay.usercore.service.impl.MoneyInGameService;
-import com.vinplay.usercore.service.impl.MoneyInGameServiceImpl;
 import game.entities.PlayerInfo;
 import game.entities.UserScore;
 import game.eventHandlers.GameEventParam;
 import game.eventHandlers.GameEventType;
 import game.modules.gameRoom.cmd.send.SendNoHu;
-import game.modules.gameRoom.entities.GameMoneyInfo;
-import game.modules.gameRoom.entities.GameRoom;
-import game.modules.gameRoom.entities.GameRoomManager;
-import game.modules.gameRoom.entities.GameRoomSetting;
-import game.modules.gameRoom.entities.GameServer;
-import game.modules.gameRoom.entities.ListGameMoneyInfo;
-import game.modules.gameRoom.entities.MoneyException;
-import game.modules.gameRoom.entities.ThongTinThangLon;
-import game.poker.server.GameManager;
-import game.poker.server.GamePlayer;
+import game.modules.gameRoom.entities.*;
 import game.poker.server.cmd.receive.RevBuyIn;
 import game.poker.server.cmd.receive.RevCheatCard;
 import game.poker.server.cmd.receive.RevTakeTurn;
-import game.poker.server.cmd.send.SendBuyIn;
-import game.poker.server.cmd.send.SendChangeTurn;
-import game.poker.server.cmd.send.SendDealPrivateCard;
-import game.poker.server.cmd.send.SendEndGame;
-import game.poker.server.cmd.send.SendGameInfo;
-import game.poker.server.cmd.send.SendJoinRoomSuccess;
-import game.poker.server.cmd.send.SendKickRoom;
-import game.poker.server.cmd.send.SendNewRound;
-import game.poker.server.cmd.send.SendNewUserJoin;
-import game.poker.server.cmd.send.SendNotifyReqQuitRoom;
-import game.poker.server.cmd.send.SendRequestBuyIn;
-import game.poker.server.cmd.send.SendSelectDealer;
-import game.poker.server.cmd.send.SendShowCard;
-import game.poker.server.cmd.send.SendStandUp;
-import game.poker.server.cmd.send.SendTakeTurn;
-import game.poker.server.cmd.send.SendUpdateMatch;
-import game.poker.server.cmd.send.SendUserExitRoom;
-import game.poker.server.logic.CardSuit;
-import game.poker.server.logic.Gamble;
-import game.poker.server.logic.GroupCard;
-import game.poker.server.logic.PokerGameInfo;
-import game.poker.server.logic.PokerPlayerInfo;
-import game.poker.server.logic.PokerRank;
-import game.poker.server.logic.PokerResult;
-import game.poker.server.logic.PokerRule;
-import game.poker.server.logic.Round;
-import game.poker.server.logic.Turn;
-import game.poker.server.sPlayerInfo;
+import game.poker.server.cmd.send.*;
+import game.poker.server.logic.*;
 import game.utils.GameUtils;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-import java.util.Vector;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.*;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 public class PokerGameServer
         extends GameServer {
@@ -226,9 +179,9 @@ public class PokerGameServer
 
     public boolean buyIn(GamePlayer gp, long moneyBuyIn, boolean autoBuyIn) {
 
-//        if (true) {
-//            throw new RuntimeException("============> test");
-//        }
+        if (true) {
+            throw new RuntimeException("============> test");
+        }
 
         StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
         StackTraceElement caller = stackTraceElements[stackTraceElements.length - 2];
@@ -708,9 +661,9 @@ public class PokerGameServer
         msg.uChair = gamePlayer.chair;
         this.sendMsgExceptMe((BaseMsg) msg, user);
         this.notifyJoinRoomSuccess(gamePlayer);
-//        if (GameUtils.isBot && !user.isPlayer()) {
-//            this.buyIn(gamePlayer, 40L * this.getMoneyBet(), true);
-//        }
+        if (GameUtils.isBot && !user.isPlayer()) {
+            this.buyIn(gamePlayer, 40L * this.getMoneyBet(), true);
+        }
     }
 
     public void notifyJoinRoomSuccess(GamePlayer gamePlayer) {

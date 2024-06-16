@@ -43,14 +43,11 @@ import bitzero.server.core.IBZEventType;
 import bitzero.server.entities.User;
 import bitzero.server.extensions.data.BaseMsg;
 import bitzero.server.extensions.data.DataCmd;
-import bitzero.server.util.TaskScheduler;
 import bitzero.util.ExtensionUtility;
 import bitzero.util.common.business.CommonHandle;
 import bitzero.util.common.business.Debug;
 import com.vinplay.usercore.service.LogGameService;
 import com.vinplay.usercore.service.impl.LogGameServiceImpl;
-import game.bacay.server.GameManager;
-import game.bacay.server.GamePlayer;
 import game.bacay.server.cmd.receive.RevCheatCard;
 import game.bacay.server.cmd.receive.RevDanhBien;
 import game.bacay.server.cmd.receive.RevDatCuoc;
@@ -75,11 +72,7 @@ import game.bacay.server.cmd.send.SendUserExitRoom;
 import game.bacay.server.cmd.send.SendVaoGa;
 import game.bacay.server.cmd.send.SendYeuCauDanhBien;
 import game.bacay.server.logic.BacayRule;
-import game.bacay.server.logic.CardSuit;
-import game.bacay.server.logic.Gamble;
 import game.bacay.server.logic.GroupCard;
-import game.bacay.server.sPlayerInfo;
-import game.bacay.server.sResultInfo;
 import game.entities.PlayerInfo;
 import game.entities.UserScore;
 import game.eventHandlers.GameEventParam;
@@ -90,7 +83,6 @@ import game.modules.gameRoom.cmd.send.SendNoHu;
 import game.modules.gameRoom.entities.GameMoneyInfo;
 import game.modules.gameRoom.entities.GameRoom;
 import game.modules.gameRoom.entities.GameRoomManager;
-import game.modules.gameRoom.entities.GameRoomSetting;
 import game.modules.gameRoom.entities.GameServer;
 import game.modules.gameRoom.entities.ListGameMoneyInfo;
 import game.modules.gameRoom.entities.MoneyException;
@@ -99,10 +91,7 @@ import game.utils.GameUtils;
 
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Random;
-import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -114,7 +103,7 @@ public class BaCayGameServer
         extends GameServer {
     public volatile boolean isRegisterLoop = false;
     private ScheduledFuture<?> task;
-    public static final int gsNoPlay = 0;
+    public static final int GS_NO_PLAY = 0;
     public static final int gsPlay = 1;
     public static final int gsResult = 2;
     public static final String USER_CHAIR = "user_chair";
@@ -626,6 +615,8 @@ public class BaCayGameServer
                 this.notifyUserEnter(gp);
                 break;
             }
+
+            this.kiemTraTuDongBatDau(5);
         } catch (Exception ex) {
             ex.printStackTrace();
             throw new RuntimeException("BaCayGameServer.onGameUserEnter error", ex);
@@ -843,7 +834,7 @@ public class BaCayGameServer
     }
 
     public void kiemTraTuDongBatDau(int after) {
-        if (this.gameMgr.gameState == 0) {
+        if (this.gameMgr.gameState == GS_NO_PLAY) {
             if (this.demSoNguoiChoiTiep() < 2) {
                 this.gameMgr.cancelAutoStart();
             } else {
