@@ -8,6 +8,7 @@ import com.hazelcast.core.IMap;
 import com.vinplay.vbee.common.models.cache.UserCacheModel;
 import game.bean.MapperUtils;
 import game.config.HttpCommon;
+import game.entity.entitiesxocdia.UserBetModel;
 import game.entity.entitytaixiu.TaiXiuAdmin;
 import game.entity.entitytaixiu.TaiXiuAdminReportObj;
 import game.entity.entitytaixiu.TaiXiuAdminReportResponse;
@@ -76,7 +77,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             String isBetting = cacheService.getValueStr("XocDia_Flag_betting");
             String session = cacheService.getValueStr("XocDia_Flag_session");
 
-            XocDiaGameStatus xocDiaGameStatus = new XocDiaGameStatus("1", String.valueOf(iTimer >= 11 ? iTimer - 11 : iTimer) , String.valueOf(gameState), isBetting, session);
+            XocDiaGameStatus xocDiaGameStatus = new XocDiaGameStatus("1", String.valueOf(iTimer >= 11 ? iTimer - 11 : iTimer), String.valueOf(gameState), isBetting, session);
             String json = MapperUtils.mapper.writeValueAsString(xocDiaGameStatus);
             this.sendMessToAdmin(json);
 
@@ -626,6 +627,55 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
                             .filter(taiXiuAdmin -> taiXiuAdmin.getUsername().equals(topWin.getUsername()))
                             .findFirst()
                             .ifPresent(taiXiuAdmin -> taiXiuAdmin.setReportMoneyToday(topWin.getMoney()));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return userList;
+    }
+
+    public List<UserBetModel> getUserXD(List<UserBetModel> userList, String boardName) {
+        if (userList.isEmpty()) {
+            return userList;
+        }
+        try {
+            CacheService service = new CacheServiceImpl();
+            String host = "";
+            try {
+                host = service.getValueStr("url_leader_board");
+            } catch (Exception e) {
+                host = "localhost";
+            }
+            final String BASE_URL = "http://" + host + ":8087/leaderboard/get_by_name";
+            String users = convertListToString(userList.stream().map(UserBetModel::getNickname).collect(Collectors.toList()));
+            String typeDate = "DAY_" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+            String url = String.format("%s?boardName=%s_%s&users=%s", BASE_URL, boardName, typeDate, users);
+
+            OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder().build();
+            Request request = new Request.Builder()
+                    .url(url)
+                    .method("GET", null)
+                    .build();
+
+            Response response = client.newCall(request).execute();
+            if (response.body() != null) {
+                List<TopWin> topWins = getTopWin(response.body().string());
+                cache = HazelcastClientFactory.getInstance();
+                for (TopWin topWin : topWins) {
+                    userList.stream()
+                            .filter(taiXiuAdmin -> taiXiuAdmin.getNickname().equals(topWin.getUsername()))
+                            .findFirst()
+                            .ifPresent(taiXiuAdmin -> {
+                                taiXiuAdmin.setTotalProfit(topWin.getMoney());
+                                if (cache != null) {
+                                    userMap = cache.getMap("users");
+                                    UserCacheModel user = userMap.get(topWin.getUsername());
+                                    if (user != null) {
+                                        taiXiuAdmin.setTotalMoney(user.getVinTotal());
+                                    }
+                                }
+                            });
                 }
             }
         } catch (Exception e) {
