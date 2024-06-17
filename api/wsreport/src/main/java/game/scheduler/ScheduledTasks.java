@@ -636,6 +636,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
     }
 
     public List<UserBetModel> getUserXD(List<UserBetModel> userList, String boardName) {
+        System.out.println("start get user info xd");
         if (userList.isEmpty()) {
             return userList;
         }
