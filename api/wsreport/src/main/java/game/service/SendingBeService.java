@@ -66,14 +66,10 @@ public class SendingBeService {
                 if (!users.contains(entry.getKey())) {
                     users.add(entry.getKey());
                     userBetModel.setNickname(entry.getKey());
+                    userBetModels.add(userBetModel);
                 }
             }
-            userBetModels.add(userBetModel);
         }
-
-        UserBetModel userBetModel = new UserBetModel();
-        userBetModel.setNickname("testacc123");
-        userBetModels.add(userBetModel);
         ScheduledTasks scheduledTasks = new ScheduledTasks();
         userBetModels = scheduledTasks.getUserXD(userBetModels, "XocDia");
         xocDiaResponse.setUsers(userBetModels);
