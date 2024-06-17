@@ -1,16 +1,16 @@
 package game.entity.response;
 
-import game.entity.entitiesxocdia.GamePot;
 import game.entity.entitiesxocdia.GamePotReportModel;
-import lombok.*;
+import game.entity.entitiesxocdia.UserBetModel;
 
 import java.util.ArrayList;
-import java.util.Vector;
+import java.util.List;
 
 
 public class XocDiaReportResponse {
     String code;
     ArrayList<GamePotReportModel> potList;
+    public List<UserBetModel> users;
 
     public XocDiaReportResponse() {
     }
@@ -36,5 +36,11 @@ public class XocDiaReportResponse {
         this.code = code;
     }
 
+    public List<UserBetModel> getUsers() {
+        return users;
+    }
 
+    public void setUsers(List<UserBetModel> users) {
+        this.users = users;
+    }
 }
