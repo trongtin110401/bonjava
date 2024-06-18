@@ -186,7 +186,7 @@ public class MGRoomBauCuaTo2 extends MGRoom {
         int i = 0;
         removeOldBot();
         for (BotBauCua botBauCua : botBC) {
-            userRoomInfoList.put(botBauCua.getNickname(), new UserRoomInfo(botBauCua.getNickname(), botBauCua.getMoneyCurrent(), String.valueOf(i)));
+            userRoomInfoList.put(botBauCua.getNickname(), new UserRoomInfo(botBauCua.getNickname(), botBauCua.getMoneyCurrent(), String.valueOf(new Random().nextInt(12))));
             i++;
         }
         this.updateBauCuaInformation();
@@ -666,7 +666,7 @@ public class MGRoomBauCuaTo2 extends MGRoom {
         userRoomInfoList.put(user.getName(), new UserRoomInfo(user.getName(), this.userService.getCurrentMoneyUserCache(user.getName(), "vin"), pInfo.avatarUrl));
         int i = 0;
         for (BotBauCua botBauCua : botBC) {
-            userRoomInfoList.put(botBauCua.getNickname(), new UserRoomInfo(botBauCua.getNickname(), botBauCua.getMoneyCurrent(), String.valueOf(i)));
+            userRoomInfoList.put(botBauCua.getNickname(), new UserRoomInfo(botBauCua.getNickname(), botBauCua.getMoneyCurrent(), String.valueOf(new Random().nextInt(12))));
             i++;
         }
         NotifyUser();
