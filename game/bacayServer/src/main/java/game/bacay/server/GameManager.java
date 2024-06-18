@@ -34,9 +34,12 @@ import java.util.List;
 import java.util.Vector;
 
 public class GameManager {
+    // GAME STATE
     public static final int GS_NO_START = 0;
     public static final int GS_GAME_PLAYING = 1;
     public static final int GS_GAME_END = 2;
+
+    // GAME ACTION
     public static final int NO_ACTION = 0;
     public static final int CHIA_BAI = 1;
     public static final int MO_BAI = 2;
