@@ -658,10 +658,11 @@ public class MGRoomBauCuaTo2 extends MGRoom {
             pInfo = new PlayerInfo();
             pInfo.userId = user.getId();
             pInfo.nickName = user.getName();
-            int avatar = new Random().nextInt(12);
-            pInfo.avatarUrl = String.valueOf(avatar);
+//            int avatar = new Random().nextInt(12);
+            pInfo.avatarUrl =  userService.getUser(user.getName()).getAvatar();
             user.setProperty((Object) "PLAYER_INFO", (Object) pInfo);
         }
+
         userRoomInfoList.put(user.getName(), new UserRoomInfo(user.getName(), this.userService.getCurrentMoneyUserCache(user.getName(), "vin"), pInfo.avatarUrl));
         int i = 0;
         for (BotBauCua botBauCua : botBC) {
