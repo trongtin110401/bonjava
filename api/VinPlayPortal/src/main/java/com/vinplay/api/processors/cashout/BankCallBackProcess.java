@@ -193,7 +193,7 @@ public class BankCallBackProcess implements BaseProcessor<HttpServletRequest, St
             case 2:
                 return "Ngân hàng đang bảo trì!";
             case 3:
-                return "Vui lòng phát sinh cược thêm 100% số tiền đã nạp!";
+                return "Vui lòng cược thêm!";
             case 105:
                 return "Giao dịch thành công!";
         }
