@@ -271,7 +271,8 @@ public class MGRoomTaiXiu
         inputTime = this.getRemainTime(); // lấy thời gian còn lại
         UserCacheModel userCacheModel = userService.getMoneyUser(nickname);
         long currentMoney = this.userService.getMoneyUserCache(nickname, this.moneyTypeStr);  // lấy số tiền hiện tại của user dựa trên nick name
-        System.out.println("===========>>>>>>>>> CURRENT MONEY: " + userCacheModel.getNickname() + " = " + userCacheModel.getMoney("vin"));
+        if (!userCacheModel.isBot())
+            System.out.println("===========>>>>>>>>> CURRENT MONEY: " + userCacheModel.getNickname() + " = " + userCacheModel.getMoney("vin"));
         int result = 2;
         if (this.enableBetting) {
             if (betValue >= 100L) {
