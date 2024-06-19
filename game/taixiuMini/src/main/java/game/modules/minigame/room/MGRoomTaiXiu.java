@@ -269,7 +269,9 @@ public class MGRoomTaiXiu
             }
         }
         inputTime = this.getRemainTime(); // lấy thời gian còn lại
+        UserCacheModel userCacheModel = userService.getMoneyUser(nickname);
         long currentMoney = this.userService.getMoneyUserCache(nickname, this.moneyTypeStr);  // lấy số tiền hiện tại của user dựa trên nick name
+        System.out.println("===========>>>>>>>>> CURRENT MONEY: " + userCacheModel.getNickname() + " = " + userCacheModel.getMoney("vin"));
         int result = 2;
         if (this.enableBetting) {
             if (betValue >= 100L) {
@@ -284,7 +286,7 @@ public class MGRoomTaiXiu
 
                         MoneyResponse res = new MoneyResponse(false, "1001");
                         if (!isBot) { // trừ tiền đặt cược
-                            res = this.userService.updateMoney(nickname, -betValue, this.moneyTypeStr, "TaiXiu", "T\u00e0i x\u1ec9u: \u0110\u1eb7t c\u01b0\u1ee3c", "Phii\u00ean " + this.referenceId + ": \u0111\u1eb7t " + betSideStr + " (" + inputTime + ")", 0L, Long.valueOf(this.referenceId), TransType.START_TRANS);
+                            res = this.userService.updateMoney(nickname, -betValue, this.moneyTypeStr, "TaiXiu", "Tài xỉu: Đặt cược", "Phiên " + this.referenceId + ": đặt " + betSideStr + " (" + inputTime + ")", 0L, Long.valueOf(this.referenceId), TransType.START_TRANS);
 
                             try {
                                 BetTXMD5Message message = new BetTXMD5Message();
@@ -304,7 +306,7 @@ public class MGRoomTaiXiu
                             if (!this.enableBetting) { // kiểm tra xem có phải đang trong quá trình đặt cược hay ko , nếu ko
                                 result = 1;
                                 if (!isBot) { // hoàn trả tiền cược
-                                    this.userService.updateMoney(nickname, betValue, this.moneyTypeStr, "TaiXiu", "T\u00e0i x\u1ec9u: Tr\u1ea3 c\u01b0\u1ee3c", "Ho\u00e0n tr\u1ea3 \u0111\u1eb7t c\u01b0\u1ee3c phi\u00ean " + this.referenceId, 0L, Long.valueOf(this.referenceId), TransType.END_TRANS);
+                                    this.userService.updateMoney(nickname, betValue, this.moneyTypeStr, "TaiXiu", "Tài xỉu: Trả cư\u1ee3c", "Hoàn tr\u1ea3 \u0111\u1eb7t c\u01b0\u1ee3c phi\u00ean " + this.referenceId, 0L, Long.valueOf(this.referenceId), TransType.END_TRANS);
 
                                 }
                             } else { // nếu đang trong quá trình đặt cược

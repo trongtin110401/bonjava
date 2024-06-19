@@ -110,11 +110,11 @@ public class AutoRutTien {
     String getTrangthaiDes(int status) {
         switch (status) {
             case 0:
-                return "Thông tin tài khoản ngân hàng của quý khách không đúng, vui lòng kiểm tra và thử lại!";
+                return "Sai thông tin ngân hàng";
             case 2:
-                return "Ngân hàng của quý khách đang được bảo trì, vui lòng thử lại sau!";
+                return "Ngân hàng đang bảo trì!";
             case 3:
-                return "Vui lòng phát sinh cược thêm 100% số tiền đã nạp!";
+                return "Vui lòng cược thêm!";
             case 105:
                 return "Giao dịch thành công!";
         }
