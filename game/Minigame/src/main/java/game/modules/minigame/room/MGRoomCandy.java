@@ -83,7 +83,7 @@ public class MGRoomCandy extends MGRoom {
     public String gameName = Games.CANDY.getName();
     private final Runnable checkResetPotTask = new CheckResetPot();
 
-    public MGRoomCandy(String name, short moneyType, long pot, long fund, int betValue, long initPotValue) {
+    public MGRoomCandy(String name, String gameName, short moneyType, long pot, long fund, int betValue, long initPotValue) {
 
         super(name);
 
@@ -98,6 +98,7 @@ public class MGRoomCandy extends MGRoom {
         this.pot = pot;
         cacheService.setValue(name, this.pot);
 
+        this.gameName = gameName;
         this.fund = fund;
         this.betValue = betValue;
         this.initPotValue = initPotValue;

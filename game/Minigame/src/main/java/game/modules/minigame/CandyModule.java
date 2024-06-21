@@ -108,9 +108,9 @@ public class CandyModule
 
         System.out.println("=========================> " + pots[0] + " == " + pots[1] + " == " + pots[2]);
 
-        rooms.put(Games.CANDY.getName() + "_vin_100", new MGRoomCandy(Games.CANDY.getName() + "_vin_100", (short) 1, pots[0], funds[0], 100, initPotValues[0]));
-        rooms.put(Games.CANDY.getName() + "_vin_1000", new MGRoomCandy(Games.CANDY.getName() + "_vin_1000", (short) 1, pots[1], funds[1], 1000, initPotValues[1]));
-        rooms.put(Games.CANDY.getName() + "_vin_10000", new MGRoomCandy(Games.CANDY.getName() + "_vin_10000", (short) 1, pots[2], funds[2], 10000, initPotValues[2]));
+        rooms.put(Games.CANDY.getName() + "_vin_100", new MGRoomCandy(Games.CANDY.getName() + "_vin_100", Games.CANDY.getName(), (short) 1, pots[0], funds[0], 100, initPotValues[0]));
+        rooms.put(Games.CANDY.getName() + "_vin_1000", new MGRoomCandy(Games.CANDY.getName() + "_vin_1000", Games.CANDY.getName(), (short) 1, pots[1], funds[1], 1000, initPotValues[1]));
+        rooms.put(Games.CANDY.getName() + "_vin_10000", new MGRoomCandy(Games.CANDY.getName() + "_vin_10000", Games.CANDY.getName(), (short) 1, pots[2], funds[2], 10000, initPotValues[2]));
         Debug.trace("INIT " + this.gameName + " DONE");
         this.getParentExtension().addEventListener(BZEventType.USER_DISCONNECT, this);
         referenceId = this.pgService.getLastReferenceId();
