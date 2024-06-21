@@ -80,7 +80,6 @@ public class MGRoomCandy extends MGRoom {
     private long lastTimeUpdateFundToRoom = 0L;
     private ThreadPoolExecutor executor;
     private boolean huX2 = false;
-    public String gameName = Games.CANDY.getName();
     private final Runnable checkResetPotTask = new CheckResetPot();
 
     public MGRoomCandy(String name, String gameName, short moneyType, long pot, long fund, int betValue, long initPotValue) {
