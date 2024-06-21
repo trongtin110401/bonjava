@@ -81,7 +81,7 @@ public class Slot25BasicRoom extends SlotRoom {
         this.initJackpotValues = initJackpotValue;
 
         try {
-            this.cachePercentFeeName = gameName + "PERCENT_FEE";
+            this.cachePercentFeeName = gameName + "_PERCENT_FEE";
             this.percentFee = cacheService.getValueInt(cachePercentFeeName);
         } catch (Exception ex) {
             this.percentFee = 2;
@@ -524,6 +524,9 @@ public class Slot25BasicRoom extends SlotRoom {
      */
     @Override
     protected void gameLoop() {
+
+        setPercentFee();
+
         ArrayList<AutoUser> usersPlay = new ArrayList<>();
         Map map = this.usersAuto;
         synchronized (map) {

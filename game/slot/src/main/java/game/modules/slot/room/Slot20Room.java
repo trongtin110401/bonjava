@@ -4,13 +4,9 @@ package game.modules.slot.room;
 import bitzero.server.BitZeroServer;
 import bitzero.server.entities.User;
 import bitzero.util.common.business.Debug;
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IMap;
 import com.vinplay.dal.service.impl.BroadcastMessageServiceImpl;
 import com.vinplay.dal.service.impl.CacheServiceImpl;
-import com.vinplay.usercore.dao.impl.UserDaoImpl;
 import com.vinplay.vbee.common.enums.Games;
-import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
 import com.vinplay.vbee.common.models.UserModel;
 import com.vinplay.vbee.common.models.cache.SlotFreeDaily;
 import com.vinplay.vbee.common.models.cache.UserCacheModel;
@@ -33,10 +29,8 @@ import game.modules.slot.utils.Slot20Utils;
 import game.modules.slot.utils.SlotUtils;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -76,13 +70,7 @@ public class Slot20Room extends SlotRoom {
         this.betValue = betValue;
         this.initJackpotValues = initPotValue;
 
-        try {
-            this.cachePercentFeeName = gameName + "PERCENT_FEE";
-            this.percentFee = cacheService.getValueInt(cachePercentFeeName);
-        } catch (Exception ex) {
-            this.percentFee = 2;
-            cacheService.setValue(cachePercentFeeName, percentFee);
-        }
+        setPercentFee();
 
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
         this.boxValues.add(10);
@@ -558,6 +546,9 @@ public class Slot20Room extends SlotRoom {
      */
     @Override
     protected void gameLoop() {
+
+        setPercentFee();
+
         ArrayList<AutoUser> usersPlay = new ArrayList<>();
         synchronized (this.usersAuto) {
             for (AutoUser user : this.usersAuto.values()) {
@@ -579,6 +570,7 @@ public class Slot20Room extends SlotRoom {
         }
         usersPlay.clear();
     }
+
 
     @Override
     protected void playListAuto(List<AutoUser> users) {

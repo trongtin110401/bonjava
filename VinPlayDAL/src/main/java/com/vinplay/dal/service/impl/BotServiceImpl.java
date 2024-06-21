@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  com.hazelcast.core.HazelcastInstance
  *  com.hazelcast.core.IMap
@@ -32,44 +32,53 @@ import com.vinplay.vbee.common.models.vippoint.UserVPEventModel;
 import com.vinplay.vbee.common.response.MoneyResponse;
 import com.vinplay.vbee.common.rmq.RMQApi;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
+
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.Date;
+
 import org.apache.log4j.Logger;
 
 public class BotServiceImpl
-implements BotService {
-    private static final Logger logger = Logger.getLogger((String)"user_core");
+        implements BotService {
+    private static final Logger logger = Logger.getLogger((String) "user_core");
 
     @Override
     public UserModel login(String nickname) throws SQLException, UnsupportedEncodingException, NoSuchAlgorithmException {
         IMap userMap = HazelcastClientFactory.getInstance().getMap("users");
         UserModel userModel = null;
-        if (!userMap.containsKey((Object)nickname)) {
+        if (!userMap.containsKey((Object) nickname)) {
             UserDaoImpl dao = new UserDaoImpl();
             userModel = dao.getUserByNickName(nickname);
             if (userModel != null) {
-                if(!userModel.isBot()){
-                    logger.debug("user "+nickname +" not is bot");
+                if (!userModel.isBot()) {
+                    logger.debug("user " + nickname + " not is bot");
                 }
                 UserVPEventModel vpModel = dao.getUserVPByNickName(userModel.getNickname());
                 UserCacheModel userCache = new UserCacheModel(userModel.getId(), userModel.getUsername(), userModel.getNickname(), userModel.getPassword(), userModel.getEmail(), userModel.getFacebookId(), userModel.getGoogleId(), userModel.getMobile(), userModel.getBirthday(), userModel.isGender(), userModel.getAddress(), userModel.getVin(), userModel.getXu(), userModel.getVinTotal(), userModel.getXuTotal(), userModel.getSafe(), userModel.getRechargeMoney(), userModel.getVippoint(), userModel.getDaily(), userModel.getStatus(), userModel.getAvatar(), userModel.getIdentification(), userModel.getVippointSave(), userModel.getCreateTime(), userModel.getMoneyVP(), userModel.getSecurityTime(), userModel.getLoginOtp(), userModel.isBot(), 0, new Date(), vpModel.getVpEvent(), vpModel.getVpReal(), vpModel.getVpAdd(), vpModel.getVpSub(), vpModel.getNumAdd(), vpModel.getNumSub(), vpModel.getPlace(), vpModel.getPlaceMax());
-                String accessToken = VinPlayUtils.genAccessToken((int)userModel.getId());
+                String accessToken = VinPlayUtils.genAccessToken((int) userModel.getId());
                 userCache.setAccessToken(accessToken);
                 userCache.setLastMessageId(0L);
                 userCache.setLastActive(new Date());
                 userCache.setOnline(0);
-                 userMap.put(userCache.getNickname(), (Object)userCache);
+                userMap.put(userCache.getNickname(), (Object) userCache);
             }
         } else {
-            userModel = (UserModel)userMap.get((Object)nickname);
+            userModel = (UserModel) userMap.get((Object) nickname);
         }
         return userModel;
     }
 
-    /*
-     * WARNING - Removed try catching itself - possible behaviour change.
+    /**
+     * Adds a specified amount of money to a user's account.
+     *
+     * @param nickname    The nickname of the user to whom the money will be added.
+     * @param money       The amount of money to be added.
+     * @param moneyType   The type of money to be added (e.g., "Vin", "Xu").
+     * @param description A description of the transaction.
+     * @return A MoneyResponse object containing the result of the operation, including whether it was successful, an error code (if any), the current money amount, and the money used.
+     * @throws Exception If an error occurs during the operation.
      */
     @Override
     public MoneyResponse addMoney(String nickname, long money, String moneyType, String description) {
@@ -79,10 +88,10 @@ implements BotService {
         }
         HazelcastInstance client = HazelcastClientFactory.getInstance();
         IMap<String, UserModel> userMap = client.getMap("users");
-        if (userMap.containsKey((Object)nickname)) {
+        if (userMap.containsKey((Object) nickname)) {
             try {
-                 userMap.lock(nickname);
-                UserCacheModel user = (UserCacheModel)userMap.get((Object)nickname);
+                userMap.lock(nickname);
+                UserCacheModel user = (UserCacheModel) userMap.get((Object) nickname);
                 if (user.isBot()) {
                     long moneyUser = user.getMoney(moneyType);
                     long currentMoney = user.getCurrentMoney(moneyType);
@@ -92,8 +101,8 @@ implements BotService {
                         MoneyMessageInMinigame message = new MoneyMessageInMinigame(VinPlayUtils.genMessageId(), user.getId(), nickname, "Bot", moneyUser, currentMoney, money, moneyType, 0L, 0, 0);
                         String des = "Chuy\u1ec3n kho\u1ea3n";
                         LogMoneyUserMessage messageLog = new LogMoneyUserMessage(user.getId(), nickname, "Bot", "Chuy\u1ec3n kho\u1ea3n", currentMoney, money, moneyType, description, 0L, false, user.isBot());
-                        RMQApi.publishMessagePayment((BaseMessage)message, (int)16);
-                        RMQApi.publishMessageLogMoney((LogMoneyUserMessage)messageLog);
+                        RMQApi.publishMessagePayment((BaseMessage) message, (int) 16);
+                        RMQApi.publishMessageLogMoney((LogMoneyUserMessage) messageLog);
                         userMap.put(nickname, user);
                         res.setSuccess(true);
                         res.setErrorCode("0");
@@ -103,12 +112,10 @@ implements BotService {
                         res.setErrorCode("1002");
                     }
                 }
-            }
-            catch (Exception e) {
-                logger.debug((Object)e);
-            }
-            finally {
-                 userMap.unlock(nickname);
+            } catch (Exception e) {
+                logger.debug((Object) e);
+            } finally {
+                userMap.unlock(nickname);
             }
         }
         return res;
