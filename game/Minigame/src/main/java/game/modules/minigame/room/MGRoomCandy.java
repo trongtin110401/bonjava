@@ -85,6 +85,8 @@ public class MGRoomCandy extends MGRoom {
     public MGRoomCandy(String name, String gameName, short moneyType, long pot, long fund, int betValue, long initPotValue) {
 
         super(name);
+        
+        this.gameName = gameName;
 
         this.moneyType = moneyType;
         this.moneyTypeStr = this.moneyType == 1 ? "vin" : "xu";
@@ -97,7 +99,7 @@ public class MGRoomCandy extends MGRoom {
         this.pot = pot;
         cacheService.setValue(name, this.pot);
 
-        this.gameName = gameName;
+
         this.fund = fund;
         this.betValue = betValue;
         this.initPotValue = initPotValue;
