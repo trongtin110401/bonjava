@@ -34,6 +34,11 @@ public abstract class MGRoom {
     protected String gameName;
     protected List<User> users = new ArrayList<User>();
 
+    protected CacheService cacheService = new CacheServiceImpl();
+
+    protected int percentFee = 0;
+    protected String cachePercentFeeName;
+
     public MGRoom(String name) {
         this.name = name;
     }
@@ -127,6 +132,16 @@ public abstract class MGRoom {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    void setPercentFee() {
+        try {
+            this.cachePercentFeeName = gameName + "_PERCENT_FEE";
+            this.percentFee = cacheService.getValueInt(cachePercentFeeName);
+        } catch (Exception ex) {
+            this.percentFee = 2;
+            cacheService.setValue(cachePercentFeeName, percentFee);
         }
     }
 

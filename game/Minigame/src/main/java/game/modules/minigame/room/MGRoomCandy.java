@@ -33,17 +33,14 @@ import bitzero.server.entities.User;
 import bitzero.server.extensions.data.BaseMsg;
 import bitzero.util.common.business.Debug;
 import com.vinplay.dal.service.BroadcastMessageService;
-import com.vinplay.dal.service.CacheService;
 import com.vinplay.dal.service.MiniGameService;
 import com.vinplay.dal.service.PokeGoService;
 import com.vinplay.dal.service.impl.BroadcastMessageServiceImpl;
-import com.vinplay.dal.service.impl.CacheServiceImpl;
 import com.vinplay.dal.service.impl.MiniGameServiceImpl;
 import com.vinplay.dal.service.impl.PokeGoServiceImpl;
 import com.vinplay.usercore.service.UserService;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.vbee.common.enums.Games;
-import com.vinplay.vbee.common.exceptions.KeyNotFoundException;
 import com.vinplay.vbee.common.models.UserModel;
 import com.vinplay.vbee.common.models.cache.UserCacheModel;
 import com.vinplay.vbee.common.response.MoneyResponse;
@@ -84,7 +81,6 @@ public class MGRoomCandy extends MGRoom {
     private ThreadPoolExecutor executor;
     private boolean huX2 = false;
     public String gameName = Games.CANDY.getName();
-    protected CacheService sv = new CacheServiceImpl();
     private final Runnable checkResetPotTask = new CheckResetPot();
 
     public MGRoomCandy(String name, short moneyType, long pot, long fund, int betValue, long initPotValue) {
@@ -100,11 +96,13 @@ public class MGRoomCandy extends MGRoom {
             pot = initPotValue;
         }
         this.pot = pot;
-        sv.setValue(name, this.pot);
+        cacheService.setValue(name, this.pot);
 
         this.fund = fund;
         this.betValue = betValue;
         this.initPotValue = initPotValue;
+
+        setPercentFee();
 
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.checkResetPotTask, 10, 10, TimeUnit.SECONDS);
@@ -169,8 +167,8 @@ public class MGRoomCandy extends MGRoom {
         String betValueCache = "";
         boolean forceJackpotByUser = false;
         try {
-            userForce = sv.getValueStr(CACHE_NAME_USER_SPOT + this.gameName);
-            betValueCache = sv.getValueStr(CACHE_BET_VALUE_SLOT + this.gameName);
+            userForce = cacheService.getValueStr(CACHE_NAME_USER_SPOT + this.gameName);
+            betValueCache = cacheService.getValueStr(CACHE_BET_VALUE_SLOT + this.gameName);
         } catch (Exception e) {
             userForce = "";
             betValueCache = "";
@@ -180,7 +178,7 @@ public class MGRoomCandy extends MGRoom {
                 if (totalBetValue <= currentMoney) {
                     MoneyResponse moneyRes = this.userService.updateMoney(username, -totalBetValue, this.moneyTypeStr, Games.CANDY.getName(), "Quay Whisky", "\u0110\u1eb7t c\u01b0\u1ee3c Quay " + this.gameName, 0L, Long.valueOf(referenceId), TransType.START_TRANS);
                     if (moneyRes != null && moneyRes.isSuccess()) {
-                        long fee = totalBetValue * 2L / 100L;
+                        long fee = totalBetValue * percentFee / 100L;
                         long moneyToPot = totalBetValue / 100L;
                         long moneyToFund = totalBetValue - fee - moneyToPot;
                         if (!u.isBot()) {
@@ -287,8 +285,8 @@ public class MGRoomCandy extends MGRoom {
                                     this.fund -= this.initPotValue;
                                     if (forceNoHu) {
                                         try {
-                                            sv.removeKey(CACHE_NAME_USER_SPOT + this.gameName);
-                                            sv.removeKey(CACHE_BET_VALUE_SLOT + this.gameName);
+                                            cacheService.removeKey(CACHE_NAME_USER_SPOT + this.gameName);
+                                            cacheService.removeKey(CACHE_BET_VALUE_SLOT + this.gameName);
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
@@ -343,8 +341,8 @@ public class MGRoomCandy extends MGRoom {
         PokeGoUtils.log(referenceId, username, this.betValue, msg.matrix, result, this.moneyType, handleTime, ratioTime, currentTimeStr);
 
         // Update cache tien hu
-        sv.setValue(this.name, this.pot);
-        sv.setValue(CACHE_JACK_POT_VALUE_SLOT + "_" + this.betValue + "_" + gameName, String.valueOf(this.pot));
+        cacheService.setValue(this.name, this.pot);
+        cacheService.setValue(CACHE_JACK_POT_VALUE_SLOT + "_" + this.betValue + "_" + gameName, String.valueOf(this.pot));
 
         if (forceJackpotByUser) {
             this.sendNotifyNoHu(username, (byte) 1, msg.prize, this.gameName);
@@ -405,13 +403,13 @@ public class MGRoomCandy extends MGRoom {
     @Override
     protected void checkResetPot() {
         try {
-            int isReset = sv.getValueInt("reset_pot_" + this.gameName + "_" + this.betValue, 0);
+            int isReset = cacheService.getValueInt("reset_pot_" + this.gameName + "_" + this.betValue, 0);
             if (isReset == 1) {
                 this.pot = this.initPotValue;
                 this.fund = 0;
                 this.savePot();
                 this.saveFund();
-                this.sv.removeKey("reset_pot_" + this.gameName + "_" + this.betValue);
+                this.cacheService.removeKey("reset_pot_" + this.gameName + "_" + this.betValue);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -422,6 +420,9 @@ public class MGRoomCandy extends MGRoom {
      * WARNING - Removed try catching itself - possible behaviour change.
      */
     private void gameLoop() {
+
+        setPercentFee();
+
         Map<String, AutoUserPokeGo> map;
         ArrayList<AutoUserPokeGo> usersPlay = new ArrayList<AutoUserPokeGo>();
         Map<String, AutoUserPokeGo> map2 = map = this.usersAuto;
