@@ -146,7 +146,7 @@ public class BauCuaServiceImpl
 
     @Override
     public int countLSGDBauCua(String username, byte moneyType) {
-        return this.dao.countLSGDBauCua(username, moneyType) / 10 + 1;
+        return (int) Math.ceil((double) this.dao.countLSGDBauCua(username, moneyType) / 10);
     }
 
     /*
