@@ -80,13 +80,7 @@ public class Slot20ExtendRoom extends SlotRoom {
         this.betValue = betValue;
         this.initJackpotValues = initJackpotValue;
 
-        try {
-            this.cachePercentFeeName = gameName + "PERCENT_FEE";
-            this.percentFee = cacheService.getValueInt(cachePercentFeeName);
-        } catch (Exception ex) {
-            this.percentFee = 2;
-            cacheService.setValue(cachePercentFeeName, percentFee);
-        }
+        setPercentFee();
 
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.checkResetPotTask, 10, 10, TimeUnit.SECONDS);
@@ -533,6 +527,9 @@ public class Slot20ExtendRoom extends SlotRoom {
      */
     @Override
     protected void gameLoop() {
+
+        setPercentFee();
+
         ArrayList<AutoUser> usersPlay = new ArrayList<>();
         synchronized (this.usersAuto) {
             for (AutoUser user : this.usersAuto.values()) {

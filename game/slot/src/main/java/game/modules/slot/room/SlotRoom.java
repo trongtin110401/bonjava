@@ -319,6 +319,16 @@ public abstract class SlotRoom {
         return false;
     }
 
+    void setPercentFee() {
+        try {
+            this.cachePercentFeeName = gameName + "_PERCENT_FEE";
+            this.percentFee = cacheService.getValueInt(cachePercentFeeName);
+        } catch (Exception ex) {
+            this.percentFee = 2;
+            cacheService.setValue(cachePercentFeeName, percentFee);
+        }
+    }
+
     protected abstract void gameLoop();
 
     protected abstract void checkResetPot();

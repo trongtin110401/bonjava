@@ -170,12 +170,6 @@ public class MGRoomTaiXiu extends MGRoom {
     // todo : lấy thời gian còn lại bằng cách lấy thời gian hiện tại trừ đi thời gian bắt đầu
     public short getRemainTime() {
         long currentTime = System.currentTimeMillis();
-        int remainTime = (int) ((currentTime - this.startTime) / 1000L);
-        if (remainTime < 0) {
-            remainTime = 0;
-        } else if (remainTime > 50) {
-            remainTime = 50;
-        }
         if (this.bettingRound) {
             return (short) (52 - this.module.count);
         }

@@ -287,7 +287,7 @@ implements IWebSocketChannel {
 
     @Override
     public void write(ChannelBuffer message) {
-        this.logger.info("Should Not Reach This Method While Testing with AutoBahn");
+//        this.logger.info("Should Not Reach This Method While Testing with AutoBahn");
         this.wsChannel.write((Object)new BinaryWebSocketFrame(message));
     }
 
