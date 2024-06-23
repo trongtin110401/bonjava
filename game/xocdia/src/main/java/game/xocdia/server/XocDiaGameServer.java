@@ -1346,12 +1346,13 @@ public class XocDiaGameServer
 
                     String nickname;
                     long moneyBet;
+                    long fee = 0;
                     if (gPot.isWin) {
                         for (Map.Entry<String, Long> entry : gPot.betMap.entrySet()) {
                             nickname = entry.getKey();
                             moneyBet = entry.getValue();
                             long moneyWin = Math.round((double) moneyBet * gPot.ratio);
-                            long fee = Math.round((double) (moneyWin - moneyBet) * this.feeWin);
+                            fee = Math.round((double) (moneyWin - moneyBet) * this.feeWin);
                             moneyWin -= fee;
                             RewardModel model = new RewardModel();
                             if (rewardMap.containsKey(nickname)) {
@@ -1418,7 +1419,7 @@ public class XocDiaGameServer
                     GamePlayer gPlayer = this.getPlayer((String) entry.getKey());
                     RewardModel model = (RewardModel) entry.getValue();
                     if (model.moneyWin > 0L) {
-                        mnres = this.userService.updateMoney(gPlayer.user.getName(), model.moneyWin, "vin", "XocDia", "xoc dia : Tra thuong ", "Phi\u00ean " + this.gameId, 0L, Long.valueOf(this.gameId), TransType.START_TRANS);
+                        mnres = this.userService.updateMoney(gPlayer.user.getName(), model.moneyWin, "vin", "XocDia", "xoc dia : Tra thuong ", "Phi\u00ean " + this.gameId,model.fee , Long.valueOf(this.gameId), TransType.START_TRANS);
                         ;
                         this.totalFee += model.fee;
                         this.totalReveneu += model.moneyWin;
