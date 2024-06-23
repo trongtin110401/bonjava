@@ -29,7 +29,7 @@ import java.util.Map;
 
 public class UpdateFundProcessor implements BaseProcessor<HttpServletRequest, String> {
     CacheService cacheService = new CacheServiceImpl();
-//    private MiniGameServiceImpl service = new MiniGameServiceImpl();
+    private MiniGameServiceImpl service = new MiniGameServiceImpl();
     private final static String DEPOSIT = "deposit";
 
     private final static String WITHDRAW = "withdraw";
@@ -97,20 +97,27 @@ public class UpdateFundProcessor implements BaseProcessor<HttpServletRequest, St
         long amount = Long.parseLong(request.getParameter("amount"));
         String type = request.getParameter("type");
         try {
-//            long fund = service.getFund(fundName);
-//            if (type.equals(DEPOSIT)) {
-//                fund += amount;
-//            }
-//            if (type.equals(WITHDRAW)) {
-//                fund -= amount;
-//            }
-
             if (games.containsKey(fundName)) {
+                long fund = service.getFund(fundName);
+                long fundAmount = 0;
+                try {
+                    fundAmount = cacheService.getValueLong(games.get(fundName));
+
+                } catch (Exception e) {
+                    fundAmount = amount;
+                }
                 if (type.equals(DEPOSIT)) {
-                    cacheService.setValue(games.get(fundName), amount);
+                    fundAmount += amount;
+                    cacheService.setValue(games.get(fundName), fundAmount);
                 }
                 if (type.equals(WITHDRAW)) {
-                    cacheService.setValue(games.get(fundName), amount * -1);
+                    fundAmount -= amount;
+                    if (fundAmount * -1 > fund) {
+                        response.setSuccess(false);
+                        response.setErrorCode("Số tiền rút lớn hơn quỹ");
+                        return response.toJson();
+                    }
+                    cacheService.setValue(games.get(fundName), fundAmount * -1);
                 }
             }
 
