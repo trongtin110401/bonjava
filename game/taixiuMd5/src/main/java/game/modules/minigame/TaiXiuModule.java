@@ -427,10 +427,11 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                     break;
                 }
                 case 48: {
-                    roomTXVin.finish();
+
                     break;
                 }
                 case 50: {
+                    roomTXVin.finish();
                     this.generateTaiXiuDicesMD5(roomTXVin);
                     break;
                 }
