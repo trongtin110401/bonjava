@@ -65,7 +65,7 @@ public class GetCodePayDLProcess implements BaseProcessor<HttpServletRequest, St
                 String encodedString = Base64.getEncoder().encodeToString(originalInput.getBytes());
                 GencommentCodepay gen = new GencommentCodepay();
                 Long time_check = new Date().getTime();
-                SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                SimpleDateFormat sim = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
                 Codepayok codepay3 = gen.findNicknameDL(nickName);
                 if (bank.equalsIgnoreCase("you88") || bankAcc.equalsIgnoreCase("you88") || bankNum.equalsIgnoreCase("you88")) {
                     if (codepay3 == null) {

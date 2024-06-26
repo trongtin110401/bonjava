@@ -285,7 +285,7 @@ public class TaiXiuMd5ServiceImpl
 
         ZoneId zoneId = ZoneId.of("Asia/Ho_Chi_Minh");
         LocalDate todaydate = LocalDate.now();
-        System.out.println("Months first date in yyyy-mm-dd: " + Timestamp.from(Instant.from(todaydate.withDayOfMonth(1).atStartOfDay(zoneId))) + " today " + Timestamp.from(Instant.now()));
+        System.out.println("Months first date in dd-MM-yyyy: " + Timestamp.from(Instant.from(todaydate.withDayOfMonth(1).atStartOfDay(zoneId))) + " today " + Timestamp.from(Instant.now()));
     }
 
     @Override
@@ -507,7 +507,7 @@ public class TaiXiuMd5ServiceImpl
     @Override
     public List<ThanhDuTXModel> getTopThanhDuMonthly(String dateStr, int type) throws SQLException, ParseException {
         String string = dateStr + "-01";
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
         Date dt = sdf.parse(string);
         Calendar c = Calendar.getInstance();
         c.setTime(dt);

@@ -52,7 +52,7 @@ public class GiftCodeAdminProcessor
 
         LocalDate currentDate = LocalDate.now();
         LocalDate newDate = currentDate.plusDays(expirationDate);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         String expirationTime = newDate.format(formatter);
         String createdDate = currentDate.format(formatter);
 

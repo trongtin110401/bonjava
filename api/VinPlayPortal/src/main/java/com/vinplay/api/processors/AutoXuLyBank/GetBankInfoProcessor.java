@@ -41,7 +41,7 @@ public class GetBankInfoProcessor implements BaseProcessor<HttpServletRequest, S
         depositBankModel = rechargeDao.isPendingTransDepositBankByNicknameAndBankName(nickName, subType);
         if (depositBankModel != null) {
 
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
             boolean isExpired;
             try {
                 Date createdAt = dateFormat.parse(depositBankModel.getCreatedAt());
@@ -110,7 +110,7 @@ public class GetBankInfoProcessor implements BaseProcessor<HttpServletRequest, S
     public static void main(String[] args) {
         String createdAtString = "2024-04-03 23:32:13";
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
         try {
             Date createdAt = dateFormat.parse(createdAtString);

@@ -49,7 +49,7 @@ implements UserMarketingDao {
     public boolean saveUserMarketing(UserMarketingMessage message) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection col = null;
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
         String timeLog = df.format(new Date());
         col = db.getCollection("user_marketing");
         Document doc = new Document();
@@ -66,7 +66,7 @@ implements UserMarketingDao {
     public boolean saveLoginDailyMarketing(UserMarketingMessage message) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection col = null;
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
         String timeLog = df.format(new Date());
         col = db.getCollection("login_daily_marketing");
         Document doc = new Document();

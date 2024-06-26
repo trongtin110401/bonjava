@@ -26,7 +26,7 @@ implements BaseProcessor<HttpServletRequest, String> {
         HttpServletRequest request = (HttpServletRequest)param.get();
         TopBauCuaResponse response = new TopBauCuaResponse(false, "1001");
         byte moneyType = Byte.parseByte(request.getParameter("mt"));
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
         String currentDate = df.format(new Date());
         String startDate = String.valueOf(currentDate) + " 00:00:00";
         String endDate = String.valueOf(currentDate) + " 23:59:59";

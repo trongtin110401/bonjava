@@ -173,7 +173,7 @@ public class GenCommentBank {
                 codepay_final = commentcode;
             }else if(codepay2 != null && codepay1 == null){
                 Long time_check = new Date().getTime();
-                SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                SimpleDateFormat sim = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
                 Date out = sim.parse(codepay2.getTimelog());
                 Long timelog = out.getTime();
                 Long time_end = time_check - timelog;

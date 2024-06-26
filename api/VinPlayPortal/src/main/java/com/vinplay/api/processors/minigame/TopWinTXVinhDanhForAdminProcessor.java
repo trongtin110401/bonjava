@@ -47,7 +47,7 @@ public class TopWinTXVinhDanhForAdminProcessor
     }
 
     private Timestamp forMatTime(String time) throws ParseException {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
         Date parsedDate = dateFormat.parse(time);
         return new java.sql.Timestamp(parsedDate.getTime());
     }

@@ -63,7 +63,7 @@ public class GiftCodeServiceImpl
             if (true) { //user.getMobile() != null && user.isHasMobileSecurity() // bỏ mobile và mobile sercurity
                 if (giftCode.toUpperCase().contains("MK1")) {
                     String beforeDate = "2017-04-01 00:00:00";
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
                     Date date1 = sdf.parse("2017-04-01 00:00:00");
                     Date date2 = user.getCreateTime();
                     if (date2.before(date1)) {

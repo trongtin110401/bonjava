@@ -79,7 +79,7 @@ implements MoneyInGameDao {
             stmt = conn.prepareStatement(" UPDATE vinplay.log_tranfer_agent  SET is_freeze_money = ?,  session_id_freeze_money = ?,  update_time = ?  WHERE transaction_no = ? ");
             stmt.setInt(1, isFreezeMoney);
             stmt.setString(2, sessionIdFreezeMoney);
-            stmt.setString(3, DateTimeUtils.getCurrentTime((String)"yyyy-MM-dd HH:mm:ss"));
+            stmt.setString(3, DateTimeUtils.getCurrentTime((String)"dd-MM-yyyy HH:mm:ss"));
             stmt.setString(4, id);
             stmt.executeUpdate();
             stmt.close();

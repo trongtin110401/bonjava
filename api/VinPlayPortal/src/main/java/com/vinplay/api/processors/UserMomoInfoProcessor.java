@@ -26,7 +26,7 @@ public class UserMomoInfoProcessor
             response.setErrorCode("Thông tin không hợp lệ");
             return response.toJson();
         }
-        UserMomoInfoDto userBankInfoDto = new UserMomoInfoDto(nickName, phoneName, phoneNumber, DateTimeUtils.getCurrentTime((String) "yyyy-MM-dd HH:mm:ss"));
+        UserMomoInfoDto userBankInfoDto = new UserMomoInfoDto(nickName, phoneName, phoneNumber, DateTimeUtils.getCurrentTime((String) "dd-MM-yyyy HH:mm:ss"));
 
         UserServiceImpl service = new UserServiceImpl();
 
