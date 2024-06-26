@@ -74,7 +74,7 @@ public class ReportMoneyUserProcessor
                 if (userMap.containsKey((Object) nickname)) {
                     UserCacheModel user = (UserCacheModel) userMap.get((Object) nickname);
                     isBot = user.isBot();
-                    currentMoney = user.getVinTotal();
+                    currentMoney = user.getVin();
                     safeMoney = user.getSafe();
                 } else {
                     isBot = dao.checkBot(nickname);
