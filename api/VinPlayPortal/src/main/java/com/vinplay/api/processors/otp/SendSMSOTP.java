@@ -48,7 +48,7 @@ public class SendSMSOTP implements BaseProcessor<HttpServletRequest, String> {
 //                int turn = 0;
 //                if(uotpx == null && checkPhone == false){
 //                    Date d = new Date(create_time_2);
-//                    SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//                    SimpleDateFormat sdfDate = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 //                    String strDate = sdfDate.format(d);
 //                    UserOTP uotp = new UserOTP(nickname, username,phone, otp, active, create_time_2, active_time, turn, strDate);
 //                    opt_pro.InsertActive(uotp);
@@ -60,7 +60,7 @@ public class SendSMSOTP implements BaseProcessor<HttpServletRequest, String> {
 //                    boolean check_Getotp = opt_pro.CheckTimeGetOTP(uotpx.getCreat_time(), create_time_2);
 //                    if(check_Getotp == true){
 //                        Date d = new Date(create_time_2);
-//                        SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//                        SimpleDateFormat sdfDate = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 //                        String strDate = sdfDate.format(d);
 //                        UserOTP uotp = new UserOTP(uotpx.getNickname(), uotpx.getUsername(),uotpx.getPhone(), otp, active, create_time_2, active_time, turn, strDate);
 //                        opt_pro.UpdateActive(uotp);

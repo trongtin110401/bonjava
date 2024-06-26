@@ -37,7 +37,7 @@ public class GiftCodeGameDaoImpl
 implements GiftCodeGameDao {
     @Override
     public boolean exportGiftCodeStore(GiftCodeGameResponse msg) {
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         String timeLog = df.format(new Date());
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         HashMap<String, Object> conditions = new HashMap<String, Object>();
@@ -69,7 +69,7 @@ implements GiftCodeGameDao {
 
     @Override
     public boolean exportGiftCode(final GiftCodeGameResponse msg) {
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         final String timeLog = df.format(new Date());
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         final MongoCollection col = db.getCollection("gift_code_game");

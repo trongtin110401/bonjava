@@ -22,7 +22,7 @@ public class DeleteOTPSMS implements BaseProcessor<HttpServletRequest, String> {
             otp_pro.UpdateSDTUserDelete(nickname);
             Long create_time_2 = new Date().getTime();
             Date d = new Date(create_time_2);
-            SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat sdfDate = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
             String strDate = sdfDate.format(d);
             UserOTP uotp = new UserOTP("da xoa", "da xoa", "da xoa", "da xoa", 0, 0, 0,0,strDate);
             oelk.DeleteActiveELK(uotp, id_elk);

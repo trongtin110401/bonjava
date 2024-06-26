@@ -170,10 +170,10 @@ public class ReportMoneyUserProcessor
                 OtherService otherService = new OtherServiceImpl();
 
                 LocalDate dateStart = LocalDate.parse(startTime, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-                String sqlDateStart = dateStart.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                String sqlDateStart = dateStart.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
 
                 LocalDate dateEnd = LocalDate.parse(endTime, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-                String sqlDateEnd = dateEnd.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                String sqlDateEnd = dateEnd.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
 
                 res.totalShootFishProfit = otherService.getTotalShootFishByNickname(sqlDateStart, sqlDateEnd, nickname);
 

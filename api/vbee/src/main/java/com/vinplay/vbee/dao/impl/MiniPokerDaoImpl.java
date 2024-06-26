@@ -24,7 +24,7 @@ public class MiniPokerDaoImpl
 implements MiniPokerDao {
     @Override
     public void logMiniPoker(LogMiniPokerMessage message) {
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         String timeLog = df.format(new Date());
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection col = db.getCollection("log_mini_poker");

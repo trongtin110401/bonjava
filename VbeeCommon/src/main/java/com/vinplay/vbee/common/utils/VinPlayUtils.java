@@ -99,7 +99,7 @@ public class VinPlayUtils {
     }
 
     public static String parseDateTimeToString(Date input) {
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         return df.format(input);
     }
 
@@ -127,32 +127,32 @@ public class VinPlayUtils {
     }
 
     public static String getCurrentDateMarketing() {
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
         return df.format(new Date());
     }
 
     public static String getCurrentDateTime() {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         return format.format(new Date());
     }
 
 
     public static String getYesterday1() {
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         Calendar aCalendar = Calendar.getInstance();
         aCalendar.add(5, -1);
         return df.format(aCalendar.getTime());
     }
 
     public static String get5MinAgoYesterday1() {
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         Calendar aCalendar = Calendar.getInstance();
         aCalendar.add(Calendar.MINUTE, -5);
         return df.format(aCalendar.getTime());
     }
 
     public static String getpreterday1() {
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         Calendar aCalendar = Calendar.getInstance();
         aCalendar.add(5, -20);
         return df.format(aCalendar.getTime());
@@ -166,14 +166,14 @@ public class VinPlayUtils {
     }
 
     public static Date getDateTime(String datetime) throws ParseException {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         return format.parse(datetime);
     }
 
     public static Calendar getCalendar(String datetime) throws ParseException {
         if (datetime != null && !datetime.isEmpty()) {
             Calendar calendar = Calendar.getInstance();
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
             calendar.setTime(format.parse(datetime));
             return calendar;
         }
@@ -181,7 +181,7 @@ public class VinPlayUtils {
     }
 
     public static String getDateTimeStr(Date datetime) throws ParseException {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         return format.format(datetime);
     }
 

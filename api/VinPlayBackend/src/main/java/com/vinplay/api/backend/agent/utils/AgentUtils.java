@@ -426,8 +426,8 @@ public class AgentUtils {
         Date firstDateOfPreviousMonth = aCalendar.getTime();
         aCalendar.set(5, aCalendar.getActualMaximum(5));
         Date lastDateOfPreviousMonth = aCalendar.getTime();
-        SimpleDateFormat startFormat = new SimpleDateFormat("yyyy-MM-dd 00;00:00");
-        SimpleDateFormat endFormat = new SimpleDateFormat("yyyy-MM-dd 23;59:59");
+        SimpleDateFormat startFormat = new SimpleDateFormat("dd-MM-yyyy 00;00:00");
+        SimpleDateFormat endFormat = new SimpleDateFormat("dd-MM-yyyy 23;59:59");
         String startTime = startFormat.format(firstDateOfPreviousMonth);
         String endTime = endFormat.format(lastDateOfPreviousMonth);
         String month = String.valueOf(aCalendar.get(2) + 1) + "/" + aCalendar.get(1);

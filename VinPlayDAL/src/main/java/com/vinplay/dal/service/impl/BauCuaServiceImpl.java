@@ -122,7 +122,7 @@ public class BauCuaServiceImpl
 
     @Override
     public void updateAllTop() {
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
         String currentDate = df.format(new Date());
         String startDate = currentDate + " 00:00:00";
         String endDate = currentDate + " 23:59:59";
