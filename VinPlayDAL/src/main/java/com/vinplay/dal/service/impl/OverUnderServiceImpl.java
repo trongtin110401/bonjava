@@ -354,7 +354,7 @@ implements OverUnderService {
     @Override
     public List<ThanhDuTXModel> getTopThanhDuMonthly(String dateStr, int type) throws SQLException, ParseException {
         String string = dateStr + "-01";
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
         Date dt = sdf.parse(string);
         Calendar c = Calendar.getInstance();
         c.setTime(dt);

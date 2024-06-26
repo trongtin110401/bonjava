@@ -111,7 +111,7 @@ implements Serializable {
     }
 
     public String getDate() {
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
         return df.format(this.updateTime);
     }
 }

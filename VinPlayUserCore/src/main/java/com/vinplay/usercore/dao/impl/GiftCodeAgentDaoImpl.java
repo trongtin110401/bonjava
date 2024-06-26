@@ -51,7 +51,7 @@ implements GiftCodeAgentDao {
         if (moneyExport > curentMoney) {
             response.ErrorCode = 2;
         } else {
-            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
             final String timeLog = df.format(new Date());
             MongoDatabase db = MongoDBConnectionFactory.getDB();
             final MongoCollection giftCodeDB = db.getCollection("gift_code");

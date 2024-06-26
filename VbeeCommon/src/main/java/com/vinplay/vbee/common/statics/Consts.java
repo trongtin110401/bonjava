@@ -96,10 +96,10 @@ public class Consts {
     public static final String QUEUE_EXCHANGE_MONEY = "queue_exchange_money";
     public static final String QUEUE_GIFT_CODE = "queue_gift_code";
     public static final String QUEUE_COMMISSION = "queue_commission";
-    public static final String DEFAULT_FORMAT_DATE_TIME = "yyyy-MM-dd HH:mm:ss";
+    public static final String DEFAULT_FORMAT_DATE_TIME = "dd-MM-yyyy HH:mm:ss";
     public static final String DEFAULT_FORMAT_DATE = "dd-MM-yyyy";
     public static final String DEFAULT_FORMAT_DATE_TIME_MINUTES = "yyyyMMddHHmm";
-    public static final String DEFAULT_FORMAT_DATE_TIME_MARKETING = "yyyy-MM-dd";
+    public static final String DEFAULT_FORMAT_DATE_TIME_MARKETING = "dd-MM-yyyy";
     public static final String ACTIVE = "1";
     public static final String INACTIVE = "0";
     public static final String SECRET_KEY = "@VinPlay#6102$817";

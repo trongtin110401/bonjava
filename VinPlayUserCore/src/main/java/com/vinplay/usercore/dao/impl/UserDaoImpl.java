@@ -944,8 +944,8 @@ public class UserDaoImpl
             stm.setString(2, nickName);
             stm.setLong(3, fee);
             stm.setString(4, month);
-            stm.setString(5, DateTimeUtils.getCurrentTime((String) "yyyy-MM-dd HH:mm:ss"));
-            stm.setString(6, DateTimeUtils.getCurrentTime((String) "yyyy-MM-dd HH:mm:ss"));
+            stm.setString(5, DateTimeUtils.getCurrentTime((String) "dd-MM-yyyy HH:mm:ss"));
+            stm.setString(6, DateTimeUtils.getCurrentTime((String) "dd-MM-yyyy HH:mm:ss"));
             stm.executeUpdate();
             stm.close();
         }

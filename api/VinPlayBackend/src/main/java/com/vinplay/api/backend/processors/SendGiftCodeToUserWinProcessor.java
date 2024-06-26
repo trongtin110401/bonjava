@@ -106,13 +106,13 @@ public class SendGiftCodeToUserWinProcessor implements BaseProcessor<HttpServlet
 
         Date expirationDate = calendar.getTime();
 
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         return format.format(expirationDate);
     }
 
     // Ph??ng th?c ?? chuy?n ??i chu?i thành Date
     public static Date parseDate(String dateString) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         try {
             return format.parse(dateString);
         } catch (ParseException e) {
@@ -147,7 +147,7 @@ public class SendGiftCodeToUserWinProcessor implements BaseProcessor<HttpServlet
     public String genCode(int price, String giftCode) {
         LocalDate currentDate = LocalDate.now();
         LocalDate newDate = currentDate.plusDays(10);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         String expirationTime = newDate.format(formatter);
         String createdDate = currentDate.format(formatter);
         GiftCodeServiceImpl service = new GiftCodeServiceImpl();

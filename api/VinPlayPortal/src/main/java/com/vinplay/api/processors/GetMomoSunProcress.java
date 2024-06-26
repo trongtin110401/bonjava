@@ -39,7 +39,7 @@ public class GetMomoSunProcress implements BaseProcessor<HttpServletRequest, Str
             RechargeServiceImpl rechargeService = new RechargeServiceImpl();
             String nickname = this.getUserNameByAccessToken(accessToken);
             DepositBankModel depositBankModel = rechargeService.finMoMoDeposit(nickname);
-            SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat sim = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
             if (depositBankModel != null) {
                 Date currentDate = new Date();
                 Date dateCreate = sim.parse(depositBankModel.getCreatedAt());

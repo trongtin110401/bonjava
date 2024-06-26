@@ -59,7 +59,7 @@ implements GiftCodeXCDao {
             stmt.setInt(1, Integer.parseInt(msg.getPrice()));
             stmt.setInt(2, msg.getQuantity());
             stmt.setInt(3, 0);
-            stmt.setString(4, DateTimeUtils.getCurrentTime((String)"yyyy-MM-dd HH:mm:ss"));
+            stmt.setString(4, DateTimeUtils.getCurrentTime((String)"dd-MM-yyyy HH:mm:ss"));
             stmt.setString(5, msg.getReqAdmin());
             stmt.executeUpdate();
         }

@@ -41,7 +41,7 @@ implements GiftCodeMachineDAO {
 
     @Override
     public boolean exportGiftCodeMachine(GiftCodeMachineMessage msg) {
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         String timeLog = df.format(new Date());
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         HashMap<String, Object> conditions = new HashMap<String, Object>();

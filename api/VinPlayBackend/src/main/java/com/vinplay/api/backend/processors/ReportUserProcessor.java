@@ -39,7 +39,7 @@ public class ReportUserProcessor
 
 
         DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
         LocalDate localDateStart = LocalDate.parse(timeStart, inputFormatter);
         LocalDate localDateEnd = LocalDate.parse(timeEnd, inputFormatter);

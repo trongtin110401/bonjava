@@ -36,7 +36,7 @@ public class CheckTienCuoc {
 
         Map<String, Long> MoneyIn = new HashedMap();
         try {
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
 
             Date et = VinPlayUtils.getCurrentDates();
             long time1 = et.getTime();

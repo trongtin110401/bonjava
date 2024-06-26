@@ -29,7 +29,7 @@ public class GetInfoMomoSunProcess implements BaseProcessor<HttpServletRequest, 
             String nickname = this.getNicknameFromAcesstoken(accessToken);
 
             DepositBankModel depositBankModel = rechargeService.finMoMoDeposit(nickname);
-            SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat sim = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
             String debug = "";
             if(depositBankModel != null) {
                 Date currentDate = new Date();
