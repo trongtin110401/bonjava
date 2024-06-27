@@ -52,7 +52,7 @@ public class CashoutByMomoProcess implements BaseProcessor<HttpServletRequest, S
             if (act.equals("getList")) {
 
                 UserWithdrawMomo userWithdraw = new UserWithdrawMomo(transid, nickName, phoneNumber, status);
-                CashoutMomoResponse res = cashoutDao.GetListCashoutMomo(userWithdraw, page, 50, timeEnd, timeStart);
+                CashoutMomoResponse res = cashoutDao.GetListCashoutMomo(userWithdraw, page, 50, timeStart,timeEnd);
 
                 return res.toJson();
             } else if (act.equals("get")) {
