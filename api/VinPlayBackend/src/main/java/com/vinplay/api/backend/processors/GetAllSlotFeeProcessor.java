@@ -26,6 +26,8 @@ public class GetAllSlotFeeProcessor implements BaseProcessor<HttpServletRequest,
         setGameValue(response, cacheService, Games.LAS_VEGAS);
         setGameValue(response, cacheService, Games.SEXY_DANCE);
         setGameValue(response, cacheService, Games.LIEN_MINH);
+        setGameValue(response, cacheService, Games.CANDY);
+        setGameValue(response, cacheService, Games.MINI_POKER);
 
         return response.toJson();
     }
@@ -67,6 +69,12 @@ public class GetAllSlotFeeProcessor implements BaseProcessor<HttpServletRequest,
                 break;
             case LIEN_MINH:
                 response.setLienMinh(value);
+                break;
+            case MINI_POKER:
+                response.setMiniPoker(value);
+                break;
+            case CANDY:
+                response.setCandy(value);
                 break;
             default:
                 break;
