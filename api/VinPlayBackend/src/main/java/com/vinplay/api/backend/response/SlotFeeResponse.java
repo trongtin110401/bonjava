@@ -16,6 +16,8 @@ public class SlotFeeResponse extends BaseResponseModel {
     private int LasVegas = 0;
     private int SexyDance = 0;
     private int LienMinh = 0;
+    private int Candy = 0;
+    private int MiniPoker = 0;
 
     public SlotFeeResponse(boolean success, String errorCode) {
         super(success, errorCode);
@@ -103,6 +105,22 @@ public class SlotFeeResponse extends BaseResponseModel {
 
     public void setLienMinh(int lienMinh) {
         LienMinh = lienMinh;
+    }
+    @JsonProperty("CANDY")
+    public int getCandy() {
+        return Candy;
+    }
+
+    public void setCandy(int candy) {
+        Candy = candy;
+    }
+    @JsonProperty("MiniPoker")
+    public int getMiniPoker() {
+        return MiniPoker;
+    }
+
+    public void setMiniPoker(int miniPoker) {
+        MiniPoker = miniPoker;
     }
 }
 
