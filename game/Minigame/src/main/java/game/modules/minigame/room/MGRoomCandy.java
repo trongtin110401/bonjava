@@ -66,7 +66,6 @@ public class MGRoomCandy extends MGRoom {
     private long pot;
     private long fund;
     private long initPotValue;
-    private int betValue;
     private short moneyType;
     private String moneyTypeStr;
     private UserService userService = new UserServiceImpl();
@@ -84,7 +83,7 @@ public class MGRoomCandy extends MGRoom {
 
     public MGRoomCandy(String name, String gameName, short moneyType, long pot, long fund, int betValue, long initPotValue) {
 
-        super(name);
+        super(name, betValue);
 
         this.gameName = gameName;
 

@@ -78,7 +78,7 @@ public class SlotMachineExtension extends BZExtension {
 
     private void gameLoop() {
         ++this.countReloadConfig;
-        if (this.countReloadConfig == 300) {
+        if (this.countReloadConfig == 10) {
             Debug.trace("reload config");
             ConfigGame.reload();
             this.countReloadConfig = 0;

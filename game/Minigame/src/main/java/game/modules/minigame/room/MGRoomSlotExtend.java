@@ -49,7 +49,6 @@ public class MGRoomSlotExtend extends MGRoom {
     private long pot;
     private long fund;
     private long initPotValue;
-    private int betValue;
     private short moneyType;
     private String moneyTypeStr;
     private UserService userService = new UserServiceImpl();
@@ -106,7 +105,7 @@ public class MGRoomSlotExtend extends MGRoom {
     int[] arrMutil = {1, 3, 5, 10};
 
     public MGRoomSlotExtend(String name, short moneyType, long pot, long fund, int betValue, long initPotValue) {
-        super(name);
+        super(name, betValue);
         this.gameLoopTask = new GameLoopTask();
         this.usersAuto = new HashMap();
         this.lastTimeUpdatePotToRoom = 0L;
@@ -172,7 +171,7 @@ public class MGRoomSlotExtend extends MGRoom {
     public synchronized ResultSlotExtendMsg play(String username, long gold) {
         long startTime = System.currentTimeMillis();
         long refernceId = Slot3x3ExtendModule.getNewRefenceId();
-           String currentTimeStr = DateTimeUtils.getCurrentTime();
+        String currentTimeStr = DateTimeUtils.getCurrentTime();
 
         short result = 0;
         long currentMoney = this.userService.getMoneyUserCache(username, this.moneyTypeStr);

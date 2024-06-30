@@ -102,7 +102,7 @@ public class MGRoomMiniPoker extends MGRoom {
     CacheService cacheService = new CacheServiceImpl();
 
     public MGRoomMiniPoker(String roomName, short moneyType, long pot, long fund, long baseBetValue, long initPotValue) {
-        super(roomName);
+        super(roomName, (int) baseBetValue);
         this.gameName = Games.MINI_POKER.getName();
         this.moneyType = moneyType;
         if (moneyType == 1) {

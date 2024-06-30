@@ -43,6 +43,13 @@ public class CacheServiceImpl implements CacheService {
     }
 
     @Override
+    public void setValue(String key, float value) {
+        HazelcastInstance instance = HazelcastClientFactory.getInstance();
+        IMap map = instance.getMap("cacheConfig");
+        map.put((Object) key, (Object) String.valueOf(value));
+    }
+
+    @Override
     public String getValueStr(String key) throws KeyNotFoundException {
         HazelcastInstance instance = HazelcastClientFactory.getInstance();
         IMap map = instance.getMap("cacheConfig");
@@ -66,6 +73,15 @@ public class CacheServiceImpl implements CacheService {
     public int getValueInt(String var1, int defaultValue) {
         try {
             return getValueInt(var1);
+        } catch (Exception ex) {
+            return defaultValue;
+        }
+    }
+
+    @Override
+    public float getValueFloat(String var1, float defaultValue) {
+        try {
+            return Float.parseFloat(getValueStr(var1));
         } catch (Exception ex) {
             return defaultValue;
         }

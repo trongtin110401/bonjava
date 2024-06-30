@@ -102,7 +102,7 @@ public class MGRoomTaiXiu
     private static final org.apache.log4j.Logger logger = Logger.getLogger((String) "recharge");
 
     public MGRoomTaiXiu(String name, long referenceId, short moneyType) {
-        super(name);
+        super(name, 0);
         this.moneyType = moneyType;
         this.moneyTypeStr = "xu";
         if (moneyType == 1) {
@@ -354,9 +354,10 @@ public class MGRoomTaiXiu
         msg.potTai = this.getPotTai();
         msg.potXiu = this.getPotXiu();
 
-        msg.numBetTai =  (this.potTai.getNumBet() + amountBotTaiFake);
-        msg.numBetXiu =  (this.potXiu.getNumBet() + amountBotXiuFake)
-        ;msg.moneyHu = TaiXiuModule.moneyHu;
+        msg.numBetTai = (this.potTai.getNumBet() + amountBotTaiFake);
+        msg.numBetXiu = (this.potXiu.getNumBet() + amountBotXiuFake)
+        ;
+        msg.moneyHu = TaiXiuModule.moneyHu;
         //todo: lấy hũ trong cache done
 //        try {
 //            msg.moneyHu = Long.parseLong(cacheService.getValueStr("Hu_TX_" + this.moneyType));
