@@ -145,7 +145,7 @@ public class RangeRoverRoom
                         long moneyToPot = totalBetValue * 1L / 100L;
                         long moneyToFund = totalBetValue - fee - moneyToPot;
                         if (!u.isBot()) {
-                            this.fund += moneyToFund;
+                            updateFunValue(moneyToFund);
                         }
                         this.pot += moneyToPot;
                         boolean enoughPair = false;
@@ -423,7 +423,8 @@ public class RangeRoverRoom
 
                                     cacheService.setValue(cacheKey, 1);
                                     //this.fund -= totalPrizes - soTienNoHuKhongTruQuy;
-                                    this.fund = 0;
+//                                    this.fund = 0;
+
                                     if (this.moneyType == 1) {
                                         //GameUtils.sendSMSToUser(username, "Chuc mung " + username + " da no hu game " + gn + " phong " + this.betValue + ". So tien no hu: " + totalPrizes + " vin");
                                     }
@@ -464,7 +465,7 @@ public class RangeRoverRoom
                                 } else {
                                     countNoHu++;
                                     if (!u.isBot()) {
-                                        this.fund -= totalPrizes;
+//                                        this.fund -= totalPrizes;
                                     }
 
                                     if (result == 0) {
@@ -597,8 +598,8 @@ public class RangeRoverRoom
             if (builderPrizesOnLine.length() > 0) {
                 builderPrizesOnLine.deleteCharAt(0);
             }
-            if (this.fund - totalPrizes < 0L || totalPrizes > (long) ConfigGame.getIntValue("max_prize_free_daily", 2000))
-                continue;
+//            if (this.fund - totalPrizes < 0L || totalPrizes > (long) ConfigGame.getIntValue("max_prize_free_daily", 2000))
+//                continue;
             enoughPair = true;
             boolean updated = this.slotService.updateLuotQuayFreeDaily(this.gameName, username, this.betValue);
             if (!updated) {
@@ -723,13 +724,13 @@ public class RangeRoverRoom
     private void saveFund() {
         long currentTime = System.currentTimeMillis();
         if (currentTime - this.lastTimeUpdateFundToRoom >= 60000L) {
-            try {
-                this.miniGameService.saveFund(this.name, this.fund);
-            } catch (IOException | InterruptedException | TimeoutException ex2) {
-                Exception ex;
-                Exception e = ex = ex2;
-                Debug.trace((Object[]) new Object[]{"KHO BAU: update fund kho bau error ", e.getMessage()});
-            }
+//            try {
+////                this.miniGameService.saveFund(this.name, this.fund);
+//            } catch (IOException | InterruptedException | TimeoutException ex2) {
+//                Exception ex;
+//                Exception e = ex = ex2;
+//                Debug.trace((Object[]) new Object[]{"KHO BAU: update fund kho bau error ", e.getMessage()});
+//            }
             this.lastTimeUpdateFundToRoom = currentTime;
         }
     }
@@ -740,7 +741,7 @@ public class RangeRoverRoom
             if (isReset == 1) {
                 this.pot = this.initJackpotValues;
                 logger.error("reset lại pot "+ pot+" : "+ name);
-                this.fund = 0;
+//                this.fund = 0;
                 this.savePot();
                 this.saveFund();
                 this.cacheService.removeKey("reset_pot_" + this.gn + "_" + this.betValue);
@@ -755,7 +756,7 @@ public class RangeRoverRoom
 
     private void resetPotFund() {
         try {
-            this.fund = this.initJackpotValues;
+//            this.fund = this.initJackpotValues;
             this.pot = this.initJackpotValues;
             this.saveFund();
             this.saveFund();

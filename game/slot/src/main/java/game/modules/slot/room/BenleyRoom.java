@@ -134,7 +134,7 @@ public class BenleyRoom extends SlotRoom {
                         // số tiền còn lại sau khi trừ phế và 1% POT cho vào quỹ thưởng
                         long moneyToFund = totalBetValue - fee - moneyToPot;
                         if (!u.isBot()) {
-                            this.fund += moneyToFund;
+//                            this.fund += moneyToFund;
                         }
 
                         boolean enoughPair = false;
@@ -432,7 +432,7 @@ public class BenleyRoom extends SlotRoom {
                                     this.noHuX2();
                                     this.pot = this.initJackpotValues;
                                     //this.fund -= totalPrizes - soTienNoHuKhongTruQuy;
-                                    this.fund = 0;
+//                                    this.fund = 0;
 
                                     // get usercache
                                     HazelcastInstance client = HazelcastClientFactory.getInstance();
@@ -471,7 +471,7 @@ public class BenleyRoom extends SlotRoom {
                                 } else {
                                     countNoHu++;
                                     if (!u.isBot()) {
-                                        this.fund -= totalPrizes;
+//                                        this.fund -= totalPrizes;
                                     }
                                     if (result == 0) {
                                         result = totalPrizes >= (this.betValue * 100L) ? (short) 2 : 1;
@@ -592,11 +592,11 @@ public class BenleyRoom extends SlotRoom {
     private void saveFund() {
         long currentTime = System.currentTimeMillis();
         if (currentTime - this.lastTimeUpdateFundToRoom >= Constant.UPDATE_FUND_PERIOD_TIME) {
-            try {
-                this.miniGameService.saveFund(this.name, this.fund);
-            } catch (IOException | InterruptedException | TimeoutException e) {
-                Debug.trace(this.gameName + ": update fund error ", e.getMessage());
-            }
+//            try {
+//                this.miniGameService.saveFund(this.name, this.fund);
+//            } catch (IOException | InterruptedException | TimeoutException e) {
+//                Debug.trace(this.gameName + ": update fund error ", e.getMessage());
+//            }
             this.lastTimeUpdateFundToRoom = currentTime;
         }
     }
@@ -659,7 +659,7 @@ public class BenleyRoom extends SlotRoom {
             int isReset = cacheService.getValueInt("reset_pot_" + gameName + "_" + this.betValue);
             if (isReset == 1) {
                 this.pot = this.initJackpotValues;
-                this.fund = 0;
+//                this.fund = 0;
                 this.savePot();
                 this.saveFund();
                 this.cacheService.removeKey("reset_pot_" + gameName + "_" + this.betValue);

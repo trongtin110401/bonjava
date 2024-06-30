@@ -179,7 +179,7 @@ public class TamHungRoom
                         long moneyToPot = totalBetValue * 1L / 100L;
                         long moneyToFund = totalBetValue - fee - moneyToPot;
                         if (!u.isBot()) {
-                            this.fund += moneyToFund;
+//                            this.fund += moneyToFund;
                         }
 
                         this.pot += moneyToPot;
@@ -494,7 +494,7 @@ public class TamHungRoom
                                     this.noHuX2();
                                     this.pot = this.initJackpotValues;
                                     //this.fund -= totalPrizes - soTienNoHuKhongTruQuy;
-                                    this.fund = 0;
+//                                    this.fund = 0;
                                     if (this.moneyType == 1) {
                                         //GameUtils.sendSMSToUser(username, "Chuc mung " + username + " da no hu game " + gn + " phong " + this.betValue + ". So tien no hu: " + totalPrizes + " " + "GS");
                                     }
@@ -536,7 +536,7 @@ public class TamHungRoom
                                 } else {
                                     countNoHu++;
                                     if (!u.isBot()) {
-                                        this.fund -= totalPrizes;
+//                                        this.fund -= totalPrizes;
                                     }
 
                                     if (result == 0) {
@@ -687,9 +687,9 @@ public class TamHungRoom
                             }
                             this.noHuX2();
                             this.pot = this.initJackpotValues;
-                            this.fund -= totalPrizes;
+//                            this.fund -= totalPrizes;
                         } else {
-                            this.fund -= totalPrizes;
+//                            this.fund -= totalPrizes;
                             if (result == 0) {
                                 result = totalPrizes >= (long) (this.betValue * 100) ? (short) 2 : 1;
                             }
@@ -795,8 +795,8 @@ public class TamHungRoom
             if (builderPrizesOnLine.length() > 0) {
                 builderPrizesOnLine.deleteCharAt(0);
             }
-            if (this.fund - totalPrizes < 0L || totalPrizes > (long) ConfigGame.getIntValue("max_prize_free_daily", 2000))
-                continue;
+//            if (this.fund - totalPrizes < 0L || totalPrizes > (long) ConfigGame.getIntValue("max_prize_free_daily", 2000))
+//                continue;
             enoughPair = true;
             boolean updated = this.slotService.updateLuotQuayFreeDaily(this.gameName, username, this.betValue);
             if (!updated) {
@@ -916,14 +916,14 @@ public class TamHungRoom
     private void saveFund() {
         long currentTime = System.currentTimeMillis();
         if (currentTime - this.lastTimeUpdateFundToRoom >= 60000L) {
-            try {
-                this.miniGameService.saveFund(this.name, this.fund);
-            } catch (IOException | InterruptedException | TimeoutException ex2) {
-                Exception ex;
-                Exception e = ex = ex2;
-                Debug.trace((Object[]) new Object[]{String.valueOf(this.gameName) + ": update fund error ", e.getMessage()});
-            }
-            this.lastTimeUpdateFundToRoom = currentTime;
+//            try {
+//                this.miniGameService.saveFund(this.name, this.fund);
+//            } catch (IOException | InterruptedException | TimeoutException ex2) {
+//                Exception ex;
+//                Exception e = ex = ex2;
+//                Debug.trace((Object[]) new Object[]{String.valueOf(this.gameName) + ": update fund error ", e.getMessage()});
+//            }
+//            this.lastTimeUpdateFundToRoom = currentTime;
         }
     }
 
@@ -996,7 +996,7 @@ public class TamHungRoom
             int isReset = cacheService.getValueInt("reset_pot_" + this.gn + "_" + this.betValue);
             if (isReset == 1) {
                 this.pot = this.initJackpotValues;
-                this.fund = 0;
+//                this.fund = 0;
                 this.savePot();
                 this.saveFund();
                 this.cacheService.removeKey("reset_pot_" + this.gn + "_" + this.betValue);

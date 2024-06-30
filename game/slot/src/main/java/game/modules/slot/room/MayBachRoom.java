@@ -92,7 +92,7 @@ extends SlotRoom {
         this.pot = pot;
         CacheServiceImpl cacheService = new CacheServiceImpl();
         cacheService.setValue(name, (int)pot);
-        this.fund = fund;
+//        this.fund = fund;
         this.betValue = betValue;
         this.initJackpotValues = initPotValue;
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
@@ -159,7 +159,7 @@ extends SlotRoom {
                         long moneyToPot = totalBetValue * 1L / 100L;
                         long moneyToFund = totalBetValue - fee - moneyToPot;
                         if(!u.isBot()){
-                            this.fund += moneyToFund;
+//                            this.fund += moneyToFund;
                         }
 
                         this.pot += moneyToPot;
@@ -443,7 +443,7 @@ extends SlotRoom {
                                     this.noHuX2();
                                     this.pot = this.initJackpotValues;
                                     //this.fund -= totalPrizes - soTienNoHuKhongTruQuy;
-                                    this.fund = 0;
+//                                    this.fund = 0;
                                     if (this.moneyType == 1) {
                                         //GameUtils.sendSMSToUser(username, "Chuc mung " + username + " da no hu game " + gn + " phong " + this.betValue + ". So tien no hu: " + totalPrizes + " vin");
                                     }
@@ -493,7 +493,7 @@ extends SlotRoom {
                                 } else {
                                     countNoHu++;
                                     if(!u.isBot()){
-                                        this.fund -= totalPrizes;
+//                                        this.fund -= totalPrizes;
                                     }
 
                                     if (result == 0) {
@@ -624,8 +624,8 @@ extends SlotRoom {
             if (builderPrizesOnLine.length() > 0) {
                 builderPrizesOnLine.deleteCharAt(0);
             }
-            if (result == 3 || this.fund - totalPrizes < 0L || totalPrizes > (long)ConfigGame.getIntValue("max_prize_free_daily", 2000)) continue;
-            enoughPair = true;
+//            if (result == 3 || this.fund - totalPrizes < 0L || totalPrizes > (long)ConfigGame.getIntValue("max_prize_free_daily", 2000)) continue;
+//            enoughPair = true;
             boolean updated = this.slotService.updateLuotQuayFreeDaily(this.gameName, username, this.betValue);
             if (!updated) {
                 result = 103;
@@ -747,14 +747,14 @@ extends SlotRoom {
     private void saveFund() {
         long currentTime = System.currentTimeMillis();
         if (currentTime - this.lastTimeUpdateFundToRoom >= 60000L) {
-            try {
-                this.miniGameService.saveFund(this.name, this.fund);
-            }
-            catch (IOException | InterruptedException | TimeoutException ex2) {
-                Exception ex;
-                Exception e = ex = ex2;
-                Debug.trace((Object[])new Object[]{this.gameName+ ": update fund error ", e.getMessage()});
-            }
+//            try {
+////                this.miniGameService.saveFund(this.name, this.fund);
+//            }
+//            catch (IOException | InterruptedException | TimeoutException ex2) {
+//                Exception ex;
+//                Exception e = ex = ex2;
+//                Debug.trace((Object[])new Object[]{this.gameName+ ": update fund error ", e.getMessage()});
+//            }
             this.lastTimeUpdateFundToRoom = currentTime;
         }
     }
@@ -839,7 +839,7 @@ extends SlotRoom {
             int isReset = cacheService.getValueInt("reset_pot_"+this.gn+"_"+this.betValue);
             if(isReset == 1){
                 this.pot = this.initJackpotValues;
-                this.fund = 0;
+//                this.fund = 0;
                 this.savePot();
                 this.saveFund();
                 this.cacheService.removeKey("reset_pot_"+this.gn+"_"+this.betValue);
