@@ -377,9 +377,11 @@ public class TaiXiuModule extends BaseClientRequestHandler {
     public void betTaiXiu(User user, DataCmd dataCmd) {
         // convert từ dataCmd sang BetTaixiu cmd
         BetTaiXiuCmd cmd = new BetTaiXiuCmd(dataCmd);
-        MGRoomTaiXiu roomTX = this.getRoomTX(cmd.moneyType);
-        if (roomTX != null) {
-            roomTX.betTaiXiu(user, cmd); // room tài xỉu khác null thì bet tài xỉu với user và cmd
+        if(cmd.moneyType == 1) {
+            MGRoomTaiXiu roomTX = this.getRoomTX(cmd.moneyType);
+            if (roomTX != null) {
+                roomTX.betTaiXiu(user, cmd); // room tài xỉu khác null thì bet tài xỉu với user và cmd
+            }
         }
     }
 
