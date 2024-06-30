@@ -334,7 +334,7 @@ public abstract class SlotRoom {
     void setPercentJackpot() {
         try {
             this.cachePercentJackpot = gameName + "_PERCENT_JACKPOT";
-            this.percentJackpot = cacheService.getValueInt(cachePercentFeeName);
+            this.percentJackpot = cacheService.getValueInt(cachePercentJackpot);
         } catch (Exception ex) {
             this.percentJackpot = 1;
             cacheService.setValue(cachePercentJackpot, percentJackpot);
