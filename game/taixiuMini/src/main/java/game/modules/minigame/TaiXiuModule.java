@@ -605,20 +605,20 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         short total = (short) (dices[0] + dices[1] + dices[2]);
         this.result = total > 10 ? (short) 1 : 0;
 
-        //cong lai tien vao hu nguoi choi
-        try {
-            if (this.result == 1) {
-                //ve tai
-                fundTx += totalRealBetXiu - totalRealBetTai;
-            } else {
-                //ve xiu
-                fundTx += totalRealBetTai - totalRealBetXiu;
-            }
-
-            cacheService.setValue("fund_tx_auto", String.valueOf(fundTx));
-        } catch (Exception e) {
-            cacheService.setValue("fund_tx_auto", (int) fundTx);
-        }
+        // cong lai tien vao hu nguoi choi
+//        try {
+//            if (this.result == 1) {
+//                // ve tai
+//                fundTx += totalRealBetXiu - totalRealBetTai;
+//            } else {
+//                // ve xiu
+//                fundTx += totalRealBetTai - totalRealBetXiu;
+//            }
+//
+//            cacheService.setValue("fund_tx_auto", String.valueOf(fundTx));
+//        } catch (Exception e) {
+//            cacheService.setValue("fund_tx_auto", (long) fundTx);
+//        }
 
         /**
          * Show ket qua ra man
