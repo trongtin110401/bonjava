@@ -517,6 +517,10 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         miniGameService.saveFund(Games.TAI_XIU.getName(), fundTx);
     }
 
+    public void updateFund() throws Exception {
+        miniGameService.saveFund(Games.TAI_XIU.getName(), fundTx);
+    }
+
     private void resetForceBalance() {
         this.forceBetSide = (short) -1;
     }
