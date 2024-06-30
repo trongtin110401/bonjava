@@ -81,7 +81,7 @@ public class MGRoomCaoThap extends MGRoom {
     protected CacheService sv = new CacheServiceImpl();
 
     public MGRoomCaoThap(String roomName, byte moneyType, long pot, long fund, int baseBetValue) {
-        super(roomName);
+        super(roomName, baseBetValue);
         this.moneyType = moneyType;
         if (moneyType == 1) {
             this.moneyTypeStr = "vin";

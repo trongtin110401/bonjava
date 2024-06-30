@@ -15,6 +15,7 @@ import bitzero.util.ExtensionUtility;
 import com.vinplay.dal.service.CacheService;
 import com.vinplay.dal.service.impl.CacheServiceImpl;
 import com.vinplay.utils.SlotNohuObject;
+import game.utils.ConfigGame;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,7 @@ public abstract class MGRoom {
 
     protected String name;
     protected String gameName;
+    protected int betValue;
     protected List<User> users = new ArrayList<User>();
 
     protected CacheService cacheService = new CacheServiceImpl();
@@ -42,10 +44,11 @@ public abstract class MGRoom {
     protected int percentFee = 0;
     protected String cachePercentFeeName;
     protected String cachePercentJackpot;
-    protected int percentJackpot = 0;
+    protected float percentJackpot = 0;
 
-    public MGRoom(String name) {
+    public MGRoom(String name, int betValue) {
         this.name = name;
+        this.betValue = betValue;
     }
 
     /*
@@ -151,12 +154,14 @@ public abstract class MGRoom {
     }
 
     void setPercentJackpot() {
-        try {
-            this.cachePercentJackpot = gameName + "_PERCENT_JACKPOT";
-            this.percentJackpot = cacheService.getValueInt(cachePercentJackpot);
-        } catch (Exception ex) {
-            this.percentJackpot = 1;
-            cacheService.setValue(cachePercentJackpot, percentJackpot);
+        this.cachePercentJackpot = gameName + "_PERCENT_JACKPOT" + "_" + betValue;
+
+        float configValue = ConfigGame.getFloatValue(cachePercentJackpot, 0.5f);
+        this.percentJackpot = cacheService.getValueFloat(cachePercentJackpot, 0.5f);
+
+        if (configValue != this.percentJackpot) {
+            this.percentJackpot = configValue;
+            cacheService.setValue(cachePercentJackpot, configValue);
         }
     }
 

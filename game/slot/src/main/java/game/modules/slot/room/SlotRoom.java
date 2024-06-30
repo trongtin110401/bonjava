@@ -41,6 +41,7 @@ import com.vinplay.vbee.common.exceptions.KeyNotFoundException;
 import com.vinplay.vbee.common.models.slot.SlotFreeSpin;
 import game.modules.slot.SlotModule;
 import game.modules.slot.entities.slot.AutoUser;
+import game.util.ConfigGame;
 
 import java.io.IOException;
 import java.util.*;
@@ -68,7 +69,7 @@ public abstract class SlotRoom {
     protected String cachePercentFeeName;
     protected int percentFee = 0;
     protected String cachePercentJackpot;
-    protected int percentJackpot = 0;
+    protected float percentJackpot = 0;
     protected int countHu = -1;
     protected int countNoHuX2 = 0;
     protected boolean huX2 = false;
@@ -332,12 +333,14 @@ public abstract class SlotRoom {
     }
 
     void setPercentJackpot() {
-        try {
-            this.cachePercentJackpot = gameName + "_PERCENT_JACKPOT";
-            this.percentJackpot = cacheService.getValueInt(cachePercentJackpot);
-        } catch (Exception ex) {
-            this.percentJackpot = 1;
-            cacheService.setValue(cachePercentJackpot, percentJackpot);
+        this.cachePercentJackpot = gameName + "_PERCENT_JACKPOT" + "_" + betValue;
+
+        float configValue = ConfigGame.getFloatValue(cachePercentJackpot, 0.5f);
+        this.percentJackpot = cacheService.getValueFloat(cachePercentJackpot, 0.5f);
+
+        if (configValue != this.percentJackpot) {
+            this.percentJackpot = configValue;
+            cacheService.setValue(cachePercentJackpot, configValue);
         }
     }
 

@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  bitzero.util.common.business.Debug
  */
@@ -89,9 +89,7 @@ public class ConfigGame {
             GameConfigDaoImpl dao = new GameConfigDaoImpl();
             String partnerConfig = dao.getGameCommon("slot");
             json = (JSONObject) new JSONParser().parse(partnerConfig);
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             Debug.trace(ex.getMessage());
         }
     }
@@ -111,11 +109,25 @@ public class ConfigGame {
 //            return ConfigGame.getIntValue(key);
 //        }
 //        return defaultValue;
-        if (json.get(key) != null)
-        {
+        if (json.get(key) != null) {
             return ConfigGame.getIntValue(key);
         }
         return defaultValue;
+    }
+
+    /**
+     * Get float value from config_game.properties
+     *
+     * @param key          key
+     * @param defaultValue default value
+     * @return float value
+     */
+    public static float getFloatValue(String key, float defaultValue) {
+        try {
+            return Float.parseFloat(ConfigGame.getValueString(key));
+        } catch (Exception ex) {
+            return defaultValue;
+        }
     }
 }
 

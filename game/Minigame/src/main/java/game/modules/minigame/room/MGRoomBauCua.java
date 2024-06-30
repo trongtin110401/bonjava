@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  bitzero.server.entities.User
  *  bitzero.server.extensions.data.BaseMsg
@@ -54,6 +54,7 @@ import game.modules.minigame.entities.MinigameConstant;
 import game.modules.minigame.entities.Pot;
 import game.modules.minigame.entities.PotBauCua;
 import game.modules.minigame.room.MGRoom;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -64,7 +65,7 @@ import java.util.Random;
 import java.util.concurrent.TimeoutException;
 
 public class MGRoomBauCua
-extends MGRoom {
+        extends MGRoom {
     public byte id;
     public long fund;
     private List<PotBauCua> pots = new ArrayList<PotBauCua>();
@@ -91,7 +92,7 @@ extends MGRoom {
     private static final byte NOT_ENOUGH_MONEY = 102;
 
     public MGRoomBauCua(String name, int minBetValue, byte moneyType, byte id, long fund) {
-        super(name);
+        super(name, minBetValue);
         this.id = id;
         this.fund = fund;
         this.moneyType = moneyType;
@@ -108,7 +109,7 @@ extends MGRoom {
             this.pots.add(new PotBauCua(i));
         }
         this.lichSuPhien = this.bcService.getLichSuPhien(30, id);
-        Debug.trace((Object)("Lich su phien " + this.buildLichSuPhien()));
+        Debug.trace((Object) ("Lich su phien " + this.buildLichSuPhien()));
     }
 
     public void updateBauCuaInfoToUser(User user, byte remainTime, boolean bettingState) {
@@ -125,7 +126,7 @@ extends MGRoom {
         msg.xPot = this.resultBC.xPot;
         msg.xValue = this.resultBC.xValue;
         msg.room = this.id;
-        this.sendMessageToUser((BaseMsg)msg, user);
+        this.sendMessageToUser((BaseMsg) msg, user);
     }
 
     public void startNewGame(long newReferenceId) {
@@ -136,7 +137,7 @@ extends MGRoom {
         this.transactionsMap.clear();
         this.resultBC = new ResultBauCua(this.referenceId, this.id, this.minBetValue);
         this.botBC = BotMinigame.getBotBauCua(this.id);
-        Debug.trace((Object)("BOT BAU CUA ROOM " + this.id + ", size= " + this.botBC.size()));
+        Debug.trace((Object) ("BOT BAU CUA ROOM " + this.id + ", size= " + this.botBC.size()));
     }
 
     public void botBet(int time, boolean bettingState) {
@@ -150,7 +151,8 @@ extends MGRoom {
         long currentMoney;
         int result;
         ResultBetBauCuaMsg msg;
-        block15 : {
+        block15:
+        {
             long totalBetValue = 0L;
             result = 100;
             msg = new ResultBetBauCuaMsg();
@@ -170,18 +172,18 @@ extends MGRoom {
                         }
                         if (totalBetValue <= 0L) break block15;
                         if (totalBetValue <= currentMoney) {
-                            long fee = (long)((float)totalBetValue * this.tax / 100.0f);
+                            long fee = (long) ((float) totalBetValue * this.tax / 100.0f);
                             MoneyResponse response = new MoneyResponse(false, "1001");
-                            if(!this.isBot(username)){
-                                 response = this.userService.updateMoney(username, -totalBetValue, this.moneyTypeStr, GAME_NAME, "B\u1ea7u cua: \u0110\u1eb7t c\u01b0\u1ee3c", "Phi\u00ean " + this.referenceId, fee, Long.valueOf(this.referenceId), TransType.START_TRANS);
+                            if (!this.isBot(username)) {
+                                response = this.userService.updateMoney(username, -totalBetValue, this.moneyTypeStr, GAME_NAME, "B\u1ea7u cua: \u0110\u1eb7t c\u01b0\u1ee3c", "Phi\u00ean " + this.referenceId, fee, Long.valueOf(this.referenceId), TransType.START_TRANS);
 
-                            }else{
+                            } else {
                                 response.setSuccess(true);
                             }
                             if (!response.isSuccess()) break block15;
                             if (!bettingState) {
                                 result = 1;
-                                if(!isBot(username)){
+                                if (!isBot(username)) {
                                     this.userService.updateMoney(username, totalBetValue, this.moneyTypeStr, GAME_NAME, "B\u1ea7u cua: Tr\u1ea3 c\u01b0\u1ee3c", "Ho\u00e0n tr\u1ea3 \u0111\u1eb7t c\u01b0\u1ee3c phi\u00ean " + this.referenceId, 0L, Long.valueOf(this.referenceId), TransType.END_TRANS);
                                     break block15;
                                 }
@@ -218,35 +220,33 @@ extends MGRoom {
                             }
                             try {
                                 this.mgService.saveFund(this.name, this.fund);
-                                if(!isBot(username)){
+                                if (!isBot(username)) {
                                     this.bcService.saveTransactionBauCuaDetail(tranDetail);
                                 }
 
-                            }
-                            catch (IOException | InterruptedException | TimeoutException arrl) {
+                            } catch (IOException | InterruptedException | TimeoutException arrl) {
                                 // empty catch block
                             }
                             result = 1;
                             break block15;
                         }
                         result = 102;
-                    }
-                    catch (NumberFormatException e) {
-                        Debug.trace((Object)("Bet value: " + betStr + " incorrect: " + e.getMessage()));
+                    } catch (NumberFormatException e) {
+                        Debug.trace((Object) ("Bet value: " + betStr + " incorrect: " + e.getMessage()));
                     }
                 }
             } else {
                 result = 101;
             }
         }
-        msg.result = (byte)result;
+        msg.result = (byte) result;
         msg.currentMoney = currentMoney;
         return msg;
     }
 
     public void bet(User user, String betStr, boolean bettingState) {
         ResultBetBauCuaMsg msg = this.bet(user.getName(), betStr, bettingState);
-        this.sendMessageToUser((BaseMsg)msg, user);
+        this.sendMessageToUser((BaseMsg) msg, user);
     }
 
     public void finishGame() {
@@ -272,11 +272,11 @@ extends MGRoom {
                 int n;
                 long[] arrl;
                 if (tiLe[i] > 0) {
-                    totalPrize += tran.betValues[i] * (long)tiLe[i] + tran.betValues[i];
-                    tran.prizes[i] = tran.betValues[i] * (long)tiLe[i] + tran.betValues[i];
+                    totalPrize += tran.betValues[i] * (long) tiLe[i] + tran.betValues[i];
+                    tran.prizes[i] = tran.betValues[i] * (long) tiLe[i] + tran.betValues[i];
                     arrl = totalPrizesInRoom;
                     n = i;
-                    arrl[n] = arrl[n] + (tran.betValues[i] * (long)tiLe[i] + tran.betValues[i]);
+                    arrl[n] = arrl[n] + (tran.betValues[i] * (long) tiLe[i] + tran.betValues[i]);
                 }
                 totalBetValues += tran.betValues[i];
                 arrl = totalBetValuesInRoom;
@@ -293,29 +293,28 @@ extends MGRoom {
                     msg.prize = totalPrize;
                     msg.currentMoney = response.getCurrentMoney();
                     msg.room = this.id;
-                    this.sendMessageToUser((BaseMsg)msg, tran.username);
-                    if (this.moneyType == 1 && totalPrize >= (long)BroadcastMessageServiceImpl.MIN_MONEY) {
+                    this.sendMessageToUser((BaseMsg) msg, tran.username);
+                    if (this.moneyType == 1 && totalPrize >= (long) BroadcastMessageServiceImpl.MIN_MONEY) {
                         this.broadcastMsgService.putMessage(Games.BAU_CUA.getId(), tran.username, totalPrize);
                     }
                 }
             }
             try {
                 tran.totalExchange = totalPrize - totalBetValues;
-                tran.dices = CommonUtils.arrayByteToString((byte[])this.resultBC.dices);
+                tran.dices = CommonUtils.arrayByteToString((byte[]) this.resultBC.dices);
 //                if(!isBot(tran.username)){
 //                    this.bcService.saveTransactionBauCua(tran);
 //                }
                 this.bcService.saveTransactionBauCua(tran);
 
-            }
-            catch (IOException | InterruptedException | TimeoutException response) {
+            } catch (IOException | InterruptedException | TimeoutException response) {
                 // empty catch block
             }
             this.fund -= totalPrize;
             try {
                 this.mgService.saveFund(this.name, this.fund);
+            } catch (IOException | InterruptedException | TimeoutException response) {
             }
-            catch (IOException | InterruptedException | TimeoutException response) {}
         }
         this.resultBC.totalBetValues = totalBetValuesInRoom;
         this.resultBC.totalPrizes = totalPrizesInRoom;
@@ -323,11 +322,10 @@ extends MGRoom {
             this.bcService.saveResultBauCua(this.resultBC);
             if (this.moneyType == 1) {
                 ArrayList<TransactionBauCua> list = new ArrayList<TransactionBauCua>(this.transactionsMap.values());
-                Debug.trace((Object)("TRANSACTION BAU CUA: " + list.size()));
+                Debug.trace((Object) ("TRANSACTION BAU CUA: " + list.size()));
                 this.bcService.calculteToiChonCa(this.dices, list);
             }
-        }
-        catch (IOException | InterruptedException | TimeoutException list) {
+        } catch (IOException | InterruptedException | TimeoutException list) {
             // empty catch block
         }
         return totalVinPay;
@@ -337,7 +335,7 @@ extends MGRoom {
         long totalValues = 0L;
         for (TransactionBauCua tran : this.transactionsMap.values()) {
             for (int i = 0; i < 6; ++i) {
-                totalValues += tran.betValues[i] * (long)tiLe[i] + tran.betValues[i];
+                totalValues += tran.betValues[i] * (long) tiLe[i] + tran.betValues[i];
             }
         }
         return totalValues;
@@ -371,7 +369,7 @@ extends MGRoom {
     public boolean joinRoom(User user) {
         boolean result = super.joinRoom(user);
         if (result) {
-            user.setProperty((Object)"MGROOM_BAU_CUA_INFO", (Object)this);
+            user.setProperty((Object) "MGROOM_BAU_CUA_INFO", (Object) this);
         }
         return result;
     }
@@ -391,11 +389,12 @@ extends MGRoom {
 
     private byte[] generateDices() {
         byte[] dices;
-        block1 : {
+        block1:
+        {
             int num = 0;
             do {
                 Random rd = new Random();
-                dices = new byte[]{(byte)rd.nextInt(6), (byte)rd.nextInt(6), (byte)rd.nextInt(6)};
+                dices = new byte[]{(byte) rd.nextInt(6), (byte) rd.nextInt(6), (byte) rd.nextInt(6)};
                 this.xPot = this.randomXPot();
                 this.xValue = this.randomXValue();
                 int[] tiLe = this.calculateTiLe(dices);
@@ -417,7 +416,7 @@ extends MGRoom {
             for (int i = 0; i < potsTmp.size(); ++i) {
                 Random rd;
                 int n;
-                Pot pt = (Pot)potsTmp.get(i);
+                Pot pt = (Pot) potsTmp.get(i);
                 if (p.getTotalValue() < pt.getTotalValue()) {
                     potsTmp.add(i, p);
                     indexPot.add(i, j);
@@ -435,7 +434,7 @@ extends MGRoom {
             indexPot.add(j);
         }
         for (int i = 0; i < 3; ++i) {
-            dices[i] = ((Integer)indexPot.get(i)).byteValue();
+            dices[i] = ((Integer) indexPot.get(i)).byteValue();
         }
         this.xPot = 1;
         this.xValue = 1;
@@ -466,7 +465,7 @@ extends MGRoom {
         this.resultBC.dices = this.dices;
         this.resultBC.xPot = this.xPot;
         this.resultBC.xValue = this.xValue;
-        Debug.trace((Object)("BAU CUA " + this.id + " DICES: " + this.dices[0] + "," + this.dices[1] + "," + this.dices[2] + ", xPot= " + this.xPot + ", xValue= " + this.xValue));
+        Debug.trace((Object) ("BAU CUA " + this.id + " DICES: " + this.dices[0] + "," + this.dices[1] + "," + this.dices[2] + ", xPot= " + this.xPot + ", xValue= " + this.xValue));
         UpdateBauCuaResultMsg msg = new UpdateBauCuaResultMsg();
         msg.dice1 = this.dices[0];
         msg.dice2 = this.dices[1];
@@ -482,7 +481,7 @@ extends MGRoom {
 
     private byte randomXPot() {
         Random rd = new Random();
-        return (byte)rd.nextInt(6);
+        return (byte) rd.nextInt(6);
     }
 
     private byte randomXValue() {
@@ -496,6 +495,7 @@ extends MGRoom {
         }
         return 1;
     }
+
     public boolean isBot(String username) {
         UserCacheModel model = this.userService.getUser(username);
         return model.isBot();
@@ -504,7 +504,7 @@ extends MGRoom {
     public void getLichSuPhien(User user) {
         BauCuaLichSuPhienMsg msg = new BauCuaLichSuPhienMsg();
         msg.data = this.buildLichSuPhien();
-        this.sendMessageToUser((BaseMsg)msg, user);
+        this.sendMessageToUser((BaseMsg) msg, user);
     }
 
     private String buildLichSuPhien() {
