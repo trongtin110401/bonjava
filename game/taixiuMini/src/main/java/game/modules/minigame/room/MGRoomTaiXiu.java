@@ -524,6 +524,10 @@ public class MGRoomTaiXiu
         // Đối tượng được sử dụng để thống kê và lưu kết quả cuối cùng trong 1 phiên
         ResultTaiXiu rs = this.resultTX;
 
+        // tổng tiền hợp lệ cửa tài
+        long tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon = 0;
+        long tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon = 0;
+
         switch (this.result) {
             case 0: {   // Cửa Xỉu
                 if (potX != null && potX.contributors != null) {
@@ -542,10 +546,16 @@ public class MGRoomTaiXiu
                                 tienDuocTinh = tongTienHopLe - tongTienXiuDaTinh;
                             }
                             tongTienXiuDaTinh += tienDuocTinh;
+
                             // Số tiền người chơi nhận lại được nếu thắng
                             // Được tính theo công thức là tiền đặt + (% ăn nhân với tiền đặt)
                             // ví dụ người chơi đặt 100k thì nhận được 100k + ( 98 * 100) = 198k => chích 2% cho nhà cái
                             tran.prize = Math.round((long) ((float) tienDuocTinh * (100.0f - this.tax) / 100.0f) + tienDuocTinh);
+
+                            if (tran.userId != 0) {
+                                tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon += Math.round((long) ((float) tienDuocTinh * (100.0f - this.tax) / 100.0f));
+                            }
+
                             // kiểm tra nếu có nổ hũ thì tính cộng thêm tiền nổ hũ
 //                            if (totalDice == 3 || totalDice == 18) {
 //                                tran.prize += (tienDuocTinh * TaiXiuModule.moneyHu / tongTienHopLe);
@@ -587,6 +597,11 @@ public class MGRoomTaiXiu
                             tienDuocTinh = tongTienHopLe - tongTienTaiDaTinh;
                         }
                         tongTienTaiDaTinh += tienDuocTinh;
+
+                        if (tran.userId != 0) {
+                            tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon += tienDuocTinh;
+                        }
+
                         tran.refund = tran.betValue - tienDuocTinh;
                         rs.totalRefundTai += tran.refund;
                         if (tran.userId != 0)
@@ -616,6 +631,11 @@ public class MGRoomTaiXiu
 //                            if (totalDice == 3 || totalDice == 18) {
 //                                tran.prize += (double) (tienDuocTinh * TaiXiuModule.moneyHu / tongTienHopLe);
 //                            }
+
+                            if (tran.userId != 0) {
+                                tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon += Math.round((long) ((float) tienDuocTinh * (100.0f - this.tax) / 100.0f));
+                            }
+
                             rs.totalPrize += tran.prize;
                             if (tran.userId != 0)
                                 totalCashOut += tran.prize;
@@ -654,6 +674,11 @@ public class MGRoomTaiXiu
                             tienDuocTinh = tongTienHopLe - tongTienXiuDaTinh;
                         }
                         tongTienXiuDaTinh += tienDuocTinh;
+
+                        if (tran.userId != 0) {
+                            tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon += tienDuocTinh;
+                        }
+
                         tran.refund = tran.betValue - tienDuocTinh;
                         rs.totalRefundXiu += tran.refund;
                         if (tran.userId != 0)
@@ -761,16 +786,31 @@ public class MGRoomTaiXiu
         }
 
         // tính toán qũy
+        calculateFund(tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon, tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon);
+    }
+
+    /**
+     * Tính toán quỹ
+     *
+     * @param tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon  tổng tiền trả thưởng của tài cửa user thật không bao gồm vốn
+     * @param tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon tổng tiền trả thưởng của xỉu cửa user thật không bao gồm vốn
+     */
+    private void calculateFund(long tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon, long tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon) {
         try {
-            if (this.result == 1) {
-                long prize = rs.totalTai - rs.totalXiu;
-                if (prize > 0) {
-
+            if (this.result == 1) { // cửa tài
+                if (tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon > tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon) {
+                    TaiXiuModule.fundTx -= (tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon - tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon);
+                } else {
+                    TaiXiuModule.fundTx += (tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon - tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon);
                 }
-
-            } else {
-
+            } else { // cửa xỉu
+                if (tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon > tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon) {
+                    TaiXiuModule.fundTx -= (tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon - tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon);
+                } else {
+                    TaiXiuModule.fundTx += (tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon - tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon);
+                }
             }
+            this.module.updateFund();
         } catch (Exception e) {
             Debug.info(ExceptionUtils.getStackTrace(e));
         }
