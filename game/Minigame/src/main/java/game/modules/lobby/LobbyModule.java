@@ -3285,6 +3285,9 @@ public class LobbyModule extends BaseClientRequestHandler {
     private void broadcastMessageService() {
 
         String message = broadcastMessageService.toJson();
+        if(StringUtils.isEmpty(message)){
+            return;
+        }
         BroadcastMessageMsg msg = new BroadcastMessageMsg();
         msg.message = message;
         List users = ExtensionUtility.globalUserManager.getAllUsers();
