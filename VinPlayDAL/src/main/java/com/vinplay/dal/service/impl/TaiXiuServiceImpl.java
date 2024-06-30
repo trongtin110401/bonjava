@@ -293,9 +293,7 @@ public class TaiXiuServiceImpl
     public boolean saveTransactionTaiXiu(List<TransactionTaiXiu> trans) throws IOException, TimeoutException, InterruptedException {
         boolean returnValue = false;
         for (TransactionTaiXiu tran : trans) {
-
             returnValue = this.saveTransactionTaiXiu(tran.referenceId, tran.userId, tran.username, tran.moneyType, tran.betValue, (short) tran.betSide, tran.totalPrize, tran.totalRefund, tran.totalExchange);
-
         }
         return returnValue;
     }

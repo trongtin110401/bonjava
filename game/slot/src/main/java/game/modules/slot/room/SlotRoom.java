@@ -42,6 +42,7 @@ import com.vinplay.vbee.common.models.slot.SlotFreeSpin;
 import game.modules.slot.SlotModule;
 import game.modules.slot.entities.slot.AutoUser;
 import game.util.ConfigGame;
+import org.apache.commons.lang.math.RandomUtils;
 
 import java.io.IOException;
 import java.util.*;

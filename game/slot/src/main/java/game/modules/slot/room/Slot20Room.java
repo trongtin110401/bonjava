@@ -95,7 +95,7 @@ public class Slot20Room extends SlotRoom {
         }
     }
 
-    public SLot20ResultMsg play(String username, String linesStr) {
+    public synchronized SLot20ResultMsg play(String username, String linesStr) {
 
         // kết quả mặc định
         short result = ResultSlot.MISSED;
