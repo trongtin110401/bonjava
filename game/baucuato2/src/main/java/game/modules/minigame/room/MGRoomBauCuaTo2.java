@@ -69,7 +69,6 @@ public class MGRoomBauCuaTo2 extends MGRoom {
     private long jackPot;
     private List<PotBauCua> pots = new ArrayList<PotBauCua>();
     private List<PotBauCua> potsUser = new ArrayList<PotBauCua>();
-    private byte moneyType;
     private String moneyTypeStr;
     private long referenceId;
     private float tax = MinigameConstant.MINIGAME_TAX_VIN;
@@ -261,7 +260,7 @@ public class MGRoomBauCuaTo2 extends MGRoom {
                             if (!this.transactionsMap.containsKey(username)) {
                                 TransactionBauCua newTransaction = new TransactionBauCua();
                                 newTransaction.username = username;
-                                newTransaction.moneyType = this.moneyType;
+                                newTransaction.moneyType = (byte) this.moneyType;
                                 newTransaction.referenceId = this.referenceId;
                                 newTransaction.room = this.minBetValue;
                                 newTransaction.betValues = betValues;
@@ -279,7 +278,7 @@ public class MGRoomBauCuaTo2 extends MGRoom {
                             TransactionBauCuaDetail tranDetail = new TransactionBauCuaDetail();
                             tranDetail.username = username;
                             tranDetail.referenceId = this.referenceId;
-                            tranDetail.moneyType = this.moneyType;
+                            tranDetail.moneyType = (byte) this.moneyType;
                             tranDetail.room = this.minBetValue;
                             tranDetail.betValues = betValues;
                             currentMoney = response.getCurrentMoney();
@@ -529,7 +528,7 @@ public class MGRoomBauCuaTo2 extends MGRoom {
 
             if (!isBot(tran.username)) {
 //                fund -= tran.totalExchange;
-                updateFunValue(tran.totalExchange);
+                updateFunValue(-tran.totalExchange);
             }
         }
 
@@ -701,7 +700,7 @@ public class MGRoomBauCuaTo2 extends MGRoom {
     }
 
     public byte getMoneyType() {
-        return this.moneyType;
+        return (byte) this.moneyType;
     }
 
 
