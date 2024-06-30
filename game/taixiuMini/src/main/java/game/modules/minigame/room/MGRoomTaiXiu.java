@@ -89,7 +89,7 @@ public class MGRoomTaiXiu
     private UserService userService = new UserServiceImpl();   // user service
     private CacheService cacheService = new CacheServiceImpl(); // cache service
     private BroadcastMessageService broadcastMsgService = new BroadcastMessageServiceImpl();
-    private float tax = MinigameConstant.MINIGAME_TAX_VIN;
+    private float tax;
     private BalanceMoneyTX balance = new BalanceMoneyTX();  //
     private long blackListBetTai = 0L;
     private long blackListBetXiu = 0L;
@@ -536,11 +536,10 @@ public class MGRoomTaiXiu
 
                     for (TransactionTaiXiuDetail tran : potX.contributors) {
                         try {
-                            //số tiền mà người chơi sẽ phải bỏ vào tính thắng thua
+                            // số tiền mà người chơi sẽ phải bỏ vào tính thắng thua
                             long tienDuocTinh = tran.betValue;
                             // Nếu không phải robot thì tính tổng tiền đầu vào của khách thật
-                            if (tran.userId != 0)
-                                totalCashIn += tienDuocTinh;
+                            if (tran.userId != 0) totalCashIn += tienDuocTinh;
                             // Nếu Tổng số tiền đã được cộng , cộng với giá trị của trans mới mà lớn hơn
                             // Số tiền hợp lệ đã chốt phiên thì số tiền được tính vào phiên của người chơi
                             // sẽ bằng tiền hợp lệ trừ đi tổng tiền đã được tính của cửa
@@ -550,11 +549,11 @@ public class MGRoomTaiXiu
                                 tienDuocTinh = tongTienHopLe - tongTienXiuDaTinh;
                             }
                             tongTienXiuDaTinh += tienDuocTinh;
-                            //Số tiền người chơi nhận lại được nếu thắng
+                            // Số tiền người chơi nhận lại được nếu thắng
                             // Được tính theo công thức là tiền đặt + (% ăn nhân với tiền đặt)
                             // ví dụ người chơi đặt 100k thì nhận được 100k + ( 98 * 100) = 198k => chích 2% cho nhà cái
                             tran.prize = Math.round((long) ((float) tienDuocTinh * (100.0f - this.tax) / 100.0f) + tienDuocTinh);
-                            //kiểm tra nếu có nổ hũ thì tính cộng thêm tiền nổ hũ
+                            // kiểm tra nếu có nổ hũ thì tính cộng thêm tiền nổ hũ
 //                            if (totalDice == 3 || totalDice == 18) {
 //                                tran.prize += (tienDuocTinh * TaiXiuModule.moneyHu / tongTienHopLe);
 //                            }
@@ -571,12 +570,13 @@ public class MGRoomTaiXiu
 //                            if (totalDice != 3 & totalDice != 18) {
 //                                TaiXiuModule.moneyHu += (long) (PHAN_TRAM_TIEN_HU * (tran.prize - tienDuocTinh));
 //                            }
-                            //Tổng tiền lỗ lãi
-                            //tran.totalExchange = tran.prize - tienDuocTinh;
+                            // Tổng tiền lỗ lãi
+                            // tran.totalExchange = tran.prize - tienDuocTinh;
                             this.updateSumTran(sumTXTMap, tran);
                             this.updateSumTran(sumXiu, tran);
                             this.saveTransactionDetailTX(tran);
-                            if (!isBot(tran.username)) TaiXiuModule.fundTx -= tran.refund;
+
+                            if (tran.userId != 0) TaiXiuModule.fundTx -= tran.refund;
                         } catch (Exception e) {
                             Debug.trace((Object) ("Error calculate prize user " + tran.username + " error: " + e.getMessage()));
                         }
@@ -644,7 +644,8 @@ public class MGRoomTaiXiu
                             this.updateSumTran(sumTXTMap, tran);
                             this.updateSumTran(sumTai, tran);
                             this.saveTransactionDetailTX(tran);
-                            if (!isBot(tran.username)) TaiXiuModule.fundTx -= tran.refund;
+
+                            if (tran.userId != 0) TaiXiuModule.fundTx -= tran.refund;
                         } catch (Exception e) {
                             Debug.trace((Object) ("Error calculate prize user " + tran.username + " error: " + e.getMessage()));
                         }
@@ -676,7 +677,7 @@ public class MGRoomTaiXiu
                 break;
             }
             default: {
-                Debug.trace((Object) ("Fuck error TX, room=" + this.moneyTypeStr + ", reference= " + referenceId + ", result= " + this.result));
+                // do nothing
             }
         }
 
@@ -1076,7 +1077,7 @@ public class MGRoomTaiXiu
                     int soLuotRut = MGRoomTaiXiu.this.api.updateLuotRutLoc(tran.username, soLuotThem);
                     UpdateRutLocMsg msg = new UpdateRutLocMsg();
                     msg.soLuotRut = soLuotRut;
-                    MGRoomTaiXiu.this.sendMessageToUser((BaseMsg) msg, tran.username);
+                    MGRoomTaiXiu.this.sendMessageToUser(msg, tran.username);
                 }
             } catch (Exception e) {
                 Debug.trace((Object) ("Error save tai xiu: " + e.getMessage()));

@@ -79,10 +79,7 @@ import org.apache.log4j.Logger;
 import java.io.*;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 public class TaiXiuModule extends BaseClientRequestHandler {
@@ -485,16 +482,9 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                 case 65: { // 75
                     try {
                         this.startNewRoundTX();
-                        long updateFund = 0;
-                        try {
-                            updateFund = Long.parseLong(cacheService.getValueStr("update_fund_tx_auto"));
 
-                        } catch (Exception e) {
-                            updateFund = 0;
-                        }
-                        fundTx += updateFund;
+                        checkUpdateFundFromCMS();
 
-                        miniGameService.saveFund(Games.TAI_XIU.getName(), fundTx);
                         amountBotTaiFake = 0;
                         amountBotXiuFake = 0;
                         this.count = 0;
@@ -515,27 +505,37 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         }
     }
 
+    private void checkUpdateFundFromCMS() throws IOException, TimeoutException, InterruptedException {
+        long updateFund = 0;
+        try {
+            updateFund = Long.parseLong(cacheService.getValueStr("update_fund_tx_auto"));
+
+        } catch (Exception e) {
+            updateFund = 0;
+        }
+        fundTx += updateFund;
+        miniGameService.saveFund(Games.TAI_XIU.getName(), fundTx);
+    }
+
     private void resetForceBalance() {
         this.forceBetSide = (short) -1;
     }
 
     private void generateTaiXiuDices(MGRoomTaiXiu roomTXVin, MGRoomTaiXiu roomTXXu) throws KeyNotFoundException {
-        Debug.info((Object) ("FORCE==============" + this.forceBetSide));
         String keyBeCang = "auto";
         try {
             keyBeCang = cacheService.getValueStr("tai_xiu_be_cang");
-            Debug.info((Object) ("Key Be Cang ============== " + keyBeCang));
         } catch (Exception r) {
             sendLogToTele(r.getMessage());
-            Debug.info("Loi get key becang");
             this.forceBetSide = -1;
         }
         short typeBet = 1;
-        //tinh toan chenh lenh user that
+        // lấy ra danh sách người chơi đặt tài xỉu
         List<TaiXiuAdmin> contributors = this.getRoomTX(typeBet).getListTransaction();
 
         long totalRealBetTai = 0;
         long totalRealBetXiu = 0;
+        // lấy ra tổng số tiền người chơi đặt tài xỉu
         for (TaiXiuAdmin taiXiuAdmin : contributors) {
             if (taiXiuAdmin.getCuaDat() == 0) {
                 //bet xiu
@@ -545,8 +545,8 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                 totalRealBetTai += taiXiuAdmin.getMoney();
             }
         }
+        // lấy ra chênh lệch tiền giữa tài và xỉu
         long chenhLechTien = Math.abs(totalRealBetTai - totalRealBetXiu);
-        Debug.info("xxxxx " + totalRealBetTai + "  vvvvvv" + totalRealBetXiu);
         if ("auto".equals(keyBeCang)) {
             try {
                 //tin duoc tien chenh lech
