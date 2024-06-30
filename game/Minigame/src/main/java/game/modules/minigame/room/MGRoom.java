@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  bitzero.server.api.IBZApi
  *  bitzero.server.entities.User
@@ -46,9 +46,17 @@ public abstract class MGRoom {
     protected String cachePercentJackpot;
     protected float percentJackpot = 0;
 
-    public MGRoom(String name, int betValue) {
+
+    protected short moneyType = 1;
+    protected String moneyTypeStr;
+
+    public MGRoom(String name, int betValue, long fund, short moneyType) {
         this.name = name;
         this.betValue = betValue;
+        this.moneyType = moneyType;
+        this.moneyTypeStr = moneyType == 1 ? "vin" : "xu";
+
+        setFunValue(fund);
     }
 
     /*
@@ -59,7 +67,7 @@ public abstract class MGRoom {
 
         List<User> list2 = list = this.users;
         synchronized (list2) {
-            if (!this.users.contains((Object)user)) {
+            if (!this.users.contains((Object) user)) {
                 this.users.add(user);
                 return true;
             }
@@ -77,8 +85,8 @@ public abstract class MGRoom {
         List<User> list;
         List<User> list2 = list = this.users;
         synchronized (list2) {
-            if (this.users.contains((Object)user)) {
-                this.users.remove((Object)user);
+            if (this.users.contains((Object) user)) {
+                this.users.remove((Object) user);
                 return true;
             }
         }
@@ -184,5 +192,34 @@ public abstract class MGRoom {
         return randomNumber == jackpotNumber;
     }
 
+
+    /**
+     * Lấy giá trị quỹ hiện tại
+     *
+     * @return Giá trị jackpot hiện tại
+     */
+    protected long getFunValue() {
+        String key = gameName + "_" + moneyTypeStr + "_" + betValue;
+        return cacheService.getValueLong(key, 0);
+    }
+
+    /**
+     * Cập nhật giá trị quỹ hiện tại
+     *
+     * @param value Giá trị cần cập nhật
+     */
+    protected void setFunValue(long value) {
+        String key = gameName + "_" + moneyTypeStr + "_" + betValue;
+        cacheService.setValue(key, value);
+    }
+
+    /**
+     * Cập nhật giá trị quỹ hiện tại
+     *
+     * @param value Giá trị cần cập nhật
+     */
+    protected void updateFunValue(long value) {
+        setFunValue(getFunValue() + value);
+    }
 }
 

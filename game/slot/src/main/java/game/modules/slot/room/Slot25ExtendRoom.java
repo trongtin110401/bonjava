@@ -4,41 +4,30 @@ package game.modules.slot.room;
 import bitzero.server.BitZeroServer;
 import bitzero.server.entities.User;
 import bitzero.util.common.business.Debug;
-import com.google.gson.Gson;
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IMap;
 import com.vinplay.dal.service.impl.CacheServiceImpl;
-import com.vinplay.usercore.dao.impl.UserDaoImpl;
 import com.vinplay.vbee.common.enums.Games;
-import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
-import com.vinplay.vbee.common.models.UserModel;
 import com.vinplay.vbee.common.models.cache.SlotFreeDaily;
 import com.vinplay.vbee.common.models.cache.UserCacheModel;
 import com.vinplay.vbee.common.models.slot.SlotFreeSpin;
 import com.vinplay.vbee.common.response.MoneyResponse;
 import com.vinplay.vbee.common.statics.TransType;
 import com.vinplay.vbee.common.utils.DateTimeUtils;
-import game.modules.slot.Slot20Module;
 import game.modules.slot.Slot25ExtendModule;
 import game.modules.slot.SlotModule;
 import game.modules.slot.cmd.Slot25CommandCollection;
-import game.modules.slot.cmd.send.slot20line.Slot20UpdatePotMsg;
 import game.modules.slot.cmd.send.slot25extend.*;
 import game.modules.slot.entities.slot.AutoUser;
 import game.modules.slot.entities.slot.AwardsOnLine;
 import game.modules.slot.entities.slot.Line;
 import game.modules.slot.entities.slot.MiniGameSlotResponse;
-import game.modules.slot.entities.slot.line25basic.Slot25BasicAward;
 import game.modules.slot.entities.slot.line25extend.*;
 import game.modules.slot.listener.SlotLogListener;
 import game.modules.slot.utils.Slot25ExtendUtil;
 import game.modules.slot.utils.SlotUtils;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -171,7 +160,7 @@ public class Slot25ExtendRoom extends SlotRoom {
                         // số tiền còn lại sau khi trừ phế và 2% POT cho vào quỹ thưởng
                         long moneyToFund = totalBetValue - fee - moneyToPot;
                         if (!u.isBot()) {
-                            this.fund += moneyToFund;
+                            updateFunValue(moneyToFund);
                         }
                         // cờ này được sử dụng để check liệu có tiếp tục vòng lặp để sinh Matrix hay không
                         boolean enoughPair = false;
@@ -326,12 +315,12 @@ public class Slot25ExtendRoom extends SlotRoom {
                             // Lớn quá thì sinh lại MATRIX kết quả kẻo anh em NPH vỡ nợ
                             if (!isForceJackpot) {
                                 // Trúng nổ hũ một cách ngẫu nhiên nhưng qũy thưởng lại không đủ bù lỗ
-                                if (isGetJackpotNaturally && fund < initJackpotValues) {
+                                if (isGetJackpotNaturally && getFunValue() < initJackpotValues) {
                                     continue;
                                 }
                                 // Tuy không trúng JACKPOT nhưng trúng Line to quá cũng cần sinh lại MATRIX
                                 if (!isGetJackpotNaturally) {
-                                    if ((totalPrizes - totalBetValue > 0 && totalPrizes > fund) || totalPrizes >= totalBetValue * 25)
+                                    if ((totalPrizes - totalBetValue > 0 && totalPrizes > getFunValue()) || totalPrizes >= totalBetValue * 25)
                                         continue;
                                 }
                             }
@@ -344,7 +333,7 @@ public class Slot25ExtendRoom extends SlotRoom {
                             if (totalPrizes > 0L) {
                                 if (result == ResultSlot.JACKPOT) {
                                     this.pot = this.initJackpotValues;
-                                    this.fund -= initJackpotValues;
+                                    updateFunValue(-initJackpotValues);
 
                                     // get user cache
                                     String displayName = username;
@@ -359,7 +348,7 @@ public class Slot25ExtendRoom extends SlotRoom {
                                     this.slotService.logNoHu(referenceId, this.gameName, displayName, this.betValue, linesStr, matrixStr, builderLinesWin.toString(), builderPrizesOnLine.toString(), totalPrizes, result, currentTimeStr);
                                 } else {
                                     if (!u.isBot()) {
-                                        this.fund -= totalPrizes;
+                                        updateFunValue(-totalPrizes);
                                     }
                                     if (result == ResultSlot.MISSED) {
                                         result = totalPrizes >= (this.betValue * 175L) ? ResultSlot.BIG_WIN : ResultSlot.WIN;
@@ -522,7 +511,7 @@ public class Slot25ExtendRoom extends SlotRoom {
 
             // Kiểm tra xem giải thưởng có LỚN hay không.
             // Lớn quá thì sinh lại MATRIX kết quả kẻo anh em NPH vỡ nợ
-            if ((totalPrizes - totalBetValue > 0 && totalPrizes > fund) || totalPrizes >= totalBetValue * 25)
+            if ((totalPrizes - totalBetValue > 0 && totalPrizes > getFunValue()) || totalPrizes >= totalBetValue * 25)
                 continue;
 
 
@@ -532,7 +521,7 @@ public class Slot25ExtendRoom extends SlotRoom {
             String matrixStr = Slot25ExtendUtil.matrixToString(matrix);
             if (totalPrizes > 0L) {
                 if (!u.isBot()) {
-                    this.fund -= totalPrizes;
+                    updateFunValue(-totalPrizes);
                 }
                 result = ResultSlot.WIN;
             }
@@ -641,7 +630,7 @@ public class Slot25ExtendRoom extends SlotRoom {
         long currentTime = System.currentTimeMillis();
         if (currentTime - this.lastTimeUpdateFundToRoom >= 60000L) {
             try {
-                this.miniGameService.saveFund(this.name, this.fund);
+                this.miniGameService.saveFund(this.name, getFunValue());
             } catch (IOException | InterruptedException | TimeoutException e) {
                 Debug.trace(this.gameName + ": update fund error ", e.getMessage());
             }
@@ -702,7 +691,7 @@ public class Slot25ExtendRoom extends SlotRoom {
             int isReset = cacheService.getValueInt("reset_pot_" + gameName + "_" + this.betValue);
             if (isReset == 1) {
                 this.pot = this.initJackpotValues;
-                this.fund = 0;
+                updateFunValue(-getFunValue());
                 this.savePot();
                 this.saveFund();
                 this.cacheService.removeKey("reset_pot_" + gameName + "_" + this.betValue);

@@ -30,5 +30,11 @@ public interface CacheService {
     public Object removeObject(String var1) throws KeyNotFoundException;
 
     public Map<String, Object> getBulk(Set<String> var1);
+
+    public long getValueLong(String var1) throws KeyNotFoundException, NumberFormatException;
+
+    public long getValueLong(String var1, long defaultValue);
+
+    public void setValue(String var1, long var2);
 }
 

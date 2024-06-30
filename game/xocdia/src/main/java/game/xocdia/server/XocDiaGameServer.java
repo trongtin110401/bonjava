@@ -191,19 +191,21 @@ public class XocDiaGameServer
 
     private String timestamp = "";
 
-    private static long fundXd = 0;
-
     private final short STOP_BETTING_TIME = 22;
     private final short START_BETTING_TIME = 2;
 
     public void init(GameRoom room) {
         try {
+            long fundXd = 0;
             try {
                 fundXd = mgService.getFund(Games.XOC_DIA.getName());
-                cacheService.setValue("fund_xd_auto", (int) fundXd);
+//                cacheService.setValue("fund_xd_auto", (int) fundXd);
+                setFunValue(fundXd);
             } catch (Exception e) {
                 fundXd = 0;
+                setFunValue(fundXd);
             }
+
             referenceId = mgService.getReferenceId(Games.XOC_DIA.getId());
             this.room = room;
             this.roomId = room.getId();
@@ -1419,7 +1421,7 @@ public class XocDiaGameServer
                     GamePlayer gPlayer = this.getPlayer((String) entry.getKey());
                     RewardModel model = (RewardModel) entry.getValue();
                     if (model.moneyWin > 0L) {
-                        mnres = this.userService.updateMoney(gPlayer.user.getName(), model.moneyWin, "vin", "XocDia", "xoc dia : Tra thuong ", "Phi\u00ean " + this.gameId,model.fee , Long.valueOf(this.gameId), TransType.START_TRANS);
+                        mnres = this.userService.updateMoney(gPlayer.user.getName(), model.moneyWin, "vin", "XocDia", "xoc dia : Tra thuong ", "Phi\u00ean " + this.gameId, model.fee, Long.valueOf(this.gameId), TransType.START_TRANS);
                         ;
                         this.totalFee += model.fee;
                         this.totalReveneu += model.moneyWin;
@@ -1907,5 +1909,18 @@ public class XocDiaGameServer
         }
     }
 
+    public long getFunValue() {
+        String key = Games.TAI_XIU.getName();
+        return cacheService.getValueLong(key, 0);
+    }
+
+    public void setFunValue(long value) {
+        String key = Games.TAI_XIU.getName();
+        cacheService.setValue(key, value);
+    }
+
+    public void updateFunValue(long value) {
+        setFunValue(getFunValue() + value);
+    }
 }
 

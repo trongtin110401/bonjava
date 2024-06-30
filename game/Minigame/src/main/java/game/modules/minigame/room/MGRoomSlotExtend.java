@@ -47,7 +47,6 @@ import java.util.concurrent.TimeoutException;
 public class MGRoomSlotExtend extends MGRoom {
 
     private long pot;
-    private long fund;
     private long initPotValue;
     private short moneyType;
     private String moneyTypeStr;
@@ -105,7 +104,7 @@ public class MGRoomSlotExtend extends MGRoom {
     int[] arrMutil = {1, 3, 5, 10};
 
     public MGRoomSlotExtend(String name, short moneyType, long pot, long fund, int betValue, long initPotValue) {
-        super(name, betValue);
+        super(name, betValue, fund, moneyType);
         this.gameLoopTask = new GameLoopTask();
         this.usersAuto = new HashMap();
         this.lastTimeUpdatePotToRoom = 0L;
@@ -120,7 +119,6 @@ public class MGRoomSlotExtend extends MGRoom {
         this.pot = pot;
         CacheServiceImpl cacheService = new CacheServiceImpl();
         cacheService.setValue(name, (int) pot);
-        this.fund = fund;
         this.betValue = betValue;
         this.initPotValue = initPotValue;
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
@@ -196,7 +194,7 @@ public class MGRoomSlotExtend extends MGRoom {
                         long fee = gold * 2L / 100L;
                         long moneyToPot = gold / 100L;
                         long moneyToFund = gold - fee - moneyToPot;
-                        this.fund += moneyToFund;
+                        updateFunValue(moneyToFund);
                         this.pot += moneyToPot;
 
                         outerloop:
@@ -250,7 +248,7 @@ public class MGRoomSlotExtend extends MGRoom {
                                 prizeAmount = checkPrizeAmount * this.betValue * mutil;
 
                                 if (prizeAmount >= this.betValue * 100) {
-                                    if (prizeAmount <= this.fund && prizeAmount <= this.fund * 50 / 100L) {
+                                    if (prizeAmount <= getFunValue() && prizeAmount <= getFunValue() * 50 / 100L) {
                                         validShowItem = showItem;
                                         isValid = true;
                                         listLineWin = checkLineWin;
@@ -259,7 +257,7 @@ public class MGRoomSlotExtend extends MGRoom {
                                     }
 
                                 } else {
-                                    if (prizeAmount > 0L && prizeAmount <= this.fund * 80 / 100L) {
+                                    if (prizeAmount > 0L && prizeAmount <= getFunValue() * 80 / 100L) {
                                         validShowItem = showItem;
                                         isValid = true;
                                         listLineWin = checkLineWin;
@@ -352,9 +350,11 @@ public class MGRoomSlotExtend extends MGRoom {
         SlotExtendUtils.log(refernceId, username, this.betValue, Arrays.toString(validShowItem), result, this.moneyType, handleTime, ratioTime, currentTimeStr);
         if (isJackpotBroken) {
             this.pot = this.initPotValue;
-            this.fund -= this.initPotValue;
-        } else
-            this.fund -= prizeAmount;
+            updateFunValue(-this.initPotValue);
+        } else {
+            updateFunValue(-prizeAmount);
+        }
+
         ResultSlotExtendMsg msg = this.sendDiamondNewSpinSuccess(result, (int) refernceId, mutil, rd1, rd2, listLineWin, validShowItem, prizeAmount, winType, currentMoney);
 
         return msg;
@@ -389,7 +389,7 @@ public class MGRoomSlotExtend extends MGRoom {
         long currentTime = System.currentTimeMillis();
         if (currentTime - this.lastTimeUpdateFundToRoom >= 60000L) {
             try {
-                this.mgService.saveFund(this.name, this.fund);
+                this.mgService.saveFund(this.name, getFunValue());
             } catch (IOException | InterruptedException | TimeoutException e) {
                 Debug.trace((Object[]) new Object[]{"Slot extend: update fund Slot extend error ", e.getMessage()});
             }
@@ -546,7 +546,7 @@ public class MGRoomSlotExtend extends MGRoom {
     }
 
     private boolean isJackpotBroken() {
-        return this.fund > this.initPotValue * 2L;
+        return getFunValue() > this.initPotValue * 2L;
     }
 
     private int[] initShuffleCollectItem() {

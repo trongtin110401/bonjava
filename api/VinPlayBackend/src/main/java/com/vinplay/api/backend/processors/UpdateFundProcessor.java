@@ -18,10 +18,10 @@ import com.vinplay.usercore.service.OtherService;
 import com.vinplay.usercore.service.impl.OtherServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
-import com.vinplay.vbee.common.exceptions.KeyNotFoundException;
 import com.vinplay.vbee.common.response.FundInfoResponse;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
 import org.bson.Document;
+import org.python.parser.ast.Str;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -34,13 +34,13 @@ public class UpdateFundProcessor implements BaseProcessor<HttpServletRequest, St
 
     private final static String WITHDRAW = "withdraw";
 
+    public final static Map<String, String> games = new HashMap<>();
 
-    public String execute(Param<HttpServletRequest> param) {
-        Map<String, String> games = new HashMap<>();
-        games.put("TaiXiu", "update_fund_tx_auto");
-        games.put("TaiXiuMd5", "update_fund_tx_md5_auto");
-        games.put("XocDia", "update_fund_xd_auto");
-        games.put("BauCuaTo_vin_1000", "update_fund_bau_cua_to");
+    static {
+        games.put("TaiXiu", "TaiXiu");
+        games.put("TaiXiuMd5", "TaiXiuMd5");
+        games.put("XocDia", "XocDia");
+        games.put("BauCuaTo_vin_1000", "BauCuaTo_vin_1000");
 
         games.put("MiniPoker_vin_100", "MiniPoker_vin_100");
         games.put("MiniPoker_vin_1000", "MiniPoker_vin_1000");
@@ -87,55 +87,52 @@ public class UpdateFundProcessor implements BaseProcessor<HttpServletRequest, St
         games.put("LienMinh_vin_100", "LienMinh_vin_100");
         games.put("LienMinh_vin_1000", "LienMinh_vin_1000");
         games.put("LienMinh_vin_10000", "LienMinh_vin_10000");
+    }
 
 
+    public String execute(Param<HttpServletRequest> param) {
+        // Create response
         FundInfoResponse response = new FundInfoResponse(true, "200");
-
+        // Get request
         HttpServletRequest request = param.get();
-
         String fundName = request.getParameter("fundName");
         long amount = Long.parseLong(request.getParameter("amount"));
         String type = request.getParameter("type");
         try {
             if (games.containsKey(fundName)) {
-                long fund = service.getFund(fundName);
-                long fundAmount = 0;
-                try {
-                    fundAmount = cacheService.getValueLong(games.get(fundName));
-
-                } catch (Exception e) {
-                    fundAmount = amount;
-                }
+                long currentFunValue = cacheService.getValueLong(games.get(fundName), 0);
                 if (type.equals(DEPOSIT)) {
-                    fundAmount += amount;
-                    cacheService.setValue(games.get(fundName), fundAmount);
-                }
-                if (type.equals(WITHDRAW)) {
-                    fundAmount -= amount;
-                    if (fundAmount * -1 > fund) {
+                    currentFunValue += amount;
+                } else if (type.equals(WITHDRAW)) {
+                    // check if fund value in cache is not enough
+                    if (currentFunValue < amount) {
                         response.setSuccess(false);
                         response.setErrorCode("Số tiền rút lớn hơn quỹ");
                         return response.toJson();
                     }
-                    cacheService.setValue(games.get(fundName), fundAmount * -1);
+                    currentFunValue -= amount;
                 }
+                // save fund to cache
+                cacheService.setValue(games.get(fundName), currentFunValue);
+                // save to db
+                service.saveFund(fundName, currentFunValue);
+                // save log
+                saveFunLog(fundName, amount, type);
             }
-
-//            service.saveFund(fundName, fund);
-
-            Document document = new Document();
-            document.put("fund_name", fundName);
-            document.put("amount", amount);
-            document.put("type", type);
-            document.put("time_log", VinPlayUtils.getCurrentDateTime());
-            OtherService otherService = new OtherServiceImpl();
-            otherService.saveTransactionUpdateFund(document);
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return response.toJson();
+    }
+
+    private static void saveFunLog(String fundName, long amount, String type) {
+        Document document = new Document();
+        document.put("fund_name", fundName);
+        document.put("amount", amount);
+        document.put("type", type);
+        document.put("time_log", VinPlayUtils.getCurrentDateTime());
+        OtherService otherService = new OtherServiceImpl();
+        otherService.saveTransactionUpdateFund(document);
     }
 }
 

@@ -268,10 +268,7 @@ public class MGRoomTaiXiu
             }
         }
         inputTime = this.getRemainTime(); // lấy thời gian còn lại
-        UserCacheModel userCacheModel = userService.getMoneyUser(nickname);
         long currentMoney = this.userService.getMoneyUserCache(nickname, this.moneyTypeStr);  // lấy số tiền hiện tại của user dựa trên nick name
-        if (!userCacheModel.isBot())
-            System.out.println("===========>>>>>>>>> CURRENT MONEY: " + userCacheModel.getNickname() + " = " + userCacheModel.getMoney("vin"));
         int result = 2;
         if (this.enableBetting) {
             if (betValue >= 100L) {
@@ -792,22 +789,26 @@ public class MGRoomTaiXiu
     /**
      * Tính toán quỹ
      *
-     * @param tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon  tổng tiền trả thưởng của tài cửa user thật không bao gồm vốn
+     * @param tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon tổng tiền trả thưởng của tài cửa user thật không bao gồm vốn
      * @param tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon tổng tiền trả thưởng của xỉu cửa user thật không bao gồm vốn
      */
     private void calculateFund(long tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon, long tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon) {
         try {
             if (this.result == 1) { // cửa tài
                 if (tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon > tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon) {
-                    TaiXiuModule.fundTx -= (tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon - tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon);
+//                    TaiXiuModule.fundTx -= (tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon - tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon);
+                    module.updateFunValue(-(tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon - tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon));
                 } else {
-                    TaiXiuModule.fundTx += (tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon - tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon);
+//                    TaiXiuModule.fundTx += (tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon - tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon);
+                    module.updateFunValue((tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon - tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon));
                 }
             } else { // cửa xỉu
                 if (tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon > tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon) {
-                    TaiXiuModule.fundTx -= (tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon - tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon);
+//                    TaiXiuModule.fundTx -= (tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon - tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon);
+                    module.updateFunValue(-(tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon - tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon));
                 } else {
-                    TaiXiuModule.fundTx += (tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon - tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon);
+//                    TaiXiuModule.fundTx += (tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon - tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon);
+                    module.updateFunValue((tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon - tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon));
                 }
             }
             this.module.updateFund();
@@ -1060,7 +1061,7 @@ public class MGRoomTaiXiu
                             long fee = Math.round((long) (MGRoomTaiXiu.this.tax * (float) txt.totalPrize / (200.0f - MGRoomTaiXiu.this.tax)));
                             MoneyResponse res2 = new MoneyResponse(false, "1001");
                             if (!MGRoomTaiXiu.this.isBot(username)) {
-                                res2 = MGRoomTaiXiu.this.userService.updateMoney(username, txt.totalPrize, MGRoomTaiXiu.this.moneyTypeStr, "TaiXiu", "Th\u1eafng t\u00e0i x\u1ec9u", "Phi\u00ean " + MGRoomTaiXiu.this.referenceId, fee, MGRoomTaiXiu.this.referenceId, transType);
+                                res2 = MGRoomTaiXiu.this.userService.updateMoney(username, txt.totalPrize, MGRoomTaiXiu.this.moneyTypeStr, "TaiXiu", "Thắng tài xỉu", "Phiên " + MGRoomTaiXiu.this.referenceId, fee, MGRoomTaiXiu.this.referenceId, transType);
                             } else {
                                 res2.setSuccess(true);
                             }
@@ -1078,7 +1079,7 @@ public class MGRoomTaiXiu
                         }
                         if (txt.totalRefund > 0L) {
                             if (!MGRoomTaiXiu.this.isBot(username)) {
-                                res = MGRoomTaiXiu.this.userService.updateMoney(username, txt.totalRefund, MGRoomTaiXiu.this.moneyTypeStr, "TaiXiu", "Ho\u00e0n tr\u1ea3 t\u00e0i x\u1ec9u", "Phi\u00ean " + MGRoomTaiXiu.this.referenceId, 0L, Long.valueOf(MGRoomTaiXiu.this.referenceId), TransType.END_TRANS);
+                                res = MGRoomTaiXiu.this.userService.updateMoney(username, txt.totalRefund, MGRoomTaiXiu.this.moneyTypeStr, "TaiXiu", "Hoàn trả tài xỉu", "Phiên " + MGRoomTaiXiu.this.referenceId, 0L, Long.valueOf(MGRoomTaiXiu.this.referenceId), TransType.END_TRANS);
                                 if (res.isSuccess()) {
                                     if (MGRoomTaiXiu.this.moneyType == 1) {
                                         MGRoomTaiXiu.this.balance.addWin(txt.totalRefund);

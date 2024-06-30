@@ -64,7 +64,6 @@ import java.util.concurrent.TimeoutException;
 
 public class MGRoomCandy extends MGRoom {
     private long pot;
-    private long fund;
     private long initPotValue;
     private short moneyType;
     private String moneyTypeStr;
@@ -83,7 +82,7 @@ public class MGRoomCandy extends MGRoom {
 
     public MGRoomCandy(String name, String gameName, short moneyType, long pot, long fund, int betValue, long initPotValue) {
 
-        super(name, betValue);
+        super(name, betValue, fund, moneyType);
 
         this.gameName = gameName;
 
@@ -98,8 +97,6 @@ public class MGRoomCandy extends MGRoom {
         this.pot = pot;
         cacheService.setValue(name, this.pot);
 
-
-        this.fund = fund;
         this.betValue = betValue;
         this.initPotValue = initPotValue;
 
@@ -184,7 +181,7 @@ public class MGRoomCandy extends MGRoom {
                         long moneyToPot = totalBetValue / 100L;
                         long moneyToFund = totalBetValue - fee - moneyToPot;
                         if (!u.isBot()) {
-                            this.fund += moneyToFund;
+                            updateFunValue(moneyToFund);
                         }
 
                         this.pot += moneyToPot;
@@ -261,12 +258,12 @@ public class MGRoomCandy extends MGRoom {
                             // L?n quá thì sinh l?i MATRIX k?t qu? k?o anh em NPH v? n?
                             if (!forceNoHu) {
                                 // Trúng n? h? m?t cách ng?u nhiên nh?ng q?y th??ng l?i không ?? bù l?
-                                if (isGetJackpotNaturally && fund < initPotValue) {
+                                if (isGetJackpotNaturally && getFunValue() < initPotValue) {
                                     continue;
                                 }
                                 // Tuy không trúng JACKPOT nh?ng trúng Line to quá c?ng c?n sinh l?i MATRIX
                                 if (!isGetJackpotNaturally) {
-                                    if ((totalPrizes - totalBetValue > 0 && totalPrizes > fund) || totalPrizes >= totalBetValue * 25)
+                                    if ((totalPrizes - totalBetValue > 0 && totalPrizes > getFunValue()) || totalPrizes >= totalBetValue * 25)
                                         continue;
                                 }
                             }
@@ -280,7 +277,7 @@ public class MGRoomCandy extends MGRoom {
                                         result = 4;
                                     }
                                     this.pot = this.initPotValue;
-                                    this.fund -= this.initPotValue;
+                                    updateFunValue(-initPotValue);
                                     if (forceNoHu) {
                                         try {
                                             cacheService.removeKey(CACHE_NAME_USER_SPOT + this.gameName);
@@ -291,7 +288,7 @@ public class MGRoomCandy extends MGRoom {
                                     }
                                 } else {
                                     if (!u.isBot())
-                                        this.fund -= totalPrizes;
+                                        updateFunValue(-totalPrizes);
                                     result = totalPrizes >= (this.betValue * 100L) ? (short) 2 : 1;
                                 }
                             }
@@ -359,7 +356,7 @@ public class MGRoomCandy extends MGRoom {
         long currentTime = System.currentTimeMillis();
         if (currentTime - this.lastTimeUpdateFundToRoom >= 60000L) {
             try {
-                this.mgService.saveFund(this.name, this.fund);
+                this.mgService.saveFund(this.name, getFunValue());
             } catch (IOException | InterruptedException | TimeoutException e) {
                 Debug.trace((Object[]) new Object[]{"MINI POKER: update fund poker error ", e.getMessage()});
             }
@@ -404,7 +401,6 @@ public class MGRoomCandy extends MGRoom {
             int isReset = cacheService.getValueInt("reset_pot_" + this.gameName + "_" + this.betValue, 0);
             if (isReset == 1) {
                 this.pot = this.initPotValue;
-                this.fund = 0;
                 this.savePot();
                 this.saveFund();
                 this.cacheService.removeKey("reset_pot_" + this.gameName + "_" + this.betValue);

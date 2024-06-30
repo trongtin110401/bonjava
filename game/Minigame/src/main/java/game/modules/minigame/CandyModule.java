@@ -106,8 +106,6 @@ public class CandyModule
             Debug.trace("Init " + this.gameName + " error ", e.getMessage());
         }
 
-        System.out.println("=========================> " + pots[0] + " == " + pots[1] + " == " + pots[2]);
-
         rooms.put(Games.CANDY.getName() + "_vin_100", new MGRoomCandy(Games.CANDY.getName() + "_vin_100", Games.CANDY.getName(), (short) 1, pots[0], funds[0], 100, initPotValues[0]));
         rooms.put(Games.CANDY.getName() + "_vin_1000", new MGRoomCandy(Games.CANDY.getName() + "_vin_1000", Games.CANDY.getName(), (short) 1, pots[1], funds[1], 1000, initPotValues[1]));
         rooms.put(Games.CANDY.getName() + "_vin_10000", new MGRoomCandy(Games.CANDY.getName() + "_vin_10000", Games.CANDY.getName(), (short) 1, pots[2], funds[2], 10000, initPotValues[2]));
@@ -119,7 +117,6 @@ public class CandyModule
         try {
             sv.removeKey("poke_go_last_day_x2");
         } catch (KeyNotFoundException e) {
-            //Debug.trace((Object)"KEY NOT FOUND");
         }
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
     }

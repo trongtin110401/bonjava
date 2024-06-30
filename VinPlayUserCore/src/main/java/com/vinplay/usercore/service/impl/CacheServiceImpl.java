@@ -105,5 +105,31 @@ implements CacheService {
         IMap map = instance.getMap("cacheGameBai");
         map.put((Object)key, obj, (long)expireTime, TimeUnit.SECONDS);
     }
+
+    @Override
+    public long getValueLong(String key) throws KeyNotFoundException, NumberFormatException {
+        HazelcastInstance instance = HazelcastClientFactory.getInstance();
+        IMap map = instance.getMap("cacheConfig");
+        if (map.containsKey(key)) {
+            return Long.parseLong((String) map.get(key));
+        }
+        throw new KeyNotFoundException();
+    }
+
+    @Override
+    public long getValueLong(String key, long defaultValue) {
+        try {
+            return getValueLong(key);
+        } catch (Exception ex) {
+            return defaultValue;
+        }
+    }
+
+    @Override
+    public void setValue(String key, long value) {
+        HazelcastInstance instance = HazelcastClientFactory.getInstance();
+        IMap map = instance.getMap("cacheConfig");
+        map.put(key, String.valueOf(value));
+    }
 }
 

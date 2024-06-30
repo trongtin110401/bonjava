@@ -66,7 +66,6 @@ import java.util.concurrent.TimeoutException;
 
 public class MGRoomCaoThap extends MGRoom {
     private long pot;
-    private long fund;
     private float tax = MinigameConstant.MINIGAME_TAX_VIN;
     private byte moneyType;
     private String moneyTypeStr;
@@ -81,7 +80,7 @@ public class MGRoomCaoThap extends MGRoom {
     protected CacheService sv = new CacheServiceImpl();
 
     public MGRoomCaoThap(String roomName, byte moneyType, long pot, long fund, int baseBetValue) {
-        super(roomName, baseBetValue);
+        super(roomName, baseBetValue, fund, moneyType);
         this.moneyType = moneyType;
         if (moneyType == 1) {
             this.moneyTypeStr = "vin";
@@ -93,7 +92,6 @@ public class MGRoomCaoThap extends MGRoom {
         this.pot = pot;
         sv.setValue(name, pot);
 
-        this.fund = fund;
         this.baseBetValue = baseBetValue;
         this.usersCaoThap = new HashMap<String, CaoThapInfo>();
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
@@ -129,7 +127,7 @@ public class MGRoomCaoThap extends MGRoom {
                         mnres.setSuccess(true);
                     }
                     if (mnres != null && mnres.isSuccess()) {
-                        this.fund += moneyToFund;
+                        updateFunValue(moneyToFund);
                         this.saveFund();
                         List<Double> ratioLst = CaoThapUtils.getRatio(deck, card);
                         msg.money1 = Math.round((double) betValue * ratioLst.get(1));
@@ -145,8 +143,7 @@ public class MGRoomCaoThap extends MGRoom {
                         this.usersCaoThap.put(user.getName(), info);
                         try {
                             if (!this.isBot(user.getName())) {
-                                this.ctService.logCaoThap(referenceId, user.getName(), (long) betValue, (short) 0, (long) (-betValue), card.toString(), this.pot, this.fund, (int) this.moneyType, (short) 0, 1);
-
+                                this.ctService.logCaoThap(referenceId, user.getName(), (long) betValue, (short) 0, (long) (-betValue), card.toString(), this.pot, getFunValue(), (int) this.moneyType, (short) 0, 1);
                             }
                         } catch (Exception e) {
                             Debug.trace((Object[]) new Object[]{"CAO THAP: log cao thap error ", e.getMessage()});
@@ -191,7 +188,7 @@ public class MGRoomCaoThap extends MGRoom {
                         //noHu = (this.baseBetValue < 100000 || this.userService.getTotalRechargeMoney(user.getName()) >= Math.round((double) this.pot * 0.1)) && CaoThapUtils.isDoWithRatio(1000.0);
                     }
                     do {
-                        fundStep = this.fund;
+                        fundStep = getFunValue();
                         numA = info.getNumA();
                         if (info.getMoneyUp() == 0L || info.getMoneyDown() == 0L) {
                             if (noHu) {
@@ -260,7 +257,7 @@ public class MGRoomCaoThap extends MGRoom {
                     if (result == 4) {
                         moneyToUser = moneyWin;
                         next = true;
-                        this.fund = info.getStep() > 2 ? (this.fund = this.fund - (moneyWin - info.getMoney())) : (this.fund = this.fund - moneyWin);
+                        updateFunValue(info.getStep() > 2 ? (getFunValue() - (moneyWin - info.getMoney())) : (getFunValue() - moneyWin));
                         this.saveFund();
                     } else if (result == 6) {
                         moneyToUser = moneyWin;
@@ -268,13 +265,13 @@ public class MGRoomCaoThap extends MGRoom {
                         this.savePot();
                         next = true;
                         if (info.getStep() <= 2) {
-                            this.fund -= info.getMoney();
+                            updateFunValue(-info.getMoney());
                             this.saveFund();
                         }
                     } else if (result == 5) {
                         moneyToUser = 0L;
                         if (info.getStep() > 2) {
-                            this.fund += info.getMoney();
+                            updateFunValue(info.getMoney());
                             this.saveFund();
                         }
                         currentMoney = this.userService.getCurrentMoneyUserCache(user.getName(), this.moneyTypeStr);
@@ -286,7 +283,7 @@ public class MGRoomCaoThap extends MGRoom {
                         if (info.getMoney() > moneyWin) {
                             this.pot += info.getMoney() - moneyWin;
                         } else {
-                            this.fund -= moneyWin - info.getMoney();
+                            updateFunValue(-(moneyWin - info.getMoney()));
                             this.saveFund();
                         }
                         moneyToUser = Math.round(this.pot / 2L);
@@ -314,11 +311,11 @@ public class MGRoomCaoThap extends MGRoom {
                         }
                     }
                     try {
-                        if(!isBot(user.getName())){
-                            this.ctService.logCaoThap(info.getReferenceId(), user.getName(), info.getMoney(), result, moneyToUser, card.toString(), this.pot, this.fund, (int) this.moneyType, (short) choose, (int) info.getStep());
+                        if (!isBot(user.getName())) {
+                            this.ctService.logCaoThap(info.getReferenceId(), user.getName(), info.getMoney(), result, moneyToUser, card.toString(), this.pot, getFunValue(), (int) this.moneyType, (short) choose, (int) info.getStep());
 
                         }
-                        } catch (Exception e) {
+                    } catch (Exception e) {
                         Debug.trace((Object[]) new Object[]{"CAO THAP: log cao thap error ", e.getMessage()});
                     }
                     List<Double> ratioLst = CaoThapUtils.getRatio(deck, card);
@@ -395,7 +392,7 @@ public class MGRoomCaoThap extends MGRoom {
 
     private void saveFund() {
         try {
-            this.ctService.updateFundCaoThap(this.name, this.fund);
+            this.ctService.updateFundCaoThap(this.name, getFunValue());
         } catch (IOException | InterruptedException | TimeoutException e) {
             Debug.trace((Object[]) new Object[]{"CAO THAP: update fund cao thap error ", e.getMessage()});
         }

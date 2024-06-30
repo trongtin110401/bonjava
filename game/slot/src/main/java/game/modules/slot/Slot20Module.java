@@ -73,6 +73,7 @@ public abstract class Slot20Module extends SlotModule {
             } catch (Exception e) {
                 System.out.println(ExceptionUtils.getStackTrace(e));
             }
+
             // adding rooms
             this.rooms.put(this.gameName + "_vin_100",
                     new Slot20Room(this, commandCollection, logListener, gameName, (byte) 0, this.gameName + "_vin_100", (short) 1, this.jackpots[0], funds[0], 100, initPotValues[0]));
@@ -80,15 +81,6 @@ public abstract class Slot20Module extends SlotModule {
                     new Slot20Room(this, commandCollection, logListener, gameName, (byte) 1, this.gameName + "_vin_1000", (short) 1, this.jackpots[1], funds[1], 1000, initPotValues[1]));
             this.rooms.put(this.gameName + "_vin_10000",
                     new Slot20Room(this, commandCollection, logListener, gameName, (byte) 2, this.gameName + "_vin_10000", (short) 1, this.jackpots[2], funds[2], 10000, initPotValues[2]));
-
-            // FORCE - R
-//            this.rooms.put(this.gameName + "_vin_100",
-//                    new Slot20Room(this, commandCollection, logListener, gameName, (byte) 0, this.gameName + "_vin_100", (short) 1, this.jackpots[0], 10000000000L, 100, initPotValues[0]));
-//            this.rooms.put(this.gameName + "_vin_1000",
-//                    new Slot20Room(this, commandCollection, logListener, gameName, (byte) 1, this.gameName + "_vin_1000", (short) 1, this.jackpots[1], 10000000000L, 1000, initPotValues[1]));
-//            this.rooms.put(this.gameName + "_vin_10000",
-//                    new Slot20Room(this, commandCollection, logListener, gameName, (byte) 2, this.gameName + "_vin_10000", (short) 1, this.jackpots[2], 10000000000L, 10000, initPotValues[3]));
-
 
             Debug.trace("INIT " + this.gameName + " DONE");
             referenceId = this.slotService.getLastReferenceId(this.gameName);
