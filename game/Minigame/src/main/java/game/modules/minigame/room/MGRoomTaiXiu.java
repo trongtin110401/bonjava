@@ -102,7 +102,7 @@ public class MGRoomTaiXiu
     private static final org.apache.log4j.Logger logger = Logger.getLogger((String) "recharge");
 
     public MGRoomTaiXiu(String name, long referenceId, short moneyType) {
-        super(name, 0);
+        super(name, 0, 0L, (short) 1);
         this.moneyType = moneyType;
         this.moneyTypeStr = "xu";
         if (moneyType == 1) {

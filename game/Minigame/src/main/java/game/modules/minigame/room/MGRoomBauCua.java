@@ -67,7 +67,6 @@ import java.util.concurrent.TimeoutException;
 public class MGRoomBauCua
         extends MGRoom {
     public byte id;
-    public long fund;
     private List<PotBauCua> pots = new ArrayList<PotBauCua>();
     private byte moneyType;
     private String moneyTypeStr;
@@ -92,9 +91,8 @@ public class MGRoomBauCua
     private static final byte NOT_ENOUGH_MONEY = 102;
 
     public MGRoomBauCua(String name, int minBetValue, byte moneyType, byte id, long fund) {
-        super(name, minBetValue);
+        super(name, minBetValue, fund, moneyType);
         this.id = id;
-        this.fund = fund;
         this.moneyType = moneyType;
         if (moneyType == 1) {
             this.moneyTypeStr = "vin";
@@ -189,7 +187,7 @@ public class MGRoomBauCua
                                 }
 
                             }
-                            this.fund += totalBetValue - fee;
+                            updateFunValue(totalBetValue - fee);
                             if (!this.transactionsMap.containsKey(username)) {
                                 TransactionBauCua newTransaction = new TransactionBauCua();
                                 newTransaction.username = username;
@@ -219,7 +217,7 @@ public class MGRoomBauCua
                                 this.pots.get(i).bet(tranDetail.username, tranDetail.betValues[i]);
                             }
                             try {
-                                this.mgService.saveFund(this.name, this.fund);
+                                this.mgService.saveFund(this.name, getFunValue());
                                 if (!isBot(username)) {
                                     this.bcService.saveTransactionBauCuaDetail(tranDetail);
                                 }
@@ -310,9 +308,9 @@ public class MGRoomBauCua
             } catch (IOException | InterruptedException | TimeoutException response) {
                 // empty catch block
             }
-            this.fund -= totalPrize;
+            updateFunValue(-totalPrize);
             try {
-                this.mgService.saveFund(this.name, this.fund);
+                this.mgService.saveFund(this.name, getFunValue());
             } catch (IOException | InterruptedException | TimeoutException response) {
             }
         }
@@ -399,7 +397,7 @@ public class MGRoomBauCua
                 this.xValue = this.randomXValue();
                 int[] tiLe = this.calculateTiLe(dices);
                 long totalPrizes = this.tryCalculatePrizes(tiLe);
-                if (this.fund - totalPrizes > 0L) break block1;
+                if (getFunValue() - totalPrizes > 0L) break block1;
             } while (++num <= 3);
             return this.traGiaiBeNhat();
         }

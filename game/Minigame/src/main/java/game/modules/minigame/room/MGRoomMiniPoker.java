@@ -76,7 +76,6 @@ import com.hazelcast.core.IMap;
 public class MGRoomMiniPoker extends MGRoom {
     private float tax = MinigameConstant.MINIGAME_TAX_VIN;
     private long pot;
-    private long fund;
     private short moneyType;
     private String moneyTypeStr;
     private long betValue = 0L;
@@ -102,7 +101,7 @@ public class MGRoomMiniPoker extends MGRoom {
     CacheService cacheService = new CacheServiceImpl();
 
     public MGRoomMiniPoker(String roomName, short moneyType, long pot, long fund, long baseBetValue, long initPotValue) {
-        super(roomName, (int) baseBetValue);
+        super(roomName, (int) baseBetValue, fund, moneyType);
         this.gameName = Games.MINI_POKER.getName();
         this.moneyType = moneyType;
         if (moneyType == 1) {
@@ -119,7 +118,6 @@ public class MGRoomMiniPoker extends MGRoom {
         this.pot = pot;
         CacheServiceImpl cacheService = new CacheServiceImpl();
         cacheService.setValue(this.name, (int) pot);
-        this.fund = fund;
         this.betValue = baseBetValue;
         this.initPotValue = initPotValue;
 
@@ -154,7 +152,7 @@ public class MGRoomMiniPoker extends MGRoom {
 
     public synchronized ResultMiniPokerMsg play(String username, long betValue) {
         long lastPot = this.pot;
-        long lastFund = this.fund;
+        long lastFund = getFunValue();
         ResultMiniPokerMsg resultMiniPokerMsg = new ResultMiniPokerMsg();
         StringBuilder builder = new StringBuilder();
         short result = ResultPoker.TRUOT;
@@ -189,7 +187,7 @@ public class MGRoomMiniPoker extends MGRoom {
                     long tienThuongX2 = 0L;
                     this.pot += moneyToPot;
                     if (!u.isBot()) {
-                        this.fund += moneyToFund;
+                        updateFunValue(moneyToFund);
                     }
                     while (!enoughToPair) {
                         if (!u.isBot())
@@ -293,7 +291,7 @@ public class MGRoomMiniPoker extends MGRoom {
                         }
 
                         // Phần thưởng quá lớn, random lại
-                        if (!forceNoHu && prize > 0 && fund < prize) {
+                        if (!forceNoHu && prize > 0 && getFunValue() < prize) {
                             continue;
                         }
 
@@ -317,7 +315,7 @@ public class MGRoomMiniPoker extends MGRoom {
                                 if (forceNoHu) {
                                     try {
                                         this.pot = this.initPotValue;
-                                        this.fund -= initPotValue;
+                                        updateFunValue(-initPotValue);
                                         sv.removeKey(CACHE_NAME_USER_SPOT + this.gameName);
                                         sv.removeKey(CACHE_BET_VALUE_SLOT + this.gameName);
                                     } catch (Exception exception) {
@@ -325,7 +323,7 @@ public class MGRoomMiniPoker extends MGRoom {
                                     }
                                 }
                             } else {
-                                this.fund -= fundExchange;
+                                updateFunValue(-fundExchange);
                             }
                         }
 
@@ -433,7 +431,7 @@ public class MGRoomMiniPoker extends MGRoom {
         long currentTime = System.currentTimeMillis();
         if (currentTime - this.lastTimeUpdateFundToRoom >= 10000L) {
             try {
-                this.mgService.saveFund(this.name, this.fund);
+                this.mgService.saveFund(this.name, getFunValue());
             } catch (IOException | InterruptedException | TimeoutException e) {
                 Debug.trace((Object[]) new Object[]{"MINI POKER: update fund poker error ", e.getMessage()});
             }
@@ -568,7 +566,7 @@ public class MGRoomMiniPoker extends MGRoom {
             int isReset = sv.getValueInt("reset_pot_" + this.gameName + "_" + this.betValue, 0);
             if (isReset == 1) {
                 this.pot = this.initPotValue;
-                this.fund = 0;
+                updateFunValue(-getFunValue());
                 this.savePot();
                 this.saveFund();
                 this.sv.removeKey("reset_pot_" + this.gameName + "_" + this.betValue);

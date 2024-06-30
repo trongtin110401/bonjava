@@ -41,9 +41,11 @@ import bitzero.util.ExtensionUtility;
 import bitzero.util.common.business.Debug;
 import com.vinplay.dal.service.BauCuaService;
 import com.vinplay.dal.service.BroadcastMessageService;
+import com.vinplay.dal.service.CacheService;
 import com.vinplay.dal.service.MiniGameService;
 import com.vinplay.dal.service.impl.BauCuaServiceImpl;
 import com.vinplay.dal.service.impl.BroadcastMessageServiceImpl;
+import com.vinplay.dal.service.impl.CacheServiceImpl;
 import com.vinplay.dal.service.impl.MiniGameServiceImpl;
 import com.vinplay.vbee.common.enums.Games;
 import com.vinplay.vbee.common.utils.DateTimeUtils;
@@ -77,6 +79,8 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
     private final Runnable serverReadyTask = new ServerReadyTask();
     private final Runnable rewardToiChonCaTask = new RewardToiChonCaTask();
     private BroadcastMessageService broadcastMsg = new BroadcastMessageServiceImpl();
+
+    protected CacheService cacheService = new CacheServiceImpl();
 
     public void init() {
         super.init();
@@ -448,6 +452,5 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
             BauCuaModuleTo2.this.calculateResult();
         }
     }
-
 }
 

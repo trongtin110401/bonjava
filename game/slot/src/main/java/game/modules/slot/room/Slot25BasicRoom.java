@@ -174,7 +174,7 @@ public class Slot25BasicRoom extends SlotRoom {
                         // số tiền còn lại sau khi trừ phế và 2% POT cho vào quỹ thưởng
                         long moneyToFund = !isSpinningFree ? totalBetValue - fee - moneyToPot : 0;
                         if (!u.isBot()) {
-                            this.fund += moneyToFund;
+                            updateFunValue(moneyToFund);
                         }
                         // cờ này được sử dụng để check liệu có tiếp tục vòng lặp để sinh Matrix hay không
                         boolean enoughPair = false;
@@ -323,12 +323,12 @@ public class Slot25BasicRoom extends SlotRoom {
                             // Lớn quá thì sinh lại MATRIX kết quả kẻo anh em NPH vỡ nợ
                             if (!isForceJackpot) {
                                 // Trúng nổ hũ một cách ngẫu nhiên nhưng qũy thưởng lại không đủ bù lỗ
-                                if (isGetJackpotNaturally && fund < initJackpotValues) {
+                                if (isGetJackpotNaturally && getFunValue() < initJackpotValues) {
                                     continue;
                                 }
                                 // Tuy không trúng JACKPOT nhưng trúng Line to quá cũng cần sinh lại MATRIX
                                 if (!isGetJackpotNaturally) {
-                                    if ((totalPrizes - totalBetValue > 0 && totalPrizes > fund) || totalPrizes >= totalBetValue * 25)
+                                    if ((totalPrizes - totalBetValue > 0 && totalPrizes > getFunValue()) || totalPrizes >= totalBetValue * 25)
                                         continue;
                                 }
                             }
@@ -339,7 +339,7 @@ public class Slot25BasicRoom extends SlotRoom {
                             if (totalPrizes > 0L) {
                                 if (result == ResultSlot.JACKPOT) {
                                     this.pot = this.initJackpotValues;
-                                    this.fund -= initJackpotValues;
+                                    updateFunValue(-initJackpotValues);
 
                                     // get user cache
                                     String displayName = username;
@@ -354,7 +354,7 @@ public class Slot25BasicRoom extends SlotRoom {
                                     this.slotService.logNoHu(referenceId, this.gameName, displayName, this.betValue, linesStr, matrixStr, builderLinesWin.toString(), builderPrizesOnLine.toString(), totalPrizes, result, currentTimeStr);
                                 } else {
                                     if (!u.isBot()) {
-                                        this.fund -= totalPrizes;
+                                        updateFunValue(-totalPrizes);
                                     }
                                     if (result == ResultSlot.MISSED) {
                                         result = totalPrizes >= (this.betValue * 175L) ? ResultSlot.BIG_WIN : ResultSlot.WIN;
@@ -485,7 +485,7 @@ public class Slot25BasicRoom extends SlotRoom {
         long currentTime = System.currentTimeMillis();
         if (currentTime - this.lastTimeUpdateFundToRoom >= 60000L) {
             try {
-                this.miniGameService.saveFund(this.name, this.fund);
+                this.miniGameService.saveFund(this.name, getFunValue());
             } catch (IOException | InterruptedException | TimeoutException e) {
                 Debug.trace(this.gameName + ": update fund error ", e.getMessage());
             }
@@ -552,15 +552,13 @@ public class Slot25BasicRoom extends SlotRoom {
     @Override
     protected void checkResetPot() {
         try {
-
             int isReset = cacheService.getValueInt("reset_pot_" + gameName + "_" + this.betValue);
             if (isReset == 1) {
                 this.pot = this.initJackpotValues;
-                this.fund = 0;
+                updateFunValue(-getFunValue());
                 this.savePot();
                 this.saveFund();
                 this.cacheService.removeKey("reset_pot_" + gameName + "_" + this.betValue);
-
             }
         } catch (Exception ignored) {
         }

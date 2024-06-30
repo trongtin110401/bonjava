@@ -66,8 +66,6 @@ import java.util.concurrent.locks.ReentrantLock;
 public class MGRoomBauCuaTo2 extends MGRoom {
     private static final double RATE_NO_HU = 0.3;
     public byte id;
-    public long fund;
-
     private long jackPot;
     private List<PotBauCua> pots = new ArrayList<PotBauCua>();
     private List<PotBauCua> potsUser = new ArrayList<PotBauCua>();
@@ -106,9 +104,8 @@ public class MGRoomBauCuaTo2 extends MGRoom {
     private ReentrantLock lock = new ReentrantLock();
 
     public MGRoomBauCuaTo2(String name, int minBetValue, byte moneyType, byte id, long fund, long jackPot) {
-        super(name);
+        super(name, minBetValue, fund, moneyType);
         this.id = id;
-        this.fund = fund;
         this.jackPot = jackPot;
         this.moneyType = moneyType;
         if (moneyType == 1) {
@@ -531,7 +528,8 @@ public class MGRoomBauCuaTo2 extends MGRoom {
             totalUserBetInRoom += totalBetValues; // calculate total bet value
 
             if (!isBot(tran.username)) {
-                fund -= tran.totalExchange;
+//                fund -= tran.totalExchange;
+                updateFunValue(tran.totalExchange);
             }
         }
 
@@ -567,8 +565,9 @@ public class MGRoomBauCuaTo2 extends MGRoom {
             } finally {
                 cacheService.setValue("update_fund_bau_cua_to", 0);
             }
-            this.fund += updateFund;
-            this.mgService.saveFund(this.name, this.fund);
+//            this.fund += updateFund;
+            updateFunValue(updateFund);
+            this.mgService.saveFund(this.name, getFunValue());
             this.mgService.savePot(this.name, jackPot, false);
         } catch (IOException | InterruptedException | TimeoutException response) {
         }
@@ -659,7 +658,7 @@ public class MGRoomBauCuaTo2 extends MGRoom {
             pInfo.userId = user.getId();
             pInfo.nickName = user.getName();
 //            int avatar = new Random().nextInt(12);
-            pInfo.avatarUrl =  userService.getUser(user.getName()).getAvatar();
+            pInfo.avatarUrl = userService.getUser(user.getName()).getAvatar();
             user.setProperty((Object) "PLAYER_INFO", (Object) pInfo);
         }
 
@@ -719,7 +718,7 @@ public class MGRoomBauCuaTo2 extends MGRoom {
                 return generateDices();
             }
             long totalPrizes = this.tryCalculatePrizes(tiLe);
-            if (this.fund - totalPrizes > 0L) {
+            if (getFunValue() - totalPrizes > 0L) {
                 return dices;
             }
         } while (++num <= 3);

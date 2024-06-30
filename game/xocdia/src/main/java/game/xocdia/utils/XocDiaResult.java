@@ -71,12 +71,12 @@ public class XocDiaResult {
             }
             if (setBauCuaKetqua != null) {
                 if (setBauCuaKetqua.getStatus().equals("be")) {
-                    this.dinces = new ArrayList<Integer>();
+                    this.dinces = new ArrayList<>();
                     byte[] listDices = setBauCuaKetqua.getListDices();
-                    dinces.add(Integer.valueOf(listDices[0]));
-                    dinces.add(Integer.valueOf(listDices[1]));
-                    dinces.add(Integer.valueOf(listDices[2]));
-                    dinces.add(Integer.valueOf(listDices[3]));
+                    dinces.add((int) listDices[0]);
+                    dinces.add((int) listDices[1]);
+                    dinces.add((int) listDices[2]);
+                    dinces.add((int) listDices[3]);
                     this.count = 0;
                     for (Integer i : this.dinces) {
                         if (i % 2 != 0) {
@@ -117,60 +117,20 @@ public class XocDiaResult {
         }
     }
 
-    public void generateResult(List<Integer> rsCheat, XocDiaForceResult xdForce) {
-
-        SetBauCuaKetqua setBauCuaKetqua = null;
-
-        List<Integer> isDinces = null;
-        try {
-            try {
-                setBauCuaKetqua = (SetBauCuaKetqua) cacheService.getObject("BeCauXocDia");
-            } catch (KeyNotFoundException e) {
-
-            }
-            if (setBauCuaKetqua != null) {
-                if (setBauCuaKetqua.getStatus().equals("be")) {
-                    this.dinces = new ArrayList<Integer>();
-                    byte[] listDices = setBauCuaKetqua.getListDices();
-                    dinces.add(Integer.valueOf(listDices[0]));
-                    dinces.add(Integer.valueOf(listDices[1]));
-                    dinces.add(Integer.valueOf(listDices[2]));
-                    dinces.add(Integer.valueOf(listDices[3]));
-                    this.count = 0;
-                    for (Integer i : this.dinces) {
-                        if (i % 2 != 0) {
-                            continue;
-                        } else {
-                            this.count = (byte) (this.count + 1);
-                        }
-
-                    }
-                    cacheService.setObject("BeCauXocDia", new SetBauCuaKetqua("auto", new byte[]{}));
-                } else {
-                    this.autoGenerateValue(rsCheat, xdForce);
-                }
-            } else {
-                this.autoGenerateValue(rsCheat, xdForce);
-            }
-
-        } catch (Exception e) {
-            Debug.trace((Object) e);
-            this.autoGenerateValue(rsCheat, xdForce);
-        }
-    }
-
     public void autoGenerateValue2(List<Integer> rsCheat, XocDiaForceResult xdForce, Vector<GamePot> potList) {
-        //tinh toan hu
+        // tinh toan hu
         long fund = 0;
         try {
-            String hu_tx = cacheService.getValueStr("fund_xd_auto");
-            fund = Long.parseLong(hu_tx);
+//            String hu_tx = cacheService.getValueStr("fund_xd_auto");
+            fund = getFunValue();
         } catch (Exception e) {
             cacheService.setValue("min_fund_xd_auto", 0);
             cacheService.setValue("max_fund_xd_auto", 0);
-            cacheService.setValue("fund_xd_auto", 0);
+            setFunValue(0);
         }
+
         ArrayList<List<Integer>> listDiceRandom = listDicesRandom();
+        long benefit = 0;
         for (int index = 0; index < 16; index++) {
             //random ket qua
             this.dinces = listDiceRandom.get(index);
@@ -180,75 +140,24 @@ public class XocDiaResult {
                     this.count = (byte) (this.count + 1);
                 }
             }
-//            this.dinces.clear();
-//            this.count = 0;
-//            for (int i = 0; i < 4; ++i) {
-//                int value = (int) (Math.round(Math.random()) + 0); // random value
-//                if (value % 2 == 0) {
-//                    this.dinces.add(0);
-//                    this.count = (byte) (this.count + 1);
-//                    continue;
-//                }
-//                this.dinces.add(1);
-//            }
-            //ket thuc ket qua random
-            // tinh toan lai lo
-            //tong tien thang thua
             try {
-                long chenhLechTien = tinhToanTienChechLech(potList);
-//                if (maxHu > minHu) {
-//                    //neu ma hu am
-//                    if (fund + chenhLechTien < minHu && chenhLechTien < 0) {
-//                        //random lai tiep
-//                        continue;
-//                    } else if (fund + chenhLechTien > maxHu && chenhLechTien > 0) {
-//                        //random tiep de be lai
-//                        continue;
-//                    } else {
-//                        //khong can phai random nua
-//                        break;
-//                    }
-//                } else {
-//                    //khong can phai random
-//                    break;
-//                }
-
-                if (chenhLechTien >= 0) {
+                benefit = tinhToanTienChechLech(potList);
+                if (benefit >= 0) { // nhà cái th?ng
                     break;
-                } else if (fund >= chenhLechTien) {
+                } else if (fund >= benefit * -1) { // qu? v?n còn bù l?
                     break;
-                } else {
-                    continue;
                 }
-
             } catch (Exception e) {
                 break;
             }
         }
 
-        //random xong cong tien lai hu xem dung k
         try {
-            long chenhLechTien = tinhToanTienChechLech(potList);
-            String hu_tx = cacheService.getValueStr("fund_xd_auto");
-            fund = Long.parseLong(hu_tx);
-            fund = chenhLechTien + fund;
-
-
-            long updateFund = 0;
-            try {
-                updateFund = Long.parseLong(cacheService.getValueStr("update_fund_xd_auto"));
-            } catch (Exception e) {
-                updateFund = 0;
-            } finally {
-                cacheService.setValue("update_fund_xd_auto", 0);
-            }
-            fund += updateFund;
-            mgService.saveFund(Games.XOC_DIA.getName(), fund);
-            cacheService.setValue("fund_xd_auto", String.valueOf(fund));
+            updateFunValue(benefit);
+            mgService.saveFund(Games.XOC_DIA.getName(), getFunValue());
         } catch (Exception e) {
-            e.printStackTrace();
+            Debug.trace(e);
         }
-
     }
 
     public static ArrayList<List<Integer>> listDicesRandom() {
@@ -297,42 +206,38 @@ public class XocDiaResult {
             long totalLai = 0;
             long totalLo = 0;
             List<Byte> listWin = getPotsWin();
-            for (int indexDoor = 0; indexDoor < 6; indexDoor++) {
-                boolean checkDoorWin = false;
-                for (Byte doorWin : listWin) {
-                    int door = doorWin.intValue();
-                    if (indexDoor == door) {
-                        checkDoorWin = true;
+            for (byte gateIndex = 0; gateIndex < 6; gateIndex++) {
+                boolean isGateWin = false;
+                for (Byte gateWin : listWin) {
+                    if (gateIndex == gateWin) {
+                        isGateWin = true;
                         break;
                     }
                 }
-                if (checkDoorWin) {
-                    //tinh toan tien lo
-                    Map<String, Long> dataUser = potList.get(indexDoor).userBetMap;
+                if (isGateWin) {
+                    // tinh toan tien lo
+                    Map<String, Long> dataUser = potList.get(gateIndex).userBetMap;
                     for (String key : dataUser.keySet()) {
-                        if (indexDoor == 0 || indexDoor == 1) {         // s?p ?ôi
+                        if (gateIndex == 0 || gateIndex == 1) {         // Sap Doi
                             totalLo += dataUser.get(key) * 2;
-                        } else if (indexDoor == 2 || indexDoor == 3) { // t? t?
+                        } else if (gateIndex == 2 || gateIndex == 3) { // Tu Tu
                             totalLo += dataUser.get(key) * 16;
-                        } else if (indexDoor == 4 || indexDoor == 5) {  // s?p 3
+                        } else if (gateIndex == 4 || gateIndex == 5) {  // Sap 3
                             totalLo += dataUser.get(key) * 4;
                         }
                     }
                 }
 
-                //tinh toan tien lai
-                Map<String, Long> dataUser = potList.get(indexDoor).userBetMap;
+                // tinh toan tien lai
+                Map<String, Long> dataUser = potList.get(gateIndex).userBetMap;
                 for (String key : dataUser.keySet()) {
                     totalLai += dataUser.get(key);
                 }
             }
-            chenhLechTien = totalLai - totalLo;
-            return chenhLechTien;
+            return totalLai - totalLo;
         } catch (Exception e) {
-            //cacheService.setValue("loi_fund_xd_auto",e.getMessage()+" loi me o cho set moneu roi");
-            e.getMessage();
+            return 0;
         }
-        return 11111;
     }
 
 
@@ -401,6 +306,20 @@ public class XocDiaResult {
             }
         }
         return result;
+    }
+
+    public long getFunValue() {
+        String key = Games.XOC_DIA.getName();
+        return cacheService.getValueLong(key, 0);
+    }
+
+    public void setFunValue(long value) {
+        String key = Games.XOC_DIA.getName();
+        cacheService.setValue(key, value);
+    }
+
+    public void updateFunValue(long value) {
+        setFunValue(getFunValue() + value);
     }
 }
 

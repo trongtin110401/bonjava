@@ -20,7 +20,6 @@
  */
 package game.modules.slot.room;
 
-import bitzero.server.BitZeroServer;
 import bitzero.server.entities.User;
 import bitzero.server.extensions.data.BaseMsg;
 import bitzero.util.ExtensionUtility;
@@ -42,11 +41,9 @@ import com.vinplay.vbee.common.models.slot.SlotFreeSpin;
 import game.modules.slot.SlotModule;
 import game.modules.slot.entities.slot.AutoUser;
 import game.util.ConfigGame;
-import org.apache.commons.lang.math.RandomUtils;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 public abstract class SlotRoom {
@@ -61,7 +58,6 @@ public abstract class SlotRoom {
     protected String name;
     protected List<User> users = new ArrayList<User>();
     protected long pot;
-    protected long fund;
     protected long initJackpotValues;
     protected int betValue;
     protected short moneyType;
@@ -83,13 +79,13 @@ public abstract class SlotRoom {
 
     protected Random random = new Random();
 
-    public SlotRoom(byte id, String name, int betValue, short moneyType, long pot, long fund, long initPotValue) {
+    public SlotRoom(byte id, String name, int betValue, short moneyType, long pot, long fun, long initPotValue) {
         this.id = id;
         this.name = name;
         this.betValue = betValue;
         this.moneyType = moneyType;
         this.pot = pot;
-        this.fund = fund;
+        cacheService.setValue(CACHE_JACK_POT_VALUE_SLOT + name, pot);
         this.initJackpotValues = initPotValue;
         this.moneyTypeStr = this.moneyType == 1 ? "vin" : "xu";
         try {
@@ -104,35 +100,12 @@ public abstract class SlotRoom {
         } catch (InterruptedException | TimeoutException | IOException ignored) {
         }
 
-        // rút quỹ
-        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(() -> {
-            try {
-                long backup = SlotRoom.this.fund;
-                long value = cacheService.getValueLong(gameName + "_" + moneyTypeStr + "_" + name, 0);
-                value = SlotRoom.this.fund - value;
-                if (value <= 0) {
-                    SlotRoom.this.fund = 0;
-                } else {
-                    SlotRoom.this.fund = value;
-                }
-                // only update db when has changing
-                if (backup != fund) {
-                    SlotRoom.this.saveFund();
-                }
-
-                try {
-                    cacheService.removeKey(gameName + "_" + moneyTypeStr + "_" + name);
-                } catch (Exception ex) {
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }, 1, 1, TimeUnit.SECONDS);
+        setFunValue(fun);
     }
 
     private void saveFund() {
         try {
-            this.miniGameService.saveFund(this.name, this.fund);
+            this.miniGameService.saveFund(this.name, getFunValue());
         } catch (IOException | InterruptedException | TimeoutException e) {
             Debug.trace(this.gameName + ": update fund error ", e.getMessage());
         }
@@ -474,6 +447,20 @@ public abstract class SlotRoom {
         } catch (Exception ex) {
             return new SlotFreeSpin();
         }
+    }
+
+    protected long getFunValue() {
+        String key = gameName + "_" + moneyTypeStr + "_" + betValue;
+        return cacheService.getValueLong(key, 0);
+    }
+
+    protected void setFunValue(long value) {
+        String key = gameName + "_" + moneyTypeStr + "_" + betValue;
+        cacheService.setValue(key, value);
+    }
+
+    protected void updateFunValue(long value) {
+        setFunValue(getFunValue() + value);
     }
 }
 

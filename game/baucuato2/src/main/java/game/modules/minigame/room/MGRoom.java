@@ -13,6 +13,9 @@ import bitzero.server.api.IBZApi;
 import bitzero.server.entities.User;
 import bitzero.server.extensions.data.BaseMsg;
 import bitzero.util.ExtensionUtility;
+import com.vinplay.dal.service.CacheService;
+import com.vinplay.dal.service.impl.CacheServiceImpl;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -27,8 +30,14 @@ public abstract class MGRoom {
     protected String gameName;
     protected List<User> users = new ArrayList<User>();
 
-    public MGRoom(String name) {
+    protected int betValue;
+
+    public MGRoom(String name, int betValue, long fund, short moneyType) {
         this.name = name;
+        this.betValue = betValue;
+        this.moneyType = moneyType;
+        this.moneyTypeStr = moneyType == 1 ? "vin" : "xu";
+        setFunValue(fund);
     }
 
     /*
@@ -94,5 +103,39 @@ public abstract class MGRoom {
             ExtensionUtility.getExtension().send(msg, user);
         }
     }
+
+    /**
+     * L?y giá tr? qu? hi?n t?i
+     *
+     * @return Giá tr? jackpot hi?n t?i
+     */
+    protected long getFunValue() {
+        String key = gameName + "_" + moneyTypeStr + "_" + betValue;
+        return cacheService.getValueLong(key, 0);
+    }
+
+    /**
+     * C?p nh?t giá tr? qu? hi?n t?i
+     *
+     * @param value Giá tr? c?n c?p nh?t
+     */
+    protected void setFunValue(long value) {
+        String key = gameName + "_" + moneyTypeStr + "_" + betValue;
+        cacheService.setValue(key, value);
+    }
+
+    /**
+     * C?p nh?t giá tr? qu? hi?n t?i
+     *
+     * @param value Giá tr? c?n c?p nh?t
+     */
+    protected void updateFunValue(long value) {
+        setFunValue(getFunValue() + value);
+    }
+
+    protected CacheService cacheService = new CacheServiceImpl();
+
+    protected short moneyType = 1;
+    protected String moneyTypeStr;
 }
 
