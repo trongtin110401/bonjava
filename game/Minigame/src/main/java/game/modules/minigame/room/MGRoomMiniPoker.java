@@ -122,6 +122,10 @@ public class MGRoomMiniPoker extends MGRoom {
         this.fund = fund;
         this.betValue = baseBetValue;
         this.initPotValue = initPotValue;
+
+        setPercentFee();
+        setPercentJackpot();
+
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.checkResetPotTask, 10, 10, TimeUnit.SECONDS);
         try {
@@ -193,10 +197,11 @@ public class MGRoomMiniPoker extends MGRoom {
                         GroupType groupType;
                         prize = 0L;
                         tienThuongX2 = 0L;
-                        long moneyExchange = 0L;
+                        long moneyExchange;
                         boolean forceNoHu = false;
 
-                        if (userForce.equals(username) && betValueCache.equals(String.valueOf(this.betValue))) {
+                        if ((userForce.equals(username) && betValueCache.equals(String.valueOf(this.betValue)))
+                                || (!u.isBot() && randomJackpot(percentJackpot))) {
                             forceNoHu = true;
                             forceJackpotByUser = true;
                         }
@@ -463,6 +468,10 @@ public class MGRoomMiniPoker extends MGRoom {
      * WARNING - Removed try catching itself - possible behaviour change.
      */
     public void gameLoop() {
+
+        setPercentFee();
+        setPercentJackpot();
+
         Map<String, AutoUserMiniPoker> map;
         ArrayList<User> usersPlay = new ArrayList<User>();
         Map<String, AutoUserMiniPoker> map2 = map = this.usersAuto;
