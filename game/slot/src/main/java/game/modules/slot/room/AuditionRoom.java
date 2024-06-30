@@ -126,7 +126,7 @@ public class AuditionRoom
                         long moneyToPot = totalBetValue / 100L;
                         long moneyToFund = totalBetValue - fee - moneyToPot;
                         if (!u.isBot()) {
-                            this.fund += moneyToFund;
+//                            this.fund += moneyToFund;
                         }
                         this.pot += moneyToPot;
                         boolean enoughPair = false;
@@ -153,34 +153,34 @@ public class AuditionRoom
 //                            }
                             if (betValue == 100) {
                                 soLanNoHu = ConfigGame.getIntValue(this.gameName + "_so_lan_no_hu_100");
-                                if (lineArr.length >= 15 && soLanNoHu > 0 && this.fund > this.pot * 2L && new Random().nextInt(soLanNoHu) == 0 && countNoHu >= soLanNoHu) {
-                                    forceNoHu = true;
-                                }
-                                if (userForce.equals(username) && lineArr.length >= 15 && soLanNoHu > 0 && this.fund > this.pot * 2L && countNoHu >= soLanNoHu) {
-                                    forceNoHu = true;
-                                    forceJackpotByUser = true;
-                                }
+//                                if (lineArr.length >= 15 && soLanNoHu > 0 && this.fund > this.pot * 2L && new Random().nextInt(soLanNoHu) == 0 && countNoHu >= soLanNoHu) {
+//                                    forceNoHu = true;
+//                                }
+//                                if (userForce.equals(username) && lineArr.length >= 15 && soLanNoHu > 0 && this.fund > this.pot * 2L && countNoHu >= soLanNoHu) {
+//                                    forceNoHu = true;
+//                                    forceJackpotByUser = true;
+//                                }
 
                             } else if (betValue == 1000) {
                                 soLanNoHu = ConfigGame.getIntValue(this.gameName + "_so_lan_no_hu_1000");
-                                if (lineArr.length >= 20 && soLanNoHu > 0 && this.fund > this.pot * 3L && (n = (rd = new Random()).nextInt(soLanNoHu)) == 0 && countNoHu >= soLanNoHu) {
-                                    forceNoHu = true;
-
-                                }
+//                                if (lineArr.length >= 20 && soLanNoHu > 0 && this.fund > this.pot * 3L && (n = (rd = new Random()).nextInt(soLanNoHu)) == 0 && countNoHu >= soLanNoHu) {
+//                                    forceNoHu = true;
+//
+//                                }
                                 //force user jackpot
-                                if (userForce.equals(username) && lineArr.length >= 20 && soLanNoHu > 0 && this.fund > this.pot * 3L && countNoHu >= soLanNoHu) {
-                                    forceNoHu = true;
-                                    forceJackpotByUser = true;
-                                }
+//                                if (userForce.equals(username) && lineArr.length >= 20 && soLanNoHu > 0 && this.fund > this.pot * 3L && countNoHu >= soLanNoHu) {
+//                                    forceNoHu = true;
+//                                    forceJackpotByUser = true;
+//                                }
                             } else {
                                 soLanNoHu = ConfigGame.getIntValue(this.gameName + "_so_lan_no_hu_10000");
-                                if (lineArr.length >= 20 && soLanNoHu > 0 && this.fund > this.pot * 3L && (n = (rd = new Random()).nextInt(soLanNoHu)) == 0 && countNoHu >= soLanNoHu) {
-                                    forceNoHu = true;
-                                }
-                                if (userForce.equals(username) && lineArr.length >= 20 && soLanNoHu > 0 && this.fund > this.pot * 3L && countNoHu >= soLanNoHu) {
-                                    forceNoHu = true;
-                                    forceJackpotByUser = true;
-                                }
+//                                if (lineArr.length >= 20 && soLanNoHu > 0 && this.fund > this.pot * 3L && (n = (rd = new Random()).nextInt(soLanNoHu)) == 0 && countNoHu >= soLanNoHu) {
+//                                    forceNoHu = true;
+//                                }
+//                                if (userForce.equals(username) && lineArr.length >= 20 && soLanNoHu > 0 && this.fund > this.pot * 3L && countNoHu >= soLanNoHu) {
+//                                    forceNoHu = true;
+//                                    forceJackpotByUser = true;
+//                                }
                             }
                             // check user deposit or received money from agency
                             if (forceNoHu) {
@@ -365,8 +365,8 @@ public class AuditionRoom
                             if (builderPrizesOnLine.length() > 0) {
                                 builderPrizesOnLine.deleteCharAt(0);
                             }
-                            if (result == 3 ? this.fund - (totalPrizes - soTienNoHuKhongTruQuy) < 0L : this.fund - totalPrizes < this.pot * 2L && totalPrizes - totalBetValue >= 0L)
-                                continue;
+//                            if (result == 3 ? this.fund - (totalPrizes - soTienNoHuKhongTruQuy) < 0L : this.fund - totalPrizes < this.pot * 2L && totalPrizes - totalBetValue >= 0L)
+//                                continue;
                             enoughPair = true;
                             String matrixStr = KhoBauUtils.matrixToString(matrix);
                             if (totalPrizes > 0L) {
@@ -381,7 +381,7 @@ public class AuditionRoom
                                     this.noHuX2();
                                     this.pot = this.initJackpotValues;
                                     //this.fund -= totalPrizes - soTienNoHuKhongTruQuy;
-                                    this.fund = 0;
+//                                    this.fund = 0;
                                     if (this.moneyType == 1) {
                                         //GameUtils.sendSMSToUser(username, "Chuc mung " + username + " da no hu game " + gn + " phong " + this.betValue + ". So tien no hu: " + totalPrizes + " vin");
                                     }
@@ -421,7 +421,7 @@ public class AuditionRoom
                                 } else {
                                     countNoHu++;
                                     if (!u.isBot()) {
-                                        this.fund -= totalPrizes;
+//                                        this.fund -= totalPrizes;
                                     }
 
                                     if (result == 0) {
@@ -541,8 +541,8 @@ public class AuditionRoom
             if (builderPrizesOnLine.length() > 0) {
                 builderPrizesOnLine.deleteCharAt(0);
             }
-            if (this.fund - totalPrizes < 0L || totalPrizes > (long) ConfigGame.getIntValue("max_prize_free_daily", 2000))
-                continue;
+//            if (this.fund - totalPrizes < 0L || totalPrizes > (long) ConfigGame.getIntValue("max_prize_free_daily", 2000))
+//                continue;
             enoughPair = true;
             boolean updated = this.slotService.updateLuotQuayFreeDaily(this.gameName, username, this.betValue);
             if (!updated) {
@@ -665,11 +665,11 @@ public class AuditionRoom
     private void saveFund() {
         long currentTime = System.currentTimeMillis();
         if (currentTime - this.lastTimeUpdateFundToRoom >= 60000L) {
-            try {
-                this.miniGameService.saveFund(this.name, this.fund);
-            } catch (IOException | InterruptedException | TimeoutException ex2) {
-                Debug.trace("Audition: update fund audition bau error ", ex2.getMessage());
-            }
+//            try {
+////                this.miniGameService.saveFund(this.name, this.fund);
+//            } catch (IOException | InterruptedException | TimeoutException ex2) {
+//                Debug.trace("Audition: update fund audition bau error ", ex2.getMessage());
+//            }
             this.lastTimeUpdateFundToRoom = currentTime;
         }
     }
@@ -680,7 +680,7 @@ public class AuditionRoom
             int isReset = cacheService.getValueInt("reset_pot_" + this.gn + "_" + this.betValue);
             if (isReset == 1) {
                 this.pot = this.initJackpotValues;
-                this.fund = 0;
+//                this.fund = 0;
                 this.savePot();
                 this.saveFund();
                 this.cacheService.removeKey("reset_pot_" + this.gn + "_" + this.betValue);
@@ -693,7 +693,7 @@ public class AuditionRoom
 
     private void resetPotFund() {
         try {
-            this.fund = this.initJackpotValues;
+//            this.fund = this.initJackpotValues;
             this.pot = this.initJackpotValues;
             this.saveFund();
             this.saveFund();

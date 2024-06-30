@@ -150,7 +150,7 @@ public class SpartanRoom
                         long moneyToPot = totalBetValue / 100L;
                         long moneyToFund = totalBetValue - fee - moneyToPot;
                         if (!u.isBot()) {
-                            this.fund += moneyToFund;
+//                            this.fund += moneyToFund;
                         }
                         this.pot += moneyToPot;
                         boolean enoughPair = false;
@@ -274,7 +274,7 @@ public class SpartanRoom
                                     this.noHuX2();
                                     this.pot = this.initJackpotValues;
                                     //this.fund -= totalPrizes - soTienNoHuKhongTruQuy;
-                                    this.fund = 0;
+//                                    this.fund = 0;
                                     if (this.moneyType == 1) {
                                         //GameUtils.sendSMSToUser(username, "Chuc mung " + username + " da no hu game " + gn + " phong " + this.betValue + ". So tien no hu: " + totalPrizes + " vin");
                                     }
@@ -316,7 +316,7 @@ public class SpartanRoom
                                 } else {
                                     countNoHu++;
                                     if (!u.isBot()) {
-                                        this.fund -= totalPrizes;
+//                                        this.fund -= totalPrizes;
                                     }
                                     if (result == 0) {
                                         result = totalPrizes >= (this.betValue * 100L) ? (short) 2 : 1;
@@ -515,7 +515,7 @@ public class SpartanRoom
         long fee = 0L;
         long moneyToPot = 0L;
         long moneyToFund = 0L;
-        this.fund += 0L;
+//        this.fund += 0L;
         this.pot += 0L;
         boolean enoughPair = false;
         ArrayList<AwardsOnLine<SpartanFreeSpinAward>> awardsOnLines = new ArrayList<AwardsOnLine<SpartanFreeSpinAward>>();
@@ -557,11 +557,11 @@ public class SpartanRoom
                 builderPrizesOnLine.deleteCharAt(0);
             }
             int tmpPrizes = (int) totalPrizes;
-            if (result == 3 ? this.fund - totalPrizes < 0L : this.fund - (totalPrizes *= (long) ratio) < this.initJackpotValues * 2L && totalPrizes - 0L >= 0L)
-                continue;
+//            if (result == 3 ? this.fund - totalPrizes < 0L : this.fund - (totalPrizes *= (long) ratio) < this.initJackpotValues * 2L && totalPrizes - 0L >= 0L)
+//                continue;
             enoughPair = true;
             if (totalPrizes > 0L) {
-                this.fund -= totalPrizes;
+//                this.fund -= totalPrizes;
                 if (result == 0) {
                     result = 1;
                 }
@@ -698,14 +698,14 @@ public class SpartanRoom
             }
             this.lastTimeUpdateFundToRoom = currentTime;
         }*/
-        try {
-            this.miniGameService.saveFund(this.name, this.fund);
-        } catch (IOException | InterruptedException | TimeoutException ex2) {
-            Exception ex;
-            Exception e = ex = ex2;
-            Debug.trace((Object[]) new Object[]{String.valueOf(this.gameName) + ": update fund error ", e.getMessage()});
-        }
-        this.lastTimeUpdateFundToRoom = currentTime;
+//        try {
+////            this.miniGameService.saveFund(this.name, this.fund);
+//        } catch (IOException | InterruptedException | TimeoutException ex2) {
+//            Exception ex;
+//            Exception e = ex = ex2;
+//            Debug.trace((Object[]) new Object[]{String.valueOf(this.gameName) + ": update fund error ", e.getMessage()});
+//        }
+//        this.lastTimeUpdateFundToRoom = currentTime;
     }
 
     private void savePot() {
@@ -769,7 +769,7 @@ public class SpartanRoom
             int isReset = cacheService.getValueInt("reset_pot_" + this.gn + "_" + this.betValue);
             if (isReset == 1) {
                 this.pot = this.initJackpotValues;
-                this.fund = 0;
+//                this.fund = 0;
                 this.savePot();
                 this.saveFund();
                 this.cacheService.removeKey("reset_pot_" + this.gn + "_" + this.betValue);
