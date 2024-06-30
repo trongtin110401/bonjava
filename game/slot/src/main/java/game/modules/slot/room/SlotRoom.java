@@ -44,8 +44,6 @@ import game.modules.slot.entities.slot.AutoUser;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -69,6 +67,8 @@ public abstract class SlotRoom {
 
     protected String cachePercentFeeName;
     protected int percentFee = 0;
+    protected String cachePercentJackpot;
+    protected int percentJackpot = 0;
     protected int countHu = -1;
     protected int countNoHuX2 = 0;
     protected boolean huX2 = false;
@@ -78,6 +78,8 @@ public abstract class SlotRoom {
     protected MiniGameService miniGameService = new MiniGameServiceImpl();
     protected CacheService cacheService = new CacheServiceImpl();
     protected final Map<String, AutoUser> usersAuto = new HashMap<>();
+
+    protected Random random = new Random();
 
     public SlotRoom(byte id, String name, int betValue, short moneyType, long pot, long fund, long initPotValue) {
         this.id = id;
@@ -324,9 +326,38 @@ public abstract class SlotRoom {
             this.cachePercentFeeName = gameName + "_PERCENT_FEE";
             this.percentFee = cacheService.getValueInt(cachePercentFeeName);
         } catch (Exception ex) {
-            this.percentFee = 2;
+            this.percentFee = 1;
             cacheService.setValue(cachePercentFeeName, percentFee);
         }
+    }
+
+    void setPercentJackpot() {
+        try {
+            this.cachePercentJackpot = gameName + "_PERCENT_JACKPOT";
+            this.percentJackpot = cacheService.getValueInt(cachePercentFeeName);
+        } catch (Exception ex) {
+            this.percentJackpot = 1;
+            cacheService.setValue(cachePercentJackpot, percentJackpot);
+        }
+    }
+
+    /**
+     * Kiểm tra xem một người chơi có trúng jackpot ngẫu nhiên hay không
+     *
+     * @param percentage Phần trăm cơ hội trúng jackpot
+     * @return true nếu người chơi trúng jackpot, ngược lại trả về false
+     */
+    public boolean randomJackpot(double percentage) {
+        if (percentage <= 0.0) {
+            throw new IllegalArgumentException("Percentage must be greater than 0.0");
+        }
+
+        int totalNumbers = (int) Math.ceil(100 / percentage);
+        int jackpotNumber = random.nextInt(totalNumbers);
+
+        // Generate a random number and check if it matches the jackpot number
+        int randomNumber = random.nextInt(totalNumbers);
+        return randomNumber == jackpotNumber;
     }
 
     protected abstract void gameLoop();

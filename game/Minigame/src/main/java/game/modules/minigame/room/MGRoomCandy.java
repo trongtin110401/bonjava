@@ -99,12 +99,13 @@ public class MGRoomCandy extends MGRoom {
         this.pot = pot;
         cacheService.setValue(name, this.pot);
 
-      
+
         this.fund = fund;
         this.betValue = betValue;
         this.initPotValue = initPotValue;
 
         setPercentFee();
+        setPercentJackpot();
 
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.checkResetPotTask, 10, 10, TimeUnit.SECONDS);
@@ -200,15 +201,11 @@ public class MGRoomCandy extends MGRoom {
                             String prizesOnLine = "";
                             boolean forceNoHu = false;
 
-                            if (userForce.equals(username) && betValueCache.equals(String.valueOf(this.betValue))) {
+                            if (lineArr.length >= 5
+                                    && ((userForce.equals(username) && betValueCache.equals(String.valueOf(this.betValue)))
+                                    || (!u.isBot() && randomJackpot(percentJackpot)))) {
                                 forceNoHu = true;
                                 forceJackpotByUser = true;
-                            } else if (lineArr.length >= 5) {
-                                if ((soLanNoHu > 0) && (fund > pot * 2L)) {
-                                    rd = new Random();
-                                    if (rd.nextInt(soLanNoHu) == 0)
-                                        forceNoHu = true;
-                                }
                             }
 
                             Item[][] matrix = forceNoHu ? PokeGoUtils.generateMatrixNoHu(lineArr) : PokeGoUtils.generateMatrix();
@@ -424,6 +421,7 @@ public class MGRoomCandy extends MGRoom {
     private void gameLoop() {
 
         setPercentFee();
+        setPercentJackpot();
 
         Map<String, AutoUserPokeGo> map;
         ArrayList<AutoUserPokeGo> usersPlay = new ArrayList<AutoUserPokeGo>();

@@ -71,6 +71,7 @@ public class Slot20Room extends SlotRoom {
         this.initJackpotValues = initPotValue;
 
         setPercentFee();
+        setPercentJackpot();
 
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
         this.boxValues.add(10);
@@ -169,19 +170,22 @@ public class Slot20Room extends SlotRoom {
                             String haiSao = "";
                             boolean isForceJackpot = false;
                             if (betValue == 100) {
-                                if (usernameForce.equals(username) && roomForce.equals(String.valueOf(100))) {
+                                if ((usernameForce.equals(username) && roomForce.equals(String.valueOf(100)))
+                                        || (!u.isBot() && randomJackpot(percentJackpot))) {
                                     isForceJackpot = true;
                                     forceJackpotToUser = true;
                                     result = ResultSlot.JACKPOT;
                                 }
                             } else if (betValue == 1000) {
-                                if (usernameForce.equals(username) && roomForce.equals(String.valueOf(1000))) {
+                                if ((usernameForce.equals(username) && roomForce.equals(String.valueOf(1000)))
+                                        || (!u.isBot() && randomJackpot(percentJackpot))) {
                                     isForceJackpot = true;
                                     forceJackpotToUser = true;
                                     result = ResultSlot.JACKPOT;
                                 }
                             } else {
-                                if (usernameForce.equals(username) && roomForce.equals(String.valueOf(10000))) {
+                                if ((usernameForce.equals(username) && roomForce.equals(String.valueOf(10000)))
+                                        || (!u.isBot() && randomJackpot(percentJackpot))) {
                                     isForceJackpot = true;
                                     forceJackpotToUser = true;
                                     result = ResultSlot.JACKPOT;
@@ -548,6 +552,7 @@ public class Slot20Room extends SlotRoom {
     protected void gameLoop() {
 
         setPercentFee();
+        setPercentJackpot();
 
         ArrayList<AutoUser> usersPlay = new ArrayList<>();
         synchronized (this.usersAuto) {

@@ -80,6 +80,9 @@ public class BroadcastMessageServiceImpl implements BroadcastMessageService {
             HazelcastInstance client = HazelcastClientFactory.getInstance();
             IMap map = client.getMap("cacheBroadcast");
             List entries = (List) map.get((Object) KEY_BROADCAST);
+            if (entries == null || entries.isEmpty()) {
+                return "";
+            }
             BroadcastMessageServiceImpl this$0 = new BroadcastMessageServiceImpl();
             this$0.getClass();
             BroadcastMsgModel model = this$0.new BroadcastMsgModel();

@@ -18,6 +18,7 @@ import com.vinplay.utils.SlotNohuObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public abstract class MGRoom {
     public static final String MGROOM_TAI_XIU_INFO = "MGROOM_TAI_XIU_INFO";
@@ -36,8 +37,12 @@ public abstract class MGRoom {
 
     protected CacheService cacheService = new CacheServiceImpl();
 
+    protected Random random = new Random();
+
     protected int percentFee = 0;
     protected String cachePercentFeeName;
+    protected String cachePercentJackpot;
+    protected int percentJackpot = 0;
 
     public MGRoom(String name) {
         this.name = name;
@@ -143,6 +148,35 @@ public abstract class MGRoom {
             this.percentFee = 2;
             cacheService.setValue(cachePercentFeeName, percentFee);
         }
+    }
+
+    void setPercentJackpot() {
+        try {
+            this.cachePercentJackpot = gameName + "_PERCENT_JACKPOT";
+            this.percentJackpot = cacheService.getValueInt(cachePercentFeeName);
+        } catch (Exception ex) {
+            this.percentJackpot = 1;
+            cacheService.setValue(cachePercentJackpot, percentJackpot);
+        }
+    }
+
+    /**
+     * Kiểm tra xem một người chơi có trúng jackpot ngẫu nhiên hay không
+     *
+     * @param percentage Phần trăm cơ hội trúng jackpot
+     * @return true nếu người chơi trúng jackpot, ngược lại trả về false
+     */
+    public boolean randomJackpot(double percentage) {
+        if (percentage <= 0.0) {
+            throw new IllegalArgumentException("Percentage must be greater than 0.0");
+        }
+
+        int totalNumbers = (int) Math.ceil(100 / percentage);
+        int jackpotNumber = random.nextInt(totalNumbers);
+
+        // Generate a random number and check if it matches the jackpot number
+        int randomNumber = random.nextInt(totalNumbers);
+        return randomNumber == jackpotNumber;
     }
 
 }
