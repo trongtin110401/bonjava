@@ -14,6 +14,7 @@ import com.vinplay.dal.service.impl.MiniGameServiceImpl;
 import com.vinplay.usercore.dao.impl.UserDaoImpl;
 import com.vinplay.usercore.service.UserService;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
+import com.vinplay.vbee.common.enums.Games;
 import com.vinplay.vbee.common.exceptions.KeyNotFoundException;
 import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
 import com.vinplay.vbee.common.models.UserModel;
@@ -104,7 +105,7 @@ public class MGRoomSlotExtend extends MGRoom {
     int[] arrMutil = {1, 3, 5, 10};
 
     public MGRoomSlotExtend(String name, short moneyType, long pot, long fund, int betValue, long initPotValue) {
-        super(name, betValue, fund, moneyType);
+        super("", name, betValue, fund, moneyType);
         this.gameLoopTask = new GameLoopTask();
         this.usersAuto = new HashMap();
         this.lastTimeUpdatePotToRoom = 0L;

@@ -82,7 +82,7 @@ public class MGRoomCandy extends MGRoom {
 
     public MGRoomCandy(String name, String gameName, short moneyType, long pot, long fund, int betValue, long initPotValue) {
 
-        super(name, betValue, fund, moneyType);
+        super(gameName, name, betValue, fund, moneyType);
 
         this.gameName = gameName;
 
@@ -107,7 +107,7 @@ public class MGRoomCandy extends MGRoom {
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.checkResetPotTask, 10, 10, TimeUnit.SECONDS);
 
         try {
-            this.mgService.savePot(name, this.pot, this.huX2);
+            this.mgService.savePot(name, CACHE_JACK_POT_VALUE_SLOT + "_" + this.betValue + "_" + gameName, this.pot, this.huX2);
         } catch (IOException | InterruptedException | TimeoutException exception) {
             // empty catch block
         }

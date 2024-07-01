@@ -101,7 +101,7 @@ public class MGRoomMiniPoker extends MGRoom {
     CacheService cacheService = new CacheServiceImpl();
 
     public MGRoomMiniPoker(String roomName, short moneyType, long pot, long fund, long baseBetValue, long initPotValue) {
-        super(roomName, (int) baseBetValue, fund, moneyType);
+        super(Games.MINI_POKER.getName(), roomName, (int) baseBetValue, fund, moneyType);
         this.gameName = Games.MINI_POKER.getName();
         this.moneyType = moneyType;
         if (moneyType == 1) {
@@ -134,7 +134,7 @@ public class MGRoomMiniPoker extends MGRoom {
             // empty catch block
         }
         try {
-            this.mgService.savePot(this.name, pot, this.huX2);
+            this.mgService.savePot(this.name,CACHE_JACK_POT_VALUE_SLOT + "_" + this.betValue + "_" + gameName, pot, this.huX2);
         } catch (IOException | InterruptedException | TimeoutException exception) {
             // empty catch block
         }

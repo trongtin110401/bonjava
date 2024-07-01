@@ -65,8 +65,7 @@ public class Slot20Room extends SlotRoom {
         this.moneyTypeStr = this.moneyType == 1 ? "vin" : "xu";
         gn = gameName;
         this.cacheFreeSpinName = this.gameName + betValue;
-        CacheServiceImpl cacheService = new CacheServiceImpl();
-        cacheService.setValue(room, (int) pot);
+
         this.betValue = betValue;
         this.initJackpotValues = initPotValue;
 
