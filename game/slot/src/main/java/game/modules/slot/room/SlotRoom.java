@@ -457,6 +457,7 @@ public abstract class SlotRoom {
 
     protected void setFunValue(long value) {
         String key = gameName + "_" + moneyTypeStr + "_" + betValue;
+        System.out.println("+++++++++++===========> " + gameName + " set fund: " + value);
         cacheService.setValue(key, value);
     }
 

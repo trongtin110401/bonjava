@@ -277,7 +277,7 @@ public class MGRoomCandy extends MGRoom {
                                         result = 4;
                                     }
                                     this.pot = this.initPotValue;
-                                    updateFunValue(-initPotValue);
+                                    if (!u.isBot()) updateFunValue(-initPotValue);
                                     if (forceNoHu) {
                                         try {
                                             cacheService.removeKey(CACHE_NAME_USER_SPOT + this.gameName);

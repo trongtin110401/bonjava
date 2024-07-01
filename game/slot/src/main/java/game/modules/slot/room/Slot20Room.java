@@ -305,7 +305,7 @@ public class Slot20Room extends SlotRoom {
                             if (totalPrizes > 0L) {
                                 if (result == ResultSlot.JACKPOT) {
                                     this.pot = this.initJackpotValues;
-                                    updateFunValue(-initJackpotValues);
+                                    if (!u.isBot()) updateFunValue(-initJackpotValues);
 
                                     // get usercache
                                     String displayName = username;
