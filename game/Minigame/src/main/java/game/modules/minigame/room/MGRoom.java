@@ -153,13 +153,8 @@ public abstract class MGRoom {
     }
 
     void setPercentFee() {
-        try {
-            this.cachePercentFeeName = gameName + "_PERCENT_FEE";
-            this.percentFee = cacheService.getValueInt(cachePercentFeeName);
-        } catch (Exception ex) {
-            this.percentFee = 2;
-            cacheService.setValue(cachePercentFeeName, percentFee);
-        }
+        this.cachePercentFeeName = gameName + "_PERCENT_FEE";
+        this.percentFee = cacheService.getValueInt(cachePercentFeeName, 2);
     }
 
     void setPercentJackpot() {
