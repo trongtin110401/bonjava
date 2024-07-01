@@ -31,6 +31,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import game.modules.slot.room.SlotRoom;
 import org.json.simple.JSONObject;
 
 public class HallSlotModule extends BaseClientRequestHandler {
@@ -134,7 +135,7 @@ public class HallSlotModule extends BaseClientRequestHandler {
         CacheServiceImpl cacheService = new CacheServiceImpl();
         JSONObject jsonValue = new JSONObject();
         try {
-            int pot = cacheService.getValueInt(gameName + "_vin_" + room);
+            int pot = cacheService.getValueInt(SlotRoom.CACHE_JACK_POT_VALUE_SLOT + "_" + room + "_" + gameName);
             jsonValue.put("p", pot);
             int x2 = cacheService.getValueInt(gameName + "_vin_" + room + "_x2");
             jsonValue.put("x2", x2);

@@ -85,6 +85,17 @@ public class MiniGameServiceImpl
     }
 
     @Override
+    public void savePot(String potName, String potCacheName, long value, boolean x2) throws IOException, TimeoutException, InterruptedException {
+        UpdatePotMessage message = new UpdatePotMessage();
+        message.potName = potName;
+        message.newValue = value;
+        RMQApi.publishMessage("queue_pot", message, 106);
+        CacheServiceImpl cacheService = new CacheServiceImpl();
+        cacheService.setValue(potCacheName, (int) value);
+        cacheService.setValue(potCacheName + "_x2", x2 ? 1 : 0);
+    }
+
+    @Override
     public long getAllResultByStatus(int var1) throws SQLException {
         return this.dao.getMoneyHuByStatus(var1);
     }

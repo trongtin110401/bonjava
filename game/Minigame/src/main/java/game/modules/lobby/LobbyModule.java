@@ -145,6 +145,7 @@ import game.entities.QuotaResponse;
 import game.modules.lobby.cmd.rev.*;
 import game.modules.lobby.cmd.send.*;
 import game.modules.minigame.cmd.MiniGameCMD;
+import game.modules.minigame.room.MGRoom;
 import game.modules.minigame.utils.MiniGameUtils;
 import game.utils.ConfigGame;
 import game.utils.GameUtils;
@@ -2624,20 +2625,20 @@ public class LobbyModule extends BaseClientRequestHandler {
         try {
             CacheService cacheService = new CacheServiceImpl();
 
-            long caoThap1000 = cacheService.getValueLong(Games.CAO_THAP.getName() + "_vin_1000", 0);
-            long caoThap10000 = cacheService.getValueLong(Games.CAO_THAP.getName() + "_vin_10000", 0);
-            long caoThap50000 = cacheService.getValueLong(Games.CAO_THAP.getName() + "_vin_50000", 0);
-            long caoThap100000 = cacheService.getValueLong(Games.CAO_THAP.getName() + "_vin_100000", 0);
-            long caoThap500000 = cacheService.getValueLong(Games.CAO_THAP.getName() + "_vin_500000", 0);
+            long caoThap1000 = cacheService.getValueLong(MGRoom.CACHE_JACK_POT_VALUE_SLOT + "_" + 1000 + "_" + Games.CAO_THAP.getName(), 0);
+            long caoThap10000 = cacheService.getValueLong(MGRoom.CACHE_JACK_POT_VALUE_SLOT + "_" + 10000 + "_" + Games.CAO_THAP.getName(), 0);
+            long caoThap50000 = cacheService.getValueLong(MGRoom.CACHE_JACK_POT_VALUE_SLOT + "_" + 50000 + "_" + Games.CAO_THAP.getName(), 0);
+            long caoThap100000 = cacheService.getValueLong(MGRoom.CACHE_JACK_POT_VALUE_SLOT + "_" + 100000 + "_" + Games.CAO_THAP.getName(), 0);
+            long caoThap500000 = cacheService.getValueLong(MGRoom.CACHE_JACK_POT_VALUE_SLOT + "_" + 500000 + "_" + Games.CAO_THAP.getName(), 0);
 
 
-            long miniPoker100 = cacheService.getValueLong(Games.MINI_POKER.getName() + "_vin_100", 0);
-            long miniPoker1000 = cacheService.getValueLong(Games.MINI_POKER.getName() + "_vin_1000", 0);
-            long miniPoker10000 = cacheService.getValueLong(Games.MINI_POKER.getName() + "_vin_10000", 0);
+            long miniPoker100 = cacheService.getValueLong(MGRoom.CACHE_JACK_POT_VALUE_SLOT + "_" + 1000 + "_" + Games.MINI_POKER.getName(), 0);
+            long miniPoker1000 = cacheService.getValueLong(MGRoom.CACHE_JACK_POT_VALUE_SLOT + "_" + 10000 + "_" + Games.MINI_POKER.getName(), 0);
+            long miniPoker10000 = cacheService.getValueLong(MGRoom.CACHE_JACK_POT_VALUE_SLOT + "_" + 100000 + "_" + Games.MINI_POKER.getName(), 0);
 
-            long pokeGo100 = cacheService.getValueLong(Games.CANDY.getName() + "_vin_100", 0);
-            long pokeGo1000 = cacheService.getValueLong(Games.CANDY.getName() + "_vin_1000", 0);
-            long pokeGo10000 = cacheService.getValueLong(Games.CANDY.getName() + "_vin_10000", 0);
+            long pokeGo100 = cacheService.getValueLong(MGRoom.CACHE_JACK_POT_VALUE_SLOT + "_" + 1000 + "_" + Games.CANDY.getName(), 0);
+            long pokeGo1000 = cacheService.getValueLong(MGRoom.CACHE_JACK_POT_VALUE_SLOT + "_" + 1000 + "_" + Games.CANDY.getName(), 0);
+            long pokeGo10000 = cacheService.getValueLong(MGRoom.CACHE_JACK_POT_VALUE_SLOT + "_" + 1000 + "_" + Games.CANDY.getName(), 0);
 
             long khoBau100 = cacheService.getValueLong(Games.KHO_BAU.getName() + "_vin_100", 0);
             long khoBau1000 = cacheService.getValueLong(Games.KHO_BAU.getName() + "_vin_1000", 0);
@@ -3285,7 +3286,7 @@ public class LobbyModule extends BaseClientRequestHandler {
     private void broadcastMessageService() {
 
         String message = broadcastMessageService.toJson();
-        if(StringUtils.isEmpty(message)){
+        if (StringUtils.isEmpty(message)) {
             return;
         }
         BroadcastMessageMsg msg = new BroadcastMessageMsg();

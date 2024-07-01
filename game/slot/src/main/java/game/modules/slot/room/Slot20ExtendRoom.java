@@ -516,7 +516,7 @@ public class Slot20ExtendRoom extends SlotRoom {
         if (currentTime - this.lastTimeUpdatePotToRoom >= 1000L) {
             this.lastTimeUpdatePotToRoom = currentTime;
             try {
-                this.miniGameService.savePot(this.name, this.pot, this.huX2);
+                this.miniGameService.savePot(this.name, CACHE_JACK_POT_VALUE_SLOT + "_" + this.betValue + "_" + gameName, this.pot, this.huX2);
             } catch (IOException | InterruptedException | TimeoutException e) {
                 Debug.trace(this.gameName + ": update pot error ", e.getMessage());
             }

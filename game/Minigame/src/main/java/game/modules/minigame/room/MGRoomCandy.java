@@ -373,7 +373,7 @@ public class MGRoomCandy extends MGRoom {
             this.sendMessageToRoom(msg);
             this.lastTimeUpdatePotToRoom = currentTime;
             try {
-                this.mgService.savePot(this.name, this.pot, this.huX2);
+                this.mgService.savePot(this.name, CACHE_JACK_POT_VALUE_SLOT + "_" + this.betValue + "_" + gameName, this.pot, this.huX2);
             } catch (IOException | InterruptedException | TimeoutException e) {
                 Debug.trace((Object[]) new Object[]{"MINI POKER: update pot poker error ", e.getMessage()});
             }
