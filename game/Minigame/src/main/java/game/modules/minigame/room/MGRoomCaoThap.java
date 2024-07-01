@@ -404,7 +404,7 @@ public class MGRoomCaoThap extends MGRoom {
         msg.value = this.pot;
         this.sendMessageToRoom(msg);
         try {
-            sv.setValue(name, pot);
+            sv.setValue(CACHE_JACK_POT_VALUE_SLOT + "_" + this.betValue + "_" + gameName, pot);
             this.ctService.updatePotCaoThap(this.name, this.pot);
         } catch (IOException | InterruptedException | TimeoutException e) {
             Debug.trace((Object[]) new Object[]{"CAO THAP: update pot cao thap error ", e.getMessage()});

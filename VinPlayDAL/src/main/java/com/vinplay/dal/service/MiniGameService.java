@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  com.vinplay.vbee.common.response.BonusFundResponse
  */
@@ -26,6 +26,8 @@ public interface MiniGameService {
     public void saveFund(String var1, long var2) throws IOException, TimeoutException, InterruptedException;
 
     public void savePot(String var1, long var2, boolean var4) throws IOException, TimeoutException, InterruptedException;
+
+    public void savePot(String var1, String var11, long var2, boolean var4) throws IOException, TimeoutException, InterruptedException;
 
     public long getReferenceId(int var1) throws SQLException;
 
