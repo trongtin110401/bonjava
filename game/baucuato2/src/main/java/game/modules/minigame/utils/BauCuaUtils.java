@@ -40,9 +40,9 @@ public class BauCuaUtils {
     private static final String FORMAT_TOI_CHON_CA = "%s,\t%d,\t%d,\t%d,\t%d,\t%d,\t%s";
 
     public static void rewardToiChonCa() {
-        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-        SimpleDateFormat startTimeFormat = new SimpleDateFormat("dd-MM-yyyy 00:00:00");
-        SimpleDateFormat endTimeFormat = new SimpleDateFormat("dd-MM-yyyy 23:59:59");
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat startTimeFormat = new SimpleDateFormat("yyyy-MM-dd 00:00:00");
+        SimpleDateFormat endTimeFormat = new SimpleDateFormat("yyyy-MM-dd 23:59:59");
         Calendar cal = Calendar.getInstance();
         cal.add(5, -1);
         String yesterday = df.format(cal.getTime());

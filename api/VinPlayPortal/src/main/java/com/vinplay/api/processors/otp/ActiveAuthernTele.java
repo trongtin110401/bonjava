@@ -32,7 +32,7 @@ public class ActiveAuthernTele implements BaseProcessor<HttpServletRequest, Stri
             //chat id
             String userId = request.getParameter("u");
             Date d = new Date();
-            SimpleDateFormat sdfDate = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+            SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String strDate = sdfDate.format(d);
             String accessToken = token.split("-")[0];
             String nickname = token.split("-")[1];

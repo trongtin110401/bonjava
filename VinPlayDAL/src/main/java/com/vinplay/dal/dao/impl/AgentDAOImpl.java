@@ -982,7 +982,7 @@ public class AgentDAOImpl
         try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
             stmt = conn.prepareStatement(" UPDATE vinplay.log_tranfer_agent  SET top_ds = ?,      update_time = ?  WHERE trans_time = ?        AND nick_name_send = ?        AND nick_name_receive = ? ");
             stmt.setInt(1, Integer.parseInt(topds));
-            stmt.setString(2, DateTimeUtils.getCurrentTime((String) "dd-MM-yyyy HH:mm:ss"));
+            stmt.setString(2, DateTimeUtils.getCurrentTime((String) "yyyy-MM-dd HH:mm:ss"));
             stmt.setString(3, timeLog);
             stmt.setString(4, nickNameSend);
             stmt.setString(5, nickNameReceive);

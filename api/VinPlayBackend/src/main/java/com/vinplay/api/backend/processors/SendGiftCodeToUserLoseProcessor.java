@@ -119,7 +119,7 @@ public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServle
     public String genCode(int price, String giftCode) {
         LocalDate currentDate = LocalDate.now();
         LocalDate newDate = currentDate.plusDays(10);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String expirationTime = newDate.format(formatter);
         String createdDate = currentDate.format(formatter);
         GiftCodeServiceImpl service = new GiftCodeServiceImpl();

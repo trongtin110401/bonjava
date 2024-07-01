@@ -40,7 +40,7 @@ public class BauCuaDaoImpl
 implements BauCuaDao {
     @Override
     public void saveTransactionBauCua(TransactionBauCuaMsg msg) {
-        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String timeLog = df.format(new Date());
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection col = db.getCollection("bau_cua_transaction");
@@ -72,7 +72,7 @@ implements BauCuaDao {
 
     @Override
     public void saveTransactionBauCuaDetail(TransactionBauCuaDetailMsg msg) {
-        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String timeLog = df.format(new Date());
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection col = db.getCollection("bau_cua_transaction_detail");
@@ -96,7 +96,7 @@ implements BauCuaDao {
 
     @Override
     public void saveResultBauCua(ResultBauCuaMsg msg) {
-        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String timeLog = df.format(new Date());
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection col = db.getCollection("bau_cua_results");
@@ -130,14 +130,14 @@ implements BauCuaDao {
 
     @Override
     public void updateToiChonCa(ToiChonCaMsg msg) {
-        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String timeLog = df.format(new Date());
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection col = db.getCollection("bau_cua_toi_chon_ca");
         BasicDBObject conditions = new BasicDBObject();
         conditions.put("user_name", msg.username);
         BasicDBObject obj = new BasicDBObject();
-        SimpleDateFormat df2 = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd");
         String currentDate = df2.format(new Date());
         String startDate = String.valueOf(currentDate) + " 00:00:00";
         String endDate = String.valueOf(currentDate) + " 23:59:59";

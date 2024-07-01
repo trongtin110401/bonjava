@@ -202,7 +202,7 @@ public class GiftCodeDAOImpl
 
     @Override
     public boolean xuatGiftCode(final GiftCodeMessage msg) {
-        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         final String timeLog = df.format(new Date());
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         final MongoCollection giftCodeDB = db.getCollection("gift_code");
@@ -251,7 +251,7 @@ public class GiftCodeDAOImpl
 
     @Override
     public boolean genGiftCode(GiftCodeMessage msg) {
-        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String timeLog = df.format(new Date());
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection col = db.getCollection("gift_code_store");
@@ -306,7 +306,7 @@ public class GiftCodeDAOImpl
         final ArrayList results = new ArrayList();
         final GiftCodeUpdateResponse response = new GiftCodeUpdateResponse(false, "1001");
         FindIterable iterable = null;
-        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String updatetime = df.format(new Date());
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection col = db.getCollection("gift_code");
@@ -493,7 +493,7 @@ public class GiftCodeDAOImpl
     public synchronized List<SpecialGiftCode> GetSpecialGiftCodes() {
         final ArrayList results = new ArrayList();
         FindIterable iterable = null;
-        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection col = db.getCollection("special_gift_code");
         HashMap<String, Object> conditions = new HashMap<String, Object>();
@@ -523,7 +523,7 @@ public class GiftCodeDAOImpl
     public synchronized List<SpecialGiftCode> GetSpecialGiftCodesByQuery(int page, int page_size, String gift_code, long amount, String nick_name, int type) {
         final ArrayList results = new ArrayList();
         FindIterable iterable = null;
-        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection col = db.getCollection("special_gift_code");
         HashMap<String, Object> conditions = new HashMap<String, Object>();
@@ -677,7 +677,7 @@ public class GiftCodeDAOImpl
         final ArrayList results = new ArrayList();
         final GiftCodeUpdateResponse response = new GiftCodeUpdateResponse(false, "1001");
         FindIterable iterable = null;
-        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String updatetime = df.format(new Date());
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection col = db.getCollection("gift_code");
@@ -1745,7 +1745,7 @@ public class GiftCodeDAOImpl
 //        HashMap<String, String> conditions2 = new HashMap<String, String>();
         conditions2.put("user_name", nickName);
         BasicDBObject obj2 = new BasicDBObject();
-        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         Calendar cal1 = Calendar.getInstance();
         cal1.setTime(format.parse(stime));
         long count = 0L;
@@ -2112,7 +2112,7 @@ public class GiftCodeDAOImpl
                             UserModel users = service.getUserByNickName(nickName);
                             result.totalRecharge = users.getRechargeMoney();
                             result.phone = users.getMobile();
-                            result.createTime = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(users.getCreateTime());
+                            result.createTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(users.getCreateTime());
                         } else {
                             result.nickName = null;
                         }

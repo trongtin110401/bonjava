@@ -244,8 +244,8 @@ public class VippointUtils {
 
     public static List<Date> randomUnluckyTime(Date start, Date end) throws ParseException, SQLException {
         ArrayList<Date> unluckyTime = new ArrayList<Date>();
-        SimpleDateFormat format2 = new SimpleDateFormat("dd-MM-yyyy " + END_UNLUCKY_TIME);
-        SimpleDateFormat format3 = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        SimpleDateFormat format2 = new SimpleDateFormat("yyyy-MM-dd " + END_UNLUCKY_TIME);
+        SimpleDateFormat format3 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date now = new Date();
         Date endDay = format3.parse(format2.format(now));
         if (now.getTime() < endDay.getTime()) {
@@ -267,8 +267,8 @@ public class VippointUtils {
 
     public static List<Date> randomLuckyTime(Date start, Date end) throws ParseException, SQLException {
         ArrayList<Date> unluckyTime = new ArrayList<Date>();
-        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-        SimpleDateFormat format2 = new SimpleDateFormat("dd-MM-yyyy " + END_LUCKY_TIME);
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat format2 = new SimpleDateFormat("yyyy-MM-dd " + END_LUCKY_TIME);
         Date now = new Date();
         Date endDay = format.parse(format2.format(now));
         if (now.getTime() < endDay.getTime()) {
@@ -383,8 +383,8 @@ public class VippointUtils {
         VippointDaoImpl dao = new VippointDaoImpl();
         List<EventVPBonusModel> bonusList = dao.getEventVPBonus();
         HazelcastInstance client = HazelcastClientFactory.getInstance();
-        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-        SimpleDateFormat format2 = new SimpleDateFormat("dd-MM-yyyy 00:00:00");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat format2 = new SimpleDateFormat("yyyy-MM-dd 00:00:00");
         Date now = new Date();
         int dayRuned = (int)(format.parse(format2.format(now)).getTime() - format.parse(format2.format(START_TIME)).getTime()) / 86400000;
         if (dayRuned >= 0) {

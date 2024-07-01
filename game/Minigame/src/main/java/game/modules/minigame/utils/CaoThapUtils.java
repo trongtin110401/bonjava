@@ -177,8 +177,8 @@ public class CaoThapUtils {
 
     public static void reward() {
         try {
-            SimpleDateFormat startTimeFormat = new SimpleDateFormat("dd-MM-yyyy 00:00:00");
-            SimpleDateFormat endTimeFormat = new SimpleDateFormat("dd-MM-yyyy 23:59:59");
+            SimpleDateFormat startTimeFormat = new SimpleDateFormat("yyyy-MM-dd 00:00:00");
+            SimpleDateFormat endTimeFormat = new SimpleDateFormat("yyyy-MM-dd 23:59:59");
             Calendar cal = Calendar.getInstance();
             cal.add(5, -1);
             String startTime = startTimeFormat.format(cal.getTime());

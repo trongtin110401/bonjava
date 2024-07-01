@@ -222,7 +222,7 @@ implements TaiXiuDao {
 
     @Override
     public void logTanLoc(LogTanLocMessage message) {
-        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String timeLog = df.format(new Date());
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection col = db.getCollection("tan_loc");
@@ -236,7 +236,7 @@ implements TaiXiuDao {
 
     @Override
     public void logRutLoc(LogRutLocMessge message) {
-        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String timeLog = df.format(new Date());
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection col = db.getCollection("rut_loc");

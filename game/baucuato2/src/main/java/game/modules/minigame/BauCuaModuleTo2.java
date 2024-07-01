@@ -95,7 +95,7 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
         } catch (ParseException e) {
             Debug.trace("Calculate time reward Toi chon ca error ", e.getMessage());
         }
-        String msg = "Start MiniGame " + DateTimeUtils.getCurrentTime("HH-mm-ss dd-MM-yyyy");
+        String msg = "Start MiniGame " + DateTimeUtils.getCurrentTime("HH-mm-ss yyyy-MM-dd");
         GameUtils.sendAlert(msg);
     }
 

@@ -234,7 +234,7 @@ implements UserDao {
         doc.append("money_bonus", (Object)message.getMoneyBonus());
         doc.append("money_user", (Object)message.getMoneyUser());
         doc.append("money_type", (Object)message.getMoneyType());
-        doc.append("time_log", (Object)DateTimeUtils.getCurrentTime((String)"dd-MM-yyyy HH:mm:ss"));
+        doc.append("time_log", (Object)DateTimeUtils.getCurrentTime((String)"yyyy-MM-dd HH:mm:ss"));
         doc.append("create_time", VinPlayUtils.getCurrentDateTime());
         col.insertOne((Object)doc);
     }
@@ -336,7 +336,7 @@ implements UserDao {
             objsort.put("_id", -1);
             Document conditions = new Document();
             conditions.put("nick_name", (Object)nickname);
-            obj.put("$gte", (Object)DateTimeUtils.getFormatTime((String)"dd-MM-yyyy HH:mm:ss", (Date)DateTimeUtils.getStartTimeThisMonth()));
+            obj.put("$gte", (Object)DateTimeUtils.getFormatTime((String)"yyyy-MM-dd HH:mm:ss", (Date)DateTimeUtils.getStartTimeThisMonth()));
             obj.put("$lte", (Object)timeEnd);
             conditions.put("trans_time", (Object)obj);
             FindIterable iterable = null;

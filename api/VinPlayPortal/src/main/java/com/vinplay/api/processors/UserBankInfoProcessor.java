@@ -27,7 +27,7 @@ public class UserBankInfoProcessor
             response.setErrorCode("Thông tin không hợp lệ");
             return response.toJson();
         }
-        UserBankInfoDto userBankInfoDto = new UserBankInfoDto(nickName, bankAccount, bankName, accountName, DateTimeUtils.getCurrentTime((String) "dd-MM-yyyy HH:mm:ss"));
+        UserBankInfoDto userBankInfoDto = new UserBankInfoDto(nickName, bankAccount, bankName, accountName, DateTimeUtils.getCurrentTime((String) "yyyy-MM-dd HH:mm:ss"));
 
         UserServiceImpl service = new UserServiceImpl();
 

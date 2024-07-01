@@ -48,7 +48,7 @@ public class UserUtil {
         long quota = rs.getLong("manual_quota");
         String sCreateTime = rs.getString("create_time");
         String sSecurityTime = rs.getString("security_time");
-        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date createTime = null;
         Date securityTime = null;
         try {
@@ -85,7 +85,7 @@ public class UserUtil {
         int status = rs.getInt("status");
         String sCreateTime = rs.getString("create_time");
         Date createTime = null;
-        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         try {
             createTime = format.parse(sCreateTime);
         }
