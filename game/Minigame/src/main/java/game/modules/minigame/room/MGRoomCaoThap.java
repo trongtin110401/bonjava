@@ -94,6 +94,9 @@ public class MGRoomCaoThap extends MGRoom {
 
         this.baseBetValue = baseBetValue;
         this.usersCaoThap = new HashMap<String, CaoThapInfo>();
+
+        cacheService.setValue(CACHE_JACK_POT_VALUE_SLOT + "_" + this.betValue + "_" + gameName, pot);
+
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.timeLoopTask, 10, 5, TimeUnit.SECONDS);
     }
