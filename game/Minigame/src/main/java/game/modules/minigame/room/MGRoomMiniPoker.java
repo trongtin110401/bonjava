@@ -429,7 +429,7 @@ public class MGRoomMiniPoker extends MGRoom {
 
     private void saveFund() {
         long currentTime = System.currentTimeMillis();
-        if (currentTime - this.lastTimeUpdateFundToRoom >= 10000L) {
+        if (currentTime - this.lastTimeUpdateFundToRoom >= 3000L) {
             try {
                 this.mgService.saveFund(this.name, getFunValue());
             } catch (IOException | InterruptedException | TimeoutException e) {
