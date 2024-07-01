@@ -137,7 +137,7 @@ public class HallSlotModule extends BaseClientRequestHandler {
         try {
             int pot = cacheService.getValueInt(SlotRoom.CACHE_JACK_POT_VALUE_SLOT + "_" + room + "_" + gameName);
             jsonValue.put("p", pot);
-            int x2 = cacheService.getValueInt(gameName + "_vin_" + room + "_x2");
+            int x2 = cacheService.getValueInt(SlotRoom.CACHE_JACK_POT_VALUE_SLOT + "_" + room + "_" + gameName + "_x2");
             jsonValue.put("x2", x2);
         } catch (Exception e) {
         }

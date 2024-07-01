@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
@@ -33,6 +35,9 @@ public class LeaderboardController {
 
     @PostMapping
     public ResponseEntity add(@RequestBody LeaderboardParam param) {
+
+        System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
+
         leaderboardService.addScore(param);
         return new ResponseEntity(Response.builder()
                 .message("success")
