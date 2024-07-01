@@ -35,9 +35,6 @@ public class LeaderboardController {
 
     @PostMapping
     public ResponseEntity add(@RequestBody LeaderboardParam param) {
-
-        System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
-
         leaderboardService.addScore(param);
         return new ResponseEntity(Response.builder()
                 .message("success")
