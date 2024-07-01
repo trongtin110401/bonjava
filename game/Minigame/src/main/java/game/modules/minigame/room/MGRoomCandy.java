@@ -254,21 +254,21 @@ public class MGRoomCandy extends MGRoom {
                             }
 
 
-                            // Ki?m tra xem gi?i th??ng có L?N hay không.
-                            // L?n quá thì sinh l?i MATRIX k?t qu? k?o anh em NPH v? n?
+                            // Ki?m tra xem gi?i th??ng cï¿½ L?N hay khï¿½ng.
+                            // L?n quï¿½ thï¿½ sinh l?i MATRIX k?t qu? k?o anh em NPH v? n?
                             if (!forceNoHu) {
-                                // Trúng n? h? m?t cách ng?u nhiên nh?ng q?y th??ng l?i không ?? bù l?
+                                // Trï¿½ng n? h? m?t cï¿½ch ng?u nhiï¿½n nh?ng q?y th??ng l?i khï¿½ng ?? bï¿½ l?
                                 if (isGetJackpotNaturally && getFunValue() < initPotValue) {
                                     continue;
                                 }
-                                // Tuy không trúng JACKPOT nh?ng trúng Line to quá c?ng c?n sinh l?i MATRIX
+                                // Tuy khï¿½ng trï¿½ng JACKPOT nh?ng trï¿½ng Line to quï¿½ c?ng c?n sinh l?i MATRIX
                                 if (!isGetJackpotNaturally) {
                                     if ((totalPrizes - totalBetValue > 0 && totalPrizes > getFunValue()) || totalPrizes >= totalBetValue * 25)
                                         continue;
                                 }
                             }
 
-                            // ?i?u ki?n trúng th??ng ?ã th?a mãn, d?ng vòng l?p
+                            // ?i?u ki?n trï¿½ng th??ng ?ï¿½ th?a mï¿½n, d?ng vï¿½ng l?p
                             enoughPair = true;
                             if (totalPrizes > 0L) {
                                 if (result == 3) {
@@ -336,7 +336,7 @@ public class MGRoomCandy extends MGRoom {
         PokeGoUtils.log(referenceId, username, this.betValue, msg.matrix, result, this.moneyType, handleTime, ratioTime, currentTimeStr);
 
         // Update cache tien hu
-        cacheService.setValue(this.name, this.pot);
+//        cacheService.setValue(this.name, this.pot);
         cacheService.setValue(CACHE_JACK_POT_VALUE_SLOT + "_" + this.betValue + "_" + gameName, String.valueOf(this.pot));
 
         if (forceJackpotByUser) {

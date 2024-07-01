@@ -366,7 +366,7 @@ public class MGRoomMiniPoker extends MGRoom {
             result = ResultPoker.DAT_CUOC_KHONG_HOP_LE;
         }
 
-        sv.setValue(name, (int) pot);
+//        sv.setValue(name, (int) pot);
         sv.setValue(CACHE_JACK_POT_VALUE_SLOT + "_" + this.betValue + "_" + gameName, String.valueOf(this.pot));
 
         if (forceJackpotByUser) {
