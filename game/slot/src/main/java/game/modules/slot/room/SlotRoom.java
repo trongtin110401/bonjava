@@ -461,6 +461,7 @@ public abstract class SlotRoom {
     }
 
     protected void updateFunValue(long value) {
+        System.out.println("+++++++++++===========> " + gameName + " update fund: " + value);
         setFunValue(getFunValue() + value);
     }
 }
