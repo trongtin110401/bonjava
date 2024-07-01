@@ -73,10 +73,6 @@ public class Slot20ExtendRoom extends SlotRoom {
         this.gameName = gameName;
         this.cacheFreeSpinName = this.gameName + betValue;
 
-        // init jackpot value
-//        CacheServiceImpl cacheService = new CacheServiceImpl();
-//        cacheService.setValue(room, (int) pot);
-
         this.betValue = betValue;
         this.initJackpotValues = initJackpotValue;
 
@@ -338,7 +334,8 @@ public class Slot20ExtendRoom extends SlotRoom {
                                 }
                                 // Tuy không trúng JACKPOT nhưng trúng Line to quá cũng cần sinh lại MATRIX
                                 if (!isGetJackpotNaturally) {
-                                    if ((totalPrizes - totalBetValue > 0 && totalPrizes > getFunValue()) || totalPrizes >= totalBetValue * 25)
+//                                    if ((totalPrizes - totalBetValue > 0 && totalPrizes > getFunValue()) || totalPrizes >= totalBetValue * 25)
+                                    if ((totalPrizes - totalBetValue > 0 && totalPrizes > getFunValue()))
                                         continue;
                                 }
                             }
