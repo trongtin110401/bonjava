@@ -271,6 +271,7 @@ implements TaiXiuDao {
 
     @Override
     public boolean updateFund(UpdateFundMessage message) throws SQLException {
+        System.out.println("=============> updateFund " + message.fundName + ":" + message.newValue);
         boolean success = false;
         Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");
         CallableStatement call = null;
