@@ -1268,7 +1268,7 @@ public class XocDiaGameServer
             synchronized (map) {
                 MoneyResponse mnres;
                 XocDiaResult xdResult = new XocDiaResult();
-                xdResult.generateResult2(this.rsCheat, this.checkForceResult(), this.potList);
+                long tienChenhLechChuaTinhPhe = xdResult.generateResult2(this.rsCheat, this.checkForceResult(), this.potList);
                 List<Integer> dinces = xdResult.getDinces();
 
                 Iterator<Integer> iterator = dinces.iterator();
@@ -1313,9 +1313,6 @@ public class XocDiaGameServer
                 Map<String, TransactionXocDiaMessage> userToTransaction = new HashMap<>();
 
                 for (GamePot gPot : this.potList) {
-
-                    boolean isWin = gPot.isWin;
-                    double ratio = gPot.ratio;
 
                     // statistic for each user
                     for (Map.Entry<String, Long> entry : gPot.betMap.entrySet()) {
@@ -1413,7 +1410,7 @@ public class XocDiaGameServer
                 long moneyBankerBefore = 0L;
                 long moneyBankerAfter = 0L;
 
-                Debug.trace((Object[]) new Object[]{"T\u00ednh ti\u1ec1n nh\u00e0 c\u00e1i: " + this.bankerName + " " + moneyBankerExchange, this.roomId, this.gameId});
+                Debug.trace(new Object[]{"Tính tiền nhà cái: " + this.bankerName + " " + moneyBankerExchange, this.roomId, this.gameId});
                 ArrayList<SubBanker> subListMsg = new ArrayList<SubBanker>();
 
                 ArrayList<String> removeRW = new ArrayList();
@@ -1421,16 +1418,14 @@ public class XocDiaGameServer
                     GamePlayer gPlayer = this.getPlayer((String) entry.getKey());
                     RewardModel model = (RewardModel) entry.getValue();
                     if (model.moneyWin > 0L) {
-                        mnres = this.userService.updateMoney(gPlayer.user.getName(), model.moneyWin, "vin", "XocDia", "xoc dia : Tra thuong ", "Phi\u00ean " + this.gameId, model.fee, Long.valueOf(this.gameId), TransType.START_TRANS);
-                        ;
+                        mnres = this.userService.updateMoney(gPlayer.user.getName(), model.moneyWin, "vin", "XocDia", "xoc dia : Tra thuong ", "Phiên " + this.gameId, model.fee, Long.valueOf(this.gameId), TransType.START_TRANS);
                         this.totalFee += model.fee;
                         this.totalReveneu += model.moneyWin;
                         model.currentMoney = userService.getCurrentMoneyUserCache(gPlayer.user.getName(), "vin");
-                        ;
                         this.gameLog.append((String) entry.getKey()).append("/").append(model.moneyWin).append("/").append(mnres.getErrorCode()).append(";");
                         rewardMap.put((String) entry.getKey(), model);
                         this.setPlayer((String) entry.getKey(), gPlayer);
-                        Debug.trace((Object[]) new Object[]{"T\u00ednh ti\u1ec1n ng\u01b0\u1eddi ch\u01a1i: " + (String) entry.getKey() + " " + model.moneyWin, this.roomId, this.gameId});
+                        Debug.trace(new Object[]{"Tính tiền người chơi: " + (String) entry.getKey() + " " + model.moneyWin, this.roomId, this.gameId});
                         if (!gPlayer.isBot) {
                             totalFeeUser += model.fee;
                             totalRevenueUser += model.moneyWin - model.moneyBet;
@@ -1446,7 +1441,7 @@ public class XocDiaGameServer
                 if (this.moneyType == 1) {
                     BotXocDiaManager.instance().finishGame(this.roomId, this.gameId, totalFeeUser, totalRevenueUser);
                 }
-                this.gameLog.append("vinplay").append("/").append("Fee: ").append(this.totalFee).append(". Revenueu: ").append(this.totalReveneu).append("/").append("").append(";");
+                this.gameLog.append("vinplay").append("/").append("Fee: ").append(this.totalFee).append(". Revenue: ").append(this.totalReveneu).append("/").append("").append(";");
 
                 for (String nickname : removeRW) { // clean map reward
                     rewardMap.remove(nickname);
@@ -1457,6 +1452,20 @@ public class XocDiaGameServer
                 msg.rewardMap = rewardMap;
                 msg.subListMsg = subListMsg;
                 MsgUtils.sendToRoom(msg, this.playerList);
+
+                // calculate fund value and save to db
+                try {
+                    if (tienChenhLechChuaTinhPhe > 0) { // nhà cái thắng
+                        long value = tienChenhLechChuaTinhPhe - totalFeeUser;
+                        updateFunValue(value);
+                    } else if (tienChenhLechChuaTinhPhe < 0) { // nhà cái thua
+                        long value = tienChenhLechChuaTinhPhe + totalFeeUser;
+                        updateFunValue(value);
+                    }
+                    mgService.saveFund(Games.XOC_DIA.getName(), getFunValue());
+                } catch (Exception e) {
+                    Debug.trace(e);
+                }
             }
         } catch (Exception e) {
             String content = "Xoc Dia exception: " + e.getMessage() + ", function: reward() " + this.roomId + " " + this.gameId;
