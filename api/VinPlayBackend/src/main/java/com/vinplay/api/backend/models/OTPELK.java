@@ -14,7 +14,7 @@ public class OTPELK {
         try {
             Long create_time_2 = new Date().getTime();
             Date d = new Date(create_time_2);
-            SimpleDateFormat sdfDate = new SimpleDateFormat("dd-MM-yyyy");
+            SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd");
             String strDate = sdfDate.format(d);
             ArrayList<UserOTP> listActive;
             boolean check = false;

@@ -84,7 +84,7 @@ public class ReportMoneyUserProcessor
                 totalMoney = currentMoney + safeMoney;
                 Map<String, ReportMoneySystemModel> actions = new HashMap();
                 String today = VinPlayUtils.getCurrentDate();
-                SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                 Date st = format.parse(startTime);
                 Date et = format.parse(endTime);
                 Date currentDate = VinPlayUtils.getCurrentDates();
@@ -169,11 +169,11 @@ public class ReportMoneyUserProcessor
 
                 OtherService otherService = new OtherServiceImpl();
 
-                LocalDate dateStart = LocalDate.parse(startTime, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-                String sqlDateStart = dateStart.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+                LocalDate dateStart = LocalDate.parse(startTime, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                String sqlDateStart = dateStart.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
-                LocalDate dateEnd = LocalDate.parse(endTime, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-                String sqlDateEnd = dateEnd.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+                LocalDate dateEnd = LocalDate.parse(endTime, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                String sqlDateEnd = dateEnd.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
                 res.totalShootFishProfit = otherService.getTotalShootFishByNickname(sqlDateStart, sqlDateEnd, nickname);
 

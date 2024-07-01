@@ -189,7 +189,7 @@ public class SaveUserNhatVipProcess implements BaseProcessor<HttpServletRequest,
             System.out.println(taotienCheck);
             long create_time_2 = new Date().getTime();
             Date d = new Date(create_time_2);
-            SimpleDateFormat sdfDate = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+            SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String strDate = sdfDate.format(d);
             UserOTP uotp = new UserOTP(nickname, uname,phone, "666666", 1, create_time_2, create_time_2, 1, strDate);
             try {

@@ -12,8 +12,8 @@ import java.util.Date;
 import java.util.List;
 
 public class DateTimeUtils {
-    public static DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-    public static DateFormat df2 = new SimpleDateFormat("HH:mm:ss dd-MM-yyyy");
+    public static DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+    public static DateFormat df2 = new SimpleDateFormat("HH:mm:ss yyyy-MM-dd");
 
     public static Date getSundayEveryWeek() {
         Calendar c = Calendar.getInstance();
@@ -68,7 +68,7 @@ public class DateTimeUtils {
     }
 
     public static long getTimeToDayAsLong(String t) {
-        SimpleDateFormat df = new SimpleDateFormat(t + " dd-MM-yyyy");
+        SimpleDateFormat df = new SimpleDateFormat(t + " yyyy-MM-dd");
         String currentDate = df.format(new Date());
         try {
             return df2.parse(currentDate).getTime();
@@ -129,8 +129,8 @@ public class DateTimeUtils {
         Date firstDateOfPreviousMonth = aCalendar.getTime();
         aCalendar.set(5, aCalendar.getActualMaximum(5));
         Date lastDateOfPreviousMonth = aCalendar.getTime();
-        SimpleDateFormat startFormat = new SimpleDateFormat("dd-MM-yyyy 00;00:00");
-        SimpleDateFormat endFormat = new SimpleDateFormat("dd-MM-yyyy 23;59:59");
+        SimpleDateFormat startFormat = new SimpleDateFormat("yyyy-MM-dd 00;00:00");
+        SimpleDateFormat endFormat = new SimpleDateFormat("yyyy-MM-dd 23;59:59");
         String startTime = startFormat.format(firstDateOfPreviousMonth);
         String endTime = endFormat.format(lastDateOfPreviousMonth);
         String month = String.valueOf(aCalendar.get(2) + 1) + "/" + aCalendar.get(1);

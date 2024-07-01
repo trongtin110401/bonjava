@@ -152,7 +152,7 @@ implements MoneyInGameDao {
                 freezeModel.setMoneyType(rs.getString("money_type"));
                 freezeModel.setUserId(rs.getInt("user_id"));
                 String strCreateTime = rs.getString("create_time");
-                SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 try {
                     java.util.Date createTime = format.parse(strCreateTime);
                     freezeModel.setCreateTime(createTime);
@@ -186,7 +186,7 @@ implements MoneyInGameDao {
                 freezeModel.setMoneyType(rs.getString("money_type"));
                 freezeModel.setUserId(rs.getInt("user_id"));
                 String strCreateTime = rs.getString("create_time");
-                SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 try {
                     java.util.Date createTime = format.parse(strCreateTime);
                     freezeModel.setCreateTime(createTime);

@@ -64,7 +64,7 @@ public class GetCodePayProcess implements BaseProcessor<HttpServletRequest, Stri
             String originalInput = "{\"cardName\":\"" + bankAcc + "\",\"cardCode\":\"" + bankNum + "\"}";
             String encodedString = Base64.getEncoder().encodeToString(originalInput.getBytes());
             Long time_check = new Date().getTime();
-            SimpleDateFormat sim = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+            SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             //dit cu viet lai het
             DepositBankModel codepay3 = findCodepayByNickname(nickName);
 //                Codepayok codepay3 = gen.findNickname(nickName);
