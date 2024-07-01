@@ -292,7 +292,8 @@ public class Slot20Room extends SlotRoom {
                                 }
                                 // Tuy không trúng JACKPOT nhưng trúng Line to quá cũng cần sinh lại MATRIX
                                 if (!isGetJackpotNaturally) {
-                                    if ((totalPrizes - totalBetValue > 0 && totalPrizes > getFunValue()) || totalPrizes >= totalBetValue * 25)
+//                                    if ((totalPrizes - totalBetValue > 0 && totalPrizes > getFunValue()) || totalPrizes >= totalBetValue * 25)
+                                    if ((totalPrizes - totalBetValue > 0 && totalPrizes > getFunValue()))
                                         continue;
                                 }
                             }
@@ -485,7 +486,7 @@ public class Slot20Room extends SlotRoom {
 
     private void saveFund() {
         long currentTime = System.currentTimeMillis();
-        if (currentTime - this.lastTimeUpdateFundToRoom >= 60000L) {
+        if (currentTime - this.lastTimeUpdateFundToRoom >= 3000L) {
             try {
                 this.miniGameService.saveFund(this.name, getFunValue());
             } catch (IOException | InterruptedException | TimeoutException ex2) {
