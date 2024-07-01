@@ -91,7 +91,7 @@ public class MGRoomBauCua
     private static final byte NOT_ENOUGH_MONEY = 102;
 
     public MGRoomBauCua(String name, int minBetValue, byte moneyType, byte id, long fund) {
-        super(name, minBetValue, fund, moneyType);
+        super(Games.BAU_CUA.getName(), name, minBetValue, fund, moneyType);
         this.id = id;
         this.moneyType = moneyType;
         if (moneyType == 1) {

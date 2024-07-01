@@ -74,8 +74,8 @@ public class Slot25BasicRoom extends SlotRoom {
         this.cacheFreeSpinName = this.gameName + betValue;
 
         // init jackpot value
-        CacheServiceImpl cacheService = new CacheServiceImpl();
-        cacheService.setValue(room, (int) pot);
+//        CacheServiceImpl cacheService = new CacheServiceImpl();
+//        cacheService.setValue(room, (int) pot);
 
         this.betValue = betValue;
         this.initJackpotValues = initJackpotValue;

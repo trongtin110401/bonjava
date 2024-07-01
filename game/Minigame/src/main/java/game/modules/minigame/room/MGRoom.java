@@ -50,8 +50,9 @@ public abstract class MGRoom {
     protected short moneyType = 1;
     protected String moneyTypeStr;
 
-    public MGRoom(String name, int betValue, long fund, short moneyType) {
+    public MGRoom(String gameName, String name, int betValue, long fund, short moneyType) {
         this.name = name;
+        this.gameName = gameName;
         this.betValue = betValue;
         this.moneyType = moneyType;
         this.moneyTypeStr = moneyType == 1 ? "vin" : "xu";

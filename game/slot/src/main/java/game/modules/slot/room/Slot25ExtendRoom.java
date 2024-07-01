@@ -52,7 +52,6 @@ public class Slot25ExtendRoom extends SlotRoom {
 
     public Slot25ExtendRoom(SlotModule module, Slot25CommandCollection commandCollection, SlotLogListener logListener, String gameName, byte id, String room, short moneyType, long pot, long fund, int betValue, long initJackpotValue) {
 
-        // FORCE - R
         super(id, gameName, room, betValue, moneyType, pot, fund, initJackpotValue);
 
         this.module = module;
@@ -63,8 +62,8 @@ public class Slot25ExtendRoom extends SlotRoom {
         this.cacheFreeSpinName = this.gameName + betValue;
 
         // init jackpot value
-        CacheServiceImpl cacheService = new CacheServiceImpl();
-        cacheService.setValue(room, (int) pot);
+//        CacheServiceImpl cacheService = new CacheServiceImpl();
+//        cacheService.setValue(room, (int) pot);
 
         this.betValue = betValue;
         this.initJackpotValues = initJackpotValue;
