@@ -1919,12 +1919,12 @@ public class XocDiaGameServer
     }
 
     public long getFunValue() {
-        String key = Games.TAI_XIU.getName();
+        String key = Games.XOC_DIA.getName();
         return cacheService.getValueLong(key, 0);
     }
 
     public void setFunValue(long value) {
-        String key = Games.TAI_XIU.getName();
+        String key = Games.XOC_DIA.getName();
         cacheService.setValue(key, value);
     }
 
