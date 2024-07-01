@@ -632,7 +632,9 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return userList;
+
+        return userList.stream().filter(bauCuaUserInfomation -> bauCuaUserInfomation.getTotalBet() > 0)
+                .collect(Collectors.toList());
     }
 
     public List<UserBetModel> getUserXD(List<UserBetModel> userList, String boardName) {
