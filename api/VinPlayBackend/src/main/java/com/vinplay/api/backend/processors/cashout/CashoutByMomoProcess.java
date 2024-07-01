@@ -74,7 +74,7 @@ public class CashoutByMomoProcess implements BaseProcessor<HttpServletRequest, S
                 if (userWithdraw == null) {
                     return "";
                 }
-                if (!userWithdraw.Status.equals(CashoutUtil.STATUS_PENDING)) {
+                if (status.equals(CashoutUtil.STATUS_SENDING)) {
                     this.sendMesToAdmin(transid, 102);
                     CallAutoTransMomo callAutoTransMomo = new CallAutoTransMomo();
                     String output = callAutoTransMomo.CallAPI(userWithdraw); //Product
@@ -83,7 +83,7 @@ public class CashoutByMomoProcess implements BaseProcessor<HttpServletRequest, S
                     if (jsonObject.get("ex_stt").equals("-2.3")) {
                         this.sendMesToAdmin(transid, 3);
                     }
-                    return "";
+                    return "trues";
                 }
                 // update trans
                 boolean updateTrans = cashoutDao.UpdateCashoutMomo(transid, status, userAprrove);
