@@ -85,7 +85,7 @@ extends SlotRoom {
     private static final org.apache.log4j.Logger logger = Logger.getLogger((String)"slot");
 
     public MayBachRoom(MayBachModule module, byte id, String name, short moneyType, long pot, long fund, int betValue, long initPotValue) {
-        super(id, name, betValue, moneyType, pot, fund, initPotValue);
+        super(id, Games.RANGE_ROVER.getName(), name, betValue, moneyType, pot, fund, initPotValue);
         this.module = module;
         this.moneyType = moneyType;
         this.gameName = Games.MAYBACH.getName();

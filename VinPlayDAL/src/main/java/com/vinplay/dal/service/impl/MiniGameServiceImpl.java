@@ -56,15 +56,6 @@ public class MiniGameServiceImpl
         msg.fundName = fundName;
         msg.newValue = value;
         RMQApi.publishMessage((String) "queue_fund", (BaseMessage) msg, (int) 110);
-
-        if (value >= 100000) {
-            System.out.println(fundName + ":" + value);
-            StackTraceElement[] elements = Thread.currentThread().getStackTrace();
-            for (int i = 1; i < elements.length; i++) {
-                StackTraceElement s = elements[i];
-                System.out.println("\tat " + s.getClassName() + "." + s.getMethodName() + "(" + s.getFileName() + ":" + s.getLineNumber() + ")");
-            }
-        }
     }
 
     @Override

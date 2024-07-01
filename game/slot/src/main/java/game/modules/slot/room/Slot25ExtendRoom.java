@@ -53,7 +53,7 @@ public class Slot25ExtendRoom extends SlotRoom {
     public Slot25ExtendRoom(SlotModule module, Slot25CommandCollection commandCollection, SlotLogListener logListener, String gameName, byte id, String room, short moneyType, long pot, long fund, int betValue, long initJackpotValue) {
 
         // FORCE - R
-        super(id, room, betValue, moneyType, pot, fund, initJackpotValue);
+        super(id, gameName, room, betValue, moneyType, pot, fund, initJackpotValue);
 
         this.module = module;
         this.commandCollection = commandCollection;
