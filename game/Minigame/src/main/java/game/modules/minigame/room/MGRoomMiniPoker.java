@@ -117,7 +117,7 @@ public class MGRoomMiniPoker extends MGRoom {
         }
         this.pot = pot;
         CacheServiceImpl cacheService = new CacheServiceImpl();
-        cacheService.setValue(this.name, (int) pot);
+        cacheService.setValue(CACHE_JACK_POT_VALUE_SLOT + "_" + this.betValue + "_" + gameName, pot);
         this.betValue = baseBetValue;
         this.initPotValue = initPotValue;
 

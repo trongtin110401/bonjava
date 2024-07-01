@@ -95,7 +95,7 @@ public class MGRoomCandy extends MGRoom {
             pot = initPotValue;
         }
         this.pot = pot;
-        cacheService.setValue(name, this.pot);
+        cacheService.setValue(CACHE_JACK_POT_VALUE_SLOT + "_" + this.betValue + "_" + gameName, this.pot);
 
         this.betValue = betValue;
         this.initPotValue = initPotValue;
