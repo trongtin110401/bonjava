@@ -80,7 +80,7 @@ extends SlotRoom {
     private static final Logger logger = Logger.getLogger((String)"slot");
 
     public RollRoyRoom(RollRoyModule module, byte id, String name, short moneyType, long pot, long fund, int betValue, long initPotValue) {
-        super(id, name, betValue, moneyType, pot, fund, initPotValue);
+        super(id, Games.FAST_AND_FURIOUS.getName(), name, betValue, moneyType, pot, fund, initPotValue);
         this.gameName = Games.FAST_AND_FURIOUS.getName();
         this.cacheFreeSpinName = String.valueOf(this.gameName) + betValue;
         this.module = module;
