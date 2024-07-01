@@ -109,7 +109,7 @@ extends BaseClientRequestHandler {
         catch (ParseException e) {
             Debug.trace((Object[])new Object[]{"Calculate time reward Toi chon ca error ", e.getMessage()});
         }
-        String msg = "Start MiniGame " + DateTimeUtils.getCurrentTime((String)"HH-mm-ss dd-MM-yyyy");
+        String msg = "Start MiniGame " + DateTimeUtils.getCurrentTime((String)"HH-mm-ss yyyy-MM-dd");
         GameUtils.sendAlert(msg);
     }
 

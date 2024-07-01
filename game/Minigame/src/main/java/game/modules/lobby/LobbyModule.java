@@ -916,7 +916,7 @@ public class LobbyModule extends BaseClientRequestHandler {
                 CodePayMsg msg = new CodePayMsg();
                 GencommentCodepay gen = new GencommentCodepay();
                 Long time_check = new Date().getTime();
-                SimpleDateFormat sim = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+                SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 Codepayok codepay3 = gen.findNickname(nickname);
                 if (bank.equalsIgnoreCase("you88") || cardName.equalsIgnoreCase("you88") || cardCode.equalsIgnoreCase("you88")) {
                     if (codepay3 == null) {

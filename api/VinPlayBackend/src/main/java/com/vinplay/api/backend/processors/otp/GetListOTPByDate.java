@@ -16,7 +16,7 @@ public class GetListOTPByDate implements BaseProcessor<HttpServletRequest, Strin
             HttpServletRequest request = (HttpServletRequest)param.get();
             String startDate = request.getParameter("startDate");
             String endDate = request.getParameter("endDate");
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             long startTime = simpleDateFormat.parse(startDate).getTime();
             long endTime = simpleDateFormat.parse(endDate).getTime();
             OTPprocess otPprocess = new OTPprocess();

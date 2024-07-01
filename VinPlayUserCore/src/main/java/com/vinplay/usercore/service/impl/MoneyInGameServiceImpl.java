@@ -241,7 +241,7 @@ public class MoneyInGameServiceImpl
                     }
                 }
                 try {
-                    SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     String alertContent = "[THONG BAO] Dai ly " + agentLevel1 + " da dong bang " + money + " vin cua user " + nickReceive + ". Thuc hien luc: " + format.format(new Date());
                     AlertServiceImpl alertService = new AlertServiceImpl();
                     if (GameCommon.getValueStr("FREEZE_MONEY_GROUP_NUMBER").contains(",")) {

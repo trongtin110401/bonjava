@@ -38,8 +38,8 @@ public class ReportUserProcessor
         String timeEnd = request.getParameter("te");
 
 
-        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         LocalDate localDateStart = LocalDate.parse(timeStart, inputFormatter);
         LocalDate localDateEnd = LocalDate.parse(timeEnd, inputFormatter);

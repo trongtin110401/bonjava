@@ -25,7 +25,7 @@ public class ServerInfoServiceImpl
 implements ServerInfoService {
     @Override
     public void logCCU(int ccu, int ccuWeb, int ccuAD, int ccuIOS, int ccuWP, int ccuFB, int ccuDT, int ccuOT) {
-        String timestamp = DateTimeUtils.getCurrentTime((String)"dd-MM-yyyy HH:mm:ss");
+        String timestamp = DateTimeUtils.getCurrentTime((String)"yyyy-MM-dd HH:mm:ss");
         LogCCUMessage msg = new LogCCUMessage();
         msg.ccu = ccu;
         msg.ccuWeb = ccuWeb;

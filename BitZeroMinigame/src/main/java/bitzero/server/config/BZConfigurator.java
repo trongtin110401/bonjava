@@ -227,7 +227,7 @@ implements IConfigurator {
     private void makeBackup(String filePath) throws IOException {
         String basePath = FilenameUtils.getPath((String)filePath);
         String backupBasePath = FilenameUtils.concat((String)basePath, (String)"_backups");
-        DateTimeFormatter fmt = DateTimeFormat.forPattern((String)"dd-MM-yyyy-HH-mm-ss");
+        DateTimeFormatter fmt = DateTimeFormat.forPattern((String)"yyyy-MM-dd-HH-mm-ss");
         String backupId = new DateTime().toString(fmt);
         String backupFileName = FilenameUtils.concat((String)backupBasePath, (String)(String.valueOf(backupId) + "__" + FilenameUtils.getName((String)filePath)));
         File sourceFile = new File(filePath);

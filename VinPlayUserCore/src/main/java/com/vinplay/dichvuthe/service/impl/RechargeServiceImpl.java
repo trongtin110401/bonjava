@@ -4451,7 +4451,7 @@ public class RechargeServiceImpl
                         String gameCode = arr[0].toUpperCase();
                         String nap = arr[1].toUpperCase();
                         String nickname = arr[2];
-                        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy'T'HH:mm:ss'Z'");
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
                         String timeRequest = VinPlayUtils.getDateTimeStr((Date) format.parse(requestTime));
                         long money = 0L;
                         String mobile = DvtUtils.revertMobile84To(msisdn);
@@ -4666,7 +4666,7 @@ public class RechargeServiceImpl
                     String[] arr = moMessage.trim().split(" ");
                     if (arr.length == 2) {
                         RechargeDaoImpl rcdao = new RechargeDaoImpl();
-                        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy'T'HH:mm:ss'Z'");
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
                         String timeRequest = VinPlayUtils.getDateTimeStr((Date) format.parse(requestTime));
                         String mobile = DvtUtils.revertMobile84To(msisdn);
                         long money = 0L;

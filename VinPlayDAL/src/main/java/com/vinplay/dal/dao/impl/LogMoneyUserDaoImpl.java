@@ -371,7 +371,7 @@ public class LogMoneyUserDaoImpl
             c.setTime(currentDate);
             c.add(Calendar.DATE, -7);
             Date currentDatePlusSeven = c.getTime();
-            DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             String strDate = dateFormat.format(currentDatePlusSeven);
             BasicDBObject obj = new BasicDBObject();
             obj.put("$gte", (Object) strDate);
@@ -911,7 +911,7 @@ public class LogMoneyUserDaoImpl
         try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
             stmt = conn.prepareStatement(" UPDATE vinplay.log_tranfer_agent  SET process = ?,      update_time = ?  WHERE trans_time = ?        AND nick_name_send = ?        AND nick_name_receive = ? ");
             stmt.setInt(1, Integer.parseInt(Status));
-            stmt.setString(2, DateTimeUtils.getCurrentTime((String) "dd-MM-yyyy HH:mm:ss"));
+            stmt.setString(2, DateTimeUtils.getCurrentTime((String) "yyyy-MM-dd HH:mm:ss"));
             stmt.setString(3, timeLog);
             stmt.setString(4, nickNameSend);
             stmt.setString(5, nickNameReceive);

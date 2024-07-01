@@ -43,7 +43,7 @@ implements BaseProcessor<byte[], Boolean> {
                 AgentCommissionModel commission = new AgentCommissionModel();
                 UserDaoImpl dao = new UserDaoImpl();
                 long fee = 0L;
-                String timeEnd = DateTimeUtils.getCurrentTime((String)"dd-MM-yyyy HH:mm:ss");
+                String timeEnd = DateTimeUtils.getCurrentTime((String)"yyyy-MM-dd HH:mm:ss");
                 if (agentCommMap.containsKey((Object)message.getNickname())) {
                     try {
                         if (Long.parseLong(message.getId()) < commission.getLastMessageId()) {

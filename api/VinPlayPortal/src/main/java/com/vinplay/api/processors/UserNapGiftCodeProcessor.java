@@ -56,7 +56,7 @@ public class UserNapGiftCodeProcessor
                 return response.toJson();
             }
 
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             Date expirationDate = dateFormat.parse(giftCodeDto.getExpirationTime());
             Date currentDate = new Date();
 

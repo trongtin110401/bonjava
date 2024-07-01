@@ -199,7 +199,7 @@ public class LogMoneyUserDaoImpl implements LogMoneyUserDao {
             stmt.setString(14, message.getDesReceive());
             stmt.setString(15, message.getSessionIdFreezeMoney());
             stmt.setString(16, message.getTransTime());
-            stmt.setString(17, DateTimeUtils.getCurrentTime((String) "dd-MM-yyyy HH:mm:ss"));
+            stmt.setString(17, DateTimeUtils.getCurrentTime((String) "yyyy-MM-dd HH:mm:ss"));
             stmt.executeUpdate();
             stmt.close();
         } catch (Exception e) {
