@@ -100,6 +100,7 @@ public abstract class SlotRoom {
         } catch (InterruptedException | TimeoutException | IOException ignored) {
         }
 
+        System.out.println("===============> " + gameName + " init fund: " + fun);
         setFunValue(fun);
     }
 
