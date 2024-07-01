@@ -315,7 +315,7 @@ public class MGRoomMiniPoker extends MGRoom {
                                 if (forceNoHu) {
                                     try {
                                         this.pot = this.initPotValue;
-                                        updateFunValue(-initPotValue);
+                                        if (!u.isBot()) updateFunValue(-initPotValue);
                                         sv.removeKey(CACHE_NAME_USER_SPOT + this.gameName);
                                         sv.removeKey(CACHE_BET_VALUE_SLOT + this.gameName);
                                     } catch (Exception exception) {
