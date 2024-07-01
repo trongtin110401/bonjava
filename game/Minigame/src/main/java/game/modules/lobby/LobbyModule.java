@@ -2632,13 +2632,13 @@ public class LobbyModule extends BaseClientRequestHandler {
             long caoThap500000 = cacheService.getValueLong(MGRoom.CACHE_JACK_POT_VALUE_SLOT + "_" + 500000 + "_" + Games.CAO_THAP.getName(), 0);
 
 
-            long miniPoker100 = cacheService.getValueLong(MGRoom.CACHE_JACK_POT_VALUE_SLOT + "_" + 1000 + "_" + Games.MINI_POKER.getName(), 0);
-            long miniPoker1000 = cacheService.getValueLong(MGRoom.CACHE_JACK_POT_VALUE_SLOT + "_" + 10000 + "_" + Games.MINI_POKER.getName(), 0);
-            long miniPoker10000 = cacheService.getValueLong(MGRoom.CACHE_JACK_POT_VALUE_SLOT + "_" + 100000 + "_" + Games.MINI_POKER.getName(), 0);
+            long miniPoker100 = cacheService.getValueLong(MGRoom.CACHE_JACK_POT_VALUE_SLOT + "_" + 100 + "_" + Games.MINI_POKER.getName(), 0);
+            long miniPoker1000 = cacheService.getValueLong(MGRoom.CACHE_JACK_POT_VALUE_SLOT + "_" + 1000 + "_" + Games.MINI_POKER.getName(), 0);
+            long miniPoker10000 = cacheService.getValueLong(MGRoom.CACHE_JACK_POT_VALUE_SLOT + "_" + 10000 + "_" + Games.MINI_POKER.getName(), 0);
 
             long pokeGo100 = cacheService.getValueLong(MGRoom.CACHE_JACK_POT_VALUE_SLOT + "_" + 1000 + "_" + Games.CANDY.getName(), 0);
             long pokeGo1000 = cacheService.getValueLong(MGRoom.CACHE_JACK_POT_VALUE_SLOT + "_" + 1000 + "_" + Games.CANDY.getName(), 0);
-            long pokeGo10000 = cacheService.getValueLong(MGRoom.CACHE_JACK_POT_VALUE_SLOT + "_" + 1000 + "_" + Games.CANDY.getName(), 0);
+            long pokeGo10000 = cacheService.getValueLong(MGRoom.CACHE_JACK_POT_VALUE_SLOT + "_" + 10000 + "_" + Games.CANDY.getName(), 0);
 
             long khoBau100 = cacheService.getValueLong(Games.KHO_BAU.getName() + "_vin_100", 0);
             long khoBau1000 = cacheService.getValueLong(Games.KHO_BAU.getName() + "_vin_1000", 0);
