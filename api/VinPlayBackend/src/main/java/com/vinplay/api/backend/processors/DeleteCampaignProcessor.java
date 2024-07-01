@@ -16,8 +16,8 @@ public class DeleteCampaignProcessor
         int id = Integer.parseInt(request.getParameter("id"));
         CampaignNameResponse response = new CampaignNameResponse(true, "0");
         GiftCodeServiceImpl service = new GiftCodeServiceImpl();
-        service.deleteCampaign(id);
-
+        boolean success  = service.deleteCampaign(id);
+        response.setSuccess(success);
         response.setCampaigns(service.getAllCampaign());
         return response.toJson();
 
