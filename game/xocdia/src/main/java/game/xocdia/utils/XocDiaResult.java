@@ -59,7 +59,7 @@ public class XocDiaResult {
         this.dinces.clear();
     }
 
-    public void generateResult2(List<Integer> rsCheat, XocDiaForceResult xdForce, Vector<GamePot> potList) {
+    public long generateResult2(List<Integer> rsCheat, XocDiaForceResult xdForce, Vector<GamePot> potList) {
 
         SetBauCuaKetqua setBauCuaKetqua = null;
 
@@ -87,16 +87,18 @@ public class XocDiaResult {
 
                     }
                     cacheService.setObject("BeCauXocDia", new SetBauCuaKetqua("auto", new byte[]{}));
+
+                    return tinhToanTienChechLech(potList);
                 } else {
-                    this.autoGenerateValue2(rsCheat, xdForce, potList);
+                    return this.autoGenerateValue2(rsCheat, xdForce, potList);
                 }
             } else {
-                this.autoGenerateValue2(rsCheat, xdForce, potList);
+                return this.autoGenerateValue2(rsCheat, xdForce, potList);
             }
 
         } catch (Exception e) {
             Debug.trace((Object) e);
-            this.autoGenerateValue2(rsCheat, xdForce, potList);
+            return this.autoGenerateValue2(rsCheat, xdForce, potList);
         }
     }
 
@@ -117,11 +119,10 @@ public class XocDiaResult {
         }
     }
 
-    public void autoGenerateValue2(List<Integer> rsCheat, XocDiaForceResult xdForce, Vector<GamePot> potList) {
+    public long autoGenerateValue2(List<Integer> rsCheat, XocDiaForceResult xdForce, Vector<GamePot> potList) {
         // tinh toan hu
         long fund = 0;
         try {
-//            String hu_tx = cacheService.getValueStr("fund_xd_auto");
             fund = getFunValue();
         } catch (Exception e) {
             cacheService.setValue("min_fund_xd_auto", 0);
@@ -152,12 +153,7 @@ public class XocDiaResult {
             }
         }
 
-        try {
-            updateFunValue(benefit);
-            mgService.saveFund(Games.XOC_DIA.getName(), getFunValue());
-        } catch (Exception e) {
-            Debug.trace(e);
-        }
+        return benefit;
     }
 
     public static ArrayList<List<Integer>> listDicesRandom() {
@@ -202,7 +198,6 @@ public class XocDiaResult {
 
     public long tinhToanTienChechLech(Vector<GamePot> potList) {
         try {
-            long chenhLechTien = 0;
             long totalLai = 0;
             long totalLo = 0;
             List<Byte> listWin = getPotsWin();
