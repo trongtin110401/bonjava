@@ -79,9 +79,9 @@ public abstract class SlotRoom {
 
     protected Random random = new Random();
 
-    public SlotRoom(byte id, String gameName, String room, int betValue, short moneyType, long pot, long fun, long initPotValue) {
+    public SlotRoom(byte id, String gamename, String room, int betValue, short moneyType, long pot, long fun, long initPotValue) {
         this.id = id;
-        this.gameName = gameName;
+        this.gameName = gamename;
         this.name = room;
         this.betValue = betValue;
         this.moneyType = moneyType;
