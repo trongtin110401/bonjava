@@ -104,14 +104,6 @@ public abstract class SlotRoom {
         setFunValue(fun);
     }
 
-    private void saveFund() {
-        try {
-            this.miniGameService.saveFund(this.name, getFunValue());
-        } catch (IOException | InterruptedException | TimeoutException e) {
-            Debug.trace(this.gameName + ": update fund error ", e.getMessage());
-        }
-    }
-
     /*
      * WARNING - Removed try catching itself - possible behaviour change.
      */
