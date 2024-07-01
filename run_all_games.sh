@@ -209,7 +209,7 @@ main() {
   runTaiXiuMd5
   runBauCuaTo2
   runXocDia
-  runSlot
+#  runSlot
 
   runTienLen
   runBacay
