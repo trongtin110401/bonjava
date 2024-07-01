@@ -51,7 +51,7 @@ public class BenleyRoom extends SlotRoom {
 
     public BenleyRoom(BentleyModule module, byte id, String gameName, short moneyType, long pot, long fund, int betValue, long initJackpotValue) {
 
-        super(id, gameName, betValue, moneyType, pot, fund, initJackpotValue);
+        super(id, Games.RANGE_ROVER.getName(), gameName, betValue, moneyType, pot, fund, initJackpotValue);
 
         this.module = module;
         this.moneyType = moneyType;

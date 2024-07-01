@@ -80,10 +80,10 @@ public class SpartanRoom
     private static final org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger((String) "slot");
 
     public SpartanRoom(SpartanModule module, byte id, String name, short moneyType, long pot, long fund, int betValue, long initPotValue) {
-        super(id, name, betValue, moneyType, pot, fund, initPotValue);
+        super(id, Games.TAMHUNG.getName(), name, betValue, moneyType, pot, fund, initPotValue);
         this.module = module;
         this.moneyType = moneyType;
-        this.gameName = Games.LADY_NIGHT.getName();
+        this.gameName = Games.TAMHUNG.getName();
         this.cacheFreeSpinName = String.valueOf(this.gameName) + betValue;
         CacheServiceImpl cacheService = new CacheServiceImpl();
         cacheService.setValue(name, (int) pot);

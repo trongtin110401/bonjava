@@ -88,7 +88,7 @@ public class TamHungRoom
     private static final org.apache.log4j.Logger logger = Logger.getLogger((String) "slot");
 
     public TamHungRoom(TamHungModule module, byte id, String name, short moneyType, long pot, long fund, int betValue, long initPotValue) {
-        super(id, name, betValue, moneyType, pot, fund, initPotValue);
+        super(id, Games.TAMHUNG.getName(), name, betValue, moneyType, pot, fund, initPotValue);
         this.gameName = Games.TAMHUNG.getName();
         this.cacheFreeSpinName = String.valueOf(this.gameName) + betValue;
         this.module = module;
@@ -224,14 +224,14 @@ public class TamHungRoom
 //                                    forceJackpotByUser = true;
 //                                }
 
-                                if (userForce.equals(username) && betValueCache.equals(String.valueOf(100))){
+                                if (userForce.equals(username) && betValueCache.equals(String.valueOf(100))) {
                                     forceNoHu = true;
                                     forceJackpotByUser = true;
                                 }
                             } else if (betValue == 1000) {
                                 soLanNoHu = ConfigGame.getIntValue(this.gameName + "_so_lan_no_hu_1000");
 //                                int nrd = 0;
-                                if (userForce.equals(username) && betValueCache.equals(String.valueOf(1000))){
+                                if (userForce.equals(username) && betValueCache.equals(String.valueOf(1000))) {
                                     forceNoHu = true;
                                     forceJackpotByUser = true;
                                 }
@@ -246,7 +246,7 @@ public class TamHungRoom
                             } else {
                                 soLanNoHu = ConfigGame.getIntValue(this.gameName + "_so_lan_no_hu_10000");
 //                                int nrd = 0;
-                                if (userForce.equals(username) && betValueCache.equals(String.valueOf(10000))){
+                                if (userForce.equals(username) && betValueCache.equals(String.valueOf(10000))) {
                                     forceNoHu = true;
                                     forceJackpotByUser = true;
                                 }
@@ -409,8 +409,8 @@ public class TamHungRoom
                             for (AwardsOnLine entry2 : awardsOnLines) {
                                 if (!forceNoHu && (entry2.getAward() == VQVAward.PENTA_JACKPOT || entry2.getAward() == VQVAward.QUADRA_JACKPOT || entry2.getAward() == VQVAward.TRIPLE_JACKPOT))
                                     continue block4;
-                                if(forceNoHu == false || forceJackpotByUser == false){
-                                    if((entry2.getAward() == VQVAward.PENTA_JACKPOT || entry2.getAward() == VQVAward.QUADRA_JACKPOT || entry2.getAward() == VQVAward.TRIPLE_JACKPOT)){
+                                if (forceNoHu == false || forceJackpotByUser == false) {
+                                    if ((entry2.getAward() == VQVAward.PENTA_JACKPOT || entry2.getAward() == VQVAward.QUADRA_JACKPOT || entry2.getAward() == VQVAward.TRIPLE_JACKPOT)) {
                                         continue block4;
                                     }
                                 }
@@ -610,9 +610,9 @@ public class TamHungRoom
         long handleTime = endTime - startTime;
         String ratioTime = CommonUtils.getRatioTime((long) handleTime);
         //Update cache tien hu
-        cacheService.setValue(CACHE_JACK_POT_VALUE_SLOT + "_" + this.betValue + "_"  + this.gn , String.valueOf(this.pot));
+        cacheService.setValue(CACHE_JACK_POT_VALUE_SLOT + "_" + this.betValue + "_" + this.gn, String.valueOf(this.pot));
         if (forceJackpotByUser) {
-            this.sendNotifyNoHu(username, (byte) 1, msg.prize,"TAMHUNG");
+            this.sendNotifyNoHu(username, (byte) 1, msg.prize, "TAMHUNG");
         }
         return msg;
     }

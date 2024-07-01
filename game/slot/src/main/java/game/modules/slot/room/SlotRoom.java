@@ -79,28 +79,24 @@ public abstract class SlotRoom {
 
     protected Random random = new Random();
 
-    public SlotRoom(byte id, String name, int betValue, short moneyType, long pot, long fun, long initPotValue) {
+    public SlotRoom(byte id, String gameName, String room, int betValue, short moneyType, long pot, long fun, long initPotValue) {
         this.id = id;
-        this.name = name;
+        this.gameName = gameName;
+        this.name = room;
         this.betValue = betValue;
         this.moneyType = moneyType;
         this.pot = pot;
-        cacheService.setValue(CACHE_JACK_POT_VALUE_SLOT + name, pot);
         this.initJackpotValues = initPotValue;
         this.moneyTypeStr = this.moneyType == 1 ? "vin" : "xu";
         try {
-            this.countHu = this.cacheService.getValueInt(name + "_count_hu");
-            this.countNoHuX2 = this.cacheService.getValueInt(name + "_count_no_hu_x2");
+            this.countHu = this.cacheService.getValueInt(room + "_count_hu");
+            this.countNoHuX2 = this.cacheService.getValueInt(room + "_count_no_hu_x2");
             this.calculatHuX2();
         } catch (KeyNotFoundException keyNotFoundException) {
             // empty catch block
         }
-        try {
-            this.miniGameService.savePot(name, pot, this.huX2);
-        } catch (InterruptedException | TimeoutException | IOException ignored) {
-        }
 
-        System.out.println("===============> " + gameName + " init fund: " + fun);
+        cacheService.setValue(CACHE_JACK_POT_VALUE_SLOT + room, pot);
         setFunValue(fun);
     }
 
@@ -449,12 +445,10 @@ public abstract class SlotRoom {
 
     protected void setFunValue(long value) {
         String key = gameName + "_" + moneyTypeStr + "_" + betValue;
-        System.out.println("+++++++++++===========> " + gameName + " set fund: " + value);
         cacheService.setValue(key, value);
     }
 
     protected void updateFunValue(long value) {
-        System.out.println("+++++++++++===========> " + gameName + " update fund: " + value);
         setFunValue(getFunValue() + value);
     }
 }

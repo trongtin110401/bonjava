@@ -57,7 +57,7 @@ public class AuditionRoom
     private int countNoHu = 0;
 
     public AuditionRoom(AuditionModule module, byte id, String name, short moneyType, long pot, long fund, int betValue, long initPotValue) {
-        super(id, name, betValue, moneyType, pot, fund, initPotValue);
+        super(id, Games.RANGE_ROVER.getName(), name, betValue, moneyType, pot, fund, initPotValue);
         this.gameName = Games.LIEN_MINH.getName();
         this.module = module;
         this.moneyTypeStr = this.moneyType == 1 ? "vin" : "xu";
