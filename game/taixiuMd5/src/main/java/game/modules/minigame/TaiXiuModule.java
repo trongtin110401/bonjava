@@ -114,18 +114,15 @@ public class TaiXiuModule extends BaseClientRequestHandler {
     private int amountBotTaiFake = 0;
     private int amountBotXiuFake = 0;
 
-    public static long fundTxMD5;
-
     protected MiniGameService miniGameService = new MiniGameServiceImpl();
 
     ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(8);
 
     public void init() {
         try {
-            fundTxMD5 = miniGameService.getFund(Games.TAI_XIU_MD5.getName());
-            cacheService.setValue("fund_tx_md5_auto", fundTxMD5);
-        } catch (Exception e) {
-            fundTxMD5 = 0;
+            long fundTxMD5 = miniGameService.getFund(Games.TAI_XIU_MD5.getName());
+            cacheService.setValue(Games.TAI_XIU_MD5.getName(), fundTxMD5);
+        } catch (Exception ignored) {
         }
 
         TaiXiuChatMsg taiXiuChatMsg = new TaiXiuChatMsg();
@@ -449,17 +446,10 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                 case 65: {
                     try {
                         this.startNewRoundTX();
-                        long updateFund = 0;
-                        try {
-                            updateFund = Long.parseLong(cacheService.getValueStr("update_fund_tx_md5_auto"));
-                        } catch (Exception e) {
-                            updateFund = 0;
-                        }
-                        finally {
-                            cacheService.setValue("update_fund_tx_md5_auto",0);
-                        }
-                        fundTxMD5 += updateFund;
-                        mgService.saveFund(Games.TAI_XIU_MD5.getName(), fundTxMD5);
+
+                        mgService.saveFund(Games.TAI_XIU_MD5.getName(), getFunValue());
+
+
                         amountBotTaiFake = 0;
                         amountBotXiuFake = 0;
                         this.count = 0;
@@ -501,84 +491,105 @@ public class TaiXiuModule extends BaseClientRequestHandler {
 
 
     private void generateTaiXiuDicesMD5(MGRoomTaiXiu roomTXVin) {
-        String keyBeCang = "auto";
-        try {
-            keyBeCang = cacheService.getValueStr("tai_xiu_be_cang_md5");
+        while (true) {
+            String keyBeCang = "auto";
+            try {
+                keyBeCang = cacheService.getValueStr("tai_xiu_be_cang_md5");
 
-        } catch (Exception r) {
-            sendLogToTele(r.getMessage());
-            Debug.info("Loi get key becang");
-        }
-        if ("tai".equals(keyBeCang)) {
-            this.forceBetSide = 1;
-        } else if ("xiu".equals(keyBeCang)) {
-            this.forceBetSide = 0;
-        } else {
-            this.forceBetSide = -1;
-        }
-        cacheService.setValue("tai_xiu_be_cang_md5", "auto");
-
-        short[] dices = new short[3];
-
-        // can thiep be cau
-        if (forceBetSide != -1) {
-            dices = this.generationTX.generateResult(this.forceBetSide);
-            String result = generationTX.buildResultText(dices);
-            roomTXVin.resultTX.setPlantTextResult(result);
-        } else {
-            dices[0] = (short) roomTXVin.resultTX.dice1;
-            dices[1] = (short) roomTXVin.resultTX.dice2;
-            dices[2] = (short) roomTXVin.resultTX.dice3;
-        }
-
-        this.resetForceBalance();
-        short total = (short) (dices[0] + dices[1] + dices[2]);
-        this.result = total > 10 ? (short) 1 : 0;
-
-        /**
-         * Show ket qua ra man
-         */
-        roomTXVin.updateResultDices(dices, this.result);
-        ResultTaiXiuMd5 resultTX = roomTXVin.resultTX;
-        resultTX.referenceId = this.referenceTaiXiuId;
-        resultTX.result = this.result;
-        resultTX.dice1 = dices[0];
-        resultTX.dice2 = dices[1];
-        resultTX.dice3 = dices[2];
-        Debug.trace("GENERATE RESULT DICES: " + dices[0] + " - " + dices[1] + " - " + dices[2] + "   " + this.result);
-        this.lichSuPhienTX.add(resultTX);
-        if (this.lichSuPhienTX.size() > 120) {
-            this.lichSuPhienTX.remove(0);
-        }
-
-        short typeBet = 1;
-        //tinh toan chenh lenh user that
-        List<TaiXiuAdmin> contributors = this.getRoomTX(typeBet).getListTransaction();
-        long totalRealBetTai = 0;
-        long totalRealBetXiu = 0;
-        for (TaiXiuAdmin taiXiuAdmin : contributors) {
-            if (taiXiuAdmin.getCuaDat() == 0) {
-                //bet xiu
-                totalRealBetXiu += taiXiuAdmin.getMoney();
-            } else if (taiXiuAdmin.getCuaDat() == 1) {
-                // bet tai
-                totalRealBetTai += taiXiuAdmin.getMoney();
+            } catch (Exception r) {
+                sendLogToTele(r.getMessage());
+                Debug.info("Loi get key becang");
             }
-        }
-        try {
-            if (this.result == 1) {
-                //ve tai
-                fundTxMD5 += totalRealBetXiu - totalRealBetTai;
+            if ("tai".equals(keyBeCang)) {
+                this.forceBetSide = 1;
+            } else if ("xiu".equals(keyBeCang)) {
+                this.forceBetSide = 0;
             } else {
-                //ve xiu
-                fundTxMD5 += totalRealBetTai - totalRealBetXiu;
+                this.forceBetSide = -1;
             }
-            cacheService.setValue("fund_tx_md5_auto", String.valueOf(fundTxMD5));
-        } catch (Exception e) {
-            cacheService.setValue("fund_tx_md5_auto", (int) fundTxMD5);
-        }
+            cacheService.setValue("tai_xiu_be_cang_md5", "auto");
 
+            short[] dices = new short[3];
+
+            // can thiep be cau
+            if (forceBetSide != -1) {
+                dices = this.generationTX.generateResult(this.forceBetSide);
+                String result = generationTX.buildResultText(dices);
+                roomTXVin.resultTX.setPlantTextResult(result);
+            } else { // khong can thiep
+
+                short typeBet = 1;
+                // tinh toan chenh lenh user that
+                List<TaiXiuAdmin> contributors = this.getRoomTX(typeBet).getListTransaction();
+                long totalRealBetTai = 0;
+                long totalRealBetXiu = 0;
+                for (TaiXiuAdmin taiXiuAdmin : contributors) {
+                    if (taiXiuAdmin.getCuaDat() == 0) {
+                        //bet xiu
+                        totalRealBetXiu += taiXiuAdmin.getMoney();
+                    } else if (taiXiuAdmin.getCuaDat() == 1) {
+                        // bet tai
+                        totalRealBetTai += taiXiuAdmin.getMoney();
+                    }
+                }
+
+                // ve tai
+                long chenhLech = 0;
+                if (this.result == 1) {
+                    // ve tai
+                    chenhLech = totalRealBetXiu - totalRealBetTai;
+                } else { // ve xiu
+                    chenhLech = totalRealBetTai - totalRealBetXiu;
+                }
+
+
+                // Can thiep be cang
+                if (chenhLech > 0) {
+                    // neu ma hu am
+                    if (getFunValue() - chenhLech < 0) {
+                        // Hũ đang bị âm => Tiến hành bẻ càng tài xỉu
+                        if (totalRealBetTai > totalRealBetXiu) {
+                            keyBeCang = "xiu";
+                            this.forceBetSide = 0;
+                        } else {
+                            keyBeCang = "tai";
+                            this.forceBetSide = 1;
+                        }
+                    }
+
+                    dices = this.generationTX.generateResult(this.forceBetSide);
+                }
+                // Ngau nhien khong can thiep
+                else {
+                    dices[0] = (short) roomTXVin.resultTX.dice1;
+                    dices[1] = (short) roomTXVin.resultTX.dice2;
+                    dices[2] = (short) roomTXVin.resultTX.dice3;
+                }
+            }
+
+            this.resetForceBalance();
+            short total = (short) (dices[0] + dices[1] + dices[2]);
+            this.result = total > 10 ? (short) 1 : 0;
+
+            /**
+             * Show ket qua ra man
+             */
+            roomTXVin.updateResultDices(dices, this.result);
+            ResultTaiXiuMd5 resultTX = roomTXVin.resultTX;
+            resultTX.referenceId = this.referenceTaiXiuId;
+            resultTX.result = this.result;
+            resultTX.dice1 = dices[0];
+            resultTX.dice2 = dices[1];
+            resultTX.dice3 = dices[2];
+            Debug.trace("GENERATE RESULT DICES: " + dices[0] + " - " + dices[1] + " - " + dices[2] + "   " + this.result);
+            this.lichSuPhienTX.add(resultTX);
+            if (this.lichSuPhienTX.size() > 120) {
+                this.lichSuPhienTX.remove(0);
+            }
+
+        }
     }
+
 
     private void getLichSuPhienTX(User user) {
         LichSuPhienMsg msg = new LichSuPhienMsg();
@@ -777,6 +788,24 @@ public class TaiXiuModule extends BaseClientRequestHandler {
      */
     public void sendLogToTele(String log) {
 
+    }
+
+    public long getFunValue() {
+        String key = Games.TAI_XIU_MD5.getName();
+        return cacheService.getValueLong(key, 0);
+    }
+
+    public void setFunValue(long value) {
+        String key = Games.TAI_XIU_MD5.getName();
+        cacheService.setValue(key, value);
+    }
+
+    public void updateFunValue(long value) {
+        setFunValue(getFunValue() + value);
+    }
+
+    public void updateFund() throws Exception {
+        miniGameService.saveFund(Games.TAI_XIU_MD5.getName(), getFunValue());
     }
 }
 
