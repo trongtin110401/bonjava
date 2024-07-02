@@ -34,6 +34,7 @@ public class GetListUserWinByDayProcessor implements BaseProcessor<HttpServletRe
         List<LogUserMoneyResponse> list = dao.getLogMoneyUser(timeStart, timeEnd);
 
         List<UserLoseByDay> userLoseByDays = list.stream()
+                .filter(log -> !"Admin".equals(log.getServiceName())) // Ignore entries with serviceName = "Admin"
                 .collect(Collectors.groupingBy(LogUserMoneyResponse::getNickName,
                         Collectors.summingLong(LogUserMoneyResponse::getMoneyExchange)))
                 .entrySet().stream()
