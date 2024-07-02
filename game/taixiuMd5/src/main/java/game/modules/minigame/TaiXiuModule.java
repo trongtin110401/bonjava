@@ -537,9 +537,9 @@ public class TaiXiuModule extends BaseClientRequestHandler {
             long chenhLech = 0;
             if (this.result == 1) {
                 // ve tai
-                chenhLech = totalRealBetXiu - totalRealBetTai;
-            } else { // ve xiu
                 chenhLech = totalRealBetTai - totalRealBetXiu;
+            } else { // ve xiu
+                chenhLech = totalRealBetXiu - totalRealBetTai;
             }
 
 
@@ -755,7 +755,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
 
         @Override
         public void run() {
-            Debug.trace("Call SendMessageToTXThread " + this.all);
+//            Debug.trace("Call SendMessageToTXThread " + this.all);
             if (this.all) {
                 TaiXiuModule.this.sendMessageToAllUsers(this.msg);
             } else {
