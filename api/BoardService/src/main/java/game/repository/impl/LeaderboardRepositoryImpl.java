@@ -27,7 +27,7 @@ public class LeaderboardRepositoryImpl implements LeaderboardRepository {
     @PostConstruct
     public void construct() {
         Config config = new Config();
-        config.useSingleServer().setAddress(redisHost);
+        config.useSingleServer().setAddress(redisHost).setPassword("hiBONwin");
         redissonClient = Redisson.create(config);
     }
 
