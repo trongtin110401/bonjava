@@ -20,6 +20,9 @@ public class UserClientInfo {
     private int appSecure;
     private int id;
 
+    public UserClientInfo() {
+    }
+
     public UserClientInfo(String nickname, String avatar, long vinTotal, long xuTotal, int vippoint, int vippointSave, String createTime, String ipAddress, boolean certificate, int luckyRotate, int daiLy, int mobileSecure, String birthday, int appSecure) {
         this.nickname = nickname;
         this.avatar = avatar;
@@ -140,10 +143,12 @@ public class UserClientInfo {
     public void setLuckyRotate(int luckyRotate) {
         this.luckyRotate = luckyRotate;
     }
+
     public void setAppSecure(int appSecure) {
         this.appSecure = appSecure;
     }
-    public int getAppSecure(){
+
+    public int getAppSecure() {
         return this.appSecure;
     }
 
