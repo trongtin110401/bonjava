@@ -258,8 +258,8 @@ extends BaseClientRequestHandler {
         }
         boolean allow = true;
         int minVPRequire = ConfigGame.getIntValue("chat_min_vp_require", 20);
-        int vipPointSave = this.userService.getVipPointSave(username);
-        if (vipPointSave < minVPRequire) {
+        long vin = this.userService.getMoneyUser(username).getVin();
+        if (vin < minVPRequire) {
             allow = false;
         }
         if (0 < daiLy && daiLy < 100) {
