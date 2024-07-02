@@ -755,7 +755,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
 
         @Override
         public void run() {
-            Debug.trace("Call SendMessageToTXThread " + this.all);
+//            Debug.trace("Call SendMessageToTXThread " + this.all);
             if (this.all) {
                 TaiXiuModule.this.sendMessageToAllUsers(this.msg);
             } else {
