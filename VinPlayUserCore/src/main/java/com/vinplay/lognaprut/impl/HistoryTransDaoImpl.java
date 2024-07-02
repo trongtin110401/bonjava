@@ -156,8 +156,8 @@ public class HistoryTransDaoImpl implements HistoryTransDao {
 
             });
 
-            response.setListTrans(records);
-            response.setTotalpage(Math.toIntExact(num.get(0)));
+            int totalPages = (int) Math.ceil((double) Math.toIntExact(num.get(0)) / 5);
+            response.setTotalpage(totalPages);
             return response;
 
 
@@ -207,8 +207,8 @@ public class HistoryTransDaoImpl implements HistoryTransDao {
 
             });
 
-            response.setListTrans(records);
-            response.setTotalpage(Math.toIntExact(num.get(0)));
+            int totalPages = (int) Math.ceil((double) Math.toIntExact(num.get(0)) / 5);
+            response.setTotalpage(totalPages);
             return response;
 
 
@@ -259,7 +259,8 @@ public class HistoryTransDaoImpl implements HistoryTransDao {
             });
 
             response.setListTrans(records);
-            response.setTotalpage(Math.toIntExact(num.get(0)));
+            int totalPages = (int) Math.ceil((double) Math.toIntExact(num.get(0)) / 5);
+            response.setTotalpage(totalPages);
             return response;
 
 
@@ -310,7 +311,8 @@ public class HistoryTransDaoImpl implements HistoryTransDao {
             });
 
             response.setListTrans(records);
-            response.setTotalpage(Math.toIntExact(num.get(0)));
+            int totalPages = (int) Math.ceil((double) Math.toIntExact(num.get(0)) / 5);
+            response.setTotalpage(totalPages);
             return response;
 
 
