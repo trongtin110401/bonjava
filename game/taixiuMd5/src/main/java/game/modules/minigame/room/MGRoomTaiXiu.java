@@ -316,6 +316,9 @@ public class MGRoomTaiXiu extends MGRoom {
         Debug.trace("resultTX {}", this.resultTX);
 
         // Tính toán tiền thắng thua trong game
+        // tổng tiền hợp lệ cửa tài
+        long tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon = 0;
+        long tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon = 0;
         switch (this.result) {
             case 0: {
                 if (potX != null && potX.contributors != null) {
@@ -328,6 +331,9 @@ public class MGRoomTaiXiu extends MGRoom {
 
                             // giải thưởng, hay nói cách khác là số tiền thắng
                             tran.prize = Math.round((long) ((float) tran.betValue * (100.0f - this.tax) / 100.0f) + tran.betValue);
+                            if (tran.userId != 0) {
+                                tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon += Math.round((long) ((float) tran.betValue * (100.0f - this.tax) / 100.0f));
+                            }
 
                             // Cộng dồn để tính tổng số tiền trả lại
                             rs.totalPrize += tran.prize;
@@ -343,7 +349,6 @@ public class MGRoomTaiXiu extends MGRoom {
 
                             // Update giao dịch
                             this.saveTransactionDetailTX(tran);
-                            if (!isBot(tran.username)) TaiXiuModule.fundTxMD5 -= tran.refund;
                         } catch (Exception e) {
                             Debug.trace((Object) ("Error calculate prize user " + tran.username + " error: " + e.getMessage()));
                         }
@@ -356,6 +361,10 @@ public class MGRoomTaiXiu extends MGRoom {
                     try {
                         if (tran.userId != 0) {
                             totalCashIn += tran.betValue;
+                        }
+
+                        if (tran.userId != 0) {
+                            tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon += tran.betValue;
                         }
 
                         // Tổng tiền lỗ lãi
@@ -380,6 +389,11 @@ public class MGRoomTaiXiu extends MGRoom {
                             }
 
                             tran.prize = Math.round((long) ((float) tran.betValue * (100.0f - this.tax) / 100.0f) + tran.betValue);
+
+                            if (tran.userId != 0) {
+                                tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon += Math.round((long) ((float) tran.betValue * (100.0f - this.tax) / 100.0f));
+                            }
+
                             rs.totalPrize += tran.prize;
                             if (tran.userId != 0) {
                                 totalCashOut += tran.prize;
@@ -391,7 +405,6 @@ public class MGRoomTaiXiu extends MGRoom {
 
                             // Update giao dịch
                             this.saveTransactionDetailTX(tran);
-                            if (!isBot(tran.username)) TaiXiuModule.fundTxMD5 -= tran.refund;
                         } catch (Exception e) {
                             Debug.trace((Object) ("Error calculate prize user " + tran.username + " error: " + e.getMessage()));
                         }
@@ -402,6 +415,10 @@ public class MGRoomTaiXiu extends MGRoom {
                     try {
                         if (tran.userId != 0) {
                             totalCashIn += tran.betValue;
+                        }
+
+                        if (tran.userId != 0) {
+                            tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon += tran.betValue;
                         }
 
                         // Tổng tiền lỗ lãi
@@ -486,6 +503,36 @@ public class MGRoomTaiXiu extends MGRoom {
             }
         } catch (Exception e) {
             logger.error("calculatePrize ex:" + e.getMessage());
+        }
+
+        // tính toán qũy
+        calculateFund(tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon, tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon);
+    }
+
+    /**
+     * Tính toán quỹ
+     *
+     * @param tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon tổng tiền trả thưởng của tài cửa user thật không bao gồm vốn
+     * @param tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon tổng tiền trả thưởng của xỉu cửa user thật không bao gồm vốn
+     */
+    private void calculateFund(long tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon, long tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon) {
+        try {
+            if (this.result == 1) { // cửa tài
+                if (tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon > tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon) {
+                    module.updateFunValue(-(tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon - tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon));
+                } else {
+                    module.updateFunValue((tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon - tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon));
+                }
+            } else { // cửa xỉu
+                if (tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon > tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon) {
+                    module.updateFunValue(-(tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon - tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon));
+                } else {
+                    module.updateFunValue((tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon - tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon));
+                }
+            }
+            this.module.updateFund();
+        } catch (Exception e) {
+            Debug.info(ExceptionUtils.getStackTrace(e));
         }
     }
 

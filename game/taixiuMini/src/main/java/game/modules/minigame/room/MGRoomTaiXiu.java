@@ -522,8 +522,8 @@ public class MGRoomTaiXiu
         ResultTaiXiu rs = this.resultTX;
 
         // tổng tiền hợp lệ cửa tài
-        long tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon = 0;
         long tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon = 0;
+        long tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon = 0;
 
         switch (this.result) {
             case 0: {   // Cửa Xỉu
@@ -796,18 +796,14 @@ public class MGRoomTaiXiu
         try {
             if (this.result == 1) { // cửa tài
                 if (tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon > tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon) {
-//                    TaiXiuModule.fundTx -= (tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon - tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon);
                     module.updateFunValue(-(tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon - tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon));
                 } else {
-//                    TaiXiuModule.fundTx += (tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon - tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon);
                     module.updateFunValue((tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon - tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon));
                 }
             } else { // cửa xỉu
                 if (tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon > tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon) {
-//                    TaiXiuModule.fundTx -= (tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon - tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon);
                     module.updateFunValue(-(tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon - tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon));
                 } else {
-//                    TaiXiuModule.fundTx += (tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon - tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon);
                     module.updateFunValue((tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon - tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon));
                 }
             }
