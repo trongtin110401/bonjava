@@ -491,102 +491,100 @@ public class TaiXiuModule extends BaseClientRequestHandler {
 
 
     private void generateTaiXiuDicesMD5(MGRoomTaiXiu roomTXVin) {
-        while (true) {
-            String keyBeCang = "auto";
-            try {
-                keyBeCang = cacheService.getValueStr("tai_xiu_be_cang_md5");
 
-            } catch (Exception r) {
-                sendLogToTele(r.getMessage());
-                Debug.info("Loi get key becang");
-            }
-            if ("tai".equals(keyBeCang)) {
-                this.forceBetSide = 1;
-            } else if ("xiu".equals(keyBeCang)) {
-                this.forceBetSide = 0;
-            } else {
-                this.forceBetSide = -1;
-            }
-            cacheService.setValue("tai_xiu_be_cang_md5", "auto");
+        String keyBeCang = "auto";
+        try {
+            keyBeCang = cacheService.getValueStr("tai_xiu_be_cang_md5");
 
-            short[] dices = new short[3];
+        } catch (Exception r) {
+            sendLogToTele(r.getMessage());
+            Debug.info("Loi get key becang");
+        }
+        if ("tai".equals(keyBeCang)) {
+            this.forceBetSide = 1;
+        } else if ("xiu".equals(keyBeCang)) {
+            this.forceBetSide = 0;
+        } else {
+            this.forceBetSide = -1;
+        }
+        cacheService.setValue("tai_xiu_be_cang_md5", "auto");
 
-            // can thiep be cau
-            if (forceBetSide != -1) {
-                dices = this.generationTX.generateResult(this.forceBetSide);
-                String result = generationTX.buildResultText(dices);
-                roomTXVin.resultTX.setPlantTextResult(result);
-            } else { // khong can thiep
+        short[] dices = new short[3];
 
-                short typeBet = 1;
-                // tinh toan chenh lenh user that
-                List<TaiXiuAdmin> contributors = this.getRoomTX(typeBet).getListTransaction();
-                long totalRealBetTai = 0;
-                long totalRealBetXiu = 0;
-                for (TaiXiuAdmin taiXiuAdmin : contributors) {
-                    if (taiXiuAdmin.getCuaDat() == 0) {
-                        //bet xiu
-                        totalRealBetXiu += taiXiuAdmin.getMoney();
-                    } else if (taiXiuAdmin.getCuaDat() == 1) {
-                        // bet tai
-                        totalRealBetTai += taiXiuAdmin.getMoney();
-                    }
+        // can thiep be cau
+        if (forceBetSide != -1) {
+            dices = this.generationTX.generateResult(this.forceBetSide);
+            String result = generationTX.buildResultText(dices);
+            roomTXVin.resultTX.setPlantTextResult(result);
+        } else { // khong can thiep
+
+            short typeBet = 1;
+            // tinh toan chenh lenh user that
+            List<TaiXiuAdmin> contributors = this.getRoomTX(typeBet).getListTransaction();
+            long totalRealBetTai = 0;
+            long totalRealBetXiu = 0;
+            for (TaiXiuAdmin taiXiuAdmin : contributors) {
+                if (taiXiuAdmin.getCuaDat() == 0) {
+                    //bet xiu
+                    totalRealBetXiu += taiXiuAdmin.getMoney();
+                } else if (taiXiuAdmin.getCuaDat() == 1) {
+                    // bet tai
+                    totalRealBetTai += taiXiuAdmin.getMoney();
                 }
+            }
 
+            // ve tai
+            long chenhLech = 0;
+            if (this.result == 1) {
                 // ve tai
-                long chenhLech = 0;
-                if (this.result == 1) {
-                    // ve tai
-                    chenhLech = totalRealBetXiu - totalRealBetTai;
-                } else { // ve xiu
-                    chenhLech = totalRealBetTai - totalRealBetXiu;
-                }
+                chenhLech = totalRealBetXiu - totalRealBetTai;
+            } else { // ve xiu
+                chenhLech = totalRealBetTai - totalRealBetXiu;
+            }
 
 
-                // Can thiep be cang
-                if (chenhLech > 0) {
-                    // neu ma hu am
-                    if (getFunValue() - chenhLech < 0) {
-                        // Hũ đang bị âm => Tiến hành bẻ càng tài xỉu
-                        if (totalRealBetTai > totalRealBetXiu) {
-                            keyBeCang = "xiu";
-                            this.forceBetSide = 0;
-                        } else {
-                            keyBeCang = "tai";
-                            this.forceBetSide = 1;
-                        }
+            // Can thiep be cang
+            if (chenhLech > 0) {
+                // neu ma hu am
+                if (getFunValue() - chenhLech < 0) {
+                    // Hũ đang bị âm => Tiến hành bẻ càng tài xỉu
+                    if (totalRealBetTai > totalRealBetXiu) {
+                        keyBeCang = "xiu";
+                        this.forceBetSide = 0;
+                    } else {
+                        keyBeCang = "tai";
+                        this.forceBetSide = 1;
                     }
-
-                    dices = this.generationTX.generateResult(this.forceBetSide);
                 }
-                // Ngau nhien khong can thiep
-                else {
-                    dices[0] = (short) roomTXVin.resultTX.dice1;
-                    dices[1] = (short) roomTXVin.resultTX.dice2;
-                    dices[2] = (short) roomTXVin.resultTX.dice3;
-                }
+
+                dices = this.generationTX.generateResult(this.forceBetSide);
             }
-
-            this.resetForceBalance();
-            short total = (short) (dices[0] + dices[1] + dices[2]);
-            this.result = total > 10 ? (short) 1 : 0;
-
-            /**
-             * Show ket qua ra man
-             */
-            roomTXVin.updateResultDices(dices, this.result);
-            ResultTaiXiuMd5 resultTX = roomTXVin.resultTX;
-            resultTX.referenceId = this.referenceTaiXiuId;
-            resultTX.result = this.result;
-            resultTX.dice1 = dices[0];
-            resultTX.dice2 = dices[1];
-            resultTX.dice3 = dices[2];
-            Debug.trace("GENERATE RESULT DICES: " + dices[0] + " - " + dices[1] + " - " + dices[2] + "   " + this.result);
-            this.lichSuPhienTX.add(resultTX);
-            if (this.lichSuPhienTX.size() > 120) {
-                this.lichSuPhienTX.remove(0);
+            // Ngau nhien khong can thiep
+            else {
+                dices[0] = (short) roomTXVin.resultTX.dice1;
+                dices[1] = (short) roomTXVin.resultTX.dice2;
+                dices[2] = (short) roomTXVin.resultTX.dice3;
             }
+        }
 
+        this.resetForceBalance();
+        short total = (short) (dices[0] + dices[1] + dices[2]);
+        this.result = total > 10 ? (short) 1 : 0;
+
+        /**
+         * Show ket qua ra man
+         */
+        roomTXVin.updateResultDices(dices, this.result);
+        ResultTaiXiuMd5 resultTX = roomTXVin.resultTX;
+        resultTX.referenceId = this.referenceTaiXiuId;
+        resultTX.result = this.result;
+        resultTX.dice1 = dices[0];
+        resultTX.dice2 = dices[1];
+        resultTX.dice3 = dices[2];
+        Debug.trace("GENERATE RESULT DICES: " + dices[0] + " - " + dices[1] + " - " + dices[2] + "   " + this.result);
+        this.lichSuPhienTX.add(resultTX);
+        if (this.lichSuPhienTX.size() > 120) {
+            this.lichSuPhienTX.remove(0);
         }
     }
 
