@@ -537,9 +537,9 @@ public class TaiXiuModule extends BaseClientRequestHandler {
             long chenhLech = 0;
             if (this.result == 1) {
                 // ve tai
-                chenhLech = totalRealBetXiu - totalRealBetTai;
-            } else { // ve xiu
                 chenhLech = totalRealBetTai - totalRealBetXiu;
+            } else { // ve xiu
+                chenhLech = totalRealBetXiu - totalRealBetTai;
             }
 
 
