@@ -110,7 +110,7 @@ public abstract class MGRoom {
      * @return Giá tr? jackpot hi?n t?i
      */
     protected long getFunValue() {
-        String key = gameName + "_" + moneyTypeStr + "_" + betValue;
+        String key = name + "_" + moneyTypeStr + "_" + betValue;
         return cacheService.getValueLong(key, 0);
     }
 
@@ -120,7 +120,7 @@ public abstract class MGRoom {
      * @param value Giá tr? c?n c?p nh?t
      */
     protected void setFunValue(long value) {
-        String key = gameName + "_" + moneyTypeStr + "_" + betValue;
+        String key = name + "_" + moneyTypeStr + "_" + betValue;
         cacheService.setValue(key, value);
     }
 
