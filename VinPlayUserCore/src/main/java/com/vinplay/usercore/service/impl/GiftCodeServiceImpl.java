@@ -25,6 +25,7 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Updates;
 import com.vinplay.usercore.dao.impl.GiftCodeDAOImpl;
 import com.vinplay.usercore.service.GiftCodeService;
 import com.vinplay.vbee.common.dto.*;
@@ -491,17 +492,10 @@ public class GiftCodeServiceImpl
                 Filters.eq("type", String.valueOf(id)),
                 Filters.eq("active", true)
         );
-
-        FindIterable<Document> result = giftCode.find(query);
-        Document firstDocument = result.first();
-
-        if (firstDocument != null) {
-            return false;
-        } else {
-            MongoCollection<Document> campaign = db.getCollection("campaign_gift_code");
-            campaign.deleteOne(Filters.eq("_id", id));
-            return true;
-        }
+        giftCode.updateMany(query, Updates.set("active", false));
+        MongoCollection<Document> campaign = db.getCollection("campaign_gift_code");
+        campaign.deleteOne(Filters.eq("_id", id));
+        return true;
     }
 }
 
