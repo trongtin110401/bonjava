@@ -1005,6 +1005,7 @@ public class UserDaoImpl
 
     @Override
     public int countUser(String startTime, String endTime) throws SQLException {
+        endTime += " 23:59:59";
         int cnt = 0;
         String sql = "";
         try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
@@ -1027,6 +1028,7 @@ public class UserDaoImpl
 
     @Override
     public int countUserPay(String startTime, String endTime) throws SQLException {
+        endTime += " 23:59:59";
         int cnt = 0;
         String sql = "";
         try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
@@ -1049,6 +1051,7 @@ public class UserDaoImpl
 
     @Override
     public int countUserSecurity(String startTime, String endTime) throws SQLException {
+        endTime += " 23:59:59";
         int cnt = 0;
         String sql = "";
         try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
@@ -1071,6 +1074,7 @@ public class UserDaoImpl
 
     @Override
     public int countUserPayAndSecurity(String startTime, String endTime) throws SQLException {
+        endTime += " 23:59:59";
         int cnt = 0;
         String sql = "";
         try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
