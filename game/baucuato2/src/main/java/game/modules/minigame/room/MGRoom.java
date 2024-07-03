@@ -37,6 +37,7 @@ public abstract class MGRoom {
         this.betValue = betValue;
         this.moneyType = moneyType;
         this.moneyTypeStr = moneyType == 1 ? "vin" : "xu";
+
         setFunValue(fund);
     }
 
@@ -110,8 +111,7 @@ public abstract class MGRoom {
      * @return Giá tr? jackpot hi?n t?i
      */
     protected long getFunValue() {
-        String key = name;
-        return cacheService.getValueLong(key, 0);
+        return cacheService.getValueLong(name, 0);
     }
 
     /**
@@ -120,8 +120,7 @@ public abstract class MGRoom {
      * @param value Giá tr? c?n c?p nh?t
      */
     protected void setFunValue(long value) {
-        String key = name;
-        cacheService.setValue(key, value);
+        cacheService.setValue(name, value);
     }
 
     /**
