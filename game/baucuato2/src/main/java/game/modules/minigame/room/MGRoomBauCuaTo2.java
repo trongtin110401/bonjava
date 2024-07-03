@@ -567,7 +567,7 @@ public class MGRoomBauCuaTo2 extends MGRoom {
 ////            this.fund += updateFund;
 //            updateFunValue(updateFund);
             this.mgService.saveFund(this.name, getFunValue());
-            this.mgService.savePot(this.name, jackPot, false);
+            this.mgService.savePot(this.name, "Hu_Bau_cua_to2", jackPot, false);
         } catch (IOException | InterruptedException | TimeoutException response) {
         }
 

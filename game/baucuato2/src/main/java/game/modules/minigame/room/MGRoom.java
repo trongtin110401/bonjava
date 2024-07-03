@@ -27,7 +27,6 @@ public abstract class MGRoom {
     public static final String MGROOM_CAO_THAP_INFO = "MGROOM_CAO_THAP_INFO";
     public static final String MGROOM_POKEGO_INFO = "MGROOM_POKEGO_INFO";
     protected String name;
-    protected String gameName;
     protected List<User> users = new ArrayList<User>();
 
     protected int betValue;
