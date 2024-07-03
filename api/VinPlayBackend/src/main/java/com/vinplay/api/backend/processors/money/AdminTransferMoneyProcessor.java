@@ -16,6 +16,7 @@ public class AdminTransferMoneyProcessor
         HttpServletRequest request = param.get();
         String timeStart = request.getParameter("ts");
         String timeEnd = request.getParameter("te");
+        timeEnd += " 23:59:59";
         HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
         ReportAdminTransferMoneyResponse response = historyTransDao.getTotalAdminTransferByDay(timeStart, timeEnd);
         return response.toJson();
