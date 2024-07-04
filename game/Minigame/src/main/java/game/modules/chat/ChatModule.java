@@ -354,6 +354,7 @@ public class ChatModule
         ChatInfoMsg chatInfoMsg = new ChatInfoMsg();
         chatInfoMsg.msg = str;
         chatInfoMsg.minVipPointRequire = (byte) ConfigGame.getIntValue("chat_min_vp_require", 20);
+        chatInfoMsg.minMoneyRequire = ConfigGame.getIntValue("chat_min_vp_require", 20000);
         chatInfoMsg.timeUnBan = this.chatService.getBanTime(user.getName());
         chatInfoMsg.userType = (byte) this.getStatusDaiLy(user);
         this.send((BaseMsg) chatInfoMsg, user);

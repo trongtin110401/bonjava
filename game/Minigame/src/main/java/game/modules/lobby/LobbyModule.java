@@ -3304,7 +3304,6 @@ public class LobbyModule extends BaseClientRequestHandler {
         while ((nickname = cacheService.getQueueElement("LOGIN_OTHER_DEVICE_QUEUE")) != null) {
             try {
                 if (StringUtils.isNotEmpty(nickname)) {
-                    logger.debug("Kick user " + nickname + " due to login other device");
                     List<User> users = ExtensionUtility.globalUserManager.getUserByName(nickname);
                     if (CollectionUtils.isNotEmpty(users)) {
                         LoginOtherDeviceMsg msg = new LoginOtherDeviceMsg();
