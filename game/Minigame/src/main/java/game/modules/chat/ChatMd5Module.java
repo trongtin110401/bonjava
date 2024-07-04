@@ -365,7 +365,7 @@ public class ChatMd5Module
             return true;
         }
         boolean allow = true;
-        int minVPRequire = ConfigGame.getIntValue("chat_min_vp_require", 20);
+        int minVPRequire = ConfigGame.getIntValue("chat_min_vp_require", 20000);
         long vin = this.userService.getMoneyUser(username).getVin();
         if (vin < minVPRequire) {
             allow = false;
