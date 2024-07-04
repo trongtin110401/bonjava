@@ -163,7 +163,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         this.referenceTaiXiuId = 1L;
         try {
             this.referenceTaiXiuId = this.mgService.getReferenceId(Games.TAI_XIU_MD5.getId());
-            this.lichSuPhienTX = this.txService.getListLichSuPhien(120, 1);
+            this.lichSuPhienTX = this.txService.getListLichSuPhien(100, 1);
         } catch (SQLException e) {
             sendLogToTele(e.getMessage());
             Debug.trace((Object[]) new Object[]{"Load reference error ", e.getMessage()});
@@ -233,7 +233,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         SubcribeMinigameCmd cmd = new SubcribeMinigameCmd(dataCmd);
         this.doSubcribeMiniGame(user, cmd.gameId, cmd.roomId);
         LichSuPhienMsg msgLSGD = new LichSuPhienMsg();
-        msgLSGD.data = TaiXiuUtils.buildLichSuPhien(this.lichSuPhienTX, 22);
+        msgLSGD.data = TaiXiuUtils.buildLichSuPhien(this.lichSuPhienTX, 100);
         this.send(msgLSGD, user);
         UpdateRutLocMsg rutLocMsg = new UpdateRutLocMsg();
         try {
@@ -383,7 +383,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
 
         // thông tin soi cầu
         String sc = lichSuPhienTX.stream()
-                .skip(Math.max(0, lichSuPhienTX.size() - 20))
+                .skip(Math.max(0, lichSuPhienTX.size() - 25))
                 .map(resultTaiXiu -> resultTaiXiu.dice1 + resultTaiXiu.dice2 + resultTaiXiu.dice3 > 10 ? "T" : "X")
                 .collect(Collectors.joining(","));
         cacheService.setValue("SC_TAI_XIU_MD5", sc);
@@ -583,7 +583,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         resultTX.dice3 = dices[2];
         Debug.trace("GENERATE RESULT DICES: " + dices[0] + " - " + dices[1] + " - " + dices[2] + "   " + this.result);
         this.lichSuPhienTX.add(resultTX);
-        if (this.lichSuPhienTX.size() > 120) {
+        if (this.lichSuPhienTX.size() > 100) {
             this.lichSuPhienTX.remove(0);
         }
     }
@@ -591,8 +591,8 @@ public class TaiXiuModule extends BaseClientRequestHandler {
 
     private void getLichSuPhienTX(User user) {
         LichSuPhienMsg msg = new LichSuPhienMsg();
-        msg.data = TaiXiuUtils.buildLichSuPhien(this.lichSuPhienTX, 22);
-        Debug.trace("LSDG: " + TaiXiuUtils.logLichSuPhien(this.lichSuPhienTX, 120));
+        msg.data = TaiXiuUtils.buildLichSuPhien(this.lichSuPhienTX, 100);
+//        Debug.trace("LSDG: " + TaiXiuUtils.logLichSuPhien(this.lichSuPhienTX, 120));
         this.send(msg, user);
     }
 

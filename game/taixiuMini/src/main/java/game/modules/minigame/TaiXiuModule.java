@@ -430,7 +430,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
 
         // thông tin soi cầu
         String sc = lichSuPhienTX.stream()
-                .skip(Math.max(0, lichSuPhienTX.size() - 80))
+                .skip(Math.max(0, lichSuPhienTX.size() - 25))
                 .map(resultTaiXiu -> resultTaiXiu.dice1 + resultTaiXiu.dice2 + resultTaiXiu.dice3 > 10 ? "T" : "X")
                 .collect(Collectors.joining(","));
         cacheService.setValue("SC_TAI_XIU", sc);
