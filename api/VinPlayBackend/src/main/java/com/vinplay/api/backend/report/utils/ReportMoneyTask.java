@@ -51,15 +51,12 @@ extends TimerTask {
             String yesterday = VinPlayUtils.getYesterday();
             HazelcastInstance client = HazelcastClientFactory.getInstance();
             ReportDaoImpl dao = new ReportDaoImpl();
-            if (hour == 3 && minute >= 0 && minute < 5) {
+
+            if (minute % 2 == 0){
                 ReportMoneyUtils.fixYesterdayData(today, yesterday);
-                return;
-            }
-            if (hour != 1 || minute < 0 || minute >= 5) {
                 String superAgent = GameCommon.getValueStr((String)"SUPER_AGENT");
                 ReportTotalMoneyModel model = dao.getTotalMoney(superAgent);
                 dao.saveLogTotalMoney(model);
-                return;
             }
             remove = true;
             date = yesterday;

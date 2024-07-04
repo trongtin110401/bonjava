@@ -33,6 +33,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
+import com.hazelcast.core.IQueue;
 import com.hazelcast.transaction.TransactionContext;
 import com.hazelcast.transaction.TransactionOptions;
 import com.mongodb.client.MongoCollection;
@@ -774,6 +775,9 @@ public class SecurityServiceImpl
                 switch (action) {
                     case 0: {
                         user.setBanLogin(ban);
+
+                        kickSession(user);
+
                         break;
                     }
                     case 1: {
@@ -942,6 +946,28 @@ public class SecurityServiceImpl
         conditions.put("referent_code", codeDaily);
         Document response = (Document) col.find(conditions).first();
         return response.get("nick_name").toString();
+    }
+
+
+    public void kickSession(UserModel userModel) {
+        String nickname = userModel.getNickname();
+        HazelcastInstance instance = HazelcastClientFactory.getInstance();
+
+        IMap<String, String> map = instance.getMap("LOGIN_OTHER_DEVICE_MAP");
+        map.put(nickname, nickname);
+
+        IQueue queue = instance.getQueue("LOGIN_OTHER_DEVICE_QUEUE");
+        if (queue != null) {
+            queue.offer(nickname);
+        }
+
+        while (map.containsKey(nickname)) {
+            try {
+                Thread.sleep(50);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
     }
 
 }
