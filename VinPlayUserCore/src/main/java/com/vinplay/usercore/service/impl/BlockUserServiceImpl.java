@@ -6,13 +6,9 @@
  */
 package com.vinplay.usercore.service.impl;
 
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IMap;
-import com.hazelcast.core.IQueue;
 import com.vinplay.usercore.service.BlockUserService;
 import com.vinplay.usercore.service.impl.SecurityServiceImpl;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
-import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
 import com.vinplay.vbee.common.models.UserModel;
 import java.sql.SQLException;
 
@@ -36,31 +32,9 @@ implements BlockUserService {
             keys[i] = usermodel.getNickname();
             for (int j = 0; j < vals.length; ++j) {
                 service.updateStatusUser(keys[i], Integer.parseInt(vals[j]), type);
-                kickSession(usermodel);
             }
         }
         return lstError;
-    }
-
-    private static void kickSession(UserModel userModel) {
-        String nickname = userModel.getNickname();
-        HazelcastInstance instance = HazelcastClientFactory.getInstance();
-
-        IMap<String, String> map = instance.getMap("LOGIN_OTHER_DEVICE_MAP");
-        map.put(nickname, nickname);
-
-        IQueue queue = instance.getQueue("LOGIN_OTHER_DEVICE_QUEUE");
-        if (queue != null) {
-            queue.offer(nickname);
-        }
-
-        while (map.containsKey(nickname)) {
-            try {
-                Thread.sleep(50);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
     }
 }
 
