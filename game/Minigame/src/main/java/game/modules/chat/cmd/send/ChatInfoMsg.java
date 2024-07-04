@@ -13,6 +13,8 @@ extends BaseMsgEx {
     public long timeUnBan;
     public byte userType;
 
+    public int minMoneyRequire;
+
     public ChatInfoMsg() {
         super(18003);
     }
@@ -23,6 +25,7 @@ extends BaseMsgEx {
         bf.put(this.minVipPointRequire);
         bf.putLong(this.timeUnBan);
         bf.put(this.userType);
+        bf.putInt(this.minMoneyRequire);
         return this.packBuffer(bf);
     }
 }
