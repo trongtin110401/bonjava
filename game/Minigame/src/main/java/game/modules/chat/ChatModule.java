@@ -365,8 +365,8 @@ public class ChatModule
             return true;
         }
         boolean allow = true;
-        int minVPRequire = ConfigGame.getIntValue("chat_min_vp_require", 20);
-        int vipPointSave = this.userService.getVipPointSave(username);
+        int minVPRequire = ConfigGame.getIntValue("chat_min_vp_require", 20000);
+        long vipPointSave = this.userService.getMoneyUser(username).getVin();
         if (vipPointSave < minVPRequire) {
             allow = false;
         }
