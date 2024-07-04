@@ -281,7 +281,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         SubcribeMinigameCmd cmd = new SubcribeMinigameCmd(dataCmd);
         this.doSubcribeMiniGame(user, cmd.gameId, cmd.roomId);
         LichSuPhienMsg msgLSGD = new LichSuPhienMsg();
-        msgLSGD.data = TaiXiuUtils.buildLichSuPhien(this.lichSuPhienTX, 22);
+        msgLSGD.data = TaiXiuUtils.buildLichSuPhien(this.lichSuPhienTX, 120);
         this.send((BaseMsg) msgLSGD, user);
         UpdateRutLocMsg rutLocMsg = new UpdateRutLocMsg();
         try {
@@ -430,7 +430,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
 
         // thông tin soi cầu
         String sc = lichSuPhienTX.stream()
-                .skip(Math.max(0, lichSuPhienTX.size() - 20))
+                .skip(Math.max(0, lichSuPhienTX.size() - 100))
                 .map(resultTaiXiu -> resultTaiXiu.dice1 + resultTaiXiu.dice2 + resultTaiXiu.dice3 > 10 ? "T" : "X")
                 .collect(Collectors.joining(","));
         cacheService.setValue("SC_TAI_XIU", sc);
@@ -652,8 +652,8 @@ public class TaiXiuModule extends BaseClientRequestHandler {
 
     private void getLichSuPhienTX(User user) {
         LichSuPhienMsg msg = new LichSuPhienMsg();
-        msg.data = TaiXiuUtils.buildLichSuPhien(this.lichSuPhienTX, 22);
-        Debug.trace((Object) ("LSDG: " + TaiXiuUtils.logLichSuPhien(this.lichSuPhienTX, 120)));
+        msg.data = TaiXiuUtils.buildLichSuPhien(this.lichSuPhienTX, 120);
+//        Debug.trace((Object) ("LSDG: " + TaiXiuUtils.logLichSuPhien(this.lichSuPhienTX, 120)));
         this.send((BaseMsg) msg, user);
     }
 
