@@ -5,7 +5,7 @@
   "mysql-defaul-db": "cgame",
 
   "redis-address": "10.40.112.3",
-  "redis-password": "",
+  "redis-password": "hiBONwin",
 
   "usd-price": 23000,
   "webservice-ip": "new-banca-service-2.default",
