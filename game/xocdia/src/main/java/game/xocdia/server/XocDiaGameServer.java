@@ -152,7 +152,7 @@ public class XocDiaGameServer
     private Map<String, GameReportModel> playerReportList;
     private List<String> playerListrp;
     private volatile boolean isRegisterLoop;
-    private List<Byte> rsList;
+    private ArrayList<Byte> rsList;
     private int totalEven;
     private int totalOdd;
     private volatile String bankerName;
@@ -236,7 +236,7 @@ public class XocDiaGameServer
             this.gameState = 0;
             this.countTime = -1;
             this.isRegisterLoop = false;
-            this.rsList = new ArrayList<Byte>();
+            getXocDiaResultFromCache();
             this.totalEven = 0;
             this.totalOdd = 0;
             this.bankerName = "";
@@ -269,6 +269,24 @@ public class XocDiaGameServer
             Debug.trace((Object) ("INIT ROOM ERROR: " + e.getMessage()));
             Debug.trace((Object) e);
         }
+    }
+
+    /**
+     * load Xoc Dia result into cache
+     */
+    private void getXocDiaResultFromCache() {
+        try {
+            this.rsList = (ArrayList<Byte>) cacheService.getObject("XOC_DIA_RESULT_LIST");
+        } catch (Exception ex) {
+            this.rsList = new ArrayList<>();
+        }
+    }
+
+    /**
+     * save Xoc Dia Result into hazelcast cache
+     */
+    private void saveXocDiaResultIntoCache() {
+        cacheService.setObject("XOC_DIA_RESULT_LIST", this.rsList);
     }
 
     public synchronized void init() {
@@ -793,6 +811,8 @@ public class XocDiaGameServer
             MsgUtils.alertServer(content, false, true);
             Debug.trace((Object) e);
         }
+        // save Results into Hazelcast cache
+        saveXocDiaResultIntoCache();
     }
 
     public synchronized void onGameMessage(User user, DataCmd dataCmd) {
