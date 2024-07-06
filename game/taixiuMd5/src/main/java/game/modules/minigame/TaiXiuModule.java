@@ -487,6 +487,12 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         resultTaiXiuMd5.setMd5TextResult(md5);
         resultTaiXiuMd5.setPlantTextResult(result);
         roomTXVin.resultTX = resultTaiXiuMd5;
+
+        if (dices[0] + dices[1] + dices[3] > 10){
+            this.result = 1;
+        } else{
+            this.result = 0;
+        }
     }
 
 
