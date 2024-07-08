@@ -1,12 +1,12 @@
 package com.vinplay.api.processors.AutoXuLyBank;
 
 public class AutoBankEntity {
-    private String url = "http://sv.caheoxanh.com";
+    private String url = "http://cao69.vnm.bz";
     private int port = 10007;
 
-    private String apiSecret = "l%uuGMibQX&s";
+    private String apiSecret = "mJkf80kZOp";
 
-    private String apiKey = "6f52a63f-9eb0-4c8c-86ab-178488fdd488";
+    private String apiKey = "ddff2ef1-3a4d-405a-bbe4-9d421414147b";
 
     private final String apiRegCharge = "/api/MM/RegCharge";
 
