@@ -460,7 +460,7 @@ public class MGRoomBauCuaTo2 extends MGRoom {
                         potIdNohu = i;
                         long bet = tran.betValues[i];
                         long win = bet * tiLe[i];
-                        long fee = (long) (win * (tax / 100));
+                        long fee = (long) (bet * (tax / 100));
                         long prize = (long) (bet * ((double) (this.jackPot) / pots.get(i).getTotalValue()) + (win - fee));
                         totalFee += fee;
                         totalPrize += prize;
@@ -474,7 +474,7 @@ public class MGRoomBauCuaTo2 extends MGRoom {
                     } else {
                         long bet = tran.betValues[i];
                         long win = bet * tiLe[i];
-                        long fee = (long) (win * (tax / 100.0f));
+                        long fee = (long) (bet * (tax / 100.0f));
                         long prize = (win + bet - fee);
                         totalPrize += prize;
                         totalFee += fee;
