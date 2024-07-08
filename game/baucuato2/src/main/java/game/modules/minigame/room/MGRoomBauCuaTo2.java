@@ -707,7 +707,8 @@ public class MGRoomBauCuaTo2 extends MGRoom {
     private byte[] generateDices() {
         byte[] dices;
         int num = 0;
-        do {
+
+        while (true) {
             Random rd = new Random();
             dices = new byte[]{(byte) rd.nextInt(6), (byte) rd.nextInt(6), (byte) rd.nextInt(6)};
             this.xPot = 1;
@@ -717,11 +718,10 @@ public class MGRoomBauCuaTo2 extends MGRoom {
                 return generateDices();
             }
             long totalPrizes = this.tryCalculatePrizes(tiLe);
-            if (getFunValue() - totalPrizes > 0L) {
+            if (getFunValue() - totalPrizes >= 0L) {
                 return dices;
             }
-        } while (++num <= 3);
-        return this.traGiaiBeNhat();
+        }
     }
 
     boolean checkNohu(int[] tile) {
@@ -769,8 +769,9 @@ public class MGRoomBauCuaTo2 extends MGRoom {
     }
 
     private int[] calculateTiLe(byte[] dices) {
-        int[] tiLe = new int[6];
-        for (int i = 0; i < 6; ++i) {
+        int SO_CUA = 6;
+        int[] tiLe = new int[SO_CUA];
+        for (int i = 0; i < SO_CUA; ++i) {
             tiLe[i] = 0;
             for (int j = 0; j < dices.length; ++j) {
                 if (i != dices[j]) continue;
@@ -794,11 +795,9 @@ public class MGRoomBauCuaTo2 extends MGRoom {
         } catch (KeyNotFoundException e) {
 
         }
-        if (setBauCuaKetqua != null) {
-            if (setBauCuaKetqua.getStatus().equals("be")) {
-                this.dices = setBauCuaKetqua.getListDices();
-                cacheService.setObject("setBauCuaKetqua", new SetBauCuaKetqua("auto", new byte[]{}));
-            }
+        if (setBauCuaKetqua != null && setBauCuaKetqua.getStatus().equals("be")) {
+            this.dices = setBauCuaKetqua.getListDices();
+            cacheService.setObject("setBauCuaKetqua", new SetBauCuaKetqua("auto", new byte[]{}));
         }
 
         //this.dices = new byte[]{1, 1, 1};
@@ -806,7 +805,7 @@ public class MGRoomBauCuaTo2 extends MGRoom {
         this.resultBC.dices = this.dices;
         this.resultBC.xPot = this.xPot;
         this.resultBC.xValue = this.xValue;
-        Debug.trace((Object) ("BAU CUA " + this.id + " DICES: " + this.dices[0] + "," + this.dices[1] + "," + this.dices[2] + ", xPot= " + this.xPot + ", xValue= " + this.xValue));
+        Debug.trace("BAU CUA " + this.id + " DICES: " + this.dices[0] + "," + this.dices[1] + "," + this.dices[2] + ", xPot= " + this.xPot + ", xValue= " + this.xValue);
         UpdateBauCuaResultMsg msg = new UpdateBauCuaResultMsg();
         msg.dice1 = this.dices[0];
         msg.dice2 = this.dices[1];
