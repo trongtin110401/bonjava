@@ -397,7 +397,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         try {
             MGRoomTaiXiu roomTXVin = this.getRoomTX((short) 1);
             if (count == 0) {
-                this.generateTaiXiuDices(roomTXVin);
+                this.generateResultBefore(roomTXVin);
             }
             ++this.count;
             this.botBet(this.count);
@@ -429,7 +429,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                 }
                 case 50: {
                     roomTXVin.finish();
-                    this.generateTaiXiuDicesMD5(roomTXVin);
+                    this.generateResultAfter(roomTXVin);
                     break;
                 }
                 case 51: {
@@ -473,11 +473,11 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         this.forceBetSide = (short) -1;
     }
 
-    private void generateTaiXiuDices(MGRoomTaiXiu roomTXVin) {
+    private void generateResultBefore(MGRoomTaiXiu roomTXVin) {
         short[] dices;
 
         dices = this.generationTX.generateDices();
-        String result = generationTX.buildResultText(dices);
+        String result = generationTX.buildPlainTextResult(dices);
         String md5 = GenerationTaiXiu.hashMD5(result);
 
         ResultTaiXiuMd5 resultTaiXiuMd5 = new ResultTaiXiuMd5();
@@ -496,14 +496,13 @@ public class TaiXiuModule extends BaseClientRequestHandler {
     }
 
 
-    private void generateTaiXiuDicesMD5(MGRoomTaiXiu roomTXVin) {
+    private void generateResultAfter(MGRoomTaiXiu roomTXVin) {
 
         String keyBeCang = "auto";
         try {
             keyBeCang = cacheService.getValueStr("tai_xiu_be_cang_md5");
 
         } catch (Exception r) {
-            sendLogToTele(r.getMessage());
             Debug.info("Loi get key becang");
         }
         if ("tai".equals(keyBeCang)) {
@@ -520,7 +519,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         // can thiep be cau
         if (forceBetSide != -1) {
             dices = this.generationTX.generateResult(this.forceBetSide);
-            String result = generationTX.buildResultText(dices);
+            String result = generationTX.buildPlainTextResult(dices);
             roomTXVin.resultTX.setPlantTextResult(result);
         } else { // khong can thiep
 
@@ -548,21 +547,15 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                 chenhLech = totalRealBetXiu - totalRealBetTai;
             }
 
-
-            // Can thiep be cang
             if (chenhLech > 0) {
-                // neu ma hu am
+                // nếu mà HŨ âm => can thiệp kế quả
                 if (getFunValue() - chenhLech < 0) {
-                    // Hũ đang bị âm => Tiến hành bẻ càng tài xỉu
                     if (totalRealBetTai > totalRealBetXiu) {
-                        keyBeCang = "xiu";
                         this.forceBetSide = 0;
                     } else {
-                        keyBeCang = "tai";
                         this.forceBetSide = 1;
                     }
                 }
-
                 dices = this.generationTX.generateResult(this.forceBetSide);
             }
             // Ngau nhien khong can thiep
@@ -571,6 +564,9 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                 dices[1] = (short) roomTXVin.resultTX.dice2;
                 dices[2] = (short) roomTXVin.resultTX.dice3;
             }
+
+            String result = generationTX.buildPlainTextResult(dices);
+            roomTXVin.resultTX.setPlantTextResult(result);
         }
 
         this.resetForceBalance();

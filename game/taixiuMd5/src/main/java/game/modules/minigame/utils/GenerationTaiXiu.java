@@ -78,7 +78,7 @@ public class GenerationTaiXiu {
         return dices;
     }
 
-    public String buildResultText(short[] dices) {
+    public String buildPlainTextResult(short[] dices) {
         return generateRandomString(10 + ThreadLocalRandom.current().nextInt(10) + 1)
                 + "{" + dices[0] + "-" + dices[1] + "-" + dices[2] + "}" +
                 generateRandomString(10 + ThreadLocalRandom.current().nextInt(10) + 1);
