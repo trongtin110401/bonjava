@@ -92,14 +92,16 @@ public class ReportMoneySystemNewProcessor
 
             LogMoneyUserServiceImpl service = new LogMoneyUserServiceImpl();
             //search all log with time
-            List<LogUserMoneyResponse> list = service.searchLogMoneyUser(nickName, "", "", startTime, endTime, -1, -1);
-            if (list == null || list.size() == 0)
+            List<LogUserMoneyResponse> logs = service.searchLogMoneyUser(nickName, "", "", startTime, endTime, -1, -1);
+            if (logs == null || logs.size() == 0)
                 return res.toJson();
             //
-            for (LogUserMoneyResponse log : list) {
-
+            for (LogUserMoneyResponse log : logs) {
                 if (Consts.GAMES.contains(log.actionName)) {
                     listReport = processListGame(listReport, log);
+                    // get fund list
+
+                    // combine list
                 } else if (Consts.VIN_IN_USER.contains(log.actionName)) {
                     listUserIn = processListMoney(listUserIn, log);
                 } else if (Consts.VIN_IN_EVENT.contains(log.actionName)) {
@@ -115,8 +117,6 @@ public class ReportMoneySystemNewProcessor
                         moneyAgentOut = processMoneyOutAgency(moneyAgentOut, log);
                     }
                 }
-
-
             }
             try {
                 ReportMoneyModel reportMoneyModel = new ReportMoneyModel(listReport, listUserIn, listUserInEvent, listUserOut, listOther);
@@ -173,41 +173,45 @@ public class ReportMoneySystemNewProcessor
 
     private List<ReportMoneySystemModelNew> processListGame(List<ReportMoneySystemModelNew> listReport, LogUserMoneyResponse log) {
         try {
-            ReportMoneySystemModelNew model = new ReportMoneySystemModelNew();
-            if (isExist(listReport, log.actionName)) {
-                model = getElementByAction(listReport, log.actionName);
-            } else {
-                model.actionName = log.actionName;
-            }
-            if (log.actionName.equals(Consts.TAI_XIU)) {
-                if (log.moneyExchange < 0) {
-                    model.moneyLost += log.moneyExchange;
-                } else if (log.serviceName.contains("Hoàn trả")) {
-                    model.moneyOther += log.moneyExchange;
-                } else {
-                    model.moneyWin += log.moneyExchange;
-                }
-
-            } else {
-                if (log.moneyExchange < 0) {
-                    model.moneyLost += log.moneyExchange;
-                } else {
-                    model.moneyWin += log.moneyExchange;
-                }
-            }
-            model.fee += log.fee;
-            model.revenuePlayGame += log.moneyExchange;
-            model.revenue += (log.moneyExchange - log.fee);
-            int index = getElementIndex(listReport, model.actionName);
-            if (index == -1)
-                listReport.add(model);
-            else
-                listReport.set(index, model);
-            return listReport;
+            return processDataGameReport(listReport, log);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
+    }
+
+    private List<ReportMoneySystemModelNew> processDataGameReport(List<ReportMoneySystemModelNew> listReport, LogUserMoneyResponse log) {
+        ReportMoneySystemModelNew model = new ReportMoneySystemModelNew();
+        if (isExist(listReport, log.actionName)) {
+            model = getElementByAction(listReport, log.actionName);
+        } else {
+            model.actionName = log.actionName;
+        }
+        if (log.actionName.equals(Consts.TAI_XIU)) {
+            if (log.moneyExchange < 0) {
+                model.moneyLost += log.moneyExchange;
+            } else if (log.serviceName.contains("Hoàn trả")) {
+                model.moneyOther += log.moneyExchange;
+            } else {
+                model.moneyWin += log.moneyExchange;
+            }
+
+        } else {
+            if (log.moneyExchange < 0) {
+                model.moneyLost += log.moneyExchange;
+            } else {
+                model.moneyWin += log.moneyExchange;
+            }
+        }
+        model.fee += log.fee;
+        model.revenuePlayGame += log.moneyExchange;
+        model.revenue += (log.moneyExchange - log.fee);
+        int index = getElementIndex(listReport, model.actionName);
+        if (index == -1)
+            listReport.add(model);
+        else
+            listReport.set(index, model);
+        return listReport;
     }
 
     // ReportMoneySystemModelNew

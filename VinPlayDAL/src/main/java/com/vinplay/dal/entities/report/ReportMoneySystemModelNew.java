@@ -12,5 +12,6 @@ public class ReportMoneySystemModelNew {
     public long revenue = 0L;
     public String dateReset;
     public String actionName;
+    public long fund;
 }
 

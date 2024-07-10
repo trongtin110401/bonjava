@@ -55,6 +55,7 @@ import com.vinplay.vbee.common.messages.statistic.LoginPortalInfoMsg;
 import com.vinplay.vbee.common.models.ConfigGame;
 import com.vinplay.vbee.common.models.StatusUser;
 import com.vinplay.vbee.common.models.UserModel;
+import com.vinplay.vbee.common.models.cache.KickUserSignal;
 import com.vinplay.vbee.common.models.cache.UserCacheModel;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.response.BaseResponseModel;
@@ -958,7 +959,8 @@ public class SecurityServiceImpl
 
         IQueue queue = instance.getQueue("LOGIN_OTHER_DEVICE_QUEUE");
         if (queue != null) {
-            queue.offer(nickname);
+//            queue.offer(nickname);
+            queue.offer(new KickUserSignal(nickname, KickUserSignal.BLOCK_USER));
         }
 
         while (map.containsKey(nickname)) {

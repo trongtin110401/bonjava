@@ -58,6 +58,7 @@ import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
 import com.vinplay.vbee.common.models.MarketingModel;
 import com.vinplay.vbee.common.models.UserClientInfo;
 import com.vinplay.vbee.common.models.UserModel;
+import com.vinplay.vbee.common.models.cache.KickUserSignal;
 import com.vinplay.vbee.common.models.cache.UserCacheModel;
 import com.vinplay.vbee.common.models.cache.UserExtraInfoModel;
 import com.vinplay.vbee.common.models.vippoint.UserVPEventModel;
@@ -210,7 +211,8 @@ public class PortalUtils {
 
         IQueue queue = instance.getQueue("LOGIN_OTHER_DEVICE_QUEUE");
         if (queue != null) {
-            queue.offer(nickname);
+//            queue.offer(nickname);
+            queue.offer(new KickUserSignal(nickname, KickUserSignal.DUPLICATE_LOGIN));
         }
 
         while (map.containsKey(nickname)) {

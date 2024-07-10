@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  com.mongodb.BasicDBObject
  *  com.mongodb.Block
@@ -32,6 +32,7 @@ import com.vinplay.vbee.common.models.cache.ReportModel;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.pools.ConnectionPool;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
+
 import java.io.PrintStream;
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -47,15 +48,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
 public class ReportDaoImpl
-implements ReportDAO {
+        implements ReportDAO {
     @Override
     public List<String> getAllBot() throws SQLException {
         ArrayList<String> res = new ArrayList<String>();
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");){
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
             String sql = "SELECT nick_name FROM users WHERE is_bot=1";
             PreparedStatement stm = conn.prepareStatement("SELECT nick_name FROM users WHERE is_bot=1");
             ResultSet rs = stm.executeQuery();
@@ -76,8 +78,8 @@ implements ReportDAO {
         try {
             call = conn.prepareCall("CALL report_money_system(?,?)");
             int param = 1;
-            call.setString(param++, VinPlayUtils.getDateTimeStr((java.util.Date)VinPlayUtils.getDateTimeFromDate((String)startTime)));
-            call.setString(param++, VinPlayUtils.getDateTimeStr((java.util.Date)VinPlayUtils.getDateTimeFromDate((String)endTime)));
+            call.setString(param++, VinPlayUtils.getDateTimeStr((java.util.Date) VinPlayUtils.getDateTimeFromDate((String) startTime)));
+            call.setString(param++, VinPlayUtils.getDateTimeStr((java.util.Date) VinPlayUtils.getDateTimeFromDate((String) endTime)));
             ResultSet rs = call.executeQuery();
             while (rs.next()) {
                 ReportMoneySystemModel model = new ReportMoneySystemModel();
@@ -91,12 +93,10 @@ implements ReportDAO {
                 results.put(actionName, model);
             }
             rs.close();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             throw e;
-        }
-        finally {
+        } finally {
             if (call != null) {
                 call.close();
             }
@@ -114,25 +114,25 @@ implements ReportDAO {
         Document conditions = new Document();
         if (!startTime.isEmpty() && !endTime.isEmpty()) {
             BasicDBObject obj = new BasicDBObject();
-            obj.put("$gte", (Object)VinPlayUtils.getDateTimeStr((java.util.Date)VinPlayUtils.getDateTimeFromDate((String)startTime)));
-            obj.put("$lte", (Object)VinPlayUtils.getDateTimeStr((java.util.Date)VinPlayUtils.getDateTimeFromDate((String)endTime)));
-            conditions.put("time_log", (Object)obj);
+            obj.put("$gte", (Object) VinPlayUtils.getDateTimeStr((java.util.Date) VinPlayUtils.getDateTimeFromDate((String) startTime)));
+            obj.put("$lte", (Object) VinPlayUtils.getDateTimeStr((java.util.Date) VinPlayUtils.getDateTimeFromDate((String) endTime)));
+            conditions.put("time_log", (Object) obj);
         }
         MongoCollection col = null;
         if (!isBot) {
             col = db.getCollection("report_money_vin");
-            AggregateIterable iterable = col.aggregate(Arrays.asList(new Document[]{new Document("$match", (Object)conditions), new Document("$group", (Object)new Document("_id", (Object)"$action_name").append("money_win", (Object)new Document("$sum", (Object)"$money_win")).append("money_lost", (Object)new Document("$sum", (Object)"$money_lost")).append("money_other", (Object)new Document("$sum", (Object)"$money_other")).append("fee", (Object)new Document("$sum", (Object)"$fee")))}));
-            iterable.forEach((Block)new Block<Document>(){
+            AggregateIterable iterable = col.aggregate(Arrays.asList(new Document[]{new Document("$match", (Object) conditions), new Document("$group", (Object) new Document("_id", (Object) "$action_name").append("money_win", (Object) new Document("$sum", (Object) "$money_win")).append("money_lost", (Object) new Document("$sum", (Object) "$money_lost")).append("money_other", (Object) new Document("$sum", (Object) "$money_other")).append("fee", (Object) new Document("$sum", (Object) "$fee")))}));
+            iterable.forEach((Block) new Block<Document>() {
 
                 public void apply(Document document) {
                     ReportMoneySystemModel model = new ReportMoneySystemModel();
-                    model.moneyWin = document.getLong((Object)"money_win");
-                    model.moneyLost = document.getLong((Object)"money_lost");
-                    model.moneyOther = document.getLong((Object)"money_other");
-                    model.fee = document.getLong((Object)"fee");
+                    model.moneyWin = document.getLong((Object) "money_win");
+                    model.moneyLost = document.getLong((Object) "money_lost");
+                    model.moneyOther = document.getLong((Object) "money_other");
+                    model.fee = document.getLong((Object) "fee");
                     model.revenuePlayGame = model.moneyWin + model.moneyLost;
                     model.revenue = model.revenuePlayGame + model.moneyOther;
-                    String actionName = document.getString((Object)"_id");
+                    String actionName = document.getString((Object) "_id");
                     results.put(actionName, model);
                 }
             });
@@ -147,24 +147,24 @@ implements ReportDAO {
         Document conditions = new Document();
         if (!startTime.isEmpty() && !endTime.isEmpty()) {
             BasicDBObject obj = new BasicDBObject();
-            obj.put("$gte", (Object)VinPlayUtils.getDateTimeStr((java.util.Date)VinPlayUtils.getDateTimeFromDate((String)startTime)));
-            obj.put("$lte", (Object)VinPlayUtils.getDateTimeStr((java.util.Date)VinPlayUtils.getDateTimeFromDate((String)endTime)));
-            conditions.put("time_log", (Object)obj);
+            obj.put("$gte", (Object) VinPlayUtils.getDateTimeStr((java.util.Date) VinPlayUtils.getDateTimeFromDate((String) startTime)));
+            obj.put("$lte", (Object) VinPlayUtils.getDateTimeStr((java.util.Date) VinPlayUtils.getDateTimeFromDate((String) endTime)));
+            conditions.put("time_log", (Object) obj);
         }
-        conditions.put("nick_name", (Object)nickname);
+        conditions.put("nick_name", (Object) nickname);
         MongoCollection col = null;
         col = !isBot ? db.getCollection("report_money_vin") : db.getCollection("report_money_vin_bot");
-        AggregateIterable iterable = col.aggregate(Arrays.asList(new Document[]{new Document("$match", (Object)conditions), new Document("$group", (Object)new Document("_id", (Object)"$action_name").append("money_win", (Object)new Document("$sum", (Object)"$money_win")).append("money_lost", (Object)new Document("$sum", (Object)"$money_lost")).append("money_other", (Object)new Document("$sum", (Object)"$money_other")).append("fee", (Object)new Document("$sum", (Object)"$fee")))}));
+        AggregateIterable iterable = col.aggregate(Arrays.asList(new Document[]{new Document("$match", (Object) conditions), new Document("$group", (Object) new Document("_id", (Object) "$action_name").append("money_win", (Object) new Document("$sum", (Object) "$money_win")).append("money_lost", (Object) new Document("$sum", (Object) "$money_lost")).append("money_other", (Object) new Document("$sum", (Object) "$money_other")).append("fee", (Object) new Document("$sum", (Object) "$fee")))}));
         final HashMap<String, ReportMoneySystemModel> results = new HashMap<String, ReportMoneySystemModel>();
-        iterable.forEach((Block)new Block<Document>(){
+        iterable.forEach((Block) new Block<Document>() {
 
             public void apply(Document document) {
                 ReportMoneySystemModel model = new ReportMoneySystemModel();
-                String actionName = document.getString((Object)"_id");
-                model.moneyWin = document.getLong((Object)"money_win");
-                model.moneyLost = document.getLong((Object)"money_lost");
-                model.moneyOther = document.getLong((Object)"money_other");
-                model.fee = document.getLong((Object)"fee");
+                String actionName = document.getString((Object) "_id");
+                model.moneyWin = document.getLong((Object) "money_win");
+                model.moneyLost = document.getLong((Object) "money_lost");
+                model.moneyOther = document.getLong((Object) "money_other");
+                model.fee = document.getLong((Object) "fee");
                 model.revenuePlayGame = model.moneyWin + model.moneyLost;
                 model.revenue = model.revenuePlayGame + model.moneyOther;
                 results.put(actionName, model);
@@ -222,11 +222,9 @@ implements ReportDAO {
             stmAgent1.close();
             stmAgent2.close();
             stmSuperAgent.close();
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             throw e;
-        }
-        finally {
+        } finally {
             if (conn != null) {
                 conn.close();
             }
@@ -239,7 +237,7 @@ implements ReportDAO {
     @Override
     public long getCurrentMoney(String nickname) throws SQLException {
         long res = 0L;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");){
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
             String sql = "SELECT vin_total FROM users WHERE nick_name=?";
             PreparedStatement stm = conn.prepareStatement("SELECT vin_total FROM users WHERE nick_name=?");
             stm.setString(1, nickname);
@@ -255,7 +253,7 @@ implements ReportDAO {
 
     public long getCurrentMoneyAllUsersByDaily(String nickname) throws SQLException {
         long res = 0L;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");){
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
             String sql = "SELECT sum(vin_total) as vin_total FROM users WHERE user_daily = ?";
             PreparedStatement stm = conn.prepareStatement(sql);
             stm.setString(1, nickname);
@@ -272,7 +270,7 @@ implements ReportDAO {
     @Override
     public long getSafeMoney(String nickname) throws SQLException {
         long res = 0L;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");){
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
             String sql = "SELECT safe FROM users WHERE nick_name=?";
             PreparedStatement stm = conn.prepareStatement("SELECT safe FROM users WHERE nick_name=?");
             stm.setString(1, nickname);
@@ -288,7 +286,7 @@ implements ReportDAO {
 
     public long getSafeMoneyAllUsersByDaily(String nickname) throws SQLException {
         long res = 0L;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");){
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
             String sql = "SELECT sum(safe) as safe FROM users WHERE  user_daily =?";
             PreparedStatement stm = conn.prepareStatement(sql);
             stm.setString(1, nickname);
@@ -305,7 +303,7 @@ implements ReportDAO {
     @Override
     public boolean checkBot(String nickname) throws SQLException {
         boolean res = false;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");){
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
             String sql = "SELECT is_bot FROM users WHERE nick_name=?";
             PreparedStatement stm = conn.prepareStatement("SELECT is_bot FROM users WHERE nick_name=?");
             stm.setString(1, nickname);
@@ -324,13 +322,13 @@ implements ReportDAO {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection col = db.getCollection("report_total_money");
         Document doc = new Document();
-        doc.append("money_bot", (Object)model.moneyBot);
-        doc.append("money_user", (Object)model.moneyUser);
-        doc.append("money_agent_1", (Object)model.moneyAgent1);
-        doc.append("money_agent_2", (Object)model.moneyAgent2);
-        doc.append("money_super_agent", (Object)model.moneySuperAgent);
-        doc.append("time_log", (Object)VinPlayUtils.getCurrentDateTime());
-        col.insertOne((Object)doc);
+        doc.append("money_bot", (Object) model.moneyBot);
+        doc.append("money_user", (Object) model.moneyUser);
+        doc.append("money_agent_1", (Object) model.moneyAgent1);
+        doc.append("money_agent_2", (Object) model.moneyAgent2);
+        doc.append("money_super_agent", (Object) model.moneySuperAgent);
+        doc.append("time_log", (Object) VinPlayUtils.getCurrentDateTime());
+        col.insertOne((Object) doc);
         return true;
     }
 
@@ -343,24 +341,24 @@ implements ReportDAO {
         Document conditions = new Document();
         if (!startTime.isEmpty() && !endTime.isEmpty()) {
             BasicDBObject obj = new BasicDBObject();
-            obj.put("$gte", (Object)startTime);
-            obj.put("$lte", (Object)endTime);
-            conditions.put("time_log", (Object)obj);
+            obj.put("$gte", (Object) startTime);
+            obj.put("$lte", (Object) endTime);
+            conditions.put("time_log", (Object) obj);
         }
         BasicDBObject sortCondtions = new BasicDBObject();
         sortCondtions.put("_id", -1);
-        FindIterable iterable = db.getCollection("report_total_money").find((Bson)conditions).sort((Bson)sortCondtions).skip(skipNumber).limit(50);
-        iterable.forEach((Block)new Block<Document>(){
+        FindIterable iterable = db.getCollection("report_total_money").find((Bson) conditions).sort((Bson) sortCondtions).skip(skipNumber).limit(50);
+        iterable.forEach((Block) new Block<Document>() {
 
             public void apply(Document document) {
                 ReportTotalMoneyModel model = new ReportTotalMoneyModel();
-                model.moneyBot = document.getLong((Object)"money_bot");
-                model.moneyUser = document.getLong((Object)"money_user");
-                model.moneyAgent1 = document.getLong((Object)"money_agent_1");
-                model.moneyAgent2 = document.getLong((Object)"money_agent_2");
-                model.moneySuperAgent = document.getLong((Object)"money_super_agent");
+                model.moneyBot = document.getLong((Object) "money_bot");
+                model.moneyUser = document.getLong((Object) "money_user");
+                model.moneyAgent1 = document.getLong((Object) "money_agent_1");
+                model.moneyAgent2 = document.getLong((Object) "money_agent_2");
+                model.moneySuperAgent = document.getLong((Object) "money_super_agent");
                 model.total = model.moneyBot + model.moneyUser + model.moneyAgent1 + model.moneyAgent2 + model.moneySuperAgent;
-                model.timeLog = document.getString((Object)"time_log");
+                model.timeLog = document.getString((Object) "time_log");
                 res.add(model);
             }
         });
@@ -373,28 +371,28 @@ implements ReportDAO {
         Document conditions = new Document();
         BasicDBObject obj = new BasicDBObject();
         BasicDBObject sortCondtions = new BasicDBObject();
-        java.util.Date dateTime = VinPlayUtils.getDateTimeFromDate((String)date);
+        java.util.Date dateTime = VinPlayUtils.getDateTimeFromDate((String) date);
         if (bStart) {
-            obj.put("$gte", (Object)VinPlayUtils.getDateTimeStr((java.util.Date)dateTime));
-            sortCondtions.put("_id", (Object)1);
+            obj.put("$gte", (Object) VinPlayUtils.getDateTimeStr((java.util.Date) dateTime));
+            sortCondtions.put("_id", (Object) 1);
         } else {
             Calendar cal = Calendar.getInstance();
             cal.setTime(dateTime);
             cal.add(5, 1);
-            obj.put("$lte", (Object)VinPlayUtils.getDateTimeStr((java.util.Date)cal.getTime()));
+            obj.put("$lte", (Object) VinPlayUtils.getDateTimeStr((java.util.Date) cal.getTime()));
             sortCondtions.put("_id", -1);
         }
-        conditions.put("time_log", (Object)obj);
-        Document document = (Document)db.getCollection("report_total_money").find((Bson)conditions).sort((Bson)sortCondtions).first();
+        conditions.put("time_log", (Object) obj);
+        Document document = (Document) db.getCollection("report_total_money").find((Bson) conditions).sort((Bson) sortCondtions).first();
         ReportTotalMoneyModel model = new ReportTotalMoneyModel();
         if (document != null) {
-            model.moneyBot = document.getLong((Object)"money_bot");
-            model.moneyUser = document.getLong((Object)"money_user");
-            model.moneyAgent1 = document.getLong((Object)"money_agent_1");
-            model.moneyAgent2 = document.getLong((Object)"money_agent_2");
-            model.moneySuperAgent = document.getLong((Object)"money_super_agent");
+            model.moneyBot = document.getLong((Object) "money_bot");
+            model.moneyUser = document.getLong((Object) "money_user");
+            model.moneyAgent1 = document.getLong((Object) "money_agent_1");
+            model.moneyAgent2 = document.getLong((Object) "money_agent_2");
+            model.moneySuperAgent = document.getLong((Object) "money_super_agent");
             model.total = model.moneyBot + model.moneyUser + model.moneyAgent1 + model.moneyAgent2 + model.moneySuperAgent;
-            model.timeLog = document.getString((Object)"time_log");
+            model.timeLog = document.getString((Object) "time_log");
         }
         return model;
     }
@@ -405,19 +403,19 @@ implements ReportDAO {
         MongoCollection col = null;
         col = !model.isBot ? db.getCollection("report_money_vin") : db.getCollection("report_money_vin_bot");
         BasicDBObject updateFields = new BasicDBObject();
-        updateFields.append("money_win", (Object)model.moneyWin);
-        updateFields.append("money_lost", (Object)model.moneyLost);
-        updateFields.append("money_other", (Object)model.moneyOther);
-        updateFields.append("fee", (Object)model.fee);
-        updateFields.append("time_log", (Object)VinPlayUtils.getDateTimeStr((java.util.Date)VinPlayUtils.getDateTimeFromDate((String)date)));
-        updateFields.append("create_time", (Object)VinPlayUtils.getDateTimeFromDate((String)date));
+        updateFields.append("money_win", (Object) model.moneyWin);
+        updateFields.append("money_lost", (Object) model.moneyLost);
+        updateFields.append("money_other", (Object) model.moneyOther);
+        updateFields.append("fee", (Object) model.fee);
+        updateFields.append("time_log", (Object) VinPlayUtils.getDateTimeStr((java.util.Date) VinPlayUtils.getDateTimeFromDate((String) date)));
+        updateFields.append("create_time", (Object) VinPlayUtils.getDateTimeFromDate((String) date));
         BasicDBObject conditions = new BasicDBObject();
-        conditions.append("nick_name", (Object)nickname);
-        conditions.append("action_name", (Object)actionname);
-        conditions.append("date", (Object)date);
+        conditions.append("nick_name", (Object) nickname);
+        conditions.append("action_name", (Object) actionname);
+        conditions.append("date", (Object) date);
         FindOneAndUpdateOptions options = new FindOneAndUpdateOptions();
         options.upsert(true);
-        col.findOneAndUpdate((Bson)conditions, (Bson)new Document("$set", (Object)updateFields), options);
+        col.findOneAndUpdate((Bson) conditions, (Bson) new Document("$set", (Object) updateFields), options);
         return true;
     }
 
@@ -426,13 +424,13 @@ implements ReportDAO {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection col = db.getCollection("top_user_play_game_vin");
         BasicDBObject updateFields = new BasicDBObject();
-        updateFields.append("money_win", (Object)moneyWin);
+        updateFields.append("money_win", (Object) moneyWin);
         BasicDBObject conditions = new BasicDBObject();
-        conditions.append("nick_name", (Object)nickname);
-        conditions.append("date", (Object)date);
+        conditions.append("nick_name", (Object) nickname);
+        conditions.append("date", (Object) date);
         FindOneAndUpdateOptions options = new FindOneAndUpdateOptions();
         options.upsert(true);
-        col.findOneAndUpdate((Bson)conditions, (Bson)new Document("$set", (Object)updateFields), options);
+        col.findOneAndUpdate((Bson) conditions, (Bson) new Document("$set", (Object) updateFields), options);
         return true;
     }
 
@@ -443,20 +441,20 @@ implements ReportDAO {
         Document conditions = new Document();
         if (!startTime.isEmpty() && !endTime.isEmpty()) {
             BasicDBObject obj = new BasicDBObject();
-            obj.put("$gte", (Object)VinPlayUtils.getDateTimeStr((java.util.Date)VinPlayUtils.getDateTimeFromDate((String)startTime)));
-            obj.put("$lte", (Object)VinPlayUtils.getDateTimeStr((java.util.Date)VinPlayUtils.getDateTimeFromDate((String)endTime)));
-            conditions.put("time_log", (Object)obj);
+            obj.put("$gte", (Object) VinPlayUtils.getDateTimeStr((java.util.Date) VinPlayUtils.getDateTimeFromDate((String) startTime)));
+            obj.put("$lte", (Object) VinPlayUtils.getDateTimeStr((java.util.Date) VinPlayUtils.getDateTimeFromDate((String) endTime)));
+            conditions.put("time_log", (Object) obj);
         }
-        conditions.put("action_name", (Object)actionName);
+        conditions.put("action_name", (Object) actionName);
         MongoCollection col = null;
         if (!isBot) {
             col = db.getCollection("report_money_vin");
-            AggregateIterable iterable = col.aggregate(Arrays.asList(new Document[]{new Document("$match", (Object)conditions), new Document("$group", (Object)new Document("_id", (Object)"$nick_name").append("money_win", (Object)new Document("$sum", (Object)"$money_win")).append("money_lost", (Object)new Document("$sum", (Object)"$money_lost")).append("money_other", (Object)new Document("$sum", (Object)"$money_other")))}));
-            iterable.forEach((Block)new Block<Document>(){
+            AggregateIterable iterable = col.aggregate(Arrays.asList(new Document[]{new Document("$match", (Object) conditions), new Document("$group", (Object) new Document("_id", (Object) "$nick_name").append("money_win", (Object) new Document("$sum", (Object) "$money_win")).append("money_lost", (Object) new Document("$sum", (Object) "$money_lost")).append("money_other", (Object) new Document("$sum", (Object) "$money_other")))}));
+            iterable.forEach((Block) new Block<Document>() {
 
                 public void apply(Document document) {
-                    String nickName = document.getString((Object)"_id");
-                    long money = document.getLong((Object)"money_win") + document.getLong((Object)"money_lost") + document.getLong((Object)"money_other");
+                    String nickName = document.getString((Object) "_id");
+                    long money = document.getLong((Object) "money_win") + document.getLong((Object) "money_lost") + document.getLong((Object) "money_other");
                     results.put(nickName, money);
                 }
             });
@@ -470,20 +468,20 @@ implements ReportDAO {
         final HashMap<String, ReportModel> results = new HashMap<String, ReportModel>();
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         Document conditions = new Document();
-        conditions.put("time_log", (Object)VinPlayUtils.getDateTimeStr((java.util.Date)VinPlayUtils.getDateTimeFromDate((String)date)));
+        conditions.put("time_log", (Object) VinPlayUtils.getDateTimeStr((java.util.Date) VinPlayUtils.getDateTimeFromDate((String) date)));
         MongoCollection col = null;
         col = !isBot ? db.getCollection("report_money_vin") : db.getCollection("report_money_vin_bot");
-        FindIterable iterable = col.find((Bson)conditions);
-        iterable.forEach((Block)new Block<Document>(){
+        FindIterable iterable = col.find((Bson) conditions);
+        iterable.forEach((Block) new Block<Document>() {
 
             public void apply(Document document) {
                 ReportModel model = new ReportModel();
-                String nickname = document.getString((Object)"nick_name");
-                String actionname = document.getString((Object)"action_name");
-                model.moneyWin = document.getLong((Object)"money_win");
-                model.moneyLost = document.getLong((Object)"money_lost");
-                model.moneyOther = document.getLong((Object)"money_other");
-                model.fee = document.getLong((Object)"fee");
+                String nickname = document.getString((Object) "nick_name");
+                String actionname = document.getString((Object) "action_name");
+                model.moneyWin = document.getLong((Object) "money_win");
+                model.moneyLost = document.getLong((Object) "money_lost");
+                model.moneyOther = document.getLong((Object) "money_other");
+                model.fee = document.getLong((Object) "fee");
                 model.isBot = isBot;
                 String key = nickname + "," + actionname + "," + date;
                 results.put(key, model);
@@ -514,25 +512,21 @@ implements ReportDAO {
                 stmt.execute();
             }
             stmt.close();
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
             System.out.println(e);
             if (conn != null) {
                 try {
                     conn.close();
-                }
-                catch (SQLException e2) {
+                } catch (SQLException e2) {
                     e2.printStackTrace();
                 }
             }
-        }
-        finally {
+        } finally {
             if (conn != null) {
                 try {
                     conn.close();
-                }
-                catch (SQLException e2) {
+                } catch (SQLException e2) {
                     e2.printStackTrace();
                 }
             }
