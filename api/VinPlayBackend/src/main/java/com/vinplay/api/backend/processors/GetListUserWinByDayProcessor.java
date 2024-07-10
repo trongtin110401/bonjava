@@ -34,7 +34,7 @@ public class GetListUserWinByDayProcessor implements BaseProcessor<HttpServletRe
         List<LogUserMoneyResponse> list = dao.getLogMoneyUser(timeStart, timeEnd);
 
         List<UserLoseByDay> userLoseByDays = list.stream()
-                .filter(log -> !"Admin".equals(log.getServiceName()) && !"Gift Code".equals(log.getServiceName()))
+                .filter(log -> !"Admin".equals(log.getActionName()) && !"Gift Code".equals(log.getActionName()) && !"Exchange".equals(log.getActionName()))
                 .collect(Collectors.groupingBy(LogUserMoneyResponse::getNickName,
                         Collectors.summingLong(LogUserMoneyResponse::getMoneyExchange)))
                 .entrySet().stream()
