@@ -151,7 +151,6 @@ public class LogMoneyUserDaoImpl
         if (serviceName != null && !serviceName.equals("")) {
             conditions.put("service_name", serviceName);
         }
-        //conditions.put("is_bot", false);
         if (timeStart != null && !timeStart.equals("") && timeEnd != null && !timeEnd.equals("")) {
             try {
                 obj.put("$gte", VinPlayUtils.getDateTimeStr(VinPlayUtils.getDateTimeFromDate(timeStart + " 00:00:00")));
