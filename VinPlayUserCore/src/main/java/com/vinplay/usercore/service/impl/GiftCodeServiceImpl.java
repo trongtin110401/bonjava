@@ -373,10 +373,7 @@ public class GiftCodeServiceImpl
         if (existingDoc != null) {
             return;
         }
-
-        Document maxIdDoc = collection.find().sort(new Document("_id", -1)).limit(1).first();
-        int maxId = (maxIdDoc != null) ? maxIdDoc.getInteger("_id", 0) : 0;
-        Document newDocument = new Document("_id", maxId + 1)
+        Document newDocument = new Document("_id", System.currentTimeMillis())
                 .append("name", campaignName);
         collection.insertOne(newDocument);
     }
