@@ -393,7 +393,7 @@ public class GiftCodeServiceImpl
                 MongoCollection<Document> giftCode = db.getCollection("gift_code");
 
                 Bson query = Filters.and(
-                        Filters.eq("type", String.valueOf(document.getInteger("_id"))),
+                        Filters.eq("type", String.valueOf(document.getLong("_id"))),
                         Filters.eq("active", true)
                 );
                 long count = giftCode.count(query);
