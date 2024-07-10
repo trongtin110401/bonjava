@@ -387,7 +387,7 @@ public class GiftCodeServiceImpl
             while (cursor.hasNext()) {
                 Document document = cursor.next();
                 CampaignName campaignName = new CampaignName();
-                campaignName.setId(document.getInteger("_id"));
+                campaignName.setId(document.getLong("_id"));
                 campaignName.setCampaignName(document.getString("name"));
 
                 MongoCollection<Document> giftCode = db.getCollection("gift_code");
