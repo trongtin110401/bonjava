@@ -135,6 +135,7 @@ import com.vinplay.vbee.common.enums.ProviderType;
 import com.vinplay.vbee.common.exceptions.KeyNotFoundException;
 import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
 import com.vinplay.vbee.common.models.UserModel;
+import com.vinplay.vbee.common.models.cache.KickUserSignal;
 import com.vinplay.vbee.common.models.cache.UserCacheModel;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.response.*;
@@ -3300,18 +3301,24 @@ public class LobbyModule extends BaseClientRequestHandler {
     }
 
     private synchronized void loginFromOtherDevice() {
-        String nickname;
-        while ((nickname = cacheService.getQueueElement("LOGIN_OTHER_DEVICE_QUEUE")) != null) {
+        KickUserSignal kickUserSignal;
+        while ((kickUserSignal = cacheService.getQueueElement("LOGIN_OTHER_DEVICE_QUEUE")) != null) {
             try {
-                if (StringUtils.isNotEmpty(nickname)) {
-                    List<User> users = ExtensionUtility.globalUserManager.getUserByName(nickname);
-                    if (CollectionUtils.isNotEmpty(users)) {
-                        LoginOtherDeviceMsg msg = new LoginOtherDeviceMsg();
-                        this.send(msg, users);
+                List<User> users = ExtensionUtility.globalUserManager.getUserByName(kickUserSignal.getNickname());
+                if (CollectionUtils.isNotEmpty(users)) {
+                    LoginOtherDeviceMsg msg = new LoginOtherDeviceMsg();
+                    switch (kickUserSignal.getKickType()) {
+                        case KickUserSignal.DUPLICATE_LOGIN:
+                            msg.s = "Tài khoản của bạn vừa được đăng nhập bởi thiết bị khác!" ;
+                            break;
+                        case KickUserSignal.BLOCK_USER:
+                            msg.s = "Tài khoản của bạn đã bị KHÓA!";
+                            break;
                     }
+                    this.send(msg, users);
                 }
             } finally {
-                cacheService.getMap("LOGIN_OTHER_DEVICE_MAP").remove(nickname);
+                cacheService.getMap("LOGIN_OTHER_DEVICE_MAP").remove(kickUserSignal.getNickname());
             }
         }
     }
