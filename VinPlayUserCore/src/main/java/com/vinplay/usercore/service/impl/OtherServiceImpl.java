@@ -8,7 +8,6 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Sorts;
 import com.mongodb.client.model.UpdateOptions;
 import com.vinplay.usercore.service.OtherService;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
@@ -30,7 +29,6 @@ import java.util.List;
 import static com.mongodb.client.model.Filters.eq;
 
 public class OtherServiceImpl implements OtherService {
-
     @Override
     public LinkSocialResponse getLinkSocial() {
         LinkSocialResponse linkSocialResponse = new LinkSocialResponse(true, "0");
@@ -134,61 +132,7 @@ public class OtherServiceImpl implements OtherService {
             query.append("fund_name", fundName);
         }
 
-        MongoCursor<Document> cursor = col.find(query).skip(skip)
-                .sort(Sorts.descending("time_log"))
-                .limit(pageSize).iterator();
-
-        long totalCount = col.count(query);
-
-        List<Document> transactions = new ArrayList<>();
-        long totalWithdraw = 0;
-        long totalDeposit = 0;
-        while (cursor.hasNext()) {
-            Document document = cursor.next();
-            Document fund = new Document();
-            fund.put("fundName", document.getString("fund_name"));
-            fund.put("amount", document.getLong("amount"));
-            fund.put("type", document.getString("type"));
-            if (document.getString("type").equals("deposit")) {
-                totalDeposit += document.getLong("amount");
-            } else {
-                totalWithdraw += document.getLong("amount");
-            }
-
-            fund.put("createdTime", document.getString("time_log"));
-            transactions.add(fund);
-        }
-        response.setTransactions(transactions);
-        response.setTotal((int) totalCount);
-        response.setPageIndex(pageIndex);
-        response.setPageSize(pageSize);
-        response.setTotalDeposit(totalDeposit);
-        response.setTotalWithdraw(totalWithdraw);
-        response.setProfit(totalWithdraw - totalDeposit);
-
-        return response;
-    }
-
-    @Override
-    public TransactionFundResponse getTransactionFund(String startTime, String endTime) {
-        TransactionFundResponse response = new TransactionFundResponse(true, "0");
-
-        MongoDatabase db = MongoDBConnectionFactory.getDB();
-        MongoCollection col = db.getCollection("fund_transaction");
-
-        Document query = new Document();
-        int skip = (pageIndex - 1) * pageSize;
-        if ((startTime != null && !startTime.isEmpty()) && (endTime != null && !endTime.isEmpty())) {
-            query.append("time_log", new Document("$gte", startTime).append("$lte", endTime));
-        }
-        if (type != null && !type.isEmpty()) {
-            query.append("type", type);
-        }
-        if (fundName != null && !fundName.isEmpty()) {
-            query.append("fund_name", fundName);
-        }
-
-        MongoCursor<Document> cursor = col.find(query).iterator();
+        MongoCursor<Document> cursor = col.find(query).skip(skip).limit(pageSize).iterator();
 
         long totalCount = col.count(query);
 
@@ -385,9 +329,9 @@ public class OtherServiceImpl implements OtherService {
             userLoseByDay.setMoneyCashBack(document.getInteger("cashBack"));
             userLoseByDay.setCreatedDate(document.getString("createdDate"));
             userLoseByDay.setExpirationDate(document.getString("expirationDate"));
-            if (document.getBoolean("status") == null) {
+            if (document.getBoolean("status") == null){
                 userLoseByDay.setStatus(false);
-            } else {
+            }else {
                 userLoseByDay.setStatus(document.getBoolean("status"));
             }
             userLoseByDay.setActiveDate(document.getString("activeDate"));
