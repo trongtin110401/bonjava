@@ -186,7 +186,7 @@ public class VinPlayUtils {
     }
 
     public static Date getDateTimeFromDate(String date) throws ParseException {
-        SimpleDateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return formatDate.parse(date);
     }
 
