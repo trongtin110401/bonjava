@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  com.hazelcast.core.HazelcastInstance
  *  com.hazelcast.core.IMap
@@ -34,6 +34,7 @@ import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
 import com.vinplay.vbee.common.models.cache.ReportModel;
 import com.vinplay.vbee.common.statics.Consts;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -41,16 +42,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
+
 import org.apache.log4j.Logger;
 
 public class ReportMoneySystemProcessor
-implements BaseProcessor<HttpServletRequest, String> {
-    private static final Logger logger = Logger.getLogger((String)"report");
+        implements BaseProcessor<HttpServletRequest, String> {
+    private static final Logger logger = Logger.getLogger((String) "report");
 
     public String execute(Param<HttpServletRequest> param) {
         ReportMoneySystemResponse res;
-        block29 : {
-            HttpServletRequest request = (HttpServletRequest)param.get();
+        block29:
+        {
+            HttpServletRequest request = (HttpServletRequest) param.get();
             String startTime = request.getParameter("ts");
             String endTime = request.getParameter("te");
             res = new ReportMoneySystemResponse(false, "1001");
@@ -62,7 +65,7 @@ implements BaseProcessor<HttpServletRequest, String> {
                 String today = VinPlayUtils.getCurrentDate();
                 HazelcastInstance client = HazelcastClientFactory.getInstance();
                 ReportDaoImpl dao = new ReportDaoImpl();
-                SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                 Date st = format.parse(startTime);
                 Date et = format.parse(endTime);
                 Date currentDate = VinPlayUtils.getCurrentDates();
@@ -70,14 +73,14 @@ implements BaseProcessor<HttpServletRequest, String> {
                     if (st.getTime() >= currentDate.getTime()) {
                         IMap<String, ReportModel> reportMap = client.getMap("cacheReports");
                         for (IMap.Entry entry : reportMap.entrySet()) {
-                            if (!((String)entry.getKey()).contains(today)) continue;
-                            String[] arr = ((String)entry.getKey()).split(",");
+                            if (!((String) entry.getKey()).contains(today)) continue;
+                            String[] arr = ((String) entry.getKey()).split(",");
                             String actionname = arr[1];
-                            ReportModel model = (ReportModel)entry.getValue();
+                            ReportModel model = (ReportModel) entry.getValue();
                             ReportMoneySystemModel rModel = new ReportMoneySystemModel();
                             if (!model.isBot) {
                                 if (map.containsKey(actionname)) {
-                                    rModel = (ReportMoneySystemModel)map.get(actionname);
+                                    rModel = (ReportMoneySystemModel) map.get(actionname);
                                 }
                                 ReportMoneySystemModel reportMoneySystemModel = rModel;
                                 reportMoneySystemModel.moneyWin += model.moneyWin;
@@ -95,7 +98,7 @@ implements BaseProcessor<HttpServletRequest, String> {
                                 continue;
                             }
                             if (mapBot.containsKey(actionname)) {
-                                rModel = (ReportMoneySystemModel)mapBot.get(actionname);
+                                rModel = (ReportMoneySystemModel) mapBot.get(actionname);
                             }
                             ReportMoneySystemModel reportMoneySystemModel7 = rModel;
                             reportMoneySystemModel7.moneyWin += model.moneyWin;
@@ -121,14 +124,14 @@ implements BaseProcessor<HttpServletRequest, String> {
                         mapBot = dao.getReportMoneySystemMySQL(startTime, yesterday, true);
                         IMap<String, ReportModel> reportMap2 = client.getMap("cacheReports");
                         for (Map.Entry entry2 : reportMap2.entrySet()) {
-                            if (!((String)entry2.getKey()).contains(today)) continue;
-                            String[] arr2 = ((String)entry2.getKey()).split(",");
+                            if (!((String) entry2.getKey()).contains(today)) continue;
+                            String[] arr2 = ((String) entry2.getKey()).split(",");
                             String actionname2 = arr2[1];
-                            ReportModel model2 = (ReportModel)entry2.getValue();
+                            ReportModel model2 = (ReportModel) entry2.getValue();
                             ReportMoneySystemModel rModel2 = new ReportMoneySystemModel();
                             if (!model2.isBot) {
                                 if (map.containsKey(actionname2)) {
-                                    rModel2 = (ReportMoneySystemModel)map.get(actionname2);
+                                    rModel2 = (ReportMoneySystemModel) map.get(actionname2);
                                 }
                                 ReportMoneySystemModel reportMoneySystemModel13 = rModel2;
                                 reportMoneySystemModel13.moneyWin += model2.moneyWin;
@@ -146,7 +149,7 @@ implements BaseProcessor<HttpServletRequest, String> {
                                 continue;
                             }
                             if (mapBot.containsKey(actionname2)) {
-                                rModel2 = (ReportMoneySystemModel)mapBot.get(actionname2);
+                                rModel2 = (ReportMoneySystemModel) mapBot.get(actionname2);
                             }
                             ReportMoneySystemModel reportMoneySystemModel19 = rModel2;
                             reportMoneySystemModel19.moneyWin += model2.moneyWin;
@@ -184,17 +187,17 @@ implements BaseProcessor<HttpServletRequest, String> {
                 HashMap<String, Long> bot = new HashMap<String, Long>();
                 ReportTotalMoneyModel totalModelStart = dao.getReportTotalMoneyAtTime(startTime, true);
                 ReportTotalMoneyModel totalModelEnd = new ReportTotalMoneyModel();
-                totalModelEnd = endToday ? dao.getTotalMoney(GameCommon.getValueStr((String)"SUPER_AGENT")) : dao.getReportTotalMoneyAtTime(endTime, false);
+                totalModelEnd = endToday ? dao.getTotalMoney(GameCommon.getValueStr((String) "SUPER_AGENT")) : dao.getReportTotalMoneyAtTime(endTime, false);
                 vinOutAgent.put("agentStart", totalModelStart.moneyAgent1 + totalModelStart.moneyAgent2 + totalModelStart.moneySuperAgent);
                 vinOutAgent.put("agentEnd", totalModelEnd.moneyAgent1 + totalModelEnd.moneyAgent2 + totalModelEnd.moneySuperAgent);
-                totalOutAgent = (Long)vinOutAgent.get("agentEnd") - (Long)vinOutAgent.get("agentStart");
+                totalOutAgent = (Long) vinOutAgent.get("agentEnd") - (Long) vinOutAgent.get("agentStart");
                 user.put("userStart", totalModelStart.moneyUser);
                 user.put("userEnd", totalModelEnd.moneyUser);
                 for (Map.Entry entry3 : map.entrySet()) {
-                    String actionname3 = (String)entry3.getKey();
-                    ReportMoneySystemModel model3 = (ReportMoneySystemModel)entry3.getValue();
+                    String actionname3 = (String) entry3.getKey();
+                    ReportMoneySystemModel model3 = (ReportMoneySystemModel) entry3.getValue();
                     if (Consts.GAMES.contains(actionname3)) {
-                        if (((String)entry3.getKey()).equals("TaiXiu")) {
+                        if (((String) entry3.getKey()).equals("TaiXiu")) {
                             taiXiu.fee = model3.fee;
                             taiXiu.moneyLost = model3.moneyLost;
                             taiXiu.moneyWin = model3.fee * 50L;
@@ -223,23 +226,23 @@ implements BaseProcessor<HttpServletRequest, String> {
                     vinOther.put(actionname3, -model3.moneyOther);
                 }
                 for (Map.Entry entry4 : vinInUser.entrySet()) {
-                    totalInUser += ((Long)entry4.getValue()).longValue();
+                    totalInUser += ((Long) entry4.getValue()).longValue();
                 }
                 for (Map.Entry entry4 : vinInEvent.entrySet()) {
-                    totalInEvent += ((Long)entry4.getValue()).longValue();
+                    totalInEvent += ((Long) entry4.getValue()).longValue();
                 }
                 totalIn = totalInUser + totalInEvent;
                 for (Map.Entry entry4 : vinOutUser.entrySet()) {
-                    totalOutUser += ((Long)entry4.getValue()).longValue();
+                    totalOutUser += ((Long) entry4.getValue()).longValue();
                 }
                 totalOut = totalOutUser + totalOutAgent;
                 if (totalIn > 0L && totalOut > 0L) {
-                    ratioCashout = (double)Math.round(10000L * totalOut / totalIn) / 100.0;
+                    ratioCashout = (double) Math.round(10000L * totalOut / totalIn) / 100.0;
                 }
                 for (Map.Entry entry3 : mapBot.entrySet()) {
-                    ReportMoneySystemModel model4 = (ReportMoneySystemModel)entry3.getValue();
+                    ReportMoneySystemModel model4 = (ReportMoneySystemModel) entry3.getValue();
                     if (Consts.GAMES.contains(entry3.getKey())) {
-                        if (((String)entry3.getKey()).equals("TaiXiu")) {
+                        if (((String) entry3.getKey()).equals("TaiXiu")) {
                             taiXiuBot.fee = model4.fee;
                             taiXiuBot.moneyLost = model4.moneyLost;
                             taiXiuBot.moneyWin = model4.fee * 50L;
@@ -249,18 +252,17 @@ implements BaseProcessor<HttpServletRequest, String> {
                             taiXiuBot.revenue = taiXiuBot.moneyRefund + taiXiuBot.moneyWin + taiXiuBot.moneyLost + taiXiuBot.moneyOther;
                             continue;
                         }
-                        actionGameBot.put((String)entry3.getKey(), (ReportMoneySystemModel)entry3.getValue());
+                        actionGameBot.put((String) entry3.getKey(), (ReportMoneySystemModel) entry3.getValue());
                         continue;
                     }
-                    bot.put((String)entry3.getKey(), model4.moneyOther);
+                    bot.put((String) entry3.getKey(), model4.moneyOther);
                 }
                 res = new ReportMoneySystemResponse(true, "0", taiXiu, taiXiuBot, actionGame, vinInUser, vinInEvent, totalInUser, totalInEvent, totalIn, vinOutUser, vinOutAgent, totalOutUser, totalOutAgent, totalOut, ratioCashout, vinOther, user, actionGameBot, bot);
                 String bill = GameCommon.getValueStr("BILLING");
                 res.billConfig = bill;
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
-                logger.debug((Object)e);
+                logger.debug((Object) e);
             }
         }
         return res.toJson();
