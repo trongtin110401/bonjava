@@ -37,7 +37,7 @@ public class GetFeeProcessor
         HttpServletRequest request = param.get();
         String startTime = request.getParameter("ts");
         String endTime = request.getParameter("te");
-        int totalFee = 0;
+        long totalFee = 0;
         try {
             ReportDaoImpl dao = new ReportDaoImpl();
             Map<String, ReportMoneySystemModel> map = dao.getReportMoneySystemMySQL(startTime, endTime, false);
