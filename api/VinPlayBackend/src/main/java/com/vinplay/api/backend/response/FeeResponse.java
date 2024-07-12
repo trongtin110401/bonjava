@@ -12,17 +12,17 @@ import com.vinplay.vbee.common.response.BaseResponseModel;
 
 public class FeeResponse
         extends BaseResponseModel {
-    private int totalFee;
+    private long totalFee;
 
     public FeeResponse(boolean success, String errorCode) {
         super(success, errorCode);
     }
 
-    public int getTotalFee() {
+    public long getTotalFee() {
         return totalFee;
     }
 
-    public void setTotalFee(int totalFee) {
+    public void setTotalFee(long totalFee) {
         this.totalFee = totalFee;
     }
 }
