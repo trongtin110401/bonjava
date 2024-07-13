@@ -481,7 +481,7 @@ public class GiftCodeServiceImpl
         collection.updateMany(query, update);
     }
 
-    public boolean deleteCampaign(int id) {
+    public boolean deleteCampaign(long id) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection<Document> giftCode = db.getCollection("gift_code");
 
