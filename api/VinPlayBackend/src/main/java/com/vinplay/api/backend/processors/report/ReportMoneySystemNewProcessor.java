@@ -33,16 +33,19 @@ import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.response.AgentResponse;
 import com.vinplay.vbee.common.response.LogUserMoneyResponse;
+import com.vinplay.vbee.common.response.TransactionFundResponse;
 import com.vinplay.vbee.common.statics.Consts;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.log4j.Logger;
+import org.bson.Document;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.stream.Collectors;
 
 public class ReportMoneySystemNewProcessor
         implements BaseProcessor<HttpServletRequest, String> {
@@ -89,18 +92,32 @@ public class ReportMoneySystemNewProcessor
             user.put("userStart", totalModelStart.moneyUser);
             user.put("userEnd", totalModelEnd.moneyUser);
 
+            // search fund
+            OtherService otherService = new OtherServiceImpl();
+//            TransactionFundResponse transactionFundResponse = otherService.getTransactionFund(1, 0, null, startTime, endTime, null);
+//            transactionFundResponse.getTransactions().stream()
+//                    .collect(Collectors.groupingBy(doc -> doc.getString("gameName")))
+//                    .entrySet()
+//                    .stream()
+//                    .map(entry -> {
+//                        String gameName = entry.getKey();
+//                        List<Document> documents = entry.getValue();
+//                        ReportMoneySystemModelNew report = new ReportMoneySystemModelNew();
+//                        report.actionName = gameName;
+//
+//                    })
+
 
             LogMoneyUserServiceImpl service = new LogMoneyUserServiceImpl();
             //search all log with time
             List<LogUserMoneyResponse> logs = service.searchLogMoneyUser(nickName, "", "", startTime, endTime, -1, -1);
-            if (logs == null || logs.size() == 0)
+            if (logs == null || logs.isEmpty())
                 return res.toJson();
-            //
+
+
             for (LogUserMoneyResponse log : logs) {
                 if (Consts.GAMES.contains(log.actionName)) {
                     listReport = processListGame(listReport, log);
-                    // get fund list
-
                     // combine list
                 } else if (Consts.VIN_IN_USER.contains(log.actionName)) {
                     listUserIn = processListMoney(listUserIn, log);
@@ -126,8 +143,6 @@ public class ReportMoneySystemNewProcessor
                 reportMoneyModel.AgentMoneyIn = moneyAgentIn;
                 reportMoneyModel.AgentMoneyOut = moneyAgentOut;
                 ObjectMapper mapper = new ObjectMapper();
-
-                OtherService otherService = new OtherServiceImpl();
 
                 LocalDate dateStart = LocalDate.parse(startTime, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
                 String sqlDateStart = dateStart.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));

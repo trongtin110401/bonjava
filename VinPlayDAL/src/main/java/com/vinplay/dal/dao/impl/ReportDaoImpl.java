@@ -497,7 +497,12 @@ public class ReportDaoImpl
     public void saveReportMoneyVin(Map<String, ReportModel> input) {
         Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
         try {
-            PreparedStatement stmt = conn.prepareStatement("INSERT INTO report_money_daily(action_name, money_win, money_lost, money_other, fee, date) VALUES(?, ?, ?, ?, ?, ?)");
+            PreparedStatement stmt = conn.prepareStatement("INSERT INTO report_money_daily(action_name, money_win, money_lost, money_other, fee, date) VALUES(?, ?, ?, ?, ?, ?) " +
+                    " ON DUPLICATE KEY UPDATE " +
+                    "       money_win = money_win + ?, " +
+                    "       money_lost = money_lost + ?," +
+                    "       money_other = money_other + ?, " +
+                    "       fee = fee + ?");
             Calendar cal = Calendar.getInstance();
             cal.add(5, -1);
             Date yesterday = new Date(cal.getTimeInMillis());
@@ -509,6 +514,10 @@ public class ReportDaoImpl
                 stmt.setLong(4, entry.getValue().moneyOther);
                 stmt.setLong(5, entry.getValue().fee);
                 stmt.setDate(6, yesterday);
+                stmt.setLong(7, entry.getValue().moneyWin);
+                stmt.setLong(8, entry.getValue().moneyLost);
+                stmt.setLong(9, entry.getValue().moneyOther);
+                stmt.setLong(10, entry.getValue().fee);
                 stmt.execute();
             }
             stmt.close();

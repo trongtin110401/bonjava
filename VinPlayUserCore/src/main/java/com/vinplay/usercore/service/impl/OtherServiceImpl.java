@@ -145,6 +145,7 @@ public class OtherServiceImpl implements OtherService {
             fund.put("fundName", document.getString("fund_name"));
             fund.put("amount", document.getLong("amount"));
             fund.put("type", document.getString("type"));
+            fund.put("gameName", document.getString("game_name"));
             if (document.getString("type").equals("deposit")) {
                 totalDeposit += document.getLong("amount");
             } else {
@@ -329,9 +330,9 @@ public class OtherServiceImpl implements OtherService {
             userLoseByDay.setMoneyCashBack(document.getInteger("cashBack"));
             userLoseByDay.setCreatedDate(document.getString("createdDate"));
             userLoseByDay.setExpirationDate(document.getString("expirationDate"));
-            if (document.getBoolean("status") == null){
+            if (document.getBoolean("status") == null) {
                 userLoseByDay.setStatus(false);
-            }else {
+            } else {
                 userLoseByDay.setStatus(document.getBoolean("status"));
             }
             userLoseByDay.setActiveDate(document.getString("activeDate"));
