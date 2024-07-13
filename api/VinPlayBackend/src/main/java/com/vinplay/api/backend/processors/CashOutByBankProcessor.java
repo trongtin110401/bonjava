@@ -76,7 +76,7 @@ public class CashOutByBankProcessor implements BaseProcessor<HttpServletRequest,
             if (act.equals("getList")) {
 
                 UserWithdraw userWithdraw = new UserWithdraw(transid, nickName, bankAccountNumber, bankAccountName, bankName, status);
-                CashoutBankResponse res = cashoutDao.GetListCashoutBank(userWithdraw, page, maxItem, timeEnd, timeStart);
+                CashoutBankResponse res = cashoutDao.GetListCashoutBank(userWithdraw, page, maxItem, timeStart, timeEnd);
 
                 return res.toJson();
             } else if (act.equals("get")) {
