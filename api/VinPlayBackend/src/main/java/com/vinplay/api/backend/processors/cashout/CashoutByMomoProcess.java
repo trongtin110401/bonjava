@@ -79,11 +79,16 @@ public class CashoutByMomoProcess implements BaseProcessor<HttpServletRequest, S
                     CallAutoTransMomo callAutoTransMomo = new CallAutoTransMomo();
                     String output = callAutoTransMomo.CallAPI(userWithdraw); //Product
                     Gson gson = new Gson();
-                    JsonObject jsonObject = gson.fromJson(output, JsonObject.class);
-                    if (jsonObject.get("ex_stt").equals("-2.3")) {
-                        this.sendMesToAdmin(transid, 3);
+                    if (output.contains("404")){
+                        this.sendMesToAdmin(transid, 2);
                     }
-                    return "trues";
+                    else {
+                        JsonObject jsonObject = gson.fromJson(output, JsonObject.class);
+                        if (jsonObject.get("ex_stt").equals("-2.3")) {
+                            this.sendMesToAdmin(transid, 3);
+                        }
+                    }
+                    return "true";
                 }
                 // update trans
                 boolean updateTrans = cashoutDao.UpdateCashoutMomo(transid, status, userAprrove);
