@@ -95,6 +95,8 @@ public class PortalUtils {
             kickSession(userModel);
         }
 
+        System.out.println("=========> Login Platform: " + pf);
+
         boolean success = true;
         String accessToken = "";
         String sessionKey = "";
