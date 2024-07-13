@@ -499,10 +499,10 @@ public class ReportDaoImpl
         try {
             PreparedStatement stmt = conn.prepareStatement("INSERT INTO report_money_daily(action_name, money_win, money_lost, money_other, fee, date) VALUES(?, ?, ?, ?, ?, ?) " +
                     " ON DUPLICATE KEY UPDATE " +
-                    "       money_win = money_win + ?, " +
-                    "       money_lost = money_lost + ?," +
-                    "       money_other = money_other + ?, " +
-                    "       fee = fee + ?");
+                    "       money_win = ?, " +
+                    "       money_lost = ?," +
+                    "       money_other =  ?, " +
+                    "       fee =  ?");
             Calendar cal = Calendar.getInstance();
             cal.add(5, -1);
             Date yesterday = new Date(cal.getTimeInMillis());
