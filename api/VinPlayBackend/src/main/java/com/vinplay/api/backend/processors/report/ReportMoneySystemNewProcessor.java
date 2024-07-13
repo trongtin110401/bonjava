@@ -94,18 +94,18 @@ public class ReportMoneySystemNewProcessor
 
             // search fund
             OtherService otherService = new OtherServiceImpl();
-            TransactionFundResponse transactionFundResponse = otherService.getTransactionFund(1, 0, null, startTime, endTime, null);
-            transactionFundResponse.getTransactions().stream()
-                    .collect(Collectors.groupingBy(doc -> doc.getString("gameName")))
-                    .entrySet()
-                    .stream()
-                    .map(entry -> {
-                        String gameName = entry.getKey();
-                        List<Document> documents = entry.getValue();
-                        ReportMoneySystemModelNew report = new ReportMoneySystemModelNew();
-                        report.actionName = gameName;
-
-                    })
+//            TransactionFundResponse transactionFundResponse = otherService.getTransactionFund(1, 0, null, startTime, endTime, null);
+//            transactionFundResponse.getTransactions().stream()
+//                    .collect(Collectors.groupingBy(doc -> doc.getString("gameName")))
+//                    .entrySet()
+//                    .stream()
+//                    .map(entry -> {
+//                        String gameName = entry.getKey();
+//                        List<Document> documents = entry.getValue();
+//                        ReportMoneySystemModelNew report = new ReportMoneySystemModelNew();
+//                        report.actionName = gameName;
+//
+//                    })
 
 
             LogMoneyUserServiceImpl service = new LogMoneyUserServiceImpl();
