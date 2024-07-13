@@ -13,7 +13,7 @@ public class DeleteCampaignProcessor
 
     public String execute(Param<HttpServletRequest> param) {
         HttpServletRequest request = param.get();
-        int id = Integer.parseInt(request.getParameter("id"));
+        long id = Long.parseLong(request.getParameter("id"));
         CampaignNameResponse response = new CampaignNameResponse(true, "0");
         GiftCodeServiceImpl service = new GiftCodeServiceImpl();
         boolean success  = service.deleteCampaign(id);
