@@ -204,9 +204,8 @@ public class HistoryTransDaoImpl implements HistoryTransDao {
             iterable2.forEach((Block) document -> {
                 long count = (Long) num.get(0) + 1L;
                 num.set(0, count);
-
             });
-
+            response.setListTrans(records);
             int totalPages = (int) Math.ceil((double) Math.toIntExact(num.get(0)) / 5);
             response.setTotalpage(totalPages);
             return response;
