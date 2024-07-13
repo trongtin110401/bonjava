@@ -18,10 +18,10 @@ import com.vinplay.usercore.service.OtherService;
 import com.vinplay.usercore.service.impl.OtherServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
+import com.vinplay.vbee.common.enums.Games;
 import com.vinplay.vbee.common.response.FundInfoResponse;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
 import org.bson.Document;
-import org.python.parser.ast.Str;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -34,59 +34,112 @@ public class UpdateFundProcessor implements BaseProcessor<HttpServletRequest, St
 
     private final static String WITHDRAW = "withdraw";
 
-    public final static Map<String, String> games = new HashMap<>();
+    public final static Map<String, String> funds = new HashMap<>();
+    public static final Map<String, String> fund2GameName = new HashMap<>();
 
     static {
-        games.put("TaiXiu", "TaiXiu");
-        games.put("TaiXiuMd5", "TaiXiuMd5");
-        games.put("XocDia", "XocDia");
-        games.put("BauCuaTo_vin_1000", "BauCuaTo_vin_1000");
+        funds.put("TaiXiu", "TaiXiu");
+        funds.put("TaiXiuMd5", "TaiXiuMd5");
+        funds.put("XocDia", "XocDia");
+        funds.put("BauCuaTo_vin_1000", "BauCuaTo_vin_1000");
 
-        games.put("MiniPoker_vin_100", "MiniPoker_vin_100");
-        games.put("MiniPoker_vin_1000", "MiniPoker_vin_1000");
-        games.put("MiniPoker_vin_10000", "MiniPoker_vin_10000");
+        funds.put("MiniPoker_vin_100", "MiniPoker_vin_100");
+        funds.put("MiniPoker_vin_1000", "MiniPoker_vin_1000");
+        funds.put("MiniPoker_vin_10000", "MiniPoker_vin_10000");
 
-        games.put("cao_thap_vin_1000", "cao_thap_vin_1000");
-        games.put("cao_thap_vin_10000", "cao_thap_vin_10000");
-        games.put("cao_thap_vin_50000", "cao_thap_vin_50000");
-        games.put("cao_thap_vin_100000", "cao_thap_vin_100000");
-        games.put("cao_thap_vin_500000", "cao_thap_vin_500000");
+        funds.put("cao_thap_vin_1000", "cao_thap_vin_1000");
+        funds.put("cao_thap_vin_10000", "cao_thap_vin_10000");
+        funds.put("cao_thap_vin_50000", "cao_thap_vin_50000");
+        funds.put("cao_thap_vin_100000", "cao_thap_vin_100000");
+        funds.put("cao_thap_vin_500000", "cao_thap_vin_500000");
 
-        games.put("Cowboy_vin_1000", "Cowboy_vin_1000");
-        games.put("Cowboy_vin_10000", "Cowboy_vin_10000");
-        games.put("Cowboy_vin_100", "Cowboy_vin_100");
+        funds.put("Cowboy_vin_1000", "Cowboy_vin_1000");
+        funds.put("Cowboy_vin_10000", "Cowboy_vin_10000");
+        funds.put("Cowboy_vin_100", "Cowboy_vin_100");
 
-        games.put("FastAndFurious_vin_100", "FastAndFurious_vin_100");
-        games.put("FastAndFurious_vin_1000", "FastAndFurious_vin_1000");
-        games.put("FastAndFurious_vin_10000", "FastAndFurious_vin_10000");
+        funds.put("FastAndFurious_vin_100", "FastAndFurious_vin_100");
+        funds.put("FastAndFurious_vin_1000", "FastAndFurious_vin_1000");
+        funds.put("FastAndFurious_vin_10000", "FastAndFurious_vin_10000");
 
-        games.put("LadyNight_vin_100", "LadyNight_vin_100");
-        games.put("LadyNight_vin_1000", "LadyNight_vin_1000");
-        games.put("LadyNight_vin_10000", "LadyNight_vin_10000");
+        funds.put("LadyNight_vin_100", "LadyNight_vin_100");
+        funds.put("LadyNight_vin_1000", "LadyNight_vin_1000");
+        funds.put("LadyNight_vin_10000", "LadyNight_vin_10000");
 
-        games.put("Caribe_vin_100", "Caribe_vin_100");
-        games.put("Caribe_vin_1000", "Caribe_vin_1000");
-        games.put("Caribe_vin_10000", "Caribe_vin_10000");
+        funds.put("Caribe_vin_100", "Caribe_vin_100");
+        funds.put("Caribe_vin_1000", "Caribe_vin_1000");
+        funds.put("Caribe_vin_10000", "Caribe_vin_10000");
 
-        games.put("BongLaiCac_vin_1000", "BongLaiCac_vin_1000");
-        games.put("BongLaiCac_vin_10000", "BongLaiCac_vin_10000");
-        games.put("BongLaiCac_vin_100000", "BongLaiCac_vin_100000");
+        funds.put("BongLaiCac_vin_1000", "BongLaiCac_vin_1000");
+        funds.put("BongLaiCac_vin_10000", "BongLaiCac_vin_10000");
+        funds.put("BongLaiCac_vin_100000", "BongLaiCac_vin_100000");
 
-        games.put("Halloween_vin_100", "Halloween_vin_100");
-        games.put("Halloween_vin_1000", "Halloween_vin_1000");
-        games.put("Halloween_vin_10000", "Halloween_vin_10000");
+        funds.put("Halloween_vin_100", "Halloween_vin_100");
+        funds.put("Halloween_vin_1000", "Halloween_vin_1000");
+        funds.put("Halloween_vin_10000", "Halloween_vin_10000");
 
-        games.put("LasVegas_vin_100", "LasVegas_vin_100");
-        games.put("LasVegas_vin_1000", "LasVegas_vin_1000");
-        games.put("LasVegas_vin_10000", "LasVegas_vin_10000");
+        funds.put("LasVegas_vin_100", "LasVegas_vin_100");
+        funds.put("LasVegas_vin_1000", "LasVegas_vin_1000");
+        funds.put("LasVegas_vin_10000", "LasVegas_vin_10000");
 
-        games.put("SexyDance_vin_100", "SexyDance_vin_100");
-        games.put("SexyDance_vin_1000", "SexyDance_vin_1000");
-        games.put("SexyDance_vin_10000", "SexyDance_vin_10000");
+        funds.put("SexyDance_vin_100", "SexyDance_vin_100");
+        funds.put("SexyDance_vin_1000", "SexyDance_vin_1000");
+        funds.put("SexyDance_vin_10000", "SexyDance_vin_10000");
 
-        games.put("LienMinh_vin_100", "LienMinh_vin_100");
-        games.put("LienMinh_vin_1000", "LienMinh_vin_1000");
-        games.put("LienMinh_vin_10000", "LienMinh_vin_10000");
+        funds.put("LienMinh_vin_100", "LienMinh_vin_100");
+        funds.put("LienMinh_vin_1000", "LienMinh_vin_1000");
+        funds.put("LienMinh_vin_10000", "LienMinh_vin_10000");
+
+
+        fund2GameName.put("TaiXiu", Games.TAI_XIU.getName());
+        fund2GameName.put("TaiXiuMd5", Games.TAI_XIU_MD5.getName());
+        fund2GameName.put("XocDia", Games.XOC_DIA.getName());
+        fund2GameName.put("BauCuaTo_vin_1000", "BauCuaTo");
+
+        fund2GameName.put("MiniPoker_vin_100", Games.MINI_POKER.getName());
+        fund2GameName.put("MiniPoker_vin_1000", Games.MINI_POKER.getName());
+        fund2GameName.put("MiniPoker_vin_10000", Games.MINI_POKER.getName());
+
+        fund2GameName.put("cao_thap_vin_1000", Games.CAO_THAP.getName());
+        fund2GameName.put("cao_thap_vin_10000", Games.CAO_THAP.getName());
+        fund2GameName.put("cao_thap_vin_50000", Games.CAO_THAP.getName());
+        fund2GameName.put("cao_thap_vin_100000", Games.CAO_THAP.getName());
+        fund2GameName.put("cao_thap_vin_500000", Games.MINI_POKER.getName());
+
+        fund2GameName.put("Cowboy_vin_1000", Games.COWBOY.getName());
+        fund2GameName.put("Cowboy_vin_10000", Games.COWBOY.getName());
+        fund2GameName.put("Cowboy_vin_100", Games.COWBOY.getName());
+
+        fund2GameName.put("FastAndFurious_vin_100", Games.FAST_AND_FURIOUS.getName());
+        fund2GameName.put("FastAndFurious_vin_1000", Games.FAST_AND_FURIOUS.getName());
+        fund2GameName.put("FastAndFurious_vin_10000", Games.FAST_AND_FURIOUS.getName());
+
+        fund2GameName.put("LadyNight_vin_100", Games.LADY_NIGHT.getName());
+        fund2GameName.put("LadyNight_vin_1000", Games.LADY_NIGHT.getName());
+        fund2GameName.put("LadyNight_vin_10000", Games.LADY_NIGHT.getName());
+
+        fund2GameName.put("Caribe_vin_100", Games.CARIBE.getName());
+        fund2GameName.put("Caribe_vin_1000", Games.CARIBE.getName());
+        fund2GameName.put("Caribe_vin_10000", Games.CARIBE.getName());
+
+        fund2GameName.put("BongLaiCac_vin_1000", Games.BONG_LAI_CAC.getName());
+        fund2GameName.put("BongLaiCac_vin_10000", Games.BONG_LAI_CAC.getName());
+        fund2GameName.put("BongLaiCac_vin_100000", Games.BONG_LAI_CAC.getName());
+
+        fund2GameName.put("Halloween_vin_100", Games.HALLOWEEN.getName());
+        fund2GameName.put("Halloween_vin_1000", Games.HALLOWEEN.getName());
+        fund2GameName.put("Halloween_vin_10000", Games.HALLOWEEN.getName());
+
+        fund2GameName.put("LasVegas_vin_100", Games.LAS_VEGAS.getName());
+        fund2GameName.put("LasVegas_vin_1000", Games.LAS_VEGAS.getName());
+        fund2GameName.put("LasVegas_vin_10000", Games.LAS_VEGAS.getName());
+
+        fund2GameName.put("SexyDance_vin_100", Games.SEXY_DANCE.getName());
+        fund2GameName.put("SexyDance_vin_1000", Games.SEXY_DANCE.getName());
+        fund2GameName.put("SexyDance_vin_10000", Games.SEXY_DANCE.getName());
+
+        fund2GameName.put("LienMinh_vin_100", Games.LIEN_MINH.getName());
+        fund2GameName.put("LienMinh_vin_1000", Games.LIEN_MINH.getName());
+        fund2GameName.put("LienMinh_vin_10000", Games.LIEN_MINH.getName());
     }
 
 
@@ -99,8 +152,8 @@ public class UpdateFundProcessor implements BaseProcessor<HttpServletRequest, St
         long amount = Long.parseLong(request.getParameter("amount"));
         String type = request.getParameter("type");
         try {
-            if (games.containsKey(fundName)) {
-                long currentFunValue = cacheService.getValueLong(games.get(fundName), 0);
+            if (funds.containsKey(fundName)) {
+                long currentFunValue = cacheService.getValueLong(funds.get(fundName), 0);
                 if (type.equals(DEPOSIT)) {
                     currentFunValue += amount;
                 } else if (type.equals(WITHDRAW)) {
@@ -113,11 +166,11 @@ public class UpdateFundProcessor implements BaseProcessor<HttpServletRequest, St
                     currentFunValue -= amount;
                 }
                 // save fund to cache
-                cacheService.setValue(games.get(fundName), currentFunValue);
+                cacheService.setValue(funds.get(fundName), currentFunValue);
                 // save to db
                 service.saveFund(fundName, currentFunValue);
                 // save log
-                saveFunLog(fundName, amount, type);
+                saveFunLog(fund2GameName.get(fundName), fundName, amount, type);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -125,8 +178,9 @@ public class UpdateFundProcessor implements BaseProcessor<HttpServletRequest, St
         return response.toJson();
     }
 
-    private static void saveFunLog(String fundName, long amount, String type) {
+    private static void saveFunLog(String gameName, String fundName, long amount, String type) {
         Document document = new Document();
+        document.put("game_name", gameName);
         document.put("fund_name", fundName);
         document.put("amount", amount);
         document.put("type", type);
