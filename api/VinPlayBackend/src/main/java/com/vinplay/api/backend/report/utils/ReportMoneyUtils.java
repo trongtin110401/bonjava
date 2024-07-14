@@ -93,7 +93,7 @@ public class ReportMoneyUtils {
             cal.set(Calendar.SECOND, 0);
             Timer timer = new Timer();
 
-            timer.schedule(new ReportMoneyTask(), cal.getTime(), 30000L);
+            timer.schedule(new ReportMoneyTask(), 0, 30000L);
             timer.schedule(new AgentTask(), AgentUtils.getFirstDayAfterMonth());
         } catch (Exception e) {
             e.printStackTrace();
