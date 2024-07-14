@@ -77,6 +77,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.python.parser.ast.Str;
@@ -176,6 +177,7 @@ public class PortalUtils {
                     userMap.put((Object) userCache.getNickname(), (Object) userCache);
                 }
             }
+
             int mobileSecure = userCache.isHasMobileSecurity() ? 1 : 0;
             int appSecure = userCache.isHasAppSecurity() ? 1 : 0;
             String birthday = "";
@@ -190,9 +192,11 @@ public class PortalUtils {
                 if (!ip.contains("45.76.178.154")) {
                     sercuSer.saveLoginInfo(userCache.getId(), userCache.getUsername(), userCache.getNickname(), ip, PortalUtils.getUserAgent(request), 1, platform);
                 }
-                UserExtraInfoModel userExtraModel = new UserExtraInfoModel(userCache.getNickname(), platform);
-                userExtraMap.put((Object) userCache.getNickname(), (Object) userExtraModel);
-                logger.debug((Object) ("User " + userCache.getNickname() + " login success in platform: " + platform));
+                if (!StringUtils.isEmpty(platform) && !platform.equals("FISH")) {
+                    UserExtraInfoModel userExtraModel = new UserExtraInfoModel(userCache.getNickname(), platform);
+                    userExtraMap.put((Object) userCache.getNickname(), (Object) userExtraModel);
+                    logger.debug((Object) ("User " + userCache.getNickname() + " login success in platform: " + platform));
+                }
             } catch (Exception e2) {
                 logger.error((Object) e2);
             }
