@@ -58,7 +58,6 @@ public class ReportMoneySystemProcessor
             String endTime = request.getParameter("te");
             res = new ReportMoneySystemResponse(false, "1001");
 
-            System.out.println("=============> " + startTime + "=====================" + endTime);
             try {
                 if (startTime == null || endTime == null || startTime.isEmpty() || endTime.isEmpty()) break block29;
                 boolean endToday = true;
