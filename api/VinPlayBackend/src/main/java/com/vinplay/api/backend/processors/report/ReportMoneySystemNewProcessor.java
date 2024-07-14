@@ -94,18 +94,19 @@ public class ReportMoneySystemNewProcessor
 
             // search fund
             OtherService otherService = new OtherServiceImpl();
-//            TransactionFundResponse transactionFundResponse = otherService.getTransactionFund(1, 0, null, startTime, endTime, null);
-//            transactionFundResponse.getTransactions().stream()
-//                    .collect(Collectors.groupingBy(doc -> doc.getString("gameName")))
-//                    .entrySet()
-//                    .stream()
-//                    .map(entry -> {
-//                        String gameName = entry.getKey();
-//                        List<Document> documents = entry.getValue();
-//                        ReportMoneySystemModelNew report = new ReportMoneySystemModelNew();
-//                        report.actionName = gameName;
-//
-//                    })
+            TransactionFundResponse transactionFundResponse = otherService.getTransactionFund(1, 0, null, startTime + " 00:00:00", endTime + " 23:59:59", null);
+            List<ReportMoneySystemModelNew> listGameFunds = transactionFundResponse.getTransactions().stream()
+                    .collect(Collectors.groupingBy(doc -> doc.getString("gameName")))
+                    .entrySet()
+                    .stream()
+                    .map(entry -> {
+                        String gameName = entry.getKey();
+                        List<Document> documents = entry.getValue();
+                        ReportMoneySystemModelNew report = new ReportMoneySystemModelNew();
+                        report.actionName = gameName;
+                        report.fee = documents.stream().mapToLong(doc -> doc.getLong("fee")).sum();
+                        return report;
+                    }).collect(Collectors.toList());
 
 
             LogMoneyUserServiceImpl service = new LogMoneyUserServiceImpl();
@@ -117,8 +118,26 @@ public class ReportMoneySystemNewProcessor
 
             for (LogUserMoneyResponse log : logs) {
                 if (Consts.GAMES.contains(log.actionName)) {
-                    listReport = processListGame(listReport, log);
+                    List<ReportMoneySystemModelNew> listGameReport = processListGame(listReport, log);
                     // combine list
+                    listGameReport.addAll(listGameFunds);
+                    Map<String, List<ReportMoneySystemModelNew>> gameName2ReportModel = listGameReport.stream()
+                            .collect(Collectors.groupingBy(reportMoneySystemModelNew -> reportMoneySystemModelNew.actionName));
+                    gameName2ReportModel.forEach((gameName, reportMoneySystemModelNews) -> {
+                        if (reportMoneySystemModelNews.size() > 1) {
+                            ReportMoneySystemModelNew report = new ReportMoneySystemModelNew();
+                            report.actionName = gameName;
+                            report.moneyWin = reportMoneySystemModelNews.stream().mapToLong(ReportMoneySystemModelNew::getMoneyWin).sum();
+                            report.moneyLost = reportMoneySystemModelNews.stream().mapToLong(ReportMoneySystemModelNew::getMoneyLost).sum();
+                            report.moneyOther = reportMoneySystemModelNews.stream().mapToLong(ReportMoneySystemModelNew::getMoneyOther).sum();
+                            report.fee = reportMoneySystemModelNews.stream().mapToLong(ReportMoneySystemModelNew::getFee).sum();
+                            report.revenuePlayGame = reportMoneySystemModelNews.stream().mapToLong(ReportMoneySystemModelNew::getRevenuePlayGame).sum();
+                            report.revenue = reportMoneySystemModelNews.stream().mapToLong(ReportMoneySystemModelNew::getRevenue).sum();
+                            listReport.add(report);
+                        } else {
+                            listReport.addAll(reportMoneySystemModelNews);
+                        }
+                    });
                 } else if (Consts.VIN_IN_USER.contains(log.actionName)) {
                     listUserIn = processListMoney(listUserIn, log);
                 } else if (Consts.VIN_IN_EVENT.contains(log.actionName)) {
