@@ -356,6 +356,7 @@ public class OtherServiceImpl implements OtherService {
 //            stm.setTimestamp(2, Date.valueOf(endTime));
             ResultSet rs = stm.executeQuery();
 
+
             totalCashIn = 0;
             totalCashOut = 0;
             totalProfit = 0;
