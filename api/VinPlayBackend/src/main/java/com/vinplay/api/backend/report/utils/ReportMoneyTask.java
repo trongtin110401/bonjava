@@ -37,8 +37,7 @@ import java.util.TimerTask;
 
 import org.apache.log4j.Logger;
 
-public class ReportMoneyTask
-        extends TimerTask {
+public class ReportMoneyTask extends TimerTask {
     private static final Logger logger = Logger.getLogger((String) "report");
     private static LogPortalService service = new LogPortalServiceImpl();
 
@@ -54,6 +53,7 @@ public class ReportMoneyTask
             String date = "";
             String today = VinPlayUtils.getCurrentDate();
             String yesterday = VinPlayUtils.getYesterday();
+            String tomorrow = VinPlayUtils.getTomorrowString();
 
             HazelcastInstance client = HazelcastClientFactory.getInstance();
             ReportDaoImpl dao = new ReportDaoImpl();
@@ -63,7 +63,7 @@ public class ReportMoneyTask
             ReportMoneyUtils.fixYesterdayData(today, yesterday);
             // T?ng h?p báo cáo lu?ng ti?n hôm nay
             System.out.println("T?ng h?p báo cáo lu?ng ti?n hôm nay");
-            ReportMoneyUtils.fixYesterdayData(VinPlayUtils.getTomorrowString(), today);
+            ReportMoneyUtils.fixYesterdayData(tomorrow, today);
 
             // T?ng h?p báo cáo bi?u ?? lu?ng ti?n
             String superAgent = GameCommon.getValueStr((String) "SUPER_AGENT");
