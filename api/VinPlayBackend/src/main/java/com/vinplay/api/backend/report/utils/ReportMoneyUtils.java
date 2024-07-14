@@ -28,11 +28,9 @@ import com.hazelcast.core.IMap;
 import com.mongodb.BasicDBObject;
 import com.mongodb.Block;
 import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.vinplay.api.backend.agent.utils.AgentTask;
 import com.vinplay.api.backend.agent.utils.AgentUtils;
-import com.vinplay.api.backend.report.utils.ReportMoneyTask;
 import com.vinplay.dal.dao.impl.ReportDaoImpl;
 import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
 import com.vinplay.vbee.common.models.cache.ReportModel;
@@ -41,24 +39,15 @@ import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.pools.ConnectionPool;
 import com.vinplay.vbee.common.statics.Consts;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
+import org.apache.log4j.Logger;
+import org.bson.Document;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import org.apache.log4j.Logger;
-import org.bson.Document;
-import org.bson.conversions.Bson;
+import java.util.*;
 
 public class ReportMoneyUtils {
     private static final Logger logger = Logger.getLogger((String) "report");
