@@ -305,10 +305,10 @@ public class OtherServiceImpl implements OtherService {
         UserLoseByDayResponse userLoseByDayResponse = new UserLoseByDayResponse(true, "200");
         Document filter = new Document();
         if (timeStart != null && !timeStart.isEmpty()) {
-            filter.append("createdDate", new Document("$gte", timeStart));
+            filter.append("createdDate", new Document("$gte", timeStart + " 00:00:00"));
         }
         if (timeEnd != null && !timeEnd.isEmpty()) {
-            filter.append("createdDate", new Document("$lte", timeEnd));
+            filter.append("createdDate", new Document("$lte", timeEnd + " 23:59:59"));
         }
         if (nickname != null && !nickname.isEmpty()) {
             filter.append("nickname", nickname);
