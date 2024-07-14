@@ -111,13 +111,18 @@ public class VinPlayUtils {
     public static String getYesterday() {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         Calendar aCalendar = Calendar.getInstance();
-        aCalendar.add(5, -1);
+        aCalendar.add(Calendar.DATE, -1);
         return df.format(aCalendar.getTime());
+    }
+
+    public static String getTomorrowString() {
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        return df.format(getTomorrow());
     }
 
     public static Date getTomorrow() {
         Calendar aCalendar = Calendar.getInstance();
-        aCalendar.add(5, 1);
+        aCalendar.add(Calendar.DATE, 1);
         return aCalendar.getTime();
     }
 
@@ -359,8 +364,7 @@ public class VinPlayUtils {
     }
 
 
-
-                    /*
+    /*
      * WARNING - Removed try catching itself - possible behaviour change.
      */
     public static void loadGiftcode(List<String> allGiftcode) {

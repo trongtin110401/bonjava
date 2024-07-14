@@ -80,17 +80,17 @@ public class ReportMoneyUtils {
 
             int period = 15;
             Calendar cal = Calendar.getInstance();
-            int minute = cal.get(12);
+            int minute = cal.get(Calendar.MINUTE);
             while (minute % 15 != 0) {
                 if (minute >= 59) {
                     minute = 0;
-                    cal.add(11, 1);
+                    cal.add(Calendar.HOUR_OF_DAY, 1);
                     break;
                 }
                 ++minute;
             }
-            cal.set(12, minute);
-            cal.set(13, 0);
+            cal.set(Calendar.MINUTE, minute);
+            cal.set(Calendar.SECOND, 0);
             Timer timer = new Timer();
 
             timer.schedule(new ReportMoneyTask(), cal.getTime(), 30000L);

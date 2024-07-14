@@ -48,10 +48,6 @@ public class ReportMoneyTask
 
             service.saveLog();
 
-//            Calendar cal = Calendar.getInstance();
-//            int hour = cal.get(11);
-//            int minute = cal.get(12);
-
             boolean remove;
             Date timeRun = new Date();
 
@@ -63,11 +59,11 @@ public class ReportMoneyTask
             ReportDaoImpl dao = new ReportDaoImpl();
 
             // T?ng h?p báo cáo lu?ng ti?n hôm qua
+            System.out.println("T?ng h?p báo cáo lu?ng ti?n hôm qua");
             ReportMoneyUtils.fixYesterdayData(today, yesterday);
             // T?ng h?p báo cáo lu?ng ti?n hôm nay
-            ReportMoneyUtils.fixYesterdayData(
-                    LocalDate.now().plusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
-                    LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+            System.out.println("T?ng h?p báo cáo lu?ng ti?n hôm nay");
+            ReportMoneyUtils.fixYesterdayData(VinPlayUtils.getTomorrowString(), today);
 
             // T?ng h?p báo cáo bi?u ?? lu?ng ti?n
             String superAgent = GameCommon.getValueStr((String) "SUPER_AGENT");
