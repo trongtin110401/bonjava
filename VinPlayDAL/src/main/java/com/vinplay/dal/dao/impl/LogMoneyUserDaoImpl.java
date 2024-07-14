@@ -155,8 +155,8 @@ public class LogMoneyUserDaoImpl
         }
         if (timeStart != null && !timeStart.equals("") && timeEnd != null && !timeEnd.equals("")) {
             try {
-                obj.put("$gte", VinPlayUtils.getDateTimeStr(VinPlayUtils.getDateTimeFromDate(timeStart + " 00:00:00")));
-                obj.put("$lte", VinPlayUtils.getDateTimeStr(VinPlayUtils.getDateTimeFromDate(timeEnd + " 23:59:59")));
+                obj.put("$gte",timeStart + " 00:00:00");
+                obj.put("$lte", timeEnd + " 23:59:59");
             } catch (Exception e) {
                 e.printStackTrace();
             }
