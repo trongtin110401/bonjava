@@ -26,6 +26,9 @@ import com.vinplay.usercore.utils.GameCommon;
 import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
@@ -42,19 +45,31 @@ public class ReportMoneyTask
     @Override
     public void run() {
         try {
+
             service.saveLog();
-            Calendar cal = Calendar.getInstance();
-            int hour = cal.get(11);
-            int minute = cal.get(12);
-            boolean remove = false;
+
+//            Calendar cal = Calendar.getInstance();
+//            int hour = cal.get(11);
+//            int minute = cal.get(12);
+
+            boolean remove;
             Date timeRun = new Date();
+
             String date = "";
             String today = VinPlayUtils.getCurrentDate();
             String yesterday = VinPlayUtils.getYesterday();
+
             HazelcastInstance client = HazelcastClientFactory.getInstance();
             ReportDaoImpl dao = new ReportDaoImpl();
 
+            // T?ng h?p báo cáo lu?ng ti?n hôm qua
             ReportMoneyUtils.fixYesterdayData(today, yesterday);
+            // T?ng h?p báo cáo lu?ng ti?n hôm nay
+            ReportMoneyUtils.fixYesterdayData(
+                    LocalDate.now().plusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+                    LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+
+            // T?ng h?p báo cáo bi?u ?? lu?ng ti?n
             String superAgent = GameCommon.getValueStr((String) "SUPER_AGENT");
             ReportTotalMoneyModel model = dao.getTotalMoney(superAgent);
             dao.saveLogTotalMoney(model);

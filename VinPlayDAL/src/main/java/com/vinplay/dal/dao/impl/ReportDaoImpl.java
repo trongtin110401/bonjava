@@ -468,8 +468,8 @@ public class ReportDaoImpl
         final HashMap<String, ReportModel> results = new HashMap<String, ReportModel>();
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         Document conditions = new Document();
-        conditions.put("time_log", (Object) VinPlayUtils.getDateTimeStr((java.util.Date) VinPlayUtils.getDateTimeFromDate((String) date)));
-        MongoCollection col = null;
+        conditions.put("time_log", VinPlayUtils.getDateTimeStr(VinPlayUtils.getDateTimeFromDate(date)));
+        MongoCollection col;
         col = !isBot ? db.getCollection("report_money_vin") : db.getCollection("report_money_vin_bot");
         FindIterable iterable = col.find((Bson) conditions);
         iterable.forEach((Block) new Block<Document>() {
