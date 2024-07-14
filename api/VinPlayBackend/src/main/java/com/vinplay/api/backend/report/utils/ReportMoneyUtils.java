@@ -121,10 +121,6 @@ public class ReportMoneyUtils {
         FindIterable iterable = db.getCollection("log_money_user_vin").find(conditions);
         iterable.forEach(new Block<Document>() {
             public void apply(Document document) {
-
-                if (print)
-                    System.out.println(document.toJson());
-
                 String serviceName = document.getString((Object) "service_name");
                 if (serviceName != null && !serviceName.equals("Tài xi - Tán l\u1ed9c") && !serviceName.equals("Tài x\u1ec9u - R\u00fat l\u1ed9c")) {
                     String key;
@@ -190,9 +186,7 @@ public class ReportMoneyUtils {
             reportModel4.fee += ((ReportModel) entry.getValue()).fee;
             reportActionMap.put(actionname, sumModel);
         }
-        if (print)
-            System.out.println("Report action map: " + new Gson().toJson(reportActionMap));
-        dao.saveReportMoneyVin(reportActionMap);
+        dao.saveReportMoneyVin(reportActionMap, yesterday);
         logger.info((Object) ("fixYesterdayData success at: " + new Date()));
     }
 

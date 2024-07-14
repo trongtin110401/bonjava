@@ -46,6 +46,6 @@ public interface ReportDAO {
 
     public boolean saveTopCaoThu(String var1, String var2, long var3);
 
-    public void saveReportMoneyVin(Map<String, ReportModel> var1);
+    public void saveReportMoneyVin(Map<String, ReportModel> var1, String date);
 }
 
