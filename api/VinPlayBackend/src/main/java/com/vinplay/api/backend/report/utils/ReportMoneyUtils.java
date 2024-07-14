@@ -101,7 +101,7 @@ public class ReportMoneyUtils {
         }
     }
 
-    public static void fixYesterdayData(String today, final String yesterday) throws ParseException {
+    public static void fixYesterdayData(String today, final String yesterday, boolean print) throws ParseException {
         logger.info("fixYesterdayData start at: " + new Date());
 
         String timeLog = VinPlayUtils.getDateTimeStr((Date) VinPlayUtils.getDateTimeFromDate((String) yesterday));
@@ -120,7 +120,8 @@ public class ReportMoneyUtils {
         iterable.forEach(new Block<Document>() {
             public void apply(Document document) {
 
-                System.out.println(document.toJson());
+                if (print)
+                    System.out.println(document.toJson());
 
                 String serviceName = document.getString((Object) "service_name");
                 if (serviceName != null && !serviceName.equals("Tài xi - Tán l\u1ed9c") && !serviceName.equals("Tài x\u1ec9u - R\u00fat l\u1ed9c")) {
