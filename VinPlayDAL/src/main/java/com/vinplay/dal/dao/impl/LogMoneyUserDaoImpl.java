@@ -64,6 +64,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -195,8 +197,8 @@ public class LogMoneyUserDaoImpl
         conditions.put("is_bot", false);
         if (timeStart != null && !timeStart.equals("") && timeEnd != null && !timeEnd.equals("")) {
             try {
-                obj.put("$gte", VinPlayUtils.getDateTimeStr(VinPlayUtils.getDateTimeFromDate(timeStart + " 00:00:00")));
-                obj.put("$lte", VinPlayUtils.getDateTimeStr(VinPlayUtils.getDateTimeFromDate(timeEnd + " 23:59:59")));
+                obj.put("$gte", LocalDateTime.parse(timeStart + " 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")).toString());
+                obj.put("$lte", LocalDateTime.parse(timeEnd + " 23:59:59", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")).toString());
             } catch (Exception e) {
                 e.printStackTrace();
             }
