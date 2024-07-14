@@ -104,7 +104,13 @@ public class ReportMoneySystemNewProcessor
                         List<Document> documents = entry.getValue();
                         ReportMoneySystemModelNew report = new ReportMoneySystemModelNew();
                         report.actionName = gameName;
-                        report.fee = documents.stream().mapToLong(doc -> doc.getLong("fee")).sum();
+                        report.fee = documents.stream().mapToLong(doc -> {
+                            if (doc.get("type", String.class).equals("deposit")) {
+                                return -doc.getLong("amount");
+                            } else {
+                                return doc.getLong("amount");
+                            }
+                        }).sum();
                         return report;
                     }).collect(Collectors.toList());
 
