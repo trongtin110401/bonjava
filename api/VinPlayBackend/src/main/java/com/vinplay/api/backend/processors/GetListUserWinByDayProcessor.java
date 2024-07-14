@@ -29,6 +29,9 @@ public class GetListUserWinByDayProcessor implements BaseProcessor<HttpServletRe
         HttpServletRequest request = param.get();
         String timeStart = request.getParameter("timeStart");
         String timeEnd = request.getParameter("timeEnd");
+
+        System.out.println("timeStart: " + timeStart + " timeEnd: " + timeEnd);
+
         LogMoneyUserDaoImpl dao = new LogMoneyUserDaoImpl();
 
         List<LogUserMoneyResponse> list = dao.getLogMoneyUser(timeStart, timeEnd);
