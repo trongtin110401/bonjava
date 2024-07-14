@@ -197,8 +197,8 @@ public class LogMoneyUserDaoImpl
         conditions.put("is_bot", false);
         if (timeStart != null && !timeStart.equals("") && timeEnd != null && !timeEnd.equals("")) {
             try {
-                obj.put("$gte", LocalDateTime.parse(timeStart + " 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")).toString());
-                obj.put("$lte", LocalDateTime.parse(timeEnd + " 23:59:59", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")).toString());
+                obj.put("$gte", timeStart + " 00:00:00");
+                obj.put("$lte", timeEnd + " 23:59:59");
             } catch (Exception e) {
                 e.printStackTrace();
             }
