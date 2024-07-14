@@ -23,6 +23,7 @@
  */
 package com.vinplay.api.backend.report.utils;
 
+import com.google.gson.Gson;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.mongodb.BasicDBObject;
@@ -102,6 +103,7 @@ public class ReportMoneyUtils {
     }
 
     public static void fixYesterdayData(String today, final String yesterday, boolean print) throws ParseException {
+
         logger.info("fixYesterdayData start at: " + new Date());
 
         String timeLog = VinPlayUtils.getDateTimeStr((Date) VinPlayUtils.getDateTimeFromDate((String) yesterday));
@@ -188,6 +190,8 @@ public class ReportMoneyUtils {
             reportModel4.fee += ((ReportModel) entry.getValue()).fee;
             reportActionMap.put(actionname, sumModel);
         }
+        if (print)
+            System.out.println("Report action map: " + new Gson().toJson(reportActionMap));
         dao.saveReportMoneyVin(reportActionMap);
         logger.info((Object) ("fixYesterdayData success at: " + new Date()));
     }
