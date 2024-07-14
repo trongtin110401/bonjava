@@ -17,10 +17,9 @@ import com.vinplay.vbee.common.utils.VinPlayUtils;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -352,8 +351,9 @@ public class OtherServiceImpl implements OtherService {
         try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_banca");) {
             String sql = "SELECT * FROM cgame.bc_trans_log where time >= ? and time <= ?";
             PreparedStatement stm = conn.prepareStatement(sql);
-            stm.setDate(1, Date.valueOf(startTime));
-            stm.setDate(2, Date.valueOf(endTime));
+            stm.setTimestamp(1, Timestamp.valueOf(LocalDateTime.parse(startTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))));
+            stm.setTimestamp(2, Timestamp.valueOf(LocalDateTime.parse(endTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))));
+//            stm.setTimestamp(2, Date.valueOf(endTime));
             ResultSet rs = stm.executeQuery();
 
             totalCashIn = 0;
