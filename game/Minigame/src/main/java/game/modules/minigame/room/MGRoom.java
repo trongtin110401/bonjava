@@ -176,8 +176,12 @@ public abstract class MGRoom {
      * @return true nếu người chơi trúng jackpot, ngược lại trả về false
      */
     public boolean randomJackpot(double percentage) {
-        if (percentage <= 0.0) {
+        if (percentage < 0.0) {
             throw new IllegalArgumentException("Percentage must be greater than 0.0");
+        }
+
+        if (percentage == 0.0) {
+            return false;
         }
 
         int totalNumbers = (int) Math.ceil(100 / percentage);
