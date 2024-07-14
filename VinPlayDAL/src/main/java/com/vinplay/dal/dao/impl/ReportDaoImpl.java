@@ -494,7 +494,7 @@ public class ReportDaoImpl
      * WARNING - Removed try catching itself - possible behaviour change.
      */
     @Override
-    public void saveReportMoneyVin(Map<String, ReportModel> input) {
+    public void saveReportMoneyVin(Map<String, ReportModel> input, String date) {
         Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
         try {
             PreparedStatement stmt = conn.prepareStatement("INSERT INTO report_money_daily(action_name, money_win, money_lost, money_other, fee, date) VALUES(?, ?, ?, ?, ?, ?) " +
@@ -503,9 +503,9 @@ public class ReportDaoImpl
                     "       money_lost = ?," +
                     "       money_other =  ?, " +
                     "       fee =  ?");
-            Calendar cal = Calendar.getInstance();
-            cal.add(5, -1);
-            Date yesterday = new Date(cal.getTimeInMillis());
+//            Calendar cal = Calendar.getInstance();
+//            cal.add(5, -1);
+//            Date yesterday = new Date(cal.getTimeInMillis());
             for (Map.Entry<String, ReportModel> entry : input.entrySet()) {
                 if (entry.getValue().isBot) continue;
                 stmt.setString(1, entry.getKey());
@@ -513,7 +513,7 @@ public class ReportDaoImpl
                 stmt.setLong(3, entry.getValue().moneyLost);
                 stmt.setLong(4, entry.getValue().moneyOther);
                 stmt.setLong(5, entry.getValue().fee);
-                stmt.setDate(6, yesterday);
+                stmt.setDate(6, Date.valueOf(date));
                 stmt.setLong(7, entry.getValue().moneyWin);
                 stmt.setLong(8, entry.getValue().moneyLost);
                 stmt.setLong(9, entry.getValue().moneyOther);

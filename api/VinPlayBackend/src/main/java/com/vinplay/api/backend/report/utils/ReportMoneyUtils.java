@@ -192,7 +192,7 @@ public class ReportMoneyUtils {
         }
         if (print)
             System.out.println("Report action map: " + new Gson().toJson(reportActionMap));
-        dao.saveReportMoneyVin(reportActionMap);
+        dao.saveReportMoneyVin(reportActionMap, yesterday);
         logger.info((Object) ("fixYesterdayData success at: " + new Date()));
     }
 
