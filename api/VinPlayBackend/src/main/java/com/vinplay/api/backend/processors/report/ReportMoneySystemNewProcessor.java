@@ -121,30 +121,10 @@ public class ReportMoneySystemNewProcessor
             if (logs == null || logs.isEmpty())
                 return res.toJson();
 
-
+            List<ReportMoneySystemModelNew> listGameReport = new ArrayList<>();
             for (LogUserMoneyResponse log : logs) {
                 if (Consts.GAMES.contains(log.actionName)) {
-                    List<ReportMoneySystemModelNew> listGameReport = processListGame(listReport, log);
-                    // combine list
-                    listGameReport.addAll(listGameFunds);
-                    Map<String, List<ReportMoneySystemModelNew>> gameName2ReportModel = listGameReport.stream()
-                            .collect(Collectors.groupingBy(reportMoneySystemModelNew -> reportMoneySystemModelNew.actionName));
-                    gameName2ReportModel.forEach((gameName, reportMoneySystemModelNews) -> {
-                        if (reportMoneySystemModelNews.size() > 1) {
-                            ReportMoneySystemModelNew report = new ReportMoneySystemModelNew();
-                            report.actionName = gameName;
-                            report.moneyWin = reportMoneySystemModelNews.stream().mapToLong(ReportMoneySystemModelNew::getMoneyWin).sum();
-                            report.moneyLost = reportMoneySystemModelNews.stream().mapToLong(ReportMoneySystemModelNew::getMoneyLost).sum();
-                            report.moneyOther = reportMoneySystemModelNews.stream().mapToLong(ReportMoneySystemModelNew::getMoneyOther).sum();
-                            report.fee = reportMoneySystemModelNews.stream().mapToLong(ReportMoneySystemModelNew::getFee).sum();
-                            report.revenuePlayGame = reportMoneySystemModelNews.stream().mapToLong(ReportMoneySystemModelNew::getRevenuePlayGame).sum();
-                            report.revenue = reportMoneySystemModelNews.stream().mapToLong(ReportMoneySystemModelNew::getRevenue).sum();
-                            report.fund = reportMoneySystemModelNews.stream().mapToLong(ReportMoneySystemModelNew::getFee).sum();
-                            listReport.add(report);
-                        } else {
-                            listReport.addAll(reportMoneySystemModelNews);
-                        }
-                    });
+                    listGameReport = processListGame(listReport, log);
                 } else if (Consts.VIN_IN_USER.contains(log.actionName)) {
                     listUserIn = processListMoney(listUserIn, log);
                 } else if (Consts.VIN_IN_EVENT.contains(log.actionName)) {
@@ -162,6 +142,27 @@ public class ReportMoneySystemNewProcessor
                 }
             }
             try {
+                // combine list
+                listGameReport.addAll(listGameFunds);
+                Map<String, List<ReportMoneySystemModelNew>> gameName2ReportModel = listGameReport.stream()
+                        .collect(Collectors.groupingBy(reportMoneySystemModelNew -> reportMoneySystemModelNew.actionName));
+                gameName2ReportModel.forEach((gameName, reportMoneySystemModelNews) -> {
+                    if (reportMoneySystemModelNews.size() > 1) {
+                        ReportMoneySystemModelNew report = new ReportMoneySystemModelNew();
+                        report.actionName = gameName;
+                        report.moneyWin = reportMoneySystemModelNews.stream().mapToLong(ReportMoneySystemModelNew::getMoneyWin).sum();
+                        report.moneyLost = reportMoneySystemModelNews.stream().mapToLong(ReportMoneySystemModelNew::getMoneyLost).sum();
+                        report.moneyOther = reportMoneySystemModelNews.stream().mapToLong(ReportMoneySystemModelNew::getMoneyOther).sum();
+                        report.fee = reportMoneySystemModelNews.stream().mapToLong(ReportMoneySystemModelNew::getFee).sum();
+                        report.revenuePlayGame = reportMoneySystemModelNews.stream().mapToLong(ReportMoneySystemModelNew::getRevenuePlayGame).sum();
+                        report.revenue = reportMoneySystemModelNews.stream().mapToLong(ReportMoneySystemModelNew::getRevenue).sum();
+                        report.fund = reportMoneySystemModelNews.stream().mapToLong(ReportMoneySystemModelNew::getFee).sum();
+                        listReport.add(report);
+                    } else {
+                        listReport.addAll(reportMoneySystemModelNews);
+                    }
+                });
+
                 ReportMoneyModel reportMoneyModel = new ReportMoneyModel(listReport, listUserIn, listUserInEvent, listUserOut, listOther);
                 reportMoneyModel.UserMoney = user;
                 // reportMoneyModel.AgentMoney = vinOutAgent;
