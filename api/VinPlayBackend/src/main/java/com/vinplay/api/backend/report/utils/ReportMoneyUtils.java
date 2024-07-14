@@ -88,6 +88,7 @@ public class ReportMoneyUtils {
                     }
                 }
             }
+
             int period = 15;
             Calendar cal = Calendar.getInstance();
             int minute = cal.get(12);
@@ -103,8 +104,8 @@ public class ReportMoneyUtils {
             cal.set(13, 0);
             Timer timer = new Timer();
 
-            timer.schedule((TimerTask) new ReportMoneyTask(), cal.getTime(), 30000L);
-            timer.schedule((TimerTask) new AgentTask(), AgentUtils.getFirstDayAfterMonth());
+            timer.schedule(new ReportMoneyTask(), cal.getTime(), 30000L);
+            timer.schedule(new AgentTask(), AgentUtils.getFirstDayAfterMonth());
         } catch (Exception e) {
             e.printStackTrace();
             logger.debug((Object) e);
@@ -112,22 +113,22 @@ public class ReportMoneyUtils {
     }
 
     public static void fixYesterdayData(String today, final String yesterday) throws ParseException {
-        logger.info((Object) ("fixYesterdayData start at: " + new Date()));
+        logger.info("fixYesterdayData start at: " + new Date());
+
         String timeLog = VinPlayUtils.getDateTimeStr((Date) VinPlayUtils.getDateTimeFromDate((String) yesterday));
         final HashMap<String, ReportModel> reportMap = new HashMap();
         HashMap<String, ReportModel> reportActionMap = new HashMap<String, ReportModel>();
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         Document conditions = new Document();
         String startTime = timeLog;
-        String endTime = VinPlayUtils.getDateTimeStr((Date) VinPlayUtils.getDateTimeFromDate((String) today));
+        String endTime = VinPlayUtils.getDateTimeStr(VinPlayUtils.getDateTimeFromDate(today));
         BasicDBObject obj = new BasicDBObject();
-        obj.put("$gte", (Object) startTime);
-        obj.put("$lt", (Object) endTime);
-        conditions.put("trans_time", (Object) obj);
-        conditions.put("is_bot", (Object) false);
-        FindIterable iterable = db.getCollection("log_money_user_vin").find((Bson) conditions);
-        iterable.forEach((Block) new Block<Document>() {
-
+        obj.put("$gte", startTime);
+        obj.put("$lt", endTime);
+        conditions.put("trans_time", obj);
+        conditions.put("is_bot", false);
+        FindIterable iterable = db.getCollection("log_money_user_vin").find(conditions);
+        iterable.forEach(new Block<Document>() {
             public void apply(Document document) {
                 String serviceName = document.getString((Object) "service_name");
                 if (serviceName != null && !serviceName.equals("Tài xi - Tán l\u1ed9c") && !serviceName.equals("Tài x\u1ec9u - R\u00fat l\u1ed9c")) {
@@ -141,7 +142,7 @@ public class ReportMoneyUtils {
                         playGame = ReportMoneyUtils.checkPlayGame(actionname);
                     }
                     if (reportMap.containsKey(key = nickname + "," + actionname + "," + yesterday)) {
-                        ReportModel reportModel = (ReportModel) reportMap.get(key);
+                        ReportModel reportModel = reportMap.get(key);
                         if (playGame.booleanValue()) {
                             if (money > 0L) {
                                 ReportModel reportModel2 = reportModel;
@@ -175,6 +176,7 @@ public class ReportMoneyUtils {
                 }
             }
         });
+
         ReportDaoImpl dao = new ReportDaoImpl();
         for (Map.Entry entry : reportMap.entrySet()) {
             if (((ReportModel) entry.getValue()).isBot) continue;

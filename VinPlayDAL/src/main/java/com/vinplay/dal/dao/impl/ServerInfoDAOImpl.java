@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  com.mongodb.BasicDBObject
  *  com.mongodb.Block
@@ -22,42 +22,43 @@ import com.mongodb.client.MongoDatabase;
 import com.vinplay.dal.dao.ServerInfoDAO;
 import com.vinplay.vbee.common.models.LogCCUModel;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
 public class ServerInfoDAOImpl
-implements ServerInfoDAO {
+        implements ServerInfoDAO {
     @Override
     public List<LogCCUModel> getLogCCU(String startTime, String endTime) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         HashMap<String, Object> conditions = new HashMap<String, Object>();
-//        HashMap<String, BasicDBObject> conditions = new HashMap<String, BasicDBObject>();
-        FindIterable iterable = null;
+        FindIterable iterable;
         BasicDBObject obj = new BasicDBObject();
-        obj.put("$gte", (Object)startTime);
-        obj.put("$lte", (Object)endTime);
+        obj.put("$gte", startTime);
+        obj.put("$lte", endTime);
         conditions.put("time_log", obj);
         BasicDBObject objsort = new BasicDBObject();
-        objsort.put("_id", (Object)1);
-        iterable = db.getCollection("log_ccu").find((Bson)new Document(conditions)).sort((Bson)objsort);
+        objsort.put("_id", 1);
+        iterable = db.getCollection("log_ccu").find(new Document(conditions)).sort(objsort);
         final ArrayList<LogCCUModel> results = new ArrayList<LogCCUModel>();
-        iterable.forEach((Block)new Block<Document>(){
+        iterable.forEach((Block) new Block<Document>() {
 
             public void apply(Document document) {
                 LogCCUModel entry = new LogCCUModel();
-                entry.ccu = document.getInteger((Object)"ccu", 0);
-                entry.web = document.getInteger((Object)"web", 0);
-                entry.ad = document.getInteger((Object)"ad", 0);
-                entry.ios = document.getInteger((Object)"ios", 0);
-                entry.wp = document.getInteger((Object)"wp", 0);
-                entry.fb = document.getInteger((Object)"fb", 0);
-                entry.dt = document.getInteger((Object)"dt", 0);
-                entry.ot = document.getInteger((Object)"ot", 0);
-                entry.ts = document.getString((Object)"time_log");
+                entry.ccu = document.getInteger("ccu", 0);
+                entry.web = document.getInteger("web", 0);
+                entry.ad = document.getInteger("ad", 0);
+                entry.ios = document.getInteger("ios", 0);
+                entry.wp = document.getInteger("wp", 0);
+                entry.fb = document.getInteger("fb", 0);
+                entry.dt = document.getInteger("dt", 0);
+                entry.ot = document.getInteger("ot", 0);
+                entry.ts = document.getString("time_log");
                 results.add(entry);
             }
         });
