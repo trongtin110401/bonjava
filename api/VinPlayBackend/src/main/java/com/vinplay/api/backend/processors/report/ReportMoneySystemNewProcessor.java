@@ -104,7 +104,7 @@ public class ReportMoneySystemNewProcessor
                         List<Document> documents = entry.getValue();
                         ReportMoneySystemModelNew report = new ReportMoneySystemModelNew();
                         report.actionName = gameName;
-                        report.fee = documents.stream().mapToLong(doc -> {
+                        report.fund = documents.stream().mapToLong(doc -> {
                             if (doc.get("type", String.class).equals("deposit")) {
                                 return -doc.getLong("amount");
                             } else {
@@ -139,6 +139,7 @@ public class ReportMoneySystemNewProcessor
                             report.fee = reportMoneySystemModelNews.stream().mapToLong(ReportMoneySystemModelNew::getFee).sum();
                             report.revenuePlayGame = reportMoneySystemModelNews.stream().mapToLong(ReportMoneySystemModelNew::getRevenuePlayGame).sum();
                             report.revenue = reportMoneySystemModelNews.stream().mapToLong(ReportMoneySystemModelNew::getRevenue).sum();
+                            report.fund = reportMoneySystemModelNews.stream().mapToLong(ReportMoneySystemModelNew::getFee).sum();
                             listReport.add(report);
                         } else {
                             listReport.addAll(reportMoneySystemModelNews);
