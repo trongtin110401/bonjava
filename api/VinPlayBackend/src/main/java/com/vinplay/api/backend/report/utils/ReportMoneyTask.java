@@ -59,10 +59,8 @@ public class ReportMoneyTask extends TimerTask {
             ReportDaoImpl dao = new ReportDaoImpl();
 
             // T?ng h?p báo cáo lu?ng ti?n hôm qua
-            System.out.println("T?ng h?p báo cáo lu?ng ti?n hôm qua");
             ReportMoneyUtils.fixYesterdayData(today, yesterday, false);
             // T?ng h?p báo cáo lu?ng ti?n hôm nay
-            System.out.println("T?ng h?p báo cáo lu?ng ti?n hôm nay");
             ReportMoneyUtils.fixYesterdayData(tomorrow, today, true);
 
             // T?ng h?p báo cáo bi?u ?? lu?ng ti?n
