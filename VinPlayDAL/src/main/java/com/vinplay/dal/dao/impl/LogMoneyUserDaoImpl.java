@@ -192,7 +192,7 @@ public class LogMoneyUserDaoImpl
         HashMap<String, Object> conditions = new HashMap<>();
         FindIterable iterable;
         BasicDBObject obj = new BasicDBObject();
-        conditions.put("is_bot", false);
+        conditions.put("is_bot", true);
         if (timeStart != null && !timeStart.equals("") && timeEnd != null && !timeEnd.equals("")) {
             try {
                 obj.put("$gte", VinPlayUtils.getDateTimeStr(VinPlayUtils.getDateTimeFromDate(timeStart + " 00:00:00")));
