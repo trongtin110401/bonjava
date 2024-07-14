@@ -21,6 +21,7 @@
 package com.vinplay.api.backend.processors.report;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vinplay.api.backend.processors.UpdateFundProcessor;
 import com.vinplay.api.backend.response.ReportMoneySystemResponse;
 import com.vinplay.dal.dao.impl.ReportDaoImpl;
 import com.vinplay.dal.entities.report.*;
@@ -100,10 +101,13 @@ public class ReportMoneySystemNewProcessor
                     .entrySet()
                     .stream()
                     .map(entry -> {
-                        String gameName = entry.getKey();
-                        List<Document> documents = entry.getValue();
+                        String fundName = entry.getKey();
+
                         ReportMoneySystemModelNew report = new ReportMoneySystemModelNew();
-                        report.actionName = gameName;
+                        report.actionName = UpdateFundProcessor.fund2GameName.get(fundName);
+
+
+                        List<Document> documents = entry.getValue();
                         report.fund = documents.stream().mapToLong(doc -> {
                             if (doc.get("type", String.class).equals("deposit")) {
                                 return -doc.getLong("amount");
