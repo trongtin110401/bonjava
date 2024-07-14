@@ -119,6 +119,9 @@ public class ReportMoneyUtils {
         FindIterable iterable = db.getCollection("log_money_user_vin").find(conditions);
         iterable.forEach(new Block<Document>() {
             public void apply(Document document) {
+
+                System.out.println(document.toJson());
+
                 String serviceName = document.getString((Object) "service_name");
                 if (serviceName != null && !serviceName.equals("Tài xi - Tán l\u1ed9c") && !serviceName.equals("Tài x\u1ec9u - R\u00fat l\u1ed9c")) {
                     String key;
