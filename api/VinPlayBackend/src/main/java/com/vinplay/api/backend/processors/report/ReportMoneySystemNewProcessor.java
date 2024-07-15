@@ -96,7 +96,7 @@ public class ReportMoneySystemNewProcessor implements BaseProcessor<HttpServletR
             OtherService otherService = new OtherServiceImpl();
             TransactionFundResponse transactionFundResponse = otherService.getTransactionFund(1, 0, null, startTime + " 00:00:00", endTime + " 23:59:59", null);
             List<ReportMoneySystemModelNew> listGameFunds = transactionFundResponse.getTransactions().stream()
-                    .collect(Collectors.groupingBy(doc -> doc.getString("gameName")))
+                    .collect(Collectors.groupingBy(doc -> doc.getString("fund_name")))
                     .entrySet()
                     .stream()
                     .map(entry -> {
@@ -104,9 +104,6 @@ public class ReportMoneySystemNewProcessor implements BaseProcessor<HttpServletR
 
                         ReportMoneySystemModelNew report = new ReportMoneySystemModelNew();
                         report.actionName = UpdateFundProcessor.fund2GameName.get(fundName);
-                        if(report.actionName == null) {
-                            System.out.println("===================> fundName: " + fundName);
-                        }
 
                         List<Document> documents = entry.getValue();
                         report.fund = documents.stream().mapToLong(doc -> {
