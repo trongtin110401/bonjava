@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import org.bson.Document;
+import org.python.parser.ast.Str;
 
 public interface RechargeDao {
     public List<RechargeByCardMessage> getListCardPending(String var1, String var2) throws NumberFormatException, KeyNotFoundException;
@@ -122,6 +123,8 @@ public interface RechargeDao {
 
     public boolean InsertDepositBankManual(DepositBankModel depositBankModel);
     public boolean UpdateDepositBankManualStatus(String transId, int status, String desc , String userApprove);
+
+    boolean UpdateDepositBankManualStatusCallBack(String transId, int status, String desc , String userApprove, String amount);
     public DepositBankReponse GetListDepositBank(DepositBankModel depositBankModel, int page, int maxItem, String fromTime, String endTime);
     public boolean isPendingTransDepositBank(String nickname);
     public DepositBankModel FindDepositBankById(String Id);
@@ -130,6 +133,8 @@ public interface RechargeDao {
 
     public boolean InsertDepositMomoManual(DepositMomoModel depositBankModel);
     public boolean UpdateDepositMomoManualStatus(String transId, int status, String desc, String userApprove);
+
+    boolean UpdateDepositMomoManualStatusCallBack(String transId, int status, String desc, String userApprove, String amount);
     public boolean UpdateDepositMomoManualStatus2(long amount, String transId, int status, String desc, String userApprove);
     public DepositMomoReponse GetListDepositMomo(DepositMomoModel depositMomoModel, int page, int maxItem, String fromTime, String endTime);
 

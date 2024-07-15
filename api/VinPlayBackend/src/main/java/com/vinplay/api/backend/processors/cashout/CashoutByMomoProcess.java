@@ -19,14 +19,13 @@ import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.response.ResultCashOutByBankResponse;
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 public class CashoutByMomoProcess implements BaseProcessor<HttpServletRequest, String> {
     private static final Logger logger = Logger.getLogger((String) "backend");
-
-    private static final String URL_CALL_BACK = "https://lunglinhlalenluons.store/api?c=4009";
 
     public String execute(Param<HttpServletRequest> param) {
         ResultCashOutByBankResponse response = new ResultCashOutByBankResponse(false, "1001");
@@ -83,12 +82,12 @@ public class CashoutByMomoProcess implements BaseProcessor<HttpServletRequest, S
                         this.sendMesToAdmin(transid, 2);
                     }
                     else {
-                        JsonObject jsonObject = gson.fromJson(output, JsonObject.class);
-                        if (jsonObject.get("ex_stt").equals("-2.3")) {
+                        JSONObject jsonObject = new JSONObject(output);
+                        if (jsonObject.get("ex_stt").toString().equals("-2.3")) {
                             this.sendMesToAdmin(transid, 3);
+                            return "true";
                         }
                     }
-                    return "true";
                 }
                 // update trans
                 boolean updateTrans = cashoutDao.UpdateCashoutMomo(transid, status, userAprrove);

@@ -7,13 +7,15 @@ public class CallBackModel {
     private String chargeCode;
     private String regAmount;
     private String status;
+    private String requestId;
 
-    public CallBackModel(String chargeId, String chargeType, String chargeCode, String regAmount, String status) {
+    public CallBackModel(String chargeId, String chargeType, String chargeCode, String regAmount, String status, String requestId) {
         this.chargeId = chargeId;
         this.chargeType = chargeType;
         this.chargeCode = chargeCode;
         this.regAmount = regAmount;
         this.status = status;
+        this.requestId = requestId;
     }
 
     public CallBackModel() {
@@ -57,5 +59,13 @@ public class CallBackModel {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(String requestId) {
+        this.requestId = requestId;
     }
 }

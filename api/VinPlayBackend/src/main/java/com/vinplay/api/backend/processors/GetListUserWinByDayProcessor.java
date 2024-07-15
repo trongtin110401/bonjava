@@ -42,6 +42,7 @@ public class GetListUserWinByDayProcessor implements BaseProcessor<HttpServletRe
                         && !"Gift Code".equals(log.getServiceName())
                         && !"RechargeByBank".equals(log.getActionName())
                         && !"RechargeByMomo".equals(log.getActionName())
+                        && !"ChargeSMS".equals(log.getActionName())
                         && !"Exchange".equals(log.getActionName()))
                 .collect(Collectors.groupingBy(LogUserMoneyResponse::getNickName,
                         Collectors.summingLong(LogUserMoneyResponse::getMoneyExchange)))

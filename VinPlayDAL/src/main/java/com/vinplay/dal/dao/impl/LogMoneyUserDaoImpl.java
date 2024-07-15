@@ -64,8 +64,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -155,8 +153,8 @@ public class LogMoneyUserDaoImpl
         }
         if (timeStart != null && !timeStart.equals("") && timeEnd != null && !timeEnd.equals("")) {
             try {
-                obj.put("$gte",timeStart + " 00:00:00");
-                obj.put("$lte", timeEnd + " 23:59:59");
+                obj.put("$gte", VinPlayUtils.getDateTimeStr(VinPlayUtils.getDateTimeFromDate(timeStart + " 00:00:00")));
+                obj.put("$lte", VinPlayUtils.getDateTimeStr(VinPlayUtils.getDateTimeFromDate(timeEnd + " 23:59:59")));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -197,8 +195,8 @@ public class LogMoneyUserDaoImpl
         conditions.put("is_bot", false);
         if (timeStart != null && !timeStart.equals("") && timeEnd != null && !timeEnd.equals("")) {
             try {
-                obj.put("$gte", timeStart + " 00:00:00");
-                obj.put("$lte", timeEnd + " 23:59:59");
+                obj.put("$gte", VinPlayUtils.getDateTimeStr(VinPlayUtils.getDateTimeFromDate(timeStart + " 00:00:00")));
+                obj.put("$lte", VinPlayUtils.getDateTimeStr(VinPlayUtils.getDateTimeFromDate(timeEnd + " 23:59:59")));
             } catch (Exception e) {
                 e.printStackTrace();
             }

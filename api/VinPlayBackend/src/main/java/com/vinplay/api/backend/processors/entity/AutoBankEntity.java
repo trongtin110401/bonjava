@@ -18,6 +18,8 @@ public class AutoBankEntity {
 
     private String apiChargeOut = "/api/Bank/ChargeOut";
 
+    private String apiMomoChargeOut = "/api/MM/ChargeOut";
+
     private String callBack = "";
 
     public String getUrl() {
@@ -54,5 +56,13 @@ public class AutoBankEntity {
 
     public String getApiCard() {
         return apiCard;
+    }
+
+    public String getApiMomoChargeOut() {
+        return apiMomoChargeOut;
+    }
+
+    public void setApiMomoChargeOut(String apiMomoChargeOut) {
+        this.apiMomoChargeOut = apiMomoChargeOut;
     }
 }
