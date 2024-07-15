@@ -16,7 +16,7 @@ public class CallAutoTransMomo {
             String TransId = uwd.Id;
             AutoBankEntity autoBank = new AutoBankEntity();
             String signature = generateSignature(phoneNumber, amount, TransId, autoBank.getApiSecret());
-            String url = autoBank.getUrl() + ":" + autoBank.getPort() + autoBank.getApiChargeOut()
+            String url = autoBank.getUrl() + ":" + autoBank.getPort() + autoBank.getApiMomoChargeOut()
                     + "?apiKey=" + autoBank.getApiKey() + "&account="
                     + phoneNumber + "&amount=" + amount + "&signature=" + signature
                     + "&requestId=" + TransId + "&msg=" + TransId;
