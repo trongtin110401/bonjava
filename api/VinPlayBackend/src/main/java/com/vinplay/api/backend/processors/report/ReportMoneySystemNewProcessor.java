@@ -48,8 +48,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.stream.Collectors;
 
-public class ReportMoneySystemNewProcessor
-        implements BaseProcessor<HttpServletRequest, String> {
+public class ReportMoneySystemNewProcessor implements BaseProcessor<HttpServletRequest, String> {
     private static final Logger logger = Logger.getLogger((String) "report");
     private final ArrayList<String> listAgency = getListAgent();
 
