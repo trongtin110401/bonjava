@@ -147,7 +147,6 @@ public class ReportMoneySystemNewProcessor implements BaseProcessor<HttpServletR
             }
             try {
                 // combine list
-                System.out.println(listGameReport.size() + " - " + listGameFunds.size());
                 listGameReport.addAll(listGameFunds);
                 // group by game name
                 Map<String, List<ReportMoneySystemModelNew>> gameName2ReportModel = listGameReport.stream()
@@ -164,7 +163,7 @@ public class ReportMoneySystemNewProcessor implements BaseProcessor<HttpServletR
                         report.fee = reportMoneySystemModelNews.stream().mapToLong(ReportMoneySystemModelNew::getFee).sum();
                         report.revenuePlayGame = reportMoneySystemModelNews.stream().mapToLong(ReportMoneySystemModelNew::getRevenuePlayGame).sum();
                         report.revenue = reportMoneySystemModelNews.stream().mapToLong(ReportMoneySystemModelNew::getRevenue).sum();
-                        report.fund = reportMoneySystemModelNews.stream().mapToLong(ReportMoneySystemModelNew::getFee).sum();
+                        report.fund = reportMoneySystemModelNews.stream().mapToLong(ReportMoneySystemModelNew::getFund).sum();
                         listReport.add(report);
                     } else {
                         listReport.addAll(reportMoneySystemModelNews);
