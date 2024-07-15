@@ -1,13 +1,10 @@
 package com.vinplay.api.backend.processors;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.vinplay.api.backend.models.CallBackModel;
 import com.vinplay.api.backend.processors.cashout.NapRutGame;
 import com.vinplay.api.backend.processors.cashout.NapRutModel;
-import com.vinplay.api.backend.processors.rutbank.CallAutoTransMomo;
 import com.vinplay.common.notification.SendToWS;
 import com.vinplay.common.report.EventactionAdminObj;
 import com.vinplay.dal.common.BroadCastUserMoney;
@@ -47,11 +44,12 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
     public String execute(Param<HttpServletRequest> param) {
         HttpServletRequest request = param.get();
         String chargeId = request.getParameter("chargeId");
+        String requestId = request.getParameter("requestId");
         String chargeType = request.getParameter("chargeType");
         String chargeCode = request.getParameter("chargeCode");
         String regAmount = request.getParameter("chargeAmount");
         String status = request.getParameter("status");
-        CallBackModel callBackModel = new CallBackModel(chargeId, chargeType, chargeCode, regAmount, status);
+        CallBackModel callBackModel = new CallBackModel(chargeId, chargeType, chargeCode, regAmount, status, requestId);
 
         if ("momo".equals(chargeType)) {
             ApproveDepositMomoProcessor(callBackModel);
@@ -70,16 +68,18 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
 
     public String cashOutByMomo(CallBackModel callBackModel) {
         CashoutDao cashoutDao = new CashoutDaoImpl();
-        UserWithdrawMomo userWithdraw = cashoutDao.FindCashoutMomoById(callBackModel.getChargeId());
+        UserWithdrawMomo userWithdraw = cashoutDao.FindCashoutMomoById(callBackModel.getRequestId());
         if (userWithdraw == null) {
             return "";
         }
         HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
-        HistoryTransModel historyTransModel = historyTransDao.findTransaction(callBackModel.getChargeId(), userWithdraw.Nickname, "RUT_BANK");
+        HistoryTransModel historyTransModel = historyTransDao.findTransaction(callBackModel.getRequestId(), userWithdraw.Nickname, "RUT_BANK");
         if (callBackModel.getStatus().equals("success")) {
             cashoutDao.UpdateCashoutMomo(callBackModel.getChargeId(), CashoutUtil.STATUS_SUCCESS, "Auto_Bank");
             historyTransModel.setTrangthai("Thành công");
             historyTransModel.setGhiChu("Thành công");
+            userWithdraw.Amount = Integer.parseInt(callBackModel.getRegAmount());
+            TelegramAlert.SendMessageCashoutMomo(userWithdraw);
         } else {
             UserServiceImpl userService = new UserServiceImpl();
             long fee = userWithdraw.AmountReal - userWithdraw.Amount;
@@ -109,6 +109,8 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
         if (callBackModel.getStatus().equals("success")) {
             historyTransModel.setTrangthai("Thành công");
             historyTransModel.setGhiChu("Thành công");
+            userWithdraw.Amount = Integer.parseInt(callBackModel.getRegAmount());
+            TelegramAlert.SendMessageCashout(userWithdraw);
             cashoutDao.UpdateCashoutBank(callBackModel.getChargeId(), CashoutUtil.STATUS_SUCCESS, "Auto_Bank");
         } else {
             UserServiceImpl userService = new UserServiceImpl();
@@ -151,7 +153,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
             }
             // update trans in db
             int status = type == 0 ? DvtConst.STATUS_APPROVE : DvtConst.STATUS_REJECT;
-            boolean resultUpdateTrans = dao.UpdateDepositMomoManualStatus(transId, status, "", userApprove);
+            boolean resultUpdateTrans = dao.UpdateDepositMomoManualStatusCallBack(transId, status, "", userApprove,callBackModel.getRegAmount());
             historyTransService.update(transId, trans.Nickname, HistoryTransConst.MOMO, this.getTrangthai(status), this.getTrangthaiDes(status));
             if (resultUpdateTrans) {
                 EventactionAdminObj model = new EventactionAdminObj();
@@ -215,7 +217,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
 
                 // update trans in db
                 int status = type == 1 ? DvtConst.STATUS_APPROVE : DvtConst.STATUS_REJECT;
-                boolean resultUpdateTrans = dao.UpdateDepositBankManualStatus(transId, status, trans.getDescription(), userApprove);
+                boolean resultUpdateTrans = dao.UpdateDepositBankManualStatusCallBack(transId, status, trans.getDescription(), userApprove, callBackModel.getRegAmount());
                 if (!resultUpdateTrans) {
                     return response.toJson();
                 }
