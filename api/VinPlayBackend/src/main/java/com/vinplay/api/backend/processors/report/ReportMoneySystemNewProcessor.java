@@ -119,7 +119,7 @@ public class ReportMoneySystemNewProcessor implements BaseProcessor<HttpServletR
 
             LogMoneyUserServiceImpl service = new LogMoneyUserServiceImpl();
             //search all log with time
-            List<LogUserMoneyResponse> logs = service.searchLogMoneyUser(nickName, "", "", startTime, endTime, -1, -1);
+            List<LogUserMoneyResponse> logs = service.searchLogMoneyUser2(nickName, "", "", startTime, endTime, -1, -1);
             if (logs == null || logs.isEmpty())
                 return res.toJson();
 

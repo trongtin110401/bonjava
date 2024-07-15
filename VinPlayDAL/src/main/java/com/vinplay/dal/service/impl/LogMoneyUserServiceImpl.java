@@ -44,6 +44,14 @@ public class LogMoneyUserServiceImpl
         return result;
     }
 
+    public List<LogUserMoneyResponse> searchLogMoneyUser2(String nickName, String serviceName, String actionName, String timeStart,
+                                                         String timeEnd, int page, int totalRecord) {
+        LogMoneyUserDaoImpl dao = new LogMoneyUserDaoImpl();
+        List<LogUserMoneyResponse> result = null;
+        result = dao.searchLogMoneyUser2(nickName, serviceName, actionName, timeStart, timeEnd, page, totalRecord);
+        return result;
+    }
+
     @Override
     public int countsearchLogMoneyUser(String nickName, String moneyType, String serviceName, String actionName, String timeStart, String timeEnd, int like) {
         LogMoneyUserDaoImpl dao = new LogMoneyUserDaoImpl();
