@@ -96,7 +96,7 @@ public class ReportMoneySystemNewProcessor implements BaseProcessor<HttpServletR
             OtherService otherService = new OtherServiceImpl();
             TransactionFundResponse transactionFundResponse = otherService.getTransactionFund(1, 0, null, startTime + " 00:00:00", endTime + " 23:59:59", null);
             List<ReportMoneySystemModelNew> listGameFunds = transactionFundResponse.getTransactions().stream()
-                    .collect(Collectors.groupingBy(doc -> doc.getString("fund_name")))
+                    .collect(Collectors.groupingBy(doc -> doc.getString("fundName")))
                     .entrySet()
                     .stream()
                     .map(entry -> {
