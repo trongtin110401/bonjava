@@ -100,10 +100,11 @@ public class ReportMoneySystemNewProcessor implements BaseProcessor<HttpServletR
                     .entrySet()
                     .stream()
                     .map(entry -> {
-                        String fundName = entry.getKey();
+                        String gameName = entry.getKey();
 
                         ReportMoneySystemModelNew report = new ReportMoneySystemModelNew();
-                        report.actionName = UpdateFundProcessor.fund2GameName.get(fundName);
+//                        report.actionName = UpdateFundProcessor.fund2GameName.get(gameName);
+                        report.actionName = gameName;
 
                         List<Document> documents = entry.getValue();
                         report.fund = documents.stream().mapToLong(doc -> {
