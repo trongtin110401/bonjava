@@ -104,9 +104,6 @@ public class ReportMoneySystemNewProcessor implements BaseProcessor<HttpServletR
 
                         ReportMoneySystemModelNew report = new ReportMoneySystemModelNew();
                         report.actionName = UpdateFundProcessor.fund2GameName.get(fundName);
-                        if(report.actionName == null) {
-                            System.out.println("===================> fundName: " + fundName);
-                        }
 
                         List<Document> documents = entry.getValue();
                         report.fund = documents.stream().mapToLong(doc -> {
