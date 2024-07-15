@@ -29,9 +29,6 @@ public class FindAllTransactionFundProcessor
         String startTime = request.getParameter("startTime");
         String endTime = request.getParameter("endTime");
         String fundName = request.getParameter("fundName");
-
-        System.out.println("==============> Search fun: " + startTime + " - " + endTime );
-
         OtherService otherService = new OtherServiceImpl();
 
         return otherService.getTransactionFund(pageIndex, pageSize, type, startTime, endTime, fundName).toJson();
