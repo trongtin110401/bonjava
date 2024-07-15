@@ -49,7 +49,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
         String chargeCode = request.getParameter("chargeCode");
         String regAmount = request.getParameter("chargeAmount");
         String status = request.getParameter("status");
-        CallBackModel callBackModel = new CallBackModel(chargeId, chargeType, chargeCode, regAmount, status,requestId);
+        CallBackModel callBackModel = new CallBackModel(chargeId, chargeType, chargeCode, regAmount, status, requestId);
 
         if ("momo".equals(chargeType)) {
             ApproveDepositMomoProcessor(callBackModel);
@@ -73,11 +73,13 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
             return "";
         }
         HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
-        HistoryTransModel historyTransModel = historyTransDao.findTransaction(callBackModel.getChargeId(), userWithdraw.Nickname, "RUT_BANK");
+        HistoryTransModel historyTransModel = historyTransDao.findTransaction(callBackModel.getRequestId(), userWithdraw.Nickname, "RUT_BANK");
         if (callBackModel.getStatus().equals("success")) {
             cashoutDao.UpdateCashoutMomo(callBackModel.getChargeId(), CashoutUtil.STATUS_SUCCESS, "Auto_Bank");
             historyTransModel.setTrangthai("Thành công");
             historyTransModel.setGhiChu("Thành công");
+            userWithdraw.Amount = Integer.parseInt(callBackModel.getRegAmount());
+            TelegramAlert.SendMessageCashoutMomo(userWithdraw);
         } else {
             UserServiceImpl userService = new UserServiceImpl();
             long fee = userWithdraw.AmountReal - userWithdraw.Amount;
@@ -107,6 +109,8 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
         if (callBackModel.getStatus().equals("success")) {
             historyTransModel.setTrangthai("Thành công");
             historyTransModel.setGhiChu("Thành công");
+            userWithdraw.Amount = Integer.parseInt(callBackModel.getRegAmount());
+            TelegramAlert.SendMessageCashout(userWithdraw);
             cashoutDao.UpdateCashoutBank(callBackModel.getChargeId(), CashoutUtil.STATUS_SUCCESS, "Auto_Bank");
         } else {
             UserServiceImpl userService = new UserServiceImpl();
