@@ -146,6 +146,7 @@ public class ReportMoneySystemNewProcessor implements BaseProcessor<HttpServletR
             }
             try {
                 // combine list
+                System.out.println(listGameReport.size() + " - " + listGameFunds.size());
                 listGameReport.addAll(listGameFunds);
                 // group by game name
                 Map<String, List<ReportMoneySystemModelNew>> gameName2ReportModel = listGameReport.stream()
