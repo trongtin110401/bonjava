@@ -21,6 +21,7 @@
 package com.vinplay.api.backend.processors.report;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import com.vinplay.api.backend.processors.UpdateFundProcessor;
 import com.vinplay.api.backend.response.ReportMoneySystemResponse;
 import com.vinplay.dal.dao.impl.ReportDaoImpl;
@@ -151,6 +152,7 @@ public class ReportMoneySystemNewProcessor implements BaseProcessor<HttpServletR
                 // group by game name
                 Map<String, List<ReportMoneySystemModelNew>> gameName2ReportModel = listGameReport.stream()
                         .collect(Collectors.groupingBy(reportMoneySystemModelNew -> reportMoneySystemModelNew.actionName));
+                System.out.println(new Gson().toJson(gameName2ReportModel));
                 // combine list
                 gameName2ReportModel.forEach((gameName, reportMoneySystemModelNews) -> {
                     if (reportMoneySystemModelNews.size() > 1) {
