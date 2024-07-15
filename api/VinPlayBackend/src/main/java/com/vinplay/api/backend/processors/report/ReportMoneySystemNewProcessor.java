@@ -96,7 +96,7 @@ public class ReportMoneySystemNewProcessor implements BaseProcessor<HttpServletR
             OtherService otherService = new OtherServiceImpl();
             TransactionFundResponse transactionFundResponse = otherService.getTransactionFund(1, 0, null, startTime + " 00:00:00", endTime + " 23:59:59", null);
             List<ReportMoneySystemModelNew> listGameFunds = transactionFundResponse.getTransactions().stream()
-                    .collect(Collectors.groupingBy(doc -> doc.getString("fundName")))
+                    .collect(Collectors.groupingBy(doc -> doc.getString("gameName")))
                     .entrySet()
                     .stream()
                     .map(entry -> {
@@ -120,8 +120,8 @@ public class ReportMoneySystemNewProcessor implements BaseProcessor<HttpServletR
             LogMoneyUserServiceImpl service = new LogMoneyUserServiceImpl();
             //search all log with time
             List<LogUserMoneyResponse> logs = service.searchLogMoneyUser2(nickName, "", "", startTime, endTime, -1, -1);
-            if (logs == null || logs.isEmpty())
-                return res.toJson();
+//            if (logs == null || logs.isEmpty())
+//                return res.toJson();
 
             List<ReportMoneySystemModelNew> listGameReport = new ArrayList<>();
             for (LogUserMoneyResponse log : logs) {
@@ -146,8 +146,10 @@ public class ReportMoneySystemNewProcessor implements BaseProcessor<HttpServletR
             try {
                 // combine list
                 listGameReport.addAll(listGameFunds);
+                // group by game name
                 Map<String, List<ReportMoneySystemModelNew>> gameName2ReportModel = listGameReport.stream()
                         .collect(Collectors.groupingBy(reportMoneySystemModelNew -> reportMoneySystemModelNew.actionName));
+                // combine list
                 gameName2ReportModel.forEach((gameName, reportMoneySystemModelNews) -> {
                     if (reportMoneySystemModelNews.size() > 1) {
                         ReportMoneySystemModelNew report = new ReportMoneySystemModelNew();
