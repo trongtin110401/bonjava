@@ -1,13 +1,10 @@
 package com.vinplay.api.backend.processors;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.vinplay.api.backend.models.CallBackModel;
 import com.vinplay.api.backend.processors.cashout.NapRutGame;
 import com.vinplay.api.backend.processors.cashout.NapRutModel;
-import com.vinplay.api.backend.processors.rutbank.CallAutoTransMomo;
 import com.vinplay.common.notification.SendToWS;
 import com.vinplay.common.report.EventactionAdminObj;
 import com.vinplay.dal.common.BroadCastUserMoney;
@@ -47,11 +44,12 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
     public String execute(Param<HttpServletRequest> param) {
         HttpServletRequest request = param.get();
         String chargeId = request.getParameter("chargeId");
+        String requestId = request.getParameter("requestId");
         String chargeType = request.getParameter("chargeType");
         String chargeCode = request.getParameter("chargeCode");
         String regAmount = request.getParameter("chargeAmount");
         String status = request.getParameter("status");
-        CallBackModel callBackModel = new CallBackModel(chargeId, chargeType, chargeCode, regAmount, status);
+        CallBackModel callBackModel = new CallBackModel(chargeId, chargeType, chargeCode, regAmount, status,requestId);
 
         if ("momo".equals(chargeType)) {
             ApproveDepositMomoProcessor(callBackModel);
@@ -70,7 +68,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
 
     public String cashOutByMomo(CallBackModel callBackModel) {
         CashoutDao cashoutDao = new CashoutDaoImpl();
-        UserWithdrawMomo userWithdraw = cashoutDao.FindCashoutMomoById(callBackModel.getChargeId());
+        UserWithdrawMomo userWithdraw = cashoutDao.FindCashoutMomoById(callBackModel.getRequestId());
         if (userWithdraw == null) {
             return "";
         }

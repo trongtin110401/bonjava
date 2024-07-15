@@ -32,7 +32,7 @@ public class HistoryMoneyProcessor implements BaseProcessor<HttpServletRequest, 
             if (!userSer.checkAccesstoken(nickName, accessToken)) {
                 return res.toJson();
             }
-            if(ver == null){
+            if(ver == null || ver.equalsIgnoreCase("")){
 
                 //1. find by trans time and nickname
                 HistoryTransDao historyTransDao = new HistoryTransDaoImpl();

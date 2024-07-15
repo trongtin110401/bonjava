@@ -157,6 +157,7 @@ public class HistoryTransDaoImpl implements HistoryTransDao {
             });
 
             int totalPages = (int) Math.ceil((double) Math.toIntExact(num.get(0)) / 5);
+            response.setListTrans(records);
             response.setTotalpage(totalPages);
             return response;
 
