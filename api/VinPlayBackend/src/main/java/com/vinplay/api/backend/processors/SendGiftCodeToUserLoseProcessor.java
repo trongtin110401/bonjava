@@ -40,6 +40,9 @@ public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServle
         String timeStart = request.getParameter("timeStart");
         String timeEnd = request.getParameter("timeEnd");
         String message = request.getParameter("message");
+
+        System.out.println("SendGiftCodeToUserLoseProcessor: " + timeStart + " " + timeEnd );
+
         long percent;
         try {
             percent = Long.parseLong(request.getParameter("percent"));
@@ -49,6 +52,7 @@ public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServle
         LogMoneyUserDaoImpl dao = new LogMoneyUserDaoImpl();
         Map<String, Long> users = new HashMap<>();
         List<LogUserMoneyResponse> list = dao.getLogMoneyUser(timeStart, timeEnd);
+
 
         for (LogUserMoneyResponse response : list) {
             if ("Gift Code".equalsIgnoreCase(response.serviceName)) {

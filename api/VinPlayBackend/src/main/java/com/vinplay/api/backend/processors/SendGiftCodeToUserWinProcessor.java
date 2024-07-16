@@ -42,6 +42,8 @@ public class SendGiftCodeToUserWinProcessor implements BaseProcessor<HttpServlet
         String message = request.getParameter("message");
         String nickname = request.getParameter("nickname");
 
+        System.out.println("SendGiftCodeToUserWinProcessor: " + timeStart + " " + timeEnd );
+
         int price;
         try {
             price = Integer.parseInt(request.getParameter("price"));
@@ -92,7 +94,7 @@ public class SendGiftCodeToUserWinProcessor implements BaseProcessor<HttpServlet
         document.put("createdDate", VinPlayUtils.getCurrentDateTime());
         String expirationDateString = calculateExpirationDate(VinPlayUtils.getCurrentDateTime());
         document.put("expirationDate", expirationDateString);
-        document.put("activeDate","");
+        document.put("activeDate", "");
         otherService.saveUserTeleCashBack(document);
     }
 
