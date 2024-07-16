@@ -134,6 +134,8 @@ public interface RechargeDao {
     public boolean InsertDepositMomoManual(DepositMomoModel depositBankModel);
     public boolean UpdateDepositMomoManualStatus(String transId, int status, String desc, String userApprove);
 
+    public boolean UpdateDepositMomoManualStatus2(String transId, int status, String desc, String userApprove, long amount);
+
     boolean UpdateDepositMomoManualStatusCallBack(String transId, int status, String desc, String userApprove, String amount);
     public boolean UpdateDepositMomoManualStatus2(long amount, String transId, int status, String desc, String userApprove);
     public DepositMomoReponse GetListDepositMomo(DepositMomoModel depositMomoModel, int page, int maxItem, String fromTime, String endTime);
