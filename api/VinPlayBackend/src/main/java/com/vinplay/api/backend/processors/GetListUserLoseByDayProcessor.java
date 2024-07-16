@@ -42,7 +42,7 @@ public class GetListUserLoseByDayProcessor implements BaseProcessor<HttpServletR
         String timeEnd = request.getParameter("timeEnd");
         LogMoneyUserDaoImpl dao = new LogMoneyUserDaoImpl();
 
-        List<LogUserMoneyResponse> list = dao.getLogMoneyUser2(timeStart, timeEnd);
+        List<LogUserMoneyResponse> list = dao.getLogMoneyUser(timeStart, timeEnd);
 
         List<UserLoseByDay> userLoseByDays = list.stream()
                 .filter(log -> !"Admin".equals(log.getActionName())
