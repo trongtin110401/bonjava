@@ -8,6 +8,7 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Sorts;
 import com.mongodb.client.model.UpdateOptions;
 import com.vinplay.usercore.service.OtherService;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
@@ -131,7 +132,7 @@ public class OtherServiceImpl implements OtherService {
             query.append("fund_name", fundName);
         }
 
-        MongoCursor<Document> cursor = col.find(query).skip(skip).limit(pageSize).iterator();
+        MongoCursor<Document> cursor = col.find(query).skip(skip).limit(pageSize).sort(Sorts.descending("time_log")).iterator();
 
         long totalCount = col.count(query);
 
