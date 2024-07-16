@@ -42,7 +42,7 @@ public class SendGiftCodeToUserWinProcessor implements BaseProcessor<HttpServlet
         String message = request.getParameter("message");
         String nickname = request.getParameter("nickname");
 
-        System.out.println("SendGiftCodeToUserWinProcessor: " + timeStart + " " + timeEnd );
+//        System.out.println("SendGiftCodeToUserWinProcessor: " + timeStart + " " + timeEnd );
 
         int price;
         try {
