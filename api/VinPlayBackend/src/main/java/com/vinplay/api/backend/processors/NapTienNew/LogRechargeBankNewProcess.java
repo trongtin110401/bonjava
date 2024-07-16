@@ -104,7 +104,7 @@ public class LogRechargeBankNewProcess implements BaseProcessor<HttpServletReque
                     try {
                         amount = document.getLong((Object) "Amount");
                     } catch (Exception e) {
-                        Long.valueOf(document.getInteger((Object) "Amount"));
+                        amount = Long.valueOf(document.getInteger((Object) "Amount"));
                     }
 
                     DepositBankModel model = new DepositBankModel(
