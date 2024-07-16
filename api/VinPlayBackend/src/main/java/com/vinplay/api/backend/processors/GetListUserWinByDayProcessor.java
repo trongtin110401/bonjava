@@ -34,7 +34,7 @@ public class GetListUserWinByDayProcessor implements BaseProcessor<HttpServletRe
 
         LogMoneyUserDaoImpl dao = new LogMoneyUserDaoImpl();
 
-        List<LogUserMoneyResponse> list = dao.getLogMoneyUser(timeStart, timeEnd);
+        List<LogUserMoneyResponse> list = dao.getLogMoneyUser2(timeStart, timeEnd);
 
         List<UserLoseByDay> userLoseByDays = list.stream()
                 .filter(log -> !"Admin".equals(log.getActionName())
