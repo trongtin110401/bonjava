@@ -58,9 +58,9 @@ public class ApproveDepositMomoProcessor implements BaseProcessor<HttpServletReq
             if (trans == null) {
                 return response.toJson();
             }
-            if (trans.Status != DvtConst.STATUS_PENDING) {
-                return response.toJson();
-            }
+//            if (trans.Status != DvtConst.STATUS_PENDING) {
+//                return response.toJson();
+//            }
             // update trans in db
             int status = type == 0 ? DvtConst.STATUS_APPROVE : DvtConst.STATUS_REJECT;
             boolean resultUpdateTrans = dao.UpdateDepositMomoManualStatus(transId, status, "", userApprove);

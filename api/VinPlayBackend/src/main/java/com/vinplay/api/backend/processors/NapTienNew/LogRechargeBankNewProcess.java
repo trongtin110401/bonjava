@@ -21,10 +21,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class LogRechargeBankNewProcess implements BaseProcessor<HttpServletRequest, String> {
-    private static final Logger logger = Logger.getLogger((String)"backend");
+    private static final Logger logger = Logger.getLogger((String) "backend");
     private static final int MAX_ITEM = 15;
+
     public String execute(Param<HttpServletRequest> param) {
-        HttpServletRequest request = (HttpServletRequest)param.get();
+        HttpServletRequest request = (HttpServletRequest) param.get();
         DepositBankReponse res = new DepositBankReponse(false, "1001");
         try {
             String nickname = request.getParameter("nn");
@@ -40,21 +41,21 @@ public class LogRechargeBankNewProcess implements BaseProcessor<HttpServletReque
             int maxItem = numberMax != null ? Integer.parseInt(numberMax) : MAX_ITEM;
             RechargeDaoImpl dao = new RechargeDaoImpl();
             DepositBankModel modelSearch = new DepositBankModel(transId, nickname, status, bank);
-            if(checkcheck == null){
+            if (checkcheck == null) {
                 res = dao.GetListDepositBank(modelSearch, page, maxItem, startTime, endTime);
-            }else if(checkcheck.equalsIgnoreCase("codepay")){
+            } else if (checkcheck.equalsIgnoreCase("codepay")) {
                 res = dao.GetListCodepayDes(modelSearch, page, maxItem, startTime, endTime);
-            }else if(checkcheck.equalsIgnoreCase("momo")){
+            } else if (checkcheck.equalsIgnoreCase("momo")) {
 //                res = dao.GetListMomoDes(modelSearch, page, maxItem, startTime, endTime);
                 res = GetListMomoDes(modelSearch, page, maxItem, startTime, endTime);
-            }else if(checkcheck.equalsIgnoreCase("nh")){
+            } else if (checkcheck.equalsIgnoreCase("nh")) {
                 res = dao.GetListNHDes(modelSearch, page, maxItem, startTime, endTime);
-            }else{
+            } else {
                 res = dao.GetListDepositBank(modelSearch, page, maxItem, startTime, endTime);
             }
 
-        }catch (Exception e) {
-            logger.debug((Object)e);
+        } catch (Exception e) {
+            logger.debug((Object) e);
         }
         return res.toJson();
     }
@@ -74,11 +75,10 @@ public class LogRechargeBankNewProcess implements BaseProcessor<HttpServletReque
             BasicDBObject objsort = new BasicDBObject();
             objsort.put("_id", -1);
             HashMap<String, Object> conditions = new HashMap<String, Object>();
-            if (!depositBankModel.Nickname.isEmpty()) {
+            if (depositBankModel.Nickname != null && !depositBankModel.Nickname.isEmpty()) {
                 String pattern = ".*" + depositBankModel.Nickname + ".*";
                 conditions.put("Nickname", (Object) new BasicDBObject().append("$regex", (Object) pattern).append("$options", (Object) "i"));
             }
-
 
             if (!depositBankModel.Id.isEmpty()) {
                 conditions.put("Id", depositBankModel.Id);
@@ -100,13 +100,19 @@ public class LogRechargeBankNewProcess implements BaseProcessor<HttpServletReque
             iterable.forEach((Block) new Block<Document>() {
 
                 public void apply(Document document) {
+                    long amount = 0;
+                    try {
+                        amount = document.getLong((Object) "Amount");
+                    } catch (Exception e) {
+                        Long.valueOf(document.getInteger((Object) "Amount"));
+                    }
 
                     DepositBankModel model = new DepositBankModel(
                             document.getString((Object) "Id"),
                             document.getString((Object) "Nickname"),
                             document.getString((Object) "CreatedAt"),
                             document.getString((Object) "UpdatedAt"),
-                            document.getLong((Object) "Amount"),
+                            amount,
                             document.getInteger((Object) "Status"),
                             document.getString((Object) "BankBrandName"),
                             document.getString((Object) "BankAccountNumber"),
@@ -125,7 +131,12 @@ public class LogRechargeBankNewProcess implements BaseProcessor<HttpServletReque
             iterable2.forEach((Block) new Block<Document>() {
 
                 public void apply(Document document) {
-                    long amount = document.getLong((Object) "Amount");
+                    long amount = 0;
+                    try {
+                        amount = document.getLong((Object) "Amount");
+                    } catch (Exception e) {
+                        Long.valueOf(document.getInteger((Object) "Amount"));
+                    }
                     int code = document.getInteger((Object) "Status");
                     long count = (Long) num.get(0) + 1L;
                     num.set(0, count);
