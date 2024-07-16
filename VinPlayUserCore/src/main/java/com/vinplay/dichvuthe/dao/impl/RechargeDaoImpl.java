@@ -2377,6 +2377,25 @@ public class RechargeDaoImpl
     }
 
     @Override
+    public boolean UpdateDepositMomoManualStatus2(String transId, int status, String desc, String userApprove, long amount) {
+        try {
+
+            MongoDatabase db = MongoDBConnectionFactory.getDB();
+            Document conditions = new Document();
+            conditions.put("Id", (Object) transId);
+            BasicDBObject updateFields = new BasicDBObject();
+            updateFields.append("Status", (Object) status);
+            updateFields.append("Description", (Object) desc);
+            updateFields.append("UserApprove", (Object) userApprove);
+            updateFields.append("Amount", (Object) amount);
+            db.getCollection(DvtConst.DEPOSIT_MOMO_COLLECTION).updateOne(conditions, (Bson) new Document("$set", (Object) updateFields));
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
     public boolean UpdateDepositMomoManualStatusCallBack(String transId, int status, String desc, String userApprove, String amount) {
         try {
 
