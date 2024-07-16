@@ -41,7 +41,7 @@ public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServle
         String timeEnd = request.getParameter("timeEnd");
         String message = request.getParameter("message");
 
-        System.out.println("SendGiftCodeToUserLoseProcessor: " + timeStart + " " + timeEnd );
+//        System.out.println("SendGiftCodeToUserLoseProcessor: " + timeStart + " " + timeEnd );
 
         long percent;
         try {
