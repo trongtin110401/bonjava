@@ -63,7 +63,7 @@ public class ApproveDepositMomoProcessor implements BaseProcessor<HttpServletReq
 //            }
             // update trans in db
             int status = type == 0 ? DvtConst.STATUS_APPROVE : DvtConst.STATUS_REJECT;
-            boolean resultUpdateTrans = dao.UpdateDepositMomoManualStatus(transId, status, "", userApprove);
+            boolean resultUpdateTrans = dao.UpdateDepositMomoManualStatus2(transId, status, "", userApprove, tien);
             historyTransService.update(transId, trans.Nickname, HistoryTransConst.MOMO, this.getTrangthai(status), this.getTrangthaiDes(status));
             if(resultUpdateTrans) {
                 EventactionAdminObj model = new EventactionAdminObj();
