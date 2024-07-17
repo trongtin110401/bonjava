@@ -64,10 +64,12 @@ public class TelegramAlert {
 
     public static boolean SendMessageCashout(UserWithdraw userWithdraw) {
         try {
-            String message = "<b>YRút tiền bank từ User " + userWithdraw.Username + "</b>";
-            message += "\n Số tiền <b>" + userWithdraw.Amount + "</b>";
+            NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.forLanguageTag("vi-VN"));
+            String formattedNumber = numberFormat.format(userWithdraw.Amount);
+            String message = "<b>Rút tiền bank từ User: " + userWithdraw.Username + "</b>";
+            message += "\n Số tiền: <b>" + formattedNumber + "</b>";
             message += "\n Ngân hàng: <b>" + userWithdraw.BankName + "</b>";
-            message += "\nTên tài khoản <b>" + userWithdraw.BankAccountName + "</b>";
+            message += "\nTên tài khoản: <b>" + userWithdraw.BankAccountName + "</b>";
             message += "\n Số tài khoản: <b>" + userWithdraw.BankAccountNumber + "</b>";
             return SendMessageRut(message);
         } catch (Exception e) {

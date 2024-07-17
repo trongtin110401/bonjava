@@ -65,12 +65,12 @@ public class ApproveDepositBankProcessor implements BaseProcessor<HttpServletReq
                 RechargeDao dao = new RechargeDaoImpl();
 
                 RechargeServiceImpl rechargeService = new RechargeServiceImpl();
-                DepositBankModel trans = rechargeService.finMoMoDepositByTransactionId(transId);
+                DepositBankModel trans = rechargeService.findBankDepositByTransactionId(transId);
 
 
                 // update trans in db
                 int status = type == 100 ? DvtConst.STATUS_APPROVE : DvtConst.STATUS_REJECT;
-                boolean resultUpdateTrans = dao.UpdateDepositBankManualStatus(transId, status, trans.getDescription(), userApprove);
+                boolean resultUpdateTrans = dao.UpdateDepositBankManualStatusCallBack(transId, status, trans.getDescription(), userApprove, tienx);
                 logger.debug(this.getClass().getName() + "resultUpdateTrans: " + resultUpdateTrans);
                 if (!resultUpdateTrans) {
                     return response.toJson();
@@ -79,6 +79,7 @@ public class ApproveDepositBankProcessor implements BaseProcessor<HttpServletReq
                 if (type == 1) {
                     BroadCastUserMoney.pushBroadTime2(trans.getNickname());
                     response.setSuccess(true);
+                    response.setErrorCode("200");
                     historyTransService.update(transId, trans.getNickname(), HistoryTransConst.BANK, "Từ chối", "Giao dịch bị từ chối");
                     EventactionAdminObj model = new EventactionAdminObj();
                     model.setId(transId);
