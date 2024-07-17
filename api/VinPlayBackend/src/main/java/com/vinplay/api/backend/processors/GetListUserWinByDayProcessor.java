@@ -45,7 +45,7 @@ public class GetListUserWinByDayProcessor implements BaseProcessor<HttpServletRe
                 .collect(Collectors.groupingBy(LogUserMoneyResponse::getNickName,
                         Collectors.summingLong(LogUserMoneyResponse::getMoneyExchange)))
                 .entrySet().stream()
-                .filter(entry -> entry.getValue() > 100000)
+                .filter(entry -> entry.getValue() >= 100000)
                 .map(entry -> {
                     UserLoseByDay userLoseByDay = new UserLoseByDay();
                     userLoseByDay.setNickname(entry.getKey());
