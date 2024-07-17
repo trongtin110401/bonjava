@@ -69,9 +69,9 @@ public class UpdateFundProcessor implements BaseProcessor<HttpServletRequest, St
         funds.put("Caribe_vin_1000", "Caribe_vin_1000");
         funds.put("Caribe_vin_10000", "Caribe_vin_10000");
 
-        funds.put("BongLaiCac_vin_1000", "BongLaiCac_vin_1000");
-        funds.put("BongLaiCac_vin_10000", "BongLaiCac_vin_10000");
-        funds.put("BongLaiCac_vin_100000", "BongLaiCac_vin_100000");
+        funds.put("BongLaiCac_vin_100", "BongLaiCac_vin_1000");
+        funds.put("BongLaiCac_vin_1000", "BongLaiCac_vin_10000");
+        funds.put("BongLaiCac_vin_10000", "BongLaiCac_vin_100000");
 
         funds.put("Halloween_vin_100", "Halloween_vin_100");
         funds.put("Halloween_vin_1000", "Halloween_vin_1000");

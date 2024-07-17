@@ -14,6 +14,7 @@ package com.vinplay.api.backend.processors;
 import com.vinplay.dal.dao.impl.LogMoneyUserDaoImpl;
 import com.vinplay.usercore.service.OtherService;
 import com.vinplay.usercore.service.impl.GiftCodeServiceImpl;
+import com.vinplay.usercore.service.impl.MailBoxServiceImpl;
 import com.vinplay.usercore.service.impl.OtherServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
@@ -35,11 +36,14 @@ import java.util.stream.Collectors;
 
 public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServletRequest, String> {
 
+    MailBoxServiceImpl mailService = new MailBoxServiceImpl();
+
     public String execute(Param<HttpServletRequest> param) {
         HttpServletRequest request = param.get();
         String timeStart = request.getParameter("timeStart");
         String timeEnd = request.getParameter("timeEnd");
         String message = request.getParameter("message");
+
         long percent;
         try {
             percent = Long.parseLong(request.getParameter("percent"));
@@ -49,6 +53,7 @@ public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServle
         LogMoneyUserDaoImpl dao = new LogMoneyUserDaoImpl();
         Map<String, Long> users = new HashMap<>();
         List<LogUserMoneyResponse> list = dao.getLogMoneyUser(timeStart, timeEnd);
+
 
         for (LogUserMoneyResponse response : list) {
             if ("Gift Code".equalsIgnoreCase(response.serviceName)) {
@@ -68,6 +73,7 @@ public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServle
                     }
                     String giftCode = VinPlayUtils.genGiftCode(10);
                     String content = message + " : " + genCode(price, giftCode);
+                    mailService.sendMailBoxFromByNickNameAdmin(userTele.getNickname(), "Tri ân khách hàng: Hoàn tr? ti?n c??c", content);
                     sendMessage(userTele.getChatID(), content);
                     saveUserTeleCashBack(userTele, giftCode, price, entry.getValue());
                 }

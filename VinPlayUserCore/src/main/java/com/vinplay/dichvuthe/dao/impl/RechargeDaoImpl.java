@@ -63,6 +63,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -1456,7 +1457,7 @@ public class RechargeDaoImpl
             updateFields.append("Status", status);
             updateFields.append("Description", desc);
             updateFields.append("UserApprove", userApprove);
-            updateFields.append("Amount", Integer.parseInt(amount));
+            updateFields.append("Amount", Long.parseLong(amount));
             db.getCollection(DvtConst.DEPOSIT_BANK_COLLECTION).updateOne(conditions, new Document("$set", updateFields));
             return true;
         } catch (Exception e) {
@@ -1489,12 +1490,16 @@ public class RechargeDaoImpl
             if (!depositBankModel.Id.isEmpty()) {
                 conditions.put("Id", depositBankModel.Id);
             }
+
             if (!depositBankModel.BankBrandName.isEmpty()) {
                 conditions.put("BankBrandName", depositBankModel.BankBrandName);
             }
+
             if (depositBankModel.Status > 0) {
                 conditions.put("Status", depositBankModel.Status);
             }
+
+
             if (!fromTime.isEmpty() && !endTime.isEmpty()) {
                 BasicDBObject obj = new BasicDBObject();
                 obj.put("$gte", (Object) fromTime);
@@ -1506,13 +1511,19 @@ public class RechargeDaoImpl
             iterable.forEach((Block) new Block<Document>() {
 
                 public void apply(Document document) {
-
+                    long amount;
+                    try {
+                        amount = document.getLong("Amount");
+                    } catch (Exception e) {
+                        amount = document.getInteger("Amount").longValue();
+                    }
                     DepositBankModel model = new DepositBankModel(
+
                             String.valueOf(document.getInteger("Id")),
                             document.getString("Nickname"),
                             document.getString("CreatedAt"),
                             document.getString("UpdatedAt"),
-                            document.getLong("Amount"),
+                            amount,
                             document.getInteger("Status"),
                             document.getString("BankCode"),
                             document.getString("BankAccountNumber"),
@@ -1532,7 +1543,12 @@ public class RechargeDaoImpl
             iterable2.forEach((Block) new Block<Document>() {
 
                 public void apply(Document document) {
-                    long amount = document.getLong((Object) "Amount");
+                    long amount;
+                    try {
+                        amount = document.getLong("Amount");
+                    } catch (Exception e) {
+                        amount = document.getInteger("Amount").longValue();
+                    }
                     int code = document.getInteger((Object) "Status");
                     long count = (Long) num.get(0) + 1L;
                     num.set(0, count);
@@ -1551,7 +1567,9 @@ public class RechargeDaoImpl
 
 
         } catch (Exception e) {
+            e.printStackTrace();
             RechargeDaoImpl.logger.error(e);
+            System.out.println("======================> " + ExceptionUtils.getStackTrace(e));
             return null;
         }
     }
@@ -2406,7 +2424,7 @@ public class RechargeDaoImpl
             updateFields.append("Status", (Object) status);
             updateFields.append("Description", (Object) desc);
             updateFields.append("UserApprove", (Object) userApprove);
-            updateFields.append("Amount", Integer.parseInt(amount));
+            updateFields.append("Amount", Long.parseLong(amount));
             db.getCollection(DvtConst.DEPOSIT_MOMO_COLLECTION).updateOne(conditions, (Bson) new Document("$set", (Object) updateFields));
             return true;
         } catch (Exception e) {

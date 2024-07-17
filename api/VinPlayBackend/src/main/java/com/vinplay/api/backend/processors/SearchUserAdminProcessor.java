@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  com.vinplay.usercore.service.impl.UserForAdminServiceImpl
  *  com.vinplay.vbee.common.cp.BaseProcessor
@@ -15,18 +15,20 @@ import com.vinplay.usercore.service.impl.UserForAdminServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.response.ResultUserReponse;
+
 import java.sql.SQLException;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
+
 import org.apache.log4j.Logger;
 
 public class SearchUserAdminProcessor
-implements BaseProcessor<HttpServletRequest, String> {
-    private static final Logger logger = Logger.getLogger((String)"backend");
+        implements BaseProcessor<HttpServletRequest, String> {
+    private static final Logger logger = Logger.getLogger((String) "backend");
 
     public String execute(Param<HttpServletRequest> param) {
         ResultUserReponse response = new ResultUserReponse(false, "1001");
-        HttpServletRequest request = (HttpServletRequest)param.get();
+        HttpServletRequest request = (HttpServletRequest) param.get();
         String userName = request.getParameter("un");
         String nickName = request.getParameter("nn");
         String mobile = request.getParameter("m");
@@ -48,17 +50,16 @@ implements BaseProcessor<HttpServletRequest, String> {
         }
         UserForAdminServiceImpl service = new UserForAdminServiceImpl();
         try {
-            List trans = service.searchUserAdmin(userName, nickName, mobile, field, sort, daily, timeStart, timeEnd, page, total, bot, like, email);
+            List trans = service.searchUserAdmin(userName, nickName, mobile, field, sort, daily, timeStart + " 00:00:00", timeEnd + " 23:59:59", page, total, bot, like, email);
             int totalRecord = service.countSearchUserAdmin(userName, nickName, mobile, field, sort, daily, timeStart, timeEnd, bot);
-            double totalPages = Math.ceil( (double)totalRecord/(double)total);
-            response.setTotal((long)totalPages);
-            response.setTotalRecord((long)totalRecord);
+            double totalPages = Math.ceil((double) totalRecord / (double) total);
+            response.setTotal((long) totalPages);
+            response.setTotalRecord((long) totalRecord);
             response.setTransactions(trans);
             response.setSuccess(true);
             response.setErrorCode("0");
-        }
-        catch (SQLException e) {
-            logger.debug((Object)e);
+        } catch (SQLException e) {
+            logger.debug((Object) e);
         }
         return response.toJson();
     }
