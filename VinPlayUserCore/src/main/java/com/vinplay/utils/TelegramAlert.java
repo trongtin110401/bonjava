@@ -88,6 +88,17 @@ public class TelegramAlert {
         }
     }
 
+    public static boolean SendMessageDepositCart(long Amount, String nickname) {
+        try {
+            NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.forLanguageTag("vi-VN"));
+            String formattedNumber = numberFormat.format(Amount);
+            String message = "<b>Tài Khoản  " + nickname + "</b> Nạp Thẻ số tiền : " + formattedNumber;
+            return SendMessageNap(message);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     public static boolean SendMessageCashoutMomo(UserWithdrawMomo userWithdraw) {
         try {
             String message = "<b>Rút tiền Momo từ User " + userWithdraw.Nickname + "</b>";

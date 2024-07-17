@@ -31,6 +31,7 @@ import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.response.BaseResponseModel;
+import com.vinplay.vbee.common.response.RechargeByCardReponse;
 import com.vinplay.vbee.common.statics.Consts;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
 import org.bson.Document;
@@ -61,6 +62,8 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
             cashOutByBank(callBackModel);
         } else if ("usdt".equals(chargeType)) {
 
+        } else if ("card".equals(chargeType)) {
+            DepositCardProcessor(callBackModel);
         }
         return "ok";
     }
@@ -129,6 +132,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
         return "true";
     }
 
+
     public String ApproveDepositMomoProcessor(CallBackModel callBackModel) {
         BaseResponseModel response = new BaseResponseModel(false, "1001");
         HistoryTransService historyTransService = new HistoryTransServiceImpl();
@@ -153,7 +157,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
             }
             // update trans in db
             int status = type == 0 ? DvtConst.STATUS_APPROVE : DvtConst.STATUS_REJECT;
-            boolean resultUpdateTrans = dao.UpdateDepositMomoManualStatusCallBack(transId, status, "", userApprove,callBackModel.getRegAmount());
+            boolean resultUpdateTrans = dao.UpdateDepositMomoManualStatusCallBack(transId, status, "", userApprove, callBackModel.getRegAmount());
             historyTransService.update(transId, trans.Nickname, HistoryTransConst.MOMO, this.getTrangthai(status), this.getTrangthaiDes(status));
             if (resultUpdateTrans) {
                 EventactionAdminObj model = new EventactionAdminObj();
@@ -185,6 +189,91 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            return response.toJson();
+        } catch (Exception e) {
+            return response.toJson();
+        }
+    }
+
+    public String DepositCardProcessor(CallBackModel callBackModel) {
+
+        BaseResponseModel response = new BaseResponseModel(false, "1001");
+        HistoryTransService historyTransService = new HistoryTransServiceImpl();
+        try {
+            String transId = callBackModel.getRequestId();
+
+            int type;
+            if (callBackModel.getStatus().equals("success")) {
+                type = 0;
+            } else {
+                type = 1;
+            }
+            String userApprove = "AutoBank";
+            long tien = Long.parseLong(callBackModel.getRegAmount());
+            tien = (long) (tien * 0.8);
+
+            RechargeDao dao = new RechargeDaoImpl();
+            RechargeByCardReponse trans = dao.searchRechargeByCard(transId);
+            if (trans == null) {
+                return response.toJson();
+            }
+
+            // update trans in db
+            int status = type == 1 ? DvtConst.STATUS_APPROVE : DvtConst.STATUS_REJECT;
+            boolean resultUpdateTrans = dao.UpdateDepositCard(transId, status, trans.message, userApprove, callBackModel.getRegAmount());
+            if (!resultUpdateTrans) {
+                return response.toJson();
+            }
+            if (type == 0) {
+                BroadCastUserMoney.pushBroadTime2(trans.nickName);
+                response.setSuccess(true);
+                historyTransService.update(transId, trans.nickName, HistoryTransConst.BANK, "Thành công", "Giao dịch thành công");
+                EventactionAdminObj model = new EventactionAdminObj();
+                model.setId(transId);
+                model.setStatus(2);
+                model.setType("DEPOSIT_BANK");
+                updateCodepay(trans.nickName, true, trans.message, trans.nickName);
+                try {
+                    SendToWS.sendBEExcEventaction(model);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            //update user money
+            UserServiceImpl service = new UserServiceImpl();
+            try {
+                response = service.updateMoneyFromAdmin(trans.nickName, tien, "vin", Consts.RECHARGE_BY_CARD, Consts.RECHARGE_BY_CARD, "Deposit Cart", 0);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
+
+            historyTransDao.insertTransaction(new HistoryTransModel(transId, "Thẻ Cào", "Nạp tiền", String.valueOf(tien), "Thành công", "Nạp Tiền Thành công ", trans.nickName, HistoryTransConst.BANK, transId));
+
+            updateMoneyCodePayMomoSun2(transId, String.valueOf(tien));
+            updateSTTCodePayMomoSun2(transId);
+
+            EventactionAdminObj model = new EventactionAdminObj();
+            model.setId(transId);
+            model.setStatus(100);
+            model.setType("DEPOSIT_BANK");
+            try {
+                SendToWS.sendBEExcEventaction(model);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (type == 0) {
+                trans.amount = (int) tien;
+                TelegramAlert.SendMessageDepositCart(tien, trans.nickName);
+                BroadCastUserMoney.pushBroadCast(trans.nickName);
+                BroadCastUserMoney.pushBroadTime(trans.nickName);
+                NapRutGame nrg = new NapRutGame();
+                String codedl = nrg.getMaDaily(trans.nickName);
+                NapRutModel napgame = new NapRutModel(transId, trans.nickName, codedl, tien, "Cart", trans.timelog);
+                nrg.NapRut(napgame);
+            }
+            response.setErrorCode("200");
+            response.setSuccess(true);
             return response.toJson();
         } catch (Exception e) {
             return response.toJson();
@@ -224,7 +313,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
                 if (type == 0) {
                     BroadCastUserMoney.pushBroadTime2(trans.getNickname());
                     response.setSuccess(true);
-                    historyTransService.update(transId, trans.getNickname(), HistoryTransConst.BANK, "Từ chối", "Giao dịch bị từ chối");
+                    historyTransService.update(transId, trans.getNickname(), HistoryTransConst.BANK, "Thành công", "Giao dịch thành công");
                     EventactionAdminObj model = new EventactionAdminObj();
                     model.setId(transId);
                     model.setStatus(2);

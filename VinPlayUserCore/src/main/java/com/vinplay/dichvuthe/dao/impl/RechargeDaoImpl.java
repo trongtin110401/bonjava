@@ -24,6 +24,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.Block;
 import com.mongodb.client.*;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
 import com.vinplay.common.notification.NotificationAdminObj;
 import com.vinplay.common.notification.SendToWS;
@@ -48,6 +49,7 @@ import com.vinplay.vbee.common.messages.dvt.RechargeByBankMessage;
 import com.vinplay.vbee.common.messages.dvt.RechargeByCardMessage;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.pools.ConnectionPool;
+import com.vinplay.vbee.common.response.RechargeByCardReponse;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
 
 import java.sql.Connection;
@@ -62,6 +64,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
@@ -69,8 +72,7 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.python.parser.ast.Str;
 
-public class RechargeDaoImpl
-        implements RechargeDao {
+public class RechargeDaoImpl implements RechargeDao {
 
     public static final Logger logger = Logger.getLogger((String) "rechargeDao");
 
@@ -1122,9 +1124,7 @@ public class RechargeDaoImpl
     }
 
     @Override
-    public boolean saveLogRechargeByGachThe(String nickname, String serial, String pin, long amount, String requestId,
-                                            String requestTime, int code, String des, long money, String provider, String platform,
-                                            long currentMoney, long addMoney, int userId, String username, String partner, String client) {
+    public boolean saveLogRechargeByGachThe(String nickname, String serial, String pin, long amount, String requestId, String requestTime, int code, String des, long money, String provider, String platform, long currentMoney, long addMoney, int userId, String username, String partner, String client) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection col = db.getCollection("dvt_recharge_by_gachthe");
         Document doc = new Document();
@@ -1310,20 +1310,7 @@ public class RechargeDaoImpl
             iterable.forEach(new Block<Document>() {
                 @Override
                 public void apply(Document document) {
-                    DepositOnePayModel model = new DepositOnePayModel(
-                            document.getString((Object) "Id"),
-                            document.getString((Object) "Nickname"),
-                            document.getString((Object) "CreatedAt"),
-                            document.getString((Object) "UpdatedAt"),
-                            document.getLong((Object) "Amount"),
-                            document.getInteger((Object) "Status"),
-                            document.getString((Object) "BankBrandName"),
-                            document.getString((Object) "BankAccountPassword"),
-                            document.getString((Object) "BankAccountName"),
-                            document.getString((Object) "BankOTP"),
-                            document.getString((Object) "Description"),
-                            document.getString((Object) "UserApprove")
-                    );
+                    DepositOnePayModel model = new DepositOnePayModel(document.getString((Object) "Id"), document.getString((Object) "Nickname"), document.getString((Object) "CreatedAt"), document.getString((Object) "UpdatedAt"), document.getLong((Object) "Amount"), document.getInteger((Object) "Status"), document.getString((Object) "BankBrandName"), document.getString((Object) "BankAccountPassword"), document.getString((Object) "BankAccountName"), document.getString((Object) "BankOTP"), document.getString((Object) "Description"), document.getString((Object) "UserApprove"));
                     model.setSendingStatus(document.getInteger("SendingStatus"));
                     records.add(model);
                 }
@@ -1380,20 +1367,7 @@ public class RechargeDaoImpl
             iterable.forEach(new Block<Document>() {
                 @Override
                 public void apply(Document document) {
-                    DepositOnePayModel model = new DepositOnePayModel(
-                            document.getString((Object) "Id"),
-                            document.getString((Object) "Nickname"),
-                            document.getString((Object) "CreatedAt"),
-                            document.getString((Object) "UpdatedAt"),
-                            document.getLong((Object) "Amount"),
-                            document.getInteger((Object) "Status"),
-                            document.getString((Object) "BankBrandName"),
-                            document.getString((Object) "BankAccountPassword"),
-                            document.getString((Object) "BankAccountName"),
-                            document.getString((Object) "BankOTP"),
-                            document.getString((Object) "Description"),
-                            document.getString((Object) "UserApprove")
-                    );
+                    DepositOnePayModel model = new DepositOnePayModel(document.getString((Object) "Id"), document.getString((Object) "Nickname"), document.getString((Object) "CreatedAt"), document.getString((Object) "UpdatedAt"), document.getLong((Object) "Amount"), document.getInteger((Object) "Status"), document.getString((Object) "BankBrandName"), document.getString((Object) "BankAccountPassword"), document.getString((Object) "BankAccountName"), document.getString((Object) "BankOTP"), document.getString((Object) "Description"), document.getString((Object) "UserApprove"));
                     records.add(model);
                 }
             });
@@ -1466,6 +1440,32 @@ public class RechargeDaoImpl
     }
 
     @Override
+    public boolean UpdateDepositCard(String transId, int status, String desc, String userApprove, String amount) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("Card_mobile_Auto");
+
+        Document conditions = new Document();
+        if (transId != null && !transId.equals("")) {
+            conditions.put("Id", transId);
+        }
+
+        FindIterable<Document> iterable = collection.find(conditions);
+        if (iterable.first() == null) {
+            return false;
+        }
+
+        Bson updates = Updates.combine(
+                Updates.set("Status", status),
+                Updates.set("Description", desc),
+                Updates.set("UserApprove", userApprove),
+                Updates.set("Amount", amount)
+        );
+
+        UpdateResult result = collection.updateOne(conditions, updates);
+        return result.getModifiedCount() > 0;
+    }
+
+    @Override
     public DepositBankReponse GetListDepositBank(DepositBankModel depositBankModel, int page, int maxItem, String fromTime, String endTime) {
         try {
             final ArrayList<DepositBankModel> records = new ArrayList<DepositBankModel>();
@@ -1519,17 +1519,7 @@ public class RechargeDaoImpl
                     }
                     DepositBankModel model = new DepositBankModel(
 
-                            String.valueOf(document.getInteger("Id")),
-                            document.getString("Nickname"),
-                            document.getString("CreatedAt"),
-                            document.getString("UpdatedAt"),
-                            amount,
-                            document.getInteger("Status"),
-                            document.getString("BankCode"),
-                            document.getString("BankAccountNumber"),
-                            document.getString("BankAccountName"),
-                            document.getString("Description"),
-                            document.getString("UserApprove")
+                            String.valueOf(document.getInteger("Id")), document.getString("Nickname"), document.getString("CreatedAt"), document.getString("UpdatedAt"), amount, document.getInteger("Status"), document.getString("BankCode"), document.getString("BankAccountNumber"), document.getString("BankAccountName"), document.getString("Description"), document.getString("UserApprove")
 
                     );
                     model.setUserSender(document.getString((Object) "UserSender"));
@@ -1616,18 +1606,7 @@ public class RechargeDaoImpl
 
                 public void apply(Document document) {
 
-                    DepositBankModel model = new DepositBankModel(
-                            document.getString((Object) "Id"),
-                            document.getString((Object) "Nickname"),
-                            document.getString((Object) "CreatedAt"),
-                            document.getString((Object) "UpdatedAt"),
-                            document.getLong((Object) "Amount"),
-                            document.getInteger((Object) "Status"),
-                            document.getString((Object) "BankBrandName"),
-                            document.getString((Object) "BankAccountNumber"),
-                            document.getString((Object) "BankAccountName"),
-                            document.getString((Object) "Description"),
-                            document.getString((Object) "UserApprove")
+                    DepositBankModel model = new DepositBankModel(document.getString((Object) "Id"), document.getString((Object) "Nickname"), document.getString((Object) "CreatedAt"), document.getString((Object) "UpdatedAt"), document.getLong((Object) "Amount"), document.getInteger((Object) "Status"), document.getString((Object) "BankBrandName"), document.getString((Object) "BankAccountNumber"), document.getString((Object) "BankAccountName"), document.getString((Object) "Description"), document.getString((Object) "UserApprove")
 
                     );
                     model.setUserSender(document.getString((Object) "UserSender"));
@@ -1705,18 +1684,7 @@ public class RechargeDaoImpl
 
                 public void apply(Document document) {
 
-                    DepositBankModel model = new DepositBankModel(
-                            document.getString((Object) "Id"),
-                            document.getString((Object) "Nickname"),
-                            document.getString((Object) "CreatedAt"),
-                            document.getString((Object) "UpdatedAt"),
-                            document.getLong((Object) "Amount"),
-                            document.getInteger((Object) "Status"),
-                            document.getString((Object) "BankBrandName"),
-                            document.getString((Object) "BankAccountNumber"),
-                            document.getString((Object) "BankAccountName"),
-                            document.getString((Object) "Description"),
-                            document.getString((Object) "UserApprove")
+                    DepositBankModel model = new DepositBankModel(document.getString((Object) "Id"), document.getString((Object) "Nickname"), document.getString((Object) "CreatedAt"), document.getString((Object) "UpdatedAt"), document.getLong((Object) "Amount"), document.getInteger((Object) "Status"), document.getString((Object) "BankBrandName"), document.getString((Object) "BankAccountNumber"), document.getString((Object) "BankAccountName"), document.getString((Object) "Description"), document.getString((Object) "UserApprove")
 
                     );
                     model.setUserSender(document.getString((Object) "UserSender"));
@@ -1795,18 +1763,7 @@ public class RechargeDaoImpl
 
                 public void apply(Document document) {
 
-                    DepositBankModel model = new DepositBankModel(
-                            document.getString((Object) "Id"),
-                            document.getString((Object) "Nickname"),
-                            document.getString((Object) "CreatedAt"),
-                            document.getString((Object) "UpdatedAt"),
-                            document.getLong((Object) "Amount"),
-                            document.getInteger((Object) "Status"),
-                            document.getString((Object) "BankBrandName"),
-                            document.getString((Object) "BankAccountNumber"),
-                            document.getString((Object) "BankAccountName"),
-                            document.getString((Object) "Description"),
-                            document.getString((Object) "UserApprove")
+                    DepositBankModel model = new DepositBankModel(document.getString((Object) "Id"), document.getString((Object) "Nickname"), document.getString((Object) "CreatedAt"), document.getString((Object) "UpdatedAt"), document.getLong((Object) "Amount"), document.getInteger((Object) "Status"), document.getString((Object) "BankBrandName"), document.getString((Object) "BankAccountNumber"), document.getString((Object) "BankAccountName"), document.getString((Object) "Description"), document.getString((Object) "UserApprove")
 
                     );
                     model.setUserSender(document.getString((Object) "UserSender"));
@@ -1884,18 +1841,7 @@ public class RechargeDaoImpl
 
                 public void apply(Document document) {
 
-                    DepositBankModel model = new DepositBankModel(
-                            document.getString((Object) "Id"),
-                            document.getString((Object) "Nickname"),
-                            document.getString((Object) "CreatedAt"),
-                            document.getString((Object) "UpdatedAt"),
-                            document.getLong((Object) "Amount"),
-                            document.getInteger((Object) "Status"),
-                            document.getString((Object) "BankBrandName"),
-                            document.getString((Object) "BankAccountNumber"),
-                            document.getString((Object) "BankAccountName"),
-                            document.getString((Object) "Description"),
-                            document.getString((Object) "UserApprove")
+                    DepositBankModel model = new DepositBankModel(document.getString((Object) "Id"), document.getString((Object) "Nickname"), document.getString((Object) "CreatedAt"), document.getString((Object) "UpdatedAt"), document.getLong((Object) "Amount"), document.getInteger((Object) "Status"), document.getString((Object) "BankBrandName"), document.getString((Object) "BankAccountNumber"), document.getString((Object) "BankAccountName"), document.getString((Object) "Description"), document.getString((Object) "UserApprove")
 
                     );
                     model.setUserSender(document.getString((Object) "UserSender"));
@@ -1974,18 +1920,7 @@ public class RechargeDaoImpl
 
                 public void apply(Document document) {
 
-                    DepositBankModel model = new DepositBankModel(
-                            document.getString((Object) "Id"),
-                            document.getString((Object) "Nickname"),
-                            document.getString((Object) "CreatedAt"),
-                            document.getString((Object) "UpdatedAt"),
-                            document.getLong((Object) "Amount"),
-                            document.getInteger((Object) "Status"),
-                            document.getString((Object) "BankBrandName"),
-                            document.getString((Object) "BankAccountNumber"),
-                            document.getString((Object) "BankAccountName"),
-                            document.getString((Object) "Description"),
-                            document.getString((Object) "UserApprove")
+                    DepositBankModel model = new DepositBankModel(document.getString((Object) "Id"), document.getString((Object) "Nickname"), document.getString((Object) "CreatedAt"), document.getString((Object) "UpdatedAt"), document.getLong((Object) "Amount"), document.getInteger((Object) "Status"), document.getString((Object) "BankBrandName"), document.getString((Object) "BankAccountNumber"), document.getString((Object) "BankAccountName"), document.getString((Object) "Description"), document.getString((Object) "UserApprove")
 
                     );
                     model.setUserSender(document.getString((Object) "UserSender"));
@@ -2059,18 +1994,7 @@ public class RechargeDaoImpl
 
                 public void apply(Document document) {
 
-                    DepositBankModel model = new DepositBankModel(
-                            document.getString((Object) "Id"),
-                            document.getString((Object) "Nickname"),
-                            document.getString((Object) "CreatedAt"),
-                            document.getString((Object) "UpdatedAt"),
-                            document.getLong((Object) "Amount"),
-                            document.getInteger((Object) "Status"),
-                            document.getString((Object) "BankBrandName"),
-                            document.getString((Object) "BankAccountNumber"),
-                            document.getString((Object) "BankAccountName"),
-                            document.getString((Object) "Description"),
-                            document.getString((Object) "UserApprove")
+                    DepositBankModel model = new DepositBankModel(document.getString((Object) "Id"), document.getString((Object) "Nickname"), document.getString((Object) "CreatedAt"), document.getString((Object) "UpdatedAt"), document.getLong((Object) "Amount"), document.getInteger((Object) "Status"), document.getString((Object) "BankBrandName"), document.getString((Object) "BankAccountNumber"), document.getString((Object) "BankAccountName"), document.getString((Object) "Description"), document.getString((Object) "UserApprove")
 
                     );
                     model.setUserSender(document.getString((Object) "UserSender"));
@@ -2215,19 +2139,7 @@ public class RechargeDaoImpl
 
                 public void apply(Document document) {
 
-                    DepositMobileCardModel model = new DepositMobileCardModel(
-                            document.getString((Object) "Id"),
-                            document.getString((Object) "Nickname"),
-                            document.getString((Object) "CreatedAt"),
-                            document.getString((Object) "UpdatedAt"),
-                            document.getLong((Object) "Amount"),
-                            document.getInteger((Object) "Status"),
-                            document.getString((Object) "Seri"),
-                            document.getString((Object) "Pin"),
-                            document.getString((Object) "Provider"),
-                            document.getString((Object) "Description"),
-                            document.getString((Object) "UserApprove")
-                    );
+                    DepositMobileCardModel model = new DepositMobileCardModel(document.getString((Object) "Id"), document.getString((Object) "Nickname"), document.getString((Object) "CreatedAt"), document.getString((Object) "UpdatedAt"), document.getLong((Object) "Amount"), document.getInteger((Object) "Status"), document.getString((Object) "Seri"), document.getString((Object) "Pin"), document.getString((Object) "Provider"), document.getString((Object) "Description"), document.getString((Object) "UserApprove"));
                     records.add(model);
                 }
             });
@@ -2278,19 +2190,7 @@ public class RechargeDaoImpl
 
                 public void apply(Document document) {
 
-                    DepositMobileCardModel model = new DepositMobileCardModel(
-                            document.getString((Object) "Id"),
-                            document.getString((Object) "Nickname"),
-                            document.getString((Object) "CreatedAt"),
-                            document.getString((Object) "UpdatedAt"),
-                            document.getLong((Object) "Amount"),
-                            document.getInteger((Object) "Status"),
-                            document.getString((Object) "Seri"),
-                            document.getString((Object) "Pin"),
-                            document.getString((Object) "Provider"),
-                            document.getString((Object) "Description"),
-                            document.getString((Object) "UserApprove")
-                    );
+                    DepositMobileCardModel model = new DepositMobileCardModel(document.getString((Object) "Id"), document.getString((Object) "Nickname"), document.getString((Object) "CreatedAt"), document.getString((Object) "UpdatedAt"), document.getLong((Object) "Amount"), document.getInteger((Object) "Status"), document.getString((Object) "Seri"), document.getString((Object) "Pin"), document.getString((Object) "Provider"), document.getString((Object) "Description"), document.getString((Object) "UserApprove"));
                     records.add(model);
                 }
             });
@@ -2327,21 +2227,8 @@ public class RechargeDaoImpl
             Document conditions = new Document();
             conditions.put("Id", (Object) Id);
             Document document = (Document) db.getCollection("Card_mobile_Auto").find((Bson) conditions).first();
-            if (document == null)
-                return null;
-            DepositMobileCardModel model = new DepositMobileCardModel(
-                    document.getString((Object) "Id"),
-                    document.getString((Object) "Nickname"),
-                    document.getString((Object) "CreatedAt"),
-                    document.getString((Object) "UpdatedAt"),
-                    document.getLong((Object) "Amount"),
-                    document.getInteger((Object) "Status"),
-                    document.getString((Object) "Seri"),
-                    document.getString((Object) "Pin"),
-                    document.getString((Object) "Provider"),
-                    document.getString((Object) "Description"),
-                    document.getString((Object) "UserApprove")
-            );
+            if (document == null) return null;
+            DepositMobileCardModel model = new DepositMobileCardModel(document.getString((Object) "Id"), document.getString((Object) "Nickname"), document.getString((Object) "CreatedAt"), document.getString((Object) "UpdatedAt"), document.getLong((Object) "Amount"), document.getInteger((Object) "Status"), document.getString((Object) "Seri"), document.getString((Object) "Pin"), document.getString((Object) "Provider"), document.getString((Object) "Description"), document.getString((Object) "UserApprove"));
             return model;
         } catch (Exception e) {
             RechargeDaoImpl.logger.error(e);
@@ -2495,19 +2382,7 @@ public class RechargeDaoImpl
 
                 public void apply(Document document) {
 
-                    DepositMomoModel model = new DepositMomoModel(
-                            document.getString((Object) "Id"),
-                            document.getString((Object) "Nickname"),
-                            document.getString((Object) "CreatedAt"),
-                            document.getString((Object) "UpdatedAt"),
-                            document.getLong((Object) "Amount"),
-                            document.getInteger((Object) "Status"),
-                            document.getString((Object) "ReceivedPhoneNumber"),
-                            document.getString((Object) "ReceivedName"),
-                            document.getString((Object) "SendFromNumber"),
-                            document.getString((Object) "Description"),
-                            document.getString((Object) "UserApprove")
-                    );
+                    DepositMomoModel model = new DepositMomoModel(document.getString((Object) "Id"), document.getString((Object) "Nickname"), document.getString((Object) "CreatedAt"), document.getString((Object) "UpdatedAt"), document.getLong((Object) "Amount"), document.getInteger((Object) "Status"), document.getString((Object) "ReceivedPhoneNumber"), document.getString((Object) "ReceivedName"), document.getString((Object) "SendFromNumber"), document.getString((Object) "Description"), document.getString((Object) "UserApprove"));
                     records.add(model);
                 }
             });
@@ -2562,19 +2437,7 @@ public class RechargeDaoImpl
 
                 public void apply(Document document) {
 
-                    DepositMomoModel model = new DepositMomoModel(
-                            document.getString((Object) "Id"),
-                            document.getString((Object) "Nickname"),
-                            document.getString((Object) "CreatedAt"),
-                            document.getString((Object) "UpdatedAt"),
-                            document.getLong((Object) "Amount"),
-                            document.getInteger((Object) "Status"),
-                            document.getString((Object) "ReceivedPhoneNumber"),
-                            document.getString((Object) "ReceivedName"),
-                            document.getString((Object) "SendFromNumber"),
-                            document.getString((Object) "Description"),
-                            document.getString((Object) "UserApprove")
-                    );
+                    DepositMomoModel model = new DepositMomoModel(document.getString((Object) "Id"), document.getString((Object) "Nickname"), document.getString((Object) "CreatedAt"), document.getString((Object) "UpdatedAt"), document.getLong((Object) "Amount"), document.getInteger((Object) "Status"), document.getString((Object) "ReceivedPhoneNumber"), document.getString((Object) "ReceivedName"), document.getString((Object) "SendFromNumber"), document.getString((Object) "Description"), document.getString((Object) "UserApprove"));
                     records.add(model);
                 }
             });
@@ -2972,21 +2835,8 @@ public class RechargeDaoImpl
             Document conditions = new Document();
             conditions.put("Id", (Object) Id);
             Document document = (Document) db.getCollection("deposit_OnePay_bank_manual").find((Bson) conditions).first();
-            if (document == null)
-                return null;
-            DepositOnePayModel model = new DepositOnePayModel(
-                    document.getString((Object) "Id"),
-                    document.getString((Object) "Nickname"),
-                    document.getString((Object) "CreatedAt"),
-                    document.getString((Object) "UpdatedAt"),
-                    document.getLong((Object) "Amount"),
-                    document.getInteger((Object) "Status"),
-                    document.getString((Object) "BankBrandName"),
-                    document.getString((Object) "BankAccountPassword"),
-                    document.getString((Object) "BankOTP"),
-                    document.getString((Object) "BankAccountName"),
-                    document.getString((Object) "Description"),
-                    document.getString((Object) "UserApprove")
+            if (document == null) return null;
+            DepositOnePayModel model = new DepositOnePayModel(document.getString((Object) "Id"), document.getString((Object) "Nickname"), document.getString((Object) "CreatedAt"), document.getString((Object) "UpdatedAt"), document.getLong((Object) "Amount"), document.getInteger((Object) "Status"), document.getString((Object) "BankBrandName"), document.getString((Object) "BankAccountPassword"), document.getString((Object) "BankOTP"), document.getString((Object) "BankAccountName"), document.getString((Object) "Description"), document.getString((Object) "UserApprove")
 
             );
             return model;
@@ -3004,21 +2854,8 @@ public class RechargeDaoImpl
             Document conditions = new Document();
             conditions.put("Id", Integer.parseInt(Id));
             Document document = db.getCollection(DvtConst.DEPOSIT_BANK_COLLECTION).find(conditions).first();
-            if (document == null)
-                return null;
-            DepositBankModel model = new DepositBankModel(
-                    String.valueOf(document.getInteger("Id")),
-                    document.getString((Object) "Nickname"),
-                    document.getString((Object) "CreatedAt"),
-                    document.getString((Object) "UpdatedAt"),
-                    document.getLong((Object) "Amount"),
-                    document.getInteger((Object) "Status"),
-                    document.getString((Object) "BankBrandName"),
-                    document.getString((Object) "BankAccountNumber"),
-                    document.getString((Object) "BankAccountName"),
-                    document.getString((Object) "Description"),
-                    document.getString((Object) "UserApprove")
-            );
+            if (document == null) return null;
+            DepositBankModel model = new DepositBankModel(String.valueOf(document.getInteger("Id")), document.getString((Object) "Nickname"), document.getString((Object) "CreatedAt"), document.getString((Object) "UpdatedAt"), document.getLong((Object) "Amount"), document.getInteger((Object) "Status"), document.getString((Object) "BankBrandName"), document.getString((Object) "BankAccountNumber"), document.getString((Object) "BankAccountName"), document.getString((Object) "Description"), document.getString((Object) "UserApprove"));
             model.setUserSender(document.getString((Object) "UserSender"));
             return model;
         } catch (Exception e) {
@@ -3034,26 +2871,46 @@ public class RechargeDaoImpl
             Document conditions = new Document();
             conditions.put("Id", (Object) Id);
             Document document = (Document) db.getCollection(DvtConst.DEPOSIT_MOMO_COLLECTION).find((Bson) conditions).first();
-            if (document == null)
-                return null;
-            DepositMomoModel model = new DepositMomoModel(
-                    document.getString((Object) "Id"),
-                    document.getString((Object) "Nickname"),
-                    document.getString((Object) "CreatedAt"),
-                    document.getString((Object) "UpdatedAt"),
-                    document.getLong((Object) "Amount"),
-                    document.getInteger((Object) "Status"),
-                    document.getString((Object) "ReceivedPhoneNumber"),
-                    document.getString((Object) "ReceivedName"),
-                    document.getString((Object) "SendFromNumber"),
-                    document.getString((Object) "Description"),
-                    document.getString((Object) "UserApprove")
-            );
+            if (document == null) return null;
+            DepositMomoModel model = new DepositMomoModel(document.getString((Object) "Id"), document.getString((Object) "Nickname"), document.getString((Object) "CreatedAt"), document.getString((Object) "UpdatedAt"), document.getLong((Object) "Amount"), document.getInteger((Object) "Status"), document.getString((Object) "ReceivedPhoneNumber"), document.getString((Object) "ReceivedName"), document.getString((Object) "SendFromNumber"), document.getString((Object) "Description"), document.getString((Object) "UserApprove"));
             return model;
         } catch (Exception e) {
             RechargeDaoImpl.logger.error(e);
             return null;
         }
+    }
+
+    public RechargeByCardReponse searchRechargeByCard(String transId) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        FindIterable iterable = null;
+        BasicDBObject objsort = new BasicDBObject();
+        Document conditions = new Document();
+        if (transId != null && !transId.equals("")) {
+            conditions.put("Id", transId);
+        }
+        iterable = db.getCollection("Card_mobile_Auto").find((Bson) new Document(conditions)).sort(objsort);
+        RechargeByCardReponse bank = new RechargeByCardReponse();
+        if (iterable.first() == null) {
+            return null;
+        }
+        iterable.forEach((Block<Document>) document -> {
+            int amount = 0;
+            try {
+                amount = (int) (long) document.getLong("Amount");
+            } catch (Exception e) {
+                amount = document.getInteger("Amount");
+            }
+            bank.referenceId = document.getString((Object) "Id");
+            bank.nickName = document.getString((Object) "Nickname");
+            bank.provider = document.getString((Object) "Provider");
+            bank.serial = document.getString((Object) "Seri");
+            bank.pin = document.getString((Object) "Pin");
+            bank.amount = amount;
+            bank.status = document.getInteger((Object) "Status");
+            bank.message = document.getString((Object) "Description");
+            bank.timelog = document.getString((Object) "CreatedAt");
+        });
+        return bank;
     }
 }
 
