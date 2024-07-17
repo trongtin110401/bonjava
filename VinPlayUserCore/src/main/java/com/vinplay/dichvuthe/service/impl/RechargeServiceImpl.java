@@ -1029,7 +1029,40 @@ public class RechargeServiceImpl
         }
         return null;
     }
+    public DepositBankModel findBankDepositByTransactionId(String transactionId) {
+        try {
+            HashMap<String, Object> conditions = new HashMap<String, Object>();
+            MongoDatabase db = MongoDBConnectionFactory.getDB();
+            MongoCollection col = db.getCollection(DvtConst.DEPOSIT_BANK_COLLECTION);
+            conditions.put("Id", Integer.valueOf(transactionId));
+            conditions.put("Status", 1);
+//            BasicDBObject sortCondtions = new BasicDBObject();
+//            sortCondtions.put("CreatedAt", -1);
+            Document document = (Document) col.find((Bson) new Document(conditions)).first();
+//            Document document = (Document) col.find((Bson) new Document(conditions)).sort((Bson) sortCondtions).first();
+            if (document != null) {
+                String Id = document.getString((Object) "Id");
+                String Nickname = document.getString((Object) "Nickname");
+                String CreatedAt = document.getString((Object) "CreatedAt");
+                String UpdatedAt = document.getString((Object) "UpdatedAt");
+                long Amount = document.getLong((Object) "Amount");
+                int Status = document.getInteger((Object) "Status");
+                String BankBrandName = document.getString((Object) "BankBrandName");
+                String BankAccountNumber = document.getString((Object) "BankAccountNumber");
+                String BankAccountName = document.getString((Object) "BankAccountName");
+                String Description = document.getString((Object) "Description");
+                String UserApprove = document.getString((Object) "UserApprove");
+                String UserSender = document.getString((Object) "UserSender");
+                DepositBankModel desp = new DepositBankModel(Id, Nickname, CreatedAt, UpdatedAt, Amount, Status, BankBrandName, BankAccountNumber, BankAccountName, Description);
+                return desp;
+            }
 
+        } catch (Exception e) {
+            DepositBankModel desp = new DepositBankModel("Id", "Nickname", "CreatedAt", "UpdatedAt", 0, 0, "BankBrandName", "BankAccountNumber", "BankAccountName", e.getMessage());
+            return desp;
+        }
+        return null;
+    }
     public DepositBankModel finMoMoDepositByTransactionId(String transactionId) {
         try {
             HashMap<String, Object> conditions = new HashMap<String, Object>();

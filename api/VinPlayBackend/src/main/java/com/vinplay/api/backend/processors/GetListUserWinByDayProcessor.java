@@ -35,7 +35,6 @@ public class GetListUserWinByDayProcessor implements BaseProcessor<HttpServletRe
         LogMoneyUserDaoImpl dao = new LogMoneyUserDaoImpl();
 
         List<LogUserMoneyResponse> list = dao.getLogMoneyUser2(timeStart, timeEnd);
-
         List<UserLoseByDay> userLoseByDays = list.stream()
                 .filter(log -> !"Admin".equals(log.getActionName())
                         && !"Gift Code".equals(log.getActionName())
@@ -43,6 +42,10 @@ public class GetListUserWinByDayProcessor implements BaseProcessor<HttpServletRe
                         && !"RechargeByBank".equals(log.getActionName())
                         && !"RechargeByMomo".equals(log.getActionName())
                         && !"ChargeSMS".equals(log.getActionName())
+                        && !"CashOutByBank".equals(log.getActionName())
+                        && !"CashOutByMomo".equals(log.getActionName())
+                        && !"RechargeByCard".equals(log.getActionName())
+                        && !"RechargeBySMS".equals(log.getActionName())
                         && !"Exchange".equals(log.getActionName()))
                 .collect(Collectors.groupingBy(LogUserMoneyResponse::getNickName,
                         Collectors.summingLong(LogUserMoneyResponse::getMoneyExchange)))
