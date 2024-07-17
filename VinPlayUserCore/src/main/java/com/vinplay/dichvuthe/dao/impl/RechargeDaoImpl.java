@@ -1543,7 +1543,12 @@ public class RechargeDaoImpl
             iterable2.forEach((Block) new Block<Document>() {
 
                 public void apply(Document document) {
-                    long amount = document.getLong((Object) "Amount");
+                    long amount;
+                    try {
+                        amount = document.getLong("Amount");
+                    } catch (Exception e) {
+                        amount = document.getInteger("Amount").longValue();
+                    }
                     int code = document.getInteger((Object) "Status");
                     long count = (Long) num.get(0) + 1L;
                     num.set(0, count);
