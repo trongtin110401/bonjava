@@ -34,10 +34,10 @@ implements BaseProcessor<HttpServletRequest, String> {
         RechargeByCardServiceImpl service = new RechargeByCardServiceImpl();
         List trans = service.searchRechargeByCard(nickName, provider, serial, pin, code, timeStart, timeEnd, page, transid);
         int totalRecord = 1000;
-        List moneyTotalRechargeByCard = service.moneyTotalRechargeByCard(nickName, provider, serial, pin, code, timeStart, timeEnd, transid);
+//        List moneyTotalRechargeByCard = service.moneyTotalRechargeByCard(nickName, provider, serial, pin, code, timeStart, timeEnd, transid);
         long totalPages = 100L;
         totalPages = 20L;
-        response.setMoneyReponse(moneyTotalRechargeByCard);
+//        response.setMoneyReponse(moneyTotalRechargeByCard);
         response.setTotal(totalPages);
         response.setTotalRecord(1000L);
         response.setTransactions(trans);
