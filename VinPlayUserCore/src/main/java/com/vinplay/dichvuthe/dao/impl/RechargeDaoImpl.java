@@ -63,6 +63,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -1553,6 +1554,7 @@ public class RechargeDaoImpl
         } catch (Exception e) {
             e.printStackTrace();
             RechargeDaoImpl.logger.error(e);
+            System.out.println("======================> " + ExceptionUtils.getStackTrace(e));
             return null;
         }
     }

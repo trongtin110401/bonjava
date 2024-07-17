@@ -68,6 +68,8 @@ implements BaseProcessor<HttpServletRequest, String> {
             int maxItem = numberMax != null ? Integer.parseInt(numberMax) : MAX_ITEM;
             RechargeDaoImpl dao = new RechargeDaoImpl();
             DepositBankModel modelSearch = new DepositBankModel(transId, nickname, status, bank);
+            // let print all params to console
+            System.out.println("nickname: " + nickname + " bank: " + bank + " transId: " + transId + " status: " + status + " startTime: " + startTime + " endTime: " + endTime + " pages: " + pages + " numberMax: " + numberMax + " codepay: " + codepay + " nicknamex: " + nicknamex);
             res = dao.GetListDepositBank(modelSearch, page, maxItem, startTime, endTime);
 
         }
