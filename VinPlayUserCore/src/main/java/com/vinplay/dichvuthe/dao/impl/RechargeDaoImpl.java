@@ -1513,7 +1513,7 @@ public class RechargeDaoImpl
                 public void apply(Document document) {
 
                     DepositBankModel model = new DepositBankModel(
-                            String.valueOf(document.getInteger("Id")),
+                            String.valueOf(document.getLong("Id")),
                             document.getString("Nickname"),
                             document.getString("CreatedAt"),
                             document.getString("UpdatedAt"),
