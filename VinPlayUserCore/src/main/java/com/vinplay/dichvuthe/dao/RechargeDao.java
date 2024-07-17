@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  com.vinplay.vbee.common.exceptions.KeyNotFoundException
  *  com.vinplay.vbee.common.messages.dvt.RechargeByBankMessage
@@ -16,11 +16,14 @@ import com.vinplay.usercore.response.LogRechargeBankNapasResponse;
 import com.vinplay.vbee.common.exceptions.KeyNotFoundException;
 import com.vinplay.vbee.common.messages.dvt.RechargeByBankMessage;
 import com.vinplay.vbee.common.messages.dvt.RechargeByCardMessage;
+
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
+import com.vinplay.vbee.common.response.RechargeByCardReponse;
 import org.bson.Document;
 import org.python.parser.ast.Str;
 
@@ -92,29 +95,29 @@ public interface RechargeDao {
     public LogSMSPlusCheckMoResponse getLogSMSPlusCheckMO(String var1, int var2, int var3, String var4, String var5, int var6);
 
     public boolean updateSMS(String var1, int var2, String var3, int var4);
-    
+
     public Document getRechargeByGachthe(String transId);
-    
-    public Document getRechargeByGachthe(String nickname,String serial,String pin);
-    
+
+    public Document getRechargeByGachthe(String nickname, String serial, String pin);
+
     public List<Document> getRechargeByGachtheRecently();
-    
-    public boolean saveLogRechargeByGachThe(String nickname, String serial, String pin, long amount, String requestId, String requestTime, int code, String des, long money, String provider, String platform,long currentMoney,long addMoney,int userId, String username, String partner, String client);
-    
-    public boolean UpdateGachtheTransctions(String transId,int code, String message);
-    
+
+    public boolean saveLogRechargeByGachThe(String nickname, String serial, String pin, long amount, String requestId, String requestTime, int code, String des, long money, String provider, String platform, long currentMoney, long addMoney, int userId, String username, String partner, String client);
+
+    public boolean UpdateGachtheTransctions(String transId, int code, String message);
+
     public boolean UpdateGachtheTransctionsSent(String transId);
-    
+
     public Document getRechargeByNapTienGa(String transId);
-    
-    public Document getRechargeByNapTienGa(String nickname,String serial,String pin);
-    
+
+    public Document getRechargeByNapTienGa(String nickname, String serial, String pin);
+
     public List<Document> getRechargeByNapTienGaRecently();
-    
-    public boolean saveLogRechargeByNapTienGa(String nickname, String serial, String pin, long amount, String requestId, String requestTime, int code, String des, long money, String provider, String platform,long currentMoney,long addMoney,int userId, String username,int napTienGaId);
-    
-    public boolean UpdateNapTienGaTransctions(String transId,int code, String message);
-    
+
+    public boolean saveLogRechargeByNapTienGa(String nickname, String serial, String pin, long amount, String requestId, String requestTime, int code, String des, long money, String provider, String platform, long currentMoney, long addMoney, int userId, String username, int napTienGaId);
+
+    public boolean UpdateNapTienGaTransctions(String transId, int code, String message);
+
     public boolean UpdateNapTienGaTransctionsSent(String transId);
 
     public boolean saveZoanMomoTran(ZoanMomoReq req, int code, String nickname, long currentMoney, String username, String partner, String client);
@@ -122,51 +125,88 @@ public interface RechargeDao {
     //Deposit bank region
 
     public boolean InsertDepositBankManual(DepositBankModel depositBankModel);
-    public boolean UpdateDepositBankManualStatus(String transId, int status, String desc , String userApprove);
 
-    boolean UpdateDepositBankManualStatusCallBack(String transId, int status, String desc , String userApprove, String amount);
+    public boolean UpdateDepositBankManualStatus(String transId, int status, String desc, String userApprove);
+
+    boolean UpdateDepositBankManualStatusCallBack(String transId, int status, String desc, String userApprove, String amount);
+
+    boolean UpdateDepositCard(String transId, int status, String desc, String userApprove, String amount);
+
     public DepositBankReponse GetListDepositBank(DepositBankModel depositBankModel, int page, int maxItem, String fromTime, String endTime);
+
     public boolean isPendingTransDepositBank(String nickname);
+
     public DepositBankModel FindDepositBankById(String Id);
 
     // deposit Momo region
 
     public boolean InsertDepositMomoManual(DepositMomoModel depositBankModel);
+
     public boolean UpdateDepositMomoManualStatus(String transId, int status, String desc, String userApprove);
 
     public boolean UpdateDepositMomoManualStatus2(String transId, int status, String desc, String userApprove, long amount);
 
     boolean UpdateDepositMomoManualStatusCallBack(String transId, int status, String desc, String userApprove, String amount);
+
     public boolean UpdateDepositMomoManualStatus2(long amount, String transId, int status, String desc, String userApprove);
+
     public DepositMomoReponse GetListDepositMomo(DepositMomoModel depositMomoModel, int page, int maxItem, String fromTime, String endTime);
 
     public boolean isPendingTransDepositMomo(String nickname);
+
     public DepositMomoModel FindDepositMomoById(String Id);
+
     public boolean logRechargeByCodePay(RechargeByBankMessage message);
+
     public String InsertDepositOnePayBankManual(DepositOnePayModel depositBankModel);
+
     DepositOnePayResponse GetListDepositOnePayBank(DepositOnePayModel depositBankModel, int page, int maxItem, String fromTime, String endTime);
-     boolean UpdateDepositOnepayOTP(String transId,   String otp,int status);
+
+    boolean UpdateDepositOnepayOTP(String transId, String otp, int status);
+
     boolean UpdateDepositOnepayManualStatus(String transId, int status, String desc, String userApprove);
+
     boolean isPendingTransDepositOnePayBank(String nickname);
+
     boolean isPendingWaitOPTDepositOnePayBank(String nickname);
+
     boolean isPendingGetAnOPTDepositOnePayBank(String nickname);
+
     boolean isPendingSentResOTPDepositOnePayBank(String nickname);
-    boolean isPendingOTPTransDepositOnePayBank(String nickname , String transId);
-    boolean UpdateDepositStatusOnepay(String transId,   int status , int sendingSts);
-    boolean UpdateDepositStatusOnepay(String transId,   int status, String admin , int sendingSts);
+
+    boolean isPendingOTPTransDepositOnePayBank(String nickname, String transId);
+
+    boolean UpdateDepositStatusOnepay(String transId, int status, int sendingSts);
+
+    boolean UpdateDepositStatusOnepay(String transId, int status, String admin, int sendingSts);
+
     int isDoneTranstionOnePay(String name, String transId);
+
     DepositOnePayModel FindDepositOnePayById(String Id);
-    boolean UpdateMaGiaoDichTechcomBankOnepay(String transId, String maGiaoDich,String admin);
+
+    boolean UpdateMaGiaoDichTechcomBankOnepay(String transId, String maGiaoDich, String admin);
+
     String getTransDoneTranstionOnePay(String name, int status);
+
     ArrayList<DepositOnePayModel> GetListDepositOnePayBank(int sendingStatus);
-    boolean InsertDepositCustomMomoManual(DepositMomoModel depositBankModel , String id , String comment);
-     ArrayList<DepositMomoModel> GetListDepositPendingMomo();
-     // card
-     boolean InsertDepositMobileCardManual(DepositMobileCardModel depositBankModel );
+
+    boolean InsertDepositCustomMomoManual(DepositMomoModel depositBankModel, String id, String comment);
+
+    ArrayList<DepositMomoModel> GetListDepositPendingMomo();
+
+    // card
+    boolean InsertDepositMobileCardManual(DepositMobileCardModel depositBankModel);
+
     boolean UpdateDepositMobileCardManualStatus(String transId, int status, String desc, String userApprove);
+
     DepositCardResponse GetListMobileCardManual(DepositMobileCardModel depositMomoModel, int page, int maxItem, String fromTime, String endTime);
+
     ArrayList<DepositMobileCardModel> GetListDepositPendingMobileCard();
+
     boolean isPendingTransDepositMoBileCard(String nickname);
+
     DepositMobileCardModel FindDepositMobileCardById(String Id);
+
+    public RechargeByCardReponse searchRechargeByCard(String transId);
 }
 
