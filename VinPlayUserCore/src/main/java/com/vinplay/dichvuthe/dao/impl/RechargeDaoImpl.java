@@ -1490,12 +1490,16 @@ public class RechargeDaoImpl
             if (!depositBankModel.Id.isEmpty()) {
                 conditions.put("Id", depositBankModel.Id);
             }
+
             if (!depositBankModel.BankBrandName.isEmpty()) {
                 conditions.put("BankBrandName", depositBankModel.BankBrandName);
             }
+
             if (depositBankModel.Status > 0) {
                 conditions.put("Status", depositBankModel.Status);
             }
+
+
             if (!fromTime.isEmpty() && !endTime.isEmpty()) {
                 BasicDBObject obj = new BasicDBObject();
                 obj.put("$gte", (Object) fromTime);
