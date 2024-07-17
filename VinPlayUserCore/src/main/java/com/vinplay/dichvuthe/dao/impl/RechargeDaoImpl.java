@@ -1457,7 +1457,7 @@ public class RechargeDaoImpl
             updateFields.append("Status", status);
             updateFields.append("Description", desc);
             updateFields.append("UserApprove", userApprove);
-            updateFields.append("Amount", Integer.parseInt(amount));
+            updateFields.append("Amount", Long.parseLong(amount));
             db.getCollection(DvtConst.DEPOSIT_BANK_COLLECTION).updateOne(conditions, new Document("$set", updateFields));
             return true;
         } catch (Exception e) {
@@ -1511,13 +1511,19 @@ public class RechargeDaoImpl
             iterable.forEach((Block) new Block<Document>() {
 
                 public void apply(Document document) {
-
+                    long amount;
+                    try {
+                        amount = document.getLong("Amount");
+                    } catch (Exception e) {
+                        amount = document.getInteger("Amount").longValue();
+                    }
                     DepositBankModel model = new DepositBankModel(
-                            String.valueOf(document.getLong("Id")),
+
+                            String.valueOf(document.getInteger("Id")),
                             document.getString("Nickname"),
                             document.getString("CreatedAt"),
                             document.getString("UpdatedAt"),
-                            document.getLong("Amount"),
+                            amount,
                             document.getInteger("Status"),
                             document.getString("BankCode"),
                             document.getString("BankAccountNumber"),
@@ -2413,7 +2419,7 @@ public class RechargeDaoImpl
             updateFields.append("Status", (Object) status);
             updateFields.append("Description", (Object) desc);
             updateFields.append("UserApprove", (Object) userApprove);
-            updateFields.append("Amount", Integer.parseInt(amount));
+            updateFields.append("Amount", Long.parseLong(amount));
             db.getCollection(DvtConst.DEPOSIT_MOMO_COLLECTION).updateOne(conditions, (Bson) new Document("$set", (Object) updateFields));
             return true;
         } catch (Exception e) {
