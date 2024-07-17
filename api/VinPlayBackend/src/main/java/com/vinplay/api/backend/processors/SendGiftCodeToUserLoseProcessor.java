@@ -73,7 +73,7 @@ public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServle
                     }
                     String giftCode = VinPlayUtils.genGiftCode(10);
                     String content = message + " : " + genCode(price, giftCode);
-                    mailService.sendMailBoxFromByNickNameAdmin(userTele.getNickname(), "Gift Code", content);
+                    mailService.sendMailBoxFromByNickNameAdmin(userTele.getNickname(), "Tri ân khách hàng: Hoàn tr? ti?n c??c", content);
                     sendMessage(userTele.getChatID(), content);
                     saveUserTeleCashBack(userTele, giftCode, price, entry.getValue());
                 }
