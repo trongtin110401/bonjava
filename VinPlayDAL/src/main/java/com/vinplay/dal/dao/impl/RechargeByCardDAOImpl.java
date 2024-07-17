@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  com.mongodb.BasicDBObject
  *  com.mongodb.Block
@@ -26,15 +26,17 @@ import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.response.MoneyTotalFollowFaceValue;
 import com.vinplay.vbee.common.response.MoneyTotalRechargeByCardReponse;
 import com.vinplay.vbee.common.response.RechargeByCardReponse;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
 public class RechargeByCardDAOImpl
-implements RechargeByCardDAO {
+        implements RechargeByCardDAO {
     private long totalMoney = 0L;
     private long webMoney = 0L;
     private long androidMoney = 0L;
@@ -219,44 +221,50 @@ implements RechargeByCardDAO {
         int num_start = (page - 1) * 50;
         int num_end = 50;
         if (transId != null && !transId.equals("")) {
-            conditions.put("reference_id", (Object)transId);
+            conditions.put("reference_id", (Object) transId);
         }
         if (nickName != null && !nickName.equals("")) {
-            conditions.put("nick_name", (Object)nickName);
+            conditions.put("nick_name", (Object) nickName);
         }
         if (provider != null && !provider.equals("")) {
-            conditions.put("provider", (Object)provider);
+            conditions.put("provider", (Object) provider);
         }
         if (serial != null && !serial.equals("")) {
-            conditions.put("serial", (Object)serial);
+            conditions.put("serial", (Object) serial);
         }
         if (pin != null && !pin.equals("")) {
-            conditions.put("pin", (Object)pin);
+            conditions.put("pin", (Object) pin);
         }
         if (code != null && !code.equals("")) {
-            conditions.put("code", (Object)Integer.parseInt(code));
+            conditions.put("code", (Object) Integer.parseInt(code));
         }
         if (timeStart != null && !timeStart.equals("") && timeEnd != null && !timeEnd.equals("")) {
-            obj.put("$gte", (Object)timeStart);
-            obj.put("$lte", (Object)timeEnd);
-            conditions.put("time_log", (Object)obj);
+            obj.put("$gte", (Object) timeStart);
+            obj.put("$lte", (Object) timeEnd);
+            conditions.put("CreatedAt", (Object) obj);
         }
-        iterable = db.getCollection("Card_mobile_Auto").find((Bson)new Document((Map)conditions)).sort((Bson)objsort).skip(num_start).limit(50).maxTime(30L, TimeUnit.SECONDS);
-        iterable.forEach((Block)new Block<Document>(){
+        iterable = db.getCollection("Card_mobile_Auto").find((Bson) new Document((Map) conditions)).sort((Bson) objsort).skip(num_start).limit(50).maxTime(30L, TimeUnit.SECONDS);
+        iterable.forEach((Block) new Block<Document>() {
 
             public void apply(Document document) {
+                int amount = 0;
+                try {
+                    amount = (int) (long) document.getLong("Amount");
+                } catch (Exception e) {
+                    amount = document.getInteger("Amount");
+                }
                 RechargeByCardReponse bank = new RechargeByCardReponse();
-                bank.referenceId = document.getString((Object)"reference_id");
-                bank.nickName = document.getString((Object)"nick_name");
-                bank.provider = document.getString((Object)"provider");
-                bank.serial = document.getString((Object)"serial");
-                bank.pin = document.getString((Object)"pin");
-                bank.amount = document.getInteger((Object)"amount");
-                bank.status = document.getInteger((Object)"status");
-                bank.message = document.getString((Object)"message");
-                bank.code = document.getInteger((Object)"code");
-                bank.timelog = document.getString((Object)"time_log");
-                bank.partner = document.getString((Object)"partner");
+                bank.referenceId = document.getString((Object) "Id");
+                bank.nickName = document.getString((Object) "Nickname");
+                    bank.provider = document.getString((Object) "Provider");
+                bank.serial = document.getString((Object) "Seri");
+                bank.pin = document.getString((Object) "Pin");
+                bank.amount = amount;
+                bank.status = document.getInteger((Object) "Status");
+                bank.message = document.getString((Object) "Description");
+//                bank.code = document.getInteger((Object) "code");
+                bank.timelog = document.getString((Object) "CreatedAt");
+//                bank.partner = document.getString((Object) "partner");
                 results.add(bank);
             }
         });
@@ -273,36 +281,36 @@ implements RechargeByCardDAO {
         Document conditions = new Document();
         objsort.put("_id", -1);
         if (provider != null && !provider.equals("")) {
-            conditions.put("provider", (Object)provider);
+            conditions.put("provider", (Object) provider);
         }
         if (timeStart != null && !timeStart.equals("") && timeEnd != null && !timeEnd.equals("")) {
-            obj.put("$gte", (Object)timeStart);
-            obj.put("$lte", (Object)timeEnd);
-            conditions.put("time_log", (Object)obj);
+            obj.put("$gte", (Object) timeStart);
+            obj.put("$lte", (Object) timeEnd);
+            conditions.put("time_log", (Object) obj);
         }
         if (amount != null && !amount.equals("")) {
-            conditions.put("amount", (Object)Integer.parseInt(amount));
+            conditions.put("amount", (Object) Integer.parseInt(amount));
         }
         if (code != null && !code.equals("")) {
-            conditions.put("code", (Object)Integer.parseInt(code));
+            conditions.put("code", (Object) Integer.parseInt(code));
         }
-        iterable = db.getCollection("dvt_recharge_by_card").find((Bson)new Document((Map)conditions)).sort((Bson)objsort);
-        iterable.forEach((Block)new Block<Document>(){
+        iterable = db.getCollection("dvt_recharge_by_card").find((Bson) new Document((Map) conditions)).sort((Bson) objsort);
+        iterable.forEach((Block) new Block<Document>() {
 
             public void apply(Document document) {
                 RechargeByCardReponse bank = new RechargeByCardReponse();
-                bank.referenceId = document.getString((Object)"reference_id");
-                bank.nickName = document.getString((Object)"nick_name");
-                bank.provider = document.getString((Object)"provider");
-                bank.serial = document.getString((Object)"serial");
-                bank.pin = document.getString((Object)"pin");
-                bank.amount = document.getInteger((Object)"amount");
-                bank.status = document.getInteger((Object)"status");
-                bank.message = document.getString((Object)"message");
-                bank.code = document.getInteger((Object)"code");
-                bank.timelog = document.getString((Object)"time_log");
-                bank.updateTime = document.getString((Object)"update_time");
-                bank.partner = document.getString((Object)"partner");
+                bank.referenceId = document.getString((Object) "reference_id");
+                bank.nickName = document.getString((Object) "nick_name");
+                bank.provider = document.getString((Object) "provider");
+                bank.serial = document.getString((Object) "serial");
+                bank.pin = document.getString((Object) "pin");
+                bank.amount = document.getInteger((Object) "amount");
+                bank.status = document.getInteger((Object) "status");
+                bank.message = document.getString((Object) "message");
+                bank.code = document.getInteger((Object) "code");
+                bank.timelog = document.getString((Object) "time_log");
+                bank.updateTime = document.getString((Object) "update_time");
+                bank.partner = document.getString((Object) "partner");
                 results.add(bank);
             }
         });
@@ -317,29 +325,29 @@ implements RechargeByCardDAO {
         Document conditions = new Document();
         objsort.put("_id", -1);
         if (transId != null && !transId.equals("")) {
-            conditions.put("reference_id", (Object)transId);
+            conditions.put("reference_id", (Object) transId);
         }
         if (nickName != null && !nickName.equals("")) {
-            conditions.put("nick_name", (Object)nickName);
+            conditions.put("nick_name", (Object) nickName);
         }
         if (provider != null && !provider.equals("")) {
-            conditions.put("provider", (Object)provider);
+            conditions.put("provider", (Object) provider);
         }
         if (serial != null && !serial.equals("")) {
-            conditions.put("serial", (Object)serial);
+            conditions.put("serial", (Object) serial);
         }
         if (pin != null && !pin.equals("")) {
-            conditions.put("pin", (Object)pin);
+            conditions.put("pin", (Object) pin);
         }
         if (code != null && !code.equals("")) {
-            conditions.put("code", (Object)Integer.parseInt(code));
+            conditions.put("code", (Object) Integer.parseInt(code));
         }
         if (!timeStart.isEmpty() && !timeEnd.isEmpty()) {
-            obj.put("$gte", (Object)timeStart);
-            obj.put("$lte", (Object)timeEnd);
-            conditions.put("time_log", (Object)obj);
+            obj.put("$gte", (Object) timeStart);
+            obj.put("$lte", (Object) timeEnd);
+            conditions.put("time_log", (Object) obj);
         }
-        int record = (int)db.getCollection("dvt_recharge_by_card").count((Bson)new Document((Map)conditions));
+        int record = (int) db.getCollection("dvt_recharge_by_card").count((Bson) new Document((Map) conditions));
         return record;
     }
 
@@ -352,35 +360,35 @@ implements RechargeByCardDAO {
         Document conditions = new Document();
         objsort.put("_id", -1);
         if (transId != null && !transId.equals("")) {
-            conditions.put("reference_id", (Object)transId);
+            conditions.put("reference_id", (Object) transId);
         }
         if (nickName != null && !nickName.equals("")) {
-            conditions.put("nick_name", (Object)nickName);
+            conditions.put("nick_name", (Object) nickName);
         }
         if (provider != null && !provider.equals("")) {
-            conditions.put("provider", (Object)provider);
+            conditions.put("provider", (Object) provider);
         }
         if (serial != null && !serial.equals("")) {
-            conditions.put("serial", (Object)serial);
+            conditions.put("serial", (Object) serial);
         }
         if (pin != null && !pin.equals("")) {
-            conditions.put("pin", (Object)pin);
+            conditions.put("pin", (Object) pin);
         }
         if (code != null && !code.equals("")) {
-            conditions.put("code", (Object)Integer.parseInt(code));
+            conditions.put("code", (Object) Integer.parseInt(code));
         }
         if (timeStart != null && !timeStart.equals("") && timeEnd != null && !timeEnd.equals("")) {
-            obj.put("$gte", (Object)timeStart);
-            obj.put("$lte", (Object)timeEnd);
-            conditions.put("time_log", (Object)obj);
+            obj.put("$gte", (Object) timeStart);
+            obj.put("$lte", (Object) timeEnd);
+            conditions.put("time_log", (Object) obj);
         }
         FindIterable iterable = null;
-        iterable = db.getCollection("dvt_recharge_by_card").find((Bson)new Document((Map)conditions)).sort((Bson)objsort);
-        iterable.forEach((Block)new Block<Document>(){
+        iterable = db.getCollection("dvt_recharge_by_card").find((Bson) new Document((Map) conditions)).sort((Bson) objsort);
+        iterable.forEach((Block) new Block<Document>() {
 
             public void apply(Document document) {
                 RechargeByCardDAOImpl rechargeByCardDAOImpl = RechargeByCardDAOImpl.this;
-                rechargeByCardDAOImpl.totalMoney = rechargeByCardDAOImpl.totalMoney + (long)document.getInteger((Object)"amount").intValue();
+                rechargeByCardDAOImpl.totalMoney = rechargeByCardDAOImpl.totalMoney + (long) document.getInteger((Object) "amount").intValue();
             }
         });
         return this.totalMoney;
@@ -557,22 +565,22 @@ implements RechargeByCardDAO {
         this.vcoin10KMoney = 0L;
         this.vcoin10KQuantity = 0;
         objsort.put("_id", -1);
-        conditions.put("code", (Object)code);
+        conditions.put("code", (Object) code);
         if (!timeStart.isEmpty() && !timeEnd.isEmpty()) {
-            obj.put("$gte", (Object)timeStart);
-            obj.put("$lte", (Object)timeEnd);
-            conditions.put("time_log", (Object)obj);
+            obj.put("$gte", (Object) timeStart);
+            obj.put("$lte", (Object) timeEnd);
+            conditions.put("time_log", (Object) obj);
         }
         FindIterable iterable = null;
-        iterable = db.getCollection("epay_recharge_by_mega_card").find((Bson)new Document((Map)conditions)).sort((Bson)objsort);
-        iterable.forEach((Block)new Block<Document>(){
+        iterable = db.getCollection("epay_recharge_by_mega_card").find((Bson) new Document((Map) conditions)).sort((Bson) objsort);
+        iterable.forEach((Block) new Block<Document>() {
 
             public void apply(Document document) {
                 RechargeByCardDAOImpl rechargeByCardDAOImpl = RechargeByCardDAOImpl.this;
-                rechargeByCardDAOImpl.totalMoney = rechargeByCardDAOImpl.totalMoney + (long)document.getInteger((Object)"amount").intValue();
+                rechargeByCardDAOImpl.totalMoney = rechargeByCardDAOImpl.totalMoney + (long) document.getInteger((Object) "amount").intValue();
                 rechargeByCardDAOImpl = RechargeByCardDAOImpl.this;
-                rechargeByCardDAOImpl.megaMoney = rechargeByCardDAOImpl.megaMoney + (long)document.getInteger((Object)"amount").intValue();
-                switch (document.getInteger((Object)"amount")) {
+                rechargeByCardDAOImpl.megaMoney = rechargeByCardDAOImpl.megaMoney + (long) document.getInteger((Object) "amount").intValue();
+                switch (document.getInteger((Object) "amount")) {
                     case 5000000: {
                         RechargeByCardDAOImpl.this.money5MQuantity++;
                         rechargeByCardDAOImpl = RechargeByCardDAOImpl.this;
@@ -641,21 +649,22 @@ implements RechargeByCardDAO {
                 }
             }
         });
-        iterable = db.getCollection("dvt_recharge_by_card").find((Bson)new Document((Map)conditions)).sort((Bson)objsort);
-        iterable.forEach((Block)new Block<Document>(){
+        iterable = db.getCollection("dvt_recharge_by_card").find((Bson) new Document((Map) conditions)).sort((Bson) objsort);
+        iterable.forEach((Block) new Block<Document>() {
 
             public void apply(Document document) {
                 RechargeByCardDAOImpl rechargeByCardDAOImpl = RechargeByCardDAOImpl.this;
-                rechargeByCardDAOImpl.totalMoney = rechargeByCardDAOImpl.totalMoney + (long)document.getInteger((Object)"amount").intValue();
-                block8 : switch (document.getString((Object)"provider")) {
+                rechargeByCardDAOImpl.totalMoney = rechargeByCardDAOImpl.totalMoney + (long) document.getInteger((Object) "amount").intValue();
+                block8:
+                switch (document.getString((Object) "provider")) {
                     case "MegaCard": {
                         String userNameMega = "";
-                        userNameMega = !document.containsKey((Object)"user_mega") ? "CTT_VINPLAY" : document.getString((Object)"user_mega");
+                        userNameMega = !document.containsKey((Object) "user_mega") ? "CTT_VINPLAY" : document.getString((Object) "user_mega");
                         switch (userNameMega) {
                             case "CTT_VINPLAY": {
                                 RechargeByCardDAOImpl rechargeByCardDAOImpl2 = RechargeByCardDAOImpl.this;
-                                rechargeByCardDAOImpl2.megaMoney = rechargeByCardDAOImpl2.megaMoney + (long)document.getInteger((Object)"amount").intValue();
-                                switch (document.getInteger((Object)"amount")) {
+                                rechargeByCardDAOImpl2.megaMoney = rechargeByCardDAOImpl2.megaMoney + (long) document.getInteger((Object) "amount").intValue();
+                                switch (document.getInteger((Object) "amount")) {
                                     case 5000000: {
                                         RechargeByCardDAOImpl.this.money5MQuantity++;
                                         rechargeByCardDAOImpl2 = RechargeByCardDAOImpl.this;
@@ -727,8 +736,8 @@ implements RechargeByCardDAO {
                             }
                             case "VINPLAY": {
                                 RechargeByCardDAOImpl rechargeByCardDAOImpl3 = RechargeByCardDAOImpl.this;
-                                rechargeByCardDAOImpl3.megaMoneyVat = rechargeByCardDAOImpl3.megaMoneyVat + (long)document.getInteger((Object)"amount").intValue();
-                                switch (document.getInteger((Object)"amount")) {
+                                rechargeByCardDAOImpl3.megaMoneyVat = rechargeByCardDAOImpl3.megaMoneyVat + (long) document.getInteger((Object) "amount").intValue();
+                                switch (document.getInteger((Object) "amount")) {
                                     case 5000000: {
                                         RechargeByCardDAOImpl.this.money5MQuantityVat++;
                                         rechargeByCardDAOImpl3 = RechargeByCardDAOImpl.this;
@@ -803,8 +812,8 @@ implements RechargeByCardDAO {
                     }
                     case "Viettel": {
                         RechargeByCardDAOImpl userNameMega = RechargeByCardDAOImpl.this;
-                        userNameMega.viettelMoney = userNameMega.viettelMoney + (long)document.getInteger((Object)"amount").intValue();
-                        switch (document.getInteger((Object)"amount")) {
+                        userNameMega.viettelMoney = userNameMega.viettelMoney + (long) document.getInteger((Object) "amount").intValue();
+                        switch (document.getInteger((Object) "amount")) {
                             case 5000000: {
                                 RechargeByCardDAOImpl.this.viettel5MQuantity++;
                                 userNameMega = RechargeByCardDAOImpl.this;
@@ -876,8 +885,8 @@ implements RechargeByCardDAO {
                     }
                     case "Vinaphone": {
                         RechargeByCardDAOImpl userNameMega = RechargeByCardDAOImpl.this;
-                        userNameMega.vinaphoneMoney = userNameMega.vinaphoneMoney + (long)document.getInteger((Object)"amount").intValue();
-                        switch (document.getInteger((Object)"amount")) {
+                        userNameMega.vinaphoneMoney = userNameMega.vinaphoneMoney + (long) document.getInteger((Object) "amount").intValue();
+                        switch (document.getInteger((Object) "amount")) {
                             case 5000000: {
                                 RechargeByCardDAOImpl.this.vinaphone5MQuantity++;
                                 userNameMega = RechargeByCardDAOImpl.this;
@@ -949,8 +958,8 @@ implements RechargeByCardDAO {
                     }
                     case "Mobifone": {
                         RechargeByCardDAOImpl userNameMega = RechargeByCardDAOImpl.this;
-                        userNameMega.mobifoneMoney = userNameMega.mobifoneMoney + (long)document.getInteger((Object)"amount").intValue();
-                        switch (document.getInteger((Object)"amount")) {
+                        userNameMega.mobifoneMoney = userNameMega.mobifoneMoney + (long) document.getInteger((Object) "amount").intValue();
+                        switch (document.getInteger((Object) "amount")) {
                             case 5000000: {
                                 RechargeByCardDAOImpl.this.mobifone5MQuantity++;
                                 userNameMega = RechargeByCardDAOImpl.this;
@@ -1022,8 +1031,8 @@ implements RechargeByCardDAO {
                     }
                     case "Gate": {
                         RechargeByCardDAOImpl userNameMega = RechargeByCardDAOImpl.this;
-                        userNameMega.gateMoney = userNameMega.gateMoney + (long)document.getInteger((Object)"amount").intValue();
-                        switch (document.getInteger((Object)"amount")) {
+                        userNameMega.gateMoney = userNameMega.gateMoney + (long) document.getInteger((Object) "amount").intValue();
+                        switch (document.getInteger((Object) "amount")) {
                             case 5000000: {
                                 RechargeByCardDAOImpl.this.gate5MQuantity++;
                                 userNameMega = RechargeByCardDAOImpl.this;
@@ -1095,8 +1104,8 @@ implements RechargeByCardDAO {
                     }
                     case "Vcoin": {
                         RechargeByCardDAOImpl userNameMega = RechargeByCardDAOImpl.this;
-                        userNameMega.vcoinMoney = userNameMega.vcoinMoney + (long)document.getInteger((Object)"amount").intValue();
-                        switch (document.getInteger((Object)"amount")) {
+                        userNameMega.vcoinMoney = userNameMega.vcoinMoney + (long) document.getInteger((Object) "amount").intValue();
+                        switch (document.getInteger((Object) "amount")) {
                             case 10000000: {
                                 RechargeByCardDAOImpl.this.vcoin10MQuantity++;
                                 userNameMega = RechargeByCardDAOImpl.this;
@@ -1179,7 +1188,7 @@ implements RechargeByCardDAO {
         MoneyTotalRechargeByCardReponse tong = new MoneyTotalRechargeByCardReponse();
         tong.setName("Tong");
         tong.setValue(this.totalMoney);
-        tong.setTrans((List)null);
+        tong.setTrans((List) null);
         listReponse.add(tong);
         MoneyTotalRechargeByCardReponse viettel = new MoneyTotalRechargeByCardReponse();
         ArrayList<MoneyTotalFollowFaceValue> listViettelMoneyFollowFace = new ArrayList<MoneyTotalFollowFaceValue>();
@@ -1638,172 +1647,172 @@ implements RechargeByCardDAO {
         this.vcoinMoney = 0L;
         objsort.put("_id", -1);
         if (transId != null && !transId.isEmpty()) {
-            conditions.put("reference_id", (Object)transId);
+            conditions.put("reference_id", (Object) transId);
         }
         if (!nickName.isEmpty()) {
-            conditions.put("nick_name", (Object)nickName);
+            conditions.put("nick_name", (Object) nickName);
         }
         if (!provider.isEmpty()) {
-            conditions.put("provider", (Object)provider);
+            conditions.put("provider", (Object) provider);
         }
         if (!serial.isEmpty()) {
-            conditions.put("serial", (Object)serial);
+            conditions.put("serial", (Object) serial);
         }
         if (!pin.isEmpty()) {
-            conditions.put("pin", (Object)pin);
+            conditions.put("pin", (Object) pin);
         }
         if (!code.isEmpty()) {
-            conditions.put("code", (Object)Integer.parseInt(code));
+            conditions.put("code", (Object) Integer.parseInt(code));
         }
         if (!timeStart.isEmpty() && !timeEnd.isEmpty()) {
-            obj.put("$gte", (Object)timeStart);
-            obj.put("$lte", (Object)timeEnd);
-            conditions.put("time_log", (Object)obj);
+            obj.put("$gte", (Object) timeStart);
+            obj.put("$lte", (Object) timeEnd);
+            conditions.put("time_log", (Object) obj);
         }
         FindIterable iterable = null;
-        iterable = db.getCollection("epay_recharge_by_mega_card").find((Bson)new Document((Map)conditions)).sort((Bson)objsort);
-        iterable.forEach((Block)new Block<Document>(){
+        iterable = db.getCollection("epay_recharge_by_mega_card").find((Bson) new Document((Map) conditions)).sort((Bson) objsort);
+        iterable.forEach((Block) new Block<Document>() {
 
             public void apply(Document document) {
                 Object string;
                 RechargeByCardDAOImpl rechargeByCardDAOImpl = RechargeByCardDAOImpl.this;
-                rechargeByCardDAOImpl.totalMoney = rechargeByCardDAOImpl.totalMoney + (long)document.getInteger((Object)"amount").intValue();
+                rechargeByCardDAOImpl.totalMoney = rechargeByCardDAOImpl.totalMoney + (long) document.getInteger((Object) "amount").intValue();
                 rechargeByCardDAOImpl = RechargeByCardDAOImpl.this;
-                rechargeByCardDAOImpl.megaMoney = rechargeByCardDAOImpl.megaMoney + (long)document.getInteger((Object)"amount").intValue();
-                if (document.containsKey((Object)"platform")) {
-                    switch (document.getString((Object)"platform")) {
+                rechargeByCardDAOImpl.megaMoney = rechargeByCardDAOImpl.megaMoney + (long) document.getInteger((Object) "amount").intValue();
+                if (document.containsKey((Object) "platform")) {
+                    switch (document.getString((Object) "platform")) {
                         case "web": {
                             RechargeByCardDAOImpl rechargeByCardDAOImpl2 = RechargeByCardDAOImpl.this;
-                            rechargeByCardDAOImpl2.webMoney = rechargeByCardDAOImpl2.webMoney + (long)document.getInteger((Object)"amount").intValue();
+                            rechargeByCardDAOImpl2.webMoney = rechargeByCardDAOImpl2.webMoney + (long) document.getInteger((Object) "amount").intValue();
                             break;
                         }
                         case "ad": {
                             RechargeByCardDAOImpl rechargeByCardDAOImpl3 = RechargeByCardDAOImpl.this;
-                            rechargeByCardDAOImpl3.androidMoney = rechargeByCardDAOImpl3.androidMoney + (long)document.getInteger((Object)"amount").intValue();
+                            rechargeByCardDAOImpl3.androidMoney = rechargeByCardDAOImpl3.androidMoney + (long) document.getInteger((Object) "amount").intValue();
                             break;
                         }
                         case "ios": {
                             RechargeByCardDAOImpl rechargeByCardDAOImpl4 = RechargeByCardDAOImpl.this;
-                            rechargeByCardDAOImpl4.iosMoney = rechargeByCardDAOImpl4.iosMoney + (long)document.getInteger((Object)"amount").intValue();
+                            rechargeByCardDAOImpl4.iosMoney = rechargeByCardDAOImpl4.iosMoney + (long) document.getInteger((Object) "amount").intValue();
                             break;
                         }
                         case "wp": {
                             RechargeByCardDAOImpl rechargeByCardDAOImpl5 = RechargeByCardDAOImpl.this;
-                            rechargeByCardDAOImpl5.winphoneMoney = rechargeByCardDAOImpl5.winphoneMoney + (long)document.getInteger((Object)"amount").intValue();
+                            rechargeByCardDAOImpl5.winphoneMoney = rechargeByCardDAOImpl5.winphoneMoney + (long) document.getInteger((Object) "amount").intValue();
                             break;
                         }
                         case "fb": {
                             RechargeByCardDAOImpl rechargeByCardDAOImpl6 = RechargeByCardDAOImpl.this;
-                            rechargeByCardDAOImpl6.facebookMoney = rechargeByCardDAOImpl6.facebookMoney + (long)document.getInteger((Object)"amount").intValue();
+                            rechargeByCardDAOImpl6.facebookMoney = rechargeByCardDAOImpl6.facebookMoney + (long) document.getInteger((Object) "amount").intValue();
                             break;
                         }
                         case "dt": {
                             RechargeByCardDAOImpl rechargeByCardDAOImpl7 = RechargeByCardDAOImpl.this;
-                            rechargeByCardDAOImpl7.desktopMoney = rechargeByCardDAOImpl7.desktopMoney + (long)document.getInteger((Object)"amount").intValue();
+                            rechargeByCardDAOImpl7.desktopMoney = rechargeByCardDAOImpl7.desktopMoney + (long) document.getInteger((Object) "amount").intValue();
                             break;
                         }
                         case "ot": {
                             RechargeByCardDAOImpl rechargeByCardDAOImpl8 = RechargeByCardDAOImpl.this;
-                            rechargeByCardDAOImpl8.otherMoney = rechargeByCardDAOImpl8.otherMoney + (long)document.getInteger((Object)"amount").intValue();
+                            rechargeByCardDAOImpl8.otherMoney = rechargeByCardDAOImpl8.otherMoney + (long) document.getInteger((Object) "amount").intValue();
                             break;
                         }
                         default: {
                             RechargeByCardDAOImpl rechargeByCardDAOImpl9 = RechargeByCardDAOImpl.this;
-                            rechargeByCardDAOImpl9.otherMoney = rechargeByCardDAOImpl9.otherMoney + (long)document.getInteger((Object)"amount").intValue();
+                            rechargeByCardDAOImpl9.otherMoney = rechargeByCardDAOImpl9.otherMoney + (long) document.getInteger((Object) "amount").intValue();
                             break;
                         }
                     }
                 } else {
                     string = RechargeByCardDAOImpl.this;
-                    ((RechargeByCardDAOImpl)string).otherMoney = ((RechargeByCardDAOImpl)string).otherMoney + (long)document.getInteger((Object)"amount").intValue();
+                    ((RechargeByCardDAOImpl) string).otherMoney = ((RechargeByCardDAOImpl) string).otherMoney + (long) document.getInteger((Object) "amount").intValue();
                 }
             }
         });
-        iterable = db.getCollection("dvt_recharge_by_card").find((Bson)new Document((Map)conditions)).sort((Bson)objsort);
-        iterable.forEach((Block)new Block<Document>(){
+        iterable = db.getCollection("dvt_recharge_by_card").find((Bson) new Document((Map) conditions)).sort((Bson) objsort);
+        iterable.forEach((Block) new Block<Document>() {
 
             public void apply(Document document) {
                 RechargeByCardDAOImpl rechargeByCardDAOImpl;
                 Object string;
                 RechargeByCardDAOImpl rechargeByCardDAOImpl2 = RechargeByCardDAOImpl.this;
-                rechargeByCardDAOImpl2.totalMoney = rechargeByCardDAOImpl2.totalMoney + (long)document.getInteger((Object)"amount").intValue();
-                if (document.containsKey((Object)"platform")) {
-                    switch (document.getString((Object)"platform")) {
+                rechargeByCardDAOImpl2.totalMoney = rechargeByCardDAOImpl2.totalMoney + (long) document.getInteger((Object) "amount").intValue();
+                if (document.containsKey((Object) "platform")) {
+                    switch (document.getString((Object) "platform")) {
                         case "web": {
                             rechargeByCardDAOImpl = RechargeByCardDAOImpl.this;
-                            rechargeByCardDAOImpl.webMoney = rechargeByCardDAOImpl.webMoney + (long)document.getInteger((Object)"amount").intValue();
+                            rechargeByCardDAOImpl.webMoney = rechargeByCardDAOImpl.webMoney + (long) document.getInteger((Object) "amount").intValue();
                             break;
                         }
                         case "ad": {
                             rechargeByCardDAOImpl = RechargeByCardDAOImpl.this;
-                            rechargeByCardDAOImpl.androidMoney = rechargeByCardDAOImpl.androidMoney + (long)document.getInteger((Object)"amount").intValue();
+                            rechargeByCardDAOImpl.androidMoney = rechargeByCardDAOImpl.androidMoney + (long) document.getInteger((Object) "amount").intValue();
                             break;
                         }
                         case "ios": {
                             rechargeByCardDAOImpl = RechargeByCardDAOImpl.this;
-                            rechargeByCardDAOImpl.iosMoney = rechargeByCardDAOImpl.iosMoney + (long)document.getInteger((Object)"amount").intValue();
+                            rechargeByCardDAOImpl.iosMoney = rechargeByCardDAOImpl.iosMoney + (long) document.getInteger((Object) "amount").intValue();
                             break;
                         }
                         case "wp": {
                             rechargeByCardDAOImpl = RechargeByCardDAOImpl.this;
-                            rechargeByCardDAOImpl.winphoneMoney = rechargeByCardDAOImpl.winphoneMoney + (long)document.getInteger((Object)"amount").intValue();
+                            rechargeByCardDAOImpl.winphoneMoney = rechargeByCardDAOImpl.winphoneMoney + (long) document.getInteger((Object) "amount").intValue();
                             break;
                         }
                         case "fb": {
                             rechargeByCardDAOImpl = RechargeByCardDAOImpl.this;
-                            rechargeByCardDAOImpl.facebookMoney = rechargeByCardDAOImpl.facebookMoney + (long)document.getInteger((Object)"amount").intValue();
+                            rechargeByCardDAOImpl.facebookMoney = rechargeByCardDAOImpl.facebookMoney + (long) document.getInteger((Object) "amount").intValue();
                             break;
                         }
                         case "dt": {
                             rechargeByCardDAOImpl = RechargeByCardDAOImpl.this;
-                            rechargeByCardDAOImpl.desktopMoney = rechargeByCardDAOImpl.desktopMoney + (long)document.getInteger((Object)"amount").intValue();
+                            rechargeByCardDAOImpl.desktopMoney = rechargeByCardDAOImpl.desktopMoney + (long) document.getInteger((Object) "amount").intValue();
                             break;
                         }
                         case "ot": {
                             rechargeByCardDAOImpl = RechargeByCardDAOImpl.this;
-                            rechargeByCardDAOImpl.otherMoney = rechargeByCardDAOImpl.otherMoney + (long)document.getInteger((Object)"amount").intValue();
+                            rechargeByCardDAOImpl.otherMoney = rechargeByCardDAOImpl.otherMoney + (long) document.getInteger((Object) "amount").intValue();
                             break;
                         }
                         default: {
                             rechargeByCardDAOImpl = RechargeByCardDAOImpl.this;
-                            rechargeByCardDAOImpl.otherMoney = rechargeByCardDAOImpl.otherMoney + (long)document.getInteger((Object)"amount").intValue();
+                            rechargeByCardDAOImpl.otherMoney = rechargeByCardDAOImpl.otherMoney + (long) document.getInteger((Object) "amount").intValue();
                             break;
                         }
                     }
                 } else {
                     string = RechargeByCardDAOImpl.this;
-                    ((RechargeByCardDAOImpl)string).otherMoney = ((RechargeByCardDAOImpl)string).otherMoney + (long)document.getInteger((Object)"amount").intValue();
+                    ((RechargeByCardDAOImpl) string).otherMoney = ((RechargeByCardDAOImpl) string).otherMoney + (long) document.getInteger((Object) "amount").intValue();
                 }
-                String string2 = document.getString((Object)"provider");
+                String string2 = document.getString((Object) "provider");
                 switch (string2) {
                     case "Viettel": {
                         rechargeByCardDAOImpl = RechargeByCardDAOImpl.this;
-                        rechargeByCardDAOImpl.viettelMoney = rechargeByCardDAOImpl.viettelMoney + (long)document.getInteger((Object)"amount").intValue();
+                        rechargeByCardDAOImpl.viettelMoney = rechargeByCardDAOImpl.viettelMoney + (long) document.getInteger((Object) "amount").intValue();
                         break;
                     }
                     case "Vinaphone": {
                         rechargeByCardDAOImpl = RechargeByCardDAOImpl.this;
-                        rechargeByCardDAOImpl.vinaphoneMoney = rechargeByCardDAOImpl.vinaphoneMoney + (long)document.getInteger((Object)"amount").intValue();
+                        rechargeByCardDAOImpl.vinaphoneMoney = rechargeByCardDAOImpl.vinaphoneMoney + (long) document.getInteger((Object) "amount").intValue();
                         break;
                     }
                     case "Mobifone": {
                         rechargeByCardDAOImpl = RechargeByCardDAOImpl.this;
-                        rechargeByCardDAOImpl.mobifoneMoney = rechargeByCardDAOImpl.mobifoneMoney + (long)document.getInteger((Object)"amount").intValue();
+                        rechargeByCardDAOImpl.mobifoneMoney = rechargeByCardDAOImpl.mobifoneMoney + (long) document.getInteger((Object) "amount").intValue();
                         break;
                     }
                     case "Gate": {
                         rechargeByCardDAOImpl = RechargeByCardDAOImpl.this;
-                        rechargeByCardDAOImpl.gateMoney = rechargeByCardDAOImpl.gateMoney + (long)document.getInteger((Object)"amount").intValue();
+                        rechargeByCardDAOImpl.gateMoney = rechargeByCardDAOImpl.gateMoney + (long) document.getInteger((Object) "amount").intValue();
                         break;
                     }
                     case "MegaCard": {
                         rechargeByCardDAOImpl = RechargeByCardDAOImpl.this;
-                        rechargeByCardDAOImpl.megaMoney = rechargeByCardDAOImpl.megaMoney + (long)document.getInteger((Object)"amount").intValue();
+                        rechargeByCardDAOImpl.megaMoney = rechargeByCardDAOImpl.megaMoney + (long) document.getInteger((Object) "amount").intValue();
                         break;
                     }
                     case "Vcoin": {
                         rechargeByCardDAOImpl = RechargeByCardDAOImpl.this;
-                        rechargeByCardDAOImpl.vcoinMoney = rechargeByCardDAOImpl.vcoinMoney + (long)document.getInteger((Object)"amount").intValue();
+                        rechargeByCardDAOImpl.vcoinMoney = rechargeByCardDAOImpl.vcoinMoney + (long) document.getInteger((Object) "amount").intValue();
                     }
                 }
             }
