@@ -1551,6 +1551,7 @@ public class RechargeDaoImpl
 
 
         } catch (Exception e) {
+            e.printStackTrace();
             RechargeDaoImpl.logger.error(e);
             return null;
         }
