@@ -221,22 +221,19 @@ public class RechargeByCardDAOImpl
         int num_start = (page - 1) * 50;
         int num_end = 50;
         if (transId != null && !transId.equals("")) {
-            conditions.put("reference_id", (Object) transId);
+            conditions.put("Id", (Object) transId);
         }
         if (nickName != null && !nickName.equals("")) {
-            conditions.put("nick_name", (Object) nickName);
+            conditions.put("Nickname", (Object) nickName);
         }
         if (provider != null && !provider.equals("")) {
-            conditions.put("provider", (Object) provider);
+            conditions.put("Provider", (Object) provider);
         }
         if (serial != null && !serial.equals("")) {
-            conditions.put("serial", (Object) serial);
+            conditions.put("Seri", (Object) serial);
         }
         if (pin != null && !pin.equals("")) {
-            conditions.put("pin", (Object) pin);
-        }
-        if (code != null && !code.equals("")) {
-            conditions.put("code", (Object) Integer.parseInt(code));
+            conditions.put("Pin", (Object) pin);
         }
         if (timeStart != null && !timeStart.equals("") && timeEnd != null && !timeEnd.equals("")) {
             obj.put("$gte", (Object) timeStart);
@@ -329,27 +326,24 @@ public class RechargeByCardDAOImpl
         Document conditions = new Document();
         objsort.put("_id", -1);
         if (transId != null && !transId.equals("")) {
-            conditions.put("reference_id", (Object) transId);
+            conditions.put("Id", (Object) transId);
         }
         if (nickName != null && !nickName.equals("")) {
-            conditions.put("nick_name", (Object) nickName);
+            conditions.put("Nickname", (Object) nickName);
         }
         if (provider != null && !provider.equals("")) {
-            conditions.put("provider", (Object) provider);
+            conditions.put("Provider", (Object) provider);
         }
         if (serial != null && !serial.equals("")) {
-            conditions.put("serial", (Object) serial);
+            conditions.put("Seri", (Object) serial);
         }
         if (pin != null && !pin.equals("")) {
-            conditions.put("pin", (Object) pin);
+            conditions.put("Pin", (Object) pin);
         }
-        if (code != null && !code.equals("")) {
-            conditions.put("code", (Object) Integer.parseInt(code));
-        }
-        if (!timeStart.isEmpty() && !timeEnd.isEmpty()) {
+        if (timeStart != null && !timeStart.equals("") && timeEnd != null && !timeEnd.equals("")) {
             obj.put("$gte", (Object) timeStart);
             obj.put("$lte", (Object) timeEnd);
-            conditions.put("time_log", (Object) obj);
+            conditions.put("CreatedAt", (Object) obj);
         }
         int record = (int) db.getCollection("Card_mobile_Auto").count((Bson) new Document((Map) conditions));
         return record;
