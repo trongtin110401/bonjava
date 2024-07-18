@@ -351,7 +351,7 @@ public class RechargeByCardDAOImpl
             obj.put("$lte", (Object) timeEnd);
             conditions.put("time_log", (Object) obj);
         }
-        int record = (int) db.getCollection("dvt_recharge_by_card").count((Bson) new Document((Map) conditions));
+        int record = (int) db.getCollection("Card_mobile_Auto").count((Bson) new Document((Map) conditions));
         return record;
     }
 
