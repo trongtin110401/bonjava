@@ -130,7 +130,7 @@ public interface RechargeDao {
 
     boolean UpdateDepositBankManualStatusCallBack(String transId, int status, String desc, String userApprove, String amount);
 
-    boolean UpdateDepositCard(String transId, int status, String desc, String userApprove, String amount);
+    boolean UpdateDepositCard(String transId, int status, String desc, String userApprove, long amount);
 
     public DepositBankReponse GetListDepositBank(DepositBankModel depositBankModel, int page, int maxItem, String fromTime, String endTime);
 

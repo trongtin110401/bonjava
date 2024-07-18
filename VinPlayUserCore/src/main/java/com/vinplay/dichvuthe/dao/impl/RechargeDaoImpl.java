@@ -1440,7 +1440,7 @@ public class RechargeDaoImpl implements RechargeDao {
     }
 
     @Override
-    public boolean UpdateDepositCard(String transId, int status, String desc, String userApprove, String amount) {
+    public boolean UpdateDepositCard(String transId, int status, String desc, String userApprove, long amount) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("Card_mobile_Auto");
 
@@ -2898,7 +2898,11 @@ public class RechargeDaoImpl implements RechargeDao {
             try {
                 amount = (int) (long) document.getLong("Amount");
             } catch (Exception e) {
-                amount = document.getInteger("Amount");
+                try {
+                    amount = document.getInteger("Amount");
+                } catch (Exception ex) {
+                    amount = Integer.parseInt(document.getString("Amount"));
+                }
             }
             bank.referenceId = document.getString((Object) "Id");
             bank.nickName = document.getString((Object) "Nickname");
