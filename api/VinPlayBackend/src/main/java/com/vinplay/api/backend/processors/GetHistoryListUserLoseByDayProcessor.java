@@ -31,7 +31,7 @@ public class GetHistoryListUserLoseByDayProcessor implements BaseProcessor<HttpS
         String nickname = request.getParameter("nickname");
         String code = request.getParameter("code");
 
-                System.out.println("=======> GetHistoryListUserLoseByDayProcessor: " + timeStart + " " + timeEnd );
+        System.out.println("=======> GetHistoryListUserLoseByDayProcessor: " + timeStart + " " + timeEnd);
 
         if (pageIndex < 0 || pageSize <= 0) {
             return userCodeResponse.toJson();

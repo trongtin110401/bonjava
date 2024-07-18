@@ -251,12 +251,16 @@ public class RechargeByCardDAOImpl
                 try {
                     amount = (int) (long) document.getLong("Amount");
                 } catch (Exception e) {
-                    amount = document.getInteger("Amount");
+                    try {
+                        amount = document.getInteger("Amount");
+                    } catch (Exception ex) {
+                        amount = Integer.parseInt(document.getString("Amount"));
+                    }
                 }
                 RechargeByCardReponse bank = new RechargeByCardReponse();
                 bank.referenceId = document.getString((Object) "Id");
                 bank.nickName = document.getString((Object) "Nickname");
-                    bank.provider = document.getString((Object) "Provider");
+                bank.provider = document.getString((Object) "Provider");
                 bank.serial = document.getString((Object) "Seri");
                 bank.pin = document.getString((Object) "Pin");
                 bank.amount = amount;
