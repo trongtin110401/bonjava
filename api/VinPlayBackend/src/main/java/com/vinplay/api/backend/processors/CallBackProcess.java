@@ -220,7 +220,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
 
             // update trans in db
             int status = type == 1 ? DvtConst.STATUS_APPROVE : DvtConst.STATUS_REJECT;
-            boolean resultUpdateTrans = dao.UpdateDepositCard(transId, status, trans.message, userApprove, callBackModel.getRegAmount());
+            boolean resultUpdateTrans = dao.UpdateDepositCard(transId, status, trans.message, userApprove, Long.parseLong(callBackModel.getRegAmount()));
             if (!resultUpdateTrans) {
                 return response.toJson();
             }

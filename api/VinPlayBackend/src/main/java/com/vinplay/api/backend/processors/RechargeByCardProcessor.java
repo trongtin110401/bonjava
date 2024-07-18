@@ -33,13 +33,13 @@ implements BaseProcessor<HttpServletRequest, String> {
         String transid = request.getParameter("tid");
         RechargeByCardServiceImpl service = new RechargeByCardServiceImpl();
         List trans = service.searchRechargeByCard(nickName, provider, serial, pin, code, timeStart, timeEnd, page, transid);
-        int totalRecord = 1000;
+        int totalRecord = service.countSearchRechargeByCard(nickName, provider, serial, pin, code, timeStart, timeEnd, transid);
 //        List moneyTotalRechargeByCard = service.moneyTotalRechargeByCard(nickName, provider, serial, pin, code, timeStart, timeEnd, transid);
         long totalPages = 100L;
         totalPages = 20L;
 //        response.setMoneyReponse(moneyTotalRechargeByCard);
         response.setTotal(totalPages);
-        response.setTotalRecord(1000L);
+        response.setTotalRecord(totalRecord);
         response.setTransactions(trans);
         response.setSuccess(true);
         response.setErrorCode("0");
