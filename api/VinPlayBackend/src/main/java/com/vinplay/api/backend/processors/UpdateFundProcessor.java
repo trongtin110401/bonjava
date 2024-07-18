@@ -89,6 +89,10 @@ public class UpdateFundProcessor implements BaseProcessor<HttpServletRequest, St
         funds.put("LienMinh_vin_1000", "LienMinh_vin_1000");
         funds.put("LienMinh_vin_10000", "LienMinh_vin_10000");
 
+        funds.put("CANDY_vin_100", "CANDY_vin_100");
+        funds.put("CANDY_vin_1000", "CANDY_vin_1000");
+        funds.put("CANDY_vin_10000", "CANDY_vin_10000");
+
 
         fund2GameName.put("TaiXiu", Games.TAI_XIU.getName());
         fund2GameName.put("TaiXiuMd5", Games.TAI_XIU_MD5.getName());
