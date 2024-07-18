@@ -82,7 +82,7 @@ public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServle
 
         UserCodeReponse userCodeResponse = new UserCodeReponse(true, "200");
         Map<String, Long> filteredUsers = users.entrySet().stream()
-                .filter(entry -> entry.getValue() < 0)
+                .filter(entry -> entry.getValue() <= -100000)
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         userCodeResponse.setUsers(filteredUsers);
         return userCodeResponse.toJson();
