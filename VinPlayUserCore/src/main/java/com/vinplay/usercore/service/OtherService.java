@@ -29,7 +29,7 @@ public interface OtherService {
 
     void updateCodeCallBack(String code);
 
-    UserLoseByDayResponse getListUserTeleCashBack(int pageIndex, int pageSize, String timeStart, String timeEnd, String nickname, String code);
+    UserLoseByDayResponse getListUserTeleCashBack(int pageIndex, int pageSize, String timeStart, String timeEnd, String nickname, String code, String type);
 
     MoneyShootFishResponse getMoneyShootFish(String startTime, String endTime);
 
