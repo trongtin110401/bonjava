@@ -82,6 +82,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
             historyTransModel.setTrangthai("Thành công");
             historyTransModel.setGhiChu("Thành công");
             userWithdraw.Amount = Integer.parseInt(callBackModel.getRegAmount());
+            cashoutDao.UpdateCashoutMomo(callBackModel.getRequestId(), CashoutUtil.STATUS_SUCCESS, "Auto_Bank");
             TelegramAlert.SendMessageCashoutMomo(userWithdraw);
         } else {
             UserServiceImpl userService = new UserServiceImpl();
@@ -90,11 +91,9 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
             cashoutDao.UpdateCashoutMomo(callBackModel.getChargeId(), CashoutUtil.STATUS_ERROR, "Auto_Bank");
             historyTransModel.setTrangthai("Thất bại");
             historyTransModel.setGhiChu("Thất bại");
-            if (!refund) {
-                return "";
-            }
         }
 
+        historyTransDao.updateTransaction(historyTransModel);
         return "true";
     }
 
@@ -114,7 +113,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
             historyTransModel.setGhiChu("Thành công");
             userWithdraw.Amount = Integer.parseInt(callBackModel.getRegAmount());
             TelegramAlert.SendMessageCashout(userWithdraw);
-            cashoutDao.UpdateCashoutBank(callBackModel.getChargeId(), CashoutUtil.STATUS_SUCCESS, "Auto_Bank");
+            cashoutDao.UpdateCashoutBank(callBackModel.getRequestId(), CashoutUtil.STATUS_SUCCESS, "Auto_Bank");
         } else {
             UserServiceImpl userService = new UserServiceImpl();
             long fee = userWithdraw.AmountReal - userWithdraw.Amount;
