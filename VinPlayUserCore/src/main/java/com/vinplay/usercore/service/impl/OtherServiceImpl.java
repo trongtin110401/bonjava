@@ -15,6 +15,7 @@ import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.pools.ConnectionPool;
 import com.vinplay.vbee.common.response.*;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
@@ -300,13 +301,20 @@ public class OtherServiceImpl implements OtherService {
     }
 
     @Override
-    public UserLoseByDayResponse getListUserTeleCashBack(int pageIndex, int pageSize, String timeStart, String timeEnd, String nickname, String code) {
+    public UserLoseByDayResponse getListUserTeleCashBack(int pageIndex, int pageSize, String timeStart, String timeEnd, String nickname, String code, String type) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("user_tele_cash_back");
         UserLoseByDayResponse userLoseByDayResponse = new UserLoseByDayResponse(true, "200");
         Document filter = new Document();
         if ((timeStart != null && !timeStart.isEmpty()) && (timeEnd != null && !timeEnd.isEmpty())) {
             filter.append("createdDate", new Document("$gte", timeStart + " 00:00:00").append("$lte", timeEnd + " 23:59:59"));
+        }
+        if (StringUtils.isNotEmpty(type)) {
+            if (type.equals("WIN")) {
+                filter.append("money", new Document("$gt", 0));
+            } else {
+                filter.append("money", new Document("$lt", 0));
+            }
         }
         if (nickname != null && !nickname.isEmpty()) {
             filter.append("nickname", nickname);
