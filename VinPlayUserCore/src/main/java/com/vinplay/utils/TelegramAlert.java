@@ -101,9 +101,11 @@ public class TelegramAlert {
 
     public static boolean SendMessageCashoutMomo(UserWithdrawMomo userWithdraw) {
         try {
-            String message = "<b>Rút tiền Momo từ User " + userWithdraw.Nickname + "</b>";
-            message += "\n Số tiền <b>" + userWithdraw.Amount + "</b>";
-            message += "\n Số điện thoại nhận : <b>" + userWithdraw.PhoneNumber + "</b>";
+            NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.forLanguageTag("vi-VN"));
+            String formattedNumber = numberFormat.format(userWithdraw.Amount);
+            String message = "<b>Rút tiền Momo từ User: " + userWithdraw.Nickname + "</b>";
+            message += "\n Số tiền: <b>" + formattedNumber + "</b>";
+            message += "\n Số điện thoại nhận: <b>" + userWithdraw.PhoneNumber + "</b>";
             return SendMessageRut(message);
         } catch (Exception e) {
             return false;
