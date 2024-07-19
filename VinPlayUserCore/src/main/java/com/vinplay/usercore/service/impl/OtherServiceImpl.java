@@ -305,11 +305,8 @@ public class OtherServiceImpl implements OtherService {
         MongoCollection<Document> collection = db.getCollection("user_tele_cash_back");
         UserLoseByDayResponse userLoseByDayResponse = new UserLoseByDayResponse(true, "200");
         Document filter = new Document();
-        if (timeStart != null && !timeStart.isEmpty()) {
-            filter.append("createdDate", new Document("$gte", timeStart + " 00:00:00"));
-        }
-        if (timeEnd != null && !timeEnd.isEmpty()) {
-            filter.append("createdDate", new Document("$lte", timeEnd + " 23:59:59"));
+        if ((timeStart != null && !timeStart.isEmpty()) && (timeEnd != null && !timeEnd.isEmpty())) {
+            filter.append("createdDate", new Document("$gte", timeStart + " 00:00:00").append("$lte", timeEnd + " 23:59:59"));
         }
         if (nickname != null && !nickname.isEmpty()) {
             filter.append("nickname", nickname);
