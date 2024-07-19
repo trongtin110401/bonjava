@@ -221,26 +221,15 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
             }
 
             // update trans in db
-            int status = type == 1 ? DvtConst.STATUS_APPROVE : DvtConst.STATUS_REJECT;
-            boolean resultUpdateTrans = dao.UpdateDepositCard(transId, status, trans.message, userApprove, Long.parseLong(callBackModel.getRegAmount()));
-            if (!resultUpdateTrans) {
-                return response.toJson();
+            int status;
+            if (type == 1) {
+                status = DvtConst.STATUS_APPROVE;
+            } else {
+                status = DvtConst.STATUS_REJECT;
             }
-            if (type == 0) {
-                BroadCastUserMoney.pushBroadTime2(trans.nickName);
-                response.setSuccess(true);
-                historyTransService.update(transId, trans.nickName, HistoryTransConst.BANK, "Thành công", "Giao dịch thành công");
-                EventactionAdminObj model = new EventactionAdminObj();
-                model.setId(transId);
-                model.setStatus(2);
-                model.setType("DEPOSIT_BANK");
-                updateCodepay(trans.nickName, true, trans.message, trans.nickName);
-                try {
-                    SendToWS.sendBEExcEventaction(model);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+
+            dao.UpdateDepositCard(transId, status, trans.message, userApprove, Long.parseLong(callBackModel.getRegAmount()));
+
             //update user money
             UserServiceImpl service = new UserServiceImpl();
             try {
