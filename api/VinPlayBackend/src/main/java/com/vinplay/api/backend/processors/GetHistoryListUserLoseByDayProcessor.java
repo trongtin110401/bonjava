@@ -30,13 +30,14 @@ public class GetHistoryListUserLoseByDayProcessor implements BaseProcessor<HttpS
         String timeEnd = request.getParameter("timeEnd");
         String nickname = request.getParameter("nickname");
         String code = request.getParameter("code");
+        String type = request.getParameter("type");
 
         if (pageIndex < 0 || pageSize <= 0) {
             return userCodeResponse.toJson();
         }
 
         OtherService otherService = new OtherServiceImpl();
-        userCodeResponse = otherService.getListUserTeleCashBack(pageIndex, pageSize, timeStart, timeEnd, nickname, code);
+        userCodeResponse = otherService.getListUserTeleCashBack(pageIndex, pageSize, timeStart, timeEnd, nickname, code, type);
         return userCodeResponse.toJson();
     }
 }
