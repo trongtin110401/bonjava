@@ -173,6 +173,9 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
             if (!resultUpdateTrans) {
                 return response.toJson();
             }
+            HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
+
+            historyTransDao.insertTransaction(new HistoryTransModel(transId, "MoMo", "Nạp tiền", String.valueOf(tien), "Thành công", "Nạp Tiền Thành công ", trans.Nickname, HistoryTransConst.MOMO, transId));
             //update user money
             UserServiceImpl service = new UserServiceImpl();
             try {

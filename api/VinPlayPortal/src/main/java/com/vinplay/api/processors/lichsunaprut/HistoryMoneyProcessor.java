@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class HistoryMoneyProcessor implements BaseProcessor<HttpServletRequest, String> {
+public class    HistoryMoneyProcessor implements BaseProcessor<HttpServletRequest, String> {
     private static final Logger logger = Logger.getLogger((String) "api");
 
     @Override
