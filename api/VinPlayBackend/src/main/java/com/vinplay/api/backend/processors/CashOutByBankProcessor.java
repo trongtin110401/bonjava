@@ -11,10 +11,7 @@
 package com.vinplay.api.backend.processors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.mongodb.client.MongoCollection;
-import org.json.JSONObject;
 import com.mongodb.client.MongoDatabase;
 import com.vinplay.api.backend.processors.cashout.NapRutGame;
 import com.vinplay.api.backend.processors.cashout.NapRutModel;
@@ -38,6 +35,7 @@ import com.vinplay.vbee.common.response.ResultCashOutByBankResponse;
 import org.apache.log4j.Logger;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.json.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -101,11 +99,17 @@ public class CashOutByBankProcessor implements BaseProcessor<HttpServletRequest,
                 if (userWithdraw == null) {
                     return "";
                 }
-                if (userWithdraw.Status.equals(CashoutUtil.STATUS_REJECT) || userWithdraw.Status.equals(CashoutUtil.STATUS_SUCCESS)) {
-                    return "";
+                UserServiceImpl userService = new UserServiceImpl();
+
+                if (status.equals(CashoutUtil.STATUS_ERROR) || status.equals(CashoutUtil.STATUS_REJECT)) {
+                    this.sendMesToAdmin(transid, 2); // gửi mes từ chối
+                    long fee = userWithdraw.AmountReal - userWithdraw.Amount;
+                    boolean refund = userService.refundWhenError(userWithdraw.Username, userWithdraw.AmountReal, fee);
+                    if (!refund) {
+                        return "";
+                    }
                 }
                 this.sendMesToAdmin(transid, 102);
-                UserServiceImpl userService = new UserServiceImpl();
                 if (status.equals(CashoutUtil.STATUS_SENDING)) {
                     CallAutoTransBank callBank = new CallAutoTransBank();
                     String output = callBank.CallAPI(userWithdraw); //Product
@@ -120,15 +124,6 @@ public class CashOutByBankProcessor implements BaseProcessor<HttpServletRequest,
                 }
                 int type = Integer.parseInt(typeStr);
                 historyTransService.update(transid, userWithdraw.Username, HistoryTransConst.RUT_BANK, this.getTrangthai(type), this.getTrangthaiDes(type));
-
-                if (status.equals(CashoutUtil.STATUS_ERROR) || status.equals(CashoutUtil.STATUS_REJECT)) {
-                    this.sendMesToAdmin(transid, 2); // gửi mes từ chối
-                    long fee = userWithdraw.AmountReal - userWithdraw.Amount;
-                    boolean refund = userService.refundWhenError(userWithdraw.Username, userWithdraw.AmountReal, fee);
-                    if (!refund) {
-                        return "";
-                    }
-                }
                 BroadCastUserMoney.pushBroadCast(userWithdraw.Username);
                 NapRutGame nrg = new NapRutGame();
                 String codedl = nrg.getMaDaily(userWithdraw.Username);
