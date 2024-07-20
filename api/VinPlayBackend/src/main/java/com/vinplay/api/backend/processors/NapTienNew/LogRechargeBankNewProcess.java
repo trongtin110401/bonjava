@@ -95,7 +95,7 @@ public class LogRechargeBankNewProcess implements BaseProcessor<HttpServletReque
                 obj.put("$lte", (Object) endTime);
                 conditions.put("CreatedAt", (Object) obj);
             }
-            logger.info("chua chet ow day");
+
             FindIterable iterable = col.find((Bson) new Document(conditions)).sort((Bson) objsort).skip(numStart).limit(maxItem);
             iterable.forEach((Block) new Block<Document>() {
 
@@ -127,7 +127,7 @@ public class LogRechargeBankNewProcess implements BaseProcessor<HttpServletReque
                 }
             });
             FindIterable iterable2 = col.find((Bson) new Document(conditions));
-            logger.info("chua chet ow day 2");
+
             iterable2.forEach((Block) new Block<Document>() {
 
                 public void apply(Document document) {
@@ -148,7 +148,7 @@ public class LogRechargeBankNewProcess implements BaseProcessor<HttpServletReque
                     }
                 }
             });
-            logger.info("chua chet ow day 4");
+
             DepositBankReponse res = new DepositBankReponse(num.get(0), num.get(2), num.get(1), records);
             res.setSuccess(true);
             res.setErrorCode("0");
