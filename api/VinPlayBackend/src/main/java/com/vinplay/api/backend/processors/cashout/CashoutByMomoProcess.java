@@ -89,6 +89,8 @@ public class CashoutByMomoProcess implements BaseProcessor<HttpServletRequest, S
                     UserServiceImpl userService = new UserServiceImpl();
                     long fee = userWithdraw.AmountReal - userWithdraw.Amount;
                     boolean refund = userService.refundWhenError(userWithdraw.Nickname, userWithdraw.AmountReal, fee);
+                    historyTransModel.setTrangthai("Từ chối");
+                    historyTransModel.setGhiChu("Từ chối");
                     if (!refund) {
                         return "";
                     }
@@ -98,18 +100,18 @@ public class CashoutByMomoProcess implements BaseProcessor<HttpServletRequest, S
                     this.sendMesToAdmin(transid, 102);
                     CallAutoTransMomo callAutoTransMomo = new CallAutoTransMomo();
                     String output = callAutoTransMomo.CallAPI(userWithdraw); //Product
-                    historyTransModel.setTrangthai("Th�nh c�ng");
-                    historyTransModel.setGhiChu("Th�nh c�ng");
+                    historyTransModel.setTrangthai("Thành công");
+                    historyTransModel.setGhiChu("Thành công");
                     if (output.contains("404")) {
                         this.sendMesToAdmin(transid, 2);
-                        historyTransModel.setTrangthai("Th?t b?i");
-                        historyTransModel.setGhiChu("Th?t b?i");
+                        historyTransModel.setTrangthai("Thất bại");
+                        historyTransModel.setGhiChu("Thất bại");
                     } else {
                         JSONObject jsonObject = new JSONObject(output);
                         if (jsonObject.get("ex_stt").toString().equals("-2.3")) {
                             this.sendMesToAdmin(transid, 3);
-                            historyTransModel.setTrangthai("Th?t b?i");
-                            historyTransModel.setGhiChu("Th?t b?i");
+                            historyTransModel.setTrangthai("Thất bại");
+                            historyTransModel.setGhiChu("Thất bại");
                         }
                     }
                 }
