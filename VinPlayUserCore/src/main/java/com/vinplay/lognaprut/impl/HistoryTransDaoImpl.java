@@ -67,6 +67,25 @@ public class HistoryTransDaoImpl implements HistoryTransDao {
     }
 
     @Override
+    public HistoryTransModel findTransactionByTransId(String transId) {
+        try {
+            MongoDatabase db = MongoDBConnectionFactory.getDB();
+            Document conditions = new Document();
+            conditions.put("transId", (Object) transId);
+            Document document = (Document) db.getCollection("History_User_transaction").find((Bson) conditions).first();
+            if (document == null)
+                return null;
+            Gson gson = new Gson();
+            HistoryTransModel model = gson.fromJson(document.toJson(), HistoryTransModel.class);
+            model.setId(String.valueOf(document.getLong("Id")));
+            return model;
+        } catch (Exception e) {
+            RechargeDaoImpl.logger.error(e);
+            return null;
+        }
+    }
+
+    @Override
     public List<HistoryTransModel> findCodepayLike(String codepay) {
         try {
             MongoDatabase db = MongoDBConnectionFactory.getDB();

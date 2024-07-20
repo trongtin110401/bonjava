@@ -2392,7 +2392,7 @@ public class UserServiceImpl
                 response.setErrorCode("1002");
                 return response;
             }
-            TelegramAlert.SendMessageCashout(userWithdraw);
+//            TelegramAlert.SendMessageCashout(userWithdraw);
             NotificationAdminObj obj = new NotificationAdminObj();
             try {
                 obj.setRutBank(true);
@@ -2486,7 +2486,7 @@ public class UserServiceImpl
                 response.setErrorCode("1002");
                 return response;
             }
-            TelegramAlert.SendMessageCashoutMomo(userWithdrawMomo);
+//            TelegramAlert.SendMessageCashoutMomo(userWithdrawMomo);
             response.setSuccess(moneyRes.isSuccess());
             response.setErrorCode(moneyRes.getErrorCode());
 
