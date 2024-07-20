@@ -11,9 +11,10 @@ public class SaveSTKMomoProcess implements BaseProcessor<HttpServletRequest, Str
         HttpServletRequest request = param.get();
         String nickName = request.getParameter("nickName");
         String phoneNumber = request.getParameter("phoneNumber");
+        String accountName = request.getParameter("accountName");
         String timelog = VinPlayUtils.getCurrentDateTime();
         RutBanhXuLy rutxuly = new RutBanhXuLy();
-        InfoMomoEnity infoMomoEnity = new InfoMomoEnity(nickName, phoneNumber, timelog);
+        InfoMomoEnity infoMomoEnity = new InfoMomoEnity(nickName, phoneNumber, timelog, accountName);
         boolean check = rutxuly.InsertRutBankMomo(infoMomoEnity);
         if (check == true) {
             return "{\"error\":0}";
