@@ -12,6 +12,9 @@ import com.vinplay.dichvuthe.dao.impl.CashoutDaoImpl;
 import com.vinplay.dichvuthe.entities.CashoutBankResponse;
 import com.vinplay.dichvuthe.entities.CashoutMomoResponse;
 import com.vinplay.dichvuthe.utils.CashoutUtil;
+import com.vinplay.lognaprut.HistoryTransDao;
+import com.vinplay.lognaprut.entities.HistoryTransModel;
+import com.vinplay.lognaprut.impl.HistoryTransDaoImpl;
 import com.vinplay.payment.entities.UserWithdraw;
 import com.vinplay.payment.entities.UserWithdrawMomo;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
@@ -51,7 +54,7 @@ public class CashoutByMomoProcess implements BaseProcessor<HttpServletRequest, S
             if (act.equals("getList")) {
 
                 UserWithdrawMomo userWithdraw = new UserWithdrawMomo(transid, nickName, phoneNumber, status);
-                CashoutMomoResponse res = cashoutDao.GetListCashoutMomo(userWithdraw, page, 50, timeStart,timeEnd);
+                CashoutMomoResponse res = cashoutDao.GetListCashoutMomo(userWithdraw, page, 50, timeStart, timeEnd);
 
                 return res.toJson();
             } else if (act.equals("get")) {
@@ -68,40 +71,54 @@ public class CashoutByMomoProcess implements BaseProcessor<HttpServletRequest, S
                 if (status == null || status.isEmpty()) {
                     return "";
                 }
+
+
+                HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
+                HistoryTransModel historyTransModel = historyTransDao.findTransactionByTransId(transid);
+                if (historyTransModel == null) {
+                    return "false";
+                }
                 //find trans
                 UserWithdrawMomo userWithdraw = cashoutDao.FindCashoutMomoById(transid);
                 if (userWithdraw == null) {
                     return "";
                 }
-                if (status.equals(CashoutUtil.STATUS_SENDING)) {
-                    this.sendMesToAdmin(transid, 102);
-                    CallAutoTransMomo callAutoTransMomo = new CallAutoTransMomo();
-                    String output = callAutoTransMomo.CallAPI(userWithdraw); //Product
-                    Gson gson = new Gson();
-                    if (output.contains("404")){
-                        this.sendMesToAdmin(transid, 2);
-                    }
-                    else {
-                        JSONObject jsonObject = new JSONObject(output);
-                        if (jsonObject.get("ex_stt").toString().equals("-2.3")) {
-                            this.sendMesToAdmin(transid, 3);
-                            return "true";
-                        }
-                    }
-                }
-                // update trans
-                boolean updateTrans = cashoutDao.UpdateCashoutMomo(transid, status, userAprrove);
-                if (!updateTrans) {
-                    return "";
-                }
+
                 // refund
-                if (status.equals(CashoutUtil.STATUS_ERROR) || status.equals(CashoutUtil.STATUS_REJECT)) {
+                if (status.equals(CashoutUtil.STATUS_ERROR) || status.equals(CashoutUtil.STATUS_REJECT) && userWithdraw.Status.equals(CashoutUtil.STATUS_PENDING)) {
                     UserServiceImpl userService = new UserServiceImpl();
                     long fee = userWithdraw.AmountReal - userWithdraw.Amount;
                     boolean refund = userService.refundWhenError(userWithdraw.Nickname, userWithdraw.AmountReal, fee);
                     if (!refund) {
                         return "";
                     }
+                }
+
+                if (status.equals(CashoutUtil.STATUS_SENDING) && userWithdraw.Status.equals(CashoutUtil.STATUS_PENDING)) {
+                    this.sendMesToAdmin(transid, 102);
+                    CallAutoTransMomo callAutoTransMomo = new CallAutoTransMomo();
+                    String output = callAutoTransMomo.CallAPI(userWithdraw); //Product
+                    historyTransModel.setTrangthai("Thành công");
+                    historyTransModel.setGhiChu("Thành công");
+                    if (output.contains("404")) {
+                        this.sendMesToAdmin(transid, 2);
+                        historyTransModel.setTrangthai("Th?t b?i");
+                        historyTransModel.setGhiChu("Th?t b?i");
+                    } else {
+                        JSONObject jsonObject = new JSONObject(output);
+                        if (jsonObject.get("ex_stt").toString().equals("-2.3")) {
+                            this.sendMesToAdmin(transid, 3);
+                            historyTransModel.setTrangthai("Th?t b?i");
+                            historyTransModel.setGhiChu("Th?t b?i");
+                        }
+                    }
+                }
+
+                historyTransDao.updateTransaction(historyTransModel);
+                // update trans
+                boolean updateTrans = cashoutDao.UpdateCashoutMomo(transid, status, userAprrove);
+                if (!updateTrans) {
+                    return "";
                 }
                 return "true";
 

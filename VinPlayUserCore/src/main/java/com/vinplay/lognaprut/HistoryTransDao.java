@@ -10,6 +10,8 @@ public interface HistoryTransDao {
     void insertTransaction(HistoryTransModel historyTransModel);
 
     HistoryTransModel findTransaction(String transId, String nickName, String hinhthucTrans);
+
+    HistoryTransModel findTransactionByTransId(String transId);
     List<HistoryTransModel> findCodepayLike(String codepay);
     boolean updateTransaction(HistoryTransModel historyTransModel);
 
