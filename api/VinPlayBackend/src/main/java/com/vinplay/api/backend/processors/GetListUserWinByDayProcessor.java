@@ -42,6 +42,7 @@ public class GetListUserWinByDayProcessor implements BaseProcessor<HttpServletRe
                         && !"RechargeByMomo".equals(log.getActionName())
                         && !"ChargeSMS".equals(log.getActionName())
                         && !"CashOutByBank".equals(log.getActionName())
+                        && !"RefundRechargeError".equals(log.getActionName())
                         && !"CashOutByMomo".equals(log.getActionName())
                         && !"RechargeByCard".equals(log.getActionName())
                         && !"RechargeBySMS".equals(log.getActionName())
