@@ -205,19 +205,19 @@ public class Consts {
     public static final List<String> NAP_XU = Arrays.asList("NapXu", "VQMM", "Admin", "GiftCode", "GiftCodeVH", "GiftCodeMKT");
     public static final List<String> GAMES = Arrays.asList("TaiXiu", "BauCua", "MiniPoker", "CaoThap", "PokeGo",
             "KhoBau", "NuDiepVien", "SieuAnhHung", "VuongQuocVin", "Sam", "BaCay", "Binh", "Tlmn", "TaLa", "Lieng", "XiTo",
-            "BaiCao", "Poker", "PokerTour", "XocDia", "XiDzach", "Caro", "CoTuong", "CoVua", "CoUp", "HamCaMap",CANDY, AUDITION, MAYBACH, BENLEY, RANGE_ROVER, Spartan, TAMHUNG, ROLL_ROYE,
-            AUDITION_FREE, MAYBACH_FREE, BENLEY_FREE, RANGE_ROVER_FREE, Spartan_FREE, TAMHUNG_FREE, TAMHUNG_FREE, ROLL_ROYE_FREE, Games.COWBOY.getName(),Games.FAST_AND_FURIOUS.getName(),
+            "BaiCao", "Poker", "PokerTour", "XocDia", "XiDzach", "Caro", "CoTuong", "CoVua", "CoUp", "HamCaMap", CANDY, AUDITION, MAYBACH, BENLEY, RANGE_ROVER, Spartan, TAMHUNG, ROLL_ROYE,
+            AUDITION_FREE, MAYBACH_FREE, BENLEY_FREE, RANGE_ROVER_FREE, Spartan_FREE, TAMHUNG_FREE, TAMHUNG_FREE, ROLL_ROYE_FREE, Games.COWBOY.getName(), Games.FAST_AND_FURIOUS.getName(),
             Games.LADY_NIGHT.getName(), Games.CARIBE.getName(), Games.BONG_LAI_CAC.getName(), Games.HALLOWEEN.getName(), Games.LAS_VEGAS.getName(),
             Games.SEXY_DANCE.getName(), Games.LIEN_MINH.getName(), Games.TAI_XIU_MD5.getName(), "BauCuaTo"
-            );
-    public static final List<String> NO_GAME = Arrays.asList(RECHARGE_BY_CARD, RECHARGE_BY_MOMO, "NhiemVu", "CashOutByCard", "CashOutByTopUp", "RechargeByCard", "RechargeByVinCard", "RechargeByMegaCard", "RechargeByIAP", "RechargeByBank", "RechargeBySMS", "TransferMoney", "NapXu", "Admin", "GiftCode", "GiftCodeVH", "GiftCodeMKT", "CashoutByVP", "Bot", "RefundFee", "ChargeSMS", "EventVPBonus", "GcAgent", "GcAgentExport", "GcAgentImport", "BonusTopDS", "KhoBauVqFree", "NuDiepVienVqFree", "SieuAnhHungVqFree", "VuongQuocVinVqFree", "SafeMoney", "EventVP", "TopupVTCPay");
+    );
+    public static final List<String> NO_GAME = Arrays.asList(RECHARGE_BY_CARD, RECHARGE_BY_MOMO, RECHARGE_BY_BANK, CASH_OUT_BY_BANK, CASH_OUT_BY_MOMO, "NhiemVu", "CashOutByCard", "CashOutByTopUp", "RechargeByVinCard", "RechargeByMegaCard", "RechargeByIAP", "RechargeBySMS", "TransferMoney", "NapXu", "Admin", "GiftCode", "GiftCodeVH", "GiftCodeMKT", "CashoutByVP", "Bot", "RefundFee", "ChargeSMS", "EventVPBonus", "GcAgent", "GcAgentExport", "GcAgentImport", "BonusTopDS", "KhoBauVqFree", "NuDiepVienVqFree", "SieuAnhHungVqFree", "VuongQuocVinVqFree", "SafeMoney", "EventVP", "TopupVTCPay");
     public static final List<String> VIN_IN_USER = Arrays.asList("RechargeByCard", "RechargeByVinCard", "RechargeByMegaCard",
             "RechargeByBank", "RechargeByIAP", "RechargeBySMS", "TopupVTCPay", "RechargeByMomo");
     public static final List<String> VIN_IN_EVENT = Arrays.asList("NhiemVu", "GiftCode", "GiftCodeMKT", "GiftCodeVH", "GcAgentImport", "RefundFee", "BonusTopDS", "CashoutByVP", "EventVPBonus", "EventVP", "VQMM", "VQVIP", "KhoBauVqFree", "NuDiepVienVqFree", "SieuAnhHungVqFree", "VuongQuocVinVqFree");
-    public static final List<String> VIN_OUT_USER = Arrays.asList("CashOutByCard", "CashOutByTopUp",CASH_OUT_BY_MOMO,CASH_OUT_BY_BANK, REFUND_RECHARGE_ERROR, "Admin");
+    public static final List<String> VIN_OUT_USER = Arrays.asList("CashOutByCard", "CashOutByTopUp", CASH_OUT_BY_MOMO, CASH_OUT_BY_BANK, REFUND_RECHARGE_ERROR, "Admin");
     public static final List<String> VIN_OTHER = Arrays.asList("NapXu", "ChargeSMS", "Admin", "GcAgent", "GcAgentExport", "PktTicket");
     // list game slot
-    public static final List<String> GAMES_SLOT = Arrays.asList(TAI_XIU, BAU_CUA, MINI_POKER,TAI_XIU_MD5,
+    public static final List<String> GAMES_SLOT = Arrays.asList(TAI_XIU, BAU_CUA, MINI_POKER, TAI_XIU_MD5,
             CAO_THAP, CANDY, AUDITION, MAYBACH, BENLEY, RANGE_ROVER, Spartan, TAMHUNG, ROLL_ROYE,
             AUDITION_FREE, MAYBACH_FREE, BENLEY_FREE, RANGE_ROVER_FREE, Spartan_FREE, TAMHUNG_FREE, TAMHUNG_FREE, ROLL_ROYE_FREE);
 
