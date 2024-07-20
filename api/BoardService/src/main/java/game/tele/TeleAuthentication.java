@@ -43,7 +43,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
                 String[] parts = text.split("\\s+");
                 if (parts.length > 1) {
                     String nickname = parts[1];
-                    if (u != null && !Objects.equals(u.getNickname(), nickname)) {
+                    if (u != null && !Objects.equals(u.getNickname(), nickname) && u.isActive()) {
                         textMessage = "Tele đã liên kết với 1 tài khoản khác, hãy thử bằng 1 tele khác";
                         sendPhoneAndOTPRequest(chatId, textMessage);
                     }
@@ -63,9 +63,16 @@ public class TeleAuthentication extends TelegramLongPollingBot {
                 }
             }
             if (message.getText().equals("Lấy lại mã kích hoạt")) {
-                String otp = generateOTP();
-                sendOTP(chatId, otp);
-                saveOTP(chatId, otp);
+                UserTele u = getInfoByChatID(chatId);
+                if (u == null || !u.isActive()) {
+                    textMessage = "Vui lòng xác thực tele để sử dụng dịch vụ";
+                    sendPhoneAndOTPRequest(chatId, textMessage);
+                } else {
+                    String otp = generateOTP();
+                    sendOTP(chatId, otp);
+                    saveOTP(chatId, otp);
+                }
+
             }
         } else if (update.hasCallbackQuery()) {
             CallbackQuery callbackQuery = update.getCallbackQuery();
