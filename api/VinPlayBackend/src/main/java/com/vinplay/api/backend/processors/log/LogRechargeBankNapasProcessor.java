@@ -77,6 +77,7 @@ implements BaseProcessor<HttpServletRequest, String> {
         }
         return res.toJson();
     }
+
     public ArrayList<String> GetNicknameByCode(String code){
         try {
             ArrayList<String> listnick;

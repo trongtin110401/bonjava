@@ -323,7 +323,7 @@ public class OtherServiceImpl implements OtherService {
             filter.append("code", code);
         }
 
-        FindIterable<Document> result = collection.find(filter).skip(pageIndex * pageSize).limit(pageSize);
+        FindIterable<Document> result = collection.find(filter).skip(pageIndex * pageSize).limit(pageSize).sort(Sorts.descending("createdDate"));
 
         List<UserLoseByDay> users = new ArrayList<>();
         for (Document document : result) {
