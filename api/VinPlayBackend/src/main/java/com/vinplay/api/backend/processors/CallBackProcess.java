@@ -216,6 +216,8 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
 
             RechargeDao dao = new RechargeDaoImpl();
             RechargeByCardReponse trans = dao.searchRechargeByCard(transId);
+            HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
+            HistoryTransModel historyTransModel = historyTransDao.findTransactionByTransId(transId);
             if (trans == null) {
                 return response.toJson();
             }
@@ -224,10 +226,15 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
             int status;
             if (type == 1) {
                 status = DvtConst.STATUS_APPROVE;
+                historyTransModel.setTrangthai("Thành công");
+                historyTransModel.setGhiChu("Thành công");
+
             } else {
                 status = DvtConst.STATUS_REJECT;
+                historyTransModel.setTrangthai("Thất bại");
+                historyTransModel.setGhiChu("Thất bại");
             }
-
+            historyTransDao.updateTransaction(historyTransModel);
             dao.UpdateDepositCard(transId, status, trans.message, userApprove, Long.parseLong(callBackModel.getRegAmount()));
 
             //update user money
@@ -237,9 +244,9 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
 
-            historyTransDao.insertTransaction(new HistoryTransModel(transId, "Thẻ Cào", "Nạp tiền", String.valueOf(tien), "Thành công", "Nạp Tiền Thành công ", trans.nickName, HistoryTransConst.BANK, transId));
+
+
 
             updateMoneyCodePayMomoSun2(transId, String.valueOf(tien));
             updateSTTCodePayMomoSun2(transId);
@@ -297,6 +304,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
 
                 // update trans in db
                 int status = type == 1 ? DvtConst.STATUS_APPROVE : DvtConst.STATUS_REJECT;
+                trans.Status = status;
                 boolean resultUpdateTrans = dao.UpdateDepositBankManualStatusCallBack(transId, status, trans.getDescription(), userApprove, callBackModel.getRegAmount());
                 if (!resultUpdateTrans) {
                     return response.toJson();
@@ -339,6 +347,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
                 model.setStatus(100);
                 model.setType("DEPOSIT_BANK");
                 try {
+                    SendToWS.sendBEExcRechargebybank(trans);
                     SendToWS.sendBEExcEventaction(model);
                 } catch (IOException e) {
                     e.printStackTrace();
