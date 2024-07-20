@@ -90,12 +90,11 @@ public class MGRoomCaoThap extends MGRoom {
             this.tax = MinigameConstant.MINIGAME_TAX_XU;
         }
         this.pot = pot;
-        sv.setValue(name, pot);
+        cacheService.setValue(CACHE_JACK_POT_VALUE_SLOT + "_" + this.betValue + "_" + gameName, pot);
 
         this.baseBetValue = baseBetValue;
         this.usersCaoThap = new HashMap<String, CaoThapInfo>();
 
-        cacheService.setValue(CACHE_JACK_POT_VALUE_SLOT + "_" + this.betValue + "_" + gameName, pot);
 
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.timeLoopTask, 10, 5, TimeUnit.SECONDS);
@@ -120,11 +119,11 @@ public class MGRoomCaoThap extends MGRoom {
                     if (card.getRank() == Rank.Ace) {
                         numA = 1;
                     }
-                    long moneyToSystem = Math.round((float) betValue * this.tax / 100.0f);
-                    long moneyToFund = (long) betValue - moneyToSystem;
+                    long fee = Math.round((float) betValue * this.tax / 100.0f);
+                    long moneyToFund = (long) betValue - fee;
                     MoneyResponse mnres = new MoneyResponse(false, "1001");
                     if (!isBot(user.getName())) {
-                        mnres = this.userService.updateMoney(user.getName(), (long) (-betValue), this.moneyTypeStr, "CaoThap", "Cao th\u1ea5p: \u0110\u1eb7t c\u01b0\u1ee3c", "Phi\u00ean: " + referenceId + ", B\u01b0\u1edbc: 1", moneyToSystem, Long.valueOf(referenceId), TransType.START_TRANS);
+                        mnres = this.userService.updateMoney(user.getName(), (long) (-betValue), this.moneyTypeStr, "CaoThap", "Cao th\u1ea5p: \u0110\u1eb7t c\u01b0\u1ee3c", "Phi\u00ean: " + referenceId + ", B\u01b0\u1edbc: 1", fee, Long.valueOf(referenceId), TransType.START_TRANS);
 
                     } else {
                         mnres.setSuccess(true);
