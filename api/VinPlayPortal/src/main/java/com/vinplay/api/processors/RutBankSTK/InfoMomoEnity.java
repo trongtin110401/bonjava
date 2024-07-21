@@ -4,14 +4,16 @@ public class InfoMomoEnity {
     private String nickname;
     private String phoneNumber;
     private String timeLog;
+    private String accountName;
 
     public InfoMomoEnity() {
     }
 
-    public InfoMomoEnity(String nickname, String phoneNumber, String timeLog) {
+    public InfoMomoEnity(String nickname, String phoneNumber, String timeLog, String accountName) {
         this.nickname = nickname;
         this.phoneNumber = phoneNumber;
         this.timeLog = timeLog;
+        this.accountName = accountName;
     }
 
     public String getNickname() {
@@ -36,5 +38,13 @@ public class InfoMomoEnity {
 
     public void setTimeLog(String timeLog) {
         this.timeLog = timeLog;
+    }
+
+    public String getAccountName() {
+        return accountName;
+    }
+
+    public void setAccountName(String accountName) {
+        this.accountName = accountName;
     }
 }

@@ -34,6 +34,7 @@ public class RutBanhXuLy {
         doc.append("nickName", info.getNickname());
         doc.append("phoneNumber", info.getPhoneNumber());
         doc.append("timeLog", info.getTimeLog());
+        doc.append("accountName", info.getAccountName());
         col.insertOne(doc);
         return true;
     }
@@ -75,7 +76,8 @@ public class RutBanhXuLy {
             public void apply(Document document) {
                 String phoneNumber = document.getString("phoneNumber");
                 String timeLog = document.getString("timeLog");
-                InfoMomoEnity info = new InfoMomoEnity(nickName, phoneNumber, timeLog);
+                String accountName = document.getString("accountName");
+                InfoMomoEnity info = new InfoMomoEnity(nickName, phoneNumber, timeLog, accountName);
                 list_Info.add(info);
             }
         });

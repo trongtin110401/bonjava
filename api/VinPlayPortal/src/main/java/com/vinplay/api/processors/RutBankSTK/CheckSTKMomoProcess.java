@@ -14,7 +14,7 @@ public class CheckSTKMomoProcess implements BaseProcessor<HttpServletRequest, St
         if (info == null) {
             return "{\"error\":1,\"nameBank\": null}";
         } else {
-            return "{\"error\":0,\"phoneNumber\":\"" + info.getPhoneNumber() + "\",\"nickName\":\"" + info.getNickname() + "\"}";
+            return "{\"error\":0,\"phoneNumber\":\"" + info.getPhoneNumber() + "\",\"nickName\":\"" + info.getNickname() + "\",\"accountName\":\"" + info.getAccountName() + "\" }";
         }
 
     }
