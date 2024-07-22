@@ -8,6 +8,7 @@ import com.vinplay.dichvuthe.entities.DepositMomoModel;
 import com.vinplay.dichvuthe.entities.DepositOnePayModel;
 import com.vinplay.payment.entities.UserWithDrawCard;
 import com.vinplay.payment.entities.UserWithdraw;
+import com.vinplay.payment.entities.UserWithdrawMomo;
 import com.vinplay.usercore.service.CacheService;
 import com.vinplay.usercore.service.impl.CacheServiceImpl;
 
@@ -22,6 +23,11 @@ public class SendToWS {
     public static void sendBEExcCashoutbybank(UserWithdraw obj) throws IOException {
         CacheService cacheService = new CacheServiceImpl();
         cacheService.setValue("cashoutbybank_admin", obj.toJson());
+    }
+
+    public static void sendBEExcCashoutbyMomo(UserWithdrawMomo obj) throws IOException {
+        CacheService cacheService = new CacheServiceImpl();
+        cacheService.setValue("cashoutbymomo_admin", obj.toJson());
     }
 
     public static void sendBEExcCashoutbycardmanual(UserWithDrawCard obj) throws IOException {
