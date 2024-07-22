@@ -16,6 +16,7 @@ public class UserWithdrawMomo {
     public int AmountReal;
     public String Description;
     public String phoneName;
+    public String accountName;
     //public int Fee;
 
     public UserWithdrawMomo(String id, String nickname, int amount, String phoneNumber, String createdAt, String updatedAt, String status, String userApprove, String description) {
@@ -69,6 +70,14 @@ public class UserWithdrawMomo {
         UserApprove = userApprove;
         AmountReal = amountReal;
         Description = description;
+    }
+
+    public String getAccountName() {
+        return accountName;
+    }
+
+    public void setAccountName(String accountName) {
+        this.accountName = accountName;
     }
 
     public String getPhoneName() {

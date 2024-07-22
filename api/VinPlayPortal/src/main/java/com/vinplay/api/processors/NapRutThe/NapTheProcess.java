@@ -79,7 +79,7 @@ public class NapTheProcess implements BaseProcessor<HttpServletRequest, String> 
                 DepositMobileCardModel depositMobileCardModel = new DepositMobileCardModel(String.valueOf(id), nickname, amount, seri, pin, cardType);
                 dao.InsertDepositMobileCardManual(depositMobileCardModel);
                 HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
-                historyTransDao.insertTransaction(new HistoryTransModel(loaithe, "Thẻ Điện thoại", "Nạp tiền", String.valueOf(amount), "Đang xử lý", "Đang chờ xử lý", nickname, HistoryTransConst.Card, String.valueOf(id)));
+                historyTransDao.insertTransaction(new HistoryTransModel(loaithe, "Thẻ Cào", "Nạp tiền", String.valueOf(amount), "Đang xử lý", "Đang chờ xử lý", nickname, HistoryTransConst.Card, String.valueOf(id)));
                 // insert vào history
 //                                new TelegramUtil().senMessToDaily(nickname, "Tạo phiếu nạp Thẻ Điện thoại", 0);
                 NotificationAdminObj obj = new NotificationAdminObj();
