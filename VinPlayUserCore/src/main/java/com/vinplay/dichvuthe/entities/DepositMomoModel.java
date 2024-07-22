@@ -16,6 +16,9 @@ public class DepositMomoModel {
     public String Description;
     public String UserApprove;
     public String Comment;
+    public String BankBrandName;
+    public String BankAccountNumber;
+    public String BankAccountName;
 
     public String getId() {
         return Id;
