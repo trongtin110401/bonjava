@@ -2493,7 +2493,7 @@ public class UserServiceImpl
                 obj.setRutMomo(true);
                 SendToWS.sendBEExcNotification(obj);
             } catch (Exception e) {
-
+                e.printStackTrace();
             }
 //            TelegramAlert.SendMessageCashoutMomo(userWithdrawMomo);
             response.setSuccess(moneyRes.isSuccess());

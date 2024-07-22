@@ -2872,7 +2872,15 @@ public class RechargeDaoImpl implements RechargeDao {
             conditions.put("Id", (Object) Id);
             Document document = (Document) db.getCollection(DvtConst.DEPOSIT_MOMO_COLLECTION).find((Bson) conditions).first();
             if (document == null) return null;
-            DepositMomoModel model = new DepositMomoModel(document.getString((Object) "Id"), document.getString((Object) "Nickname"), document.getString((Object) "CreatedAt"), document.getString((Object) "UpdatedAt"), document.getLong((Object) "Amount"), document.getInteger((Object) "Status"), document.getString((Object) "ReceivedPhoneNumber"), document.getString((Object) "ReceivedName"), document.getString((Object) "SendFromNumber"), document.getString((Object) "Description"), document.getString((Object) "UserApprove"));
+            DepositMomoModel model = new DepositMomoModel(document.getString((Object) "Id"),
+                    document.getString((Object) "Nickname"), document.getString((Object) "CreatedAt"),
+                    document.getString((Object) "UpdatedAt"), document.getLong((Object) "Amount"),
+                    document.getInteger((Object) "Status"), document.getString((Object) "ReceivedPhoneNumber"),
+                    document.getString((Object) "ReceivedName"), document.getString((Object) "SendFromNumber"),
+                    document.getString((Object) "Description"), document.getString((Object) "UserApprove"));
+            model.BankAccountName = document.getString("BankAccountName");
+            model.BankAccountNumber = document.getString("BankAccountNumber");
+            model.BankBrandName = document.getString("BankBrandName");
             return model;
         } catch (Exception e) {
             RechargeDaoImpl.logger.error(e);

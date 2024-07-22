@@ -5,6 +5,7 @@ import com.mongodb.client.MongoDatabase;
 import com.vinplay.api.backend.models.CallBackModel;
 import com.vinplay.api.backend.processors.cashout.NapRutGame;
 import com.vinplay.api.backend.processors.cashout.NapRutModel;
+import com.vinplay.common.notification.NotificationAdminObj;
 import com.vinplay.common.notification.SendToWS;
 import com.vinplay.common.report.EventactionAdminObj;
 import com.vinplay.dal.common.BroadCastUserMoney;
@@ -83,16 +84,26 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
             historyTransModel.setGhiChu("Thành công");
             userWithdraw.Amount = Integer.parseInt(callBackModel.getRegAmount());
             cashoutDao.UpdateCashoutMomo(callBackModel.getRequestId(), CashoutUtil.STATUS_SUCCESS, "Auto_Bank");
+            userWithdraw.Status = CashoutUtil.STATUS_SUCCESS;
             TelegramAlert.SendMessageCashoutMomo(userWithdraw);
+
         } else {
             UserServiceImpl userService = new UserServiceImpl();
             long fee = userWithdraw.AmountReal - userWithdraw.Amount;
-            boolean refund = userService.refundWhenError(userWithdraw.Nickname, userWithdraw.AmountReal, fee);
+            userService.refundWhenError(userWithdraw.Nickname, userWithdraw.AmountReal, fee);
             cashoutDao.UpdateCashoutMomo(callBackModel.getChargeId(), CashoutUtil.STATUS_ERROR, "Auto_Bank");
             historyTransModel.setTrangthai("Thất bại");
             historyTransModel.setGhiChu("Thất bại");
+            userWithdraw.Status = CashoutUtil.STATUS_ERROR;
         }
-
+        try {
+            NotificationAdminObj obj = new NotificationAdminObj();
+            SendToWS.sendBEExcCashoutbyMomo(userWithdraw);
+            obj.setRutMomo(true);
+            SendToWS.sendBEExcNotification(obj);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         historyTransDao.updateTransaction(historyTransModel);
         return "true";
     }
@@ -163,11 +174,6 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
                 model.setId(transId);
                 model.setStatus(status);
                 model.setType("DEPOSIT_MOMO");
-                try {
-                    SendToWS.sendBEExcEventaction(model);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
             }
             if (!resultUpdateTrans) {
                 return response.toJson();
@@ -191,6 +197,24 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
+            NotificationAdminObj obj = new NotificationAdminObj();
+            DepositBankModel model = new DepositBankModel(trans.Nickname, trans.Amount, trans.BankBrandName, trans.BankAccountName, trans.BankAccountNumber);
+            model.setId(callBackModel.getChargeId());
+            model.setTransactionID(callBackModel.getRequestId());
+            try {
+//                model.setStatus(1);
+//                model.setDescription(trans.Description);
+//                model.setCreatedAt(VinPlayUtils.getCurrentDateTime());
+//                model.setUpdatedAt(VinPlayUtils.getCurrentDateTime());
+//                SendToWS.sendBEExcRechargebyMomosunvin(model);
+//                obj.setNapBank(true);
+//                SendToWS.sendBEExcNotification(obj);
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
             return response.toJson();
         } catch (Exception e) {
             return response.toJson();
@@ -244,8 +268,6 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-
 
 
             updateMoneyCodePayMomoSun2(transId, String.valueOf(tien));
