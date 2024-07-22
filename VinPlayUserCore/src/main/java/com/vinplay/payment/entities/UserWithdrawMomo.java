@@ -1,5 +1,7 @@
 package com.vinplay.payment.entities;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vinplay.dichvuthe.utils.CashoutUtil;
 import com.vinplay.usercore.utils.GameCommon;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
@@ -41,12 +43,12 @@ public class UserWithdrawMomo {
         Status = CashoutUtil.STATUS_PENDING;
         UserApprove = "";
         Description = "";
-        try{
+        try {
             double feeWithdraw = GameCommon.getValueDouble("RATIO_CASHOUT_MOMO");
-            AmountReal = (int)(feeWithdraw * amount);
+            AmountReal = (int) (feeWithdraw * amount);
             //Fee = amount - AmountReal;
             System.out.println(AmountReal);
-        }catch (Exception e){
+        } catch (Exception e) {
             AmountReal = 0;
         }
     }
@@ -86,5 +88,14 @@ public class UserWithdrawMomo {
 
     public void setPhoneName(String phoneName) {
         this.phoneName = phoneName;
+    }
+
+    public String toJson() {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.writeValueAsString((Object) this);
+        } catch (JsonProcessingException mapper) {
+            return "{\"code\":500,\"message\":\"error\"}";
+        }
     }
 }
