@@ -187,29 +187,35 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
 
         switch (this.count) {
             case 2: {
+                System.out.println("==========>isBettingRound count: " + count);
                 this.isBettingRound = true;
                 break;
             }
             case 19: {
+                System.out.println("==========>isBettingRound count: " + count);
                 this.isBettingRound = false;
                 genResult = true;
                 break;
             }
             case 20: {
+                System.out.println("==========>Generate result count: " + count);
                 genResult = false;
                 this.generateResult();
                 break;
             }
             case 24: {
+                System.out.println("==========>Calculate Prize count: " + count);
                 CalculatePrizeTask task = new CalculatePrizeTask();
                 task.run();
                 break;
             }
             case 28: {
+                System.out.println("==========>broadcastMessage count: " + count);
                 this.broadcastMessage();
                 break;
             }
             case 33: {
+                System.out.println("==========> startNewRound count: " + count);
                 this.startNewRound();
                 break;
             }
