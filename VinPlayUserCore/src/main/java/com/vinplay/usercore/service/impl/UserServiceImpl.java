@@ -50,6 +50,7 @@ import com.vinplay.common.notification.SendToWS;
 import com.vinplay.dal.dao.impl.LogChuyenTienDaiLyImpl;
 import com.vinplay.dichvuthe.dao.CashoutDao;
 import com.vinplay.dichvuthe.dao.impl.CashoutDaoImpl;
+import com.vinplay.dichvuthe.entities.DepositBankModel;
 import com.vinplay.dichvuthe.entities.TransferMoneyBankModel;
 import com.vinplay.dichvuthe.service.impl.AlertServiceImpl;
 import com.vinplay.dichvuthe.service.impl.TransferMoneyBankService;
@@ -2485,6 +2486,14 @@ public class UserServiceImpl
                 response.setSuccess(false);
                 response.setErrorCode("1002");
                 return response;
+            }
+            try {
+                NotificationAdminObj obj = new NotificationAdminObj();
+                SendToWS.sendBEExcCashoutbyMomo(userWithdrawMomo);
+                obj.setRutMomo(true);
+                SendToWS.sendBEExcNotification(obj);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 //            TelegramAlert.SendMessageCashoutMomo(userWithdrawMomo);
             response.setSuccess(moneyRes.isSuccess());

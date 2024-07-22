@@ -13,6 +13,7 @@ public class NotificationAdminObj implements Serializable {
     boolean rutBank;
     boolean rutCardPhone;
     boolean onePayOtp;
+    boolean rutMomo;
 
     public NotificationAdminObj(boolean napOnePay, boolean napBank, boolean napMomo, boolean napCardPhone, boolean rutBank, boolean rutCardPhone, boolean onePayOtp ) {
         this.napOnePay = napOnePay;
@@ -83,6 +84,14 @@ public class NotificationAdminObj implements Serializable {
         this.onePayOtp = onePayOtp;
     }
 
+    public boolean isRutMomo() {
+        return rutMomo;
+    }
+
+    public void setRutMomo(boolean rutMomo) {
+        this.rutMomo = rutMomo;
+    }
+
     @Override
     public String toString() {
         return "NotificationAdminObj{" +
@@ -93,6 +102,7 @@ public class NotificationAdminObj implements Serializable {
                 ", rutBank=" + rutBank +
                 ", rutCardPhone=" + rutCardPhone +
                 ", onePayOtp=" + onePayOtp +
+                ", rutMomo=" + rutMomo +
                 '}';
     }
 
