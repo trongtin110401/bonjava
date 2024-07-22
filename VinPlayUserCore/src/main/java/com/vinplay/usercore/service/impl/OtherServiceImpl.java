@@ -409,8 +409,8 @@ public class OtherServiceImpl implements OtherService {
                 sql = "SELECT * FROM cgame.bc_trans_log WHERE time >= ? AND time <= ?";
             }
             PreparedStatement stm = conn.prepareStatement(sql);
-            stm.setDate(1, Date.valueOf(startTime));
-            stm.setDate(2, Date.valueOf(endTime));
+            stm.setTimestamp(1, Timestamp.valueOf(startTime + " 00:00:00"));
+            stm.setTimestamp(2, Timestamp.valueOf(endTime + " 23:59:59"));
             if (nickname != null && !nickname.isEmpty()) {
                 stm.setString(3, nickname);
             }
