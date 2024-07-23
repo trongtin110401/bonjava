@@ -7,6 +7,7 @@ import com.vinplay.common.notification.SendToWS;
 import com.vinplay.dichvuthe.dao.impl.RechargeDaoImpl;
 import com.vinplay.dichvuthe.entities.DepositMobileCardModel;
 import com.vinplay.dichvuthe.service.impl.RechargeServiceImpl;
+import com.vinplay.dichvuthe.utils.DvtConst;
 import com.vinplay.gachthe.NapTienGaClient;
 import com.vinplay.lognaprut.HistoryTransConst;
 import com.vinplay.lognaprut.HistoryTransDao;
@@ -77,6 +78,7 @@ public class NapTheProcess implements BaseProcessor<HttpServletRequest, String> 
             try {
                 //todo: insert record vào db
                 DepositMobileCardModel depositMobileCardModel = new DepositMobileCardModel(String.valueOf(id), nickname, amount, seri, pin, cardType);
+                depositMobileCardModel.Status = DvtConst.STATUS_PENDING;
                 dao.InsertDepositMobileCardManual(depositMobileCardModel);
                 HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
                 historyTransDao.insertTransaction(new HistoryTransModel(loaithe, "Thẻ Cào", "Nạp tiền", String.valueOf(amount), "Đang xử lý", "Đang chờ xử lý", nickname, HistoryTransConst.Card, String.valueOf(id)));
