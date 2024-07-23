@@ -7,6 +7,7 @@ import com.vinplay.common.notification.SendToWS;
 import com.vinplay.dichvuthe.dao.impl.RechargeDaoImpl;
 import com.vinplay.dichvuthe.entities.DepositMobileCardModel;
 import com.vinplay.dichvuthe.service.impl.RechargeServiceImpl;
+import com.vinplay.dichvuthe.utils.DvtConst;
 import com.vinplay.gachthe.NapTienGaClient;
 import com.vinplay.lognaprut.HistoryTransConst;
 import com.vinplay.lognaprut.HistoryTransDao;
@@ -72,11 +73,15 @@ public class NapTheProcess implements BaseProcessor<HttpServletRequest, String> 
             }
             long id = VinPlayUtils.generateTransId();
             JSONObject result = napthe.napTheAuto(cardType, pin, seri, String.valueOf(id), amount);
+            if (result.get("stt").equals(0.0d) || result.get("stt").equals(-1.0d) || result.get("stt").equals(-2.0d)) {
+                return result.toJSONString();
+            }
             RechargeDaoImpl dao = new RechargeDaoImpl();
 
             try {
                 //todo: insert record vào db
                 DepositMobileCardModel depositMobileCardModel = new DepositMobileCardModel(String.valueOf(id), nickname, amount, seri, pin, cardType);
+                depositMobileCardModel.Status = DvtConst.STATUS_PENDING;
                 dao.InsertDepositMobileCardManual(depositMobileCardModel);
                 HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
                 historyTransDao.insertTransaction(new HistoryTransModel(loaithe, "Thẻ Cào", "Nạp tiền", String.valueOf(amount), "Đang xử lý", "Đang chờ xử lý", nickname, HistoryTransConst.Card, String.valueOf(id)));
