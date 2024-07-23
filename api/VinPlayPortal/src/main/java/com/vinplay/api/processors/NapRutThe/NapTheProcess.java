@@ -73,6 +73,9 @@ public class NapTheProcess implements BaseProcessor<HttpServletRequest, String> 
             }
             long id = VinPlayUtils.generateTransId();
             JSONObject result = napthe.napTheAuto(cardType, pin, seri, String.valueOf(id), amount);
+            if (result.get("stt").equals(0.0d) || result.get("stt").equals(-1.0d) || result.get("stt").equals(-2.0d)) {
+                return result.toJSONString();
+            }
             RechargeDaoImpl dao = new RechargeDaoImpl();
 
             try {
