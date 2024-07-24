@@ -867,7 +867,7 @@ public class RechargeServiceImpl
     public synchronized RechargeResponse rechargeByAutoMomo(String nickname, BankPartnerModel requestTaoCode, String transactionId ) {
         synchronized (this) {
             try {
-                int amount = 1;
+                int amount = 0;
                 int code = 1;
                 RechargeResponse res = new RechargeResponse(code, 0L, 0, 0L);
                 // insert to db
@@ -890,7 +890,7 @@ public class RechargeServiceImpl
                     model.setCreatedAt(VinPlayUtils.getCurrentDateTime());
                     model.setUpdatedAt(VinPlayUtils.getCurrentDateTime());
                     SendToWS.sendBEExcRechargebyMomosunvin(model);
-                    obj.setNapBank(true);
+                    obj.setNapMomo(true);
                     SendToWS.sendBEExcNotification(obj);
 
                 } catch (Exception ex) {
