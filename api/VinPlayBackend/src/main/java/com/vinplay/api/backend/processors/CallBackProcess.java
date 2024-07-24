@@ -138,6 +138,14 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
         }
 
         historyTransDao.updateTransaction(historyTransModel);
+        NotificationAdminObj obj = new NotificationAdminObj();
+        try {
+            obj.setRutBank(true);
+            SendToWS.sendBEExcNotification(obj);
+            SendToWS.sendBEExcCashoutbybank(userWithdraw);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
 
         return "true";
     }
@@ -200,16 +208,16 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
 
             NotificationAdminObj obj = new NotificationAdminObj();
             DepositBankModel model = new DepositBankModel(trans.Nickname, trans.Amount, trans.BankBrandName, trans.BankAccountName, trans.BankAccountNumber);
-            model.setId(callBackModel.getChargeId());
+            model.setId(callBackModel.getRequestId());
             model.setTransactionID(callBackModel.getRequestId());
             try {
-//                model.setStatus(1);
-//                model.setDescription(trans.Description);
-//                model.setCreatedAt(VinPlayUtils.getCurrentDateTime());
-//                model.setUpdatedAt(VinPlayUtils.getCurrentDateTime());
-//                SendToWS.sendBEExcRechargebyMomosunvin(model);
-//                obj.setNapBank(true);
-//                SendToWS.sendBEExcNotification(obj);
+                model.setStatus(1);
+                model.setDescription(trans.Description);
+                model.setCreatedAt(VinPlayUtils.getCurrentDateTime());
+                model.setUpdatedAt(VinPlayUtils.getCurrentDateTime());
+                SendToWS.sendBEExcRechargebyMomosunvin(model);
+                obj.setNapBank(true);
+                SendToWS.sendBEExcNotification(obj);
 
             } catch (Exception ex) {
                 ex.printStackTrace();
