@@ -13,6 +13,8 @@ import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.response.BaseResponseModel;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Timestamp;
+import java.time.Instant;
 
 public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, String> {
     private UserService userService = new UserServiceImpl();
@@ -29,7 +31,7 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
             String bankacc = request.getParameter("bankacc");
             String otp = request.getParameter("otp");
             OtpServiceImpl service = new OtpServiceImpl();
-            baseResponseModel = service.checkOTP(nickname,otp);
+            baseResponseModel = service.checkOTP(nickname, otp);
             if (!baseResponseModel.isSuccess()) {
                 return baseResponseModel.toJson();
             }
@@ -39,13 +41,16 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
             naptmp ntmp = checknap.tongnapThe(nickname);
             long tiennap = ntmp.getTongnap();
             int yeu_cau_rut_1 = Integer.parseInt(amount);
+            String id = String.valueOf(Instant.now().toEpochMilli());
             if (tiennap >= 0) {
                 if ("momo".equalsIgnoreCase(type)) {
                     UserWithdrawMomo userWithdrawMomo = new UserWithdrawMomo(nickname, yeu_cau_rut_1, banknum);
                     userWithdrawMomo.setAccountName(bankacc);
+                    userWithdrawMomo.Id = id;
                     baseResponseModel = this.userService.UpdateMoneyWhenWithdrawMomo(userWithdrawMomo);
                 } else if ("bank".equalsIgnoreCase(type)) {
                     UserWithdraw userWithdraw = new UserWithdraw(nickname, yeu_cau_rut_1, banknum, bankacc, bankname);
+                    userWithdraw.Id = id;
                     baseResponseModel = this.userService.UpdateMoneyWhenWithdrawBank(userWithdraw);
                 }
                 BroadCastUserMoney.pushBroadCast(nickname);

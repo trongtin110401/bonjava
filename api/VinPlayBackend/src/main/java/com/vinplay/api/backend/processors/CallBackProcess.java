@@ -110,12 +110,12 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
 
     public String cashOutByBank(CallBackModel callBackModel) {
         CashoutDao cashoutDao = new CashoutDaoImpl();
-        UserWithdraw userWithdraw = cashoutDao.FindCashoutBankById(callBackModel.getChargeId());
+        UserWithdraw userWithdraw = cashoutDao.FindCashoutBankById(callBackModel.getRequestId());
         if (userWithdraw == null) {
             return "";
         }
         HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
-        HistoryTransModel historyTransModel = historyTransDao.findTransaction(callBackModel.getChargeId(), userWithdraw.Username, "RUT_BANK");
+        HistoryTransModel historyTransModel = historyTransDao.findTransaction(callBackModel.getRequestId(), userWithdraw.Username, "RUT_BANK");
         if (historyTransModel == null) {
             return "";
         }
