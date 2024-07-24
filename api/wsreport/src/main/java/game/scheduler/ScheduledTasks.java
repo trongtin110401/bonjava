@@ -57,6 +57,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
     private static final String RECHARGEBYONEPAYOTP_ADMIN = "rechargebyonepayotp_admin";
     private static final String RECHARGEBYMOMO_ADMIN = "rechargebymomo_admin";
     private static final String RECHARGEBYMOMOSUNVIN_ADMIN = "rechargebymomosunvin_admin";
+    private static final String CASHOUTBYMOMOSUNVIN_ADMIN = "cashoutbymomo_admin";
     private static final String RECHARGEBYAUTOCARD_ADMIN = "rechargebyautocard_admin";
     private static final String NOTIFY_ADMIN = "notify_admin";
     private static final String EVENTACTION_ADMIN = "eventaction_admin";
@@ -358,6 +359,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
 
     }
 
+
     private void sendMessRechargebybankToAdmin(String mess) {
         for (Session session : ServerRechargebybankGame.sessions) {
             session.sendText(mess);
@@ -386,8 +388,31 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
 
     }
 
+    @Scheduled(fixedRate = 1000)
+    public void sendCashOutByMomoAdmin() {
+
+        try {
+            RechargebybankAdminObj obj = MapperUtils.mapper.readValue(cacheService.getValueStr(CASHOUTBYMOMOSUNVIN_ADMIN), RechargebybankAdminObj.class);
+            RechargebybankReportResponse oResponse = new RechargebybankReportResponse("2", obj);
+            String json = MapperUtils.mapper.writeValueAsString(oResponse);
+            this.sendMessCashoutbymomosunvinToAdmin(json);
+            cacheService.removeKey(RECHARGEBYMOMOSUNVIN_ADMIN);
+        } catch (KeyNotFoundException ignored) {
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
     private void sendMessRechargebymomosunvinToAdmin(String mess) {
         for (Session session : ServerRechargebymomosunvinGame.sessions) {
+            session.sendText(mess);
+        }
+        //todo : update lại cache
+    }
+
+    private void sendMessCashoutbymomosunvinToAdmin(String mess) {
+        for (Session session : ServerCashoutbymomosunvinGame.sessions) {
             session.sendText(mess);
         }
         //todo : update lại cache
