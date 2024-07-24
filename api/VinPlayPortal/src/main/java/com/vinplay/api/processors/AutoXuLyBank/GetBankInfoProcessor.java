@@ -62,6 +62,7 @@ public class GetBankInfoProcessor implements BaseProcessor<HttpServletRequest, S
         String url = autoBank.getUrl() + ":" + autoBank.getPort() + autoBank.getApiRegCharge()
                 + "?apiKey=" + autoBank.getApiKey() + "&chargeType=" + chargeType + "&amount=" + amount + "&subType=" + subType + "&requestId=" + UUID.randomUUID();
         depositBankModel = processResponse(APIProcess.responseGetAPI(url, null), nickName);
+        depositBankModel.setSubType(subType);
         rechargeDao.InsertDepositBankManual(depositBankModel);
 
         NotificationAdminObj obj = new NotificationAdminObj();
