@@ -30,6 +30,7 @@ implements BaseProcessor<HttpServletRequest, String> {
         String timeStart = request.getParameter("ts");
         String timeEnd = request.getParameter("te");
         int page = Integer.parseInt(request.getParameter("p"));
+        int pageSize = Integer.parseInt(request.getParameter("pageSize"));
         String transid = request.getParameter("tid");
         RechargeByCardServiceImpl service = new RechargeByCardServiceImpl();
         List trans = service.searchRechargeByCard(nickName, provider, serial, pin, code, timeStart, timeEnd, page, transid);

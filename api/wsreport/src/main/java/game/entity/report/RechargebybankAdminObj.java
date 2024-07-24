@@ -13,7 +13,7 @@ public class RechargebybankAdminObj implements Serializable {
     public String CreatedAt;
     public String UpdatedAt;
     public long Amount;
-    public int Status;
+    public String Status;
     public String BankBrandName;
     public String BankAccountNumber;
     public String BankAccountName;
@@ -26,7 +26,7 @@ public class RechargebybankAdminObj implements Serializable {
     public RechargebybankAdminObj() {
     }
 
-    public RechargebybankAdminObj(String id, String nickname, String createdAt, String updatedAt, long amount, int status, String bankBrandName, String bankAccountNumber, String bankAccountName, String description, String userApprove, String userSender, String QRCode) {
+    public RechargebybankAdminObj(String id, String nickname, String createdAt, String updatedAt, long amount, String status, String bankBrandName, String bankAccountNumber, String bankAccountName, String description, String userApprove, String userSender, String QRCode) {
         Id = id;
         Nickname = nickname;
         CreatedAt = createdAt;
@@ -82,11 +82,11 @@ public class RechargebybankAdminObj implements Serializable {
         Amount = amount;
     }
 
-    public int getStatus() {
+    public String getStatus() {
         return Status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(String status) {
         Status = status;
     }
 
