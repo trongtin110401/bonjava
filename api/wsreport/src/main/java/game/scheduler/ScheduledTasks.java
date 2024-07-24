@@ -396,7 +396,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             RechargebybankReportResponse oResponse = new RechargebybankReportResponse("2", obj);
             String json = MapperUtils.mapper.writeValueAsString(oResponse);
             this.sendMessCashoutbymomosunvinToAdmin(json);
-            cacheService.removeKey(RECHARGEBYMOMOSUNVIN_ADMIN);
+            cacheService.removeKey(CASHOUTBYMOMOSUNVIN_ADMIN);
         } catch (KeyNotFoundException ignored) {
         } catch (Exception e) {
             e.printStackTrace();
