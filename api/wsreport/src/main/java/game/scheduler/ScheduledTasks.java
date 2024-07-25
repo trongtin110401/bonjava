@@ -392,8 +392,8 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
     public void sendCashOutByMomoAdmin() {
 
         try {
-            RechargebybankAdminObj obj = MapperUtils.mapper.readValue(cacheService.getValueStr(CASHOUTBYMOMOSUNVIN_ADMIN), RechargebybankAdminObj.class);
-            RechargebybankReportResponse oResponse = new RechargebybankReportResponse("2", obj);
+            UserWithdrawMomo obj = MapperUtils.mapper.readValue(cacheService.getValueStr(CASHOUTBYMOMOSUNVIN_ADMIN), UserWithdrawMomo.class);
+            RechargebymomoReportResponseExt oResponse = new RechargebymomoReportResponseExt("2", obj);
             String json = MapperUtils.mapper.writeValueAsString(oResponse);
             this.sendMessCashoutbymomosunvinToAdmin(json);
             cacheService.removeKey(CASHOUTBYMOMOSUNVIN_ADMIN);
