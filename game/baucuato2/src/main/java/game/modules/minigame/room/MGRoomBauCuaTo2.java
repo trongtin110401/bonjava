@@ -62,6 +62,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
 public class MGRoomBauCuaTo2 extends MGRoom {
     private static final double RATE_NO_HU = 0.3;
@@ -604,9 +605,13 @@ public class MGRoomBauCuaTo2 extends MGRoom {
 
     public long tryCalculatePrizes(int[] tiLe) {
         long totalValues = 0L;
+        Map<Integer, Integer> mResults = new HashMap<>();
+        for (byte i : dices) {
+            mResults.put((int) i, (int) i);
+        }
         for (TransactionBauCua tran : this.transactionsMap.values()) {
             for (int i = 0; i < 6; ++i) {
-                if (!this.isBot(tran.username)) {
+                if (!this.isBot(tran.username) && mResults.containsKey(i)) {
                     totalValues += tran.betValues[i] * (long) tiLe[i] + tran.betValues[i];
                 }
             }
@@ -701,7 +706,6 @@ public class MGRoomBauCuaTo2 extends MGRoom {
         byte[] dices;
 
         while (true) {
-            System.out.println("=====================> BAUCUATOTO1");
             Random rd = new Random();
             dices = new byte[]{(byte) rd.nextInt(6), (byte) rd.nextInt(6), (byte) rd.nextInt(6)};
             this.xPot = 1;

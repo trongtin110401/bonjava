@@ -39,8 +39,6 @@ public class PokeGoDaoImpl implements PokeGoDao {
         doc.append("time_log", (Object) message.time);
         doc.append("create_time", VinPlayUtils.getCurrentDateTime());
         doc.append("matrix", message.matrix);
-
-        System.out.println("Document: " +doc.toJson());
         col.insertOne(doc);
     }
 }
