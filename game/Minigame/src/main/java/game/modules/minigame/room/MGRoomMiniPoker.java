@@ -322,7 +322,7 @@ public class MGRoomMiniPoker extends MGRoom {
                                     }
                                 }
                             } else {
-                                updateFunValue(-fundExchange);
+                                if (!u.isBot()) updateFunValue(-fundExchange);
                             }
                         }
 
