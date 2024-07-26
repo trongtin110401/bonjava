@@ -603,7 +603,7 @@ public class MGRoomBauCuaTo2 extends MGRoom {
 
     }
 
-    public long tryCalculatePrizes(int[] tiLe) {
+    public long tryCalculatePrizes(int[] tiLe, byte[] dices) {
         long totalValues = 0L;
         Map<Integer, Integer> mResults = new HashMap<>();
         for (byte i : dices) {
@@ -714,7 +714,7 @@ public class MGRoomBauCuaTo2 extends MGRoom {
             if (checkNohu(tiLe)) {
                 return generateDices();
             }
-            long totalPrizes = this.tryCalculatePrizes(tiLe);
+            long totalPrizes = this.tryCalculatePrizes(tiLe, dices);
             if (getFunValue() - totalPrizes >= 0L) {
                 return dices;
             }
