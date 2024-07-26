@@ -701,6 +701,7 @@ public class MGRoomBauCuaTo2 extends MGRoom {
         byte[] dices;
 
         while (true) {
+            System.out.println("=====================> BAUCUATOTO1");
             Random rd = new Random();
             dices = new byte[]{(byte) rd.nextInt(6), (byte) rd.nextInt(6), (byte) rd.nextInt(6)};
             this.xPot = 1;
