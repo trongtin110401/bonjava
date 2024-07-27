@@ -235,6 +235,9 @@ public class RechargeByCardDAOImpl
         if (pin != null && !pin.equals("")) {
             conditions.put("Pin", (Object) pin);
         }
+        if (transId != null && !transId.equals("")) {
+            conditions.put("Status", (Object) pin);
+        }
         if (timeStart != null && !timeStart.equals("") && timeEnd != null && !timeEnd.equals("")) {
             obj.put("$gte", (Object) timeStart);
             obj.put("$lte", (Object) timeEnd);
