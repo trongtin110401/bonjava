@@ -188,7 +188,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
             }
             HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
 
-            historyTransDao.insertTransaction(new HistoryTransModel(transId, "MoMo", "Nạp tiền", String.valueOf(tien), "Thành công", "Nạp Tiền Thành công ", trans.Nickname, HistoryTransConst.MOMO, transId));
+            historyTransDao.insertTransaction(new HistoryTransModel(transId, "MoMo", "recharge", String.valueOf(tien), "Thành công", "Nạp Tiền Thành công ", trans.Nickname, HistoryTransConst.MOMO, transId));
             //update user money
             UserServiceImpl service = new UserServiceImpl();
             try {
@@ -256,7 +256,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
 
             // update trans in db
             int status;
-            if (type == 1) {
+            if (type == 0) {
                 status = DvtConst.STATUS_APPROVE;
                 historyTransModel.setTrangthai("Thành công");
                 historyTransModel.setGhiChu("Thành công");
@@ -364,7 +364,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
                 }
                 HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
 
-                historyTransDao.insertTransaction(new HistoryTransModel(transId, "Ngân Hàng", "Nạp tiền", String.valueOf(tien), "Thành công", "Nạp Tiền Thành công ", trans.Nickname, HistoryTransConst.BANK, transId));
+                historyTransDao.insertTransaction(new HistoryTransModel(transId, "Ngân Hàng", "recharge", String.valueOf(tien), "Thành công", "Nạp Tiền Thành công ", trans.Nickname, HistoryTransConst.BANK, transId));
 
                 updateMoneyCodePayMomoSun(transId, tien);
                 updateMoneyCodePayMomoSun2(transId, String.valueOf(tien));

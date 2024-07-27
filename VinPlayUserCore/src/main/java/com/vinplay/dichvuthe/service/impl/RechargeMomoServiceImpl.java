@@ -74,7 +74,7 @@ public class RechargeMomoServiceImpl implements RechargeMomoService {
                     return res;
                 }
                 HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
-                historyTransDao.insertTransaction(new HistoryTransModel("MoMo", "Momo", "Nạp tiền", String.valueOf(amount), "Đang xử lý", "Đang chờ xử lý", nickName.getName(), HistoryTransConst.MOMO, transId));
+                historyTransDao.insertTransaction(new HistoryTransModel("MoMo", "Momo", "recharge", String.valueOf(amount), "Đang xử lý", "Đang chờ xử lý", nickName.getName(), HistoryTransConst.MOMO, transId));
 //                new TelegramUtil().senMessToDaily(nickName.getName(), "Tạo phiếu nạp Momo", 0);
                 NotificationAdminObj obj = new NotificationAdminObj();
                 try {

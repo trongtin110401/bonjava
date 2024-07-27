@@ -115,7 +115,7 @@ public class ApproveDepositNHProcessor implements BaseProcessor<HttpServletReque
                     }
                     try {
                         HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
-                        historyTransDao.insertTransaction(new HistoryTransModel(trans.BankBrandName + "|" + trans.getDescription(), HistoryTransConst.CHUYEN_KHOAN, "Nạp tiền", tien+"", "Thành công", "Nạp tiền Thành công ", trans.Nickname, HistoryTransConst.BANK, trans.Id));
+                        historyTransDao.insertTransaction(new HistoryTransModel(trans.BankBrandName + "|" + trans.getDescription(), HistoryTransConst.CHUYEN_KHOAN, "recharge", tien+"", "Thành công", "Nạp tiền Thành công ", trans.Nickname, HistoryTransConst.BANK, trans.Id));
                     }catch (Exception e) {
                     }
                     updateMoneyCodePayMomoSun(transId,tien_final);

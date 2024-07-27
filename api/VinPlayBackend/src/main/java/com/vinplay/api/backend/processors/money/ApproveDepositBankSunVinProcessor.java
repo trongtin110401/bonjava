@@ -103,7 +103,7 @@ public class ApproveDepositBankSunVinProcessor implements BaseProcessor<HttpServ
                         e.printStackTrace();
                     }
                     HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
-                    historyTransDao.insertTransaction(new HistoryTransModel(trans.BankBrandName + "|" + trans.getDescription(), "CodePay", "Nạp tiền", money + "", "Thành công", "Nạp tiền Thành công ", trans.Nickname, HistoryTransConst.BANK, trans.Id));
+                    historyTransDao.insertTransaction(new HistoryTransModel(trans.BankBrandName + "|" + trans.getDescription(), "CodePay", "recharge", money + "", "Thành công", "Nạp tiền Thành công ", trans.Nickname, HistoryTransConst.BANK, trans.Id));
                     updateSttCodePayMomoSun(transId);
                     updateSTTCodePayMomoSun2(transId, trans.Description);
                     EventactionAdminObj model = new EventactionAdminObj();
