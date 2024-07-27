@@ -256,7 +256,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
 
             // update trans in db
             int status;
-            if (type == 1) {
+            if (type == 0) {
                 status = DvtConst.STATUS_APPROVE;
                 historyTransModel.setTrangthai("Thành công");
                 historyTransModel.setGhiChu("Thành công");
