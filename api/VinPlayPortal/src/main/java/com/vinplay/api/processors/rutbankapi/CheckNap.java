@@ -244,7 +244,7 @@ public class CheckNap {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection col = db.getCollection("History_User_transaction");
         conditions.put("nickName", nickname);
-        conditions.put("hinhthuc", "Nạp tiền");
+        conditions.put("hinhthuc", "recharge");
         conditions.put("trangthai", "Thành công");
         FindIterable iterable = col.find((Bson) new Document(conditions));
         iterable.forEach((Block) new Block<Document>() {

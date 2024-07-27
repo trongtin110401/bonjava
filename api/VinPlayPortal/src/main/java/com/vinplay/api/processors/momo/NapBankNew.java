@@ -90,7 +90,7 @@ public class NapBankNew implements BaseProcessor<HttpServletRequest, String> {
                     }
                     try {
                         HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
-                        historyTransDao.insertTransaction(new HistoryTransModel(codepay.BankBrandName + "|" + codepay.getDescription(), "CodePay", "Nạp tiền", amountx, "Thành công", "Nạp tiền Thành công ", codepay.Nickname, HistoryTransConst.BANK, codepay.Id));
+                        historyTransDao.insertTransaction(new HistoryTransModel(codepay.BankBrandName + "|" + codepay.getDescription(), "CodePay", "recharge", amountx, "Thành công", "Nạp tiền Thành công ", codepay.Nickname, HistoryTransConst.BANK, codepay.Id));
                     }catch (Exception e) {
                         logger.info("loi update history"+ codepay.getDescription());
                     }

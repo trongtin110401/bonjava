@@ -701,11 +701,11 @@ public class RechargeServiceImpl
                         }
                         HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
                         if (model.getUserSender().equalsIgnoreCase("codepay")) {
-                            historyTransDao.insertTransaction(new HistoryTransModel(bankname + "|" + commentTrans, "CodePay", "Nạp tiền", "", "Đang xử lý", "Đang chờ xử lý", nickname, HistoryTransConst.BANK, model.Id));
+                            historyTransDao.insertTransaction(new HistoryTransModel(bankname + "|" + commentTrans, "CodePay", "recharge", "", "Đang xử lý", "Đang chờ xử lý", nickname, HistoryTransConst.BANK, model.Id));
                         } else if (model.getUserSender().equalsIgnoreCase("momo")) {
-                            historyTransDao.insertTransaction(new HistoryTransModel("Nạp NH", "Momo", "Nạp tiền", "", "Đang xử lý", "Đang chờ xử lý", nickname, HistoryTransConst.BANK, model.Id));
+                            historyTransDao.insertTransaction(new HistoryTransModel("Nạp NH", "Momo", "recharge", "", "Đang xử lý", "Đang chờ xử lý", nickname, HistoryTransConst.BANK, model.Id));
                         } else {
-                            historyTransDao.insertTransaction(new HistoryTransModel(bankname + "|" + commentTrans, "Ngân Hàng", "Nạp tiền", String.valueOf(amount), "Đang xử lý", "Đang chờ xử lý", nickname, HistoryTransConst.BANK, model.Id));
+                            historyTransDao.insertTransaction(new HistoryTransModel(bankname + "|" + commentTrans, "Ngân Hàng", "recharge", String.valueOf(amount), "Đang xử lý", "Đang chờ xử lý", nickname, HistoryTransConst.BANK, model.Id));
                         }
                         //            new TelegramUtil().senMessToDaily(nickname, "Tạo phiếu nạp Ngân Hàng", 0);
                         NotificationAdminObj obj = new NotificationAdminObj();
@@ -741,11 +741,11 @@ public class RechargeServiceImpl
                     }
                     HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
                     if (model.getUserSender().equalsIgnoreCase("codepay")) {
-                        historyTransDao.insertTransaction(new HistoryTransModel(bankname + "|" + commentTrans, "CodePay", "Nạp tiền", "", "Đang xử lý", "Đang chờ xử lý", nickname, HistoryTransConst.BANK, model.Id));
+                        historyTransDao.insertTransaction(new HistoryTransModel(bankname + "|" + commentTrans, "CodePay", "recharge", "", "Đang xử lý", "Đang chờ xử lý", nickname, HistoryTransConst.BANK, model.Id));
                     } else if (model.getUserSender().equalsIgnoreCase("momo")) {
-                        historyTransDao.insertTransaction(new HistoryTransModel("Nạp NH", "Momo", "Nạp tiền", "", "Đang xử lý", "Đang chờ xử lý", nickname, HistoryTransConst.BANK, model.Id));
+                        historyTransDao.insertTransaction(new HistoryTransModel("Nạp NH", "Momo", "recharge", "", "Đang xử lý", "Đang chờ xử lý", nickname, HistoryTransConst.BANK, model.Id));
                     } else {
-                        historyTransDao.insertTransaction(new HistoryTransModel(bankname + "|" + commentTrans, "Ngân Hàng", "Nạp tiền", String.valueOf(amount), "Đang xử lý", "Đang chờ xử lý", nickname, HistoryTransConst.BANK, model.Id));
+                        historyTransDao.insertTransaction(new HistoryTransModel(bankname + "|" + commentTrans, "Ngân Hàng", "recharge", String.valueOf(amount), "Đang xử lý", "Đang chờ xử lý", nickname, HistoryTransConst.BANK, model.Id));
                     }
                     //            new TelegramUtil().senMessToDaily(nickname, "Tạo phiếu nạp Ngân Hàng", 0);
                     NotificationAdminObj obj = new NotificationAdminObj();
@@ -1311,7 +1311,7 @@ public class RechargeServiceImpl
                 String transactionId = rechargeDao.InsertDepositOnePayBankManual(model);
                 res.setTid(transactionId);
                 HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
-                historyTransDao.insertTransaction(new HistoryTransModel("nạp ONEPAY", "Smart Link", "Nạp tiền", String.valueOf(amount), "Đang xử lý", "Đang chờ xử lý", nickname, HistoryTransConst.ONE_PAY, transactionId));
+                historyTransDao.insertTransaction(new HistoryTransModel("nạp ONEPAY", "Smart Link", "recharge", String.valueOf(amount), "Đang xử lý", "Đang chờ xử lý", nickname, HistoryTransConst.ONE_PAY, transactionId));
 //            new TelegramUtil().senMessToDaily(nickname, "Tạo phiếu nạp ONEPAY", 0);
                 NotificationAdminObj obj = new NotificationAdminObj();
                 try {
@@ -1597,7 +1597,7 @@ public class RechargeServiceImpl
                                 DepositMobileCardModel depositMobileCardModel = new DepositMobileCardModel(id, nickname, amount, serial, pin, provider.getValue());
                                 dao.InsertDepositMobileCardManual(depositMobileCardModel);
                                 HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
-                                historyTransDao.insertTransaction(new HistoryTransModel(loaithe, "Thẻ Điện thoại", "Nạp tiền", String.valueOf(amount), "Đang xử lý", "Đang chờ xử lý", nickname, HistoryTransConst.Card, id));
+                                historyTransDao.insertTransaction(new HistoryTransModel(loaithe, "Thẻ Điện thoại", "recharge", String.valueOf(amount), "Đang xử lý", "Đang chờ xử lý", nickname, HistoryTransConst.Card, id));
                                 // insert vào history
 
 //                                new TelegramUtil().senMessToDaily(nickname, "Tạo phiếu nạp Thẻ Điện thoại", 0);
@@ -2428,7 +2428,7 @@ public class RechargeServiceImpl
             // update trạng thái thành công
             if (trans.getStatus() != 100 && realStatus == 2) { // đúng mới cộng tiền
                 HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
-                historyTransDao.insertTransaction(new HistoryTransModel(HistoryTransConst.MOMO + "|" + trans.getDescription(), "CodePay", "Nạp tiền", amountReal+"", "Thành công", "Nạp tiền Thành công ", trans.Nickname, HistoryTransConst.MOMO, trans.Id));
+                historyTransDao.insertTransaction(new HistoryTransModel(HistoryTransConst.MOMO + "|" + trans.getDescription(), "CodePay", "recharge", amountReal+"", "Thành công", "Nạp tiền Thành công ", trans.Nickname, HistoryTransConst.MOMO, trans.Id));
 //                historyTransService.update(trans.Id, trans.Nickname, HistoryTransConst.MOMO, "Thành công", " giao dịch thành công");
                 boolean resultUpdateTrans = dao.UpdateDepositMomoManualStatus2(amountReal, requestId, DvtConst.STATUS_APPROVE, "", "Momo Auto");
                 if (!resultUpdateTrans) {
