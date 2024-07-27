@@ -209,7 +209,7 @@ public class HistoryTransDaoImpl implements HistoryTransDao {
                 conditions.put("hinhthuc", "recharge");
 
                 BasicDBObject obj = new BasicDBObject();
-                obj.put("$gt", 0);
+                obj.put("$gt", "0");
                 conditions.put("sotien", obj );
             }
 
