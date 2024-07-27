@@ -343,6 +343,9 @@ public class RechargeByCardDAOImpl
         if (pin != null && !pin.equals("")) {
             conditions.put("Pin", (Object) pin);
         }
+        if (code != null && !code.equals("")) {
+            conditions.put("Status", (Object) code);
+        }
         if (timeStart != null && !timeStart.equals("") && timeEnd != null && !timeEnd.equals("")) {
             obj.put("$gte", (Object) timeStart);
             obj.put("$lte", (Object) timeEnd);
