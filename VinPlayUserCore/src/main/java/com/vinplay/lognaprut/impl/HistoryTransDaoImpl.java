@@ -207,7 +207,6 @@ public class HistoryTransDaoImpl implements HistoryTransDao {
             if (nickName != null && !nickName.isEmpty()) {
                 conditions.put("nickName", nickName.trim());
                 conditions.put("hinhthuc", "recharge");
-
                 BasicDBObject obj = new BasicDBObject();
                 obj.put("$gt", "0");
                 conditions.put("sotien", obj );
