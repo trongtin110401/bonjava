@@ -443,7 +443,7 @@ public class OtherServiceImpl implements OtherService {
         try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_banca");) {
             String sql = "SELECT u.nickname, sum(c.CashGain) " +
                     "FROM cgame.bc_trans_log c JOIN cgame.users u ON c.UserId = u.user_id " +
-                    "WHERE c.time >= ?  AND c.time <= ? AND Type = 1 " +
+                    "WHERE c.time >= ?  AND c.time <= ? AND c.type = 1 " +
                     "GROUP BY u.nickname";
 
             stm = conn.prepareStatement(sql);
