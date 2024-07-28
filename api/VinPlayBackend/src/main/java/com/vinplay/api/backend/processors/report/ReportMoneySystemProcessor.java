@@ -30,7 +30,9 @@ import com.vinplay.dal.entities.report.ReportTotalMoneyModel;
 import com.vinplay.dichvuthe.dao.CashoutDao;
 import com.vinplay.dichvuthe.dao.impl.CashoutDaoImpl;
 import com.vinplay.dichvuthe.entities.CashoutBankResponse;
+import com.vinplay.dichvuthe.entities.CashoutMomoResponse;
 import com.vinplay.payment.entities.UserWithdraw;
+import com.vinplay.payment.entities.UserWithdrawMomo;
 import com.vinplay.usercore.utils.GameCommon;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
@@ -277,7 +279,6 @@ public class ReportMoneySystemProcessor
     }
 
     private Long getCashOutByBankSucesss(String startTime, String endTime) {
-        System.out.println("==================" + startTime + " - " + endTime);
         CashoutDao cashoutDao = new CashoutDaoImpl();
         UserWithdraw userWithdraw = new UserWithdraw(null, null, null, null, null, "success");
         CashoutBankResponse res = cashoutDao.GetListCashoutBank(userWithdraw, 0, 0, startTime + " 00:00:00", endTime + " 23:59:59");
@@ -285,7 +286,11 @@ public class ReportMoneySystemProcessor
     }
 
     private Long getCashOutByMoMoSucesss(String startTime, String endTime) {
-        return 0L;
+        CashoutDao cashoutDao = new CashoutDaoImpl();
+        UserWithdrawMomo userWithdraw = new UserWithdrawMomo(null, null, null, "success");
+        CashoutMomoResponse res = cashoutDao.GetListCashoutMomo(userWithdraw, 0, 0, startTime + " 00:00:00", endTime + " 23:59:59");
+
+        return res.totalMoneySuccess;
     }
 }
 
