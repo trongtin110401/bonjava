@@ -156,7 +156,7 @@ public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServle
 
 
                 try {
-                    mailService.sendMailGiftCode(userLoseByDay.getNickname(), giftCode, "Hoan Tra Tien Cuoc", content);
+                    mailService.sendMailGiftCode(userLoseByDay.getNickname(), giftCode, "Hoàn Tr? Ti?n C??c", content);
                     UserTele userTele = otherService.getUserTeleInfoByNickname(userLoseByDay.getNickname());
                     if (userTele != null) {
                         sendMessage(userTele.getChatID(), content);
