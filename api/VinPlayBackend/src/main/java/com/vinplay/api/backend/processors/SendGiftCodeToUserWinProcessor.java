@@ -20,15 +20,15 @@ import com.vinplay.usercore.service.impl.OtherServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.dto.GiftCodeDto;
-import com.vinplay.vbee.common.response.LogUserMoneyResponse;
-import com.vinplay.vbee.common.response.UserCodeReponse;
-import com.vinplay.vbee.common.response.UserTele;
+import com.vinplay.vbee.common.response.*;
+import com.vinplay.vbee.common.statics.Consts;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
 import okhttp3.*;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.bson.Document;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -54,40 +54,77 @@ public class SendGiftCodeToUserWinProcessor implements BaseProcessor<HttpServlet
             } catch (Exception e) {
                 price = 50000;
             }
-            LogMoneyUserDaoImpl dao = new LogMoneyUserDaoImpl();
-            Map<String, Long> users = new HashMap<>();
-            List<LogUserMoneyResponse> list = dao.getLogMoneyUserByNickname(timeStart, timeEnd, nickname);
+            return process(nickname, message, timeStart, timeEnd, price);
+        } catch (Exception ex) {
+            System.out.println(ExceptionUtils.getStackTrace(ex));
+            throw new RuntimeException(ex);
+        }
+    }
 
-            for (LogUserMoneyResponse response : list) {
-                if ("Gift Code".equalsIgnoreCase(response.serviceName)) {
-                    continue;
-                }
-                users.merge(response.nickName, response.moneyExchange, Long::sum);
-            }
-
+    public String process(String nickname, String message, String timeStart, String timeEnd, int price) throws Exception {
+        try {
+            // get Fish profit
             OtherService otherService = new OtherServiceImpl();
-            for (Map.Entry<String, Long> entry : users.entrySet()) {
-                if (entry.getValue() > 0) {
-                    UserTele userTele = otherService.getUserTeleInfoByNickname(entry.getKey());
-                    if (userTele != null && userTele.getChatID() != null) {
-                        String giftCode = VinPlayUtils.genGiftCode(10);
-                        String content = message + " : " + genCode(price, giftCode);
-//                    mailService.sendMailBoxFromByNickNameAdmin(userTele.getNickname(), "Tri ân khách hàng: Hoàn tr? ti?n c??c", content);
+            List<MoneyShootFishResponse> userFishProfits = otherService.getTotalShootFish(timeStart, timeEnd, nickname);
+            Map<String, Long> mapUserFishProfits = new HashMap<>();
+            userFishProfits.forEach(moneyShootFishResponse -> mapUserFishProfits.put(moneyShootFishResponse.getNickname(), moneyShootFishResponse.getTotalProfit()));
+
+            LogMoneyUserDaoImpl dao = new LogMoneyUserDaoImpl();
+            List<LogUserMoneyResponse> list = dao.getLogMoneyUser(timeStart, timeEnd);
+
+            List<UserLoseByDay> userLoseByDays = list.stream()
+//                .filter(log -> !"Admin".equals(log.getActionName())
+//                        && !"Gift Code".equals(log.getActionName())
+//                        && !"Gift Code".equals(log.getServiceName())
+//                        && !"RechargeByBank".equals(log.getActionName())
+//                        && !"RechargeByMomo".equals(log.getActionName())
+//                        && !"ChargeSMS".equals(log.getActionName())
+//                        && !"CashOutByBank".equals(log.getActionName())
+//                        && !"RefundRechargeError".equals(log.getActionName())
+//                        && !"CashOutByMomo".equals(log.getActionName())
+//                        && !"RechargeByCard".equals(log.getActionName())
+//                        && !"RechargeBySMS".equals(log.getActionName())
+//                        && !"Exchange".equals(log.getActionName()))
+                    .filter(log -> !Consts.NO_GAME.contains(log.getActionName()) && !"Exchange".equals(log.getActionName()))
+                    .collect(Collectors.groupingBy(LogUserMoneyResponse::getNickName,
+                            Collectors.summingLong(LogUserMoneyResponse::getMoneyExchange)))
+                    .entrySet().stream()
+                    .filter(entry -> entry.getValue() >= 100000)
+                    .map(entry -> {
+                        UserLoseByDay userLoseByDay = new UserLoseByDay();
+                        userLoseByDay.setNickname(entry.getKey());
+                        userLoseByDay.setMoney(entry.getValue());
+                        return userLoseByDay;
+                    })
+                    .collect(Collectors.toList());
+
+            userLoseByDays.forEach(userLoseByDay -> {
+                if (mapUserFishProfits.containsKey(userLoseByDay.getNickname())) {
+                    userLoseByDay.setMoney(userLoseByDay.getMoney() + (mapUserFishProfits.get(userLoseByDay.getNickname()) * -1));
+                }
+            });
+
+            userLoseByDays.forEach(userLoseByDay -> {
+                UserTele userTele = otherService.getUserTeleInfoByNickname(userLoseByDay.getNickname());
+                if (userTele != null && userTele.getChatID() != null) {
+                    String giftCode = VinPlayUtils.genGiftCode(10);
+                    String content = message + " : " + genCode(price, giftCode);
+                    try {
                         mailService.sendMailGiftCode(userTele.getNickname(), giftCode, "Hoan Tra Tien Cuoc", content);
                         sendMessage(userTele.getChatID(), content);
-                        saveUserTeleCashBack(userTele, giftCode, price, entry.getValue());
+                        saveUserTeleCashBack(userTele, giftCode, price, userLoseByDay.getMoney());
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
                     }
                 }
-            }
+            });
 
             UserCodeReponse userCodeResponse = new UserCodeReponse(true, "200");
-            Map<String, Long> filteredUsers = users.entrySet().stream()
-                    .filter(entry -> entry.getValue() < 0)
-                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            Map<String, Long> filteredUsers = userLoseByDays.stream()
+                    .collect(Collectors.toMap(userLoseByDay -> userLoseByDay.getNickname(), userLoseByDay -> userLoseByDay.getMoney()));
             userCodeResponse.setUsers(filteredUsers);
             return userCodeResponse.toJson();
         } catch (Exception ex) {
-            System.out.println(ExceptionUtils.getStackTrace(ex));
             throw new RuntimeException(ex);
         }
     }

@@ -46,7 +46,7 @@ public class GetListUserLoseByDayProcessor implements BaseProcessor<HttpServletR
 
             // get Fish profit
             OtherService otherService = new OtherServiceImpl();
-            List<MoneyShootFishResponse> userFishProfits = otherService.getTotalShootFish(timeStart, timeEnd);
+            List<MoneyShootFishResponse> userFishProfits = otherService.getTotalShootFish(timeStart, timeEnd, null);
             Map<String, Long> mapUserFishProfits = new HashMap<>();
             userFishProfits.forEach(moneyShootFishResponse -> mapUserFishProfits.put(moneyShootFishResponse.getNickname(), moneyShootFishResponse.getTotalProfit()));
 
