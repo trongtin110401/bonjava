@@ -447,8 +447,8 @@ public class OtherServiceImpl implements OtherService {
                     "GROUP BY u.nickname";
 
             stm = conn.prepareStatement(sql);
-            stm.setTimestamp(1, Timestamp.valueOf(startTime + " 00:00:00"));
-            stm.setTimestamp(2, Timestamp.valueOf(endTime + " 23:59:59"));
+            stm.setTimestamp(1, Timestamp.valueOf(LocalDateTime.parse(startTime + " 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))));
+            stm.setTimestamp(2, Timestamp.valueOf(LocalDateTime.parse(endTime + " 23:59:59", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))));
             rs = stm.executeQuery();
 
             MoneyShootFishResponse response = null;
