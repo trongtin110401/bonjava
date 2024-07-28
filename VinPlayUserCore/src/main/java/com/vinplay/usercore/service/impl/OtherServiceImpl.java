@@ -442,7 +442,7 @@ public class OtherServiceImpl implements OtherService {
         PreparedStatement stm = null;
         ResultSet rs = null;
         try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_banca");) {
-            String sql = "SELECT u.nickname, sum(c.CashGain) " +
+            String sql = "SELECT u.nickname, sum(c.CashGain) as CashGain " +
                     "FROM cgame.bc_trans_log c JOIN cgame.users u ON c.UserId = u.user_id " +
                     "WHERE c.time >= ?  AND c.time <= ? AND c.type = 1 " +
                     "GROUP BY u.nickname";
