@@ -36,49 +36,64 @@ import java.util.stream.Collectors;
 public class GetListUserLoseByDayProcessor implements BaseProcessor<HttpServletRequest, String> {
 
     public String execute(Param<HttpServletRequest> param) {
-        UserLoseByDayResponse userCodeResponse = new UserLoseByDayResponse(true, "200");
-        HttpServletRequest request = param.get();
+        try {
+            UserLoseByDayResponse userCodeResponse = new UserLoseByDayResponse(true, "200");
+            HttpServletRequest request = param.get();
 
-        String timeStart = request.getParameter("timeStart");
-        String timeEnd = request.getParameter("timeEnd");
-        LogMoneyUserDaoImpl dao = new LogMoneyUserDaoImpl();
+            String timeStart = request.getParameter("timeStart");
+            String timeEnd = request.getParameter("timeEnd");
+            LogMoneyUserDaoImpl dao = new LogMoneyUserDaoImpl();
 
-        List<LogUserMoneyResponse> list = dao.getLogMoneyUser(timeStart, timeEnd);
+            List<LogUserMoneyResponse> list = dao.getLogMoneyUser(timeStart, timeEnd);
+            // search fund
+            OtherService otherService = new OtherServiceImpl();
+            List<MoneyShootFishResponse> userFishProfits = otherService.getTotalShootFish(timeStart, timeEnd);
+            Map<String, Long> mapUserFishProfits = new HashMap<>();
+            userFishProfits.forEach(moneyShootFishResponse -> mapUserFishProfits.put(moneyShootFishResponse.getNickname(), moneyShootFishResponse.getTotalProfit()));
 
-        List<UserLoseByDay> userLoseByDays = list.stream()
-                .filter(log -> !"Admin".equals(log.getActionName())
-                        && !"Gift Code".equals(log.getActionName())
-                        && !"Gift Code".equals(log.getServiceName())
-                        && !"RechargeByBank".equals(log.getActionName())
-                        && !"RechargeByMomo".equals(log.getActionName())
-                        && !"ChargeSMS".equals(log.getActionName())
-                        && !"CashOutByBank".equals(log.getActionName())
-                        && !"RefundRechargeError".equals(log.getActionName())
-                        && !"CashOutByMomo".equals(log.getActionName())
-                        && !"RechargeByCard".equals(log.getActionName())
-                        && !"RechargeBySMS".equals(log.getActionName())
-                        && !"Exchange".equals(log.getActionName()))
-                .filter(log -> !Consts.NO_GAME.contains(log.getActionName()))
-                .map(log -> {
-                    System.out.println("=============> " + log.getActionName());
-                    return log;
-                })
-                .collect(Collectors.groupingBy(LogUserMoneyResponse::getNickName,
-                        Collectors.summingLong(LogUserMoneyResponse::getMoneyExchange)))
-                .entrySet().stream()
-                .filter(entry -> entry.getValue() <= -100000)
-                .map(entry -> {
-                    UserLoseByDay userLoseByDay = new UserLoseByDay();
-                    userLoseByDay.setNickname(entry.getKey());
-                    userLoseByDay.setMoney(entry.getValue());
-                    return userLoseByDay;
-                })
-                .collect(Collectors.toList());
+            List<UserLoseByDay> userLoseByDays = list.stream()
+//                .filter(log -> !"Admin".equals(log.getActionName())
+//                        && !"Gift Code".equals(log.getActionName())
+//                        && !"Gift Code".equals(log.getServiceName())
+//                        && !"RechargeByBank".equals(log.getActionName())
+//                        && !"RechargeByMomo".equals(log.getActionName())
+//                        && !"ChargeSMS".equals(log.getActionName())
+//                        && !"CashOutByBank".equals(log.getActionName())
+//                        && !"RefundRechargeError".equals(log.getActionName())
+//                        && !"CashOutByMomo".equals(log.getActionName())
+//                        && !"RechargeByCard".equals(log.getActionName())
+//                        && !"RechargeBySMS".equals(log.getActionName())
+//                        && !"Exchange".equals(log.getActionName()))
+                    .filter(log -> !Consts.NO_GAME.contains(log.getActionName()))
+                    .map(log -> {
+                        System.out.println("=============> " + log.getActionName());
+                        return log;
+                    })
+                    .map(logUserMoneyResponse -> {
+                        if(mapUserFishProfits.containsKey(logUserMoneyResponse.getNickName())) {
+                            logUserMoneyResponse.setMoneyExchange(logUserMoneyResponse.getMoneyExchange() + mapUserFishProfits.get(logUserMoneyResponse.getNickName()));
+                        }
+                        return logUserMoneyResponse;
+                    })
+                    .collect(Collectors.groupingBy(LogUserMoneyResponse::getNickName,
+                            Collectors.summingLong(LogUserMoneyResponse::getMoneyExchange)))
+                    .entrySet().stream()
+                    .filter(entry -> entry.getValue() <= -100000)
+                    .map(entry -> {
+                        UserLoseByDay userLoseByDay = new UserLoseByDay();
+                        userLoseByDay.setNickname(entry.getKey());
+                        userLoseByDay.setMoney(entry.getValue());
+                        return userLoseByDay;
+                    })
+                    .collect(Collectors.toList());
 
-        userCodeResponse.setUsers(userLoseByDays);
-        userCodeResponse.setTotalRecord(userLoseByDays.size());
+            userCodeResponse.setUsers(userLoseByDays);
+            userCodeResponse.setTotalRecord(userLoseByDays.size());
 
-        return userCodeResponse.toJson();
+            return userCodeResponse.toJson();
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
     }
 }
 
