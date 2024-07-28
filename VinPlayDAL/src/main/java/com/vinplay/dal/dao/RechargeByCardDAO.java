@@ -12,7 +12,7 @@ import com.vinplay.vbee.common.response.RechargeByCardReponse;
 import java.util.List;
 
 public interface RechargeByCardDAO {
-    public List<RechargeByCardReponse> searchRechargeByCard(String var1, String var2, String var3, String var4, String var5, String var6, String var7, int var8, String var9);
+    public List<RechargeByCardReponse> searchRechargeByCard(String var1, String var2, String var3, String var4, String var5, String var6, String var7, int var8, String var9, String var10);
 
     public int countSearchRechargeByCard(String var1, String var2, String var3, String var4, String var5, String var6, String var7, String var8);
 
