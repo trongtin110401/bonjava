@@ -277,6 +277,7 @@ public class ReportMoneySystemProcessor
     }
 
     private Long getCashOutByBankSucesss(String startTime, String endTime) {
+        System.out.println("==================" + startTime + " - " + endTime);
         CashoutDao cashoutDao = new CashoutDaoImpl();
         UserWithdraw userWithdraw = new UserWithdraw(null, null, null, null, null, "success");
         CashoutBankResponse res = cashoutDao.GetListCashoutBank(userWithdraw, 0, 0, startTime, endTime);
