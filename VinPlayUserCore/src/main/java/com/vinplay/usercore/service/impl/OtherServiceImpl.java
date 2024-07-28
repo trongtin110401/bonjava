@@ -435,6 +435,42 @@ public class OtherServiceImpl implements OtherService {
     }
 
     @Override
+    public List<MoneyShootFishResponse> getTotalShootFish(String startTime, String endTime) throws Exception {
+        startTime = startTime + " 00:00:00";
+        endTime = endTime + " 23:59:59";
+        List<MoneyShootFishResponse> responses = new ArrayList<>();
+        long totalProfit = 0;
+        PreparedStatement stm = null;
+        ResultSet rs = null;
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_banca");) {
+            String sql = "SELECT u.nickname, sum(c.CashGain) " +
+                    "FROM cgame.bc_trans_log c JOIN cgame.users u ON c.UserId = u.user_id " +
+                    "WHERE c.time >= ?  AND c.time <= ? AND Type = 1 " +
+                    "GROUP BY u.nickname";
+            stm = conn.prepareStatement(sql);
+            stm.setTimestamp(1, Timestamp.valueOf(startTime + " 00:00:00"));
+            stm.setTimestamp(2, Timestamp.valueOf(endTime + " 23:59:59"));
+            rs = stm.executeQuery();
+
+            MoneyShootFishResponse response = null;
+            while (rs.next()) {
+                response = new MoneyShootFishResponse(true, "0", rs.getString("nickname"), rs.getLong("CashGain"));
+                responses.add(response);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (rs != null && !rs.isClosed()) {
+                rs.close();
+            }
+            if (stm != null && !stm.isClosed()) {
+                stm.close();
+            }
+        }
+        return responses;
+    }
+
+    @Override
     public void deleteExpenseById(String id) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection<Document> col = db.getCollection("expense_transaction");
