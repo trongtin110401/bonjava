@@ -447,6 +447,7 @@ public class OtherServiceImpl implements OtherService {
                     "FROM cgame.bc_trans_log c JOIN cgame.users u ON c.UserId = u.user_id " +
                     "WHERE c.time >= ?  AND c.time <= ? AND Type = 1 " +
                     "GROUP BY u.nickname";
+
             stm = conn.prepareStatement(sql);
             stm.setTimestamp(1, Timestamp.valueOf(startTime + " 00:00:00"));
             stm.setTimestamp(2, Timestamp.valueOf(endTime + " 23:59:59"));

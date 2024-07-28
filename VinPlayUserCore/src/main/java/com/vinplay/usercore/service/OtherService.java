@@ -35,6 +35,7 @@ public interface OtherService {
 
     List<MoneyShootFishResponse> getTotalShootFish(String startTime, String endTime) throws Exception;
 
+
     long getTotalShootFishByNickname(String startTime, String endTime, String nickname);
 
     void deleteExpenseById(String id);
