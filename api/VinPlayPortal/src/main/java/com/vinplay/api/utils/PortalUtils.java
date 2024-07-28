@@ -90,9 +90,6 @@ public class PortalUtils {
 
         // kick user logging in other device
         String pf = request.getParameter("pf");
-
-        System.out.println("============> User " + userModel.getNickname() + " login with pf: " + pf);
-
         if (pf != null && pf.equalsIgnoreCase("FISH")) {
             // do nothing
         } else {

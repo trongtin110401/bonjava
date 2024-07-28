@@ -19,6 +19,7 @@ import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.dto.GiftCodeDto;
 import com.vinplay.vbee.common.response.*;
+import com.vinplay.vbee.common.statics.Consts;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
 import okhttp3.*;
 
@@ -57,6 +58,7 @@ public class GetListUserLoseByDayProcessor implements BaseProcessor<HttpServletR
                         && !"RechargeByCard".equals(log.getActionName())
                         && !"RechargeBySMS".equals(log.getActionName())
                         && !"Exchange".equals(log.getActionName()))
+                .filter(log -> !Consts.NO_GAME.contains(log.getActionName()))
                 .map(log -> {
                     System.out.println("=============> " + log.getActionName());
                     return log;
