@@ -60,7 +60,7 @@ public class GetListUserWinByDayProcessor implements BaseProcessor<HttpServletRe
 //                        && !"RechargeByCard".equals(log.getActionName())
 //                        && !"RechargeBySMS".equals(log.getActionName())
 //                        && !"Exchange".equals(log.getActionName()))
-                    .filter(log -> !Consts.NO_GAME.contains(log.getActionName()))
+                    .filter(log -> !Consts.NO_GAME.contains(log.getActionName()) && !"Exchange".equals(log.getActionName()))
                     .collect(Collectors.groupingBy(LogUserMoneyResponse::getNickName,
                             Collectors.summingLong(LogUserMoneyResponse::getMoneyExchange)))
                     .entrySet().stream()
