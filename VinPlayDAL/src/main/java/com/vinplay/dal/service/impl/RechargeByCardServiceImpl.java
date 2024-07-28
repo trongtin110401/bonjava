@@ -16,9 +16,9 @@ import java.util.List;
 public class RechargeByCardServiceImpl
 implements RechargeByCardService {
     @Override
-    public List<RechargeByCardReponse> searchRechargeByCard(String nickName, String provider, String serial, String pin, String code, String timeStart, String timeEnd, int page, String transId) {
+    public List<RechargeByCardReponse> searchRechargeByCard(String nickName, String provider, String serial, String pin, String code, String timeStart, String timeEnd, int page, String transId, String status) {
         RechargeByCardDAOImpl dao = new RechargeByCardDAOImpl();
-        return dao.searchRechargeByCard(nickName, provider, serial, pin, code, timeStart, timeEnd, page, transId);
+        return dao.searchRechargeByCard(nickName, provider, serial, pin, code, timeStart, timeEnd, page, transId, status);
     }
 
     @Override

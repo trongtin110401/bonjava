@@ -210,7 +210,7 @@ public class RechargeByCardDAOImpl
     private int vcoin10KQuantity = 0;
 
     @Override
-    public List<RechargeByCardReponse> searchRechargeByCard(String nickName, String provider, String serial, String pin, String code, String timeStart, String timeEnd, int page, String transId) {
+    public List<RechargeByCardReponse> searchRechargeByCard(String nickName, String provider, String serial, String pin, String code, String timeStart, String timeEnd, int page, String transId, String status) {
 
         System.out.println("=========Code: " + code);
         final ArrayList<RechargeByCardReponse> results = new ArrayList<RechargeByCardReponse>();
@@ -237,8 +237,8 @@ public class RechargeByCardDAOImpl
         if (pin != null && !pin.equals("")) {
             conditions.put("Pin", (Object) pin);
         }
-        if (code != null && !code.equals("")) {
-            conditions.put("Status", (Object) code);
+        if (status != null && !status.equals("")) {
+            conditions.put("Status", (Object) Integer.parseInt(status));
         }
         if (timeStart != null && !timeStart.equals("") && timeEnd != null && !timeEnd.equals("")) {
             obj.put("$gte", (Object) timeStart);

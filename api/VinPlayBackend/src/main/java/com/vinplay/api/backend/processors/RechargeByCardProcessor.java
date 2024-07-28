@@ -33,7 +33,7 @@ implements BaseProcessor<HttpServletRequest, String> {
         int pageSize = Integer.parseInt(request.getParameter("pageSize"));
         String transid = request.getParameter("tid");
         RechargeByCardServiceImpl service = new RechargeByCardServiceImpl();
-        List trans = service.searchRechargeByCard(nickName, provider, serial, pin, code, timeStart, timeEnd, page, transid);
+        List trans = service.searchRechargeByCard(nickName, provider, serial, pin, code, timeStart, timeEnd, page, transid, code);
         int totalRecord = service.countSearchRechargeByCard(nickName, provider, serial, pin, code, timeStart, timeEnd, transid);
 //        List moneyTotalRechargeByCard = service.moneyTotalRechargeByCard(nickName, provider, serial, pin, code, timeStart, timeEnd, transid);
         long totalPages = 100L;
