@@ -65,7 +65,6 @@ public class CheckOtpProcessor implements BaseProcessor<HttpServletRequest, Stri
 
             OkHttpClient client = new OkHttpClient();
             Response response = client.newCall(request).execute();
-            System.out.println("Response Code: " + response.code());
             response.close();
         } catch (Exception e) {
             e.printStackTrace();

@@ -156,7 +156,7 @@ public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServle
 
 
                 try {
-                    mailService.sendMailGiftCode(userLoseByDay.getNickname(), giftCode, "Hoan Tra Tien Cuoc", content);
+                    mailService.sendMailGiftCode(userLoseByDay.getNickname(), giftCode, "Hoàn Tr? Ti?n C??c", content);
                     UserTele userTele = otherService.getUserTeleInfoByNickname(userLoseByDay.getNickname());
                     if (userTele != null) {
                         sendMessage(userTele.getChatID(), content);
@@ -204,7 +204,6 @@ public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServle
 
             OkHttpClient client = new OkHttpClient();
             Response response = client.newCall(request).execute();
-            System.out.println("Response Code: " + response.code());
             response.close();
         } catch (Exception e) {
             e.printStackTrace();

@@ -27,6 +27,10 @@ import com.vinplay.dal.dao.impl.ReportDaoImpl;
 import com.vinplay.dal.entities.report.ReportMoneySystemModel;
 import com.vinplay.dal.entities.report.ReportTXModel;
 import com.vinplay.dal.entities.report.ReportTotalMoneyModel;
+import com.vinplay.dichvuthe.dao.CashoutDao;
+import com.vinplay.dichvuthe.dao.impl.CashoutDaoImpl;
+import com.vinplay.dichvuthe.entities.CashoutBankResponse;
+import com.vinplay.payment.entities.UserWithdraw;
 import com.vinplay.usercore.utils.GameCommon;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
@@ -38,9 +42,7 @@ import com.vinplay.vbee.common.utils.VinPlayUtils;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -258,6 +260,11 @@ public class ReportMoneySystemProcessor
                     }
                     bot.put((String) entry3.getKey(), model4.moneyOther);
                 }
+
+                // add real cash out base on channel
+                vinOutUser.put("realCashoutByMomo", getCashOutByMoMoSucesss(startTime, endTime));
+                vinOutUser.put("realCashoutByBank", getCashOutByBankSucesss(startTime, endTime));
+
                 res = new ReportMoneySystemResponse(true, "0", taiXiu, taiXiuBot, actionGame, vinInUser, vinInEvent, totalInUser, totalInEvent, totalIn, vinOutUser, vinOutAgent, totalOutUser, totalOutAgent, totalOut, ratioCashout, vinOther, user, actionGameBot, bot);
                 String bill = GameCommon.getValueStr("BILLING");
                 res.billConfig = bill;
@@ -267,6 +274,17 @@ public class ReportMoneySystemProcessor
             }
         }
         return res.toJson();
+    }
+
+    private Long getCashOutByBankSucesss(String startTime, String endTime) {
+        CashoutDao cashoutDao = new CashoutDaoImpl();
+        UserWithdraw userWithdraw = new UserWithdraw(null, null, null, null, null, "success");
+        CashoutBankResponse res = cashoutDao.GetListCashoutBank(userWithdraw, 0, 0, startTime, endTime);
+        return res.totalMoneySuccess;
+    }
+
+    private Long getCashOutByMoMoSucesss(String startTime, String endTime) {
+        return 0L;
     }
 }
 

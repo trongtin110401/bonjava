@@ -108,7 +108,7 @@ public class SendGiftCodeToUserWinProcessor implements BaseProcessor<HttpServlet
                 String giftCode = VinPlayUtils.genGiftCode(10);
                 String content = message + " : " + genCode(price, giftCode);
                 try {
-                    mailService.sendMailGiftCode(userLoseByDay.getNickname(), giftCode, "Hoan Tra Tien Cuoc", content);
+                    mailService.sendMailGiftCode(userLoseByDay.getNickname(), giftCode, "Hoàn Trả Tiền Cược", content);
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
@@ -164,7 +164,7 @@ public class SendGiftCodeToUserWinProcessor implements BaseProcessor<HttpServlet
         return format.format(expirationDate);
     }
 
-    // Ph??ng th?c ?? chuy?n ??i chu?i th�nh Date
+    // Ph??ng th?c ?? chuy?n ??i chu?i th�nh Date
     public static Date parseDate(String dateString) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         try {
@@ -191,7 +191,6 @@ public class SendGiftCodeToUserWinProcessor implements BaseProcessor<HttpServlet
 
             OkHttpClient client = new OkHttpClient();
             Response response = client.newCall(request).execute();
-            System.out.println("Response Code: " + response.code());
             response.close();
         } catch (Exception e) {
             e.printStackTrace();
