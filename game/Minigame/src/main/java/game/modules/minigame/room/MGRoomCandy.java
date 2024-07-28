@@ -212,11 +212,11 @@ public class MGRoomCandy extends MGRoom {
                                 PokeGoUtils.calculateLine(line, awardList);
                                 for (Award award : awardList) {
                                     long money = 0L;
-                                    if (award != Award.TRIPLE_POKER_BALL) {
+                                    if (award != Award.TRIPLE_JACKPOT) {
                                         money = (long) (award.getRatio() * (float) this.betValue);
                                     } else {
                                         for (AwardsOnLine e : awardsOnLines) {
-                                            if (e.getAward() == Award.TRIPLE_POKER_BALL) {
+                                            if (e.getAward() == Award.TRIPLE_JACKPOT) {
                                                 continue block4;
                                             }
                                         }
@@ -234,14 +234,14 @@ public class MGRoomCandy extends MGRoom {
                             boolean isGetJackpotNaturally = false;
                             StringBuilder builderLinesWin = new StringBuilder();
                             StringBuilder builderPrizesOnLine = new StringBuilder();
-                            for (AwardsOnLine entry2 : awardsOnLines) {
-                                totalPrizes += entry2.getMoney();
+                            for (AwardsOnLine award : awardsOnLines) {
+                                totalPrizes += award.getMoney();
                                 builderLinesWin.append(",");
-                                builderLinesWin.append(entry2.getLineId());
+                                builderLinesWin.append(award.getLineId());
                                 builderPrizesOnLine.append(",");
-                                builderPrizesOnLine.append(entry2.getMoney());
+                                builderPrizesOnLine.append(award.getMoney());
 
-                                if (!forceNoHu && entry2.getAward() == Award.TRIPLE_POKER_BALL) {
+                                if (!forceNoHu && award.getAward() == Award.TRIPLE_JACKPOT) {
                                     result = 3;
                                     isGetJackpotNaturally = true;
                                 }

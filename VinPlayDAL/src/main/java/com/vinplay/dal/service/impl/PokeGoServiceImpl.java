@@ -84,20 +84,20 @@ public class PokeGoServiceImpl
 
     @Override
     public List<TopPokeGo> getTopPokeGo(int moneyType, int page) {
-        if (page <= 10) {
-            HazelcastInstance client = HazelcastClientFactory.getInstance();
-            IMap topMap = client.getMap("cacheTop");
-            TopPokeGoModel topPokeGo = (TopPokeGoModel) topMap.get((Object) (Games.POKE_GO.getName() + "_" + moneyType));
-            if (topPokeGo == null) {
-                topPokeGo = new TopPokeGoModel();
-            }
-            if (topPokeGo.getResults().size() == 0) {
-                List<TopPokeGo> results = this.dao.getTop(moneyType, 100);
-                topPokeGo.setResults(results);
-                topMap.put((Object) (Games.POKE_GO.getName() + "_" + moneyType), (Object) topPokeGo);
-            }
-            return topPokeGo.getResults(page, 10);
-        }
+//        if (page <= 10) {
+//            HazelcastInstance client = HazelcastClientFactory.getInstance();
+//            IMap topMap = client.getMap("cacheTop");
+//            TopPokeGoModel topPokeGo = (TopPokeGoModel) topMap.get((Object) (Games.POKE_GO.getName() + "_" + moneyType));
+//            if (topPokeGo == null) {
+//                topPokeGo = new TopPokeGoModel();
+//            }
+//            if (topPokeGo.getResults().size() == 0) {
+//                List<TopPokeGo> results = this.dao.getTop(moneyType, 100);
+//                topPokeGo.setResults(results);
+//                topMap.put((Object) (Games.POKE_GO.getName() + "_" + moneyType), (Object) topPokeGo);
+//            }
+//            return topPokeGo.getResults(page, 10);
+//        }
         return this.dao.getTopPokeGo(moneyType, page);
     }
 

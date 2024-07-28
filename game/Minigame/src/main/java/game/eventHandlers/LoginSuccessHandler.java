@@ -37,15 +37,11 @@ extends BaseServerEventHandler {
 
         IMap userOnline = instance.getMap("USER_ONLINE");
         UserInfo info = new UserInfo();
-        System.out.println("User login getLastLoginTime !!!!!!!!!" + user.getLastLoginTime());
         info.setLastLoginTime(user.getLastLoginTime());
         if(user.getJoinedRoom() != null){
-            System.out.println("User login getJoinedRoom !!!!!!!!!" + user.getJoinedRoom().getName());
             info.setGameName(user.getJoinedRoom().getName());
         }
-        System.out.println("User login !!!!!!!!!" + info.toJson());
         userOnline.set(user.getName(),info.toJson());
-
     }
 
 }

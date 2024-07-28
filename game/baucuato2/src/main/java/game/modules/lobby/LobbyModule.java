@@ -2182,7 +2182,6 @@ extends BaseClientRequestHandler {
             try
             {
                 List<Document> pendingTrans = rechargeDAO.getRechargeByGachtheRecently();
-                Debug.trace((Object)("update trans error: " + pendingTrans.size()));
                 if (pendingTrans.size() > 0)
                 {
                     pendingTrans.forEach((document) -> {

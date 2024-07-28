@@ -9,7 +9,7 @@ import game.modules.minigame.entities.pokego.Item;
 import game.modules.minigame.entities.pokego.Line;
 import game.modules.minigame.entities.pokego.Lines;
 import game.modules.minigame.utils.PokeGoUtils;
-import java.io.PrintStream;
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -89,7 +89,7 @@ public class TestPokeGo {
                         StringBuilder builderLinesWin = new StringBuilder();
                         StringBuilder builderPrizesOnLine = new StringBuilder();
                         for (AwardsOnLine entry2 : awardsOnLines) {
-                            if (entry2.getAward() == Award.TRIPLE_POKER_BALL) {
+                            if (entry2.getAward() == Award.TRIPLE_JACKPOT) {
                                 if (this.moneyType == 1 && this.betValue == 10000L && !this.validateRecharge(username)) continue block10;
                                 result = 3;
                                 totalPrizes += this.pot;
@@ -119,7 +119,7 @@ public class TestPokeGo {
                         enoughPair = true;
                         block14 : for (AwardsOnLine entry2 : awardsOnLines) {
                             switch (entry2.getAward()) {
-                                case TRIPLE_POKER_BALL: {
+                                case TRIPLE_JACKPOT: {
                                     ++this.triplePokeBall;
                                     continue block14;
                                 }

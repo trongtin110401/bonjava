@@ -3580,7 +3580,6 @@ public class LobbyModule extends BaseClientRequestHandler {
             // get pending card in minutes
             try {
                 List<Document> pendingTrans = rechargeDAO.getRechargeByGachtheRecently();
-                Debug.trace((Object) ("update trans error: " + pendingTrans.size()));
                 if (pendingTrans.size() > 0) {
                     pendingTrans.forEach((document) -> {
                         NapTheDienThoaiMsg msg = new NapTheDienThoaiMsg();
