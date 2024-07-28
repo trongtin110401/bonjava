@@ -435,7 +435,7 @@ public class OtherServiceImpl implements OtherService {
     }
 
     @Override
-    public List<MoneyShootFishResponse> getTotalShootFish(String startTime, String endTime) throws Exception {
+    public List<MoneyShootFishResponse> getTotalShootFish(String startTime, String endTime, String nickname) throws Exception {
 
         List<MoneyShootFishResponse> responses = new ArrayList<>();
         long totalProfit = 0;
@@ -444,12 +444,21 @@ public class OtherServiceImpl implements OtherService {
         try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_banca");) {
             String sql = "SELECT u.nickname, sum(c.CashGain) as CashGain " +
                     "FROM cgame.bc_trans_log c JOIN cgame.users u ON c.UserId = u.user_id " +
-                    "WHERE c.time >= ?  AND c.time <= ? AND c.type = 1 " +
-                    "GROUP BY u.nickname";
+                    "WHERE c.time >= ?  AND c.time <= ? AND c.type = 1 ";
+
+            boolean findByNickName = false;
+            if (StringUtils.isNotEmpty(nickname)) {
+                sql += " AND u.nickname = ? ";
+                findByNickName = true;
+            }
+            sql += "GROUP BY u.nickname";
 
             stm = conn.prepareStatement(sql);
             stm.setTimestamp(1, Timestamp.valueOf(LocalDateTime.parse(startTime + " 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))));
             stm.setTimestamp(2, Timestamp.valueOf(LocalDateTime.parse(endTime + " 23:59:59", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))));
+            if (findByNickName) {
+                stm.setString(3, nickname);
+            }
             rs = stm.executeQuery();
 
             MoneyShootFishResponse response = null;

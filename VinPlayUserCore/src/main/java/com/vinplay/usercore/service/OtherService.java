@@ -33,7 +33,7 @@ public interface OtherService {
 
     MoneyShootFishResponse getMoneyShootFish(String startTime, String endTime);
 
-    List<MoneyShootFishResponse> getTotalShootFish(String startTime, String endTime) throws Exception;
+    List<MoneyShootFishResponse> getTotalShootFish(String startTime, String endTime, String nickname) throws Exception;
 
 
     long getTotalShootFishByNickname(String startTime, String endTime, String nickname);
