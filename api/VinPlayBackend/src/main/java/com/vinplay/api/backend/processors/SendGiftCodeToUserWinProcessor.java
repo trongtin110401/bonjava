@@ -11,6 +11,7 @@
  */
 package com.vinplay.api.backend.processors;
 
+import bitzero.util.common.business.Debug;
 import com.vinplay.dal.dao.impl.LogMoneyUserDaoImpl;
 import com.vinplay.usercore.service.OtherService;
 import com.vinplay.usercore.service.impl.GiftCodeServiceImpl;
@@ -24,6 +25,7 @@ import com.vinplay.vbee.common.response.UserCodeReponse;
 import com.vinplay.vbee.common.response.UserTele;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
 import okhttp3.*;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.bson.Document;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,51 +41,55 @@ public class SendGiftCodeToUserWinProcessor implements BaseProcessor<HttpServlet
     MailBoxServiceImpl mailService = new MailBoxServiceImpl();
 
     public String execute(Param<HttpServletRequest> param) {
-        HttpServletRequest request = param.get();
-        String timeStart = request.getParameter("timeStart");
-        String timeEnd = request.getParameter("timeEnd");
-        String message = request.getParameter("message");
-        String nickname = request.getParameter("nickname");
-
-//        System.out.println("SendGiftCodeToUserWinProcessor: " + timeStart + " " + timeEnd );
-
-        int price;
         try {
-            price = Integer.parseInt(request.getParameter("price"));
-        } catch (Exception e) {
-            price = 50000;
-        }
-        LogMoneyUserDaoImpl dao = new LogMoneyUserDaoImpl();
-        Map<String, Long> users = new HashMap<>();
-        List<LogUserMoneyResponse> list = dao.getLogMoneyUserByNickname(timeStart, timeEnd, nickname);
+            HttpServletRequest request = param.get();
+            String timeStart = request.getParameter("timeStart");
+            String timeEnd = request.getParameter("timeEnd");
+            String message = request.getParameter("message");
+            String nickname = request.getParameter("nickname");
 
-        for (LogUserMoneyResponse response : list) {
-            if ("Gift Code".equalsIgnoreCase(response.serviceName)) {
-                continue;
+            int price;
+            try {
+                price = Integer.parseInt(request.getParameter("price"));
+            } catch (Exception e) {
+                price = 50000;
             }
-            users.merge(response.nickName, response.moneyExchange, Long::sum);
-        }
+            LogMoneyUserDaoImpl dao = new LogMoneyUserDaoImpl();
+            Map<String, Long> users = new HashMap<>();
+            List<LogUserMoneyResponse> list = dao.getLogMoneyUserByNickname(timeStart, timeEnd, nickname);
 
-        OtherService otherService = new OtherServiceImpl();
-        for (Map.Entry<String, Long> entry : users.entrySet()) {
-            if (entry.getValue() > 0) {
-                UserTele userTele = otherService.getUserTeleInfoByNickname(entry.getKey());
-                if (userTele != null && userTele.getChatID() != null) {
-                    String giftCode = VinPlayUtils.genGiftCode(10);
-                    String content = message + " : " + genCode(price, giftCode);
-                    mailService.sendMailBoxFromByNickNameAdmin(userTele.getNickname(), "Tri ân khách hàng: Hoàn tr? ti?n c??c", content);
-                    sendMessage(userTele.getChatID(), content);
-                    saveUserTeleCashBack(userTele, giftCode, price, entry.getValue());
+            for (LogUserMoneyResponse response : list) {
+                if ("Gift Code".equalsIgnoreCase(response.serviceName)) {
+                    continue;
+                }
+                users.merge(response.nickName, response.moneyExchange, Long::sum);
+            }
+
+            OtherService otherService = new OtherServiceImpl();
+            for (Map.Entry<String, Long> entry : users.entrySet()) {
+                if (entry.getValue() > 0) {
+                    UserTele userTele = otherService.getUserTeleInfoByNickname(entry.getKey());
+                    if (userTele != null && userTele.getChatID() != null) {
+                        String giftCode = VinPlayUtils.genGiftCode(10);
+                        String content = message + " : " + genCode(price, giftCode);
+//                    mailService.sendMailBoxFromByNickNameAdmin(userTele.getNickname(), "Tri ân khách hàng: Hoàn tr? ti?n c??c", content);
+                        mailService.sendMailGiftCode(userTele.getNickname(), giftCode, "Hoan Tra Tien Cuoc", content);
+                        sendMessage(userTele.getChatID(), content);
+                        saveUserTeleCashBack(userTele, giftCode, price, entry.getValue());
+                    }
                 }
             }
-        }
 
-        UserCodeReponse userCodeResponse = new UserCodeReponse(true, "200");
-        Map<String, Long> filteredUsers = users.entrySet().stream()
-                .filter(entry -> entry.getValue() < 0)
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-        userCodeResponse.setUsers(filteredUsers);
-        return userCodeResponse.toJson();
+            UserCodeReponse userCodeResponse = new UserCodeReponse(true, "200");
+            Map<String, Long> filteredUsers = users.entrySet().stream()
+                    .filter(entry -> entry.getValue() < 0)
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            userCodeResponse.setUsers(filteredUsers);
+            return userCodeResponse.toJson();
+        } catch (Exception ex) {
+            System.out.println(ExceptionUtils.getStackTrace(ex));
+            throw new RuntimeException(ex);
+        }
     }
 
     public void saveUserTeleCashBack(UserTele userTele, String code, int price, long money) {
