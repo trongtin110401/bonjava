@@ -19,15 +19,15 @@ import com.vinplay.usercore.service.impl.OtherServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.dto.GiftCodeDto;
-import com.vinplay.vbee.common.response.LogUserMoneyResponse;
-import com.vinplay.vbee.common.response.UserCodeReponse;
-import com.vinplay.vbee.common.response.UserTele;
+import com.vinplay.vbee.common.response.*;
+import com.vinplay.vbee.common.statics.Consts;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
 import okhttp3.*;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.bson.Document;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -52,11 +52,17 @@ public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServle
             } catch (Exception e) {
                 percent = 3;
             }
+
+            // get Fish profit
+            OtherService otherService = new OtherServiceImpl();
+            List<MoneyShootFishResponse> userFishProfits = otherService.getTotalShootFish(timeStart, timeEnd);
+            Map<String, Long> mapUserFishProfits = new HashMap<>();
+            userFishProfits.forEach(moneyShootFishResponse -> mapUserFishProfits.put(moneyShootFishResponse.getNickname(), moneyShootFishResponse.getTotalProfit()));
+
+
             LogMoneyUserDaoImpl dao = new LogMoneyUserDaoImpl();
             Map<String, Long> users = new HashMap<>();
             List<LogUserMoneyResponse> list = dao.getLogMoneyUser(timeStart, timeEnd);
-
-
             for (LogUserMoneyResponse response : list) {
                 if ("Gift Code".equalsIgnoreCase(response.serviceName)) {
                     continue;
@@ -64,7 +70,6 @@ public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServle
                 users.merge(response.nickName, response.moneyExchange, Long::sum);
             }
 
-            OtherService otherService = new OtherServiceImpl();
             for (Map.Entry<String, Long> entry : users.entrySet()) {
                 if (entry.getValue() < 0) {
                     UserTele userTele = otherService.getUserTeleInfoByNickname(entry.getKey());
@@ -75,7 +80,6 @@ public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServle
                         }
                         String giftCode = VinPlayUtils.genGiftCode(10);
                         String content = message + " : " + genCode(price, giftCode);
-//                    mailService.sendMailBoxFromByNickNameAdmin(userTele.getNickname(), "Tri Ân Khách Hàng, Hoàn Tr? Ti?n C??c", content);
                         mailService.sendMailGiftCode(userTele.getNickname(), giftCode, "Hoan Tra Tien Cuoc", content);
                         sendMessage(userTele.getChatID(), content);
                         saveUserTeleCashBack(userTele, giftCode, price, entry.getValue());
@@ -91,6 +95,76 @@ public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServle
             return userCodeResponse.toJson();
         } catch (Exception ex) {
             System.out.println(ExceptionUtils.getStackTrace(ex));
+            throw new RuntimeException(ex);
+        }
+    }
+
+    public String process(String message, String timeStart, String timeEnd, long percent) throws Exception {
+        try {
+            // get Fish profit
+            OtherService otherService = new OtherServiceImpl();
+            List<MoneyShootFishResponse> userFishProfits = otherService.getTotalShootFish(timeStart, timeEnd);
+            Map<String, Long> mapUserFishProfits = new HashMap<>();
+            userFishProfits.forEach(moneyShootFishResponse -> mapUserFishProfits.put(moneyShootFishResponse.getNickname(), moneyShootFishResponse.getTotalProfit()));
+
+            LogMoneyUserDaoImpl dao = new LogMoneyUserDaoImpl();
+            List<LogUserMoneyResponse> list = dao.getLogMoneyUser(timeStart, timeEnd);
+            // search fund
+
+
+            List<UserLoseByDay> userLoseByDays = list.stream()
+//                .filter(log -> !"Admin".equals(log.getActionName())
+//                        && !"Gift Code".equals(log.getActionName())
+//                        && !"Gift Code".equals(log.getServiceName())
+//                        && !"RechargeByBank".equals(log.getActionName())
+//                        && !"RechargeByMomo".equals(log.getActionName())
+//                        && !"ChargeSMS".equals(log.getActionName())
+//                        && !"CashOutByBank".equals(log.getActionName())
+//                        && !"RefundRechargeError".equals(log.getActionName())
+//                        && !"CashOutByMomo".equals(log.getActionName())
+//                        && !"RechargeByCard".equals(log.getActionName())
+//                        && !"RechargeBySMS".equals(log.getActionName())
+//                        && !"Exchange".equals(log.getActionName()))
+                    .filter(log -> !Consts.NO_GAME.contains(log.getActionName()) && !"Exchange".equals(log.getActionName()))
+                    .collect(Collectors.groupingBy(LogUserMoneyResponse::getNickName,
+                            Collectors.summingLong(LogUserMoneyResponse::getMoneyExchange)))
+                    .entrySet().stream()
+                    .filter(entry -> entry.getValue() <= -100000)
+                    .map(entry -> {
+                        UserLoseByDay userLoseByDay = new UserLoseByDay();
+                        userLoseByDay.setNickname(entry.getKey());
+                        userLoseByDay.setMoney(entry.getValue());
+                        return userLoseByDay;
+                    })
+                    .collect(Collectors.toList());
+
+            userLoseByDays.forEach(userLoseByDay -> {
+                if (mapUserFishProfits.containsKey(userLoseByDay.getNickname())) {
+                    userLoseByDay.setMoney(userLoseByDay.getMoney() + (mapUserFishProfits.get(userLoseByDay.getNickname()) * -1));
+                }
+            });
+
+            userLoseByDays.forEach(userLoseByDay -> {
+                int price = (int) (userLoseByDay.getMoney() * percent / 100 * -1);
+                if (price < 0) {
+                    price = price * -1;
+                }
+                String giftCode = VinPlayUtils.genGiftCode(10);
+                String content = message + " : " + genCode(price, giftCode);
+
+
+                UserTele userTele = otherService.getUserTeleInfoByNickname(userLoseByDay.getNickname());
+                try {
+                    mailService.sendMailGiftCode(userTele.getNickname(), giftCode, "Hoan Tra Tien Cuoc", content);
+                    sendMessage(userTele.getChatID(), content);
+                    saveUserTeleCashBack(userTele, giftCode, price, userLoseByDay.getMoney());
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+
+            return "";
+        } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
     }
