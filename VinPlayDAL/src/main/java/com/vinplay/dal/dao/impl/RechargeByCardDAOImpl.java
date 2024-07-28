@@ -212,7 +212,6 @@ public class RechargeByCardDAOImpl
     @Override
     public List<RechargeByCardReponse> searchRechargeByCard(String nickName, String provider, String serial, String pin, String code, String timeStart, String timeEnd, int page, String transId, String status) {
 
-        System.out.println("=========Code: " + code);
         final ArrayList<RechargeByCardReponse> results = new ArrayList<RechargeByCardReponse>();
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         FindIterable iterable = null;
