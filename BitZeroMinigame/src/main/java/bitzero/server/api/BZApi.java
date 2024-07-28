@@ -305,7 +305,7 @@ implements IBZApi {
             user.setConnected(true);
             sender.setLoggedIn(true);
             this.globalUserManager.addUser(user);
-            this.log.info("Login in, " + user.getName() + ", " + user.toString() + user.getSession().getSystemProperty("ClientType"));
+//            this.log.info("Login in, " + user.getName() + ", " + user.toString() + user.getSession().getSystemProperty("ClientType"));
             user.updateLastRequestTime();
             HashMap<BZEventParam, User> evtParams = new HashMap<BZEventParam, User>();
             evtParams.put(BZEventParam.USER, user);

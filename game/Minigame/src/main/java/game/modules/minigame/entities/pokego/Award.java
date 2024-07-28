@@ -3,10 +3,8 @@
  */
 package game.modules.minigame.entities.pokego;
 
-import game.modules.minigame.entities.pokego.Item;
-
 public enum Award {
-    TRIPLE_POKER_BALL((byte)1, Item.POKER_BALL, (byte)3, -2.0f),
+    TRIPLE_JACKPOT((byte)1, Item.POKER_BALL, (byte)3, -2.0f),
     TRIPLE_PIKACHU((byte)2, Item.PIKACHU, (byte)3, 85.0f),
     TRIPLE_BULBASAUR((byte)3, Item.BULBASAUR, (byte)3, 40.0f),
     TRIPLE_CLEFABLE((byte)4, Item.CLEFABLE, (byte)3, 20.0f),
