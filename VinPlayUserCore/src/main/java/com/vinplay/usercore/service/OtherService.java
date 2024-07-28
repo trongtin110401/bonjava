@@ -31,6 +31,8 @@ public interface OtherService {
 
     UserLoseByDayResponse getListUserTeleCashBack(int pageIndex, int pageSize, String timeStart, String timeEnd, String nickname, String code, String type);
 
+    
+
     MoneyShootFishResponse getMoneyShootFish(String startTime, String endTime);
 
     List<MoneyShootFishResponse> getTotalShootFish(String startTime, String endTime, String nickname) throws Exception;
