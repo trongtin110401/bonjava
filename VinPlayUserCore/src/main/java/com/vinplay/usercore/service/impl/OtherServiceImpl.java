@@ -441,6 +441,7 @@ public class OtherServiceImpl implements OtherService {
         long totalProfit = 0;
         PreparedStatement stm = null;
         ResultSet rs = null;
+
         try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_banca");) {
             String sql = "SELECT u.nickname, sum(c.CashGain) as CashGain " +
                     "FROM cgame.bc_trans_log c JOIN cgame.users u ON c.UserId = u.user_id " +
