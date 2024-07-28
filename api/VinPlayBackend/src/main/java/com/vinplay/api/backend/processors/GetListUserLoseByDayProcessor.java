@@ -57,6 +57,10 @@ public class GetListUserLoseByDayProcessor implements BaseProcessor<HttpServletR
                         && !"RechargeByCard".equals(log.getActionName())
                         && !"RechargeBySMS".equals(log.getActionName())
                         && !"Exchange".equals(log.getActionName()))
+                .map(log -> {
+                    System.out.println("=============> " + log.getActionName());
+                    return log;
+                })
                 .collect(Collectors.groupingBy(LogUserMoneyResponse::getNickName,
                         Collectors.summingLong(LogUserMoneyResponse::getMoneyExchange)))
                 .entrySet().stream()
