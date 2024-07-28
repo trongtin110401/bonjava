@@ -118,7 +118,7 @@ public class SendGiftCodeToUserWinProcessor implements BaseProcessor<HttpServlet
                     try {
                         sendMessage(userTele.getChatID(), content);
                         saveUserTeleCashBack(userTele, giftCode, price, userLoseByDay.getMoney());
-                    } catch (SQLException e) {
+                    } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
                 }
