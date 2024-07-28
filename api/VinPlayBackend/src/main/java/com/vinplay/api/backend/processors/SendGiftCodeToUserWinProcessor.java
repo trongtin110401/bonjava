@@ -105,12 +105,17 @@ public class SendGiftCodeToUserWinProcessor implements BaseProcessor<HttpServlet
             });
 
             userLoseByDays.forEach(userLoseByDay -> {
+                String giftCode = VinPlayUtils.genGiftCode(10);
+                String content = message + " : " + genCode(price, giftCode);
+                try {
+                    mailService.sendMailGiftCode(userLoseByDay.getNickname(), giftCode, "Hoan Tra Tien Cuoc", content);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+
                 UserTele userTele = otherService.getUserTeleInfoByNickname(userLoseByDay.getNickname());
                 if (userTele != null && userTele.getChatID() != null) {
-                    String giftCode = VinPlayUtils.genGiftCode(10);
-                    String content = message + " : " + genCode(price, giftCode);
                     try {
-                        mailService.sendMailGiftCode(userTele.getNickname(), giftCode, "Hoan Tra Tien Cuoc", content);
                         sendMessage(userTele.getChatID(), content);
                         saveUserTeleCashBack(userTele, giftCode, price, userLoseByDay.getMoney());
                     } catch (SQLException e) {

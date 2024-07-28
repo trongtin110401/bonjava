@@ -155,11 +155,13 @@ public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServle
                 String content = message + " : " + genCode(price, giftCode);
 
 
-                UserTele userTele = otherService.getUserTeleInfoByNickname(userLoseByDay.getNickname());
                 try {
-                    mailService.sendMailGiftCode(userTele.getNickname(), giftCode, "Hoan Tra Tien Cuoc", content);
-                    sendMessage(userTele.getChatID(), content);
-                    saveUserTeleCashBack(userTele, giftCode, price, userLoseByDay.getMoney());
+                    mailService.sendMailGiftCode(userLoseByDay.getNickname(), giftCode, "Hoan Tra Tien Cuoc", content);
+                    UserTele userTele = otherService.getUserTeleInfoByNickname(userLoseByDay.getNickname());
+                    if (userTele != null) {
+                        sendMessage(userTele.getChatID(), content);
+                        saveUserTeleCashBack(userTele, giftCode, price, userLoseByDay.getMoney());
+                    }
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
