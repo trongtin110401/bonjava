@@ -191,7 +191,6 @@ public class SendGiftCodeToUserWinProcessor implements BaseProcessor<HttpServlet
 
             OkHttpClient client = new OkHttpClient();
             Response response = client.newCall(request).execute();
-            System.out.println("Response Code: " + response.code());
             response.close();
         } catch (Exception e) {
             e.printStackTrace();
