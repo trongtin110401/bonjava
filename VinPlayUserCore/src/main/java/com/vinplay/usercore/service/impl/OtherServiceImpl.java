@@ -455,7 +455,7 @@ public class OtherServiceImpl implements OtherService {
 
             MoneyShootFishResponse response = null;
             while (rs.next()) {
-                response = new MoneyShootFishResponse(true, "0", rs.getString("nickname"), rs.getLong("CashGain"));
+                response = new MoneyShootFishResponse(true, "0", rs.getString("nickname"), rs.getLong("CashGain") * -1);
                 responses.add(response);
             }
         } catch (Exception e) {
