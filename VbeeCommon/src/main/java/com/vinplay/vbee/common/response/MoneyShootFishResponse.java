@@ -13,6 +13,13 @@ public class MoneyShootFishResponse
         super(success, errorCode);
     }
 
+    public MoneyShootFishResponse(boolean success, String errorCode, String nickname, long totalProfit) {
+        super(success, errorCode);
+        this.nickname = nickname;
+        this.totalProfit = totalProfit;
+    }
+
+    private String nickname;
     private long totalCashIn;
     private long totalCashOut;
     private long totalProfit;
@@ -39,6 +46,14 @@ public class MoneyShootFishResponse
 
     public void setTotalProfit(long totalProfit) {
         this.totalProfit = totalProfit;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 }
 
