@@ -65,16 +65,6 @@ public class GetListUserLoseByDayProcessor implements BaseProcessor<HttpServletR
 //                        && !"RechargeBySMS".equals(log.getActionName())
 //                        && !"Exchange".equals(log.getActionName()))
                     .filter(log -> !Consts.NO_GAME.contains(log.getActionName()))
-                    .map(log -> {
-                        System.out.println("=============> " + log.getActionName());
-                        return log;
-                    })
-                    .map(logUserMoneyResponse -> {
-                        if(mapUserFishProfits.containsKey(logUserMoneyResponse.getNickName())) {
-                            logUserMoneyResponse.setMoneyExchange(logUserMoneyResponse.getMoneyExchange() + mapUserFishProfits.get(logUserMoneyResponse.getNickName()));
-                        }
-                        return logUserMoneyResponse;
-                    })
                     .collect(Collectors.groupingBy(LogUserMoneyResponse::getNickName,
                             Collectors.summingLong(LogUserMoneyResponse::getMoneyExchange)))
                     .entrySet().stream()
@@ -87,6 +77,11 @@ public class GetListUserLoseByDayProcessor implements BaseProcessor<HttpServletR
                     })
                     .collect(Collectors.toList());
 
+            userLoseByDays.forEach(userLoseByDay -> {
+                if (mapUserFishProfits.containsKey(userLoseByDay.getNickname())) {
+                    userLoseByDay.setMoney(userLoseByDay.getMoney() + (mapUserFishProfits.get(userLoseByDay.getNickname()) * -1));
+                }
+            });
             userCodeResponse.setUsers(userLoseByDays);
             userCodeResponse.setTotalRecord(userLoseByDays.size());
 
