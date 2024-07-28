@@ -43,16 +43,17 @@ public class GetListUserLoseByDayProcessor implements BaseProcessor<HttpServletR
             String timeStart = request.getParameter("timeStart");
             String timeEnd = request.getParameter("timeEnd");
 
-            System.out.println(timeStart + " - " + timeEnd);
 
-            LogMoneyUserDaoImpl dao = new LogMoneyUserDaoImpl();
-
-            List<LogUserMoneyResponse> list = dao.getLogMoneyUser(timeStart, timeEnd);
-            // search fund
+            // get Fish profit
             OtherService otherService = new OtherServiceImpl();
             List<MoneyShootFishResponse> userFishProfits = otherService.getTotalShootFish(timeStart, timeEnd);
             Map<String, Long> mapUserFishProfits = new HashMap<>();
             userFishProfits.forEach(moneyShootFishResponse -> mapUserFishProfits.put(moneyShootFishResponse.getNickname(), moneyShootFishResponse.getTotalProfit()));
+
+            LogMoneyUserDaoImpl dao = new LogMoneyUserDaoImpl();
+            List<LogUserMoneyResponse> list = dao.getLogMoneyUser(timeStart, timeEnd);
+            // search fund
+
 
             List<UserLoseByDay> userLoseByDays = list.stream()
 //                .filter(log -> !"Admin".equals(log.getActionName())

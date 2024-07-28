@@ -436,8 +436,6 @@ public class OtherServiceImpl implements OtherService {
 
     @Override
     public List<MoneyShootFishResponse> getTotalShootFish(String startTime, String endTime) throws Exception {
-        startTime = startTime + " 00:00:00";
-        endTime = endTime + " 23:59:59";
         List<MoneyShootFishResponse> responses = new ArrayList<>();
         long totalProfit = 0;
         PreparedStatement stm = null;
