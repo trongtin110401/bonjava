@@ -42,6 +42,9 @@ public class GetListUserLoseByDayProcessor implements BaseProcessor<HttpServletR
 
             String timeStart = request.getParameter("timeStart");
             String timeEnd = request.getParameter("timeEnd");
+
+            System.out.println(timeStart + " - " + timeEnd);
+
             LogMoneyUserDaoImpl dao = new LogMoneyUserDaoImpl();
 
             List<LogUserMoneyResponse> list = dao.getLogMoneyUser(timeStart, timeEnd);
