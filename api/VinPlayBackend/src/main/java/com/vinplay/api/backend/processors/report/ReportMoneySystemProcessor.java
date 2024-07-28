@@ -280,7 +280,7 @@ public class ReportMoneySystemProcessor
         System.out.println("==================" + startTime + " - " + endTime);
         CashoutDao cashoutDao = new CashoutDaoImpl();
         UserWithdraw userWithdraw = new UserWithdraw(null, null, null, null, null, "success");
-        CashoutBankResponse res = cashoutDao.GetListCashoutBank(userWithdraw, 0, 0, startTime, endTime);
+        CashoutBankResponse res = cashoutDao.GetListCashoutBank(userWithdraw, 0, 0, startTime + " 00:00:00", endTime + " 23:59:59");
         return res.totalMoneySuccess;
     }
 
