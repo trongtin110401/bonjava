@@ -460,10 +460,10 @@ public class OtherServiceImpl implements OtherService {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if (rs != null && !rs.isClosed()) {
+            if (rs != null) {
                 rs.close();
             }
-            if (stm != null && !stm.isClosed()) {
+            if (stm != null) {
                 stm.close();
             }
         }
