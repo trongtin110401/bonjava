@@ -106,7 +106,7 @@ TRUNCATE table vinplay_gamebai.poker_tour;
 TRUNCATE table vinplay.codetanthu;
 TRUNCATE table vinplay.giftcodett;
 TRUNCATE table vinplay.report_money_daily;
-update vinplay.money_system set money = 0 where id >= 1;
+-- update vinplay.money_system set money = 0 where id >= 1;
 delete from vinplay.users where is_bot = 0 and nick_name != 'superadmin123';
 TRUNCATE table cgame.bc_ccu;
 TRUNCATE table cgame.bc_history;
