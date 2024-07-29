@@ -28,11 +28,10 @@ import org.bson.Document;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServletRequest, String> {
@@ -156,7 +155,7 @@ public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServle
 
 
                 try {
-                    mailService.sendMailGiftCode(userLoseByDay.getNickname(), giftCode, "Ho�n Tr? Ti?n C??c", content);
+                    mailService.sendMailGiftCode(userLoseByDay.getNickname(), giftCode, "Hoàn Trả Tiền Cược", content);
                     UserTele userTele = otherService.getUserTeleInfoByNickname(userLoseByDay.getNickname());
                     if (userTele != null) {
                         sendMessage(userTele.getChatID(), content);
@@ -184,7 +183,20 @@ public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServle
         document.put("money", money);
         document.put("code", code);
         document.put("cashBack", price);
+        String createdDate = VinPlayUtils.getCurrentDateTime();
         document.put("createdDate", VinPlayUtils.getCurrentDateTime());
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            Date date = format.parse(createdDate);
+            calendar.setTime(date);
+            calendar.add(Calendar.DAY_OF_MONTH, 3);
+            Date newDate = calendar.getTime();
+            String expirationDate = format.format(newDate);
+            document.put("expirationDate", expirationDate);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         otherService.saveUserTeleCashBack(document);
     }
 

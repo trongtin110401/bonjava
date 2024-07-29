@@ -1007,5 +1007,10 @@
             <name>active phone number</name>
             <path>com.vinplay.api.processors.otp.CheckOtpPhoneProcessor</path>
         </command>
+        <command>
+            <id>4125</id>
+            <name>request OTP Tele</name>
+            <path>com.vinplay.api.processors.otp.RequestOTPTeleProcesser</path>
+        </command>
     </commands>
 </portal>
