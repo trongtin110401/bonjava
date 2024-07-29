@@ -402,7 +402,7 @@ public class GiftCodeServiceImpl
                 campaignName.setQuantityActiveCode(active);
                 campaignName.setUnused(unused);
                 campaignName.setUsed(used);
-                campaignName.setTotal(unused + unused);
+                campaignName.setTotal(unused + used);
 
                 campaignNames.add(campaignName);
             }
