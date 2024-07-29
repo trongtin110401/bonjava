@@ -37,8 +37,13 @@ public class CheckOtpProcessor implements BaseProcessor<HttpServletRequest, Stri
             OtpServiceImpl service = new OtpServiceImpl();
             try {
                 BaseResponseModel model = service.checkOTP(nickname, otp);
-                if (model.isSuccess()){
+                if (model.isSuccess()) {
                     UserTele userTele = getInfoByNickname(nickname);
+                    if (userTele == null || userTele.getChatID() == null || userTele.getChatID().isEmpty()) {
+                        model.setSuccess(false);
+                        model.setErrorCode("Không tìm thấy user");
+                        return model.toJson();
+                    }
                     sendMessage(userTele.getChatID(), "Xin chào " + nickname + " bạn đã kích hoạt telegram OTP thành công");
                 }
                 return model.toJson();
