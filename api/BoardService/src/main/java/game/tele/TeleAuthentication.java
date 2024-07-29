@@ -121,25 +121,25 @@ public class TeleAuthentication extends TelegramLongPollingBot {
     }
 
 
-    private UserTele getInfoByNickname(String nickname) {
-        MongoDatabase db = MongoDBConnectionFactory.getDB();
-        MongoCollection<Document> collection = db.getCollection("user_tele");
-        Document filter = new Document("nickname", nickname);
-        MongoCursor<Document> cursor = collection.find(filter).iterator();
-
-        try {
-            if (cursor.hasNext()) {
-                Document doc = cursor.next();
-                UserTele user = extractUserInfo(doc);
-                return user;
-            } else {
-                return null;
-            }
-        } finally {
-            cursor.close();
-        }
-
-    }
+//    private UserTele getInfoByNickname(String nickname) {
+//        MongoDatabase db = MongoDBConnectionFactory.getDB();
+//        MongoCollection<Document> collection = db.getCollection("user_tele");
+//        Document filter = new Document("nickname", nickname);
+//        MongoCursor<Document> cursor = collection.find(filter).iterator();
+//
+//        try {
+//            if (cursor.hasNext()) {
+//                Document doc = cursor.next();
+//                UserTele user = extractUserInfo(doc);
+//                return user;
+//            } else {
+//                return null;
+//            }
+//        } finally {
+//            cursor.close();
+//        }
+//
+//    }
 
     private UserTele getInfoByChatID(String chatID) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
