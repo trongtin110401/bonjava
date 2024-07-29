@@ -1,5 +1,7 @@
 package com.vinplay.api.backend.processors;
 
+import bitzero.server.entities.User;
+import bitzero.util.ExtensionUtility;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.vinplay.dal.dao.ReportDAO;
@@ -33,6 +35,8 @@ public class GetUserOnlineProcessor implements BaseProcessor<HttpServletRequest,
 
         int pageIndex = getParameter(request, "pageIndex", 1);
         int pageSize = getParameter(request, "pageSize", 50);
+
+        List<User> users = ExtensionUtility.globalUserManager.getAllUsers();
 
         List<String> usernames = getPage(new ArrayList<>(userOnline.keySet()), pageIndex, pageSize);
         LogMoneyUserDaoImpl dao = new LogMoneyUserDaoImpl();
