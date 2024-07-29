@@ -181,6 +181,7 @@ extends BZExtension {
             if (ccuGiam >= (long)ConfigGame.getIntValue("min_so_ccu_giam", 50)) {
                 GameUtils.sendAlertAndCall("CCU giam " + ccuGiam + " trong " + ConfigGame.getIntValue("update_log_ccu") + " (s), time= " + DateTimeUtils.getCurrentTime());
             }
+
             this.lastCCU = ccu;
             this.countLogCCU = 0;
             int ccuOT = ccu - (ccuWeb + ccuAD + ccuIOS + ccuWP + ccuFB + ccuDT);
