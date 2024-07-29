@@ -12,7 +12,7 @@ services:
     volumes:
       - /home/data/mysql:/var/lib/mysql
 #      - ./config/mysql/conf.d:/etc/mysql/conf.d:ro
-      - ./config/mysql/db1:/docker-entrypoint-initdb.d/:ro
+#      - ./config/mysql/db1:/docker-entrypoint-initdb.d/:ro
 
   mongo:
     image: mongo:4.0.16-xenial
