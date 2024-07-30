@@ -391,11 +391,11 @@ public class MGRoomCaoThap extends MGRoom {
     }
 
     private void saveFund() {
-        try {
-            this.ctService.updateFundCaoThap(this.name, getFunValue());
-        } catch (IOException | InterruptedException | TimeoutException e) {
-            Debug.trace((Object[]) new Object[]{"CAO THAP: update fund cao thap error ", e.getMessage()});
-        }
+//        try {
+//            this.ctService.updateFundCaoThap(this.name, getFunValue());
+//        } catch (IOException | InterruptedException | TimeoutException e) {
+//            Debug.trace((Object[]) new Object[]{"CAO THAP: update fund cao thap error ", e.getMessage()});
+//        }
     }
 
     private void savePot() {
