@@ -53,6 +53,7 @@ public class SetSlotJackpot implements BaseProcessor<HttpServletRequest, String>
                 long prize = totalPrize.isEmpty() ? this.getMoneyPot(betValue, gameName) : Long.parseLong(totalPrize);
                 int betMoney = betValue.isEmpty() ? 100 : Integer.parseInt(betValue);
                 if (Objects.equals(gameName.toUpperCase(), Games.CANDY.getName().toUpperCase())) {
+                    System.out.println(nickname + " - " + betValue + " - " + prize);
                     this.pgService.addTop(nickname, betMoney, prize, 1, currentTimeStr, 3);
                 } else if (Objects.equals(gameName.toUpperCase(), Games.MINI_POKER.getName().toUpperCase())) {
                     this.mpService.logMiniPoker(nickname, betMoney, (short) 1, prize, "builder.toString()", 12, 12, 1);
