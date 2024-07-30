@@ -6,6 +6,8 @@ public class UserCCUResponse {
     private long totalDeposit;
     private long totalCashOut;
 
+    private long totalMoney;
+
     public String getNickName() {
         return nickName;
     }
@@ -28,5 +30,13 @@ public class UserCCUResponse {
 
     public void setTotalCashOut(long totalCashOut) {
         this.totalCashOut = totalCashOut;
+    }
+
+    public long getTotalMoney() {
+        return totalMoney;
+    }
+
+    public void setTotalMoney(long totalMoney) {
+        this.totalMoney = totalMoney;
     }
 }
