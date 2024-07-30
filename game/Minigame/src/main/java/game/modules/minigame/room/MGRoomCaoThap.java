@@ -25,7 +25,6 @@ package game.modules.minigame.room;
 import bitzero.server.BitZeroServer;
 import bitzero.server.entities.User;
 import bitzero.server.extensions.data.BaseMsg;
-import bitzero.server.util.TaskScheduler;
 import bitzero.util.common.business.Debug;
 import com.vinplay.cardlib.models.Card;
 import com.vinplay.cardlib.models.Deck;
@@ -49,7 +48,6 @@ import game.modules.minigame.cmd.send.caothap.UpdatePotCaoThapMsg;
 import game.modules.minigame.cmd.send.caothap.UpdateTimeCaoThapMsg;
 import game.modules.minigame.entities.CaoThapInfo;
 import game.modules.minigame.entities.MinigameConstant;
-import game.modules.minigame.room.MGRoom;
 import game.modules.minigame.utils.CaoThapUtils;
 import game.utils.GameUtils;
 
@@ -59,8 +57,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -113,7 +109,7 @@ public class MGRoomCaoThap extends MGRoom {
                 if (moneyUse >= (long) betValue) {
                     Deck deck = new Deck();
                     deck.shuffle();
-                    Card card = CaoThapUtils.randomNoA(deck);
+                    Card card = CaoThapUtils.randomWithoutA(deck);
                     //deck.deal();
                     byte numA = 0;
                     if (card.getRank() == Rank.Ace) {
@@ -187,7 +183,7 @@ public class MGRoomCaoThap extends MGRoom {
                     boolean noHu = false;
                     if (this.moneyType == 1 && info.getNumA() == 2) {
                         // // lock no hũ 11/01 kane
-                        //noHu = (this.baseBetValue < 100000 || this.userService.getTotalRechargeMoney(user.getName()) >= Math.round((double) this.pot * 0.1)) && CaoThapUtils.isDoWithRatio(1000.0);
+                        noHu = (this.baseBetValue < 100000 || this.userService.getTotalRechargeMoney(user.getName()) >= Math.round((double) this.pot * 0.1)) && CaoThapUtils.isDoWithRatio(1000.0);
                     }
                     do {
                         fundStep = getFunValue();
@@ -197,7 +193,7 @@ public class MGRoomCaoThap extends MGRoom {
                                 deck = info.getDeck();
                                 card = deck.deal();
                             } else {
-                                card = CaoThapUtils.randomNoA(info.getDeck());
+                                card = CaoThapUtils.randomWithoutA(info.getDeck());
                                 deck = info.getDeck();
                                 deck.popCard(card);
                             }
@@ -207,11 +203,12 @@ public class MGRoomCaoThap extends MGRoom {
                                 deck = info.getDeck();
                                 card = deck.deal();
                             } else {
-                                card = CaoThapUtils.randomNoA(info.getDeck());
+                                card = CaoThapUtils.randomWithoutA(info.getDeck());
                                 deck = info.getDeck();
                                 deck.popCard(card);
                             }
                         } else {
+                            System.out.println("=========== Random lose");
                             card = CaoThapUtils.randomThua(info.getDeck(), info.getCard(), choose);
                             deck = info.getDeck();
                             deck.popCard(card);

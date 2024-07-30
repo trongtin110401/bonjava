@@ -19,9 +19,7 @@
  */
 package game.modules.minigame.utils;
 
-import bitzero.server.api.IBZApi;
 import bitzero.server.entities.User;
-import bitzero.server.extensions.data.BaseMsg;
 import bitzero.util.ExtensionUtility;
 import bitzero.util.common.business.Debug;
 import com.vinplay.cardlib.models.Card;
@@ -29,14 +27,11 @@ import com.vinplay.cardlib.models.Deck;
 import com.vinplay.cardlib.models.Rank;
 import com.vinplay.dal.entities.caothap.TopCaoThap;
 import com.vinplay.dal.service.impl.CaoThapServiceImpl;
-import com.vinplay.usercore.service.GameConfigService;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.vbee.common.response.MoneyResponse;
 import com.vinplay.vbee.common.statics.TransType;
-import game.modules.gameRoom.config.GameRoomConfig;
 import game.modules.minigame.cmd.send.UpdateUserInfoMsg;
 
-import java.io.PrintStream;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -151,7 +146,7 @@ public class CaoThapUtils {
         return cardThua;
     }
 
-    public static Card randomNoA(Deck deck) {
+    public static Card randomWithoutA(Deck deck) {
         Card cardThua = null;
         if (deck.getSize() > 0) {
             Deck dk;
