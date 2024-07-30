@@ -66,6 +66,17 @@ public class PokeGoServiceImpl
 
     @Override
     public void addTop(String username, int betValue, long totalPrizes, int moneyType, String time, int result) throws IOException, TimeoutException, InterruptedException {
+
+        if(betValue == 100 && totalPrizes < 500000) {
+            return;
+        }
+        if(betValue == 1000 && totalPrizes < 5000000) {
+            return;
+        }
+        if(betValue == 10000 && totalPrizes < 50000000) {
+            return;
+        }
+
         HazelcastInstance client = HazelcastClientFactory.getInstance();
         IMap topMap = client.getMap("cacheTop");
         TopPokeGoModel topPokeGo = (TopPokeGoModel) topMap.get(Games.POKE_GO.getName() + "_" + moneyType);
