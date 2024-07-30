@@ -26,6 +26,7 @@ public class GetUserOnlineProcessor implements BaseProcessor<HttpServletRequest,
 
     @Override
     public String execute(Param<HttpServletRequest> param) {
+
         HttpServletRequest request = param.get();
         UserOnlineResponse response = new UserOnlineResponse(true, "200");
         HazelcastInstance instance = HazelcastClientFactory.getInstance();
