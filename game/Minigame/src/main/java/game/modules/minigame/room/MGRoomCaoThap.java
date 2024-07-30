@@ -165,7 +165,7 @@ public class MGRoomCaoThap extends MGRoom {
     public void play(User user, byte choose) {
         Map<String, CaoThapInfo> map;
         ResultCaoThapMsg msg = new ResultCaoThapMsg();
-        Map<String, CaoThapInfo> map2 = map = this.usersCaoThap;
+        Map<String, CaoThapInfo> map2 = this.usersCaoThap;
         synchronized (map2) {
             if (this.usersCaoThap.containsKey(user.getName())) {
                 long currentMoney = this.userService.getCurrentMoneyUserCache(user.getName(), this.moneyTypeStr);
@@ -208,7 +208,6 @@ public class MGRoomCaoThap extends MGRoom {
                                 deck.popCard(card);
                             }
                         } else {
-                            System.out.println("=========== Random lose");
                             card = CaoThapUtils.randomThua(info.getDeck(), info.getCard(), choose);
                             deck = info.getDeck();
                             deck.popCard(card);
@@ -220,14 +219,16 @@ public class MGRoomCaoThap extends MGRoom {
 
                         moneyWin = 0L;
                         if (card.getRank().getRank() == info.getCard().getRank().getRank()) {
-                            result = 6;
+                            result = ResultCaoThap.HOA;
                             moneyWin = Math.round(info.getMoney() * 9L / 10L);
                         } else if (card.getRank().getRank() > info.getCard().getRank().getRank()) {
                             if (choose == 1) {
                                 result = 4;
+                                result = ResultCaoThap.THANG;
                                 moneyWin = info.getMoneyUp();
                             } else {
                                 result = 5;
+                                result = ResultCaoThap.THUA;
                             }
                         } else if (card.getRank().getRank() < info.getCard().getRank().getRank()) {
                             if (choose == 1) {
@@ -238,7 +239,7 @@ public class MGRoomCaoThap extends MGRoom {
                             }
                         }
                         if (result == 4) {
-                            fundStep = info.getStep() > 2 ? (fundStep = fundStep - (moneyWin - info.getMoney())) : (fundStep = fundStep - moneyWin);
+                            fundStep = info.getStep() > 2 ? fundStep - (moneyWin - info.getMoney()) : fundStep - moneyWin;
                         } else if (result == 6) {
                             if (info.getStep() > 2) {
                                 ++i;
