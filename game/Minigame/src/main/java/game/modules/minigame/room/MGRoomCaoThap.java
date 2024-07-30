@@ -214,9 +214,9 @@ public class MGRoomCaoThap extends MGRoom {
                             deck.popCard(card);
                         }
 
-                        card = CaoThapUtils.randomThua(info.getDeck(), info.getCard(), choose);
-                        deck = info.getDeck();
-                        deck.popCard(card);
+//                        card = CaoThapUtils.randomThua(info.getDeck(), info.getCard(), choose);
+//                        deck = info.getDeck();
+//                        deck.popCard(card);
 
                         moneyWin = 0L;
                         if (card.getRank().getRank() == info.getCard().getRank().getRank()) {
