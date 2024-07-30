@@ -43,8 +43,7 @@ import java.util.TreeMap;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 
-public class ReportTopGameProcessor
-implements BaseProcessor<HttpServletRequest, String> {
+public class ReportTopGameProcessor implements BaseProcessor<HttpServletRequest, String> {
     private static final Logger logger = Logger.getLogger((String)"report");
 
     public String execute(Param<HttpServletRequest> param) {
