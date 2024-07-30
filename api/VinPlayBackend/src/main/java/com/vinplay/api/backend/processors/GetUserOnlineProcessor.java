@@ -39,7 +39,7 @@ public class GetUserOnlineProcessor implements BaseProcessor<HttpServletRequest,
 
         List<UserCCUResponse> userOnlineResponse = usernames.stream()
                 .map(username -> createUserCCUResponse(username, dao))
-                .sorted((u1, u2) -> Double.compare(u2.getTotalDeposit(), u1.getTotalDeposit()))
+                .sorted((u1, u2) -> Double.compare(u2.getTotalMoney(), u1.getTotalMoney()))
                 .collect(Collectors.toList());
 
         response.setUsers(userOnlineResponse);
@@ -48,7 +48,6 @@ public class GetUserOnlineProcessor implements BaseProcessor<HttpServletRequest,
 
     private UserCCUResponse createUserCCUResponse(String username, LogMoneyUserDaoImpl dao) {
         List<LogUserMoneyResponse> responses = dao.getMoneyCashInAndCashOutByNickname(username, ACTION_NAME);
-
         ReportDAO reportDAO = new ReportDaoImpl();
         long currentMoeny = 0;
         try {
@@ -71,7 +70,7 @@ public class GetUserOnlineProcessor implements BaseProcessor<HttpServletRequest,
 
         UserCCUResponse userCCUResponse = new UserCCUResponse();
         userCCUResponse.setNickName(username);
-//        userCCUResponse.setTotalMoney(currentMoeny);
+        userCCUResponse.setTotalMoney(currentMoeny);
         userCCUResponse.setTotalCashOut(totalCashOut);
         userCCUResponse.setTotalDeposit(totalDeposit);
 
@@ -112,4 +111,3 @@ public class GetUserOnlineProcessor implements BaseProcessor<HttpServletRequest,
         return list.subList(fromIndex, toIndex);
     }
 }
-
