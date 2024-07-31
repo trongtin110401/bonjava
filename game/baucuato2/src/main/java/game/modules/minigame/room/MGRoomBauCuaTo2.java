@@ -614,7 +614,7 @@ public class MGRoomBauCuaTo2 extends MGRoom {
             for (int i = 0; i < 6; ++i) {
                 if (!this.isBot(tran.username)) {
                     if (mResults.containsKey(i)) {
-                        totalPrizes += tran.betValues[i] * (long) tiLe[i] + tran.betValues[i];
+                        totalPrizes += (tran.betValues[i] * (long) tiLe[i] + tran.betValues[i]);
                     } else {
                         totalRevanue += tran.betValues[i];
                     }
@@ -625,6 +625,7 @@ public class MGRoomBauCuaTo2 extends MGRoom {
 //                }
             }
         }
+        System.out.println("total prize: " + totalRevanue + " - total profit: " + totalRevanue + " - fund: " + getFunValue() + " <> " + (totalPrizes - totalRevanue));
         return totalPrizes - totalRevanue;
     }
 
