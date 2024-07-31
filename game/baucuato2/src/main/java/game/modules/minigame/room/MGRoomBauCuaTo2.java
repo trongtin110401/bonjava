@@ -605,7 +605,8 @@ public class MGRoomBauCuaTo2 extends MGRoom {
 
     public long tryCalculatePrizes(int[] tiLe, byte[] dices) {
         long totalPrizes = 0L;
-        long totalRevanue = 0L;
+        long totalProfit = 0L;
+        long fund = getFunValue();
         Map<Integer, Integer> mResults = new HashMap<>();
         for (byte i : dices) {
             mResults.put((int) i, (int) i);
@@ -616,17 +617,17 @@ public class MGRoomBauCuaTo2 extends MGRoom {
                     if (mResults.containsKey(i)) {
                         totalPrizes += (tran.betValues[i] * (long) tiLe[i] + tran.betValues[i]);
                     } else {
-                        totalRevanue += tran.betValues[i];
+                        totalProfit += tran.betValues[i];
                     }
                 }
-
-//                if (!this.isBot(tran.username) && mResults.containsKey(i)) {
-//                    totalPrizes += tran.betValues[i] * (long) tiLe[i] + tran.betValues[i];
-//                }
             }
         }
-        System.out.println("total prize: " + totalRevanue + " - total profit: " + totalRevanue + " - fund: " + getFunValue() + " <> " + (totalPrizes - totalRevanue));
-        return totalPrizes - totalRevanue;
+        System.out.println("total prize: " + totalProfit + " - total profit: " + totalProfit + " - fund: " + fund + " <> " + (totalPrizes - totalProfit));
+        if (totalPrizes <= (totalProfit + fund)) {
+            return 0;
+        } else {
+            return totalPrizes;
+        }
     }
 
     public String buildPotData() {
@@ -724,7 +725,7 @@ public class MGRoomBauCuaTo2 extends MGRoom {
             if (checkNohu(tiLe)) {
                 return generateDices();
             }
-            System.out.println("========= try calculate prize BC");
+            System.out.println("trying calculate prize...");
             long totalPrizes = this.tryCalculatePrizes(tiLe, dices);
             if (getFunValue() - totalPrizes >= 0L) {
                 return dices;
