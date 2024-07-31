@@ -723,6 +723,7 @@ public class MGRoomBauCuaTo2 extends MGRoom {
             if (checkNohu(tiLe)) {
                 return generateDices();
             }
+            System.out.println("========= try calculate prize BC");
             long totalPrizes = this.tryCalculatePrizes(tiLe, dices);
             if (getFunValue() - totalPrizes >= 0L) {
                 return dices;
