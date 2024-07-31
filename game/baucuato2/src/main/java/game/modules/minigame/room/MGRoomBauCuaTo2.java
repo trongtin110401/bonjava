@@ -604,19 +604,28 @@ public class MGRoomBauCuaTo2 extends MGRoom {
     }
 
     public long tryCalculatePrizes(int[] tiLe, byte[] dices) {
-        long totalValues = 0L;
+        long totalPrizes = 0L;
+        long totalRevanue = 0L;
         Map<Integer, Integer> mResults = new HashMap<>();
         for (byte i : dices) {
             mResults.put((int) i, (int) i);
         }
         for (TransactionBauCua tran : this.transactionsMap.values()) {
             for (int i = 0; i < 6; ++i) {
-                if (!this.isBot(tran.username) && mResults.containsKey(i)) {
-                    totalValues += tran.betValues[i] * (long) tiLe[i] + tran.betValues[i];
+                if (!this.isBot(tran.username)) {
+                    if (mResults.containsKey(i)) {
+                        totalPrizes += tran.betValues[i] * (long) tiLe[i] + tran.betValues[i];
+                    } else {
+                        totalRevanue += tran.betValues[i];
+                    }
                 }
+
+//                if (!this.isBot(tran.username) && mResults.containsKey(i)) {
+//                    totalPrizes += tran.betValues[i] * (long) tiLe[i] + tran.betValues[i];
+//                }
             }
         }
-        return totalValues;
+        return totalPrizes - totalRevanue;
     }
 
     public String buildPotData() {
