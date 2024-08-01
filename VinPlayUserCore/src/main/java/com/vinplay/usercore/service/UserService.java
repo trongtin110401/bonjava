@@ -34,6 +34,8 @@ import com.vinplay.vbee.common.response.NapXuResponse;
 import com.vinplay.vbee.common.response.UserInfoModel;
 import com.vinplay.vbee.common.response.UserResponse;
 import com.vinplay.vbee.common.statics.TransType;
+import org.python.parser.ast.Str;
+
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.List;
@@ -129,5 +131,7 @@ public interface UserService {
     List<UserBankInfoDto> getListBankByNickname(String nickName);
 
     void saveBankInfo(UserBankInfoDto userBankInfoDto);
+
+    List<UserBankInfoDto> updateListBankByNicknameAndId(String nickName, String id, String bankAccount, String bankName, String accountName);
 }
 

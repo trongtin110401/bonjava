@@ -100,6 +100,7 @@ import com.vinplay.vbee.common.utils.VinPlayUtils;
 import org.apache.log4j.Logger;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
 
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -107,8 +108,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 // todo : user service gồm curd và check user
-public class UserServiceImpl
-        implements UserService {
+public class UserServiceImpl implements UserService {
     private static final Logger logger = Logger.getLogger((String) "user_core");
 
     @Override
@@ -556,11 +556,9 @@ public class UserServiceImpl
 
         UserDaoImpl userDao = new UserDaoImpl();
         UserFish user = userDao.GetUserFishByNickname(nickName);
-        if (user == null)
-            return false;
+        if (user == null) return false;
         if (amount > 0) {
-            if (user.Cash < amount)
-                return false;
+            if (user.Cash < amount) return false;
         }
 
         amount = -amount;
@@ -914,10 +912,8 @@ public class UserServiceImpl
                                                         RMQApi.publishMessageLogMoney((LogMoneyUserMessage) messageLogSend);
                                                         RMQApi.publishMessagePayment((BaseMessage) messageReceive, (int) 16);
                                                         RMQApi.publishMessageLogMoney((LogMoneyUserMessage) messageLogReceive);
-                                                        historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "CK Người Chơi",
-                                                                "Chuyển Khoản", String.valueOf(vin), "Thành Công", nicknameReceive, nicknameSend, HistoryTransConst.GAMER, transactionId));
-                                                        historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "CK Người Chơi",
-                                                                "Nhận Tiền", String.valueOf(vin), "Thành Công", nicknameSend, nicknameReceive, HistoryTransConst.GAMER, transactionId));
+                                                        historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "CK Người Chơi", "Chuyển Khoản", String.valueOf(vin), "Thành Công", nicknameReceive, nicknameSend, HistoryTransConst.GAMER, transactionId));
+                                                        historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "CK Người Chơi", "Nhận Tiền", String.valueOf(vin), "Thành Công", nicknameSend, nicknameReceive, HistoryTransConst.GAMER, transactionId));
 
 //                                                            if (status != 0) {
 //                                                                LogChuyenTienDaiLyMessage messageDaily = new LogChuyenTienDaiLyMessage(nicknameSend, nicknameReceive, vin, moneyReceive, fee, VinPlayUtils.getCurrentDateTime(), status, desSend, desReceive, VinPlayUtils.genTransactionId((int) userSend.getId()), 1, this.getAgentLevel1(nicknameSend, nicknameReceive), "");
@@ -1097,10 +1093,8 @@ public class UserServiceImpl
                                                         RMQApi.publishMessageLogMoney((LogMoneyUserMessage) messageLogSend3);
                                                         RMQApi.publishMessagePayment((BaseMessage) messageReceive2, (int) 16);
                                                         RMQApi.publishMessageLogMoney((LogMoneyUserMessage) messageLogReceive3);
-                                                        historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "CK Người Chơi",
-                                                                "Chuyển Khoản", String.valueOf(vin), "Thành Công", nicknameReceive, nicknameSend, HistoryTransConst.GAMER, transactionId));
-                                                        historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "CK Người Chơi",
-                                                                "Nhận Tiền", String.valueOf(vin), "Thành Công", nicknameSend, nicknameReceive, HistoryTransConst.GAMER, transactionId));
+                                                        historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "CK Người Chơi", "Chuyển Khoản", String.valueOf(vin), "Thành Công", nicknameReceive, nicknameSend, HistoryTransConst.GAMER, transactionId));
+                                                        historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "CK Người Chơi", "Nhận Tiền", String.valueOf(vin), "Thành Công", nicknameSend, nicknameReceive, HistoryTransConst.GAMER, transactionId));
 
 //                                                        if (status != 0) {
 //                                                            LogChuyenTienDaiLyMessage messageDaily3 = new LogChuyenTienDaiLyMessage(nicknameSend, nicknameReceive, vin, moneyReceive, fee2, VinPlayUtils.getCurrentDateTime(), status, desSend3, desReceive3, VinPlayUtils.genTransactionId((int) userSend2.getId()), 1, this.getAgentLevel1(nicknameSend, nicknameReceive), "");
@@ -1322,10 +1316,8 @@ public class UserServiceImpl
                                                 //RMQApi.publishMessagePayment(messageReceive, 16);
                                                 this.updateMoneyUser(messageReceive);
                                                 RMQApi.publishMessageLogMoney(messageLogReceive);
-                                                historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "CK Người Chơi",
-                                                        "Chuyển Khoản", String.valueOf(vin), "Thành Công", nicknameReceive, nicknameSend, HistoryTransConst.GAMER, transactionId));
-                                                historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "CK Người Chơi",
-                                                        "Nhận Tiền", String.valueOf(vin), "Thành Công", nicknameSend, nicknameReceive, HistoryTransConst.GAMER, transactionId));
+                                                historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "CK Người Chơi", "Chuyển Khoản", String.valueOf(vin), "Thành Công", nicknameReceive, nicknameSend, HistoryTransConst.GAMER, transactionId));
+                                                historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "CK Người Chơi", "Nhận Tiền", String.valueOf(vin), "Thành Công", nicknameSend, nicknameReceive, HistoryTransConst.GAMER, transactionId));
                                                 userMap.put(nicknameSend, userSend);
                                                 userMap.put(nicknameReceive, userCacheReceive);
                                                 context.commitTransaction();
@@ -1448,10 +1440,8 @@ public class UserServiceImpl
                                                 //RMQApi.publishMessagePayment((BaseMessage) messageReceive2, (int) 16);
                                                 this.updateMoneyUser(messageReceive2);
                                                 RMQApi.publishMessageLogMoney((LogMoneyUserMessage) messageLogReceive3);
-                                                historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "CK Người Chơi",
-                                                        "Chuyển Khoản", String.valueOf(vin), "Thành Công", nicknameReceive, nicknameSend, HistoryTransConst.GAMER, transactionId));
-                                                historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "CK Người Chơi",
-                                                        "Nhận Tiền", String.valueOf(vin), "Thành Công", nicknameSend, nicknameReceive, HistoryTransConst.GAMER, transactionId));
+                                                historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "CK Người Chơi", "Chuyển Khoản", String.valueOf(vin), "Thành Công", nicknameReceive, nicknameSend, HistoryTransConst.GAMER, transactionId));
+                                                historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "CK Người Chơi", "Nhận Tiền", String.valueOf(vin), "Thành Công", nicknameSend, nicknameReceive, HistoryTransConst.GAMER, transactionId));
                                                 userMap.put(nicknameSend, userSend2);
                                                 userMap.put(nicknameReceive, userCacheReceive2);
                                                 context2.commitTransaction();
@@ -1593,9 +1583,7 @@ public class UserServiceImpl
             int type = 0;
             if (message.getActionName().equals("Bot")) {
                 type = 3;
-            } else if (message.getActionName().equals("RechargeByCard") || message.getActionName().equals("RechargeByVinCard") || message.getActionName().equals("RechargeByMegaCard") || message.getActionName().equals("RechargeByBank") || message.getActionName().equals("RechargeByIAP") || message.getActionName().equals("RechargeBySMS") || message.getActionName().equals("TransferMoney")
-                    || message.getActionName().equals(Consts.RECHARGE_BY_MOMO) || message.getActionName().equals(Consts.RECHARGE_BY_BANK)
-                    && message.getMoneyVP() == -1) {
+            } else if (message.getActionName().equals("RechargeByCard") || message.getActionName().equals("RechargeByVinCard") || message.getActionName().equals("RechargeByMegaCard") || message.getActionName().equals("RechargeByBank") || message.getActionName().equals("RechargeByIAP") || message.getActionName().equals("RechargeBySMS") || message.getActionName().equals("TransferMoney") || message.getActionName().equals(Consts.RECHARGE_BY_MOMO) || message.getActionName().equals(Consts.RECHARGE_BY_BANK) && message.getMoneyVP() == -1) {
                 type = 1;
                 UserMakertingUtil.userNapVin(message.getNickname(), message.getMoneyExchange());
             } else if (message.getMoneyVP() > 0 || message.getVp() != 0) {
@@ -1722,10 +1710,8 @@ public class UserServiceImpl
 //                                                            LogMoneyUserMessage messageLogReceive = new LogMoneyUserMessage(userCacheReceive.getId(), nicknameReceive, "TransferMoney", "Chuy\u1ec3n kho\u1ea3n", currentMoneyReceive, moneyReceive, "vin", desReceive, 0L, false, userCacheReceive.isBot());
                                                             RMQApi.publishMessagePayment((BaseMessage) messageSend, (int) 16);
 
-                                                            historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "Đại Lý",
-                                                                    "Chuyển Khoản", String.valueOf(vin), "Thành Công", "User nhận: " + nicknameReceive, nicknameSend, HistoryTransConst.DAILY, transactionId));
-                                                            historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "Đại Lý",
-                                                                    "Nhận Tiền", String.valueOf(vin), "Thành Công", "User gửi: " + nicknameSend, nicknameReceive, HistoryTransConst.DAILY, transactionId));
+                                                            historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "Đại Lý", "Chuyển Khoản", String.valueOf(vin), "Thành Công", "User nhận: " + nicknameReceive, nicknameSend, HistoryTransConst.DAILY, transactionId));
+                                                            historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "Đại Lý", "Nhận Tiền", String.valueOf(vin), "Thành Công", "User gửi: " + nicknameSend, nicknameReceive, HistoryTransConst.DAILY, transactionId));
                                                             new TelegramUtil().senMessToDaily(nicknameReceive, "Nhận tiền từ : " + nicknameSend, vin, description);
                                                             new TelegramUtil().senMessToDaily(nicknameSend, "Chuyển Khoản đến : " + nicknameReceive, -vin, description);
                                                             //
@@ -1799,10 +1785,8 @@ public class UserServiceImpl
                                                         String desSend2 = "Chuy\u1ec3n t\u1edbi " + nicknameReceive + ": " + description;
 //                                                        LogMoneyUserMessage messageLogSend2 = new LogMoneyUserMessage(userSend.getId(), nicknameSend, "TransferMoney", "Chuy\u1ec3n kho\u1ea3n", currentMoney, -vin, "vin", desSend2, fee2, false, userSend.isBot());
                                                         RMQApi.publishMessagePayment((BaseMessage) messageSend2, (int) 16);
-                                                        historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "Đại Lý",
-                                                                "Chuyển Khoản", String.valueOf(vin), "Thành Công", "User nhận: " + nicknameReceive, nicknameSend, HistoryTransConst.DAILY, transactionId));
-                                                        historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "Đại Lý",
-                                                                "Nhận Tiền", String.valueOf(vin), "Thành Công", "User gửi: " + nicknameSend, nicknameReceive, HistoryTransConst.DAILY, transactionId));
+                                                        historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "Đại Lý", "Chuyển Khoản", String.valueOf(vin), "Thành Công", "User nhận: " + nicknameReceive, nicknameSend, HistoryTransConst.DAILY, transactionId));
+                                                        historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "Đại Lý", "Nhận Tiền", String.valueOf(vin), "Thành Công", "User gửi: " + nicknameSend, nicknameReceive, HistoryTransConst.DAILY, transactionId));
 //
                                                         new TelegramUtil().senMessToDaily(nicknameSend, "Chuyển Khoản đến : " + nicknameReceive, -vin, description);
                                                         new TelegramUtil().senMessToDaily(nicknameReceive, "Nhận tiền từ : " + nicknameSend, vin, description);
@@ -1943,8 +1927,7 @@ public class UserServiceImpl
                                                         RMQApi.publishMessagePayment((BaseMessage) messageReceive2, (int) 16);
                                                         RMQApi.publishMessageLogMoney((LogMoneyUserMessage) messageLogReceive3);
 
-                                                        historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "Đại Lý",
-                                                                "Chuyển Khoản", String.valueOf(vin), "Thành Công", "User nhận: " + nicknameReceive, nicknameSend, HistoryTransConst.DAILY, transactionId));
+                                                        historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "Đại Lý", "Chuyển Khoản", String.valueOf(vin), "Thành Công", "User nhận: " + nicknameReceive, nicknameSend, HistoryTransConst.DAILY, transactionId));
                                                         new TelegramUtil().senMessToDaily(nicknameReceive, "Nhận tiền từ " + nicknameSend, vin, description);
                                                         if (status != 0) {
                                                             LogChuyenTienDaiLyMessage messageDaily3 = new LogChuyenTienDaiLyMessage(nicknameSend, nicknameReceive, vin, moneyReceive, fee2, VinPlayUtils.getCurrentDateTime(), status, desSend3, desReceive3, VinPlayUtils.genTransactionId((int) userSend2.getId()), 1, this.getAgentLevel1(nicknameSend, nicknameReceive), "");
@@ -2351,20 +2334,17 @@ public class UserServiceImpl
             int totalFee = totalAmount - userWithdraw.Amount;
 
             HazelcastInstance client = HazelcastClientFactory.getInstance();
-            if (client == null)
-                return response;
+            if (client == null) return response;
 
             UserDaoImpl userDao = new UserDaoImpl();
             UserModel user = userDao.getUserByNickName(userWithdraw.Username);
-            if (user == null)
-                return response;
+            if (user == null) return response;
             if (user.isBanCashOut()) {
                 return response;
             }
             IMap<String, UserModel> userMap = client.getMap("users");
             String nickname = user.getNickname();
-            if (!userMap.containsKey((Object) nickname))
-                return response;
+            if (!userMap.containsKey((Object) nickname)) return response;
             MoneyResponse moneyRes = this.updateMoney(nickname, amount, "vin", Consts.CASH_OUT_BY_BANK, Consts.CASH_OUT_BY_BANK, "withdraw to bank", totalFee, null, TransType.NO_VIPPOINT);
             if (!moneyRes.isSuccess()) {
                 response.setSuccess(moneyRes.isSuccess());
@@ -2449,20 +2429,17 @@ public class UserServiceImpl
             int totalFee = totalAmount - userWithdrawMomo.Amount;
 
             HazelcastInstance client = HazelcastClientFactory.getInstance();
-            if (client == null)
-                return response;
+            if (client == null) return response;
 
             UserDaoImpl userDao = new UserDaoImpl();
             UserModel user = userDao.getUserByNickName(userWithdrawMomo.Nickname);
-            if (user == null)
-                return response;
+            if (user == null) return response;
             if (user.isBanCashOut()) {
                 return response;
             }
             IMap<String, UserModel> userMap = client.getMap("users");
             String nickname = user.getNickname();
-            if (!userMap.containsKey((Object) nickname))
-                return response;
+            if (!userMap.containsKey((Object) nickname)) return response;
             MoneyResponse moneyRes = this.updateMoney(nickname, amount, "vin", Consts.CASH_OUT_BY_MOMO, Consts.CASH_OUT_BY_MOMO, "withdraw to momo", totalFee, null, TransType.NO_VIPPOINT);
             if (!moneyRes.isSuccess()) {
                 response.setSuccess(moneyRes.isSuccess());
@@ -2479,9 +2456,7 @@ public class UserServiceImpl
                 return response;
             }
             HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
-            historyTransDao.insertTransaction(new HistoryTransModel("Momo", "Momo",
-                    "Rút tiền", String.valueOf(amount), "Đang xử lý", "Đang chờ duyệt",
-                    nickname, HistoryTransConst.RUT_BANK, userWithdrawMomo.Id));
+            historyTransDao.insertTransaction(new HistoryTransModel("Momo", "Momo", "Rút tiền", String.valueOf(amount), "Đang xử lý", "Đang chờ duyệt", nickname, HistoryTransConst.RUT_BANK, userWithdrawMomo.Id));
             if (!insert) {
                 response.setSuccess(false);
                 response.setErrorCode("1002");
@@ -2537,20 +2512,17 @@ public class UserServiceImpl
             int totalFee = totalAmount - userWithdraw.Amount;
 
             HazelcastInstance client = HazelcastClientFactory.getInstance();
-            if (client == null)
-                return response;
+            if (client == null) return response;
 
             UserDaoImpl userDao = new UserDaoImpl();
             UserModel user = userDao.getUserByNickName(userWithdraw.Username);
-            if (user == null)
-                return response;
+            if (user == null) return response;
             if (user.isBanCashOut()) {
                 return response;
             }
             IMap<String, UserModel> userMap = client.getMap("users");
             String nickname = user.getNickname();
-            if (!userMap.containsKey((Object) nickname))
-                return response;
+            if (!userMap.containsKey((Object) nickname)) return response;
             MoneyResponse moneyRes = this.updateMoney(nickname, amount, "vin", Consts.CASH_OUT_BY_CARD, Consts.CASH_OUT_BY_CARD, "withdraw to card", totalFee, null, TransType.NO_VIPPOINT);
             if (!moneyRes.isSuccess()) {
                 response.setSuccess(moneyRes.isSuccess());
@@ -2615,15 +2587,12 @@ public class UserServiceImpl
         try {
             UserDaoImpl userDao = new UserDaoImpl();
             UserModel user = userDao.getUserByNickName(nickname);
-            if (user == null)
-                return false;
+            if (user == null) return false;
             HazelcastInstance client = HazelcastClientFactory.getInstance();
-            if (client == null)
-                return false;
+            if (client == null) return false;
             IMap<String, UserModel> userMap = client.getMap("users");
 
-            if (!userMap.containsKey((Object) nickname))
-                return false;
+            if (!userMap.containsKey((Object) nickname)) return false;
             MoneyResponse moneyRes = this.updateMoney(nickname, amount, "vin", Consts.REFUND_RECHARGE_ERROR, "Hoàn tiền", "Hoàn tiền", fee, null, TransType.NO_VIPPOINT);
             if (!moneyRes.isSuccess()) {
                 return false;
@@ -2669,6 +2638,37 @@ public class UserServiceImpl
             userBankInfoDto.setAccountName(document.getString("account_name"));
             userBankInfoDto.setNickName(document.getString("nick_name"));
             userBankInfoDto.setCreatedDate(document.getString("created_date"));
+            ObjectId id = document.getObjectId("_id");
+            userBankInfoDto.setId(id.toString());
+            results.add(userBankInfoDto);
+        }
+        return results;
+    }
+
+    @Override
+    public List<UserBankInfoDto> updateListBankByNicknameAndId(String nickName, String id, String bankAccount, String bankName, String accountName) {
+        List<UserBankInfoDto> results = new ArrayList<>();
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("user_bank_info");
+        Document conditions = new Document();
+        conditions.put("nick_name", nickName);
+        conditions.put("_id", new ObjectId(id));
+        Document update = new Document("$set", new Document("bank_account", bankAccount)
+                .append("bank_name", bankName)
+                .append("account_name", accountName));
+        collection.updateOne(conditions, update);
+        MongoCursor<Document> cursor = collection.find(new Document("nick_name", nickName)).iterator();
+
+        while (cursor.hasNext()) {
+            Document document = cursor.next();
+            UserBankInfoDto userBankInfoDto = new UserBankInfoDto();
+            userBankInfoDto.setBankAccount(document.getString("bank_account"));
+            userBankInfoDto.setBankName(document.getString("bank_name"));
+            userBankInfoDto.setAccountName(document.getString("account_name"));
+            userBankInfoDto.setNickName(document.getString("nick_name"));
+            userBankInfoDto.setCreatedDate(document.getString("created_date"));
+            ObjectId objectId = document.getObjectId("_id");
+            userBankInfoDto.setId(objectId.toString());
             results.add(userBankInfoDto);
         }
 
@@ -2687,6 +2687,7 @@ public class UserServiceImpl
         document.put("created_date", userBankInfoDto.getCreatedDate());
         collection.insertOne(document);
     }
+
 
     public void saveMomoInfo(UserMomoInfoDto userMomoInfoDto) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
@@ -2717,10 +2718,39 @@ public class UserServiceImpl
             userBankInfoDto.setPhoneNumber(document.getString("phone_number"));
             userBankInfoDto.setCreatedDate(document.getString("created_date"));
             userBankInfoDto.setNickName(nickName);
+            ObjectId objectId = document.getObjectId("_id");
+            userBankInfoDto.setId(objectId.toString());
             results.add(userBankInfoDto);
         }
         return results;
     }
+
+    public List<UserMomoInfoDto> updateMomoByNicknameAndId(String nickName, String id, String phoneName, String phoneNumber) {
+        List<UserMomoInfoDto> results = new ArrayList<>();
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("user_momo_info");
+        Document conditions = new Document();
+        conditions.put("nick_name", nickName);
+        conditions.put("_id", new ObjectId(id));
+        Document update = new Document("$set", new Document("phone_name", phoneName)
+                .append("phone_number", phoneNumber));
+        collection.updateOne(conditions, update);
+        MongoCursor<Document> cursor = collection.find(new Document("nick_name", nickName)).sort(new BasicDBObject("created_date", -1)).iterator();
+        while (cursor.hasNext()) {
+            Document document = cursor.next();
+            UserMomoInfoDto userMomoInfoDto = new UserMomoInfoDto();
+            userMomoInfoDto.setPhoneName(document.getString("phone_name"));
+            userMomoInfoDto.setPhoneNumber(document.getString("phone_number"));
+            userMomoInfoDto.setCreatedDate(document.getString("created_date"));
+            userMomoInfoDto.setNickName(document.getString("nick_name"));
+            ObjectId objectId = document.getObjectId("_id");
+            userMomoInfoDto.setId(objectId.toString());
+            results.add(userMomoInfoDto);
+        }
+
+        return results;
+    }
+
 
 }
 

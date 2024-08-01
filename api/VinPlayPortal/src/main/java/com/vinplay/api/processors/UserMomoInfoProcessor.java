@@ -4,7 +4,6 @@ import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.dto.UserMomoInfoDto;
-import com.vinplay.vbee.common.response.UserMomoInfoResponse;
 import com.vinplay.vbee.common.utils.DateTimeUtils;
 
 import javax.servlet.http.HttpServletRequest;

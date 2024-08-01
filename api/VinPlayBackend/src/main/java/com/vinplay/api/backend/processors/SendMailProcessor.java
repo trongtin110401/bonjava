@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  com.vinplay.usercore.service.impl.MailBoxServiceImpl
  *  com.vinplay.usercore.service.impl.UserServiceImpl
@@ -11,18 +11,22 @@
  */
 package com.vinplay.api.backend.processors;
 
+import com.vinplay.usercore.dao.UserDao;
+import com.vinplay.usercore.dao.impl.UserDaoImpl;
 import com.vinplay.usercore.service.impl.MailBoxServiceImpl;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.response.SendMailResponse;
+
 import java.sql.SQLException;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 public class SendMailProcessor
-implements BaseProcessor<HttpServletRequest, String> {
-    public String execute(Param<HttpServletRequest> param) {
-        HttpServletRequest request = (HttpServletRequest)param.get();
+        implements BaseProcessor<HttpServletRequest, String> {
+    public String execute(Param<HttpServletRequest> param) throws SQLException {
+        HttpServletRequest request = (HttpServletRequest) param.get();
         SendMailResponse response = new SendMailResponse(true, "0", "");
         String nickName = request.getParameter("nn");
         String title = request.getParameter("tm");
@@ -32,7 +36,11 @@ implements BaseProcessor<HttpServletRequest, String> {
             UserServiceImpl user = new UserServiceImpl();
             boolean check = false;
             if (nickName.equals("*")) {
-                check = service.sendMailBoxFromByNickNameAdmin(nickName, title, content);
+                UserDao userDao = new UserDaoImpl();
+                List<String> users = userDao.getAllUsers();
+                for (String u : users) {
+                    check = service.sendMailBoxFromByNickNameAdmin(u, title, content);
+                }
                 if (check) {
                     response.setErrorCode("0");
                     response.setSuccess(true);
@@ -48,8 +56,7 @@ implements BaseProcessor<HttpServletRequest, String> {
                         response.setNickName(name);
                         response.setSuccess(false);
                         return response.toJson();
-                    }
-                    catch (SQLException e) {
+                    } catch (SQLException e) {
                         e.printStackTrace();
                     }
                 }

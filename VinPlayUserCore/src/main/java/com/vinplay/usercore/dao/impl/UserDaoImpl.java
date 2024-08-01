@@ -57,8 +57,7 @@ import java.util.List;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
-public class UserDaoImpl
-        implements UserDao {
+public class UserDaoImpl implements UserDao {
 
 
     @Override
@@ -202,6 +201,20 @@ public class UserDaoImpl
     }
 
     @Override
+    public List<String> getAllUsers() throws SQLException {
+        List<String> users = new ArrayList<>();
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
+            PreparedStatement stm = conn.prepareStatement("SELECT * FROM vinplay.users WHERE is_bot = 0");
+            ResultSet rs = stm.executeQuery();
+            while (rs.next()) {
+                users.add(rs.getString("nick_name"));
+            }
+            rs.close();
+            stm.close();
+        }
+        return users;
+    }
+
     public UserModel getUserByUserName(String username) throws SQLException {
         UserModel user = null;
         try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
