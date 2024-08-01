@@ -4,6 +4,7 @@
 package com.vinplay.vbee.common.dto;
 
 public class UserMomoInfoDto {
+    private String id;
     private String nickName;
     private String phoneName;
     private String phoneNumber;
@@ -49,6 +50,14 @@ public class UserMomoInfoDto {
 
     public void setNickName(String nickName) {
         this.nickName = nickName;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }
 
