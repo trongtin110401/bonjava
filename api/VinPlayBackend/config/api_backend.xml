@@ -1823,5 +1823,15 @@
             <name>update bank info</name>
             <path>com.vinplay.api.backend.processors.UpdateUserBankInfoProcessor</path>
         </command>
+        <command>
+            <id>11045</id>
+            <name>get momo info</name>
+            <path>com.vinplay.api.backend.processors.GetUserMomoInfoProcessor</path>
+        </command>
+        <command>
+            <id>11046</id>
+            <name>update momo info</name>
+            <path>com.vinplay.api.backend.processors.UpdateUserMomoInfoProcessor</path>
+        </command>
     </commands>
 </backend>

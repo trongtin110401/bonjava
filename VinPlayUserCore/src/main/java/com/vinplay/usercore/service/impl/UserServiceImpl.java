@@ -2718,10 +2718,39 @@ public class UserServiceImpl implements UserService {
             userBankInfoDto.setPhoneNumber(document.getString("phone_number"));
             userBankInfoDto.setCreatedDate(document.getString("created_date"));
             userBankInfoDto.setNickName(nickName);
+            ObjectId objectId = document.getObjectId("_id");
+            userBankInfoDto.setId(objectId.toString());
             results.add(userBankInfoDto);
         }
         return results;
     }
+
+    public List<UserMomoInfoDto> updateMomoByNicknameAndId(String nickName, String id, String phoneName, String phoneNumber) {
+        List<UserMomoInfoDto> results = new ArrayList<>();
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("user_momo_info");
+        Document conditions = new Document();
+        conditions.put("nick_name", nickName);
+        conditions.put("_id", new ObjectId(id));
+        Document update = new Document("$set", new Document("phone_name", phoneName)
+                .append("phone_number", phoneNumber));
+        collection.updateOne(conditions, update);
+        MongoCursor<Document> cursor = collection.find(new Document("nick_name", nickName)).sort(new BasicDBObject("created_date", -1)).iterator();
+        while (cursor.hasNext()) {
+            Document document = cursor.next();
+            UserMomoInfoDto userMomoInfoDto = new UserMomoInfoDto();
+            userMomoInfoDto.setPhoneName(document.getString("phone_name"));
+            userMomoInfoDto.setPhoneNumber(document.getString("phone_number"));
+            userMomoInfoDto.setCreatedDate(document.getString("created_date"));
+            userMomoInfoDto.setNickName(document.getString("nick_name"));
+            ObjectId objectId = document.getObjectId("_id");
+            userMomoInfoDto.setId(objectId.toString());
+            results.add(userMomoInfoDto);
+        }
+
+        return results;
+    }
+
 
 }
 
