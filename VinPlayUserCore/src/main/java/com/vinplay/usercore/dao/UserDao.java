@@ -108,5 +108,7 @@ public interface UserDao {
     public int countUserSecurity(String startTime, String endTime) throws SQLException;
 
     public int countUserPayAndSecurity(String startTime, String endTime) throws SQLException;
+
+    public List<String> getAllUsers() throws SQLException;
 }
 
