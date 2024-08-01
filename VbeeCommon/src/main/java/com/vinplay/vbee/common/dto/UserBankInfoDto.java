@@ -4,6 +4,7 @@
 package com.vinplay.vbee.common.dto;
 
 public class UserBankInfoDto {
+    private String id;
     private String nickName;
     private String bankAccount;
 
@@ -62,6 +63,14 @@ public class UserBankInfoDto {
 
     public void setCreatedDate(String createdDate) {
         this.createdDate = createdDate;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }
 

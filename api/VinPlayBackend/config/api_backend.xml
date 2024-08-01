@@ -1815,8 +1815,13 @@
         </command>
         <command>
             <id>11043</id>
-            <name>deactivate user tele</name>
+            <name>deactivate user phone</name>
             <path>com.vinplay.api.backend.processors.DeActiveUserPhoneProcessor</path>
+        </command>
+        <command>
+            <id>11044</id>
+            <name>update bank info</name>
+            <path>com.vinplay.api.backend.processors.UpdateUserBankInfoProcessor</path>
         </command>
     </commands>
 </backend>
