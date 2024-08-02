@@ -233,7 +233,7 @@ public class TaiXiuMd5DAOImpl
         Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");
         CallableStatement call = null;
         try {
-            call = conn.prepareCall("CALL tx_count_lich_su_giao_dich(?, ?, ?)");
+            call = conn.prepareCall("CALL tx_count_lich_su_giao_dich_md5(?, ?, ?)");
             int param = 1;
             call.setString(param++, nickname);
             call.setByte(param++, (byte) moneyType);
