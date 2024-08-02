@@ -209,7 +209,7 @@ public class MGRoomTaiXiu extends MGRoom {
 
                         MoneyResponse res = new MoneyResponse(false, "1001");
                         if (!isBot) { // trừ tiền đặt cược
-                            res = this.userService.updateMoney(nickname, -betValue, this.moneyTypeStr, Games.TAI_XIU_MD5.getName(), "T\u00e0i x\u1ec9u: \u0110\u1eb7t c\u01b0\u1ee3c", "Phii\u00ean " + this.referenceId + ": \u0111\u1eb7t " + betSideStr + " (" + inputTime + ")", 0L, Long.valueOf(this.referenceId), TransType.START_TRANS);
+                            res = this.userService.updateMoney(nickname, -betValue, this.moneyTypeStr, Games.TAI_XIU_MD5.getName(), "Tài Xỉu MD5: Đặt cược", "Phiên " + this.referenceId + ": đặt " + betSideStr + " (" + inputTime + ")", 0L, Long.valueOf(this.referenceId), TransType.START_TRANS);
                             try {
                                 BetTXMD5Message message = new BetTXMD5Message();
                                 message.setBetSide(betSide);
