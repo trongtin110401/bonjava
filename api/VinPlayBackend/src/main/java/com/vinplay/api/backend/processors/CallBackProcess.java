@@ -130,7 +130,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
             UserServiceImpl userService = new UserServiceImpl();
             long fee = userWithdraw.AmountReal - userWithdraw.Amount;
             boolean refund = userService.refundWhenError(userWithdraw.Username, userWithdraw.AmountReal, fee);
-            cashoutDao.UpdateCashoutMomo(callBackModel.getChargeId(), CashoutUtil.STATUS_ERROR, "Auto_Bank");
+            cashoutDao.UpdateCashoutBank(callBackModel.getRequestId(), CashoutUtil.STATUS_ERROR, "Auto_Bank");
             historyTransModel.setTrangthai("Thất bại");
             historyTransModel.setGhiChu("Thất bại");
             if (!refund) {
