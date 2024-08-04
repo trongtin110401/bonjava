@@ -69,5 +69,7 @@ public interface OtherService {
     boolean checkIsSendBackCodeByDay(String type, String nickname, String startTime, String endTime);
 
     boolean createEvent (EventResponse eventResponse);
+
+    public long getMoneyShootFishByNickname(String startTime, String endTime, String nickname);
 }
 
