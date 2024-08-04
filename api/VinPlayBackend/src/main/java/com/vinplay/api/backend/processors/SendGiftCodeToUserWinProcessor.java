@@ -11,7 +11,6 @@
  */
 package com.vinplay.api.backend.processors;
 
-import bitzero.util.common.business.Debug;
 import com.vinplay.dal.dao.impl.LogMoneyUserDaoImpl;
 import com.vinplay.usercore.service.OtherService;
 import com.vinplay.usercore.service.impl.GiftCodeServiceImpl;
@@ -47,6 +46,14 @@ public class SendGiftCodeToUserWinProcessor implements BaseProcessor<HttpServlet
             String timeEnd = request.getParameter("timeEnd");
             String message = request.getParameter("message");
             String nickname = request.getParameter("nickname");
+
+            OtherService service = new OtherServiceImpl();
+            UserCodeReponse userCodeResponse = new UserCodeReponse(true, "200");
+            if (service.checkIsSendBackCodeByDay("WIN", nickname, timeStart, timeEnd)) {
+                userCodeResponse.setErrorCode("Gift code đã gửi");
+                userCodeResponse.setSuccess(false);
+                return userCodeResponse.toJson();
+            }
 
             int price;
             try {
@@ -122,6 +129,8 @@ public class SendGiftCodeToUserWinProcessor implements BaseProcessor<HttpServlet
                         throw new RuntimeException(e);
                     }
                 }
+                OtherService service = new OtherServiceImpl();
+                service.updateStatusSendBackCodeByDay("WIN", nickname, timeStart, timeEnd);
             });
 
             UserCodeReponse userCodeResponse = new UserCodeReponse(true, "200");
