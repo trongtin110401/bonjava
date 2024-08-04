@@ -67,5 +67,7 @@ public interface OtherService {
     void updateStatusSendBackCodeByDay(String type, String nickname, String startTime, String endTime);
 
     boolean checkIsSendBackCodeByDay(String type, String nickname, String startTime, String endTime);
+
+    boolean createEvent (EventResponse eventResponse);
 }
 
