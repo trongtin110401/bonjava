@@ -568,6 +568,24 @@ public class OtherServiceImpl implements OtherService {
     }
 
     @Override
+    public boolean createEvent(EventResponse eventResponse) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("event");
+        Document document = new Document();
+        document.put("id", System.currentTimeMillis());
+        document.put("start_time", eventResponse.getTimeStart());
+        document.put("end_time", eventResponse.getTimeEnd());
+        document.put("event_name", eventResponse.getEventName());
+        document.put("status", true);
+        try {
+            collection.insertOne(document);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
     public UserPhone getUserPhoneInfoByPhoneNumber(String phoneNumber) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("user_phone");

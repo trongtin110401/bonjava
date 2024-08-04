@@ -1833,5 +1833,10 @@
             <name>update momo info</name>
             <path>com.vinplay.api.backend.processors.UpdateUserMomoInfoProcessor</path>
         </command>
+        <command>
+            <id>11047</id>
+            <name>create event</name>
+            <path>com.vinplay.api.backend.processors.CreateEventProcessor</path>
+        </command>
     </commands>
 </backend>
