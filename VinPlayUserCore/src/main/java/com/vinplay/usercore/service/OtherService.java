@@ -70,6 +70,6 @@ public interface OtherService {
 
     boolean createEvent (EventResponse eventResponse);
 
-    public long getMoneyShootFishByNickname(String startTime, String endTime, String nickname);
+    long getMoneyShootFishByNickname(String startTime, String endTime, String nickname);
 }
 
