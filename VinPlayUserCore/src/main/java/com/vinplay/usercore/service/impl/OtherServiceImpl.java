@@ -18,6 +18,7 @@ import com.vinplay.vbee.common.utils.VinPlayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.python.parser.ast.Str;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -234,8 +235,7 @@ public class OtherServiceImpl implements OtherService {
     public boolean checkActiveByNickname(String nickname) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("user_tele");
-        Document filter = new Document("nickname", nickname)
-                .append("isActive", true);
+        Document filter = new Document("nickname", nickname).append("isActive", true);
         MongoCursor<Document> cursor = collection.find(filter).iterator();
 
         try {
@@ -295,8 +295,7 @@ public class OtherServiceImpl implements OtherService {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
 
         MongoCollection<Document> collection = db.getCollection("user_tele_cash_back");
-        Document updateQuery = new Document("$set", new Document("status", true)
-                .append("activeDate", VinPlayUtils.getCurrentDateTime()));
+        Document updateQuery = new Document("$set", new Document("status", true).append("activeDate", VinPlayUtils.getCurrentDateTime()));
         collection.updateOne(new Document("code", code), updateQuery);
     }
 
@@ -402,9 +401,7 @@ public class OtherServiceImpl implements OtherService {
         try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_banca");) {
             String sql;
             if (nickname != null && !nickname.isEmpty()) {
-                sql = "SELECT * FROM cgame.bc_trans_log c " +
-                        "JOIN users u ON c.UserId = u.user_id " +
-                        "WHERE c.time >= ? AND c.time <= ? AND u.nickname = ?";
+                sql = "SELECT * FROM cgame.bc_trans_log c " + "JOIN users u ON c.UserId = u.user_id " + "WHERE c.time >= ? AND c.time <= ? AND u.nickname = ?";
             } else {
                 sql = "SELECT * FROM cgame.bc_trans_log WHERE time >= ? AND time <= ?";
             }
@@ -443,9 +440,7 @@ public class OtherServiceImpl implements OtherService {
         ResultSet rs = null;
 
         try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_banca");) {
-            String sql = "SELECT u.nickname, sum(c.CashGain) as CashGain " +
-                    "FROM cgame.bc_trans_log c JOIN cgame.users u ON c.UserId = u.user_id " +
-                    "WHERE c.time >= ?  AND c.time <= ? AND c.type = 1 ";
+            String sql = "SELECT u.nickname, sum(c.CashGain) as CashGain " + "FROM cgame.bc_trans_log c JOIN cgame.users u ON c.UserId = u.user_id " + "WHERE c.time >= ?  AND c.time <= ? AND c.type = 1 ";
 
             boolean findByNickName = false;
             if (StringUtils.isNotEmpty(nickname)) {
@@ -543,6 +538,33 @@ public class OtherServiceImpl implements OtherService {
         } else {
             return "";
         }
+    }
+
+    @Override
+    public void updateStatusSendBackCodeByDay(String type, String nickname, String startTime, String endTime) {
+        if (checkIsSendBackCodeByDay(type, nickname, startTime, endTime)) {
+            return;
+        }
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("status_back_code");
+        Document document = new Document();
+        document.put("type", type);
+        document.put("start_time", startTime);
+        document.put("end_time", endTime);
+        document.put("nickname", nickname);
+        collection.insertOne(document);
+    }
+
+    @Override
+    public boolean checkIsSendBackCodeByDay(String type, String nickname, String startTime, String endTime) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("status_back_code");
+        Document filter = new Document();
+        filter.put("type", type);
+        filter.put("nickname", nickname);
+        filter.put("start_time", new Document("$gte", startTime));
+        filter.put("end_time", new Document("$lte", endTime));
+        return collection.find(filter).first() != null;
     }
 
     @Override

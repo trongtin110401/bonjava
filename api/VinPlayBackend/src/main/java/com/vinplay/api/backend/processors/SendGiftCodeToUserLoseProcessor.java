@@ -45,6 +45,14 @@ public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServle
             String timeEnd = request.getParameter("timeEnd");
             String message = request.getParameter("message");
 
+            OtherService service = new OtherServiceImpl();
+            UserCodeReponse userCodeResponse = new UserCodeReponse(true, "200");
+            if (service.checkIsSendBackCodeByDay("LOSE", "", timeStart, timeEnd)) {
+                userCodeResponse.setErrorCode("Gift code đã gửi");
+                userCodeResponse.setSuccess(false);
+                return userCodeResponse.toJson();
+            }
+
             long percent;
             try {
                 percent = Long.parseLong(request.getParameter("percent"));
@@ -161,6 +169,8 @@ public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServle
                         sendMessage(userTele.getChatID(), content);
                         saveUserTeleCashBack(userTele, giftCode, price, userLoseByDay.getMoney());
                     }
+                    OtherService service = new OtherServiceImpl();
+                    service.updateStatusSendBackCodeByDay("LOSE", "", timeStart, timeEnd);
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }

@@ -63,5 +63,9 @@ public interface OtherService {
     UserActiveTeleResponse getAllUserActiveTele(String nickname, int pageIndex, int pageSize);
 
     String getPhoneActiveByNickname(String nickname);
+
+    void updateStatusSendBackCodeByDay(String type, String nickname, String startTime, String endTime);
+
+    boolean checkIsSendBackCodeByDay(String type, String nickname, String startTime, String endTime);
 }
 
