@@ -432,6 +432,42 @@ public class OtherServiceImpl implements OtherService {
     }
 
     @Override
+    public long getMoneyShootFishByNickname(String startTime, String endTime, String nickname) {
+        MoneyShootFishResponse response = new MoneyShootFishResponse(false, "1001");
+        long totalProfit = 0;
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_banca");) {
+            String sql;
+            if (nickname != null && !nickname.isEmpty()) {
+                sql = "SELECT * FROM cgame.bc_trans_log c " + "JOIN users u ON c.UserId = u.user_id " + "WHERE c.time >= ? AND c.time <= ? AND u.nickname = ?";
+            } else {
+                sql = "SELECT * FROM cgame.bc_trans_log WHERE time >= ? AND time <= ?";
+            }
+            PreparedStatement stm = conn.prepareStatement(sql);
+            stm.setTimestamp(1, Timestamp.valueOf(startTime + " 00:00:00"));
+            stm.setTimestamp(2, Timestamp.valueOf(endTime + " 23:59:59"));
+            if (nickname != null && !nickname.isEmpty()) {
+                stm.setString(3, nickname);
+            }
+            ResultSet rs = stm.executeQuery();
+
+            totalProfit = 0;
+
+            while (rs.next()) {
+                if (rs.getString("Type").equals("1")) {
+                    totalProfit += rs.getInt("CashGain");
+                }
+            }
+            rs.close();
+            stm.close();
+        } catch (Exception e) {
+            response.setSuccess(false);
+            response.setErrorCode(e.getMessage());
+            e.printStackTrace();
+        }
+        return totalProfit;
+    }
+
+    @Override
     public List<MoneyShootFishResponse> getTotalShootFish(String startTime, String endTime, String nickname) throws Exception {
 
         List<MoneyShootFishResponse> responses = new ArrayList<>();
