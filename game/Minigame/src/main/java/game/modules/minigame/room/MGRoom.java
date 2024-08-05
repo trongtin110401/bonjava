@@ -218,7 +218,7 @@ public abstract class MGRoom {
      *
      * @param value Giá trị cần cập nhật
      */
-    protected void updateFunValue(long value) {
+    protected synchronized void updateFunValue(long value) {
         setFunValue(getFunValue() + value);
     }
 }

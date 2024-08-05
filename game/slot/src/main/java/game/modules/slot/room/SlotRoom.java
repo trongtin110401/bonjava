@@ -459,7 +459,7 @@ public abstract class SlotRoom {
         cacheService.setValue(key, value);
     }
 
-    protected void updateFunValue(long value) {
+    protected synchronized void updateFunValue(long value) {
         setFunValue(getFunValue() + value);
     }
 }
