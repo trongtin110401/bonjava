@@ -691,9 +691,9 @@ public class Slot25ExtendRoom extends SlotRoom {
             int isReset = cacheService.getValueInt("reset_pot_" + gameName + "_" + this.betValue);
             if (isReset == 1) {
                 this.pot = this.initJackpotValues;
-                updateFunValue(-getFunValue());
+//                updateFunValue(-getFunValue());
                 this.savePot();
-                this.saveFund();
+//                this.saveFund();
                 this.cacheService.removeKey("reset_pot_" + gameName + "_" + this.betValue);
 
             }

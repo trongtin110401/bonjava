@@ -150,7 +150,7 @@ public class Slot20Room extends SlotRoom {
 
                         // số tiền còn lại sau khi trừ phế và 2% POT cho vào quỹ thưởng
                         long moneyToFund = !isSpinningFree ? totalBetValue - fee - moneyToPot : 0;
-                        if (!u.isBot()) {
+                        if (!u.isBot() && moneyToPot > 0) {
                             updateFunValue(moneyToFund);
                         }
                         // cờ này được sử dụng để check liệu có tiếp tục vòng lặp để sinh Matrix hay không
@@ -501,9 +501,9 @@ public class Slot20Room extends SlotRoom {
             int isReset = cacheService.getValueInt("reset_pot_" + this.gn + "_" + this.betValue);
             if (isReset == 1) {
                 this.pot = this.initJackpotValues;
-                updateFunValue(-getFunValue());
+//                updateFunValue(-getFunValue());
                 this.savePot();
-                this.saveFund();
+//                this.saveFund();
                 this.cacheService.removeKey("reset_pot_" + this.gn + "_" + this.betValue);
             }
         } catch (Exception ignored) {
