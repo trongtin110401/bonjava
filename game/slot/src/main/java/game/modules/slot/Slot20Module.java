@@ -65,7 +65,6 @@ public abstract class Slot20Module extends SlotModule {
                     jackpots[2] = 500000000;
                     jackpots[3] = 0;
                 }
-                System.out.println("====> POT " + gameName + ":" + new Gson().toJson(this.jackpots));
 
                 Debug.trace(this.gameName + " POTS: " + CommonUtils.arrayLongToString(this.jackpots));
                 funds = this.service.getFunds(gameName);
