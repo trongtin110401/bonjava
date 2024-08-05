@@ -133,7 +133,7 @@ public class MGRoomMiniPoker extends MGRoom {
             // empty catch block
         }
         try {
-            this.mgService.savePot(this.name,CACHE_JACK_POT_VALUE_SLOT + "_" + this.betValue + "_" + gameName, pot, this.huX2);
+            this.mgService.savePot(this.name, CACHE_JACK_POT_VALUE_SLOT + "_" + this.betValue + "_" + gameName, pot, this.huX2);
         } catch (IOException | InterruptedException | TimeoutException exception) {
             // empty catch block
         }
@@ -149,7 +149,7 @@ public class MGRoomMiniPoker extends MGRoom {
         return msg.result;
     }
 
-    public synchronized ResultMiniPokerMsg play(String username, long betValue) {
+    public ResultMiniPokerMsg play(String username, long betValue) {
         long lastPot = this.pot;
         long lastFund = getFunValue();
         ResultMiniPokerMsg resultMiniPokerMsg = new ResultMiniPokerMsg();
@@ -188,171 +188,173 @@ public class MGRoomMiniPoker extends MGRoom {
                     if (!u.isBot()) {
                         updateFunValue(moneyToFund);
                     }
-                    while (!enoughToPair) {
-                        if (!u.isBot())
-                            System.out.println("Play Mini Poker: 3");
-                        GroupType groupType;
-                        prize = 0L;
-                        tienThuongX2 = 0L;
-                        long moneyExchange;
-                        boolean forceNoHu = false;
+                    synchronized (this) {
+                        while (!enoughToPair) {
+                            if (!u.isBot())
+                                System.out.println("Play Mini Poker: 3");
+                            GroupType groupType;
+                            prize = 0L;
+                            tienThuongX2 = 0L;
+                            long moneyExchange;
+                            boolean forceNoHu = false;
 
-                        if ((userForce.equals(username) && betValueCache.equals(String.valueOf(this.betValue)))
-                                || (!u.isBot() && randomJackpot(percentJackpot))) {
-                            forceNoHu = true;
-                            forceJackpotByUser = true;
-                        }
+                            if ((userForce.equals(username) && betValueCache.equals(String.valueOf(this.betValue)))
+                                    || (!u.isBot() && randomJackpot(percentJackpot))) {
+                                forceNoHu = true;
+                                forceJackpotByUser = true;
+                            }
 
-                        List<Card> cards = this.gen.randomCards2(forceJackpotByUser);
-                        if (cards.size() != 5) {
-                            cards = this.gen.randomCards();
-                        }
+                            List<Card> cards = this.gen.randomCards2(forceJackpotByUser);
+                            if (cards.size() != 5) {
+                                cards = this.gen.randomCards();
+                            }
 
-                        if ((groupType = CardLibUtils.calculateTypePoker(cards)) == null) continue;
+                            if ((groupType = CardLibUtils.calculateTypePoker(cards)) == null) continue;
 
-                        switch (groupType) {
-                            case HighCard: {
-                                result = ResultPoker.BAI_CAO;
-                                break;
-                            }
-                            case OnePair: {
-                                if (CardLibUtils.pairEqualOrGreatJack(cards)) {
-                                    result = ResultPoker.MOT_DOI_TO;
-                                    prize = (int) ((float) betValue * 2.5f);
+                            switch (groupType) {
+                                case HighCard: {
+                                    result = ResultPoker.BAI_CAO;
                                     break;
                                 }
-                                result = ResultPoker.MOT_DOI_NHO;
-                                prize = 0L;
-                                break;
-                            }
-                            case TwoPair: {
-                                result = ResultPoker.HAI_DOI;
-                                prize = betValue * 5L;
-                                break;
-                            }
-                            case ThreeOfKind: {
-                                result = ResultPoker.SAM_CO;
-                                prize = betValue * 8L;
-                                break;
-                            }
-                            case Straight: {
-                                result = ResultPoker.SANH;
-                                if (this.moneyType == 1) {
-                                    prize = betValue * 13L;
-                                    break;
-                                }
-                                prize = betValue * 12L;
-                                break;
-                            }
-                            case Flush: {
-                                result = ResultPoker.THUNG;
-                                if (this.moneyType == 1) {
-                                    prize = betValue * 20L;
-                                    break;
-                                }
-                                prize = betValue * 18L;
-                                break;
-                            }
-                            case FullHouse: {
-                                result = ResultPoker.CU_LU;
-                                if (this.moneyType == 1) {
-                                    prize = betValue * 50L;
-                                    break;
-                                }
-                                prize = betValue * 40L;
-                                break;
-                            }
-                            case FourOfKind: {
-                                result = ResultPoker.TU_QUY;
-                                if (this.moneyType == 1) {
-                                    prize = betValue * 150L;
-                                    break;
-                                }
-                                prize = betValue * 120L;
-                                break;
-                            }
-                            case StraightFlush: {
-                                if (forceJackpotByUser) {
-                                    if (CardLibUtils.isStraightFlushJack(cards)) {
-                                        result = ResultPoker.NO_HU;
-                                        if (this.huX2) {
-                                            tienThuongX2 = this.pot;
-                                            prize = this.pot * 2L;
-                                            break;
-                                        }
-                                        prize = this.pot;
+                                case OnePair: {
+                                    if (CardLibUtils.pairEqualOrGreatJack(cards)) {
+                                        result = ResultPoker.MOT_DOI_TO;
+                                        prize = (int) ((float) betValue * 2.5f);
                                         break;
                                     }
-                                    result = ResultPoker.THUNG_PHA_SANH_NHO;
-                                    prize = betValue * 1000L;
+                                    result = ResultPoker.MOT_DOI_NHO;
+                                    prize = 0L;
+                                    break;
                                 }
-                            }
-                        }
-
-                        // Phần thưởng quá lớn, random lại
-                        if (!forceNoHu && prize > 0 && getFunValue() < prize) {
-                            continue;
-                        }
-
-                        if (!u.isBot())
-                            System.out.println("Play Mini Poker: 5");
-
-                        long fundExchange = Math.max(prize, 0L);
-                        enoughToPair = true;
-                        if (cards.size() == 5) {
-                            resultMiniPokerMsg.card1 = (byte) cards.get(0).getCode();
-                            resultMiniPokerMsg.card2 = (byte) cards.get(1).getCode();
-                            resultMiniPokerMsg.card3 = (byte) cards.get(2).getCode();
-                            resultMiniPokerMsg.card4 = (byte) cards.get(3).getCode();
-                            resultMiniPokerMsg.card5 = (byte) cards.get(4).getCode();
-                        }
-                        if (prize > 0L) {
-                            if (result == ResultPoker.NO_HU) {
-                                if (this.huX2) {
-                                    result = ResultPoker.NO_HU_X2;
+                                case TwoPair: {
+                                    result = ResultPoker.HAI_DOI;
+                                    prize = betValue * 5L;
+                                    break;
                                 }
-                                if (forceNoHu) {
-                                    try {
-                                        this.pot = this.initPotValue;
-                                        if (!u.isBot()) updateFunValue(-initPotValue);
-                                        sv.removeKey(CACHE_NAME_USER_SPOT + this.gameName);
-                                        sv.removeKey(CACHE_BET_VALUE_SLOT + this.gameName);
-                                    } catch (Exception exception) {
-                                        exception.printStackTrace();
+                                case ThreeOfKind: {
+                                    result = ResultPoker.SAM_CO;
+                                    prize = betValue * 8L;
+                                    break;
+                                }
+                                case Straight: {
+                                    result = ResultPoker.SANH;
+                                    if (this.moneyType == 1) {
+                                        prize = betValue * 13L;
+                                        break;
+                                    }
+                                    prize = betValue * 12L;
+                                    break;
+                                }
+                                case Flush: {
+                                    result = ResultPoker.THUNG;
+                                    if (this.moneyType == 1) {
+                                        prize = betValue * 20L;
+                                        break;
+                                    }
+                                    prize = betValue * 18L;
+                                    break;
+                                }
+                                case FullHouse: {
+                                    result = ResultPoker.CU_LU;
+                                    if (this.moneyType == 1) {
+                                        prize = betValue * 50L;
+                                        break;
+                                    }
+                                    prize = betValue * 40L;
+                                    break;
+                                }
+                                case FourOfKind: {
+                                    result = ResultPoker.TU_QUY;
+                                    if (this.moneyType == 1) {
+                                        prize = betValue * 150L;
+                                        break;
+                                    }
+                                    prize = betValue * 120L;
+                                    break;
+                                }
+                                case StraightFlush: {
+                                    if (forceJackpotByUser) {
+                                        if (CardLibUtils.isStraightFlushJack(cards)) {
+                                            result = ResultPoker.NO_HU;
+                                            if (this.huX2) {
+                                                tienThuongX2 = this.pot;
+                                                prize = this.pot * 2L;
+                                                break;
+                                            }
+                                            prize = this.pot;
+                                            break;
+                                        }
+                                        result = ResultPoker.THUNG_PHA_SANH_NHO;
+                                        prize = betValue * 1000L;
                                     }
                                 }
-                            } else {
-                                if (!u.isBot()) updateFunValue(-fundExchange);
                             }
-                        }
 
-                        long moneyAdded = prize;
-                        String des = "Quay MiniPoker";
-                        if (result == ResultPoker.NO_HU_X2 && !u.isBot()) {
-                            moneyAdded -= tienThuongX2;
-                            this.userService.updateMoney(username, tienThuongX2, this.moneyTypeStr, this.gameName, des, "Th\u1eafng X2", 0L, null, TransType.NO_VIPPOINT);
-                        }
-                        if (!u.isBot()) {
-                            moneyRes = this.userService.updateMoney(username, moneyAdded, this.moneyTypeStr, Games.MINI_POKER.getName(), des, this.buildDescription(betValue, moneyAdded, result), fee, Long.valueOf(referenceId), TransType.END_TRANS);
-                        }
-                        moneyExchange = prize - betValue;
-                        if (moneyRes != null && moneyRes.isSuccess()) {
-                            currentMoney = moneyRes.getCurrentMoney();
-                            if (this.moneyType == 1 && moneyExchange >= (long) BroadcastMessageServiceImpl.MIN_MONEY) {
-                                this.broadcastMsgService.putMessage(Games.MINI_POKER.getId(), username, moneyExchange);
+                            // Phần thưởng quá lớn, random lại
+                            if (!forceNoHu && prize > 0 && getFunValue() < prize) {
+                                continue;
                             }
-                        }
-                        builder.append(cards.get(0).toString());
-                        for (int i = 1; i < cards.size(); ++i) {
-                            builder.append(",");
-                            builder.append(cards.get(i).toString());
-                        }
-                        try {
-                            if (!isBot(username)) {
-                                this.mpService.logMiniPoker(username, betValue, result, prize, builder.toString(), lastPot, lastFund, this.moneyType);
+
+                            if (!u.isBot())
+                                System.out.println("Play Mini Poker: 5");
+
+                            long fundExchange = Math.max(prize, 0L);
+                            enoughToPair = true;
+                            if (cards.size() == 5) {
+                                resultMiniPokerMsg.card1 = (byte) cards.get(0).getCode();
+                                resultMiniPokerMsg.card2 = (byte) cards.get(1).getCode();
+                                resultMiniPokerMsg.card3 = (byte) cards.get(2).getCode();
+                                resultMiniPokerMsg.card4 = (byte) cards.get(3).getCode();
+                                resultMiniPokerMsg.card5 = (byte) cards.get(4).getCode();
                             }
-                        } catch (IOException | InterruptedException | TimeoutException e) {
-                            Debug.trace("Log mini poker error ", e.getMessage());
+                            if (prize > 0L) {
+                                if (result == ResultPoker.NO_HU) {
+                                    if (this.huX2) {
+                                        result = ResultPoker.NO_HU_X2;
+                                    }
+                                    if (forceNoHu) {
+                                        try {
+                                            this.pot = this.initPotValue;
+                                            if (!u.isBot()) updateFunValue(-initPotValue);
+                                            sv.removeKey(CACHE_NAME_USER_SPOT + this.gameName);
+                                            sv.removeKey(CACHE_BET_VALUE_SLOT + this.gameName);
+                                        } catch (Exception exception) {
+                                            exception.printStackTrace();
+                                        }
+                                    }
+                                } else {
+                                    if (!u.isBot()) updateFunValue(-fundExchange);
+                                }
+                            }
+
+                            long moneyAdded = prize;
+                            String des = "Quay MiniPoker";
+                            if (result == ResultPoker.NO_HU_X2 && !u.isBot()) {
+                                moneyAdded -= tienThuongX2;
+                                this.userService.updateMoney(username, tienThuongX2, this.moneyTypeStr, this.gameName, des, "Th\u1eafng X2", 0L, null, TransType.NO_VIPPOINT);
+                            }
+                            if (!u.isBot()) {
+                                moneyRes = this.userService.updateMoney(username, moneyAdded, this.moneyTypeStr, Games.MINI_POKER.getName(), des, this.buildDescription(betValue, moneyAdded, result), fee, Long.valueOf(referenceId), TransType.END_TRANS);
+                            }
+                            moneyExchange = prize - betValue;
+                            if (moneyRes != null && moneyRes.isSuccess()) {
+                                currentMoney = moneyRes.getCurrentMoney();
+                                if (this.moneyType == 1 && moneyExchange >= (long) BroadcastMessageServiceImpl.MIN_MONEY) {
+                                    this.broadcastMsgService.putMessage(Games.MINI_POKER.getId(), username, moneyExchange);
+                                }
+                            }
+                            builder.append(cards.get(0).toString());
+                            for (int i = 1; i < cards.size(); ++i) {
+                                builder.append(",");
+                                builder.append(cards.get(i).toString());
+                            }
+                            try {
+                                if (!isBot(username)) {
+                                    this.mpService.logMiniPoker(username, betValue, result, prize, builder.toString(), lastPot, lastFund, this.moneyType);
+                                }
+                            } catch (IOException | InterruptedException | TimeoutException e) {
+                                Debug.trace("Log mini poker error ", e.getMessage());
+                            }
                         }
                     }
                     this.saveFund();
