@@ -150,7 +150,7 @@ public class MGRoomCandy extends MGRoom {
         }
     }
 
-    public synchronized ResultPokeGoMsg play(String username, String linesStr) {
+    public ResultPokeGoMsg play(String username, String linesStr) {
         long startTime = System.currentTimeMillis();
         String currentTimeStr = DateTimeUtils.getCurrentTime();
         long referenceId = CandyModule.getNewRefenceId();
@@ -188,135 +188,137 @@ public class MGRoomCandy extends MGRoom {
                         boolean enoughPair = false;
                         ArrayList<AwardsOnLine> awardsOnLines = new ArrayList<AwardsOnLine>();
                         long totalPrizes = 0L;
-                        block4:
-                        while (!enoughPair) {
-                            result = 0;
-                            awardsOnLines.clear();
-                            totalPrizes = 0L;
-                            String linesWin = "";
-                            String prizesOnLine = "";
-                            boolean forceNoHu = false;
+                        synchronized (this) {
+                            block4:
+                            while (!enoughPair) {
+                                result = 0;
+                                awardsOnLines.clear();
+                                totalPrizes = 0L;
+                                String linesWin = "";
+                                String prizesOnLine = "";
+                                boolean forceNoHu = false;
 
-                            if (lineArr.length >= 5
-                                    && ((userForce.equals(username) && betValueCache.equals(String.valueOf(this.betValue)))
-                                    || (!u.isBot() && randomJackpot(percentJackpot)))) {
-                                forceNoHu = true;
-                                forceJackpotByUser = true;
-                            }
+                                if (lineArr.length >= 5
+                                        && ((userForce.equals(username) && betValueCache.equals(String.valueOf(this.betValue)))
+                                        || (!u.isBot() && randomJackpot(percentJackpot)))) {
+                                    forceNoHu = true;
+                                    forceJackpotByUser = true;
+                                }
 
-                            Item[][] matrix = forceNoHu ? PokeGoUtils.generateMatrixNoHu(lineArr) : PokeGoUtils.generateMatrix();
-                            for (int i = 0; i < lineArr.length; ++i) {
-                                String entry = lineArr[i];
-                                ArrayList<Award> awardList = new ArrayList<Award>();
-                                Line line = PokeGoUtils.getLine(this.lines, matrix, Integer.parseInt(entry));
-                                PokeGoUtils.calculateLine(line, awardList);
-                                for (Award award : awardList) {
-                                    long money = 0L;
-                                    if (award != Award.TRIPLE_JACKPOT) {
-                                        money = (long) (award.getRatio() * (float) this.betValue);
-                                    } else {
-                                        for (AwardsOnLine e : awardsOnLines) {
-                                            if (e.getAward() == Award.TRIPLE_JACKPOT) {
-                                                continue block4;
+                                Item[][] matrix = forceNoHu ? PokeGoUtils.generateMatrixNoHu(lineArr) : PokeGoUtils.generateMatrix();
+                                for (int i = 0; i < lineArr.length; ++i) {
+                                    String entry = lineArr[i];
+                                    ArrayList<Award> awardList = new ArrayList<Award>();
+                                    Line line = PokeGoUtils.getLine(this.lines, matrix, Integer.parseInt(entry));
+                                    PokeGoUtils.calculateLine(line, awardList);
+                                    for (Award award : awardList) {
+                                        long money = 0L;
+                                        if (award != Award.TRIPLE_JACKPOT) {
+                                            money = (long) (award.getRatio() * (float) this.betValue);
+                                        } else {
+                                            for (AwardsOnLine e : awardsOnLines) {
+                                                if (e.getAward() == Award.TRIPLE_JACKPOT) {
+                                                    continue block4;
+                                                }
+                                            }
+                                            if (forceNoHu) {
+                                                result = 3;
+//                                            money = this.huX2 ? this.pot * 2L : this.pot;
+                                                money = this.pot;
                                             }
                                         }
-                                        if (forceNoHu) {
-                                            result = 3;
-//                                            money = this.huX2 ? this.pot * 2L : this.pot;
-                                            money = this.pot;
-                                        }
+                                        AwardsOnLine aol = new AwardsOnLine(award, money, line.getName());
+                                        awardsOnLines.add(aol);
                                     }
-                                    AwardsOnLine aol = new AwardsOnLine(award, money, line.getName());
-                                    awardsOnLines.add(aol);
                                 }
-                            }
 
-                            boolean isGetJackpotNaturally = false;
-                            StringBuilder builderLinesWin = new StringBuilder();
-                            StringBuilder builderPrizesOnLine = new StringBuilder();
-                            for (AwardsOnLine award : awardsOnLines) {
-                                totalPrizes += award.getMoney();
-                                builderLinesWin.append(",");
-                                builderLinesWin.append(award.getLineId());
-                                builderPrizesOnLine.append(",");
-                                builderPrizesOnLine.append(award.getMoney());
+                                boolean isGetJackpotNaturally = false;
+                                StringBuilder builderLinesWin = new StringBuilder();
+                                StringBuilder builderPrizesOnLine = new StringBuilder();
+                                for (AwardsOnLine award : awardsOnLines) {
+                                    totalPrizes += award.getMoney();
+                                    builderLinesWin.append(",");
+                                    builderLinesWin.append(award.getLineId());
+                                    builderPrizesOnLine.append(",");
+                                    builderPrizesOnLine.append(award.getMoney());
 
-                                if (!forceNoHu && award.getAward() == Award.TRIPLE_JACKPOT) {
-                                    result = 3;
-                                    isGetJackpotNaturally = true;
+                                    if (!forceNoHu && award.getAward() == Award.TRIPLE_JACKPOT) {
+                                        result = 3;
+                                        isGetJackpotNaturally = true;
+                                    }
                                 }
-                            }
-                            if (builderLinesWin.length() > 0) {
-                                builderLinesWin.deleteCharAt(0);
-                            }
-                            if (builderPrizesOnLine.length() > 0) {
-                                builderPrizesOnLine.deleteCharAt(0);
-                            }
-
-
-                            // Ki?m tra xem gi?i th??ng c� L?N hay kh�ng.
-                            // L?n qu� th� sinh l?i MATRIX k?t qu? k?o anh em NPH v? n?
-                            if (!forceNoHu) {
-                                // Tr�ng n? h? m?t c�ch ng?u nhi�n nh?ng q?y th??ng l?i kh�ng ?? b� l?
-                                if (isGetJackpotNaturally && getFunValue() < initPotValue) {
-                                    continue;
+                                if (builderLinesWin.length() > 0) {
+                                    builderLinesWin.deleteCharAt(0);
                                 }
-                                // Tuy kh�ng tr�ng JACKPOT nh?ng tr�ng Line to qu� c?ng c?n sinh l?i MATRIX
-                                if (!isGetJackpotNaturally) {
-                                    if ((totalPrizes - totalBetValue > 0 && totalPrizes > getFunValue()) || totalPrizes >= totalBetValue * 25)
+                                if (builderPrizesOnLine.length() > 0) {
+                                    builderPrizesOnLine.deleteCharAt(0);
+                                }
+
+
+                                // Ki?m tra xem gi?i th??ng c� L?N hay kh�ng.
+                                // L?n qu� th� sinh l?i MATRIX k?t qu? k?o anh em NPH v? n?
+                                if (!forceNoHu) {
+                                    // Tr�ng n? h? m?t c�ch ng?u nhi�n nh?ng q?y th??ng l?i kh�ng ?? b� l?
+                                    if (isGetJackpotNaturally && getFunValue() < initPotValue) {
                                         continue;
+                                    }
+                                    // Tuy kh�ng tr�ng JACKPOT nh?ng tr�ng Line to qu� c?ng c?n sinh l?i MATRIX
+                                    if (!isGetJackpotNaturally) {
+                                        if ((totalPrizes - totalBetValue > 0 && totalPrizes > getFunValue()) || totalPrizes >= totalBetValue * 25)
+                                            continue;
+                                    }
                                 }
-                            }
 
-                            // ?i?u ki?n tr�ng th??ng ?� th?a m�n, d?ng v�ng l?p
-                            enoughPair = true;
-                            if (totalPrizes > 0L) {
-                                if (result == 3) {
-                                    if (this.huX2) {
-                                        totalPrizes += this.pot;
-                                        result = 4;
-                                    }
-                                    this.pot = this.initPotValue;
-                                    if (!u.isBot()) updateFunValue(-initPotValue);
-                                    if (forceNoHu) {
-                                        try {
-                                            cacheService.removeKey(CACHE_NAME_USER_SPOT + this.gameName);
-                                            cacheService.removeKey(CACHE_BET_VALUE_SLOT + this.gameName);
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
+                                // ?i?u ki?n tr�ng th??ng ?� th?a m�n, d?ng v�ng l?p
+                                enoughPair = true;
+                                if (totalPrizes > 0L) {
+                                    if (result == 3) {
+                                        if (this.huX2) {
+                                            totalPrizes += this.pot;
+                                            result = 4;
                                         }
+                                        this.pot = this.initPotValue;
+                                        if (!u.isBot()) updateFunValue(-initPotValue);
+                                        if (forceNoHu) {
+                                            try {
+                                                cacheService.removeKey(CACHE_NAME_USER_SPOT + this.gameName);
+                                                cacheService.removeKey(CACHE_BET_VALUE_SLOT + this.gameName);
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    } else {
+                                        if (!u.isBot())
+                                            updateFunValue(-totalPrizes);
+                                        result = totalPrizes >= (this.betValue * 100L) ? (short) 2 : 1;
                                     }
-                                } else {
-                                    if (!u.isBot())
-                                        updateFunValue(-totalPrizes);
-                                    result = totalPrizes >= (this.betValue * 100L) ? (short) 2 : 1;
                                 }
+                                moneyRes = this.userService.updateMoney(username, totalPrizes, this.moneyTypeStr, Games.CANDY.getName(), "Quay Whisky", this.buildDescription(totalBetValue, totalPrizes, result), fee, Long.valueOf(referenceId), TransType.END_TRANS);
+                                long moneyExchange = totalPrizes - (long) this.betValue;
+                                if (moneyRes != null && moneyRes.isSuccess()) {
+                                    currentMoney = moneyRes.getCurrentMoney();
+                                    if (this.moneyType == 1 && moneyExchange >= (long) BroadcastMessageServiceImpl.MIN_MONEY) {
+                                        this.broadcastMsgService.putMessage(Games.CANDY.getId(), username, moneyExchange);
+                                    }
+                                }
+                                linesWin = builderLinesWin.toString();
+                                prizesOnLine = builderPrizesOnLine.toString();
+                                msg.matrix = PokeGoUtils.matrixToString(matrix);
+                                msg.linesWin = linesWin;
+                                msg.prize = totalPrizes;
+                                try {
+                                    if (!u.isBot()) {
+                                        this.pgService.logPokeGo(referenceId, username, this.betValue, linesStr, linesWin, prizesOnLine, result, totalPrizes, this.moneyType, currentTimeStr, msg.matrix);
+                                    }
+                                    if (result == 3 || result == 4) {
+                                        this.pgService.addTop(username, this.betValue, totalPrizes, this.moneyType, currentTimeStr, result);
+                                    }
+                                } catch (InterruptedException | TimeoutException | IOException exception) {
+                                    exception.printStackTrace();
+                                }
+                                this.saveFund();
+                                this.savePot();
                             }
-                            moneyRes = this.userService.updateMoney(username, totalPrizes, this.moneyTypeStr, Games.CANDY.getName(), "Quay Whisky", this.buildDescription(totalBetValue, totalPrizes, result), fee, Long.valueOf(referenceId), TransType.END_TRANS);
-                            long moneyExchange = totalPrizes - (long) this.betValue;
-                            if (moneyRes != null && moneyRes.isSuccess()) {
-                                currentMoney = moneyRes.getCurrentMoney();
-                                if (this.moneyType == 1 && moneyExchange >= (long) BroadcastMessageServiceImpl.MIN_MONEY) {
-                                    this.broadcastMsgService.putMessage(Games.CANDY.getId(), username, moneyExchange);
-                                }
-                            }
-                            linesWin = builderLinesWin.toString();
-                            prizesOnLine = builderPrizesOnLine.toString();
-                            msg.matrix = PokeGoUtils.matrixToString(matrix);
-                            msg.linesWin = linesWin;
-                            msg.prize = totalPrizes;
-                            try {
-                                if (!u.isBot()) {
-                                    this.pgService.logPokeGo(referenceId, username, this.betValue, linesStr, linesWin, prizesOnLine, result, totalPrizes, this.moneyType, currentTimeStr, msg.matrix);
-                                }
-                                if (result == 3 || result == 4) {
-                                    this.pgService.addTop(username, this.betValue, totalPrizes, this.moneyType, currentTimeStr, result);
-                                }
-                            } catch (InterruptedException | TimeoutException | IOException exception) {
-                                exception.printStackTrace();
-                            }
-                            this.saveFund();
-                            this.savePot();
                         }
                     }
                 } else {
@@ -402,7 +404,7 @@ public class MGRoomCandy extends MGRoom {
             if (isReset == 1) {
                 this.pot = this.initPotValue;
                 this.savePot();
-                this.saveFund();
+//                this.saveFund();
                 this.cacheService.removeKey("reset_pot_" + this.gameName + "_" + this.betValue);
             }
         } catch (Exception e) {
