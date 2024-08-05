@@ -94,7 +94,7 @@ public class Slot20Room extends SlotRoom {
         }
     }
 
-    public synchronized SLot20ResultMsg play(String username, String linesStr) {
+    public SLot20ResultMsg play(String username, String linesStr) {
 
         // kết quả mặc định
         short result = ResultSlot.MISSED;
@@ -159,227 +159,229 @@ public class Slot20Room extends SlotRoom {
                         long totalPrizes;
                         ArrayList<AwardsOnLine> awardsOnLines = new ArrayList<>();
 
-                        block4:
-                        while (!enoughPair) {
-                            result = 0;
-                            awardsOnLines.clear();
-                            totalPrizes = 0L;
-                            String linesWin;
-                            String prizesOnLine;
-                            String haiSao = "";
-                            boolean isForceJackpot = false;
-                            if (betValue == 100) {
-                                if ((usernameForce.equals(username) && roomForce.equals(String.valueOf(100)))
-                                        || (!u.isBot() && randomJackpot(percentJackpot))) {
-                                    isForceJackpot = true;
-                                    forceJackpotToUser = true;
-                                    result = ResultSlot.JACKPOT;
-                                }
-                            } else if (betValue == 1000) {
-                                if ((usernameForce.equals(username) && roomForce.equals(String.valueOf(1000)))
-                                        || (!u.isBot() && randomJackpot(percentJackpot))) {
-                                    isForceJackpot = true;
-                                    forceJackpotToUser = true;
-                                    result = ResultSlot.JACKPOT;
-                                }
-                            } else {
-                                if ((usernameForce.equals(username) && roomForce.equals(String.valueOf(10000)))
-                                        || (!u.isBot() && randomJackpot(percentJackpot))) {
-                                    isForceJackpot = true;
-                                    forceJackpotToUser = true;
-                                    result = ResultSlot.JACKPOT;
-                                }
-                            }
-
-                            // sinh Matrix
-                            Slot20Item[][] matrix = isForceJackpot
-                                    ? Slot20Utils.generateJackpotMatrix(selectedLines)
-                                    : Slot20Utils.generateMatrix();
-                            // Duyệt toàn bộ Lines được chọn bởi người chơi để tính toán giải thưởng trên từng Line
-                            boolean hasFreeSpinAward = false;
-                            boolean hasBonusAward = false;
-                            int countFreeSpin = 0;
-                            for (String selectedLine : selectedLines) {
-                                ArrayList<Slot20Award> awardList = new ArrayList<>();
-                                Slot20Line line = Slot20Utils.getLine(this.lines, matrix, Integer.parseInt(selectedLine));
-                                Slot20Utils.calculateAwardInLine(line, awardList);
-                                for (Slot20Award award : awardList) {
-                                    long moneyOnLine = 0;
-                                    // Phần thưởng bình thường
-                                    // phần thưởng bình thường là phần thưởng được tính bằng mức cược * hệ số
-                                    // betValue * award.getRatio
-                                    if (award.getRatio() > 0.0f) {
-                                        moneyOnLine = (long) (award.getRatio() * this.betValue);
-                                    }
-                                    // phần thưởng cho JACKPOT
-                                    else if (award == Slot20Award.PENTA_JACKPOT) {
-                                        // đảm bảo chỉ duy nhất 1 dòng trúng JACKPOT
-                                        // nếu trùng lặp, bắt đầu lại dòng vòng lặp while (continue block4)
-                                        for (AwardsOnLine e : awardsOnLines) {
-                                            if (e.getAward() != Slot20Award.PENTA_JACKPOT) {
-                                                continue;
-                                            }
-                                            continue block4;
-                                        }
-                                        moneyOnLine = this.pot;
+                        synchronized (this) {
+                            block4:
+                            while (!enoughPair) {
+                                result = 0;
+                                awardsOnLines.clear();
+                                totalPrizes = 0L;
+                                String linesWin;
+                                String prizesOnLine;
+                                String haiSao = "";
+                                boolean isForceJackpot = false;
+                                if (betValue == 100) {
+                                    if ((usernameForce.equals(username) && roomForce.equals(String.valueOf(100)))
+                                            || (!u.isBot() && randomJackpot(percentJackpot))) {
+                                        isForceJackpot = true;
+                                        forceJackpotToUser = true;
                                         result = ResultSlot.JACKPOT;
                                     }
-                                    // phần thưởng FREE SPIN
-                                    else if (award == Slot20Award.TRIPLE_FREE_SPIN
-                                            || award == Slot20Award.QUADRA_FREE_SPIN
-                                            || award == Slot20Award.PENTA_FREE_SPIN) {
-                                        hasFreeSpinAward = true;
-                                        countFreeSpin += (int) (award.getRatio() * -1);
-                                        // do something relate to FREE SPINS
+                                } else if (betValue == 1000) {
+                                    if ((usernameForce.equals(username) && roomForce.equals(String.valueOf(1000)))
+                                            || (!u.isBot() && randomJackpot(percentJackpot))) {
+                                        isForceJackpot = true;
+                                        forceJackpotToUser = true;
+                                        result = ResultSlot.JACKPOT;
                                     }
-                                    // phần thưởng còn lại là BONUS
-                                    else {
-                                        hasBonusAward = true;
-                                        MiniGameSlotResponse response = this.generateBonusData();
-                                        moneyOnLine = response.getTotalPrize();
-                                        haiSao = response.getPrizes();
-                                        if (result != 3) {
-                                            result = 5;
+                                } else {
+                                    if ((usernameForce.equals(username) && roomForce.equals(String.valueOf(10000)))
+                                            || (!u.isBot() && randomJackpot(percentJackpot))) {
+                                        isForceJackpot = true;
+                                        forceJackpotToUser = true;
+                                        result = ResultSlot.JACKPOT;
+                                    }
+                                }
+
+                                // sinh Matrix
+                                Slot20Item[][] matrix = isForceJackpot
+                                        ? Slot20Utils.generateJackpotMatrix(selectedLines)
+                                        : Slot20Utils.generateMatrix();
+                                // Duyệt toàn bộ Lines được chọn bởi người chơi để tính toán giải thưởng trên từng Line
+                                boolean hasFreeSpinAward = false;
+                                boolean hasBonusAward = false;
+                                int countFreeSpin = 0;
+                                for (String selectedLine : selectedLines) {
+                                    ArrayList<Slot20Award> awardList = new ArrayList<>();
+                                    Slot20Line line = Slot20Utils.getLine(this.lines, matrix, Integer.parseInt(selectedLine));
+                                    Slot20Utils.calculateAwardInLine(line, awardList);
+                                    for (Slot20Award award : awardList) {
+                                        long moneyOnLine = 0;
+                                        // Phần thưởng bình thường
+                                        // phần thưởng bình thường là phần thưởng được tính bằng mức cược * hệ số
+                                        // betValue * award.getRatio
+                                        if (award.getRatio() > 0.0f) {
+                                            moneyOnLine = (long) (award.getRatio() * this.betValue);
                                         }
+                                        // phần thưởng cho JACKPOT
+                                        else if (award == Slot20Award.PENTA_JACKPOT) {
+                                            // đảm bảo chỉ duy nhất 1 dòng trúng JACKPOT
+                                            // nếu trùng lặp, bắt đầu lại dòng vòng lặp while (continue block4)
+                                            for (AwardsOnLine e : awardsOnLines) {
+                                                if (e.getAward() != Slot20Award.PENTA_JACKPOT) {
+                                                    continue;
+                                                }
+                                                continue block4;
+                                            }
+                                            moneyOnLine = this.pot;
+                                            result = ResultSlot.JACKPOT;
+                                        }
+                                        // phần thưởng FREE SPIN
+                                        else if (award == Slot20Award.TRIPLE_FREE_SPIN
+                                                || award == Slot20Award.QUADRA_FREE_SPIN
+                                                || award == Slot20Award.PENTA_FREE_SPIN) {
+                                            hasFreeSpinAward = true;
+                                            countFreeSpin += (int) (award.getRatio() * -1);
+                                            // do something relate to FREE SPINS
+                                        }
+                                        // phần thưởng còn lại là BONUS
+                                        else {
+                                            hasBonusAward = true;
+                                            MiniGameSlotResponse response = this.generateBonusData();
+                                            moneyOnLine = response.getTotalPrize();
+                                            haiSao = response.getPrizes();
+                                            if (result != 3) {
+                                                result = 5;
+                                            }
+                                        }
+                                        AwardsOnLine aol = new AwardsOnLine(award, moneyOnLine, line.getName());
+                                        awardsOnLines.add(aol);
                                     }
-                                    AwardsOnLine aol = new AwardsOnLine(award, moneyOnLine, line.getName());
-                                    awardsOnLines.add(aol);
                                 }
-                            }
-                            // không cho phép nổ hũ và (BONUS hoặc FREE SPIN) xảy ra đồng thời
-                            if (isForceJackpot && (hasBonusAward || hasFreeSpinAward)) {
-                                continue;
-                            }
-                            // Không cho phép đồng thời cả BONUS và FREE SPIN
-                            if (hasFreeSpinAward && hasBonusAward) {
-                                continue;
-                            }
-
-                            // FORCE: uncomment đoạn dưới
-                            // ở chế độ Free Spin, không cho phép trúng BONUS hoặc SCATTER
-                            if (isSpinningFree && (hasFreeSpinAward || hasBonusAward)) {
-                                continue;
-                            }
-
-                            // Tiếp theo, tính toán toàn bộ giải thưởng
-                            boolean isGetJackpotNaturally = false;
-                            StringBuilder builderLinesWin = new StringBuilder();
-                            StringBuilder builderPrizesOnLine = new StringBuilder();
-                            for (AwardsOnLine award : awardsOnLines) {
-                                totalPrizes += award.getMoney();
-                                builderLinesWin.append(",");
-                                builderLinesWin.append(award.getLineId());
-                                builderPrizesOnLine.append(",");
-                                builderPrizesOnLine.append(award.getMoney());
-                                if (!isForceJackpot && award.getAward() == Slot25BasicAward.PENTA_JACKPOT) {
-                                    result = ResultSlot.JACKPOT;
-                                    isGetJackpotNaturally = true;
-                                }
-                            }
-
-                            if (builderLinesWin.length() > 0) {
-                                builderLinesWin.deleteCharAt(0);
-                            }
-                            if (builderPrizesOnLine.length() > 0) {
-                                builderPrizesOnLine.deleteCharAt(0);
-                            }
-                            // Kiểm tra xem giải thưởng có LỚN hay không.
-                            // Lớn quá thì sinh lại MATRIX kết quả kẻo anh em NPH vỡ nợ
-                            if (!isForceJackpot) {
-                                // Trúng nổ hũ một cách ngẫu nhiên nhưng qũy thưởng lại không đủ bù lỗ
-                                if (isGetJackpotNaturally && getFunValue() < initJackpotValues) {
+                                // không cho phép nổ hũ và (BONUS hoặc FREE SPIN) xảy ra đồng thời
+                                if (isForceJackpot && (hasBonusAward || hasFreeSpinAward)) {
                                     continue;
                                 }
-                                // Tuy không trúng JACKPOT nhưng trúng Line to quá cũng cần sinh lại MATRIX
-                                if (!isGetJackpotNaturally) {
-//                                    if ((totalPrizes - totalBetValue > 0 && totalPrizes > getFunValue()) || totalPrizes >= totalBetValue * 25)
-                                    if ((totalPrizes - totalBetValue > 0 && totalPrizes > getFunValue()))
-                                        continue;
+                                // Không cho phép đồng thời cả BONUS và FREE SPIN
+                                if (hasFreeSpinAward && hasBonusAward) {
+                                    continue;
                                 }
-                            }
-                            // điều kiện trúng thưởng đã thỏa mãn, dừng vòng lặp
-                            enoughPair = true;
 
-                            // BẮT ĐẦU QUÁ TRÌNH LƯU TRỮ THÔNG TIN VÀ TRẢ THƯỞNG
-                            String matrixStr = Slot20Utils.matrixToString(matrix);
-                            if (totalPrizes > 0L) {
-                                if (result == ResultSlot.JACKPOT) {
-                                    this.pot = this.initJackpotValues;
-                                    if (!u.isBot()) updateFunValue(-initJackpotValues);
+                                // FORCE: uncomment đoạn dưới
+                                // ở chế độ Free Spin, không cho phép trúng BONUS hoặc SCATTER
+                                if (isSpinningFree && (hasFreeSpinAward || hasBonusAward)) {
+                                    continue;
+                                }
 
-                                    // get usercache
-                                    String displayName = username;
-                                    if (forceJackpotToUser) {
-                                        try {
-                                            cacheService.removeKey(CACHE_NAME_USER_SPOT + this.gn);
-                                            cacheService.removeKey(CACHE_BET_VALUE_SLOT + gameName);
-                                        } catch (Exception ignored) {
+                                // Tiếp theo, tính toán toàn bộ giải thưởng
+                                boolean isGetJackpotNaturally = false;
+                                StringBuilder builderLinesWin = new StringBuilder();
+                                StringBuilder builderPrizesOnLine = new StringBuilder();
+                                for (AwardsOnLine award : awardsOnLines) {
+                                    totalPrizes += award.getMoney();
+                                    builderLinesWin.append(",");
+                                    builderLinesWin.append(award.getLineId());
+                                    builderPrizesOnLine.append(",");
+                                    builderPrizesOnLine.append(award.getMoney());
+                                    if (!isForceJackpot && award.getAward() == Slot25BasicAward.PENTA_JACKPOT) {
+                                        result = ResultSlot.JACKPOT;
+                                        isGetJackpotNaturally = true;
+                                    }
+                                }
+
+                                if (builderLinesWin.length() > 0) {
+                                    builderLinesWin.deleteCharAt(0);
+                                }
+                                if (builderPrizesOnLine.length() > 0) {
+                                    builderPrizesOnLine.deleteCharAt(0);
+                                }
+                                // Kiểm tra xem giải thưởng có LỚN hay không.
+                                // Lớn quá thì sinh lại MATRIX kết quả kẻo anh em NPH vỡ nợ
+                                if (!isForceJackpot) {
+                                    // Trúng nổ hũ một cách ngẫu nhiên nhưng qũy thưởng lại không đủ bù lỗ
+                                    if (isGetJackpotNaturally && getFunValue() < initJackpotValues) {
+                                        continue;
+                                    }
+                                    // Tuy không trúng JACKPOT nhưng trúng Line to quá cũng cần sinh lại MATRIX
+                                    if (!isGetJackpotNaturally) {
+//                                    if ((totalPrizes - totalBetValue > 0 && totalPrizes > getFunValue()) || totalPrizes >= totalBetValue * 25)
+                                        if ((totalPrizes - totalBetValue > 0 && totalPrizes > getFunValue()))
+                                            continue;
+                                    }
+                                }
+                                // điều kiện trúng thưởng đã thỏa mãn, dừng vòng lặp
+                                enoughPair = true;
+
+                                // BẮT ĐẦU QUÁ TRÌNH LƯU TRỮ THÔNG TIN VÀ TRẢ THƯỞNG
+                                String matrixStr = Slot20Utils.matrixToString(matrix);
+                                if (totalPrizes > 0L) {
+                                    if (result == ResultSlot.JACKPOT) {
+                                        this.pot = this.initJackpotValues;
+                                        if (!u.isBot()) updateFunValue(-initJackpotValues);
+
+                                        // get usercache
+                                        String displayName = username;
+                                        if (forceJackpotToUser) {
+                                            try {
+                                                cacheService.removeKey(CACHE_NAME_USER_SPOT + this.gn);
+                                                cacheService.removeKey(CACHE_BET_VALUE_SLOT + gameName);
+                                            } catch (Exception ignored) {
+                                            }
+                                        }
+                                        this.slotService.logNoHu(referenceId, this.gameName, displayName, this.betValue, linesStr, matrixStr, builderLinesWin.toString(), builderPrizesOnLine.toString(), totalPrizes, result, currentTimeStr);
+                                    } else {
+                                        if (!u.isBot()) {
+                                            updateFunValue(-totalPrizes);
+                                        }
+                                        if (result == ResultSlot.MISSED) {
+                                            result = totalPrizes >= (this.betValue * 175L) ? ResultSlot.BIG_WIN : ResultSlot.WIN;
                                         }
                                     }
-                                    this.slotService.logNoHu(referenceId, this.gameName, displayName, this.betValue, linesStr, matrixStr, builderLinesWin.toString(), builderPrizesOnLine.toString(), totalPrizes, result, currentTimeStr);
-                                } else {
+                                }
+
+                                // cập nhật và tính toán lượt quay miễn phí
+                                SlotFreeSpin slotFreeSpin = slotService.updateLuotQuaySlotFree(cacheFreeSpinName, username);
+                                playResponse.freeSpin = (byte) this.setFreeSpin(username, linesStr, countFreeSpin, slotFreeSpin.getNum());
+                                if (countFreeSpin >= 3) {
+                                    playResponse.isFreeSpin = true;
+                                    if (result != ResultSlot.BONUS_GAME && result != ResultSlot.JACKPOT) {
+                                        result = ResultSlot.FREE_SPIN;
+                                    }
+                                }
+
+                                // only save real user
+                                long moneyExchange = totalPrizes;
+                                if (totalPrizes != 0 && !u.isBot()) {
+                                    if ((moneyRes = this.userService.updateMoney(username, totalPrizes, this.moneyTypeStr, this.gameName, "Quay " + gn, this.buildDescription(totalBetValue, totalPrizes, result), 0L, referenceId, TransType.END_TRANS)) != null && moneyRes.isSuccess()) {
+                                        currentMoney = moneyRes.getCurrentMoney();
+                                        // thông báo tới toàn hệ thống số tiền thắng của người chơi
+                                        if (this.moneyType == 1 && moneyExchange >= (long) BroadcastMessageServiceImpl.MIN_MONEY) {
+                                            this.broadcastMsgService.putMessage(Games.findGameByName(gameName).getId(), username, moneyExchange - totalBetValue);
+                                        }
+                                    }
+                                }
+                                linesWin = builderLinesWin.toString();
+                                prizesOnLine = builderPrizesOnLine.toString();
+                                playResponse.referenceId = referenceId;
+                                playResponse.matrix = Slot20Utils.matrixToString(matrix);
+                                playResponse.linesWin = linesWin;
+                                playResponse.prize = totalPrizes;
+                                playResponse.haiSao = haiSao;
+                                try {
+                                    // lưu nhật ký chơi
                                     if (!u.isBot()) {
-                                        updateFunValue(-totalPrizes);
+                                        slotLogListener.log(referenceId, username, this.betValue, linesStr, linesWin, prizesOnLine, result, totalPrizes, currentTimeStr, matrixStr);
                                     }
-                                    if (result == ResultSlot.MISSED) {
-                                        result = totalPrizes >= (this.betValue * 175L) ? ResultSlot.BIG_WIN : ResultSlot.WIN;
+                                    // lưu nhật ký nổ hũ
+                                    if (result == ResultSlot.JACKPOT) {
+                                        this.slotService.addTop(gn, username, this.betValue, totalPrizes, currentTimeStr, result);
                                     }
-                                }
-                            }
-
-                            // cập nhật và tính toán lượt quay miễn phí
-                            SlotFreeSpin slotFreeSpin = slotService.updateLuotQuaySlotFree(cacheFreeSpinName, username);
-                            playResponse.freeSpin = (byte) this.setFreeSpin(username, linesStr, countFreeSpin, slotFreeSpin.getNum());
-                            if (countFreeSpin >= 3) {
-                                playResponse.isFreeSpin = true;
-                                if (result != ResultSlot.BONUS_GAME && result != ResultSlot.JACKPOT) {
-                                    result = ResultSlot.FREE_SPIN;
-                                }
-                            }
-
-                            // only save real user
-                            long moneyExchange = totalPrizes;
-                            if (totalPrizes != 0 && !u.isBot()) {
-                                if ((moneyRes = this.userService.updateMoney(username, totalPrizes, this.moneyTypeStr, this.gameName, "Quay " + gn, this.buildDescription(totalBetValue, totalPrizes, result), 0L, referenceId, TransType.END_TRANS)) != null && moneyRes.isSuccess()) {
-                                    currentMoney = moneyRes.getCurrentMoney();
-                                    // thông báo tới toàn hệ thống số tiền thắng của người chơi
-                                    if (this.moneyType == 1 && moneyExchange >= (long) BroadcastMessageServiceImpl.MIN_MONEY) {
-                                        this.broadcastMsgService.putMessage(Games.findGameByName(gameName).getId(), username, moneyExchange - totalBetValue);
+                                    // thông báo tới toàn bộ người chơi trong game (trong MODULE)
+                                    if (result == ResultSlot.JACKPOT || result == ResultSlot.BIG_WIN) {
+                                        Slot20BigWinMsg bigWinMsg = new Slot20BigWinMsg(commandCollection.BIG_WIN_MESSAGE);
+                                        bigWinMsg.username = username;
+                                        bigWinMsg.type = (byte) result;
+                                        bigWinMsg.betValue = (short) this.betValue;
+                                        bigWinMsg.totalPrizes = totalPrizes;
+                                        bigWinMsg.timestamp = DateTimeUtils.getCurrentTime();
+                                        this.module.sendMsgToAllUsers(bigWinMsg);
                                     }
+                                } catch (InterruptedException | TimeoutException | IOException ignored) {
                                 }
+                                // lưu thông tin quỹ
+                                this.saveFund();
+                                // lưu thông tin HŨ
+                                this.savePot();
                             }
-                            linesWin = builderLinesWin.toString();
-                            prizesOnLine = builderPrizesOnLine.toString();
-                            playResponse.referenceId = referenceId;
-                            playResponse.matrix = Slot20Utils.matrixToString(matrix);
-                            playResponse.linesWin = linesWin;
-                            playResponse.prize = totalPrizes;
-                            playResponse.haiSao = haiSao;
-                            try {
-                                // lưu nhật ký chơi
-                                if (!u.isBot()) {
-                                    slotLogListener.log(referenceId, username, this.betValue, linesStr, linesWin, prizesOnLine, result, totalPrizes, currentTimeStr, matrixStr);
-                                }
-                                // lưu nhật ký nổ hũ
-                                if (result == ResultSlot.JACKPOT) {
-                                    this.slotService.addTop(gn, username, this.betValue, totalPrizes, currentTimeStr, result);
-                                }
-                                // thông báo tới toàn bộ người chơi trong game (trong MODULE)
-                                if (result == ResultSlot.JACKPOT || result == ResultSlot.BIG_WIN) {
-                                    Slot20BigWinMsg bigWinMsg = new Slot20BigWinMsg(commandCollection.BIG_WIN_MESSAGE);
-                                    bigWinMsg.username = username;
-                                    bigWinMsg.type = (byte) result;
-                                    bigWinMsg.betValue = (short) this.betValue;
-                                    bigWinMsg.totalPrizes = totalPrizes;
-                                    bigWinMsg.timestamp = DateTimeUtils.getCurrentTime();
-                                    this.module.sendMsgToAllUsers(bigWinMsg);
-                                }
-                            } catch (InterruptedException | TimeoutException | IOException ignored) {
-                            }
-                            // lưu thông tin quỹ
-                            this.saveFund();
-                            // lưu thông tin HŨ
-                            this.savePot();
                         }
                     } else {
                         result = ResultSlot.NOT_ENOUGH_MONEY;
