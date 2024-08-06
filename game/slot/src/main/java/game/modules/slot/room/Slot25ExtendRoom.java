@@ -414,7 +414,8 @@ public class Slot25ExtendRoom extends SlotRoom {
                                     // empty catch block
                                 }
                                 // lưu thông tin quỹ
-                                System.out.println("BeforeFun: " + beforeFund + " - Current Fun Value: " + getFunValue() + " - MoneyToFund: " + moneyToFund);
+                                if (!u.isBot())
+                                    System.out.println("BeforeFun: " + beforeFund + " - Current Fun Value: " + getFunValue() + " - MoneyToFund: " + moneyToFund);
 
                                 this.saveFund();
                                 // lưu thông tin HŨ
