@@ -156,6 +156,7 @@ public class Slot20Room extends SlotRoom {
                         ArrayList<AwardsOnLine> awardsOnLines = new ArrayList<>();
 
                         synchronized (this) {
+                            long beforeFund = getFunValue();
                             block4:
                             while (!enoughPair) {
                                 result = 0;
@@ -371,6 +372,7 @@ public class Slot20Room extends SlotRoom {
                                 } catch (InterruptedException | TimeoutException | IOException ignored) {
                                 }
                                 // lưu thông tin quỹ
+                                System.out.println("BeforeFun: " + beforeFund + " - Current Fun Value: " + getFunValue() + " - MoneyToFund: " + moneyToFund);
                                 this.saveFund();
                                 // lưu thông tin HŨ
                                 this.savePot();
