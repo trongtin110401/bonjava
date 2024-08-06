@@ -192,12 +192,10 @@ public class MiniPokerModule
     }
 
     private void playMiniPoker(User user, DataCmd dataCmd) {
-        System.out.println("Play Mini Poker: 1");
         PlayMiniPokerCmd cmd = new PlayMiniPokerCmd(dataCmd);
         String roomName = this.getRoomName(cmd.moneyType, cmd.betValue);
         MGRoomMiniPoker room = (MGRoomMiniPoker) rooms.get(roomName);
         if (room != null) {
-            System.out.println("Play Mini Poker: 2");
             room.play(user, cmd.betValue);
         }
     }

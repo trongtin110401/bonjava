@@ -190,8 +190,6 @@ public class MGRoomMiniPoker extends MGRoom {
                     }
                     synchronized (this) {
                         while (!enoughToPair) {
-                            if (!u.isBot())
-                                System.out.println("Play Mini Poker: 3");
                             GroupType groupType;
                             prize = 0L;
                             tienThuongX2 = 0L;
@@ -291,12 +289,9 @@ public class MGRoomMiniPoker extends MGRoom {
                             }
 
                             // Phần thưởng quá lớn, random lại
-                            if (!forceNoHu && prize > 0 && getFunValue() < prize) {
+                            if (!forceNoHu && getFunValue() < prize) {
                                 continue;
                             }
-
-                            if (!u.isBot())
-                                System.out.println("Play Mini Poker: 5");
 
                             long fundExchange = Math.max(prize, 0L);
                             enoughToPair = true;

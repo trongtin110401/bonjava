@@ -264,7 +264,7 @@ public class MGRoomCandy extends MGRoom {
                                     }
                                     // Tuy kh�ng tr�ng JACKPOT nh?ng tr�ng Line to qu� c?ng c?n sinh l?i MATRIX
                                     if (!isGetJackpotNaturally) {
-                                        if ((totalPrizes - totalBetValue > 0 && totalPrizes > getFunValue()) || totalPrizes >= totalBetValue * 25)
+                                        if (totalPrizes > getFunValue())
                                             continue;
                                     }
                                 }
