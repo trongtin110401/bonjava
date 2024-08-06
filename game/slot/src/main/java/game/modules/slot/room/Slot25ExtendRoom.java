@@ -24,6 +24,7 @@ import game.modules.slot.entities.slot.line25extend.*;
 import game.modules.slot.listener.SlotLogListener;
 import game.modules.slot.utils.Slot25ExtendUtil;
 import game.modules.slot.utils.SlotUtils;
+import org.python.parser.ast.Str;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -153,7 +154,7 @@ public class Slot25ExtendRoom extends SlotRoom {
                     if (moneyRes != null && moneyRes.isSuccess()) {
 
                         // 2 phần trăm cho vào hũ JACKPOT
-                        long moneyToPot = totalBetValue * 1 / 100L;
+                        long moneyToPot = totalBetValue / 100L;
                         this.pot += moneyToPot;
 
                         // số tiền còn lại sau khi trừ phế và 2% POT cho vào quỹ thưởng
@@ -175,7 +176,7 @@ public class Slot25ExtendRoom extends SlotRoom {
                         ArrayList<AwardsOnLine<Slot25ExtendAward>> awardsOnLines = new ArrayList<>();
 
                         synchronized (this) {
-                            long beforeFund = getFunValue();
+                            String beforeFund = username + "*" + getFunValue();
                             // BẮT ĐẦU QUÁ TRÌNH SINH MA TRẬN KẾT QUẢ VÀ TÍNH TOÁN GIẢI THƯỞNG
                             block4:
                             while (!enoughPair) {
@@ -322,7 +323,7 @@ public class Slot25ExtendRoom extends SlotRoom {
                                     // Tuy không trúng JACKPOT nhưng trúng Line to quá cũng cần sinh lại MATRIX
                                     if (!isGetJackpotNaturally) {
 //                                    if ((totalPrizes - totalBetValue > 0 && totalPrizes > getFunValue()) || totalPrizes >= totalBetValue * 25)
-                                        if ((totalPrizes - totalBetValue > 0 && totalPrizes > getFunValue()))
+                                        if (totalPrizes > getFunValue())
                                             continue;
                                     }
                                 }
@@ -416,7 +417,7 @@ public class Slot25ExtendRoom extends SlotRoom {
                                 // lưu thông tin quỹ
                                 if (!u.isBot())
                                     System.out.println("BeforeFun: " + beforeFund + " - Current Fun Value: " + getFunValue() + " - MoneyToFund: " + moneyToFund + " - Prize: " + totalPrizes + " - Fee: " + fee);
-                                if(getFunValue() < 0) {
+                                if (getFunValue() < 0) {
                                     System.out.println("=========> " + username);
                                 }
                                 this.saveFund();
