@@ -520,7 +520,7 @@ public class Slot25ExtendRoom extends SlotRoom {
 
                 // Kiểm tra xem giải thưởng có LỚN hay không.
                 // Lớn quá thì sinh lại MATRIX kết quả kẻo anh em NPH vỡ nợ
-                if ((totalPrizes - totalBetValue > 0 && totalPrizes > getFunValue()) || totalPrizes >= totalBetValue * 25)
+                if (totalPrizes > getFunValue())
                     continue;
 
 
