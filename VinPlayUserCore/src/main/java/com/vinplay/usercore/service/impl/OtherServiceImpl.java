@@ -468,6 +468,39 @@ public class OtherServiceImpl implements OtherService {
     }
 
     @Override
+    public boolean checkIfHaveAnyEventActive() {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("event");
+        Document document = new Document();
+        document.put("status", true);
+        return collection.count(document) > 0;
+    }
+
+    @Override
+    public EventResponse getCurrentEvent() {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("event");
+        String currentDate = VinPlayUtils.getCurrentDate();
+        Document filter = new Document("status", true)
+                .append("end_time", new Document("$gte", currentDate));
+        MongoCursor<Document> cursor = collection.find(filter).iterator();
+        EventResponse eventResponse = new EventResponse(true, "1001");
+
+        if (cursor.hasNext()) {
+            Document doc = cursor.next();
+            eventResponse.setRate(doc.getInteger("rate"));
+            eventResponse.setEventName(doc.getString("event_name"));
+            eventResponse.setTimeEnd(doc.getString("end_time"));
+            eventResponse.setStatus(doc.getBoolean("status"));
+            eventResponse.setTimeStart(doc.getString("start_time"));
+            eventResponse.setId(doc.getString("id"));
+            eventResponse.setSuccess(true);
+            eventResponse.setErrorCode("200");
+        }
+        return eventResponse;
+    }
+
+    @Override
     public List<MoneyShootFishResponse> getTotalShootFish(String startTime, String endTime, String nickname) throws Exception {
 
         List<MoneyShootFishResponse> responses = new ArrayList<>();
@@ -612,6 +645,7 @@ public class OtherServiceImpl implements OtherService {
         document.put("start_time", eventResponse.getTimeStart());
         document.put("end_time", eventResponse.getTimeEnd());
         document.put("event_name", eventResponse.getEventName());
+        document.put("rate", eventResponse.getRate());
         document.put("status", true);
         try {
             collection.insertOne(document);

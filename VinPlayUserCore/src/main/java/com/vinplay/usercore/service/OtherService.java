@@ -71,5 +71,9 @@ public interface OtherService {
     boolean createEvent (EventResponse eventResponse);
 
     long getMoneyShootFishByNickname(String startTime, String endTime, String nickname);
+
+    boolean checkIfHaveAnyEventActive();
+
+    EventResponse getCurrentEvent();
 }
 
