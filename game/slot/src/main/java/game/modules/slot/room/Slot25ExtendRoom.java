@@ -415,8 +415,10 @@ public class Slot25ExtendRoom extends SlotRoom {
                                 }
                                 // lưu thông tin quỹ
                                 if (!u.isBot())
-                                    System.out.println("BeforeFun: " + beforeFund + " - Current Fun Value: " + getFunValue() + " - MoneyToFund: " + moneyToFund);
-
+                                    System.out.println("BeforeFun: " + beforeFund + " - Current Fun Value: " + getFunValue() + " - MoneyToFund: " + moneyToFund + " - Prize: " + totalPrizes + " - Fee: " + fee);
+                                if(getFunValue() < 0) {
+                                    System.out.println("=========> " + username);
+                                }
                                 this.saveFund();
                                 // lưu thông tin HŨ
                                 this.savePot();
