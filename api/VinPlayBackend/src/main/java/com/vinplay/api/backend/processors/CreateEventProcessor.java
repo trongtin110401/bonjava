@@ -22,18 +22,22 @@ import javax.servlet.http.HttpServletRequest;
 public class CreateEventProcessor implements BaseProcessor<HttpServletRequest, String> {
 
     public String execute(Param<HttpServletRequest> param) {
+        OtherService service = new OtherServiceImpl();
+        EventResponse eventResponse = new EventResponse(false, "1001");
         HttpServletRequest request = param.get();
         String timeStart = request.getParameter("time   Start");
         String timeEnd = request.getParameter("timeEnd");
         String eventName = request.getParameter("eventName");
         int rate = Integer.parseInt(request.getParameter("rate"));
-        EventResponse eventResponse = new EventResponse(false, "1001");
+        if (service.checkIfHaveAnyEventActive()) {
+            eventResponse.setErrorCode("Đang có một event diễn ra");
+            return eventResponse.toJson();
+        }
         eventResponse.setEventName(eventName);
         eventResponse.setTimeStart(timeStart);
         eventResponse.setTimeEnd(timeEnd);
         eventResponse.setRate(rate);
         eventResponse.setStatus(true);
-        OtherService service = new OtherServiceImpl();
         boolean isSuccess = service.createEvent(eventResponse);
         if (!isSuccess) {
             return eventResponse.toJson();
