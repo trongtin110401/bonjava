@@ -50,10 +50,6 @@ public class Slot20Room extends SlotRoom {
     private final SlotLogListener slotLogListener;
     private final Slot20CommandCollection commandCollection;
 
-    // FORCE - R
-    int resultState = 0;
-    int MAX_STATE = 5;
-
     public Slot20Room(SlotModule module, Slot20CommandCollection commandCollection, SlotLogListener slotLogListener,
                       String gameName, byte id, String room, short moneyType, long pot, long fund, int betValue, long initPotValue) {
         // FORCE - R
@@ -145,12 +141,12 @@ public class Slot20Room extends SlotRoom {
                     }
                     if (moneyRes != null && moneyRes.isSuccess()) {
                         // 2 phần trăm cho vào hũ JACKPOT
-                        long moneyToPot = !isSpinningFree ? totalBetValue * 1 / 100L : 0;
+                        long moneyToPot = !isSpinningFree ? totalBetValue / 100L : 0;
                         this.pot += moneyToPot;
 
                         // số tiền còn lại sau khi trừ phế và 2% POT cho vào quỹ thưởng
                         long moneyToFund = !isSpinningFree ? totalBetValue - fee - moneyToPot : 0;
-                        if (!u.isBot() && moneyToPot > 0) {
+                        if (!u.isBot() && moneyToFund > 0) {
                             updateFunValue(moneyToFund);
                         }
                         // cờ này được sử dụng để check liệu có tiếp tục vòng lặp để sinh Matrix hay không
@@ -293,9 +289,7 @@ public class Slot20Room extends SlotRoom {
                                     }
                                     // Tuy không trúng JACKPOT nhưng trúng Line to quá cũng cần sinh lại MATRIX
                                     if (!isGetJackpotNaturally) {
-//                                    if ((totalPrizes - totalBetValue > 0 && totalPrizes > getFunValue()) || totalPrizes >= totalBetValue * 25)
-                                        if ((totalPrizes - totalBetValue > 0 && totalPrizes > getFunValue()))
-                                            continue;
+                                        if ((totalPrizes - totalBetValue > 0 && totalPrizes > getFunValue())) continue;
                                     }
                                 }
                                 // điều kiện trúng thưởng đã thỏa mãn, dừng vòng lặp
@@ -309,7 +303,6 @@ public class Slot20Room extends SlotRoom {
                                         if (!u.isBot()) updateFunValue(-initJackpotValues);
 
                                         // get usercache
-                                        String displayName = username;
                                         if (forceJackpotToUser) {
                                             try {
                                                 cacheService.removeKey(CACHE_NAME_USER_SPOT + this.gn);
@@ -317,7 +310,7 @@ public class Slot20Room extends SlotRoom {
                                             } catch (Exception ignored) {
                                             }
                                         }
-                                        this.slotService.logNoHu(referenceId, this.gameName, displayName, this.betValue, linesStr, matrixStr, builderLinesWin.toString(), builderPrizesOnLine.toString(), totalPrizes, result, currentTimeStr);
+                                        this.slotService.logNoHu(referenceId, this.gameName, username, this.betValue, linesStr, matrixStr, builderLinesWin.toString(), builderPrizesOnLine.toString(), totalPrizes, result, currentTimeStr);
                                     } else {
                                         if (!u.isBot()) {
                                             updateFunValue(-totalPrizes);

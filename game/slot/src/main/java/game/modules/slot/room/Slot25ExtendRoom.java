@@ -158,7 +158,7 @@ public class Slot25ExtendRoom extends SlotRoom {
 
                         // số tiền còn lại sau khi trừ phế và 2% POT cho vào quỹ thưởng
                         long moneyToFund = totalBetValue - fee - moneyToPot;
-                        if (!u.isBot()) {
+                        if (!u.isBot() && moneyToFund > 0) {
                             updateFunValue(moneyToFund);
                         }
                         // cờ này được sử dụng để check liệu có tiếp tục vòng lặp để sinh Matrix hay không
@@ -441,7 +441,7 @@ public class Slot25ExtendRoom extends SlotRoom {
         return playResponse;
     }
 
-    public synchronized Slot25ResultMsg playFreeSpin(String username, String linesStr, long referenceId) {
+    public Slot25ResultMsg playFreeSpin(String username, String linesStr, long referenceId) {
         // kết quả mặc định
         short result = ResultSlot.MISSED;
         // thời điểm hiện tại
@@ -466,110 +466,109 @@ public class Slot25ExtendRoom extends SlotRoom {
         ArrayList<AwardsOnLine<Slot25ExtendFreeSpinAward>> awardsOnLines = new ArrayList<>();
         // thông tin Free Spin
         SlotFreeSpin freeSpinInfo = getFreeSpinInfo(username);
-
-        while (!enoughPair) {
-            // khởi tạo lại các giá trị mặc định sau mỗi lần lặp
-            result = ResultSlot.MISSED;
-            awardsOnLines.clear();
-            totalPrizes = 0L;
-
-
-            // sinh Matrix
-            Slot25ExtendFreeSpinItem[][] matrix = Slot25ExtendUtil.generateMatrixFreeSpin("");
+        synchronized (this) {
+            while (!enoughPair) {
+                // khởi tạo lại các giá trị mặc định sau mỗi lần lặp
+                result = ResultSlot.MISSED;
+                awardsOnLines.clear();
+                totalPrizes = 0L;
 
 
-            // Duyệt toàn bộ Lines được chọn bởi người chơi để tính toán giải thưởng trên từng Line
-            for (String selectedLine : selectedLines) {
-                ArrayList<Slot25ExtendFreeSpinAward> awardList = new ArrayList<>();
-                int lineNumber = Integer.parseInt(selectedLine);
-                Line line = Slot25ExtendUtil.getLine(this.lines, matrix, lineNumber);
-                Slot25ExtendUtil.calculateFreeSpinAwardInLine(line, awardList);
-                for (Slot25ExtendFreeSpinAward award : awardList) {
-                    long moneyOnLine = (long) (award.getRatio() * this.betValue);
-                    AwardsOnLine<Slot25ExtendFreeSpinAward> aol2 = new AwardsOnLine<>(award, moneyOnLine, line.getName());
-                    awardsOnLines.add(aol2);
-                }
-            }
+                // sinh Matrix
+                Slot25ExtendFreeSpinItem[][] matrix = Slot25ExtendUtil.generateMatrixFreeSpin("");
 
 
-            // Tiếp theo, tính toán toàn bộ giải thưởng
-            StringBuilder builderLinesWin = new StringBuilder();
-            StringBuilder builderPrizesOnLine = new StringBuilder();
-            for (AwardsOnLine<Slot25ExtendFreeSpinAward> award : awardsOnLines) {
-                totalPrizes += (award.getMoney() * freeSpinInfo.getRatio());
-
-                builderLinesWin.append(",");
-                builderLinesWin.append(award.getLineId());
-
-                builderPrizesOnLine.append(",");
-                builderPrizesOnLine.append(award.getMoney());
-            }
-            if (builderLinesWin.length() > 0) {
-                builderLinesWin.deleteCharAt(0);
-            }
-            if (builderPrizesOnLine.length() > 0) {
-                builderPrizesOnLine.deleteCharAt(0);
-            }
-
-            // Kiểm tra xem giải thưởng có LỚN hay không.
-            // Lớn quá thì sinh lại MATRIX kết quả kẻo anh em NPH vỡ nợ
-            if ((totalPrizes - totalBetValue > 0 && totalPrizes > getFunValue()) || totalPrizes >= totalBetValue * 25)
-                continue;
-
-
-            // điều kiện trúng thưởng đã thỏa mãn, dừng vòng lặp
-            enoughPair = true;
-            // BẮT ĐẦU QUÁ TRÌNH LƯU TRỮ THÔNG TIN VÀ TRẢ THƯỞNG
-            String matrixStr = Slot25ExtendUtil.matrixToString(matrix);
-            if (totalPrizes > 0L) {
-                if (!u.isBot()) {
-                    updateFunValue(-totalPrizes);
-                }
-                result = ResultSlot.WIN;
-            }
-
-            // cập nhật và tính toán lượt quay miễn phí
-            SlotFreeSpin slotFreeSpin = slotService.updateLuotQuaySlotFree(cacheFreeSpinName, username);
-            playResponse.freeSpin = (byte) slotFreeSpin.getNum();
-            if (slotFreeSpin.getNum() > 0) {
-                playResponse.isFreeSpin = true;
-                playResponse.result = ResultSlot.FREE_SPIN;
-            }
-
-            // only save real user
-            long moneyExchange = totalPrizes;
-            if (moneyExchange != 0 && !u.isBot()) {
-                MoneyResponse moneyRes = this.userService.updateMoney(username, moneyExchange, this.moneyTypeStr, this.gameName, "Quay " + gameName, this.buildDescription(totalBetValue, totalPrizes, result), 0L, referenceId, TransType.END_TRANS);
-                if (moneyRes != null && moneyRes.isSuccess()) {
-                    currentMoney = moneyRes.getCurrentMoney();
-                    // thông báo tới toàn hệ thống số tiền thắng của người chơi
-                    if (this.moneyType == 1 && moneyExchange - this.betValue >= (totalBetValue * 1.5)) {
-                        this.broadcastMsgService.putMessage(Games.findGameByName(gameName).getId(), username, moneyExchange - (long) this.betValue);
+                // Duyệt toàn bộ Lines được chọn bởi người chơi để tính toán giải thưởng trên từng Line
+                for (String selectedLine : selectedLines) {
+                    ArrayList<Slot25ExtendFreeSpinAward> awardList = new ArrayList<>();
+                    int lineNumber = Integer.parseInt(selectedLine);
+                    Line line = Slot25ExtendUtil.getLine(this.lines, matrix, lineNumber);
+                    Slot25ExtendUtil.calculateFreeSpinAwardInLine(line, awardList);
+                    for (Slot25ExtendFreeSpinAward award : awardList) {
+                        long moneyOnLine = (long) (award.getRatio() * this.betValue);
+                        AwardsOnLine<Slot25ExtendFreeSpinAward> aol2 = new AwardsOnLine<>(award, moneyOnLine, line.getName());
+                        awardsOnLines.add(aol2);
                     }
                 }
-            }
-            String linesWin = builderLinesWin.toString();
-            String prizesOnLine = builderPrizesOnLine.toString();
-            playResponse.referenceId = referenceId;
-            playResponse.matrix = matrixStr;
-            playResponse.linesWin = linesWin;
-            playResponse.prize = totalPrizes;
-            playResponse.haiSao = "";
 
-            try {
-                // lưu nhật ký chơi
-                if (!u.isBot()) {
-                    this.logListener.log(referenceId, username, this.betValue, linesStr, linesWin, prizesOnLine, ResultSlot.LOG_FREE_SPIN, totalPrizes, currentTimeStr, matrixStr);
+
+                // Tiếp theo, tính toán toàn bộ giải thưởng
+                StringBuilder builderLinesWin = new StringBuilder();
+                StringBuilder builderPrizesOnLine = new StringBuilder();
+                for (AwardsOnLine<Slot25ExtendFreeSpinAward> award : awardsOnLines) {
+                    totalPrizes += (award.getMoney() * freeSpinInfo.getRatio());
+
+                    builderLinesWin.append(",");
+                    builderLinesWin.append(award.getLineId());
+
+                    builderPrizesOnLine.append(",");
+                    builderPrizesOnLine.append(award.getMoney());
                 }
-            } catch (InterruptedException | TimeoutException | IOException ignored) {
-                // empty catch block
-            }
-            // lưu thông tin quỹ
-            this.saveFund();
-            // lưu thông tin HŨ
-            this.savePot();
+                if (builderLinesWin.length() > 0) {
+                    builderLinesWin.deleteCharAt(0);
+                }
+                if (builderPrizesOnLine.length() > 0) {
+                    builderPrizesOnLine.deleteCharAt(0);
+                }
 
-//            System.out.println("Total Prize: " + totalPrizes + " - Fun: " + fund);
+                // Kiểm tra xem giải thưởng có LỚN hay không.
+                // Lớn quá thì sinh lại MATRIX kết quả kẻo anh em NPH vỡ nợ
+                if ((totalPrizes - totalBetValue > 0 && totalPrizes > getFunValue()) || totalPrizes >= totalBetValue * 25)
+                    continue;
+
+
+                // điều kiện trúng thưởng đã thỏa mãn, dừng vòng lặp
+                enoughPair = true;
+                // BẮT ĐẦU QUÁ TRÌNH LƯU TRỮ THÔNG TIN VÀ TRẢ THƯỞNG
+                String matrixStr = Slot25ExtendUtil.matrixToString(matrix);
+                if (totalPrizes > 0L) {
+                    if (!u.isBot()) {
+                        updateFunValue(-totalPrizes);
+                    }
+                    result = ResultSlot.WIN;
+                }
+
+                // cập nhật và tính toán lượt quay miễn phí
+                SlotFreeSpin slotFreeSpin = slotService.updateLuotQuaySlotFree(cacheFreeSpinName, username);
+                playResponse.freeSpin = (byte) slotFreeSpin.getNum();
+                if (slotFreeSpin.getNum() > 0) {
+                    playResponse.isFreeSpin = true;
+                    playResponse.result = ResultSlot.FREE_SPIN;
+                }
+
+                // only save real user
+                long moneyExchange = totalPrizes;
+                if (moneyExchange != 0 && !u.isBot()) {
+                    MoneyResponse moneyRes = this.userService.updateMoney(username, moneyExchange, this.moneyTypeStr, this.gameName, "Quay " + gameName, this.buildDescription(totalBetValue, totalPrizes, result), 0L, referenceId, TransType.END_TRANS);
+                    if (moneyRes != null && moneyRes.isSuccess()) {
+                        currentMoney = moneyRes.getCurrentMoney();
+                        // thông báo tới toàn hệ thống số tiền thắng của người chơi
+                        if (this.moneyType == 1 && moneyExchange - this.betValue >= (totalBetValue * 1.5)) {
+                            this.broadcastMsgService.putMessage(Games.findGameByName(gameName).getId(), username, moneyExchange - (long) this.betValue);
+                        }
+                    }
+                }
+                String linesWin = builderLinesWin.toString();
+                String prizesOnLine = builderPrizesOnLine.toString();
+                playResponse.referenceId = referenceId;
+                playResponse.matrix = matrixStr;
+                playResponse.linesWin = linesWin;
+                playResponse.prize = totalPrizes;
+                playResponse.haiSao = "";
+
+                try {
+                    // lưu nhật ký chơi
+                    if (!u.isBot()) {
+                        this.logListener.log(referenceId, username, this.betValue, linesStr, linesWin, prizesOnLine, ResultSlot.LOG_FREE_SPIN, totalPrizes, currentTimeStr, matrixStr);
+                    }
+                } catch (InterruptedException | TimeoutException | IOException ignored) {
+                    // empty catch block
+                }
+                // lưu thông tin quỹ
+                this.saveFund();
+                // lưu thông tin HŨ
+                this.savePot();
+            }
         }
 
 
@@ -579,9 +578,6 @@ public class Slot25ExtendRoom extends SlotRoom {
         // update cache tien hu
         cacheService.setValue(CACHE_JACK_POT_VALUE_SLOT + "_" + this.betValue + "_" + gameName, String.valueOf(this.pot));
 
-//        if (!u.isBot()) {
-//            System.out.println(new Gson().toJson(playResponse));
-//        }
         return playResponse;
     }
 
