@@ -23,7 +23,6 @@ package game.modules.slot.room;
 import bitzero.server.entities.User;
 import bitzero.server.extensions.data.BaseMsg;
 import bitzero.util.ExtensionUtility;
-import bitzero.util.common.business.Debug;
 import com.vinplay.dal.common.BroadCastUserState;
 import com.vinplay.dal.service.BroadcastMessageService;
 import com.vinplay.dal.service.CacheService;
@@ -42,9 +41,7 @@ import game.modules.slot.SlotModule;
 import game.modules.slot.entities.slot.AutoUser;
 import game.util.ConfigGame;
 
-import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.TimeoutException;
 
 public abstract class SlotRoom {
     protected SlotModule module;
@@ -56,7 +53,7 @@ public abstract class SlotRoom {
     protected String gameName;
     protected String cacheFreeSpinName;
     protected String name;
-    protected List<User> users = new ArrayList<User>();
+    protected List<User> users = new ArrayList<>();
     protected long pot;
     protected long initJackpotValues;
     protected int betValue;
@@ -96,13 +93,8 @@ public abstract class SlotRoom {
             this.countHu = this.cacheService.getValueInt(name + "_count_hu");
             this.countNoHuX2 = this.cacheService.getValueInt(name + "_count_no_hu_x2");
             this.calculatHuX2();
-        } catch (KeyNotFoundException keyNotFoundException) {
-            // empty catch block
+        } catch (KeyNotFoundException ignored) {
         }
-//        try {
-//            this.miniGameService.savePot(name, pot, this.huX2);
-//        } catch (InterruptedException | TimeoutException | IOException ignored) {
-//        }
 
         setFunValue(fun);
     }
@@ -127,8 +119,8 @@ public abstract class SlotRoom {
     public boolean quitRoom(User user) {
         List<User> list = this.users;
         synchronized (list) {
-            if (this.users.contains((Object) user)) {
-                this.users.remove((Object) user);
+            if (this.users.contains(user)) {
+                this.users.remove(user);
                 return true;
             }
         }
@@ -136,7 +128,7 @@ public abstract class SlotRoom {
     }
 
     public void sendMessageToRoom(BaseMsg msg) {
-        ArrayList<User> usersCopy = new ArrayList<User>(this.users);
+        ArrayList<User> usersCopy = new ArrayList<>(this.users);
         for (User user : usersCopy) {
             ExtensionUtility.getExtension().send(msg, user);
         }
@@ -148,58 +140,11 @@ public abstract class SlotRoom {
         cacheService.setObject("notifyNohu", msg);
     }
 
-    public void startHuX2() {
-        this.huX2 = false;
-        /*
-        Debug.trace((Object)(String.valueOf(this.gameName) + " start hu X2"));
-        this.countHu = 1;
-        this.sv.setValue(String.valueOf(this.name) + "_count_hu", this.countHu);
-        if (this.moneyType == 1 && this.betValue == 100) {
-            this.huX2 = true;
-        }*/
-    }
-
-    public void stopHuX2() {
-        Debug.trace((Object) (String.valueOf(this.gameName) + " stop hu x2"));
-        this.countHu = -1;
-        this.countNoHuX2 = 0;
-        this.huX2 = false;
-        this.cacheService.setValue(String.valueOf(this.name) + "_count_hu", this.countHu);
-        this.cacheService.setValue(String.valueOf(this.name) + "_count_no_hu_x2", this.countNoHuX2);
-    }
-
     public void noHuX2() {
 
-        /*
-        if (this.countHu > -1) {
-            ++this.countHu;
-            this.sv.setValue(String.valueOf(this.name) + "_count_hu", this.countHu);
-            if (this.huX2) {
-                ++this.countNoHuX2;
-                this.sv.setValue(String.valueOf(this.name) + "_count_no_hu_x2", this.countNoHuX2);
-                Debug.trace((Object)(String.valueOf(this.gameName) + " No hu X2: " + this.countHu + " , huX2= " + this.countNoHuX2));
-                if (this.betValue == 100 && this.countNoHuX2 >= 10) {
-                    this.module.stopX2();
-                    this.stopHuX2();
-                }
-                if (this.betValue == 1000 && this.countNoHuX2 >= 1) {
-                    this.module.stopX2();
-                    this.stopHuX2();
-                }
-            }
-            this.calculatHuX2();
-        }*/
     }
 
     private void calculatHuX2() {
-        /*
-        if (this.countHu > -1 && this.moneyType == 1) {
-            if (this.betValue == 100) {
-                this.huX2 = this.countHu % 4 == 1 && this.countNoHuX2 < 10;
-            } else if (this.betValue == 1000) {
-                this.huX2 = this.countHu == 3 && this.countNoHuX2 < 1;
-            }
-        }*/
     }
 
     public int getBetValue() {
@@ -207,7 +152,7 @@ public abstract class SlotRoom {
     }
 
     public void forceStopAutoPlay(User user) {
-        user.removeProperty((Object) ("auto_" + this.gameName));
+        user.removeProperty("auto_" + this.gameName);
         BroadCastUserState.popBroadCast(user.getName());
     }
 
@@ -215,8 +160,7 @@ public abstract class SlotRoom {
      * WARNING - Removed try catching itself - possible behaviour change.
      */
     public void autoPlay(User user, String lines, short resultFirstPlay) {
-        Map<String, AutoUser> map = this.usersAuto;
-        synchronized (map) {
+        synchronized (this.usersAuto) {
             if (this.usersAuto.containsKey(user.getName())) {
                 AutoUser entry = this.usersAuto.get(user.getName());
                 this.forceStopAutoPlay(entry.getUser());
@@ -230,7 +174,7 @@ public abstract class SlotRoom {
                 autoUser.setMaxCount(8);
             }
             this.usersAuto.put(user.getName(), autoUser);
-            user.setProperty((Object) ("auto_" + this.gameName), (Object) true);
+            user.setProperty("auto_" + this.gameName, true);
         }
     }
 
@@ -238,13 +182,11 @@ public abstract class SlotRoom {
      * WARNING - Removed try catching itself - possible behaviour change.
      */
     public void stopAutoPlay(User user) {
-        Map<String, AutoUser> map = this.usersAuto;
-        synchronized (map) {
-            AutoUser entry;
+        synchronized (this.usersAuto) {
             if (this.usersAuto.containsKey(user.getName())
-                    && (entry = this.usersAuto.get(user.getName())).getUser().getUniqueId() == user.getUniqueId()) {
+                    && this.usersAuto.get(user.getName()).getUser().getUniqueId() == user.getUniqueId()) {
                 this.usersAuto.remove(user.getName());
-                user.removeProperty((Object) ("auto_" + this.gameName));
+                user.removeProperty("auto_" + this.gameName);
             }
         }
     }
@@ -253,8 +195,7 @@ public abstract class SlotRoom {
      * WARNING - Removed try catching itself - possible behaviour change.
      */
     public void userMinimize(User user) {
-        Map<String, AutoUser> map = this.usersAuto;
-        synchronized (map) {
+        synchronized (this.usersAuto) {
             AutoUser entry;
             if (this.usersAuto.containsKey(user.getName())
                     && (entry = this.usersAuto.get(user.getName())).getUser().getUniqueId() == user.getUniqueId()) {
@@ -267,8 +208,7 @@ public abstract class SlotRoom {
      * WARNING - Removed try catching itself - possible behaviour change.
      */
     public void userMaximize(User user) {
-        Map<String, AutoUser> map = this.usersAuto;
-        synchronized (map) {
+        synchronized (this.usersAuto) {
             AutoUser entry;
             if (this.usersAuto.containsKey(user.getName())
                     && (entry = this.usersAuto.get(user.getName())).getUser().getUniqueId() == user.getUniqueId()) {
@@ -281,8 +221,7 @@ public abstract class SlotRoom {
      * WARNING - Removed try catching itself - possible behaviour change.
      */
     public boolean isUserMinimize(User user) {
-        Map<String, AutoUser> map = this.usersAuto;
-        synchronized (map) {
+        synchronized (this.usersAuto) {
             AutoUser entry;
             if (this.usersAuto.containsKey(user.getName())
                     && (entry = this.usersAuto.get(user.getName())).getUser().getUniqueId() == user.getUniqueId()) {
@@ -348,7 +287,7 @@ public abstract class SlotRoom {
         if (totalBet == 0L) {
             return this.resultToString(result) + ": " + totalPrizes;
         }
-        return "Quay: " + (totalBet == 0L ? "free" : Long.valueOf(totalBet)) + ", " + this.resultToString(result) + ": " + totalPrizes;
+        return "Quay: " + totalBet + ", " + this.resultToString(result) + ": " + totalPrizes;
     }
 
     protected String resultToString(short result) {
@@ -377,11 +316,10 @@ public abstract class SlotRoom {
         return this.id;
     }
 
-    public class ResultSlot {
+    public static class ResultSlot {
         public static final short SYSTEM_ERROR = 100;
         public static final short INVALID_BET_VALUE = 101;
         public static final short NOT_ENOUGH_MONEY = 102;
-        public static final short INVALID_FREE_SPIN = 103;
         public static final short MISSED = 0;
         public static final short WIN = 1;
         public static final short BIG_WIN = 2;
@@ -409,7 +347,7 @@ public abstract class SlotRoom {
 
     protected final class CheckResetPot implements Runnable {
 
-        protected CheckResetPot() {
+        CheckResetPot() {
 
         }
 
@@ -424,7 +362,7 @@ public abstract class SlotRoom {
     }
 
     protected final class PlayListAutoUserTask extends Thread {
-        private List<AutoUser> users;
+        private final List<AutoUser> users;
 
         PlayListAutoUserTask(List<AutoUser> users) {
             this.users = users;

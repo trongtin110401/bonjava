@@ -69,7 +69,7 @@ public class MGRoomCaoThap extends MGRoom {
     private UserService userService = new UserServiceImpl();
     private final Runnable gameLoopTask = new GameLoopTask();
     private final Runnable timeLoopTask = new TimeLoopTask();
-    private Map<String, CaoThapInfo> usersCaoThap = new HashMap<>();
+    private Map<String, CaoThapInfo> usersCaoThap;
     private CaoThapService ctService = new CaoThapServiceImpl();
     private BroadcastMessageService broadcastMsgService = new BroadcastMessageServiceImpl();
 
@@ -100,9 +100,8 @@ public class MGRoomCaoThap extends MGRoom {
      * WARNING - Removed try catching itself - possible behaviour change.
      */
     public void startPlay(User user, int betValue, long referenceId) {
-        Map<String, CaoThapInfo> map;
         StartPlayCaoThapMsg msg = new StartPlayCaoThapMsg();
-        Map<String, CaoThapInfo> map2 = map = this.usersCaoThap;
+        Map<String, CaoThapInfo> map2 = this.usersCaoThap;
         synchronized (map2) {
             if (!this.usersCaoThap.containsKey(user.getName())) {
                 long moneyUse = this.userService.getMoneyUserCache(user.getName(), this.moneyTypeStr);
@@ -110,21 +109,19 @@ public class MGRoomCaoThap extends MGRoom {
                     Deck deck = new Deck();
                     deck.shuffle();
                     Card card = CaoThapUtils.randomWithoutA(deck);
-                    //deck.deal();
                     byte numA = 0;
                     if (card.getRank() == Rank.Ace) {
                         numA = 1;
                     }
                     long fee = Math.round((float) betValue * this.tax / 100.0f);
                     long moneyToFund = (long) betValue - fee;
-                    MoneyResponse mnres = new MoneyResponse(false, "1001");
+                    MoneyResponse moneyResponse = new MoneyResponse(false, "1001");
                     if (!isBot(user.getName())) {
-                        mnres = this.userService.updateMoney(user.getName(), (long) (-betValue), this.moneyTypeStr, "CaoThap", "Cao th\u1ea5p: \u0110\u1eb7t c\u01b0\u1ee3c", "Phi\u00ean: " + referenceId + ", B\u01b0\u1edbc: 1", fee, Long.valueOf(referenceId), TransType.START_TRANS);
-
+                        moneyResponse = this.userService.updateMoney(user.getName(), -betValue, this.moneyTypeStr, "CaoThap", "Cao thấp: Đặt cược", "Phiên: " + referenceId + ", Bước: 1", fee, referenceId, TransType.START_TRANS);
                     } else {
-                        mnres.setSuccess(true);
+                        moneyResponse.setSuccess(true);
                     }
-                    if (mnres != null && mnres.isSuccess()) {
+                    if (moneyResponse != null && moneyResponse.isSuccess()) {
                         updateFunValue(moneyToFund);
                         this.saveFund();
                         List<Double> ratioLst = CaoThapUtils.getRatio(deck, card);
@@ -132,38 +129,39 @@ public class MGRoomCaoThap extends MGRoom {
                         msg.money2 = betValue;
                         msg.money3 = Math.round((double) betValue * ratioLst.get(0));
                         msg.card = (byte) card.getCode();
-                        msg.currentMoney = mnres.getCurrentMoney();
+                        msg.currentMoney = moneyResponse.getCurrentMoney();
                         msg.referenceId = referenceId;
                         ArrayList<Card> carryCards = new ArrayList<Card>();
                         carryCards.add(card);
-//                        CaoThapInfo info = new CaoThapInfo(user, referenceId, deck, card, 1, 120, betValue, numA, carryCards, msg.money1, msg.money3, user.getUniqueId());
-                        CaoThapInfo info = new CaoThapInfo(user, referenceId, deck, card, (short) 1, (short) 120, betValue, numA, carryCards, msg.money1, msg.money3, user.getId());
+                        CaoThapInfo info = new CaoThapInfo(user, referenceId, deck, card, ResultCaoThap.USER_PLAYING, (short) 120, betValue, numA, carryCards, msg.money1, msg.money3, user.getId());
                         this.usersCaoThap.put(user.getName(), info);
                         try {
                             if (!this.isBot(user.getName())) {
-                                this.ctService.logCaoThap(referenceId, user.getName(), (long) betValue, (short) 0, (long) (-betValue), card.toString(), this.pot, getFunValue(), (int) this.moneyType, (short) 0, 1);
+                                this.ctService.logCaoThap(referenceId, user.getName(), betValue, (short) 0, -betValue, card.toString(), this.pot, getFunValue(), this.moneyType, (short) 0, 1);
                             }
                         } catch (Exception e) {
-                            Debug.trace((Object[]) new Object[]{"CAO THAP: log cao thap error ", e.getMessage()});
+                            Debug.trace("CAO THAP: log cao thap error ", e.getMessage());
                         }
                     } else {
-                        msg.Error = 100;
+                        msg.Error = ResultCaoThap.LOI_HE_THONG;
                     }
                 } else {
-                    msg.Error = 3;
+                    msg.Error = ResultCaoThap.NOT_ENOUGH_MONEY;
                 }
             } else {
-                msg.Error = 1;
+                msg.Error = ResultCaoThap.USER_PLAYING;
             }
         }
-        this.sendMessageToUser((BaseMsg) msg, user);
+        this.sendMessageToUser(msg, user);
     }
+
+    public static final int TREN = 1;
+    public static final int DUOI = 0;
 
     /*
      * WARNING - Removed try catching itself - possible behaviour change.
      */
     public void play(User user, byte choose) {
-        Map<String, CaoThapInfo> map;
         ResultCaoThapMsg msg = new ResultCaoThapMsg();
         Map<String, CaoThapInfo> map2 = this.usersCaoThap;
         synchronized (map2) {
@@ -172,9 +170,9 @@ public class MGRoomCaoThap extends MGRoom {
                 CaoThapInfo info = this.usersCaoThap.get(user.getName());
                 info.setTime((short) 120);
                 info.setStep((short) (info.getStep() + 1));
-                if (!(info.getMoneyUp() == 0L && choose == 1 || info.getMoneyDown() == 0L && choose == 0)) {
+                if (!((info.getMoneyUp() == 0L && choose == TREN) || (info.getMoneyDown() == 0L && choose == DUOI))) { // Không phải chọn TRÊN khi ra A và chọn DƯỚI khi ra 2
                     long moneyWin;
-                    long fundStep;
+                    long fund;
                     byte numA;
                     Card card;
                     Deck deck;
@@ -185,8 +183,10 @@ public class MGRoomCaoThap extends MGRoom {
                         // // lock no hũ 11/01 kane
                         noHu = (this.baseBetValue < 100000 || this.userService.getTotalRechargeMoney(user.getName()) >= Math.round((double) this.pot * 0.1)) && CaoThapUtils.isDoWithRatio(1000.0);
                     }
+
+                    block4:
                     do {
-                        fundStep = getFunValue();
+                        fund = getFunValue();
                         numA = info.getNumA();
                         if (info.getMoneyUp() == 0L || info.getMoneyDown() == 0L) {
                             if (noHu) {
@@ -213,62 +213,59 @@ public class MGRoomCaoThap extends MGRoom {
                             deck.popCard(card);
                         }
 
-//                        card = CaoThapUtils.randomThua(info.getDeck(), info.getCard(), choose);
-//                        deck = info.getDeck();
-//                        deck.popCard(card);
-
                         moneyWin = 0L;
                         if (card.getRank().getRank() == info.getCard().getRank().getRank()) {
                             result = ResultCaoThap.HOA;
                             moneyWin = Math.round(info.getMoney() * 9L / 10L);
                         } else if (card.getRank().getRank() > info.getCard().getRank().getRank()) {
-                            if (choose == 1) {
-                                result = 4;
+                            if (choose == TREN) {
                                 result = ResultCaoThap.THANG;
                                 moneyWin = info.getMoneyUp();
                             } else {
-                                result = 5;
                                 result = ResultCaoThap.THUA;
                             }
                         } else if (card.getRank().getRank() < info.getCard().getRank().getRank()) {
-                            if (choose == 1) {
-                                result = 5;
-                            } else {
-                                result = 4;
+                            if (choose == TREN) {
+                                result = ResultCaoThap.THUA;
+                            } else if (choose == DUOI) {
+                                result = ResultCaoThap.THANG;
                                 moneyWin = info.getMoneyDown();
                             }
                         }
-                        if (result == 4) {
-                            fundStep = info.getStep() > 2 ? fundStep - (moneyWin - info.getMoney()) : fundStep - moneyWin;
-                        } else if (result == 6) {
+                        if (result == ResultCaoThap.THANG) {
+                            fund = info.getStep() > 2 ? fund - (moneyWin - info.getMoney()) : fund - moneyWin;
+                        } else if (result == ResultCaoThap.HOA) {
                             if (info.getStep() > 2) {
                                 ++i;
                             } else {
-                                fundStep -= info.getMoney();
+                                fund -= info.getMoney();
                             }
-                        } else if (result == 5) {
+                        } else if (result == ResultCaoThap.THUA) {
                             ++i;
                         }
-                        if (result == 5 || card.getRank() != Rank.Ace || (numA = (byte) (numA + 1)) != 3) continue;
-                        result = 7;
-                    } while (fundStep <= 0L && ++i <= 1);
-                    boolean next = false;
+                        if (result == ResultCaoThap.THUA || card.getRank() != Rank.Ace || (numA = (byte) (numA + 1)) != 3)
+                            continue;
+
+                        result = ResultCaoThap.NO_HU;
+                    } while (fund <= 0L && ++i <= 1);
+
+                    boolean askUserNext = false;
                     long moneyToUser = 0L;
-                    if (result == 4) {
+                    if (result == ResultCaoThap.THANG) {
                         moneyToUser = moneyWin;
-                        next = true;
+                        askUserNext = true;
                         updateFunValue(info.getStep() > 2 ? (getFunValue() - (moneyWin - info.getMoney())) : (getFunValue() - moneyWin));
                         this.saveFund();
-                    } else if (result == 6) {
+                    } else if (result == ResultCaoThap.HOA) {
                         moneyToUser = moneyWin;
                         this.pot += info.getMoney() - moneyWin;
                         this.savePot();
-                        next = true;
+                        askUserNext = true;
                         if (info.getStep() <= 2) {
                             updateFunValue(-info.getMoney());
                             this.saveFund();
                         }
-                    } else if (result == 5) {
+                    } else if (result == ResultCaoThap.THUA) {
                         moneyToUser = 0L;
                         if (info.getStep() > 2) {
                             updateFunValue(info.getMoney());
@@ -279,7 +276,7 @@ public class MGRoomCaoThap extends MGRoom {
                             this.userService.updateMoney(user.getName(), moneyToUser, this.moneyTypeStr, "CaoThap", "", "", 0L, Long.valueOf(info.getReferenceId()), TransType.END_TRANS);
 
                         }
-                    } else if (result == 7) {
+                    } else if (result == ResultCaoThap.NO_HU) {
                         if (info.getMoney() > moneyWin) {
                             this.pot += info.getMoney() - moneyWin;
                         } else {
@@ -289,15 +286,15 @@ public class MGRoomCaoThap extends MGRoom {
                         moneyToUser = Math.round(this.pot / 2L);
                         this.pot -= moneyToUser;
                         this.savePot();
-                        MoneyResponse mnres = this.userService.updateMoney(user.getName(), moneyToUser += moneyWin, this.moneyTypeStr, "CaoThap", "Cao th\u1ea5p: N\u1ed5 h\u0169", "Phi\u00ean: " + info.getReferenceId() + ", B\u01b0\u1edbc: " + info.getStep(), 0L, Long.valueOf(info.getReferenceId()), TransType.END_TRANS);
-                        if (mnres != null && mnres.isSuccess()) {
+                        MoneyResponse moneyResponse = this.userService.updateMoney(user.getName(), moneyToUser += moneyWin, this.moneyTypeStr, "CaoThap", "Cao th\u1ea5p: N\u1ed5 h\u0169", "Phi\u00ean: " + info.getReferenceId() + ", B\u01b0\u1edbc: " + info.getStep(), 0L, Long.valueOf(info.getReferenceId()), TransType.END_TRANS);
+                        if (moneyResponse != null && moneyResponse.isSuccess()) {
                             if (this.moneyType == 1) {
                                 GameUtils.sendSMSToUser(user.getName(), "Chuc mung " + user.getName() + " da no hu game Cao Thap phong " + this.baseBetValue + ". So tien no hu: " + moneyToUser + " Vin");
                                 if (moneyToUser >= (long) BroadcastMessageServiceImpl.MIN_MONEY) {
                                     this.broadcastMsgService.putMessage(Games.CAO_THAP.getId(), user.getName(), moneyToUser);
                                 }
                             }
-                            currentMoney = mnres.getCurrentMoney();
+                            currentMoney = moneyResponse.getCurrentMoney();
                             try {
                                 List<Card> carryCardsNoHu = info.getCarryCards();
                                 carryCardsNoHu.add(card);
@@ -306,25 +303,24 @@ public class MGRoomCaoThap extends MGRoom {
 
                                 }
                             } catch (Exception e) {
-                                Debug.trace((Object[]) new Object[]{"CAO THAP: log cao thap error ", e.getMessage()});
+                                Debug.trace("CAO THAP: log cao thap error ", e.getMessage());
                             }
                         }
                     }
                     try {
                         if (!isBot(user.getName())) {
                             this.ctService.logCaoThap(info.getReferenceId(), user.getName(), info.getMoney(), result, moneyToUser, card.toString(), this.pot, getFunValue(), (int) this.moneyType, (short) choose, (int) info.getStep());
-
                         }
                     } catch (Exception e) {
-                        Debug.trace((Object[]) new Object[]{"CAO THAP: log cao thap error ", e.getMessage()});
+                        Debug.trace("CAO THAP: log cao thap error ", e.getMessage());
                     }
                     List<Double> ratioLst = CaoThapUtils.getRatio(deck, card);
                     msg.money1 = Math.round((double) moneyToUser * ratioLst.get(1));
                     msg.money2 = moneyToUser;
                     msg.money3 = Math.round((double) moneyToUser * ratioLst.get(0));
                     msg.card = (byte) card.getCode();
-                    this.sendMessageToUser((BaseMsg) msg, user);
-                    if (next) {
+                    this.sendMessageToUser(msg, user);
+                    if (askUserNext) {
                         info.setDeck(deck);
                         info.setCard(card);
                         info.setNumA(numA);
@@ -341,7 +337,7 @@ public class MGRoomCaoThap extends MGRoom {
                         msgStop.currentMoney = currentMoney;
                         msgStop.moneyExchange = moneyToUser;
                         this.usersCaoThap.remove(user.getName());
-                        this.sendMessageToUser((BaseMsg) msgStop, user);
+                        this.sendMessageToUser(msgStop, user);
                     }
                 }
             }
@@ -352,21 +348,20 @@ public class MGRoomCaoThap extends MGRoom {
      * WARNING - Removed try catching itself - possible behaviour change.
      */
     public void stopPlay(User user) {
-        Map<String, CaoThapInfo> map;
         StopPlayCaoThapMsg msg = new StopPlayCaoThapMsg();
-        Map<String, CaoThapInfo> map2 = map = this.usersCaoThap;
+        Map<String, CaoThapInfo> map2 = this.usersCaoThap;
         synchronized (map2) {
             if (this.usersCaoThap.containsKey(user.getName())) {
                 CaoThapInfo info = this.usersCaoThap.get(user.getName());
-                if (info.getStep() != 1) {
+                if (info.getStep() != ResultCaoThap.USER_PLAYING) {
                     MoneyResponse mnres = this.userService.updateMoney(user.getName(), info.getMoney(), this.moneyTypeStr, "CaoThap", "Cao th\u1ea5p: Tr\u1eadn th\u1eafng", "Phi\u00ean: " + info.getReferenceId() + ", B\u01b0\u1edbc: " + info.getStep(), 0L, Long.valueOf(info.getReferenceId()), TransType.END_TRANS);
                     if (mnres != null && mnres.isSuccess()) {
                         try {
-                            this.ctService.logCaoThapWin(info.getReferenceId(), user.getName(), (long) this.baseBetValue, (short) 4, info.getMoney(), CaoThapUtils.getCardStr(info.getCarryCards()), (int) this.moneyType);
+                            this.ctService.logCaoThapWin(info.getReferenceId(), user.getName(), this.baseBetValue, ResultCaoThap.THANG, info.getMoney(), CaoThapUtils.getCardStr(info.getCarryCards()), (int) this.moneyType);
                         } catch (Exception e) {
-                            Debug.trace((Object[]) new Object[]{"CAO THAP: log cao thap error ", e.getMessage()});
+                            Debug.trace("CAO THAP: log cao thap error ", e.getMessage());
                         }
-                        msg.result = (byte) 4;
+                        msg.result = ResultCaoThap.THANG;
                         msg.currentMoney = mnres.getCurrentMoney();
                         msg.moneyExchange = info.getMoney();
                         this.usersCaoThap.remove(user.getName());
@@ -374,12 +369,12 @@ public class MGRoomCaoThap extends MGRoom {
                             this.broadcastMsgService.putMessage(Games.CAO_THAP.getId(), user.getName(), info.getMoney());
                         }
                     } else {
-                        msg.Error = 100;
+                        msg.Error = ResultCaoThap.LOI_HE_THONG;
                     }
                 } else {
-                    msg.Error = 2;
+                    msg.Error = ResultCaoThap.STEP_ONE;
                 }
-                this.sendMessageToUser((BaseMsg) msg, user);
+                this.sendMessageToUser(msg, user);
             }
         }
     }

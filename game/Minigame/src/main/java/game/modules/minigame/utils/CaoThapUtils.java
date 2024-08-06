@@ -149,13 +149,12 @@ public class CaoThapUtils {
     public static Card randomWithoutA(Deck deck) {
         Card cardThua = null;
         if (deck.getSize() > 0) {
-            Deck dk;
             int numA = 0;
             for (Card cd : deck.getHand()) {
                 if (cd.getRank() != Rank.Ace) continue;
                 ++numA;
             }
-            while ((cardThua = (dk = new Deck(deck.getDeck(), deck.getCount())).deal()).getRank() == Rank.Ace && numA != deck.getSize()) {
+            while ((cardThua = new Deck(deck.getDeck(), deck.getCount()).deal()).getRank() == Rank.Ace && numA != deck.getSize()) {
             }
         }
         return cardThua;

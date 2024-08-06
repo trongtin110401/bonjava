@@ -13,8 +13,6 @@ package com.vinplay.dal.service.impl;
 import com.vinplay.dal.dao.MiniGameDAO;
 import com.vinplay.dal.dao.impl.MiniGameDAOImpl;
 import com.vinplay.dal.service.MiniGameService;
-import com.vinplay.dal.service.impl.CacheServiceImpl;
-import com.vinplay.vbee.common.messages.BaseMessage;
 import com.vinplay.vbee.common.messages.minigame.UpdateFundMessage;
 import com.vinplay.vbee.common.messages.minigame.UpdatePotMessage;
 import com.vinplay.vbee.common.response.BonusFundResponse;
@@ -41,8 +39,7 @@ public class MiniGameServiceImpl
 
     @Override
     public long getReferenceId(int gameId) throws SQLException {
-        long referenceId = this.dao.getReferenceId(gameId);
-        return referenceId;
+        return this.dao.getReferenceId(gameId);
     }
 
     @Override
@@ -55,7 +52,7 @@ public class MiniGameServiceImpl
         UpdateFundMessage msg = new UpdateFundMessage();
         msg.fundName = fundName;
         msg.newValue = value;
-        RMQApi.publishMessage((String) "queue_fund", (BaseMessage) msg, (int) 110);
+        RMQApi.publishMessage("queue_fund", msg, 110);
     }
 
     @Override
