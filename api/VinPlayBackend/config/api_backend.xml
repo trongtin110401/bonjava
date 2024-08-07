@@ -1838,5 +1838,16 @@
             <name>create event</name>
             <path>com.vinplay.api.backend.processors.CreateEventProcessor</path>
         </command>
+
+        <command>
+            <id>11048</id>
+            <name>get all event</name>
+            <path>com.vinplay.api.backend.processors.GetAllEventProcessor</path>
+        </command>
+        <command>
+            <id>11049</id>
+            <name>get all event</name>
+            <path>com.vinplay.api.backend.processors.UpdateEventProcessor</path>
+        </command>
     </commands>
 </backend>

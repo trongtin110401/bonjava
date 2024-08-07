@@ -525,6 +525,46 @@ public class OtherServiceImpl implements OtherService {
     }
 
     @Override
+    public ListEventResponse getAllEvent(String timeStart, String timeEnd, String eventName, String rate, boolean status) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("event");
+        Document filter = new Document();
+
+        if (timeStart != null && !timeStart.isEmpty()) {
+            filter.append("start_time", new Document("$gte", timeStart));
+        }
+
+        if (timeEnd != null && !timeEnd.isEmpty()) {
+            filter.append("end_time", new Document("$lte", timeEnd));
+        }
+
+        if (eventName != null && !eventName.isEmpty()) {
+            filter.append("event_name", eventName);
+        }
+
+        if (rate != null && !rate.isEmpty()) {
+            filter.append("rate", Integer.parseInt(rate));
+        }
+        filter.append("status", status);
+        MongoCursor<Document> cursor = collection.find(filter).iterator();
+        List<Event> events = new ArrayList<>();
+        while (cursor.hasNext()) {
+            Document doc = cursor.next();
+            Event eventResponse = new Event();
+            eventResponse.setRate(doc.getInteger("rate"));
+            eventResponse.setEventName(doc.getString("event_name"));
+            eventResponse.setTimeEnd(doc.getString("end_time"));
+            eventResponse.setStatus(doc.getBoolean("status"));
+            eventResponse.setTimeStart(doc.getString("start_time"));
+            eventResponse.setId(String.valueOf(doc.getLong("id")));
+            events.add(eventResponse);
+        }
+        ListEventResponse eventResponse = new ListEventResponse(true, "200");
+        eventResponse.setEvents(events);
+        return eventResponse;
+    }
+
+    @Override
     public List<MoneyShootFishResponse> getTotalShootFish(String startTime, String endTime, String nickname) throws Exception {
 
         List<MoneyShootFishResponse> responses = new ArrayList<>();
