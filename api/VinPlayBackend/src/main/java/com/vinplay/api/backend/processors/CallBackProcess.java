@@ -274,6 +274,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
                 return response.toJson();
             }
 
+
             EventResponse eventResponse = checkEventNapTien(trans.nickName);
             if (!eventResponse.isSuccess()) {
                 tien = tien * eventResponse.getRate();
