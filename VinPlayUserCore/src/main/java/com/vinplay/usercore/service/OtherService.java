@@ -75,5 +75,9 @@ public interface OtherService {
     boolean checkIfHaveAnyEventActive();
 
     EventResponse getCurrentEvent();
+
+    boolean checkUserNapTienEvent(String eventId, String nickname);
+
+    void saveUserNapTienEvent(UserEvent userEvent);
 }
 

@@ -493,11 +493,35 @@ public class OtherServiceImpl implements OtherService {
             eventResponse.setTimeEnd(doc.getString("end_time"));
             eventResponse.setStatus(doc.getBoolean("status"));
             eventResponse.setTimeStart(doc.getString("start_time"));
-            eventResponse.setId(doc.getString("id"));
+            eventResponse.setId(String.valueOf(doc.getLong("id")));
             eventResponse.setSuccess(true);
             eventResponse.setErrorCode("200");
         }
         return eventResponse;
+    }
+
+    @Override
+    public boolean checkUserNapTienEvent(String eventId, String nickname) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("user_event");
+        Document filter = new Document("event_id", eventId).append("nickname", nickname);
+        long count = collection.count(filter);
+        return count > 0;
+    }
+
+    @Override
+    public void saveUserNapTienEvent(UserEvent userEvent) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("user_event");
+        Document document = new Document();
+        document.put("id", userEvent.getId());
+        document.put("event_id", userEvent.getEventId());
+        document.put("create_date", userEvent.getCreatedDate());
+        document.put("actual_amount", userEvent.getActualAmount());
+        document.put("event_amount", userEvent.getEventAmount());
+        document.put("event_name", userEvent.getEventName());
+        document.put("nickname", userEvent.getNickname());
+        collection.insertOne(document);
     }
 
     @Override
