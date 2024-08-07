@@ -174,7 +174,7 @@ public class MGRoomMiniPoker extends MGRoom {
             if (currentMoney >= betValue) {
                 MoneyResponse moneyRes = new MoneyResponse(false, "1001");
                 if (!u.isBot()) {
-                    moneyRes = this.userService.updateMoney(username, -betValue, this.moneyTypeStr, Games.MINI_POKER.getName(), "Quay MiniPoker", "\u0110\u1eb7t c\u01b0\u1ee3c MiniPoker", 0L, Long.valueOf(referenceId), TransType.START_TRANS);
+                    moneyRes = this.userService.updateMoney(username, -betValue, this.moneyTypeStr, Games.MINI_POKER.getName(), "Quay MiniPoker", "Đặt cược MiniPoker", 0L, Long.valueOf(referenceId), TransType.START_TRANS);
                 } else {
                     moneyRes.setSuccess(true);
                 }
