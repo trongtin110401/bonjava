@@ -175,7 +175,7 @@ public class MGRoomCandy extends MGRoom {
         if (lineArr.length > 0 && !linesStr.isEmpty()) {
             if (totalBetValue > 0L) {
                 if (totalBetValue <= currentMoney) {
-                    MoneyResponse moneyRes = this.userService.updateMoney(username, -totalBetValue, this.moneyTypeStr, Games.CANDY.getName(), "Quay Whisky", "\u0110\u1eb7t c\u01b0\u1ee3c Quay " + this.gameName, 0L, Long.valueOf(referenceId), TransType.START_TRANS);
+                    MoneyResponse moneyRes = this.userService.updateMoney(username, -totalBetValue, this.moneyTypeStr, Games.CANDY.getName(), "Quay Whisky", "Đặt cược Quay " + this.gameName, 0L, Long.valueOf(referenceId), TransType.START_TRANS);
                     if (moneyRes != null && moneyRes.isSuccess()) {
                         long fee = totalBetValue * percentFee / 100L;
                         long moneyToPot = totalBetValue / 100L;
