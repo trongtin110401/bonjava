@@ -189,7 +189,7 @@ public class UpdateMoneyUserProcessor
         logger.info("updateMoneyFromAdmin insert log with containsKey");
         HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
         historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Tiền Từ Admin", "Admin",
-                "Nạp tiền", String.valueOf(money), "Thành công", description, nickname, typelog, transactionId));
+                "recharge", String.valueOf(money), "Thành công", description, nickname, typelog, transactionId));
 
     }
 }

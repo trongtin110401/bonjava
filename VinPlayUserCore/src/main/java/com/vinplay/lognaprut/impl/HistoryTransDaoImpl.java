@@ -206,10 +206,9 @@ public class HistoryTransDaoImpl implements HistoryTransDao {
             HashMap<String, Object> conditions = new HashMap<String, Object>();
             if (nickName != null && !nickName.isEmpty()) {
                 conditions.put("nickName", nickName.trim());
-                conditions.put("hinhthuc", "Nạp tiền");
-
+                conditions.put("hinhthuc", "recharge");
                 BasicDBObject obj = new BasicDBObject();
-                obj.put("$gt", 0);
+                obj.put("$gt", "0");
                 conditions.put("sotien", obj );
             }
 

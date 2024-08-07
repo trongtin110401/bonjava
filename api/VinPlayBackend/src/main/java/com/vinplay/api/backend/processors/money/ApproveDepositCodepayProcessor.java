@@ -112,7 +112,7 @@ public class ApproveDepositCodepayProcessor implements BaseProcessor<HttpServlet
                         e.printStackTrace();
                     }
                     HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
-                    historyTransDao.insertTransaction(new HistoryTransModel(trans.BankBrandName + "|" + trans.getDescription(), "CodePay", "Nạp tiền", tienx, "Thành công", "Nạp tiền Thành công ", trans.Nickname, HistoryTransConst.BANK, trans.Id));
+                    historyTransDao.insertTransaction(new HistoryTransModel(trans.BankBrandName + "|" + trans.getDescription(), "CodePay", "recharge", tienx, "Thành công", "Nạp tiền Thành công ", trans.Nickname, HistoryTransConst.BANK, trans.Id));
                     updateMoneyCodePayMomoSun(transId,tien_final);
                     updateMoneyCodePayMomoSun2(transId, tien_final+"");
                     updateSttCodePayMomoSun(transId,userApprove);

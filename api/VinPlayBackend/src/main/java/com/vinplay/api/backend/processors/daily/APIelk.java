@@ -255,7 +255,7 @@ public class APIelk {
                     String hinhthuc = test.getString("hinhthuc");
                     long sotien = Long.parseLong(test.getString("sotien"));
                     if(trangthai.trim().equalsIgnoreCase("Thành công") || trangthai.trim().equalsIgnoreCase("Đã duyệt")){
-                        if(hinhthuc.trim().equalsIgnoreCase("Nạp tiền")){
+                        if(hinhthuc.trim().equalsIgnoreCase("recharge")){
                             tong_tien_nap = tong_tien_nap + sotien;
                         }
                     }
