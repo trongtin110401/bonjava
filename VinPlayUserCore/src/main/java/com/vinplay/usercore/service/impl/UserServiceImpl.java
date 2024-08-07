@@ -352,8 +352,8 @@ public class UserServiceImpl implements UserService {
                             }
                             MoneyMessageInMinigame message = new MoneyMessageInMinigame(VinPlayUtils.genMessageId(), user.getId(), nickname, gameName, moneyUser, currentMoney, money, moneyType, fee, moneyVPs, vp);
                             LogMoneyUserMessage messageLog = new LogMoneyUserMessage(user.getId(), nickname, gameName, serviceName, currentMoney, money, moneyType, description, fee, playgame, user.isBot());
-                            RMQApi.publishMessagePayment((BaseMessage) message, (int) 16);  // bắn vào queue payment
-                            RMQApi.publishMessageLogMoney((LogMoneyUserMessage) messageLog); // bắn vào queue log
+                            RMQApi.publishMessagePayment(message, 16);  // bắn vào queue payment
+                            RMQApi.publishMessageLogMoney(messageLog); // bắn vào queue log
                             userMap.put(nickname, user); // commit vào cache
                             context.commitTransaction();
                             response.setSuccess(true);

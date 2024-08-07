@@ -423,8 +423,6 @@ public class Slot25ExtendRoom extends SlotRoom {
                                 this.saveFund();
                                 // lưu thông tin HŨ
                                 this.savePot();
-
-//                            System.out.println(gameName + ": Total Prize: " + totalPrizes + " - Fun: " + fund);
                             }
                         }
                     }

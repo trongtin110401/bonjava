@@ -33,6 +33,7 @@ import com.vinplay.usercore.service.impl.OtherServiceImpl;
 import com.vinplay.usercore.utils.GameCommon;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
+import com.vinplay.vbee.common.enums.Games;
 import com.vinplay.vbee.common.response.AgentResponse;
 import com.vinplay.vbee.common.response.LogUserMoneyResponse;
 import com.vinplay.vbee.common.response.TransactionFundResponse;
@@ -198,6 +199,20 @@ public class ReportMoneySystemNewProcessor implements BaseProcessor<HttpServletR
                 model.moneyWin += log.moneyExchange;
             }
 
+        } else if ((log.actionName.equals(Games.MINI_POKER.getName())
+                || log.actionName.equals(Games.CANDY.getName())
+                || log.actionName.equals(Games.FAST_AND_FURIOUS.getName())
+                || log.actionName.equals(Games.SEXY_DANCE.getName())
+                || log.actionName.equals(Games.COWBOY.getName())
+                || log.actionName.equals(Games.LADY_NIGHT.getName())
+                || log.actionName.equals(Games.BONG_LAI_CAC.getName())
+                || log.actionName.equals(Games.LIEN_MINH.getName()) && log.getDescription().startsWith("Đặt cược"))) {
+            log.setMoneyExchange(log.moneyExchange - (log.moneyExchange) / 100);
+            if (log.moneyExchange < 0) {
+                model.moneyLost += log.moneyExchange;
+            } else {
+                model.moneyWin += log.moneyExchange;
+            }
         } else {
             if (log.moneyExchange < 0) {
                 model.moneyLost += log.moneyExchange;
