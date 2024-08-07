@@ -77,7 +77,7 @@ public interface OtherService {
 
     boolean checkUserNapTienEvent(String eventId, String nickname);
 
-    void saveUserNapTienEvent(UserEvent userEvent); 
+    void saveUserNapTienEvent(UserEvent userEvent);
 
     ListEventResponse getAllEvent(String timeStart, String timeEnd, String eventName, String rate, boolean status);
 
