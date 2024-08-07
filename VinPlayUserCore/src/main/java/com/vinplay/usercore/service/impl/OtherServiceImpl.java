@@ -522,6 +522,7 @@ public class OtherServiceImpl implements OtherService {
         document.put("event_name", userEvent.getEventName());
         document.put("nickname", userEvent.getNickname());
         collection.insertOne(document);
+
     }
 
     @Override
