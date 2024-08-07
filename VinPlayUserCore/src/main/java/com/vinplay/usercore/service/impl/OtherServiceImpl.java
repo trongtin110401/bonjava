@@ -493,11 +493,90 @@ public class OtherServiceImpl implements OtherService {
             eventResponse.setTimeEnd(doc.getString("end_time"));
             eventResponse.setStatus(doc.getBoolean("status"));
             eventResponse.setTimeStart(doc.getString("start_time"));
-            eventResponse.setId(doc.getString("id"));
+            eventResponse.setId(String.valueOf(doc.getLong("id")));
             eventResponse.setSuccess(true);
             eventResponse.setErrorCode("200");
         }
         return eventResponse;
+    }
+
+    @Override
+    public boolean checkUserNapTienEvent(String eventId, String nickname) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("user_event");
+        Document filter = new Document("event_id", eventId).append("nickname", nickname);
+        long count = collection.count(filter);
+        return count > 0;
+    }
+
+    @Override
+    public void saveUserNapTienEvent(UserEvent userEvent) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("user_event");
+        Document document = new Document();
+        document.put("id", userEvent.getId());
+        document.put("event_id", userEvent.getEventId());
+        document.put("create_date", userEvent.getCreatedDate());
+        document.put("actual_amount", userEvent.getActualAmount());
+        document.put("event_amount", userEvent.getEventAmount());
+        document.put("event_name", userEvent.getEventName());
+        document.put("nickname", userEvent.getNickname());
+        collection.insertOne(document);
+    }
+
+    @Override
+    public ListEventResponse getAllEvent(String timeStart, String timeEnd, String eventName, String rate, boolean status) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("event");
+        Document filter = new Document();
+
+        if (timeStart != null && !timeStart.isEmpty()) {
+            filter.append("start_time", new Document("$gte", timeStart));
+        }
+
+        if (timeEnd != null && !timeEnd.isEmpty()) {
+            filter.append("end_time", new Document("$lte", timeEnd));
+        }
+
+        if (eventName != null && !eventName.isEmpty()) {
+            filter.append("event_name", eventName);
+        }
+
+        if (rate != null && !rate.isEmpty()) {
+            filter.append("rate", Integer.parseInt(rate));
+        }
+        filter.append("status", status);
+        MongoCursor<Document> cursor = collection.find(filter).iterator();
+        List<Event> events = new ArrayList<>();
+        while (cursor.hasNext()) {
+            Document doc = cursor.next();
+            Event eventResponse = new Event();
+            eventResponse.setRate(doc.getInteger("rate"));
+            eventResponse.setEventName(doc.getString("event_name"));
+            eventResponse.setTimeEnd(doc.getString("end_time"));
+            eventResponse.setStatus(doc.getBoolean("status"));
+            eventResponse.setTimeStart(doc.getString("start_time"));
+            eventResponse.setId(String.valueOf(doc.getLong("id")));
+            events.add(eventResponse);
+        }
+        ListEventResponse eventResponse = new ListEventResponse(true, "200");
+        eventResponse.setEvents(events);
+        return eventResponse;
+    }
+
+    @Override
+    public void updateEvent(long id, String timeStart, String timeEnd, String eventName, int rate, boolean status) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("event");
+        Document filter = new Document("id", id);
+        Document updateFields = new Document();
+        updateFields.append("start_time", timeStart);
+        updateFields.append("end_time", timeEnd);
+        updateFields.append("event_name", eventName);
+        updateFields.append("rate", rate);
+        updateFields.append("status", status);
+        Document updateOperation = new Document("$set", updateFields);
+        collection.updateOne(filter, updateOperation);
     }
 
     @Override

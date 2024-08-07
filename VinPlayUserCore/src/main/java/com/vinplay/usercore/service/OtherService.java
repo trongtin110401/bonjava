@@ -32,7 +32,6 @@ public interface OtherService {
     UserLoseByDayResponse getListUserTeleCashBack(int pageIndex, int pageSize, String timeStart, String timeEnd, String nickname, String code, String type);
 
 
-
     MoneyShootFishResponse getMoneyShootFish(String startTime, String endTime);
 
     List<MoneyShootFishResponse> getTotalShootFish(String startTime, String endTime, String nickname) throws Exception;
@@ -68,12 +67,20 @@ public interface OtherService {
 
     boolean checkIsSendBackCodeByDay(String type, String nickname, String startTime, String endTime);
 
-    boolean createEvent (EventResponse eventResponse);
+    boolean createEvent(EventResponse eventResponse);
 
     long getMoneyShootFishByNickname(String startTime, String endTime, String nickname);
 
     boolean checkIfHaveAnyEventActive();
 
     EventResponse getCurrentEvent();
+
+    boolean checkUserNapTienEvent(String eventId, String nickname);
+
+    void saveUserNapTienEvent(UserEvent userEvent);
+
+    ListEventResponse getAllEvent(String timeStart, String timeEnd, String eventName, String rate, boolean status);
+
+    void updateEvent(long id, String timeStart, String timeEnd, String eventName, int rate, boolean status);
 }
 

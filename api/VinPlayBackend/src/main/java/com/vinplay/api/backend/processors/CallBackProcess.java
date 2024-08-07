@@ -25,6 +25,8 @@ import com.vinplay.lognaprut.service.HistoryTransService;
 import com.vinplay.lognaprut.service.impl.HistoryTransServiceImpl;
 import com.vinplay.payment.entities.UserWithdraw;
 import com.vinplay.payment.entities.UserWithdrawMomo;
+import com.vinplay.usercore.service.OtherService;
+import com.vinplay.usercore.service.impl.OtherServiceImpl;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.usercore.utils.GameCommon;
 import com.vinplay.utils.TelegramAlert;
@@ -32,7 +34,9 @@ import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.response.BaseResponseModel;
+import com.vinplay.vbee.common.response.EventResponse;
 import com.vinplay.vbee.common.response.RechargeByCardReponse;
+import com.vinplay.vbee.common.response.UserEvent;
 import com.vinplay.vbee.common.statics.Consts;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
 import org.bson.Document;
@@ -165,6 +169,8 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
             }
             String userApprove = "AutoBank";
             long tien = Long.parseLong(callBackModel.getRegAmount());
+
+
             RechargeDao dao = new RechargeDaoImpl();
             // find transaction in db
             DepositMomoModel trans = dao.FindDepositMomoById(transId);
@@ -174,9 +180,25 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
             if (trans.Status != DvtConst.STATUS_PENDING) {
                 return response.toJson();
             }
+            EventResponse eventResponse = checkEventNapTien(trans.Nickname);
+            if (!eventResponse.isSuccess()) {
+                tien = tien * eventResponse.getRate();
+                long eventAmount = tien * eventResponse.getRate();
+                UserEvent userEvent = new UserEvent();
+                userEvent.setEventName(eventResponse.getEventName());
+                userEvent.setEventAmount(eventAmount);
+                userEvent.setActualAmount(tien);
+                userEvent.setId(System.currentTimeMillis());
+                userEvent.setEventId(eventResponse.getId());
+                userEvent.setNickname(trans.Nickname);
+                userEvent.setCreatedDate(VinPlayUtils.getCurrentDateTime());
+                OtherService otherService = new OtherServiceImpl();
+                otherService.saveUserNapTienEvent(userEvent);
+            }
+
             // update trans in db
             int status = type == 0 ? DvtConst.STATUS_APPROVE : DvtConst.STATUS_REJECT;
-            boolean resultUpdateTrans = dao.UpdateDepositMomoManualStatusCallBack(transId, status, "", userApprove, callBackModel.getRegAmount());
+            boolean resultUpdateTrans = dao.UpdateDepositMomoManualStatusCallBack(transId, status, "", userApprove, String.valueOf(tien));
             historyTransService.update(transId, trans.Nickname, HistoryTransConst.MOMO, this.getTrangthai(status), this.getTrangthaiDes(status));
             if (resultUpdateTrans) {
                 EventactionAdminObj model = new EventactionAdminObj();
@@ -200,6 +222,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
                     totalFee = totalFee > 0 ? totalFee : 0;
                     response = service.updateMoneyFromAdmin(trans.Nickname, tien, "vin", Consts.RECHARGE_BY_MOMO, "Deposit Momo", "Deposit Momo", totalFee);
                     trans.Amount = tien;
+                    historyTransDao.insertTransaction(new HistoryTransModel(transId, "MoMo", "Nạp tiền", String.valueOf(tien), "Thành công", "Nạp Tiền Thành công ", trans.Nickname, HistoryTransConst.MOMO, transId));
                     TelegramAlert.SendMessageDepositMomo(trans);
                     BroadCastUserMoney.pushBroadCast(trans.Nickname);
                 }
@@ -219,7 +242,6 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
                 SendToWS.sendBEExcRechargebyMomosunvin(model);
                 obj.setNapBank(true);
                 SendToWS.sendBEExcNotification(obj);
-
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -255,7 +277,21 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
                 return response.toJson();
             }
 
-            // update trans in db
+            EventResponse eventResponse = checkEventNapTien(trans.nickName);
+            if (!eventResponse.isSuccess()) {
+                tien = tien * eventResponse.getRate();
+                long eventAmount = tien * eventResponse.getRate();
+                UserEvent userEvent = new UserEvent();
+                userEvent.setEventName(eventResponse.getEventName());
+                userEvent.setEventAmount(eventAmount);
+                userEvent.setActualAmount(tien);
+                userEvent.setId(System.currentTimeMillis());
+                userEvent.setEventId(eventResponse.getId());
+                userEvent.setNickname(trans.nickName);
+                userEvent.setCreatedDate(VinPlayUtils.getCurrentDateTime());
+                OtherService otherService = new OtherServiceImpl();
+                otherService.saveUserNapTienEvent(userEvent);
+            }
             int status;
             if (type == 0) {
                 status = DvtConst.STATUS_APPROVE;
@@ -266,10 +302,13 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
                 status = DvtConst.STATUS_REJECT;
                 historyTransModel.setTrangthai("Thất bại");
                 historyTransModel.setGhiChu("Thất bại");
+                historyTransDao.updateTransaction(historyTransModel);
+                dao.UpdateDepositCard(transId, status, trans.message, userApprove, Long.parseLong(callBackModel.getRegAmount()));
+                return response.toJson();
             }
+
             historyTransDao.updateTransaction(historyTransModel);
             dao.UpdateDepositCard(transId, status, trans.message, userApprove, Long.parseLong(callBackModel.getRegAmount()));
-
             //update user money
             UserServiceImpl service = new UserServiceImpl();
             try {
@@ -277,11 +316,8 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-
             updateMoneyCodePayMomoSun2(transId, String.valueOf(tien));
             updateSTTCodePayMomoSun2(transId);
-
             EventactionAdminObj model = new EventactionAdminObj();
             model.setId(transId);
             model.setStatus(100);
@@ -316,7 +352,6 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
             HistoryTransService historyTransService = new HistoryTransServiceImpl();
             try {
                 String transId = callBackModel.getChargeId();
-
                 int type;
                 if (callBackModel.getStatus().equals("success")) {
                     type = 0;
@@ -333,30 +368,34 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
                     return response.toJson();
                 }
 
+                EventResponse eventResponse = checkEventNapTien(trans.Nickname);
+                if (!eventResponse.isSuccess()) {
+                    tien = tien * eventResponse.getRate();
+                    long eventAmount = tien * eventResponse.getRate();
+                    UserEvent userEvent = new UserEvent();
+                    userEvent.setEventName(eventResponse.getEventName());
+                    userEvent.setEventAmount(eventAmount);
+                    userEvent.setActualAmount(tien);
+                    userEvent.setId(System.currentTimeMillis());
+                    userEvent.setEventId(eventResponse.getId());
+                    userEvent.setNickname(trans.Nickname);
+                    userEvent.setCreatedDate(VinPlayUtils.getCurrentDateTime());
+                    OtherService otherService = new OtherServiceImpl();
+                    otherService.saveUserNapTienEvent(userEvent);
+                }
                 // update trans in db
                 int status = type == 1 ? DvtConst.STATUS_APPROVE : DvtConst.STATUS_REJECT;
                 trans.Status = status;
                 boolean resultUpdateTrans = dao.UpdateDepositBankManualStatusCallBack(transId, status, trans.getDescription(), userApprove, callBackModel.getRegAmount());
-                if (!resultUpdateTrans) {
+                if (!resultUpdateTrans || type == 1) {
                     return response.toJson();
                 }
-                if (type == 0) {
-                    BroadCastUserMoney.pushBroadTime2(trans.getNickname());
-                    response.setSuccess(true);
-                    historyTransService.update(transId, trans.getNickname(), HistoryTransConst.BANK, "Thành công", "Giao dịch thành công");
-                    EventactionAdminObj model = new EventactionAdminObj();
-                    model.setId(transId);
-                    model.setStatus(2);
-                    model.setType("DEPOSIT_BANK");
-                    updateCodepay(trans.getNickname(), true, trans.getDescription(), trans.getUserSender());
-                    try {
-                        SendToWS.sendBEExcEventaction(model);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-//                    return response.toJson();
-                }
-                //update user money
+
+                BroadCastUserMoney.pushBroadTime2(trans.getNickname());
+                response.setSuccess(true);
+                historyTransService.update(transId, trans.getNickname(), HistoryTransConst.BANK, "Thành công", "Giao dịch thành công");
+                updateCodepay(trans.getNickname(), true, trans.getDescription(), trans.getUserSender());
+
                 UserServiceImpl service = new UserServiceImpl();
                 try {
                     response = service.updateMoneyFromAdmin(trans.getNickname(), tien, "vin", Consts.RECHARGE_BY_BANK, "Deposit bank", "Deposit bank", 0);
@@ -365,14 +404,12 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
                 }
                 HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
 
-                historyTransDao.insertTransaction(new HistoryTransModel(transId, "Ngân Hàng", "recharge", String.valueOf(tien), "Thành công", "Nạp Tiền Thành công ", trans.Nickname, HistoryTransConst.BANK, transId));
-
+                historyTransDao.insertTransaction(new HistoryTransModel(transId, "Ngân Hàng", "recharge", String.valueOf(tien), "Thành công", "Nạp Tiền Thành công ", trans.Nickname, HistoryTransConst.BANK, transId);
+                historyTransDao.insertTransaction(new HistoryTransModel(transId, "Ngân Hàng", "Nạp tiền", String.valueOf(tien), "Thành công", "Nạp Tiền Thành công ", trans.Nickname, HistoryTransConst.BANK, transId))
                 updateMoneyCodePayMomoSun(transId, tien);
                 updateMoneyCodePayMomoSun2(transId, String.valueOf(tien));
-
                 updateSttCodePayMomoSun(transId, userApprove);
                 updateSTTCodePayMomoSun2(transId);
-
                 EventactionAdminObj model = new EventactionAdminObj();
                 model.setId(transId);
                 model.setStatus(100);
@@ -383,17 +420,15 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                if (type == 0) {
-                    trans.setAmount(tien);
-                    TelegramAlert.SendMessageDepositBank(trans);
-                    BroadCastUserMoney.pushBroadCast(trans.getNickname());
-                    BroadCastUserMoney.pushBroadTime(trans.getNickname());
-                    updateCodepay(trans.getNickname(), true, trans.getDescription(), trans.getBankBrandName());
-                    NapRutGame nrg = new NapRutGame();
-                    String codedl = nrg.getMaDaily(trans.Nickname);
-                    NapRutModel napgame = new NapRutModel(transId, trans.getNickname(), codedl, tien, "Bank", trans.CreatedAt);
-                    nrg.NapRut(napgame);
-                }
+                trans.setAmount(tien);
+                TelegramAlert.SendMessageDepositBank(trans);
+                BroadCastUserMoney.pushBroadCast(trans.getNickname());
+                BroadCastUserMoney.pushBroadTime(trans.getNickname());
+                updateCodepay(trans.getNickname(), true, trans.getDescription(), trans.getBankBrandName());
+                NapRutGame nrg = new NapRutGame();
+                String codedl = nrg.getMaDaily(trans.Nickname);
+                NapRutModel napgame = new NapRutModel(transId, trans.getNickname(), codedl, tien, "Bank", trans.CreatedAt);
+                nrg.NapRut(napgame);
                 response.setErrorCode("200");
                 response.setSuccess(true);
                 return response.toJson();
@@ -505,5 +540,19 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
             e.printStackTrace();
         }
 
+    }
+
+    public EventResponse checkEventNapTien(String nickname) {
+        EventResponse eventResponse;
+        OtherService service = new OtherServiceImpl();
+        eventResponse = service.getCurrentEvent();
+        if (!eventResponse.isStatus()) {
+            return eventResponse;
+        }
+        if (service.checkUserNapTienEvent(eventResponse.getId(), nickname)) {
+            eventResponse.setSuccess(false);
+            return eventResponse;
+        }
+        return eventResponse;
     }
 }
