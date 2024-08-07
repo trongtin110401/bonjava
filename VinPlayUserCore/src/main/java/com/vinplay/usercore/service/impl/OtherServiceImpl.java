@@ -565,6 +565,21 @@ public class OtherServiceImpl implements OtherService {
     }
 
     @Override
+    public void updateEvent(long id, String timeStart, String timeEnd, String eventName, int rate, boolean status) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("event");
+        Document filter = new Document("id", id);
+        Document updateFields = new Document();
+        updateFields.append("start_time", timeStart);
+        updateFields.append("end_time", timeEnd);
+        updateFields.append("event_name", eventName);
+        updateFields.append("rate", rate);
+        updateFields.append("status", status);
+        Document updateOperation = new Document("$set", updateFields);
+        collection.updateOne(filter, updateOperation);
+    }
+
+    @Override
     public List<MoneyShootFishResponse> getTotalShootFish(String startTime, String endTime, String nickname) throws Exception {
 
         List<MoneyShootFishResponse> responses = new ArrayList<>();
