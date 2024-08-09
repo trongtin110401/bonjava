@@ -84,7 +84,7 @@ public class MGRoomCaoThap extends MGRoom {
 
 
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
-        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.timeLoopTask, 10, 5, TimeUnit.SECONDS);
+        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.timeLoopTask, 10, 2, TimeUnit.SECONDS);
     }
 
     /*
@@ -123,7 +123,7 @@ public class MGRoomCaoThap extends MGRoom {
                         msg.referenceId = referenceId;
                         ArrayList<Card> carryCards = new ArrayList<>();
                         carryCards.add(card);
-                        CaoThapInfo info = new CaoThapInfo(user, referenceId, deck, card, ResultCaoThap.USER_PLAYING, (short) 120, betValue, numA, carryCards, msg.money1, msg.money3, user.getId());
+                        CaoThapInfo info = new CaoThapInfo(user, referenceId, deck, card, ResultCaoThap.USER_PLAYING, (short) 10, betValue, numA, carryCards, msg.money1, msg.money3, user.getId());
                         this.usersCaoThap.put(user.getName(), info);
                         try {
                             if (!this.isBot(user.getName())) {
