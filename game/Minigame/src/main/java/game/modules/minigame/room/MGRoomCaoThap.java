@@ -230,12 +230,14 @@ public class MGRoomCaoThap extends MGRoom {
                 if (result == ResultCaoThap.THANG) {
                     moneyToUser = moneyWin;
                     askUserNext = true;
-                    // calculate fund
-                    long moneyToFund = info.getStep() == ResultCaoThap.STEP_ONE
-                            ? (getFunValue() - moneyWin)
-                            : (getFunValue() - moneyWin - info.getMoney());
-                    updateFunValue(moneyToFund);
-                    this.saveFund();
+                    if (!isBot(user.getName())) {
+                        // calculate fund
+                        long moneyToFund = info.getStep() == ResultCaoThap.STEP_ONE
+                                ? (getFunValue() - moneyWin)
+                                : (getFunValue() - moneyWin - info.getMoney());
+                        updateFunValue(moneyToFund);
+                        this.saveFund();
+                    }
                 } else if (result == ResultCaoThap.HOA) {
                     moneyToUser = moneyWin;
                     this.pot += info.getMoney() - moneyWin;
@@ -246,7 +248,7 @@ public class MGRoomCaoThap extends MGRoom {
 //                        this.saveFund();
 //                    }
                 } else if (result == ResultCaoThap.THUA) {
-                    if (info.getStep() > ResultCaoThap.STEP_ONE) {
+                    if (!isBot(user.getName()) && info.getStep() > ResultCaoThap.STEP_ONE) {
                         // rollback money to fund
                         updateFunValue(info.getMoney());
                         this.saveFund();
