@@ -157,7 +157,7 @@ public class MGRoomCaoThap extends MGRoom {
             if (this.usersCaoThap.containsKey(user.getName())) {
                 long currentMoney = this.userService.getCurrentMoneyUserCache(user.getName(), this.moneyTypeStr);
                 CaoThapInfo info = this.usersCaoThap.get(user.getName());
-                info.setTime((short) 120);
+                info.setTime((short) 10);
                 info.setStep((short) (info.getStep() + 1));
                 if (!((info.getMoneyUp() == 0L && choose == TREN) || (info.getMoneyDown() == 0L && choose == DUOI))) { // Không phải chọn TRÊN khi ra A và chọn DƯỚI khi ra 2
                     long moneyWin;
