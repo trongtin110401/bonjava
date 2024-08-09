@@ -235,7 +235,7 @@ public class MGRoomCaoThap extends MGRoom {
                         long moneyToFund = info.getStep() == ResultCaoThap.STEP_ONE
                                 ? (getFunValue() - moneyWin)
                                 : (getFunValue() - moneyWin - info.getMoney());
-                        updateFunValue(moneyToFund);
+                        updateFunValue(-moneyToFund);
                         this.saveFund();
                     }
                 } else if (result == ResultCaoThap.HOA) {
