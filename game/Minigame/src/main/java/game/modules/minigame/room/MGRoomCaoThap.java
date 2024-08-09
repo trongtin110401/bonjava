@@ -209,8 +209,14 @@ public class MGRoomCaoThap extends MGRoom {
                     }
 
                     if (result == ResultCaoThap.THANG) {
-                        if (getFunValue() - moneyWin < 0) {
-                            continue;
+                        if (info.getStep() == ResultCaoThap.STEP_ONE) {
+                            if (getFunValue() - moneyWin < 0) {
+                                continue;
+                            }
+                        } else {
+                            if (getFunValue() - moneyWin - info.getMoney() < 0) {
+                                continue;
+                            }
                         }
 
                         if (card.getRank() == Rank.Ace && (numA = (byte) (numA + 1)) == 3)
@@ -224,20 +230,24 @@ public class MGRoomCaoThap extends MGRoom {
                 if (result == ResultCaoThap.THANG) {
                     moneyToUser = moneyWin;
                     askUserNext = true;
-                    updateFunValue(info.getStep() > ResultCaoThap.STEP_ONE ? (getFunValue() - (moneyWin + info.getMoney())) : (getFunValue() - moneyWin));
+                    // calculate fund
+                    long moneyToFund = info.getStep() == ResultCaoThap.STEP_ONE
+                            ? (getFunValue() - moneyWin)
+                            : (getFunValue() - moneyWin - info.getMoney());
+                    updateFunValue(moneyToFund);
                     this.saveFund();
                 } else if (result == ResultCaoThap.HOA) {
                     moneyToUser = moneyWin;
                     this.pot += info.getMoney() - moneyWin;
                     this.savePot();
                     askUserNext = true;
-                    if (info.getStep() <= ResultCaoThap.STEP_ONE) {
-//                        updateFunValue(-info.getMoney());
-                        updateFunValue(-info.getMoney());
-                        this.saveFund();
-                    }
+//                    if (info.getStep() == ResultCaoThap.STEP_ONE) {
+//                        updateFunValue(-(info.getMoney() + moneyWin));
+//                        this.saveFund();
+//                    }
                 } else if (result == ResultCaoThap.THUA) {
                     if (info.getStep() > ResultCaoThap.STEP_ONE) {
+                        // rollback money to fund
                         updateFunValue(info.getMoney());
                         this.saveFund();
                     }
