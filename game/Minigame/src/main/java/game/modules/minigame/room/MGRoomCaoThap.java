@@ -98,7 +98,12 @@ public class MGRoomCaoThap extends MGRoom {
                 if (moneyUse >= (long) betValue) {
                     Deck deck = new Deck();
                     deck.shuffle();
-                    Card card = CaoThapUtils.randomWithoutA(deck);
+                    Card card;
+
+                    do {
+                        card = CaoThapUtils.randomWithoutA(deck);
+                    } while (card.getRank() != Rank.Ace && card.getRank() != Rank.King);
+
                     byte numA = 0;
                     if (card.getRank() == Rank.Ace) {
                         numA = 1;
@@ -123,7 +128,7 @@ public class MGRoomCaoThap extends MGRoom {
                         msg.referenceId = referenceId;
                         ArrayList<Card> carryCards = new ArrayList<>();
                         carryCards.add(card);
-                        CaoThapInfo info = new CaoThapInfo(user, referenceId, deck, card, ResultCaoThap.USER_PLAYING, (short) 10, betValue, numA, carryCards, msg.money1, msg.money3, user.getId());
+                        CaoThapInfo info = new CaoThapInfo(user, referenceId, deck, card, (short) 1, (short) 10, betValue, numA, carryCards, msg.money1, msg.money3, user.getId());
                         this.usersCaoThap.put(user.getName(), info);
                         try {
                             if (!this.isBot(user.getName())) {
@@ -151,184 +156,164 @@ public class MGRoomCaoThap extends MGRoom {
     /*
      * WARNING - Removed try catching itself - possible behaviour change.
      */
-    public void play(User user, byte choose) {
+    public synchronized void play(User user, byte choose) {
         ResultCaoThapMsg msg = new ResultCaoThapMsg();
-        synchronized (this.usersCaoThap) {
-            if (this.usersCaoThap.containsKey(user.getName())) {
-                long currentMoney = this.userService.getCurrentMoneyUserCache(user.getName(), this.moneyTypeStr);
-                CaoThapInfo info = this.usersCaoThap.get(user.getName());
-                info.setTime((short) 10);
-                info.setStep((short) (info.getStep() + 1));
-                if (!((info.getMoneyUp() == 0L && choose == TREN) || (info.getMoneyDown() == 0L && choose == DUOI))) { // Không phải chọn TRÊN khi ra A và chọn DƯỚI khi ra 2
-                    long moneyWin;
-                    long fund;
-                    byte numA;
-                    Card card;
-                    Deck deck;
-                    short result = 0;
-                    int i = 0;
-                    boolean noHu = false;
-                    if (this.moneyType == 1 && info.getNumA() == 2) {
-                        // // lock no hũ 11/01 kane
-                        noHu = (this.baseBetValue < 100000 || this.userService.getTotalRechargeMoney(user.getName()) >= Math.round((double) this.pot * 0.1)) && CaoThapUtils.isDoWithRatio(1000.0);
-                    }
+        if (this.usersCaoThap.containsKey(user.getName())) {
+            long currentMoney = this.userService.getCurrentMoneyUserCache(user.getName(), this.moneyTypeStr);
+            CaoThapInfo info = this.usersCaoThap.get(user.getName());
+            info.setTime((short) 10);
+            info.setStep((short) (info.getStep() + 1));
+            if (!((info.getMoneyUp() == 0L && choose == TREN) || (info.getMoneyDown() == 0L && choose == DUOI))) { // Không phải chọn TRÊN khi ra A và chọn DƯỚI khi ra 2
+                long moneyWin;
+//                long fund;
+                byte numA;
+                Card card;
+                Deck deck;
+                short result = 0;
+//                int i = 0;
+                boolean noHu = false;
+                if (this.moneyType == 1 && info.getNumA() == 2) {
+                    // // lock no hũ 11/01 kane
+                    noHu = (this.baseBetValue < 100000 || this.userService.getTotalRechargeMoney(user.getName()) >= Math.round((double) this.pot * 0.1)) && CaoThapUtils.isDoWithRatio(1000.0);
+                }
 
-                    do {
-                        fund = getFunValue();
-                        numA = info.getNumA();
-                        if (info.getMoneyUp() == 0L || info.getMoneyDown() == 0L) {
-                            if (noHu) {
-                                deck = info.getDeck();
-                                card = deck.deal();
-                            } else {
-                                card = CaoThapUtils.randomWithoutA(info.getDeck());
-                                deck = info.getDeck();
-                                deck.popCard(card);
-                            }
-                            ++i;
-                        } else if (i == 0) {
-                            if (noHu) {
-                                deck = info.getDeck();
-                                card = deck.deal();
-                            } else {
-                                card = CaoThapUtils.randomWithoutA(info.getDeck());
-                                deck = info.getDeck();
-                                deck.popCard(card);
-                            }
-                        } else {
-                            card = CaoThapUtils.randomThua(info.getDeck(), info.getCard(), choose);
-                            deck = info.getDeck();
-                            deck.popCard(card);
-                        }
-
-                        moneyWin = 0L;
-                        if (card.getRank().getRank() == info.getCard().getRank().getRank()) {
-                            result = ResultCaoThap.HOA;
-                            moneyWin = Math.round(info.getMoney() * 9L / 10L);
-                        } else if (card.getRank().getRank() > info.getCard().getRank().getRank()) {
-                            if (choose == TREN) {
-                                result = ResultCaoThap.THANG;
-                                moneyWin = info.getMoneyUp();
-                            } else {
-                                result = ResultCaoThap.THUA;
-                            }
-                        } else if (card.getRank().getRank() < info.getCard().getRank().getRank()) {
-                            if (choose == TREN) {
-                                result = ResultCaoThap.THUA;
-                            } else if (choose == DUOI) {
-                                result = ResultCaoThap.THANG;
-                                moneyWin = info.getMoneyDown();
-                            }
-                        }
-                        if (result == ResultCaoThap.THANG) {
-                            fund = info.getStep() > 2 ? fund - (moneyWin - info.getMoney()) : fund - moneyWin;
-                        } else if (result == ResultCaoThap.HOA) {
-                            if (info.getStep() > 2) {
-                                ++i;
-                            } else {
-                                fund -= info.getMoney();
-                            }
-                        } else if (result == ResultCaoThap.THUA) {
-                            ++i;
-                        }
-                        if (result == ResultCaoThap.THUA || card.getRank() != Rank.Ace || (numA = (byte) (numA + 1)) != 3)
-                            continue;
-
-                        result = ResultCaoThap.NO_HU;
-                    } while (fund <= 0L && ++i <= 1);
-
-                    boolean askUserNext = false;
-                    long moneyToUser = 0L;
-                    if (result == ResultCaoThap.THANG) {
-                        moneyToUser = moneyWin;
-                        askUserNext = true;
-                        updateFunValue(info.getStep() > 2 ? (getFunValue() - (moneyWin - info.getMoney())) : (getFunValue() - moneyWin));
-                        this.saveFund();
-                    } else if (result == ResultCaoThap.HOA) {
-                        moneyToUser = moneyWin;
-                        this.pot += info.getMoney() - moneyWin;
-                        this.savePot();
-                        askUserNext = true;
-                        if (info.getStep() <= 2) {
-                            updateFunValue(-info.getMoney());
-                            this.saveFund();
-                        }
-                    } else if (result == ResultCaoThap.THUA) {
-                        if (info.getStep() > 2) {
-                            updateFunValue(info.getMoney());
-                            this.saveFund();
-                        }
-                        currentMoney = this.userService.getCurrentMoneyUserCache(user.getName(), this.moneyTypeStr);
-                        if (!isBot(user.getName())) {
-                            this.userService.updateMoney(user.getName(), moneyToUser, this.moneyTypeStr, "CaoThap", "", "", 0L, info.getReferenceId(), TransType.END_TRANS);
-
-                        }
-                    } else if (result == ResultCaoThap.NO_HU) {
-                        if (info.getMoney() > moneyWin) {
-                            this.pot += info.getMoney() - moneyWin;
-                        } else {
-                            updateFunValue(-(moneyWin - info.getMoney()));
-                            this.saveFund();
-                        }
-                        moneyToUser = Math.round(this.pot / 2L);
-                        this.pot -= moneyToUser;
-                        this.savePot();
-                        MoneyResponse moneyResponse = this.userService.updateMoney(user.getName(), moneyToUser += moneyWin, this.moneyTypeStr, "CaoThap", "Cao thấp: Nổ hũ", "Phiên: " + info.getReferenceId() + ", Bước: " + info.getStep(), 0L, info.getReferenceId(), TransType.END_TRANS);
-                        if (moneyResponse != null && moneyResponse.isSuccess()) {
-                            if (this.moneyType == 1) {
-                                GameUtils.sendSMSToUser(user.getName(), "Chuc mung " + user.getName() + " da no hu game Cao Thap phong " + this.baseBetValue + ". So tien no hu: " + moneyToUser + " Vin");
-                                if (moneyToUser >= (long) BroadcastMessageServiceImpl.MIN_MONEY) {
-                                    this.broadcastMsgService.putMessage(Games.CAO_THAP.getId(), user.getName(), moneyToUser);
-                                }
-                            }
-                            currentMoney = moneyResponse.getCurrentMoney();
-                            try {
-                                List<Card> carryCardsNoHu = info.getCarryCards();
-                                carryCardsNoHu.add(card);
-                                if (!isBot(user.getName())) {
-                                    this.ctService.logCaoThapWin(info.getReferenceId(), user.getName(), this.baseBetValue, (short) 7, moneyToUser, CaoThapUtils.getCardStr(carryCardsNoHu), this.moneyType);
-
-                                }
-                            } catch (Exception e) {
-                                Debug.trace("CAO THAP: log cao thap error ", e.getMessage());
-                            }
-                        }
-                    }
-                    try {
-                        if (!isBot(user.getName())) {
-                            this.ctService.logCaoThap(info.getReferenceId(), user.getName(), info.getMoney(), result, moneyToUser, card.toString(), this.pot, getFunValue(), this.moneyType, choose, info.getStep());
-                        }
-                    } catch (Exception e) {
-                        Debug.trace("CAO THAP: log cao thap error ", e.getMessage());
-                    }
-                    List<Double> ratioLst = CaoThapUtils.getRatio(deck, card);
-                    msg.money1 = Math.round((double) moneyToUser * ratioLst.get(1));
-                    msg.money2 = moneyToUser;
-                    msg.money3 = Math.round((double) moneyToUser * ratioLst.get(0));
-                    msg.card = (byte) card.getCode();
-                    this.sendMessageToUser(msg, user);
-                    if (askUserNext) {
-                        info.setDeck(deck);
-                        info.setCard(card);
-                        info.setNumA(numA);
-                        info.setMoney(moneyToUser);
-                        List<Card> carryCards = info.getCarryCards();
-                        carryCards.add(card);
-                        info.setCarryCards(carryCards);
-                        info.setMoneyUp(msg.money1);
-                        info.setMoneyDown(msg.money3);
-                        this.usersCaoThap.put(user.getName(), info);
+                while (true) {
+                    numA = info.getNumA();
+                    if (noHu) {
+                        deck = info.getDeck();
+                        card = deck.deal();
                     } else {
-                        StopPlayCaoThapMsg msgStop = new StopPlayCaoThapMsg();
-                        msgStop.result = (byte) result;
-                        msgStop.currentMoney = currentMoney;
-                        msgStop.moneyExchange = moneyToUser;
-                        this.usersCaoThap.remove(user.getName());
-                        this.sendMessageToUser(msgStop, user);
+                        card = CaoThapUtils.randomWithoutA(info.getDeck());
+                        deck = info.getDeck();
+                        deck.popCard(card);
                     }
+
+                    moneyWin = 0L;
+                    if (card.getRank().getRank() == info.getCard().getRank().getRank()) {
+                        result = ResultCaoThap.HOA;
+                        moneyWin = Math.round((float) (info.getMoney() * 9L) / 10L);
+                    } else if (card.getRank().getRank() > info.getCard().getRank().getRank()) {
+                        if (choose == TREN) {
+                            result = ResultCaoThap.THANG;
+                            moneyWin = info.getMoneyUp();
+                        } else {
+                            result = ResultCaoThap.THUA;
+                        }
+                    } else if (card.getRank().getRank() < info.getCard().getRank().getRank()) {
+                        if (choose == TREN) {
+                            result = ResultCaoThap.THUA;
+                        } else if (choose == DUOI) {
+                            result = ResultCaoThap.THANG;
+                            moneyWin = info.getMoneyDown();
+                        }
+                    }
+
+                    if (result == ResultCaoThap.THANG) {
+                        if (getFunValue() - moneyWin < 0) {
+                            continue;
+                        }
+
+                        if (card.getRank() == Rank.Ace && (numA = (byte) (numA + 1)) == 3)
+                            result = ResultCaoThap.NO_HU;
+                    }
+                    break;
+                }
+
+                boolean askUserNext = false;
+                long moneyToUser = 0L;
+                if (result == ResultCaoThap.THANG) {
+                    moneyToUser = moneyWin;
+                    askUserNext = true;
+                    updateFunValue(info.getStep() > ResultCaoThap.STEP_ONE ? (getFunValue() - (moneyWin + info.getMoney())) : (getFunValue() - moneyWin));
+                    this.saveFund();
+                } else if (result == ResultCaoThap.HOA) {
+                    moneyToUser = moneyWin;
+                    this.pot += info.getMoney() - moneyWin;
+                    this.savePot();
+                    askUserNext = true;
+                    if (info.getStep() <= ResultCaoThap.STEP_ONE) {
+//                        updateFunValue(-info.getMoney());
+                        updateFunValue(-info.getMoney());
+                        this.saveFund();
+                    }
+                } else if (result == ResultCaoThap.THUA) {
+                    if (info.getStep() > ResultCaoThap.STEP_ONE) {
+                        updateFunValue(info.getMoney());
+                        this.saveFund();
+                    }
+                    currentMoney = this.userService.getCurrentMoneyUserCache(user.getName(), this.moneyTypeStr);
+                    if (!isBot(user.getName())) {
+                        this.userService.updateMoney(user.getName(), moneyToUser, this.moneyTypeStr, "CaoThap", "", "", 0L, info.getReferenceId(), TransType.END_TRANS);
+
+                    }
+                } else if (result == ResultCaoThap.NO_HU) {
+                    if (info.getMoney() > moneyWin) {
+                        this.pot += info.getMoney() - moneyWin;
+                    } else {
+                        updateFunValue(-(moneyWin - info.getMoney()));
+                        this.saveFund();
+                    }
+                    moneyToUser = Math.round(this.pot / 2L);
+                    this.pot -= moneyToUser;
+                    this.savePot();
+                    MoneyResponse moneyResponse = this.userService.updateMoney(user.getName(), moneyToUser += moneyWin, this.moneyTypeStr, "CaoThap", "Cao thấp: Nổ hũ", "Phiên: " + info.getReferenceId() + ", Bước: " + info.getStep(), 0L, info.getReferenceId(), TransType.END_TRANS);
+                    if (moneyResponse != null && moneyResponse.isSuccess()) {
+                        if (this.moneyType == 1) {
+                            GameUtils.sendSMSToUser(user.getName(), "Chuc mung " + user.getName() + " da no hu game Cao Thap phong " + this.baseBetValue + ". So tien no hu: " + moneyToUser + " Vin");
+                            if (moneyToUser >= (long) BroadcastMessageServiceImpl.MIN_MONEY) {
+                                this.broadcastMsgService.putMessage(Games.CAO_THAP.getId(), user.getName(), moneyToUser);
+                            }
+                        }
+                        currentMoney = moneyResponse.getCurrentMoney();
+                        try {
+                            List<Card> carryCardsNoHu = info.getCarryCards();
+                            carryCardsNoHu.add(card);
+                            if (!isBot(user.getName())) {
+                                this.ctService.logCaoThapWin(info.getReferenceId(), user.getName(), this.baseBetValue, (short) 7, moneyToUser, CaoThapUtils.getCardStr(carryCardsNoHu), this.moneyType);
+
+                            }
+                        } catch (Exception e) {
+                            Debug.trace("CAO THAP: log cao thap error ", e.getMessage());
+                        }
+                    }
+                }
+
+
+                try {
+                    if (!isBot(user.getName())) {
+                        this.ctService.logCaoThap(info.getReferenceId(), user.getName(), info.getMoney(), result, moneyToUser, card.toString(), this.pot, getFunValue(), this.moneyType, choose, info.getStep());
+                    }
+                } catch (Exception e) {
+                    Debug.trace("CAO THAP: log cao thap error ", e.getMessage());
+                }
+                List<Double> ratioLst = CaoThapUtils.getRatio(deck, card);
+                msg.money1 = Math.round((double) moneyToUser * ratioLst.get(1));
+                msg.money2 = moneyToUser;
+                msg.money3 = Math.round((double) moneyToUser * ratioLst.get(0));
+                msg.card = (byte) card.getCode();
+                this.sendMessageToUser(msg, user);
+                if (askUserNext) {
+                    info.setDeck(deck);
+                    info.setCard(card);
+                    info.setNumA(numA);
+                    info.setMoney(moneyToUser);
+                    List<Card> carryCards = info.getCarryCards();
+                    carryCards.add(card);
+                    info.setCarryCards(carryCards);
+                    info.setMoneyUp(msg.money1);
+                    info.setMoneyDown(msg.money3);
+                    this.usersCaoThap.put(user.getName(), info);
+                } else {
+                    StopPlayCaoThapMsg msgStop = new StopPlayCaoThapMsg();
+                    msgStop.result = (byte) result;
+                    msgStop.currentMoney = currentMoney;
+                    msgStop.moneyExchange = moneyToUser;
+                    this.usersCaoThap.remove(user.getName());
+                    this.sendMessageToUser(msgStop, user);
                 }
             }
         }
+//        }
     }
 
     /*
