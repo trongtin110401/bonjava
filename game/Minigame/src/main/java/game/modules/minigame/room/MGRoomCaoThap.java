@@ -240,7 +240,10 @@ public class MGRoomCaoThap extends MGRoom {
                 } else if (result == ResultCaoThap.HOA) {
                     moneyToUser = moneyWin;
                     this.pot += info.getMoney() - moneyWin;
-
+                    // nếu hòa người chơi mất 1% tổng tiền ở bước hiện tại để cho vào hũ JACKPOT
+                    // ngoài ra
+                    //      nếu hòa ở bước 1: Quỹ  chi trả lại 99%
+                    //      từ bước 2: quỹ không thay đổi
                     if (!isBot(user.getName()) && info.getStep() == ResultCaoThap.STEP_ONE) {
                         updateFunValue(-moneyWin);
                         this.saveFund();
