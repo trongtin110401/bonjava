@@ -224,17 +224,13 @@ public class MGRoomCaoThap extends MGRoom {
 
                 boolean askUserNext = false;
                 long moneyToUser = 0L;
-                long turnMoneyWin = 0L;
                 if (result == ResultCaoThap.THANG) {
-                    turnMoneyWin = moneyWin - info.getMoney();
                     moneyToUser = moneyWin;
                     askUserNext = true;
-                    // calculate fund
-//                    long moneyToFund = info.getStep() == ResultCaoThap.STEP_ONE
-//                            ? (getFunValue() - moneyWin)
-//                            : (getFunValue() - turnMoneyWin);
                     if (!isBot(user.getName())) {
-                        long moneyToFund = moneyWin - info.getMoney();
+                        long moneyToFund = info.getStep() == ResultCaoThap.STEP_ONE
+                                ? moneyWin
+                                : moneyWin - info.getMoney();
                         System.out.println("STEP " + info.getStep() + " - Fund Change Value: -" + moneyToFund);
                         updateFunValue(-moneyToFund);
                         this.saveFund();
@@ -244,10 +240,6 @@ public class MGRoomCaoThap extends MGRoom {
                     this.pot += info.getMoney() - moneyWin;
                     this.savePot();
                     askUserNext = true;
-//                    if (info.getStep() == ResultCaoThap.STEP_ONE) {
-//                        updateFunValue(-(info.getMoney() + moneyWin));
-//                        this.saveFund();
-//                    }
                 } else if (result == ResultCaoThap.THUA) {
                     if (!isBot(user.getName()) && info.getStep() > ResultCaoThap.STEP_ONE) {
                         // rollback money to fund
