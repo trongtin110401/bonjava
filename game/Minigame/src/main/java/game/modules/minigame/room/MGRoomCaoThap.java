@@ -219,14 +219,16 @@ public class MGRoomCaoThap extends MGRoom {
 
                 boolean askUserNext = false;
                 long moneyToUser = 0L;
+                long turnMoneyWin = 0L;
                 if (result == ResultCaoThap.THANG) {
+                    turnMoneyWin = moneyWin - info.getMoney();
                     moneyToUser = moneyWin;
                     askUserNext = true;
                     if (!isBot(user.getName())) {
                         // calculate fund
                         long moneyToFund = info.getStep() == ResultCaoThap.STEP_ONE
                                 ? (getFunValue() - moneyWin)
-                                : (getFunValue() - moneyWin - info.getMoney());
+                                : (getFunValue() - turnMoneyWin);
                         System.out.println("STEP " + info.getStep() + " - Fund Change Value: -" + moneyToFund);
                         updateFunValue(-moneyToFund);
                         this.saveFund();
