@@ -98,11 +98,11 @@ public class MGRoomCaoThap extends MGRoom {
                 if (moneyUse >= (long) betValue) {
                     Deck deck = new Deck();
                     deck.shuffle();
-                    Card card;
+                    Card card = CaoThapUtils.randomWithoutA(deck);
 
-                    do {
-                        card = CaoThapUtils.randomWithoutA(deck);
-                    } while (card.getRank() != Rank.Ace && card.getRank() != Rank.King);
+                    while (card.getRank() == Rank.Ace || card.getRank() == Rank.King) {
+                         card = CaoThapUtils.randomWithoutA(deck);
+                    }
 
                     byte numA = 0;
                     if (card.getRank() == Rank.Ace) {
