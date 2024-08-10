@@ -184,7 +184,7 @@ public class BaseGameExtension
     private void gameLoop() { // todo :game loop luôn chạy thằng này
         ++this.countReloadConfig;
         if (this.countReloadConfig == 10) {
-            Debug.trace((Object) "reload config");
+//            Debug.trace((Object) "reload config");
             ConfigGame.reload(); // todo luôn reload config khi 10
             PartnerConfig.ReadConfig();
             this.countReloadConfig = 0;
