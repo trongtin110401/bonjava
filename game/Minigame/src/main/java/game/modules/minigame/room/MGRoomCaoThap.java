@@ -117,6 +117,7 @@ public class MGRoomCaoThap extends MGRoom {
                         moneyResponse.setSuccess(true);
                     }
                     if (moneyResponse != null && moneyResponse.isSuccess()) {
+                        System.out.println("STEP " + "Start GAME " + " - Fund Change Value: " + moneyToFund);
                         updateFunValue(moneyToFund);
                         this.saveFund();
                         List<Double> ratioLst = CaoThapUtils.getRatio(deck, card);
@@ -128,7 +129,7 @@ public class MGRoomCaoThap extends MGRoom {
                         msg.referenceId = referenceId;
                         ArrayList<Card> carryCards = new ArrayList<>();
                         carryCards.add(card);
-                        CaoThapInfo info = new CaoThapInfo(user, referenceId, deck, card, (short) 1, (short) 10, betValue, numA, carryCards, msg.money1, msg.money3, user.getId());
+                        CaoThapInfo info = new CaoThapInfo(user, referenceId, deck, card, (short) 1, (short) 120, betValue, numA, carryCards, msg.money1, msg.money3, user.getId());
                         this.usersCaoThap.put(user.getName(), info);
                         try {
                             if (!this.isBot(user.getName())) {
@@ -161,7 +162,7 @@ public class MGRoomCaoThap extends MGRoom {
         if (this.usersCaoThap.containsKey(user.getName())) {
             long currentMoney = this.userService.getCurrentMoneyUserCache(user.getName(), this.moneyTypeStr);
             CaoThapInfo info = this.usersCaoThap.get(user.getName());
-            info.setTime((short) 10);
+            info.setTime((short) 120);
             info.setStep((short) (info.getStep() + 1));
             if (!((info.getMoneyUp() == 0L && choose == TREN) || (info.getMoneyDown() == 0L && choose == DUOI))) { // Không phải chọn TRÊN khi ra A và chọn DƯỚI khi ra 2
                 long moneyWin;
@@ -235,6 +236,7 @@ public class MGRoomCaoThap extends MGRoom {
                         long moneyToFund = info.getStep() == ResultCaoThap.STEP_ONE
                                 ? (getFunValue() - moneyWin)
                                 : (getFunValue() - moneyWin - info.getMoney());
+                        System.out.println("STEP " + info.getStep() + " - Fund Change Value: -" + moneyToFund);
                         updateFunValue(-moneyToFund);
                         this.saveFund();
                     }
@@ -250,6 +252,7 @@ public class MGRoomCaoThap extends MGRoom {
                 } else if (result == ResultCaoThap.THUA) {
                     if (!isBot(user.getName()) && info.getStep() > ResultCaoThap.STEP_ONE) {
                         // rollback money to fund
+                        System.out.println("STEP " + info.getStep() + " - Fund Change Value: " + info.getMoney());
                         updateFunValue(info.getMoney());
                         this.saveFund();
                     }
@@ -262,6 +265,7 @@ public class MGRoomCaoThap extends MGRoom {
                     if (info.getMoney() > moneyWin) {
                         this.pot += info.getMoney() - moneyWin;
                     } else {
+                        System.out.println("STEP " + info.getStep() + " - Fund Change Value: -" + (moneyWin - info.getMoney()));
                         updateFunValue(-(moneyWin - info.getMoney()));
                         this.saveFund();
                     }
