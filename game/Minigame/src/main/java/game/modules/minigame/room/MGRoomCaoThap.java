@@ -240,6 +240,12 @@ public class MGRoomCaoThap extends MGRoom {
                 } else if (result == ResultCaoThap.HOA) {
                     moneyToUser = moneyWin;
                     this.pot += info.getMoney() - moneyWin;
+
+                    if (!isBot(user.getName()) && info.getStep() == ResultCaoThap.STEP_ONE) {
+                        updateFunValue(-moneyWin);
+                        this.saveFund();
+                    }
+
                     this.savePot();
                     askUserNext = true;
                 } else if (result == ResultCaoThap.THUA) {
