@@ -183,6 +183,7 @@ public class MGRoomCaoThap extends MGRoom {
                     noHu = (this.baseBetValue < 100000 || this.userService.getTotalRechargeMoney(user.getName()) >= Math.round((double) this.pot * 0.1)) && CaoThapUtils.isDoWithRatio(1000.0);
                 }
 
+                int countRetryRandom = 0;
                 while (true) {
                     numA = info.getNumA();
                     if (noHu) {
@@ -214,7 +215,8 @@ public class MGRoomCaoThap extends MGRoom {
                         }
                     }
 
-                    if (result == ResultCaoThap.THANG && getFunValue() - moneyWin < 0) {
+                    if (result == ResultCaoThap.THANG && getFunValue() - moneyWin < 0 && countRetryRandom < 1) {
+                        countRetryRandom++;
                         continue;
                     }
                     if (nextCard.getRank() == Rank.Ace && (numA = (byte) (numA + 1)) == 3)
