@@ -101,7 +101,7 @@ public class MGRoomCaoThap extends MGRoom {
                     Card card = CaoThapUtils.randomWithoutA(deck);
 
                     while (card.getRank() == Rank.Ace || card.getRank() == Rank.King) {
-                         card = CaoThapUtils.randomWithoutA(deck);
+                        card = CaoThapUtils.randomWithoutA(deck);
                     }
 
                     byte numA = 0;
@@ -164,7 +164,7 @@ public class MGRoomCaoThap extends MGRoom {
             CaoThapInfo info = this.usersCaoThap.get(user.getName());
             info.setTime((short) 120);
             info.setStep((short) (info.getStep() + 1));
-            if (!((info.getMoneyUp() == 0L && choose == TREN) || (info.getMoneyDown() == 0L && choose == DUOI))) { // Không phải chọn TRÊN khi ra A và chọn DƯỚI khi ra 2
+            if (!((info.getMoneyUp() == 0L && choose == TREN) || (info.getMoneyDown() == 0L && choose == DUOI))) { // Không được chọn TRÊN khi ra A và chọn DƯỚI khi ra 2
                 long moneyWin;
 //                long fund;
                 byte numA;
@@ -209,20 +209,11 @@ public class MGRoomCaoThap extends MGRoom {
                         }
                     }
 
-                    if (result == ResultCaoThap.THANG) {
-                        if (info.getStep() == ResultCaoThap.STEP_ONE) {
-                            if (getFunValue() - moneyWin < 0) {
-                                continue;
-                            }
-                        } else {
-                            if (getFunValue() - moneyWin - info.getMoney() < 0) {
-                                continue;
-                            }
-                        }
-
-                        if (card.getRank() == Rank.Ace && (numA = (byte) (numA + 1)) == 3)
-                            result = ResultCaoThap.NO_HU;
+                    if (result == ResultCaoThap.THANG && getFunValue() - moneyWin < 0) {
+                        continue;
                     }
+                    if (card.getRank() == Rank.Ace && (numA = (byte) (numA + 1)) == 3)
+                        result = ResultCaoThap.NO_HU;
                     break;
                 }
 
@@ -329,7 +320,6 @@ public class MGRoomCaoThap extends MGRoom {
                 }
             }
         }
-//        }
     }
 
     /*
