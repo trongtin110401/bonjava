@@ -209,7 +209,7 @@ public class HistoryTransDaoImpl implements HistoryTransDao {
                 conditions.put("nickName", nickName.trim());
 
                 // Kiểm tra điều kiện hinhthucTrans với các giá trị MOMO, BANK, CARD
-                List<String> hinhthucTransList = Arrays.asList("MOMO", "BANK", "CARD", "GIFT_CODE", "ADMIN_TRANSFER_TO_USER");
+                List<String> hinhthucTransList = Arrays.asList("MOMO", "BANK", "CARD");
                 BasicDBObject hinhthucTransCondition = new BasicDBObject("$or", hinhthucTransList);
                 conditions.put("hinhthucTrans", hinhthucTransCondition);
 
@@ -241,7 +241,6 @@ public class HistoryTransDaoImpl implements HistoryTransDao {
 
 
         } catch (Exception e) {
-            e.printStackTrace();
             return null;
         }
 
