@@ -8,7 +8,6 @@ import com.vinplay.dichvuthe.dao.impl.RechargeDaoImpl;
 import com.vinplay.dichvuthe.entities.DepositMobileCardModel;
 import com.vinplay.dichvuthe.service.impl.RechargeServiceImpl;
 import com.vinplay.dichvuthe.utils.DvtConst;
-import com.vinplay.gachthe.NapTienGaClient;
 import com.vinplay.lognaprut.HistoryTransConst;
 import com.vinplay.lognaprut.HistoryTransDao;
 import com.vinplay.lognaprut.entities.HistoryTransModel;
@@ -19,12 +18,10 @@ import com.vinplay.usercore.service.impl.UserExtraServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
-import com.vinplay.vbee.common.models.cache.UserCacheModel;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
 import org.json.simple.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Random;
 
 public class NapTheProcess implements BaseProcessor<HttpServletRequest, String> {
     public String execute(Param<HttpServletRequest> param) {
@@ -84,7 +81,7 @@ public class NapTheProcess implements BaseProcessor<HttpServletRequest, String> 
                 depositMobileCardModel.Status = DvtConst.STATUS_PENDING;
                 dao.InsertDepositMobileCardManual(depositMobileCardModel);
                 HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
-                historyTransDao.insertTransaction(new HistoryTransModel(loaithe, "Thẻ Cào", "recharge", String.valueOf(amount), "Đang xử lý", "Đang chờ xử lý", nickname, HistoryTransConst.Card, String.valueOf(id)));
+                historyTransDao.insertTransaction(new HistoryTransModel(loaithe, "Thẻ Cào", "recharge", String.valueOf(amount), "Đang xử lý", "Đang chờ xử lý", nickname, HistoryTransConst.CARD, String.valueOf(id)));
                 // insert vào history
 //                                new TelegramUtil().senMessToDaily(nickname, "Tạo phiếu nạp Thẻ Điện thoại", 0);
                 NotificationAdminObj obj = new NotificationAdminObj();

@@ -48,15 +48,14 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 
-public class ReportMoneyUserProcessor
-        implements BaseProcessor<HttpServletRequest, String> {
+public class ReportMoneyUserProcessor implements BaseProcessor<HttpServletRequest, String> {
     private static final Logger logger = Logger.getLogger((String) "report");
 
     public String execute(Param<HttpServletRequest> param) {
         ReportMoneyUserResponse res;
         block15:
         {
-            HttpServletRequest request = (HttpServletRequest) param.get();
+            HttpServletRequest request = param.get();
             String nickname = request.getParameter("nn");
             String startTime = request.getParameter("ts");
             String endTime = request.getParameter("te");
@@ -66,13 +65,13 @@ public class ReportMoneyUserProcessor
                     break block15;
                 HazelcastInstance client = HazelcastClientFactory.getInstance();
                 ReportDaoImpl dao = new ReportDaoImpl();
-                boolean isBot = false;
-                long currentMoney = 0L;
-                long safeMoney = 0L;
-                long totalMoney = 0L;
+                boolean isBot;
+                long currentMoney;
+                long safeMoney;
+                long totalMoney;
                 IMap userMap = client.getMap("users");
-                if (userMap.containsKey((Object) nickname)) {
-                    UserCacheModel user = (UserCacheModel) userMap.get((Object) nickname);
+                if (userMap.containsKey(nickname)) {
+                    UserCacheModel user = (UserCacheModel) userMap.get(nickname);
                     isBot = user.isBot();
                     currentMoney = user.getVin();
                     safeMoney = user.getSafe();

@@ -57,7 +57,7 @@ public class AutoCardCallBackSunVinProcess implements BaseProcessor<HttpServletR
 
                     if (Status.equals("-1")) {
                         resultUpdateTrans = dao.UpdateDepositMobileCardManualStatus(TransID, DvtConst.STATUS_REJECT, "Sai mệnh giá", "Auto card mobile");
-                        historyTransService.update(TransID, depositMobileCardModel.getNickname(), HistoryTransConst.Card, "Từ chối", "thẻ sai mệnh giá");
+                        historyTransService.update(TransID, depositMobileCardModel.getNickname(), HistoryTransConst.CARD, "Từ chối", "thẻ sai mệnh giá");
                         response.setErrorCode(200);
                         response.setErrorDescription("Thành công !");
                         return response.toJson();
@@ -69,7 +69,7 @@ public class AutoCardCallBackSunVinProcess implements BaseProcessor<HttpServletR
                             long amount = 0L;
                             if (Amount.equals(String.valueOf(depositMobileCardModel.getAmount()))) {
                                 resultUpdateTrans = dao.UpdateDepositMobileCardManualStatus(TransID, DvtConst.STATUS_APPROVE, "", "Auto card mobile");
-                                historyTransService.update(TransID, depositMobileCardModel.getNickname(), HistoryTransConst.Card, "Thành công", "Nạp thẻ thành công");
+                                historyTransService.update(TransID, depositMobileCardModel.getNickname(), HistoryTransConst.CARD, "Thành công", "Nạp thẻ thành công");
                                 if (!resultUpdateTrans) {
                                     return response.toJson();
                                 }
@@ -100,7 +100,7 @@ public class AutoCardCallBackSunVinProcess implements BaseProcessor<HttpServletR
                                 return response.toJson();
                             }else{
                                 resultUpdateTrans = dao.UpdateDepositMobileCardManualStatus(TransID, DvtConst.STATUS_REJECT, "Sai mệnh giá, gia tri thuc: "+Amount, "Auto card mobile");
-                                historyTransService.update(TransID, depositMobileCardModel.getNickname(), HistoryTransConst.Card, "Từ chối", "thẻ sai mệnh giá");
+                                historyTransService.update(TransID, depositMobileCardModel.getNickname(), HistoryTransConst.CARD, "Từ chối", "thẻ sai mệnh giá");
                                 response.setErrorCode(200);
                                 response.setErrorDescription("Thành công !");
                                 return response.toJson();
@@ -112,7 +112,7 @@ public class AutoCardCallBackSunVinProcess implements BaseProcessor<HttpServletR
 
                     }else{
                         resultUpdateTrans = dao.UpdateDepositMobileCardManualStatus(TransID, DvtConst.STATUS_REJECT, "Thẻ sai", "Auto card mobile");
-                        historyTransService.update(TransID, depositMobileCardModel.getNickname(), HistoryTransConst.Card, "Từ chối", "thẻ sai");
+                        historyTransService.update(TransID, depositMobileCardModel.getNickname(), HistoryTransConst.CARD, "Từ chối", "thẻ sai");
                         response.setErrorCode(200);
                         response.setErrorDescription("Thành công !");
                         return response.toJson();

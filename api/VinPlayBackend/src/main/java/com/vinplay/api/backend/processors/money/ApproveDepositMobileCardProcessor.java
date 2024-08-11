@@ -6,10 +6,8 @@ import com.vinplay.dal.common.BroadCastUserMoney;
 import com.vinplay.dichvuthe.dao.RechargeDao;
 import com.vinplay.dichvuthe.dao.impl.RechargeDaoImpl;
 import com.vinplay.dichvuthe.entities.DepositMobileCardModel;
-import com.vinplay.dichvuthe.entities.DepositMomoModel;
 import com.vinplay.dichvuthe.utils.DvtConst;
 import com.vinplay.lognaprut.HistoryTransConst;
-import com.vinplay.lognaprut.entities.HistoryTransModel;
 import com.vinplay.lognaprut.service.HistoryTransService;
 import com.vinplay.lognaprut.service.impl.HistoryTransServiceImpl;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
@@ -58,7 +56,7 @@ public class ApproveDepositMobileCardProcessor implements BaseProcessor<HttpServ
                     return response.toJson();
                 }
                 if (type == 1) {
-                    historyTransService.update(transId, trans.getNickname(), HistoryTransConst.Card, "Từ chối", "Giao dịch bị từ chối ");
+                    historyTransService.update(transId, trans.getNickname(), HistoryTransConst.CARD, "Từ chối", "Giao dịch bị từ chối ");
                     response.setSuccess(true);
                     return response.toJson();
                 }
@@ -75,7 +73,7 @@ public class ApproveDepositMobileCardProcessor implements BaseProcessor<HttpServ
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    historyTransService.update(transId, trans.getNickname(), HistoryTransConst.Card, "Thành công", "Giao dịch Thành Công ");
+                    historyTransService.update(transId, trans.getNickname(), HistoryTransConst.CARD, "Thành công", "Giao dịch Thành Công ");
                 }
                 BroadCastUserMoney.pushBroadCast(trans.Nickname);
                 NapRutGame nrg = new NapRutGame();

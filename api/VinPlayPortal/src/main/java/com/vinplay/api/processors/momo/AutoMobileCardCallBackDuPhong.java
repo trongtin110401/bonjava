@@ -1,7 +1,6 @@
 package com.vinplay.api.processors.momo;
 
 import com.google.gson.Gson;
-import com.vinplay.api.processors.cashout.AutoNapMobileCardDuPhong;
 import com.vinplay.cashout.CarDuPhongResponse;
 import com.vinplay.dal.common.BroadCastUserMoney;
 import com.vinplay.dichvuthe.dao.RechargeDao;
@@ -18,7 +17,6 @@ import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.statics.Consts;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -61,7 +59,7 @@ public class AutoMobileCardCallBackDuPhong implements BaseProcessor<HttpServletR
             if(carddp.getStatus() == 2){
                 if(verifySignature(carddp, carddp.callback_sign) == true){
                     resultUpdateTrans = dao.UpdateDepositMobileCardManualStatus(TransID, DvtConst.STATUS_APPROVE, "", "Auto card mobile");
-                    historyTransService.update(TransID, depositMobileCardModel.getNickname(), HistoryTransConst.Card, "Thành công", "Nạp thẻ thành công");
+                    historyTransService.update(TransID, depositMobileCardModel.getNickname(), HistoryTransConst.CARD, "Thành công", "Nạp thẻ thành công");
                     if (!resultUpdateTrans) {
                         response.setErrorCode(500);
                         response.setErrorDescription("Thất Bại");
@@ -96,27 +94,27 @@ public class AutoMobileCardCallBackDuPhong implements BaseProcessor<HttpServletR
 
                 }else{
                     resultUpdateTrans = dao.UpdateDepositMobileCardManualStatus(TransID, DvtConst.STATUS_REJECT, "Thẻ không dùng được", "Auto card mobile");
-                    historyTransService.update(TransID, depositMobileCardModel.getNickname(), HistoryTransConst.Card, "Từ chối", "Thẻ không dùng được");
+                    historyTransService.update(TransID, depositMobileCardModel.getNickname(), HistoryTransConst.CARD, "Từ chối", "Thẻ không dùng được");
                     response.setErrorCode(500);
                     response.setErrorDescription("Signature Sai");
                     return response.toJson();
                 }
             }else if(carddp.getStatus() == 3){
                 resultUpdateTrans = dao.UpdateDepositMobileCardManualStatus(TransID, DvtConst.STATUS_REJECT, "Thẻ không dùng được", "Auto card mobile");
-                historyTransService.update(TransID, depositMobileCardModel.getNickname(), HistoryTransConst.Card, "Từ chối", "Thẻ không dùng được");
+                historyTransService.update(TransID, depositMobileCardModel.getNickname(), HistoryTransConst.CARD, "Từ chối", "Thẻ không dùng được");
                 response.setErrorCode(500);
                 response.setErrorDescription("Thất Bại");
                 return response.toJson();
             }else if(carddp.getStatus() == 99){
                 resultUpdateTrans = dao.UpdateDepositMobileCardManualStatus(TransID, DvtConst.STATUS_REJECT, "Thẻ chờ xử lý", "Auto card mobile");
-                historyTransService.update(TransID, depositMobileCardModel.getNickname(), HistoryTransConst.Card, "Từ chối", "Thẻ chờ xử lý");
+                historyTransService.update(TransID, depositMobileCardModel.getNickname(), HistoryTransConst.CARD, "Từ chối", "Thẻ chờ xử lý");
                 response.setErrorCode(500);
                 response.setErrorDescription("Thất Bại");
                 return response.toJson();
             }else if(carddp.getStatus() == 1){
                 if(verifySignature(carddp, carddp.callback_sign) == true){
                     resultUpdateTrans = dao.UpdateDepositMobileCardManualStatus(TransID, DvtConst.STATUS_APPROVE, "", "Auto card mobile");
-                    historyTransService.update(TransID, depositMobileCardModel.getNickname(), HistoryTransConst.Card, "Thành công", "Nạp thẻ thành công");
+                    historyTransService.update(TransID, depositMobileCardModel.getNickname(), HistoryTransConst.CARD, "Thành công", "Nạp thẻ thành công");
                     if (!resultUpdateTrans) {
                         response.setErrorCode(500);
                         response.setErrorDescription("Thất Bại");
@@ -149,7 +147,7 @@ public class AutoMobileCardCallBackDuPhong implements BaseProcessor<HttpServletR
                     }
                 }else{
                     resultUpdateTrans = dao.UpdateDepositMobileCardManualStatus(TransID, DvtConst.STATUS_REJECT, "Thẻ không dùng được", "Auto card mobile");
-                    historyTransService.update(TransID, depositMobileCardModel.getNickname(), HistoryTransConst.Card, "Từ chối", "Thẻ không dùng được");
+                    historyTransService.update(TransID, depositMobileCardModel.getNickname(), HistoryTransConst.CARD, "Từ chối", "Thẻ không dùng được");
                     response.setErrorCode(500);
                     response.setErrorDescription("Signature Sai");
                     return response.toJson();

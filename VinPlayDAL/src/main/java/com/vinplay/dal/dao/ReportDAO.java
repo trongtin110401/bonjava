@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  com.vinplay.vbee.common.models.cache.ReportModel
  */
@@ -9,6 +9,7 @@ package com.vinplay.dal.dao;
 import com.vinplay.dal.entities.report.ReportMoneySystemModel;
 import com.vinplay.dal.entities.report.ReportTotalMoneyModel;
 import com.vinplay.vbee.common.models.cache.ReportModel;
+
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.HashMap;
@@ -33,6 +34,8 @@ public interface ReportDAO {
     public HashMap<String, Long> getReportTopGame(String var1, String var2, String var3, boolean var4) throws Exception;
 
     public Map<String, ReportMoneySystemModel> getReportMoneyUser(String var1, String var2, String var3, boolean var4) throws Exception;
+
+    public Map<String, ReportMoneySystemModel> getReportMoneyUser2(String var1, String var2, String var3, boolean var4) throws Exception;
 
     public Map<String, ReportModel> getListReportModelByDay(String var1, boolean var2) throws Exception;
 

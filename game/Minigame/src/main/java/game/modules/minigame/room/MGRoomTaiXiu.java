@@ -278,12 +278,11 @@ public class MGRoomTaiXiu
                     if (betSide == 1 && this.potXiu.getTotalBetByUsername(nickname) > 0L || betSide == 0 && this.potTai.getTotalBetByUsername(nickname) > 0L) {
                         result = 5;
                     } else {
-                        String betSideStr = betSide == 0 ? "X\u1ec9u" : "T\u00e0i";
+                        String betSideStr = betSide == 0 ? "Xỉu" : "Tài";
 
                         MoneyResponse res = new MoneyResponse(false, "1001");
                         if (!isBot) { // trừ tiền đặt cược
-                            res = this.userService.updateMoney(nickname, -betValue, this.moneyTypeStr, "TaiXiu", "T\u00e0i x\u1ec9u: \u0110\u1eb7t c\u01b0\u1ee3c", "Phii\u00ean " + this.referenceId + ": \u0111\u1eb7t " + betSideStr + " (" + inputTime + ")", 0L, Long.valueOf(this.referenceId), TransType.START_TRANS);
-
+                            res = this.userService.updateMoney(nickname, -betValue, this.moneyTypeStr, "TaiXiu", "Tài xỉu: Đặt cược", "Phiên " + this.referenceId + ": đặt " + betSideStr + " (" + inputTime + ")", 0L, this.referenceId, TransType.START_TRANS);
                         } else {
                             res.setSuccess(true);
                         }
@@ -291,25 +290,22 @@ public class MGRoomTaiXiu
                             if (!this.enableBetting) { // kiểm tra xem có phải đang trong quá trình đặt cược hay ko , nếu ko
                                 result = 1;
                                 if (!isBot) { // hoàn trả tiền cược
-                                    this.userService.updateMoney(nickname, betValue, this.moneyTypeStr, "TaiXiu", "T\u00e0i x\u1ec9u: Tr\u1ea3 c\u01b0\u1ee3c", "Ho\u00e0n tr\u1ea3 \u0111\u1eb7t c\u01b0\u1ee3c phi\u00ean " + this.referenceId, 0L, Long.valueOf(this.referenceId), TransType.END_TRANS);
-
+                                    this.userService.updateMoney(nickname, betValue, this.moneyTypeStr, "TaiXiu", "Tài xỉu: Trả cược", "Hoàn trả đặt cược phiên " + this.referenceId, 0L, this.referenceId, TransType.END_TRANS);
                                 }
                             } else { // nếu đang trong quá trình đặt cược
                                 isBot = this.isBot(nickname);
                                 if (moneyType == 1 && !isBot) {
-                                    Random rd;
-                                    int n;
                                     this.balance.addBet(betValue); //
-                                    if (betValue >= (long) ConfigGame.getIntValue("tx_min_money_black_list", 2000000) && ConfigGame.inBlackList(nickname) && (n = (rd = new Random()).nextInt(100)) <= ConfigGame.getIntValue("tx_black_list_percent", 50)) {
-                                        Debug.trace((Object) ("Black list " + nickname + " money= " + betValue + ", bet side= " + betSide));
+                                    if (betValue >= (long) ConfigGame.getIntValue("tx_min_money_black_list", 2000000) && ConfigGame.inBlackList(nickname) && new Random().nextInt(100) <= ConfigGame.getIntValue("tx_black_list_percent", 50)) {
+                                        Debug.trace("Black list " + nickname + " money= " + betValue + ", bet side= " + betSide);
                                         if (betSide == 1) {
                                             this.blackListBetTai += betValue;
                                         } else {
                                             this.blackListBetXiu += betValue;
                                         }
                                     }
-                                    if (betValue >= (long) ConfigGame.getIntValue("tx_min_money_white_list", 2000000) && ConfigGame.inWhiteList(nickname) && (n = (rd = new Random()).nextInt(100)) <= ConfigGame.getIntValue("tx_white_list_percent", 50)) {
-                                        Debug.trace((Object) ("White list " + nickname + " money= " + betValue + ", bet side= " + betSide));
+                                    if (betValue >= (long) ConfigGame.getIntValue("tx_min_money_white_list", 2000000) && ConfigGame.inWhiteList(nickname) && new Random().nextInt(100) <= ConfigGame.getIntValue("tx_white_list_percent", 50)) {
+                                        Debug.trace("White list " + nickname + " money= " + betValue + ", bet side= " + betSide);
                                         if (betSide == 1) {
                                             this.whiteListBetTai += betValue;
                                         } else {

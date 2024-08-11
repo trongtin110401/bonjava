@@ -122,7 +122,7 @@ public class MGRoomCaoThap extends MGRoom {
                         moneyResponse.setSuccess(true);
                     }
                     if (moneyResponse != null && moneyResponse.isSuccess()) {
-                        System.out.println("STEP " + "Start GAME " + " - Fund Change Value: " + moneyToFund);
+//                        System.out.println("STEP " + "Start GAME " + " - Fund Change Value: " + moneyToFund);
                         updateFunValue(moneyToFund);
                         this.saveFund();
                         List<Double> ratioLst = CaoThapUtils.getRatio(deck, card);
@@ -233,7 +233,7 @@ public class MGRoomCaoThap extends MGRoom {
                         long moneyToFund = info.getStep() == ResultCaoThap.STEP_ONE
                                 ? moneyWin
                                 : moneyWin - info.getMoney();
-                        System.out.println("STEP " + info.getStep() + " - Fund Change Value: -" + moneyToFund);
+//                        System.out.println("STEP " + info.getStep() + " - Fund Change Value: -" + moneyToFund);
                         updateFunValue(-moneyToFund);
                         this.saveFund();
                     }
@@ -254,7 +254,7 @@ public class MGRoomCaoThap extends MGRoom {
                 } else if (result == ResultCaoThap.THUA) {
                     if (!isBot(user.getName()) && info.getStep() > ResultCaoThap.STEP_ONE) {
                         // rollback money to fund
-                        System.out.println("STEP " + info.getStep() + " - Fund Change Value: " + info.getMoney());
+//                        System.out.println("STEP " + info.getStep() + " - Fund Change Value: " + info.getMoney());
                         updateFunValue(info.getMoney());
                         this.saveFund();
                     }
@@ -267,7 +267,7 @@ public class MGRoomCaoThap extends MGRoom {
                     if (info.getMoney() > moneyWin) {
                         this.pot += info.getMoney() - moneyWin;
                     } else {
-                        System.out.println("STEP " + info.getStep() + " - Fund Change Value: -" + (moneyWin - info.getMoney()));
+//                        System.out.println("STEP " + info.getStep() + " - Fund Change Value: -" + (moneyWin - info.getMoney()));
                         updateFunValue(-(moneyWin - info.getMoney()));
                         this.saveFund();
                     }

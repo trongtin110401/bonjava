@@ -147,24 +147,56 @@ public class ReportDaoImpl
         Document conditions = new Document();
         if (!startTime.isEmpty() && !endTime.isEmpty()) {
             BasicDBObject obj = new BasicDBObject();
-            obj.put("$gte", (Object) VinPlayUtils.getDateTimeStr((java.util.Date) VinPlayUtils.getDateTimeFromDate((String) startTime)));
-            obj.put("$lte", (Object) VinPlayUtils.getDateTimeStr((java.util.Date) VinPlayUtils.getDateTimeFromDate((String) endTime)));
-            conditions.put("time_log", (Object) obj);
+            obj.put("$gte", VinPlayUtils.getDateTimeStr(VinPlayUtils.getDateTimeFromDate(startTime)));
+            obj.put("$lte", VinPlayUtils.getDateTimeStr(VinPlayUtils.getDateTimeFromDate(endTime)));
+            conditions.put("time_log", obj);
         }
-        conditions.put("nick_name", (Object) nickname);
-        MongoCollection col = null;
+        conditions.put("nick_name", nickname);
+        MongoCollection col;
         col = !isBot ? db.getCollection("report_money_vin") : db.getCollection("report_money_vin_bot");
-        AggregateIterable iterable = col.aggregate(Arrays.asList(new Document[]{new Document("$match", (Object) conditions), new Document("$group", (Object) new Document("_id", (Object) "$action_name").append("money_win", (Object) new Document("$sum", (Object) "$money_win")).append("money_lost", (Object) new Document("$sum", (Object) "$money_lost")).append("money_other", (Object) new Document("$sum", (Object) "$money_other")).append("fee", (Object) new Document("$sum", (Object) "$fee")))}));
+        AggregateIterable iterable = col.aggregate(Arrays.asList(new Document("$match", conditions), new Document("$group", new Document("_id", "$action_name").append("money_win", new Document("$sum", "$money_win")).append("money_lost", new Document("$sum", "$money_lost")).append("money_other", new Document("$sum", "$money_other")).append("fee", new Document("$sum", "$fee")))));
         final HashMap<String, ReportMoneySystemModel> results = new HashMap<String, ReportMoneySystemModel>();
-        iterable.forEach((Block) new Block<Document>() {
+        iterable.forEach(new Block<Document>() {
 
             public void apply(Document document) {
                 ReportMoneySystemModel model = new ReportMoneySystemModel();
-                String actionName = document.getString((Object) "_id");
-                model.moneyWin = document.getLong((Object) "money_win");
-                model.moneyLost = document.getLong((Object) "money_lost");
-                model.moneyOther = document.getLong((Object) "money_other");
-                model.fee = document.getLong((Object) "fee");
+                String actionName = document.getString("_id");
+                model.moneyWin = document.getLong("money_win");
+                model.moneyLost = document.getLong("money_lost");
+                model.moneyOther = document.getLong("money_other");
+                model.fee = document.getLong("fee");
+                model.revenuePlayGame = model.moneyWin + model.moneyLost;
+                model.revenue = model.revenuePlayGame + model.moneyOther;
+                results.put(actionName, model);
+            }
+        });
+        return results;
+    }
+
+    @Override
+    public Map<String, ReportMoneySystemModel> getReportMoneyUser2(String startTime, String endTime, String nickname, boolean isBot) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        Document conditions = new Document();
+        if (!startTime.isEmpty() && !endTime.isEmpty()) {
+            BasicDBObject obj = new BasicDBObject();
+            obj.put("$gte", startTime);
+            obj.put("$lte", endTime);
+            conditions.put("time_log", obj);
+        }
+        conditions.put("nick_name", nickname);
+        MongoCollection col;
+        col = !isBot ? db.getCollection("report_money_vin") : db.getCollection("report_money_vin_bot");
+        AggregateIterable iterable = col.aggregate(Arrays.asList(new Document("$match", conditions), new Document("$group", new Document("_id", "$action_name").append("money_win", new Document("$sum", "$money_win")).append("money_lost", new Document("$sum", "$money_lost")).append("money_other", new Document("$sum", "$money_other")).append("fee", new Document("$sum", "$fee")))));
+        final HashMap<String, ReportMoneySystemModel> results = new HashMap<String, ReportMoneySystemModel>();
+        iterable.forEach(new Block<Document>() {
+
+            public void apply(Document document) {
+                ReportMoneySystemModel model = new ReportMoneySystemModel();
+                String actionName = document.getString("_id");
+                model.moneyWin = document.getLong("money_win");
+                model.moneyLost = document.getLong("money_lost");
+                model.moneyOther = document.getLong("money_other");
+                model.fee = document.getLong("fee");
                 model.revenuePlayGame = model.moneyWin + model.moneyLost;
                 model.revenue = model.revenuePlayGame + model.moneyOther;
                 results.put(actionName, model);

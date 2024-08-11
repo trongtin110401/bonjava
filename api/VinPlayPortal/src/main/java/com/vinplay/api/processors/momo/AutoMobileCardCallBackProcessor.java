@@ -9,9 +9,6 @@ import com.vinplay.dichvuthe.dao.impl.RechargeDaoImpl;
 import com.vinplay.dichvuthe.entities.DepositMobileCardModel;
 import com.vinplay.dichvuthe.utils.DvtConst;
 import com.vinplay.lognaprut.HistoryTransConst;
-import com.vinplay.lognaprut.HistoryTransDao;
-import com.vinplay.lognaprut.entities.HistoryTransModel;
-import com.vinplay.lognaprut.impl.HistoryTransDaoImpl;
 import com.vinplay.lognaprut.service.HistoryTransService;
 import com.vinplay.lognaprut.service.impl.HistoryTransServiceImpl;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
@@ -48,7 +45,7 @@ public class AutoMobileCardCallBackProcessor implements BaseProcessor<HttpServle
             resultUpdateTrans = dao.UpdateDepositMobileCardManualStatus(TransID, DvtConst.STATUS_REJECT, "Thẻ sai", "Auto card mobile");
 
 
-            historyTransService.update(TransID, depositMobileCardModel.getNickname(), HistoryTransConst.Card, "Từ chối", "thẻ sai ");
+            historyTransService.update(TransID, depositMobileCardModel.getNickname(), HistoryTransConst.CARD, "Từ chối", "thẻ sai ");
             return response.toJson();
         }
         try {
@@ -56,11 +53,11 @@ public class AutoMobileCardCallBackProcessor implements BaseProcessor<HttpServle
 
                 if (Status.equals("-100")) {
                     resultUpdateTrans = dao.UpdateDepositMobileCardManualStatus(TransID, DvtConst.STATUS_REJECT, "Sai mệnh giá", "Auto card mobile");
-                    historyTransService.update(TransID, depositMobileCardModel.getNickname(), HistoryTransConst.Card, "Từ chối", "thẻ sai mệnh giá");
+                    historyTransService.update(TransID, depositMobileCardModel.getNickname(), HistoryTransConst.CARD, "Từ chối", "thẻ sai mệnh giá");
 
                 } else if (Status.equals("0")) {
                     resultUpdateTrans = dao.UpdateDepositMobileCardManualStatus(TransID, DvtConst.STATUS_APPROVE, "", "Auto card mobile");
-                    historyTransService.update(TransID, depositMobileCardModel.getNickname(), HistoryTransConst.Card, "Thành công", "Nạp thẻ thành công");
+                    historyTransService.update(TransID, depositMobileCardModel.getNickname(), HistoryTransConst.CARD, "Thành công", "Nạp thẻ thành công");
                     if (!resultUpdateTrans) {
                         return response.toJson();
                     }

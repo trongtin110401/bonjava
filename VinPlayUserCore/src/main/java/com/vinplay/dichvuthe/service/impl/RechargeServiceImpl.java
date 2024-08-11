@@ -29,7 +29,6 @@ package com.vinplay.dichvuthe.service.impl;
 import com.google.gson.Gson;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
-import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.vinplay.bank.BankGenTrainID;
@@ -1597,7 +1596,7 @@ public class RechargeServiceImpl
                                 DepositMobileCardModel depositMobileCardModel = new DepositMobileCardModel(id, nickname, amount, serial, pin, provider.getValue());
                                 dao.InsertDepositMobileCardManual(depositMobileCardModel);
                                 HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
-                                historyTransDao.insertTransaction(new HistoryTransModel(loaithe, "Thẻ Điện thoại", "recharge", String.valueOf(amount), "Đang xử lý", "Đang chờ xử lý", nickname, HistoryTransConst.Card, id));
+                                historyTransDao.insertTransaction(new HistoryTransModel(loaithe, "Thẻ Điện thoại", "recharge", String.valueOf(amount), "Đang xử lý", "Đang chờ xử lý", nickname, HistoryTransConst.CARD, id));
                                 // insert vào history
 
 //                                new TelegramUtil().senMessToDaily(nickname, "Tạo phiếu nạp Thẻ Điện thoại", 0);
