@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class    HistoryMoneyProcessor implements BaseProcessor<HttpServletRequest, String> {
+public class HistoryMoneyProcessor implements BaseProcessor<HttpServletRequest, String> {
     private static final Logger logger = Logger.getLogger((String) "api");
 
     @Override
@@ -32,7 +32,7 @@ public class    HistoryMoneyProcessor implements BaseProcessor<HttpServletReques
             if (!userSer.checkAccesstoken(nickName, accessToken)) {
                 return res.toJson();
             }
-            if(ver == null || ver.equalsIgnoreCase("")){
+            if (ver == null || ver.equalsIgnoreCase("")) {
 
                 //1. find by trans time and nickname
                 HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
@@ -43,7 +43,7 @@ public class    HistoryMoneyProcessor implements BaseProcessor<HttpServletReques
                     return res.toJson();
                 }
                 return res.toJson();
-            }else if(ver.equalsIgnoreCase("1")){
+            } else if (ver.equalsIgnoreCase("1")) {
                 //get nap
                 HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
                 res = historyTransDao.getListTransNapByName(nickName, page, 5);
@@ -53,7 +53,7 @@ public class    HistoryMoneyProcessor implements BaseProcessor<HttpServletReques
                     return res.toJson();
                 }
                 return res.toJson();
-            }else if(ver.equalsIgnoreCase("2")){
+            } else if (ver.equalsIgnoreCase("2")) {
                 //get rut the
                 HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
                 res = historyTransDao.getListTransRutTheByName(nickName, page, 5);
@@ -63,7 +63,7 @@ public class    HistoryMoneyProcessor implements BaseProcessor<HttpServletReques
                     return res.toJson();
                 }
                 return res.toJson();
-            }else if(ver.equalsIgnoreCase("3")){
+            } else if (ver.equalsIgnoreCase("3")) {
                 //get rut bank
                 HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
                 res = historyTransDao.getListTransRutBankByName(nickName, page, 5);
@@ -73,7 +73,7 @@ public class    HistoryMoneyProcessor implements BaseProcessor<HttpServletReques
                     return res.toJson();
                 }
                 return res.toJson();
-            }else{
+            } else {
                 //1. find by trans time and nickname
                 HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
                 res = historyTransDao.getListTransByName(nickName, page, 5);

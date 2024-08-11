@@ -17,6 +17,7 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -206,10 +207,15 @@ public class HistoryTransDaoImpl implements HistoryTransDao {
             HashMap<String, Object> conditions = new HashMap<String, Object>();
             if (nickName != null && !nickName.isEmpty()) {
                 conditions.put("nickName", nickName.trim());
-                conditions.put("hinhthuc", "recharge");
+
+                // Kiểm tra điều kiện hinhthucTrans với các giá trị MOMO, BANK, CARD
+                List<String> hinhthucTransList = Arrays.asList("MOMO", "BANK", "CARD");
+                BasicDBObject hinhthucTransCondition = new BasicDBObject("$in", hinhthucTransList);
+                conditions.put("hinhthucTrans", hinhthucTransCondition);
+
                 BasicDBObject obj = new BasicDBObject();
                 obj.put("$gt", "0");
-                conditions.put("sotien", obj );
+                conditions.put("sotien", obj);
             }
 
 

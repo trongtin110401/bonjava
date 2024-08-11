@@ -54,7 +54,7 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
             long fistRechargeValueToday = getFirstRechargeToday(nickname);
 
             if (totalBetToday <= 0 || fistRechargeValueToday <= 0 || totalBetToday < fistRechargeValueToday / 2) {
-                baseResponseModel = new BaseResponseModel(false, "Bạn chưa cược đủ 50% giá trị mã nạp đầu tiên hôm nay. Vui lòng cược thêm.");
+                baseResponseModel = new BaseResponseModel(false, "Bạn chưa cược đủ 50% giá trị mã nạp đầu tiên trong ngày. Vui lòng cược thêm.");
                 return baseResponseModel.toJson();
             }
 
@@ -156,14 +156,14 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
         // Get the current date
-        LocalDate today = LocalDate.now();
+        LocalDate fromDate = LocalDate.parse("2024-01-01", DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
         // Get the start of the day (00:00:00)
-        LocalDateTime startOfDay = today.atStartOfDay();
+        LocalDateTime startOfDay = fromDate.atStartOfDay();
         String startTime = startOfDay.format(formatter);
 
         // Get the end of the day (23:59:59)
-        LocalDateTime endOfDay = today.atTime(23, 59, 59);
+        LocalDateTime endOfDay = LocalDate.now().atTime(23, 59, 59);
         String endTime = endOfDay.format(formatter);
 
         HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
