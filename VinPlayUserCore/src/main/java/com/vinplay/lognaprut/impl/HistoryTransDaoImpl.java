@@ -210,7 +210,7 @@ public class HistoryTransDaoImpl implements HistoryTransDao {
 
                 // Kiểm tra điều kiện hinhthucTrans với các giá trị MOMO, BANK, CARD
                 List<String> hinhthucTransList = Arrays.asList("MOMO", "BANK", "CARD", "recharge", "GIFT_CODE", "ADMIN_TRANSFER_TO_USER");
-                BasicDBObject hinhthucTransCondition = new BasicDBObject("$in", hinhthucTransList);
+                BasicDBObject hinhthucTransCondition = new BasicDBObject("$or", hinhthucTransList);
                 conditions.put("hinhthucTrans", hinhthucTransCondition);
 
                 BasicDBObject obj = new BasicDBObject();
