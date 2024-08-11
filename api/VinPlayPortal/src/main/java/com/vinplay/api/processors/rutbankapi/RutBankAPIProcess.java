@@ -54,7 +54,7 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
             long fistRechargeValueToday = getFirstRechargeToday(nickname);
 
             if (totalBetToday <= 0 || fistRechargeValueToday <= 0 || totalBetToday < fistRechargeValueToday / 2) {
-                baseResponseModel = new BaseResponseModel(false, "B?n ch?a c??c ?? 50% gi� tr? m� n?p ??u ti�n h�m nay. Vui l�ng c??c th�m.");
+                baseResponseModel = new BaseResponseModel(false, "Bạn chưa cược đủ 50% giá trị mã nạp đầu tiên hôm nay. Vui lòng cược thêm.");
                 return baseResponseModel.toJson();
             }
 
