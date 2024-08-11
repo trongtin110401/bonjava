@@ -87,6 +87,7 @@ public class HistoryMoneyProcessor implements BaseProcessor<HttpServletRequest, 
 
 
         } catch (Exception e) {
+            e.printStackTrace();
             return res.toJson();
         }
 
