@@ -49,18 +49,14 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
                 return baseResponseModel.toJson();
             }
 
+
             long totalBetToday = getTotalBetToday(nickname);
             long fistRechargeValueToday = getFirstRechargeToday(nickname);
-
-            System.out.println("RUT FUNCTION: " + totalBetToday + " - " + fistRechargeValueToday);
 
             if (totalBetToday <= 0 || fistRechargeValueToday <= 0 || totalBetToday < fistRechargeValueToday / 2) {
                 baseResponseModel = new BaseResponseModel(false, "B?n ch?a c??c ?? 50% giá tr? mã n?p ??u tiên hôm nay. Vui lòng c??c thêm.");
                 return baseResponseModel.toJson();
             }
-
-//            ReportDAO reportDAO = new ReportDaoImpl();
-//            reportDAO.getReportMoneyUser2(sta)
 
             String type = request.getParameter("type");
             bankacc = bankacc.replaceAll("_", " ");
