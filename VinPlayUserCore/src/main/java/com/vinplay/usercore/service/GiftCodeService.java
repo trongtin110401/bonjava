@@ -77,5 +77,7 @@ public interface GiftCodeService {
     boolean saveGiftCode(GiftCodeDto giftCodeDto);
 
     GiftCodeDto findActiveByCode(String code);
+
+    public boolean checkUserTransactionAfterUseGiftCode(String nickName);
 }
 

@@ -11,8 +11,10 @@ import com.vinplay.lognaprut.entities.HistoryTransResponse;
 import com.vinplay.lognaprut.impl.HistoryTransDaoImpl;
 import com.vinplay.payment.entities.UserWithdraw;
 import com.vinplay.payment.entities.UserWithdrawMomo;
+import com.vinplay.usercore.service.GiftCodeService;
 import com.vinplay.usercore.service.UserExtraService;
 import com.vinplay.usercore.service.UserService;
+import com.vinplay.usercore.service.impl.GiftCodeServiceImpl;
 import com.vinplay.usercore.service.impl.OtpServiceImpl;
 import com.vinplay.usercore.service.impl.UserExtraServiceImpl;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
@@ -52,6 +54,11 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
 
             long totalBetToday = getTotalBetToday(nickname);
             long fistRechargeValueToday = getFirstRechargeToday(nickname);
+            GiftCodeService giftCodeService = new GiftCodeServiceImpl();
+            if (!giftCodeService.checkUserTransactionAfterUseGiftCode(nickname)) {
+                baseResponseModel = new BaseResponseModel(false, "Bạn phải phát sinh giao dịch sau khi nhập gift code.");
+                return baseResponseModel.toJson();
+            }
 
             if (totalBetToday <= 0 || fistRechargeValueToday <= 0 || totalBetToday < fistRechargeValueToday / 2) {
                 baseResponseModel = new BaseResponseModel(false, "Bạn chưa cược đủ 50% giá trị mã nạp đầu tiên. Vui lòng cược thêm.");
