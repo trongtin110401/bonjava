@@ -179,10 +179,9 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
             // ??o ng??c list ?? l?y th?i gian t? th?p t?i cao
             Collections.reverse(res.getListTrans());
             Optional<HistoryTransModel> optional = res.getListTrans().stream().filter(historyTransModel ->
-                            historyTransModel.hinhthucTrans.equals(HistoryTransConst.MOMO)
+                            (Integer.parseInt(historyTransModel.getSotien()) > 0 && (historyTransModel.hinhthucTrans.equals(HistoryTransConst.MOMO)
                                     || historyTransModel.hinhthucTrans.equals(HistoryTransConst.BANK)
-                                    || historyTransModel.hinhthucTrans.equals(HistoryTransConst.CARD))
-
+                                    || historyTransModel.hinhthucTrans.equals(HistoryTransConst.CARD))))
                     .findFirst();
             if (optional.isPresent()) {
                 return Long.parseLong(optional.get().sotien);
