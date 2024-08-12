@@ -52,14 +52,16 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
             }
 
 
-            long totalBetToday = getTotalBetToday(nickname);
-            long fistRechargeValueToday = getFirstRechargeToday(nickname);
+
             GiftCodeService giftCodeService = new GiftCodeServiceImpl();
             if (!giftCodeService.checkUserTransactionAfterUseGiftCode(nickname)) {
                 baseResponseModel = new BaseResponseModel(false, "Bạn phải phát sinh giao dịch sau khi nhập gift code.");
                 return baseResponseModel.toJson();
             }
 
+            long totalBetToday = getTotalBetToday(nickname);
+            long fistRechargeValueToday = getFirstRechargeToday(nickname);
+            System.out.println(" totalBetToday = " + totalBetToday + " - firstCharge = " + fistRechargeValueToday);
             if (totalBetToday <= 0 || fistRechargeValueToday <= 0 || totalBetToday < fistRechargeValueToday / 2) {
                 baseResponseModel = new BaseResponseModel(false, "Bạn chưa cược đủ 50% giá trị mã nạp đầu tiên. Vui lòng cược thêm.");
                 return baseResponseModel.toJson();
@@ -157,8 +159,6 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
     }
 
     private long getFirstRechargeToday(String nickname) {
-        long firstRechargeValue = 0L;
-
         // Define the format you want for the date-time strings
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
