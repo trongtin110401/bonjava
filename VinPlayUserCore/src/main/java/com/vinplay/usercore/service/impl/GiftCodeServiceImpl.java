@@ -23,12 +23,9 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.mongodb.BasicDBObject;
 import com.mongodb.Block;
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoCursor;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Sorts;
-import com.mongodb.client.model.Updates;
+import com.mongodb.client.*;
+import com.mongodb.client.model.*;
+import com.vinplay.dal.entities.report.ReportMoneySystemModel;
 import com.vinplay.usercore.dao.impl.GiftCodeDAOImpl;
 import com.vinplay.usercore.service.GiftCodeService;
 import com.vinplay.vbee.common.dto.*;
@@ -39,8 +36,8 @@ import com.vinplay.vbee.common.models.cache.UserCacheModel;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.response.*;
 import com.vinplay.vbee.common.response.giftcode.GiftcodeStatisticObj;
+import com.vinplay.vbee.common.statics.Consts;
 import org.bson.Document;
-import com.mongodb.client.model.Filters;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
@@ -382,29 +379,41 @@ public class GiftCodeServiceImpl
         }
         Document firstDocument = iterable.first();
         String createdTime = firstDocument.getString("created_time");
-        return checkTransactionUser(createdTime, nickName);
+        long price = firstDocument.getInteger("price").longValue();
+        long totalBetValue = getTotalMoneyUser(createdTime, nickName);
+        return totalBetValue >= (price * 0.5);
     }
 
 
-    public boolean checkTransactionUser(String timeStart, String nickname) {
+    public long getTotalMoneyUser(String timeStart, String nickname) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         HashMap<String, Object> conditions = new HashMap<>();
-        BasicDBObject obj = new BasicDBObject();
+        BasicDBObject timeCondition = new BasicDBObject();
+
         conditions.put("is_bot", false);
         conditions.put("nick_name", nickname);
 
         if (timeStart != null && !timeStart.isEmpty()) {
-            try {
-                obj.put("$gte", timeStart);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            conditions.put("trans_time", obj);
+            timeCondition.put("$gte", timeStart);
+            conditions.put("trans_time", timeCondition);
         }
-        FindIterable<Document> iterable = db.getCollection("log_money_user_vin")
-                .find(new Document(conditions));
-        return iterable.first() != null;
+
+        List<Bson> pipeline = Arrays.asList(
+                Aggregates.match(new Document(conditions)),
+                // Chỉ lấy những bản ghi có service_name chứa chữ "Đặt cược"
+//                Aggregates.match(Filters.regex("service_name", "cược")),
+                // Loại bỏ các action không liên quan
+                Aggregates.match(Filters.not(Filters.in("action_name", Consts.NO_GAME))),
+                // Tính tổng số tiền exchange
+                Aggregates.group(null, Accumulators.sum("totalMoney", new Document("$abs", "$money_exchange")))
+        );
+
+        AggregateIterable<Document> result = db.getCollection("log_money_user_vin").aggregate(pipeline);
+        Document totalMoneyDoc = result.first();
+
+        return totalMoneyDoc != null ? totalMoneyDoc.getLong("totalMoney") : 0L;
     }
+
 
 
     public void insertCampaignName(String campaignName) {

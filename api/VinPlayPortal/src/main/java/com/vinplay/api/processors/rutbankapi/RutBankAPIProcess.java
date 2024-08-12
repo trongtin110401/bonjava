@@ -56,7 +56,7 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
             long fistRechargeValueToday = getFirstRechargeToday(nickname);
             GiftCodeService giftCodeService = new GiftCodeServiceImpl();
             if (!giftCodeService.checkUserTransactionAfterUseGiftCode(nickname)) {
-                baseResponseModel = new BaseResponseModel(false, "Bạn phải phát sinh giao dịch sau khi nhập gift code.");
+                baseResponseModel = new BaseResponseModel(false, "Bạn chưa cược đủ 50% giá trị nạp giftcode. Vui lòng cược thêm.");
                 return baseResponseModel.toJson();
             }
 

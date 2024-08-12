@@ -78,6 +78,6 @@ public interface GiftCodeService {
 
     GiftCodeDto findActiveByCode(String code);
 
-    public boolean checkUserTransactionAfterUseGiftCode(String nickName);
+    boolean checkUserTransactionAfterUseGiftCode(String nickName);
 }
 
