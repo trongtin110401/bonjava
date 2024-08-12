@@ -200,12 +200,14 @@ public class MGRoomCandy extends MGRoom {
                                 String prizesOnLine = "";
                                 boolean forceNoHu = false;
 
-                                if (lineArr.length >= 5
-                                        && ((userForce.equals(username) && betValueCache.equals(String.valueOf(this.betValue)))
-                                        || (!u.isBot() && randomJackpot(percentJackpot)))) {
-                                    forceNoHu = true;
-                                    forceJackpotByUser = true;
-                                }
+//                                if (lineArr.length >= 5
+//                                        && ((userForce.equals(username) && betValueCache.equals(String.valueOf(this.betValue)))
+//                                        || (!u.isBot()))) {
+//                                    forceNoHu = true;
+//                                    forceJackpotByUser = true;
+//                                }
+
+                                System.out.println("forceNoHu " + forceNoHu + " - " + forceJackpotByUser);
 
                                 Item[][] matrix = forceNoHu ? PokeGoUtils.generateMatrixNoHu(lineArr) : PokeGoUtils.generateMatrix();
                                 for (int i = 0; i < lineArr.length; ++i) {
@@ -266,8 +268,11 @@ public class MGRoomCandy extends MGRoom {
                                     }
                                     // Tuy kh�ng tr�ng JACKPOT nh?ng tr�ng Line to qu� c?ng c?n sinh l?i MATRIX
                                     if (!isGetJackpotNaturally) {
-                                        if (totalPrizes > getFunValue())
+                                        System.out.println("==================> 1");
+                                        if (totalPrizes > 0 && totalPrizes > getFunValue()) {
+                                            System.out.println("==================> 2");
                                             continue;
+                                        }
                                     }
                                 }
 
@@ -295,7 +300,7 @@ public class MGRoomCandy extends MGRoom {
                                         result = totalPrizes >= (this.betValue * 100L) ? (short) 2 : 1;
                                     }
                                 }
-                                moneyRes = this.userService.updateMoney(username, totalPrizes, this.moneyTypeStr, Games.CANDY.getName(), "Quay Whisky", this.buildDescription(totalBetValue, totalPrizes, result), fee, Long.valueOf(referenceId), TransType.END_TRANS);
+                                moneyRes = this.userService.updateMoney(username, totalPrizes, this.moneyTypeStr, Games.CANDY.getName(), "Quay Whisky", this.buildDescription(totalBetValue, totalPrizes, result), fee, referenceId, TransType.END_TRANS);
                                 long moneyExchange = totalPrizes - (long) this.betValue;
                                 if (moneyRes != null && moneyRes.isSuccess()) {
                                     currentMoney = moneyRes.getCurrentMoney();

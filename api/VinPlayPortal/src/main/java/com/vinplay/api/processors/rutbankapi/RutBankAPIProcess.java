@@ -52,14 +52,16 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
             }
 
 
-            long totalBetToday = getTotalBetToday(nickname);
-            long fistRechargeValueToday = getFirstRechargeToday(nickname);
+
             GiftCodeService giftCodeService = new GiftCodeServiceImpl();
             if (!giftCodeService.checkUserTransactionAfterUseGiftCode(nickname)) {
                 baseResponseModel = new BaseResponseModel(false, "Bạn chưa cược đủ 50% giá trị nạp giftcode. Vui lòng cược thêm.");
                 return baseResponseModel.toJson();
             }
 
+            long totalBetToday = getTotalBetToday(nickname);
+            long fistRechargeValueToday = getFirstRechargeToday(nickname);
+            System.out.println(" totalBetToday = " + totalBetToday + " - firstCharge = " + fistRechargeValueToday);
             if (totalBetToday <= 0 || fistRechargeValueToday <= 0 || totalBetToday < fistRechargeValueToday / 2) {
                 baseResponseModel = new BaseResponseModel(false, "Bạn chưa cược đủ 50% giá trị mã nạp đầu tiên. Vui lòng cược thêm.");
                 return baseResponseModel.toJson();
@@ -139,7 +141,7 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
         String startTime = startOfDay.format(formatter);
 
         // Get the end of the day (23:59:59)
-        LocalDateTime endOfDay = fromDate.atTime(23, 59, 59);
+        LocalDateTime endOfDay = LocalDate.now().atTime(23, 59, 59);
         String endTime = endOfDay.format(formatter);
 
         ReportDaoImpl reportDao = new ReportDaoImpl();
@@ -157,8 +159,6 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
     }
 
     private long getFirstRechargeToday(String nickname) {
-        long firstRechargeValue = 0L;
-
         // Define the format you want for the date-time strings
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
