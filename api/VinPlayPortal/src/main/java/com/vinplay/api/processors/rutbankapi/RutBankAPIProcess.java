@@ -52,7 +52,6 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
             }
 
 
-
             GiftCodeService giftCodeService = new GiftCodeServiceImpl();
             if (!giftCodeService.checkUserTransactionAfterUseGiftCode(nickname)) {
                 baseResponseModel = new BaseResponseModel(false, "Bạn phải phát sinh giao dịch sau khi nhập gift code.");
@@ -175,7 +174,7 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
 
         HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
         HistoryTransResponse res = historyTransDao.getListTransByDay(nickname, startTime, endTime);
-
+        System.out.println(nickname + " - " + startTime + " -> " + endTime + " - History trans count = " + res.getListTrans().size());
         if (CollectionUtils.isNotEmpty(res.getListTrans())) {
             // ??o ng??c list ?? l?y th?i gian t? th?p t?i cao
             Collections.reverse(res.getListTrans());
