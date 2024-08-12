@@ -268,8 +268,11 @@ public class MGRoomCandy extends MGRoom {
                                     }
                                     // Tuy kh�ng tr�ng JACKPOT nh?ng tr�ng Line to qu� c?ng c?n sinh l?i MATRIX
                                     if (!isGetJackpotNaturally) {
-                                        if (totalPrizes > getFunValue())
+                                        System.out.println("==================> 1");
+                                        if (totalPrizes > getFunValue()) {
+                                            System.out.println("==================> 2");
                                             continue;
+                                        }
                                     }
                                 }
 
