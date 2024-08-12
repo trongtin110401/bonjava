@@ -86,6 +86,7 @@ public class GetListUserLoseByDayProcessor implements BaseProcessor<HttpServletR
                     userLoseByDay.setMoney(userLoseByDay.getMoney() + (mapUserFishProfits.get(userLoseByDay.getNickname()) * -1));
                 }
             });
+            userLoseByDays.sort((u1, u2) -> Double.compare(u1.getMoney(), u2.getMoney()));
             userCodeResponse.setUsers(userLoseByDays);
             userCodeResponse.setTotalRecord(userLoseByDays.size());
 

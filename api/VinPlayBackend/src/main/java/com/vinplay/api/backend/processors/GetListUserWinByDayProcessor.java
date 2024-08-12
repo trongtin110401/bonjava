@@ -79,6 +79,7 @@ public class GetListUserWinByDayProcessor implements BaseProcessor<HttpServletRe
                 }
             });
 
+            userLoseByDays.sort((u1, u2) -> Double.compare(u2.getMoney(), u1.getMoney()));
             userCodeResponse.setUsers(userLoseByDays);
             userCodeResponse.setTotalRecord(userLoseByDays.size());
 
