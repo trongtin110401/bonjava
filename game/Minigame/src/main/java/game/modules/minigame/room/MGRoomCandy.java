@@ -200,12 +200,12 @@ public class MGRoomCandy extends MGRoom {
                                 String prizesOnLine = "";
                                 boolean forceNoHu = false;
 
-                                if (lineArr.length >= 5
-                                        && ((userForce.equals(username) && betValueCache.equals(String.valueOf(this.betValue)))
-                                        || (!u.isBot()))) {
-                                    forceNoHu = true;
-                                    forceJackpotByUser = true;
-                                }
+//                                if (lineArr.length >= 5
+//                                        && ((userForce.equals(username) && betValueCache.equals(String.valueOf(this.betValue)))
+//                                        || (!u.isBot()))) {
+//                                    forceNoHu = true;
+//                                    forceJackpotByUser = true;
+//                                }
 
                                 System.out.println("forceNoHu " + forceNoHu + " - " + forceJackpotByUser);
 
