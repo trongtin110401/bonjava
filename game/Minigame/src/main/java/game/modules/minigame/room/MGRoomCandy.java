@@ -191,6 +191,7 @@ public class MGRoomCandy extends MGRoom {
                         synchronized (this) {
                             block4:
                             while (!enoughPair) {
+                                System.out.println("=================>  lap wishky");
                                 result = 0;
                                 awardsOnLines.clear();
                                 totalPrizes = 0L;
