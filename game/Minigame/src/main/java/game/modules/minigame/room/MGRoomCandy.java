@@ -520,7 +520,7 @@ public class MGRoomCandy extends MGRoom {
         @Override
         public void run() {
             try {
-                MGRoomCandy.this.gameLoop();
+//                MGRoomCandy.this.gameLoop();
             } catch (Exception e) {
                 e.printStackTrace();
             }
