@@ -314,38 +314,38 @@ public class CandyModule
     }
 
     private void gameLoop() {
-        List<String> bots;
-        MGRoomCandy room;
-        ++this.countBot100;
-        if (this.countBot100 >= this.getCountTimeBot100()) {
-            this.countBot100 = 0;
-            bots = BotMinigame.getBots(ConfigGame.getIntValue(this.gameName + "_num_bot_100"), "vin");
-            for (String bot : bots) {
-                if (bot == null) continue;
-                room = (MGRoomCandy) rooms.get(Games.CANDY.getName() + "_vin_100");
-                room.play(bot, this.fullLines);
-            }
-        }
-        ++this.countBot1000;
-        if (this.countBot1000 >= this.getCountTimeBot1000()) {
-            this.countBot1000 = 0;
-            bots = BotMinigame.getBots(ConfigGame.getIntValue(this.gameName + "_num_bot_1000"), "vin");
-            for (String bot : bots) {
-                if (bot == null) continue;
-                room = (MGRoomCandy) rooms.get(Games.CANDY.getName() + "_vin_1000");
-                room.play(bot, this.fullLines);
-            }
-        }
-        ++this.countBot10000;
-        if (this.countBot10000 >= this.getCountTimeBot10000()) {
-            this.countBot10000 = 0;
-            bots = BotMinigame.getBots(ConfigGame.getIntValue(this.gameName + "_num_bot_10000"), "vin");
-            for (String bot : bots) {
-                if (bot == null) continue;
-                room = (MGRoomCandy) rooms.get(Games.CANDY.getName() + "_vin_10000");
-                room.play(bot, this.fullLines);
-            }
-        }
+//        List<String> bots;
+//        MGRoomCandy room;
+//        ++this.countBot100;
+//        if (this.countBot100 >= this.getCountTimeBot100()) {
+//            this.countBot100 = 0;
+//            bots = BotMinigame.getBots(ConfigGame.getIntValue(this.gameName + "_num_bot_100"), "vin");
+//            for (String bot : bots) {
+//                if (bot == null) continue;
+//                room = (MGRoomCandy) rooms.get(Games.CANDY.getName() + "_vin_100");
+//                room.play(bot, this.fullLines);
+//            }
+//        }
+//        ++this.countBot1000;
+//        if (this.countBot1000 >= this.getCountTimeBot1000()) {
+//            this.countBot1000 = 0;
+//            bots = BotMinigame.getBots(ConfigGame.getIntValue(this.gameName + "_num_bot_1000"), "vin");
+//            for (String bot : bots) {
+//                if (bot == null) continue;
+//                room = (MGRoomCandy) rooms.get(Games.CANDY.getName() + "_vin_1000");
+//                room.play(bot, this.fullLines);
+//            }
+//        }
+//        ++this.countBot10000;
+//        if (this.countBot10000 >= this.getCountTimeBot10000()) {
+//            this.countBot10000 = 0;
+//            bots = BotMinigame.getBots(ConfigGame.getIntValue(this.gameName + "_num_bot_10000"), "vin");
+//            for (String bot : bots) {
+//                if (bot == null) continue;
+//                room = (MGRoomCandy) rooms.get(Games.CANDY.getName() + "_vin_10000");
+//                room.play(bot, this.fullLines);
+//            }
+//        }
     }
 
     private static final class PokeGoX2Task

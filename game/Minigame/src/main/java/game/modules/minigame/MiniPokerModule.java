@@ -316,42 +316,42 @@ public class MiniPokerModule
     }
 
     private void gameLoop() {
-        try {
-            List<String> bots;
-            MGRoomMiniPoker room;
-            ++this.countBot100;
-            if (this.countBot100 >= this.getCountTimeBot100()) {
-                this.countBot100 = 0;
-                bots = BotMinigame.getBots(ConfigGame.getIntValue("mini_poker_num_bot_100"), "vin");
-                for (String bot : bots) {
-                    if (bot == null) continue;
-                    room = (MGRoomMiniPoker) rooms.get(Games.MINI_POKER.getName() + "_vin_100");
-                    room.play(bot, 100L);
-                }
-            }
-            ++this.countBot1000;
-            if (this.countBot1000 >= this.getCountTimeBot1000()) {
-                this.countBot1000 = 0;
-                bots = BotMinigame.getBots(ConfigGame.getIntValue("mini_poker_num_bot_1000"), "vin");
-                for (String bot : bots) {
-                    if (bot == null) continue;
-                    room = (MGRoomMiniPoker) rooms.get(Games.MINI_POKER.getName() + "_vin_1000");
-                    room.play(bot, 1000L);
-                }
-            }
-            ++this.countBot10000;
-            if (this.countBot10000 >= this.getCountTimeBot10000()) {
-                this.countBot10000 = 0;
-                bots = BotMinigame.getBots(ConfigGame.getIntValue("mini_poker_num_bot_10000"), "vin");
-                for (String bot : bots) {
-                    if (bot == null) continue;
-                    room = (MGRoomMiniPoker) rooms.get(Games.MINI_POKER.getName() + "_vin_10000");
-                    room.play(bot, 10000L);
-                }
-            }
-        } catch (Exception ex) {
-            System.out.println(ExceptionUtils.getStackTrace(ex));
-        }
+//        try {
+//            List<String> bots;
+//            MGRoomMiniPoker room;
+//            ++this.countBot100;
+//            if (this.countBot100 >= this.getCountTimeBot100()) {
+//                this.countBot100 = 0;
+//                bots = BotMinigame.getBots(ConfigGame.getIntValue("mini_poker_num_bot_100"), "vin");
+//                for (String bot : bots) {
+//                    if (bot == null) continue;
+//                    room = (MGRoomMiniPoker) rooms.get(Games.MINI_POKER.getName() + "_vin_100");
+//                    room.play(bot, 100L);
+//                }
+//            }
+//            ++this.countBot1000;
+//            if (this.countBot1000 >= this.getCountTimeBot1000()) {
+//                this.countBot1000 = 0;
+//                bots = BotMinigame.getBots(ConfigGame.getIntValue("mini_poker_num_bot_1000"), "vin");
+//                for (String bot : bots) {
+//                    if (bot == null) continue;
+//                    room = (MGRoomMiniPoker) rooms.get(Games.MINI_POKER.getName() + "_vin_1000");
+//                    room.play(bot, 1000L);
+//                }
+//            }
+//            ++this.countBot10000;
+//            if (this.countBot10000 >= this.getCountTimeBot10000()) {
+//                this.countBot10000 = 0;
+//                bots = BotMinigame.getBots(ConfigGame.getIntValue("mini_poker_num_bot_10000"), "vin");
+//                for (String bot : bots) {
+//                    if (bot == null) continue;
+//                    room = (MGRoomMiniPoker) rooms.get(Games.MINI_POKER.getName() + "_vin_10000");
+//                    room.play(bot, 10000L);
+//                }
+//            }
+//        } catch (Exception ex) {
+//            System.out.println(ExceptionUtils.getStackTrace(ex));
+//        }
     }
 
     static {
