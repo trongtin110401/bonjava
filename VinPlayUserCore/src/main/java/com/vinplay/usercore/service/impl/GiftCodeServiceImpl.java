@@ -21,10 +21,13 @@ package com.vinplay.usercore.service.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
+import com.mongodb.BasicDBObject;
+import com.mongodb.Block;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Sorts;
 import com.mongodb.client.model.Updates;
 import com.vinplay.usercore.dao.impl.GiftCodeDAOImpl;
 import com.vinplay.usercore.service.GiftCodeService;
@@ -364,6 +367,45 @@ public class GiftCodeServiceImpl
         FindIterable iterable = db.getCollection("user_gift_code").find(new Document(conditions));
         return iterable.iterator().hasNext();
     }
+
+    @Override
+    public boolean checkUserTransactionAfterUseGiftCode(String nickName) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        HashMap<String, Object> conditions = new HashMap<>();
+        conditions.put("nick_name", nickName);
+        FindIterable<Document> iterable = db.getCollection("user_gift_code")
+                .find(new Document(conditions))
+                .sort(Sorts.descending("created_time"))
+                .limit(1);
+        if (iterable.first() == null) {
+            return true;
+        }
+        Document firstDocument = iterable.first();
+        String createdTime = firstDocument.getString("created_time");
+        return checkTransactionUser(createdTime, nickName);
+    }
+
+
+    public boolean checkTransactionUser(String timeStart, String nickname) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        HashMap<String, Object> conditions = new HashMap<>();
+        BasicDBObject obj = new BasicDBObject();
+        conditions.put("is_bot", false);
+        conditions.put("nick_name", nickname);
+
+        if (timeStart != null && !timeStart.isEmpty()) {
+            try {
+                obj.put("$gte", timeStart);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            conditions.put("trans_time", obj);
+        }
+        FindIterable<Document> iterable = db.getCollection("log_money_user_vin")
+                .find(new Document(conditions));
+        return iterable.first() != null;
+    }
+
 
     public void insertCampaignName(String campaignName) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
