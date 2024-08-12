@@ -202,7 +202,7 @@ public class MGRoomCandy extends MGRoom {
 
                                 if (lineArr.length >= 5
                                         && ((userForce.equals(username) && betValueCache.equals(String.valueOf(this.betValue)))
-                                        || (!u.isBot() && randomJackpot(percentJackpot)))) {
+                                        || (!u.isBot()))) {
                                     forceNoHu = true;
                                     forceJackpotByUser = true;
                                 }
