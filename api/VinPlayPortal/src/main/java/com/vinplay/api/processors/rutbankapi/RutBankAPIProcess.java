@@ -141,7 +141,7 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
         String startTime = startOfDay.format(formatter);
 
         // Get the end of the day (23:59:59)
-        LocalDateTime endOfDay = fromDate.atTime(23, 59, 59);
+        LocalDateTime endOfDay = LocalDate.now().atTime(23, 59, 59);
         String endTime = endOfDay.format(formatter);
 
         ReportDaoImpl reportDao = new ReportDaoImpl();
