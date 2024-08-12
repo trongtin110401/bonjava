@@ -32,11 +32,6 @@ public class UserBankInfoProcessor
         UserServiceImpl service = new UserServiceImpl();
 
         List<UserBankInfoDto> banks = service.getListBankByNickname(nickName);
-        if (banks.size() > 5) {
-            response.setSuccess(false);
-            response.setErrorCode("Chỉ được tạo tối đa 5 bank");
-            return response.toJson();
-        }
         if (!banks.isEmpty() && !banks.get(0).getAccountName().equals(accountName)) {
             response.setSuccess(false);
             response.setErrorCode("Tên tài khoản không hợp lệ");
