@@ -198,11 +198,11 @@ public class MGRoomMiniPoker extends MGRoom {
                             long moneyExchange;
                             boolean forceNoHu = false;
 
-                            if ((userForce.equals(username) && betValueCache.equals(String.valueOf(this.betValue)))
-                                    || (!u.isBot() && randomJackpot(percentJackpot))) {
-                                forceNoHu = true;
-                                forceJackpotByUser = true;
-                            }
+//                            if ((userForce.equals(username) && betValueCache.equals(String.valueOf(this.betValue)))
+//                                    || (!u.isBot() && randomJackpot(percentJackpot))) {
+//                                forceNoHu = true;
+//                                forceJackpotByUser = true;
+//                            }
 
                             List<Card> cards = this.gen.randomCards2(forceJackpotByUser);
                             if (cards.size() != 5) {
@@ -291,7 +291,7 @@ public class MGRoomMiniPoker extends MGRoom {
                             }
 
                             // Phần thưởng quá lớn, random lại
-                            if (!forceNoHu && getFunValue() < prize) {
+                            if (!forceNoHu && getFunValue() < prize && prize > 0) {
                                 continue;
                             }
 
