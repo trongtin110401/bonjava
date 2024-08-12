@@ -190,6 +190,8 @@ public class MGRoomMiniPoker extends MGRoom {
                     }
                     synchronized (this) {
                         while (!enoughToPair) {
+                            if (!u.isBot())
+                                System.out.println("=================>  lap wishky");
                             GroupType groupType;
                             prize = 0L;
                             tienThuongX2 = 0L;
