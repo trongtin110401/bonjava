@@ -31,7 +31,6 @@ package game.modules.minigame.room;
 
 import bitzero.server.BitZeroServer;
 import bitzero.server.entities.User;
-import bitzero.server.extensions.data.BaseMsg;
 import bitzero.util.common.business.Debug;
 import com.vinplay.cardlib.models.Card;
 import com.vinplay.cardlib.models.GroupType;
@@ -44,13 +43,9 @@ import com.vinplay.dal.service.impl.BroadcastMessageServiceImpl;
 import com.vinplay.dal.service.impl.CacheServiceImpl;
 import com.vinplay.dal.service.impl.MiniGameServiceImpl;
 import com.vinplay.dal.service.impl.MiniPokerServiceImpl;
-import com.vinplay.usercore.dao.impl.UserDaoImpl;
 import com.vinplay.usercore.service.UserService;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.vbee.common.enums.Games;
-import com.vinplay.vbee.common.exceptions.KeyNotFoundException;
-import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
-import com.vinplay.vbee.common.models.UserModel;
 import com.vinplay.vbee.common.models.cache.UserCacheModel;
 import com.vinplay.vbee.common.response.MoneyResponse;
 import com.vinplay.vbee.common.statics.TransType;
@@ -58,40 +53,34 @@ import game.modules.minigame.cmd.send.minipoker.ForceStopAuatoPlayMiniPokerMsg;
 import game.modules.minigame.cmd.send.minipoker.ResultMiniPokerMsg;
 import game.modules.minigame.cmd.send.minipoker.UpdatePotMiniPokerMsg;
 import game.modules.minigame.entities.AutoUserMiniPoker;
-import game.modules.minigame.entities.MinigameConstant;
 import game.modules.minigame.utils.GenerationMiniPoker;
 import game.utils.ConfigGame;
 
 import java.io.IOException;
-import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IMap;
-
 public class MGRoomMiniPoker extends MGRoom {
-    private float tax = MinigameConstant.MINIGAME_TAX_VIN;
     private long pot;
-    private short moneyType;
-    private String moneyTypeStr;
+    private final short moneyType;
     private long betValue = 0L;
-    private long initPotValue = 500000L;
+    private final long initPotValue;
     private UserService userService = new UserServiceImpl();
     private MiniPokerService mpService = new MiniPokerServiceImpl();
     private MiniGameService mgService = new MiniGameServiceImpl();
-    private BroadcastMessageService broadcastMsgService = new BroadcastMessageServiceImpl();
+    private final BroadcastMessageService broadcastMsgService = new BroadcastMessageServiceImpl();
     private GenerationMiniPoker gen = new GenerationMiniPoker();
-    private Map<String, AutoUserMiniPoker> usersAuto = new HashMap<String, AutoUserMiniPoker>();
+    private final Map<String, AutoUserMiniPoker> usersAuto = new HashMap<>();
     private final Runnable gameLoopTask = new GameLoopTask();
     private long lastTimeUpdatePotToRoom = 0L;
     private long lastTimeUpdateFundToRoom = 0L;
-    private ThreadPoolExecutor executor;
-    private int countHu = -1;
-    private int countNoHuX2 = 0;
+    private final ThreadPoolExecutor executor;
     private boolean huX2 = false;
     protected CacheService sv = new CacheServiceImpl();
     private final Runnable checkResetPotTask = new CheckResetPot();
@@ -104,13 +93,9 @@ public class MGRoomMiniPoker extends MGRoom {
         super(Games.MINI_POKER.getName(), roomName, (int) baseBetValue, fund, moneyType);
         this.gameName = Games.MINI_POKER.getName();
         this.moneyType = moneyType;
-        if (moneyType == 1) {
-            this.moneyTypeStr = "vin";
-            this.tax = MinigameConstant.MINIGAME_TAX_VIN;
-        } else if (moneyType == 0) {
-            this.moneyTypeStr = "xu";
-            this.tax = MinigameConstant.MINIGAME_TAX_XU;
-        }
+
+        setPercentFee();
+
         this.executor = moneyType == 1 ? (ThreadPoolExecutor) Executors.newFixedThreadPool(ConfigGame.getIntValue("mini_poker_thread_pool_per_room_vin")) : (ThreadPoolExecutor) Executors.newFixedThreadPool(ConfigGame.getIntValue("mini_poker_thread_pool_per_room_xu"));
         if (pot < 0) {
             pot = initPotValue;
@@ -126,16 +111,9 @@ public class MGRoomMiniPoker extends MGRoom {
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.checkResetPotTask, 10, 10, TimeUnit.SECONDS);
         try {
-            this.countHu = this.sv.getValueInt(this.name + "_count_hu");
-            this.countNoHuX2 = this.sv.getValueInt(this.name + "_count_no_hu_x2");
-            this.calculatHuX2();
-        } catch (KeyNotFoundException keyNotFoundException) {
-            // empty catch block
-        }
-        try {
             this.mgService.savePot(this.name, CACHE_JACK_POT_VALUE_SLOT + "_" + this.betValue + "_" + gameName, pot, this.huX2);
-        } catch (IOException | InterruptedException | TimeoutException exception) {
-            // empty catch block
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -159,50 +137,66 @@ public class MGRoomMiniPoker extends MGRoom {
         UserCacheModel u = this.userService.getUser(username);
         long referenceId = System.currentTimeMillis();
 
-        String userForce = "";
-        String betValueCache = "";
+        // từ PHP admin, cài đặt cho một người chơi trúng JACKPOT
+        String usernameForce;
+        // phòng được set nổ hũ
+        String roomForce;
         boolean forceJackpotByUser = false;
         try {
-            userForce = sv.getValueStr(CACHE_NAME_USER_SPOT + this.gameName);
-            betValueCache = sv.getValueStr(CACHE_BET_VALUE_SLOT + this.gameName);
+            usernameForce = sv.getValueStr(CACHE_NAME_USER_SPOT + this.gameName);
+            roomForce = sv.getValueStr(CACHE_BET_VALUE_SLOT + this.gameName);
         } catch (Exception e) {
-            userForce = "";
-            betValueCache = "";
+            usernameForce = "";
+            roomForce = "";
         }
         long currentMoney = this.userService.getMoneyUserCache(username, this.moneyTypeStr);
         if (betValue > 0L) {
             if (currentMoney >= betValue) {
                 MoneyResponse moneyRes = new MoneyResponse(false, "1001");
                 if (!u.isBot()) {
-                    moneyRes = this.userService.updateMoney(username, -betValue, this.moneyTypeStr, Games.MINI_POKER.getName(), "Quay MiniPoker", "Đặt cược MiniPoker", 0L, Long.valueOf(referenceId), TransType.START_TRANS);
+                    moneyRes = this.userService.updateMoney(username, -betValue, this.moneyTypeStr, Games.MINI_POKER.getName(), "Quay MiniPoker", "Đặt cược MiniPoker", 0L, referenceId, TransType.START_TRANS);
                 } else {
                     moneyRes.setSuccess(true);
                 }
                 if (moneyRes != null && moneyRes.isSuccess()) {
                     boolean enoughToPair = false;
                     long moneyToPot = betValue / 100L;
-                    long fee = (long) (betValue * this.tax / 100.0f);
+                    long fee = (long) (betValue * percentFee / 100.0f);
                     long moneyToFund = betValue - moneyToPot - fee;
-                    long tienThuongX2 = 0L;
+                    long tienThuongX2;
                     this.pot += moneyToPot;
                     if (!u.isBot()) {
                         updateFunValue(moneyToFund);
                     }
                     synchronized (this) {
                         while (!enoughToPair) {
-                            if (!u.isBot())
-                                System.out.println("=================>  lap wishky");
                             GroupType groupType;
                             prize = 0L;
                             tienThuongX2 = 0L;
                             long moneyExchange;
-                            boolean forceNoHu = false;
-
-//                            if ((userForce.equals(username) && betValueCache.equals(String.valueOf(this.betValue)))
-//                                    || (!u.isBot() && randomJackpot(percentJackpot))) {
-//                                forceNoHu = true;
-//                                forceJackpotByUser = true;
-//                            }
+                            boolean isForceJackpot = false;
+                            if (betValue == 100) {
+                                if ((usernameForce.equals(username) && roomForce.equals(String.valueOf(100)))
+                                        || (!u.isBot() && randomJackpot(percentJackpot))) {
+                                    isForceJackpot = true;
+                                    result = ResultPoker.NO_HU;
+                                    forceJackpotByUser = true;
+                                }
+                            } else if (betValue == 1000) {
+                                if ((usernameForce.equals(username) && roomForce.equals(String.valueOf(1000)))
+                                        || (!u.isBot() && randomJackpot(percentJackpot))) {
+                                    isForceJackpot = true;
+                                    result = ResultPoker.NO_HU;
+                                    forceJackpotByUser = true;
+                                }
+                            } else {
+                                if ((usernameForce.equals(username) && roomForce.equals(String.valueOf(10000)))
+                                        || (!u.isBot() && randomJackpot(percentJackpot))) {
+                                    isForceJackpot = true;
+                                    result = ResultPoker.NO_HU;
+                                    forceJackpotByUser = true;
+                                }
+                            }
 
                             List<Card> cards = this.gen.randomCards2(forceJackpotByUser);
                             if (cards.size() != 5) {
@@ -223,7 +217,6 @@ public class MGRoomMiniPoker extends MGRoom {
                                         break;
                                     }
                                     result = ResultPoker.MOT_DOI_NHO;
-                                    prize = 0L;
                                     break;
                                 }
                                 case TwoPair: {
@@ -291,7 +284,7 @@ public class MGRoomMiniPoker extends MGRoom {
                             }
 
                             // Phần thưởng quá lớn, random lại
-                            if (!forceNoHu && getFunValue() < prize && prize > 0) {
+                            if (!isForceJackpot && prize > 0 && getFunValue() < prize) {
                                 continue;
                             }
 
@@ -309,7 +302,7 @@ public class MGRoomMiniPoker extends MGRoom {
                                     if (this.huX2) {
                                         result = ResultPoker.NO_HU_X2;
                                     }
-                                    if (forceNoHu) {
+                                    if (isForceJackpot) {
                                         try {
                                             this.pot = this.initPotValue;
                                             if (!u.isBot()) updateFunValue(-initPotValue);
@@ -328,10 +321,10 @@ public class MGRoomMiniPoker extends MGRoom {
                             String des = "Quay MiniPoker";
                             if (result == ResultPoker.NO_HU_X2 && !u.isBot()) {
                                 moneyAdded -= tienThuongX2;
-                                this.userService.updateMoney(username, tienThuongX2, this.moneyTypeStr, this.gameName, des, "Th\u1eafng X2", 0L, null, TransType.NO_VIPPOINT);
+                                this.userService.updateMoney(username, tienThuongX2, this.moneyTypeStr, this.gameName, des, "Thắng X2", 0L, null, TransType.NO_VIPPOINT);
                             }
                             if (!u.isBot()) {
-                                moneyRes = this.userService.updateMoney(username, moneyAdded, this.moneyTypeStr, Games.MINI_POKER.getName(), des, this.buildDescription(betValue, moneyAdded, result), fee, Long.valueOf(referenceId), TransType.END_TRANS);
+                                moneyRes = this.userService.updateMoney(username, moneyAdded, this.moneyTypeStr, Games.MINI_POKER.getName(), des, this.buildDescription(betValue, moneyAdded, result), fee, referenceId, TransType.END_TRANS);
                             }
                             moneyExchange = prize - betValue;
                             if (moneyRes != null && moneyRes.isSuccess()) {
@@ -364,7 +357,6 @@ public class MGRoomMiniPoker extends MGRoom {
             result = ResultPoker.DAT_CUOC_KHONG_HOP_LE;
         }
 
-//        sv.setValue(name, (int) pot);
         sv.setValue(CACHE_JACK_POT_VALUE_SLOT + "_" + this.betValue + "_" + gameName, String.valueOf(this.pot));
 
         if (forceJackpotByUser) {
@@ -381,9 +373,7 @@ public class MGRoomMiniPoker extends MGRoom {
      * WARNING - Removed try catching itself - possible behaviour change.
      */
     public void autoPlay(User user) {
-        Map<String, AutoUserMiniPoker> map;
-        Map<String, AutoUserMiniPoker> map2 = map = this.usersAuto;
-        synchronized (map2) {
+        synchronized (this.usersAuto) {
             if (this.usersAuto.containsKey(user.getName())) {
                 AutoUserMiniPoker entry = this.usersAuto.get(user.getName());
                 this.forceStopAutoPlay(entry.getUser());
@@ -396,12 +386,8 @@ public class MGRoomMiniPoker extends MGRoom {
      * WARNING - Removed try catching itself - possible behaviour change.
      */
     public void stopAutoPlay(User user) {
-        Map<String, AutoUserMiniPoker> map;
-        Map<String, AutoUserMiniPoker> map2 = map = this.usersAuto;
-        synchronized (map2) {
-            AutoUserMiniPoker entry;
-//            if (this.usersAuto.containsKey(user.getName()) && (entry = this.usersAuto.get(user.getName())).getUser().getUniqueId() == user.getUniqueId()) {
-            if (this.usersAuto.containsKey(user.getName()) && (entry = this.usersAuto.get(user.getName())).getUser().getId() == user.getId()) {
+        synchronized (this.usersAuto) {
+            if (this.usersAuto.containsKey(user.getName()) && this.usersAuto.get(user.getName()).getUser().getId() == user.getId()) {
                 this.usersAuto.remove(user.getName());
             }
         }
@@ -411,12 +397,10 @@ public class MGRoomMiniPoker extends MGRoom {
      * WARNING - Removed try catching itself - possible behaviour change.
      */
     public void forceStopAutoPlay(User user) {
-        Map<String, AutoUserMiniPoker> map;
-        Map<String, AutoUserMiniPoker> map2 = map = this.usersAuto;
-        synchronized (map2) {
+        synchronized (this.usersAuto) {
             this.usersAuto.remove(user.getName());
             ForceStopAuatoPlayMiniPokerMsg msg = new ForceStopAuatoPlayMiniPokerMsg();
-            this.sendMessageToUser((BaseMsg) msg, user);
+            this.sendMessageToUser(msg, user);
         }
     }
 
@@ -431,7 +415,7 @@ public class MGRoomMiniPoker extends MGRoom {
             try {
                 this.mgService.saveFund(this.name, getFunValue());
             } catch (IOException | InterruptedException | TimeoutException e) {
-                Debug.trace((Object[]) new Object[]{"MINI POKER: update fund poker error ", e.getMessage()});
+                Debug.trace("MINI POKER: update fund poker error ", e.getMessage());
             }
             this.lastTimeUpdateFundToRoom = currentTime;
         }
@@ -448,7 +432,7 @@ public class MGRoomMiniPoker extends MGRoom {
             try {
                 this.mgService.savePot(this.name, CACHE_JACK_POT_VALUE_SLOT + "_" + this.betValue + "_" + gameName, this.pot, false);
             } catch (IOException | InterruptedException | TimeoutException e) {
-                Debug.trace((Object[]) new Object[]{"MINI POKER: update pot poker error ", e.getMessage()});
+                Debug.trace("MINI POKER: update pot poker error ", e.getMessage());
             }
         }
     }
@@ -468,10 +452,8 @@ public class MGRoomMiniPoker extends MGRoom {
         setPercentFee();
         setPercentJackpot();
 
-        Map<String, AutoUserMiniPoker> map;
-        ArrayList<User> usersPlay = new ArrayList<User>();
-        Map<String, AutoUserMiniPoker> map2 = map = this.usersAuto;
-        synchronized (map2) {
+        ArrayList<User> usersPlay = new ArrayList<>();
+        synchronized (this.usersAuto) {
             for (AutoUserMiniPoker user : this.usersAuto.values()) {
                 boolean play = user.incCount();
                 if (!play) continue;
@@ -511,44 +493,44 @@ public class MGRoomMiniPoker extends MGRoom {
     private String resultToString(short result) {
         switch (result) {
             case 1: {
-                return "N\u1ed5 h\u0169";
+                return "Nổ hũ";
             }
             case 12: {
-                return "N\u1ed5 h\u0169 X2";
+                return "Nổ hũ X2";
             }
             case 2: {
-                return "Th\u00f9ng ph\u00e1 s\u1ea3nh";
+                return "Thùng phá sảnh";
             }
             case 3: {
-                return "T\u1ee9 qu\u00fd";
+                return "Tứ quý";
             }
             case 4: {
-                return "C\u00f9 l\u0169";
+                return "Cù lũ";
             }
             case 5: {
-                return "Th\u1eafng";
+                return "Thắng";
             }
             case 6: {
-                return "S\u1ea3nh";
+                return "Sảnh";
             }
             case 7: {
-                return "S\u1ea3nh ch\u00faa";
+                return "Sảnh chúa";
             }
             case 8: {
-                return "Hai \u0111\u00f4i";
+                return "Hai đôi";
             }
             case 9: {
-                return "L\u00e1 b\u00e0i cao";
+                return "Lá bài cao";
             }
         }
-        return "Tr\u01b0\u1ee3t";
+        return "Trượt";
     }
 
     @Override
     public boolean joinRoom(User user) {
         boolean result = super.joinRoom(user);
         if (result) {
-            user.setProperty((Object) "MGROOM_MINI_POKER_INFO", (Object) this);
+            user.setProperty("MGROOM_MINI_POKER_INFO", this);
         }
         return result;
     }
@@ -575,62 +557,13 @@ public class MGRoomMiniPoker extends MGRoom {
     }
 
     public void startHuX2() {
-        /*
-        Debug.trace((Object)(this.gameName + " start hu X2"));
-        this.countHu = 1;
-        this.sv.setValue(this.name + "_count_hu", this.countHu);
-        if (this.moneyType == 1 && this.betValue == 100L) {
-            this.huX2 = true;
-        }*/
     }
 
-    public void stopHuX2() {
-        Debug.trace((Object) (this.gameName + " stop hu x2"));
-        this.countHu = -1;
-        this.countNoHuX2 = 0;
-        this.huX2 = false;
-        this.sv.setValue(this.name + "_count_hu", this.countHu);
-        this.sv.setValue(this.name + "_count_no_hu_x2", this.countNoHuX2);
-    }
-
-    public void noHuX2() {
-        /*
-        if (this.countHu > -1) {
-            ++this.countHu;
-            this.sv.setValue(this.name + "_count_hu", this.countHu);
-            if (this.huX2) {
-                ++this.countNoHuX2;
-                this.sv.setValue(this.name + "_count_no_hu_x2", this.countNoHuX2);
-                Debug.trace((Object)(this.gameName + " No hu X2: " + this.countHu + " , huX2= " + this.countNoHuX2));
-                if (this.betValue == 100L && this.countNoHuX2 >= 10) {
-                    MiniPokerModule.stopX2();
-                    this.stopHuX2();
-                }
-                if (this.betValue == 1000L && this.countNoHuX2 >= 1) {
-                    MiniPokerModule.stopX2();
-                    this.stopHuX2();
-                }
-            }
-            this.calculatHuX2();
-        }*/
-    }
 
     private void calculatHuX2() {
-        /*
-        if (this.countHu > -1 && this.moneyType == 1) {
-            if (this.betValue == 100L) {
-                this.huX2 = this.countHu % 4 == 1 && this.countNoHuX2 < 10;
-            } else if (this.betValue == 1000L) {
-                this.huX2 = this.countHu == 3 && this.countNoHuX2 < 1;
-            }
-            Debug.trace((Object)("Count hu X2 " + this.name + ": " + this.countNoHuX2));
-        }
-        Debug.trace((Object)("Count hu " + this.name + ": " + this.countHu + ", x2= " + this.huX2));
-
-         */
     }
 
-    public class ResultPoker {
+    public static class ResultPoker {
         public static final short LOI_HE_THONG = 100;
         public static final short DAT_CUOC_KHONG_HOP_LE = 101;
         public static final short KHONG_DU_TIEN = 102;
@@ -666,7 +599,7 @@ public class MGRoomMiniPoker extends MGRoom {
 
     private final class PlayListMiniPokerTask
             extends Thread {
-        private List<User> users;
+        private final List<User> users;
 
         private PlayListMiniPokerTask(List<User> users) {
             this.users = users;
