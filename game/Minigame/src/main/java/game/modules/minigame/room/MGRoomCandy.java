@@ -1,31 +1,4 @@
-/*
- * Decompiled with CFR 0.144.
- *
- * Could not load the following classes:
- *  bitzero.server.BitZeroServer
- *  bitzero.server.entities.User
- *  bitzero.server.extensions.data.BaseMsg
- *  bitzero.server.util.TaskScheduler
- *  bitzero.util.common.business.Debug
- *  com.vinplay.dal.service.BroadcastMessageService
- *  com.vinplay.dal.service.CacheService
- *  com.vinplay.dal.service.MiniGameService
- *  com.vinplay.dal.service.PokeGoService
- *  com.vinplay.dal.service.impl.BroadcastMessageServiceImpl
- *  com.vinplay.dal.service.impl.CacheServiceImpl
- *  com.vinplay.dal.service.impl.MiniGameServiceImpl
- *  com.vinplay.dal.service.impl.PokeGoServiceImpl
- *  com.vinplay.usercore.service.UserService
- *  com.vinplay.usercore.service.impl.UserServiceImpl
- *  com.vinplay.vbee.common.enums.Games
- *  com.vinplay.vbee.common.exceptions.KeyNotFoundException
- *  com.vinplay.vbee.common.models.UserModel
- *  com.vinplay.vbee.common.models.cache.UserCacheModel
- *  com.vinplay.vbee.common.response.MoneyResponse
- *  com.vinplay.vbee.common.statics.TransType
- *  com.vinplay.vbee.common.utils.CommonUtils
- *  com.vinplay.vbee.common.utils.DateTimeUtils
- */
+
 package game.modules.minigame.room;
 
 import bitzero.server.BitZeroServer;
@@ -132,8 +105,7 @@ public class MGRoomCandy extends MGRoom {
      */
     public void stopAutoPlay(User user) {
         synchronized (this.usersAuto) {
-            AutoUserPokeGo entry;
-            if (this.usersAuto.containsKey(user.getName()) && (entry = this.usersAuto.get(user.getName())).getUser().getId() == user.getId()) {
+            if (this.usersAuto.containsKey(user.getName()) && this.usersAuto.get(user.getName()).getUser().getId() == user.getId()) {
                 this.usersAuto.remove(user.getName());
             }
         }
@@ -143,11 +115,10 @@ public class MGRoomCandy extends MGRoom {
      * WARNING - Removed try catching itself - possible behaviour change.
      */
     public void forceStopAutoPlay(User user) {
-        Map<String, AutoUserPokeGo> map2 = this.usersAuto;
-        synchronized (map2) {
+        synchronized (this.usersAuto) {
             this.usersAuto.remove(user.getName());
             ForceStopAutoPlayPokeGoMsg msg = new ForceStopAutoPlayPokeGoMsg();
-            this.sendMessageToUser((BaseMsg) msg, user);
+            this.sendMessageToUser(msg, user);
         }
     }
 
@@ -159,7 +130,7 @@ public class MGRoomCandy extends MGRoom {
         String[] lineArr = linesStr.split(",");
         long currentMoney = this.userService.getMoneyUserCache(username, this.moneyTypeStr);
         UserCacheModel u = this.userService.getUser(username);
-        long totalBetValue = lineArr.length * this.betValue;
+        long totalBetValue = (long) lineArr.length * this.betValue;
         ResultPokeGoMsg msg = new ResultPokeGoMsg();
         // từ PHP admin, cài đặt cho một người chơi trúng JACKPOT
         boolean forceJackpotToUser = false;
@@ -179,7 +150,7 @@ public class MGRoomCandy extends MGRoom {
         if (lineArr.length > 0 && !linesStr.isEmpty()) {
             if (totalBetValue > 0L) {
                 if (totalBetValue <= currentMoney) {
-                    MoneyResponse moneyRes = this.userService.updateMoney(username, -totalBetValue, this.moneyTypeStr, Games.CANDY.getName(), "Quay Whisky", "Đặt cược Quay " + this.gameName, 0L, Long.valueOf(referenceId), TransType.START_TRANS);
+                    MoneyResponse moneyRes = this.userService.updateMoney(username, -totalBetValue, this.moneyTypeStr, Games.CANDY.getName(), "Quay Whisky", "Đặt cược Quay " + this.gameName, 0L, referenceId, TransType.START_TRANS);
                     if (moneyRes != null && moneyRes.isSuccess()) {
                         long fee = totalBetValue * percentFee / 100L;
                         long moneyToPot = totalBetValue / 100L;
@@ -190,18 +161,16 @@ public class MGRoomCandy extends MGRoom {
 
                         this.pot += moneyToPot;
                         boolean enoughPair = false;
-                        ArrayList<AwardsOnLine> awardsOnLines = new ArrayList<AwardsOnLine>();
-                        long totalPrizes = 0L;
+                        ArrayList<AwardsOnLine> awardsOnLines = new ArrayList<>();
+                        long totalPrizes;
                         synchronized (this) {
                             block4:
                             while (!enoughPair) {
-                                if (!u.isBot())
-                                    System.out.println("=================>  lap wishky");
                                 result = 0;
                                 awardsOnLines.clear();
                                 totalPrizes = 0L;
-                                String linesWin = "";
-                                String prizesOnLine = "";
+                                String linesWin;
+                                String prizesOnLine;
                                 boolean forceNoHu = false;
 
                                 if (betValue == 100) {
@@ -228,8 +197,7 @@ public class MGRoomCandy extends MGRoom {
                                 }
 
                                 Item[][] matrix = forceNoHu ? PokeGoUtils.generateMatrixNoHu(lineArr) : PokeGoUtils.generateMatrix();
-                                for (int i = 0; i < lineArr.length; ++i) {
-                                    String entry = lineArr[i];
+                                for (String entry : lineArr) {
                                     ArrayList<Award> awardList = new ArrayList<Award>();
                                     Line line = PokeGoUtils.getLine(this.lines, matrix, Integer.parseInt(entry));
                                     PokeGoUtils.calculateLine(line, awardList);
@@ -244,8 +212,6 @@ public class MGRoomCandy extends MGRoom {
                                                 }
                                             }
                                             if (forceNoHu) {
-                                                result = 3;
-//                                            money = this.huX2 ? this.pot * 2L : this.pot;
                                                 money = this.pot;
                                             }
                                         }
@@ -297,11 +263,7 @@ public class MGRoomCandy extends MGRoom {
                                 // ?i?u ki?n tr�ng th??ng ?� th?a m�n, d?ng v�ng l?p
                                 enoughPair = true;
                                 if (totalPrizes > 0L) {
-                                    if (result == 3) {
-                                        if (this.huX2) {
-                                            totalPrizes += this.pot;
-                                            result = 4;
-                                        }
+                                    if (result == ResultPokeGo.NO_HU) {
                                         this.pot = this.initPotValue;
                                         if (!u.isBot()) updateFunValue(-initPotValue);
                                         if (forceNoHu) {
@@ -313,8 +275,7 @@ public class MGRoomCandy extends MGRoom {
                                             }
                                         }
                                     } else {
-                                        if (!u.isBot())
-                                            updateFunValue(-totalPrizes);
+                                        if (!u.isBot()) updateFunValue(-totalPrizes);
                                         result = totalPrizes >= (this.betValue * 100L) ? (short) 2 : 1;
                                     }
                                 }
@@ -335,7 +296,7 @@ public class MGRoomCandy extends MGRoom {
                                     if (!u.isBot()) {
                                         this.pgService.logPokeGo(referenceId, username, this.betValue, linesStr, linesWin, prizesOnLine, result, totalPrizes, this.moneyType, currentTimeStr, msg.matrix);
                                     }
-                                    if (result == 3 || result == 4) {
+                                    if (result == ResultPokeGo.NO_HU) {
                                         this.pgService.addTop(username, this.betValue, totalPrizes, this.moneyType, currentTimeStr, result);
                                     }
                                 } catch (InterruptedException | TimeoutException | IOException exception) {
@@ -375,7 +336,7 @@ public class MGRoomCandy extends MGRoom {
     public short play(User user, String linesStr) {
         String username = user.getName();
         ResultPokeGoMsg msg = this.play(username, linesStr);
-        this.sendMessageToUser((BaseMsg) msg, user);
+        this.sendMessageToUser(msg, user);
         return msg.result;
     }
 
@@ -385,7 +346,7 @@ public class MGRoomCandy extends MGRoom {
             try {
                 this.mgService.saveFund(this.name, getFunValue());
             } catch (IOException | InterruptedException | TimeoutException e) {
-                Debug.trace((Object[]) new Object[]{"MINI POKER: update fund poker error ", e.getMessage()});
+                Debug.trace("MINI POKER: update fund poker error ", e.getMessage());
             }
             this.lastTimeUpdateFundToRoom = currentTime;
         }
@@ -402,7 +363,7 @@ public class MGRoomCandy extends MGRoom {
             try {
                 this.mgService.savePot(this.name, CACHE_JACK_POT_VALUE_SLOT + "_" + this.betValue + "_" + gameName, this.pot, this.huX2);
             } catch (IOException | InterruptedException | TimeoutException e) {
-                Debug.trace((Object[]) new Object[]{"MINI POKER: update pot poker error ", e.getMessage()});
+                Debug.trace("MINI POKER: update pot poker error ", e.getMessage());
             }
         }
     }
@@ -410,16 +371,7 @@ public class MGRoomCandy extends MGRoom {
     public void updatePotToUser(User user) {
         UpdatePotPokeGoMsg msg = new UpdatePotPokeGoMsg();
         msg.value = this.pot;
-        this.sendMessageToUser((BaseMsg) msg, user);
-    }
-
-    private boolean checkDieuKienNoHu(String username) {
-        try {
-            UserModel u = this.userService.getUserByUserName(username);
-            return u.isBot();
-        } catch (Exception u) {
-            return false;
-        }
+        this.sendMessageToUser(msg, user);
     }
 
     @Override
@@ -445,10 +397,8 @@ public class MGRoomCandy extends MGRoom {
         setPercentFee();
         setPercentJackpot();
 
-        Map<String, AutoUserPokeGo> map;
-        ArrayList<AutoUserPokeGo> usersPlay = new ArrayList<AutoUserPokeGo>();
-        Map<String, AutoUserPokeGo> map2 = map = this.usersAuto;
-        synchronized (map2) {
+        ArrayList<AutoUserPokeGo> usersPlay = new ArrayList<>();
+        synchronized (this.usersAuto) {
             for (AutoUserPokeGo user : this.usersAuto.values()) {
                 boolean play = user.incCount();
                 if (!play) continue;
@@ -489,25 +439,9 @@ public class MGRoomCandy extends MGRoom {
     public boolean joinRoom(User user) {
         boolean result = super.joinRoom(user);
         if (result) {
-            user.setProperty((Object) "MGROOM_" + this.gameName + "_INFO", (Object) this);
+            user.setProperty("MGROOM_" + this.gameName + "_INFO", this);
         }
         return result;
-    }
-
-    public void startHuX2() {
-
-    }
-
-    public void stopHuX2() {
-
-    }
-
-    public void noHuX2() {
-
-    }
-
-    private void calculatHuX2() {
-
     }
 
     private String buildDescription(long totalBet, long totalPrizes, short result) {
@@ -520,19 +454,19 @@ public class MGRoomCandy extends MGRoom {
     private String resultToString(short result) {
         switch (result) {
             case 3: {
-                return "N\u1ed5 h\u0169";
+                return "Nổ hũ";
             }
             case 4: {
-                return "N\u1ed5 h\u0169 X2";
+                return "Nổ hũ X2";
             }
             case 1: {
-                return "Th\u1eafng";
+                return "Thắng";
             }
             case 2: {
-                return "Th\u1eafng l\u1edbn";
+                return "Thắng lớn";
             }
         }
-        return "Tr\u01b0\u1ee3t";
+        return "Trượt";
     }
 
     private final class GameLoopTask
@@ -550,7 +484,7 @@ public class MGRoomCandy extends MGRoom {
         }
     }
 
-    public class ResultPokeGo {
+    public static class ResultPokeGo {
         public static final short LOI_HE_THONG = 100;
         public static final short DAT_CUOC_KHONG_HOP_LE = 101;
         public static final short KHONG_DU_TIEN = 102;
@@ -563,7 +497,7 @@ public class MGRoomCandy extends MGRoom {
 
     private final class PlayListPokeGoTask
             extends Thread {
-        private List<AutoUserPokeGo> users;
+        private final List<AutoUserPokeGo> users;
 
         private PlayListPokeGoTask(List<AutoUserPokeGo> users) {
             this.users = users;
