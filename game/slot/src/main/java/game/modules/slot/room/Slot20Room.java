@@ -156,7 +156,6 @@ public class Slot20Room extends SlotRoom {
                         ArrayList<AwardsOnLine> awardsOnLines = new ArrayList<>();
 
                         synchronized (this) {
-                            long beforeFund = getFunValue();
                             block4:
                             while (!enoughPair) {
                                 result = 0;

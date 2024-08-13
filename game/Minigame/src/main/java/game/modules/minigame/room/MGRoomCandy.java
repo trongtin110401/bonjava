@@ -36,6 +36,7 @@ import com.vinplay.dal.service.BroadcastMessageService;
 import com.vinplay.dal.service.MiniGameService;
 import com.vinplay.dal.service.PokeGoService;
 import com.vinplay.dal.service.impl.BroadcastMessageServiceImpl;
+import com.vinplay.dal.service.impl.CacheServiceImpl;
 import com.vinplay.dal.service.impl.MiniGameServiceImpl;
 import com.vinplay.dal.service.impl.PokeGoServiceImpl;
 import com.vinplay.usercore.service.UserService;
@@ -155,22 +156,25 @@ public class MGRoomCandy extends MGRoom {
         String currentTimeStr = DateTimeUtils.getCurrentTime();
         long referenceId = CandyModule.getNewRefenceId();
         short result = 0;
-        int soLanNoHu = ConfigGame.getIntValue(this.gameName + "_so_lan_no_hu");
-        Random rd;
         String[] lineArr = linesStr.split(",");
         long currentMoney = this.userService.getMoneyUserCache(username, this.moneyTypeStr);
         UserCacheModel u = this.userService.getUser(username);
         long totalBetValue = lineArr.length * this.betValue;
         ResultPokeGoMsg msg = new ResultPokeGoMsg();
-        String userForce = "";
-        String betValueCache = "";
-        boolean forceJackpotByUser = false;
+        // từ PHP admin, cài đặt cho một người chơi trúng JACKPOT
+        boolean forceJackpotToUser = false;
+        // người chơi được set nổ hũ
+        String usernameForce;
+        // phòng được set nổ hũ
+        String roomForce;
+        // Lớp dịch vụ caching
+        CacheServiceImpl cacheService = new CacheServiceImpl();
         try {
-            userForce = cacheService.getValueStr(CACHE_NAME_USER_SPOT + this.gameName);
-            betValueCache = cacheService.getValueStr(CACHE_BET_VALUE_SLOT + this.gameName);
+            usernameForce = cacheService.getValueStr(CACHE_NAME_USER_SPOT + gameName);
+            roomForce = cacheService.getValueStr(CACHE_BET_VALUE_SLOT + gameName);
         } catch (Exception e) {
-            userForce = "";
-            betValueCache = "";
+            usernameForce = "";
+            roomForce = "";
         }
         if (lineArr.length > 0 && !linesStr.isEmpty()) {
             if (totalBetValue > 0L) {
@@ -200,14 +204,28 @@ public class MGRoomCandy extends MGRoom {
                                 String prizesOnLine = "";
                                 boolean forceNoHu = false;
 
-//                                if (lineArr.length >= 5
-//                                        && ((userForce.equals(username) && betValueCache.equals(String.valueOf(this.betValue)))
-//                                        || (!u.isBot()))) {
-//                                    forceNoHu = true;
-//                                    forceJackpotByUser = true;
-//                                }
-
-                                System.out.println("forceNoHu " + forceNoHu + " - " + forceJackpotByUser);
+                                if (betValue == 100) {
+                                    if ((usernameForce.equals(username) && roomForce.equals(String.valueOf(100)))
+                                            || (!u.isBot() && randomJackpot(percentJackpot))) {
+                                        forceNoHu = true;
+                                        forceJackpotToUser = true;
+                                        result = ResultPokeGo.NO_HU;
+                                    }
+                                } else if (betValue == 1000) {
+                                    if ((usernameForce.equals(username) && roomForce.equals(String.valueOf(1000)))
+                                            || (!u.isBot() && randomJackpot(percentJackpot))) {
+                                        forceNoHu = true;
+                                        forceJackpotToUser = true;
+                                        result = ResultPokeGo.NO_HU;
+                                    }
+                                } else {
+                                    if ((usernameForce.equals(username) && roomForce.equals(String.valueOf(10000)))
+                                            || (!u.isBot() && randomJackpot(percentJackpot))) {
+                                        forceNoHu = true;
+                                        forceJackpotToUser = true;
+                                        result = ResultPokeGo.NO_HU;
+                                    }
+                                }
 
                                 Item[][] matrix = forceNoHu ? PokeGoUtils.generateMatrixNoHu(lineArr) : PokeGoUtils.generateMatrix();
                                 for (int i = 0; i < lineArr.length; ++i) {
@@ -348,7 +366,7 @@ public class MGRoomCandy extends MGRoom {
 //        cacheService.setValue(this.name, this.pot);
         cacheService.setValue(CACHE_JACK_POT_VALUE_SLOT + "_" + this.betValue + "_" + gameName, String.valueOf(this.pot));
 
-        if (forceJackpotByUser) {
+        if (forceJackpotToUser) {
             this.sendNotifyNoHu(username, (byte) 1, msg.prize, this.gameName);
         }
         return msg;
