@@ -56,7 +56,7 @@ public class CaoThapServiceImpl
         UpdateFundMessage message = new UpdateFundMessage();
         message.fundName = fundName;
         message.newValue = newValue;
-        RMQApi.publishMessage((String) "queue_fund", (BaseMessage) message, (int) 110);
+        RMQApi.publishMessage("queue_fund", message, 110);
     }
 
     @Override

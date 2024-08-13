@@ -171,15 +171,12 @@ public class MGRoomCaoThap extends MGRoom {
             info.setStep((short) (info.getStep() + 1));
             if (!((info.getMoneyUp() == 0L && choose == TREN) || (info.getMoneyDown() == 0L && choose == DUOI))) { // Không được chọn TRÊN khi ra A và chọn DƯỚI khi ra 2
                 long moneyWin;
-//                long fund;
                 byte numA;
                 Card nextCard;
                 Deck deck;
                 short result = 0;
-//                int i = 0;
                 boolean noHu = false;
                 if (this.moneyType == 1 && info.getNumA() == 2) {
-                    // // lock no hũ 11/01 kane
                     noHu = (this.baseBetValue < 100000 || this.userService.getTotalRechargeMoney(user.getName()) >= Math.round((double) this.pot * 0.1)) && CaoThapUtils.isDoWithRatio(1000.0);
                 }
 
@@ -215,8 +212,7 @@ public class MGRoomCaoThap extends MGRoom {
                         }
                     }
 
-                    if (result == ResultCaoThap.THANG && getFunValue() - moneyWin < 0 && countRetryRandom < 1) {
-                        countRetryRandom++;
+                    if (result == ResultCaoThap.THANG && moneyWin > 0 && getFunValue() - moneyWin < 0) {
                         continue;
                     }
                     if (nextCard.getRank() == Rank.Ace && (numA = (byte) (numA + 1)) == 3)
