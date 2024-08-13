@@ -100,34 +100,6 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
     }
 
     private long getTotalBetToday(String nickname) {
-//        Map<String, ReportMoneySystemModel> actions = new HashMap();
-//        HazelcastInstance client = HazelcastClientFactory.getInstance();
-//        String today = VinPlayUtils.getCurrentDate();
-//        ReportModel model;
-//        String actionname;
-//        IMap<String, ReportModel> reportMap = client.getMap("cacheReports");
-//        for (IMap.Entry entry : reportMap.entrySet()) {
-//            ReportMoneySystemModel reportMoneySystemModel;
-//            if (!((String) entry.getKey()).contains(today)) continue;
-//            String[] arr = ((String) entry.getKey()).split(",");
-//            String nickname2 = arr[0];
-//            actionname = arr[1];
-//            if (!nickname2.equals(nickname)) continue;
-//            model = (ReportModel) entry.getValue();
-//            ReportMoneySystemModel rModel = reportMoneySystemModel = new ReportMoneySystemModel();
-//            reportMoneySystemModel.moneyWin += model.moneyWin;
-//            ReportMoneySystemModel reportMoneySystemModel2 = rModel;
-//            reportMoneySystemModel2.moneyLost += model.moneyLost;
-//            ReportMoneySystemModel reportMoneySystemModel3 = rModel;
-//            reportMoneySystemModel3.moneyOther += model.moneyOther;
-//            ReportMoneySystemModel reportMoneySystemModel4 = rModel;
-//            reportMoneySystemModel4.fee += model.fee;
-//            ReportMoneySystemModel reportMoneySystemModel5 = rModel;
-//            reportMoneySystemModel5.revenuePlayGame += model.moneyWin + model.moneyLost;
-//            ReportMoneySystemModel reportMoneySystemModel6 = rModel;
-//            reportMoneySystemModel6.revenue += model.moneyWin + model.moneyLost + model.moneyOther;
-//            actions.put(actionname, rModel);
-//        }
 
         // Define the format you want for the date-time strings
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -174,7 +146,7 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
 
         HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
         HistoryTransResponse res = historyTransDao.getListTransByDay(nickname, startTime, endTime);
-        System.out.println(nickname + " - " + startTime + " -> " + endTime + " - History trans count = " + res.getListTrans().size());
+//        System.out.println(nickname + " - " + startTime + " -> " + endTime + " - History trans count = " + res.getListTrans().size());
         if (CollectionUtils.isNotEmpty(res.getListTrans())) {
             // ??o ng??c list ?? l?y th?i gian t? th?p t?i cao
             Collections.reverse(res.getListTrans());
