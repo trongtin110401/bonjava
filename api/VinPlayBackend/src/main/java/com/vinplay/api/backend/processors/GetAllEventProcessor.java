@@ -28,9 +28,11 @@ public class GetAllEventProcessor implements BaseProcessor<HttpServletRequest, S
         String timeEnd = request.getParameter("timeEnd");
         String eventName = request.getParameter("eventName");
         String rate = request.getParameter("rate");
-        boolean status = true;
+        Boolean status = null;
         try {
-            status = Boolean.parseBoolean(request.getParameter("status"));
+            if (!request.getParameter("status").isEmpty()) {
+                status = Boolean.parseBoolean(request.getParameter("status"));
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

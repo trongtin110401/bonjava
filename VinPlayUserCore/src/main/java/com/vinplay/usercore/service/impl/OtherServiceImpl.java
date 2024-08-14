@@ -526,7 +526,7 @@ public class OtherServiceImpl implements OtherService {
     }
 
     @Override
-    public ListEventResponse getAllEvent(String timeStart, String timeEnd, String eventName, String rate, boolean status) {
+    public ListEventResponse getAllEvent(String timeStart, String timeEnd, String eventName, String rate, Boolean status) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("event");
         Document filter = new Document();
@@ -546,7 +546,10 @@ public class OtherServiceImpl implements OtherService {
         if (rate != null && !rate.isEmpty()) {
             filter.append("rate", Integer.parseInt(rate));
         }
-        filter.append("status", status);
+        if (status != null) {
+            filter.append("status", status);
+        }
+
         MongoCursor<Document> cursor = collection.find(filter).iterator();
         List<Event> events = new ArrayList<>();
         while (cursor.hasNext()) {
