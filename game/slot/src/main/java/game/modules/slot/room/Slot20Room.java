@@ -165,23 +165,21 @@ public class Slot20Room extends SlotRoom {
                                 String prizesOnLine;
                                 String haiSao = "";
                                 boolean isForceJackpot = false;
+                                forceJackpotToUser = false;
                                 if (betValue == 100) {
-                                    if ((usernameForce.equals(username) && roomForce.equals(String.valueOf(100)))
-                                            || (!u.isBot() && randomJackpot(percentJackpot))) {
+                                    if ((usernameForce.equals(username) && roomForce.equals(String.valueOf(100)))) {
                                         isForceJackpot = true;
                                         forceJackpotToUser = true;
                                         result = ResultSlot.JACKPOT;
                                     }
                                 } else if (betValue == 1000) {
-                                    if ((usernameForce.equals(username) && roomForce.equals(String.valueOf(1000)))
-                                            || (!u.isBot() && randomJackpot(percentJackpot))) {
+                                    if ((usernameForce.equals(username) && roomForce.equals(String.valueOf(1000)))) {
                                         isForceJackpot = true;
                                         forceJackpotToUser = true;
                                         result = ResultSlot.JACKPOT;
                                     }
                                 } else {
-                                    if ((usernameForce.equals(username) && roomForce.equals(String.valueOf(10000)))
-                                            || (!u.isBot() && randomJackpot(percentJackpot))) {
+                                    if ((usernameForce.equals(username) && roomForce.equals(String.valueOf(10000)))) {
                                         isForceJackpot = true;
                                         forceJackpotToUser = true;
                                         result = ResultSlot.JACKPOT;

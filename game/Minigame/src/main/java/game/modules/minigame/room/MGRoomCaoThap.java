@@ -122,8 +122,10 @@ public class MGRoomCaoThap extends MGRoom {
                         moneyResponse.setSuccess(true);
                     }
                     if (moneyResponse != null && moneyResponse.isSuccess()) {
-                        updateFunValue(moneyToFund);
-                        this.saveFund();
+                        if (!isBot(user.getName())) {
+                            updateFunValue(moneyToFund);
+                            this.saveFund();
+                        }
                         List<Double> ratioLst = CaoThapUtils.getRatio(deck, card);
                         msg.money1 = Math.round((double) betValue * ratioLst.get(1));
                         msg.money2 = betValue;

@@ -191,22 +191,19 @@ public class Slot25ExtendRoom extends SlotRoom {
 
                                 // xử lý FORCE nổ hũ
                                 if (betValue == 100) {
-                                    if ((usernameForce.equals(username) && roomForce.equals(String.valueOf(100)))
-                                            || (!u.isBot() && randomJackpot(percentJackpot))) {
+                                    if ((usernameForce.equals(username) && roomForce.equals(String.valueOf(100)))) {
                                         isForceJackpot = true;
                                         forceJackpotToUser = true;
                                         result = ResultSlot.JACKPOT;
                                     }
                                 } else if (betValue == 1000) {
-                                    if ((usernameForce.equals(username) && roomForce.equals(String.valueOf(1000)))
-                                            || (!u.isBot() && randomJackpot(percentJackpot))) {
+                                    if ((usernameForce.equals(username) && roomForce.equals(String.valueOf(1000)))) {
                                         isForceJackpot = true;
                                         forceJackpotToUser = true;
                                         result = ResultSlot.JACKPOT;
                                     }
                                 } else {
-                                    if ((usernameForce.equals(username) && roomForce.equals(String.valueOf(10000)))
-                                            || (!u.isBot() && randomJackpot(percentJackpot))) {
+                                    if ((usernameForce.equals(username) && roomForce.equals(String.valueOf(10000)))) {
                                         isForceJackpot = true;
                                         forceJackpotToUser = true;
                                         result = ResultSlot.JACKPOT;

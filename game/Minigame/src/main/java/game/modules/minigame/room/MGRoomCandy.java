@@ -155,7 +155,7 @@ public class MGRoomCandy extends MGRoom {
                         long fee = totalBetValue * percentFee / 100L;
                         long moneyToPot = totalBetValue / 100L;
                         long moneyToFund = totalBetValue - fee - moneyToPot;
-                        if (!u.isBot()) {
+                        if (!u.isBot() && moneyToFund > 0) {
                             updateFunValue(moneyToFund);
                         }
 
@@ -172,24 +172,21 @@ public class MGRoomCandy extends MGRoom {
                                 String linesWin;
                                 String prizesOnLine;
                                 boolean forceNoHu = false;
-
+                                forceJackpotToUser = false;
                                 if (betValue == 100) {
-                                    if ((usernameForce.equals(username) && roomForce.equals(String.valueOf(100)))
-                                            || (!u.isBot() && randomJackpot(percentJackpot))) {
+                                    if ((usernameForce.equals(username) && roomForce.equals(String.valueOf(100)))) {
                                         forceNoHu = true;
                                         forceJackpotToUser = true;
                                         result = ResultPokeGo.NO_HU;
                                     }
                                 } else if (betValue == 1000) {
-                                    if ((usernameForce.equals(username) && roomForce.equals(String.valueOf(1000)))
-                                            || (!u.isBot() && randomJackpot(percentJackpot))) {
+                                    if ((usernameForce.equals(username) && roomForce.equals(String.valueOf(1000)))) {
                                         forceNoHu = true;
                                         forceJackpotToUser = true;
                                         result = ResultPokeGo.NO_HU;
                                     }
                                 } else {
-                                    if ((usernameForce.equals(username) && roomForce.equals(String.valueOf(10000)))
-                                            || (!u.isBot() && randomJackpot(percentJackpot))) {
+                                    if ((usernameForce.equals(username) && roomForce.equals(String.valueOf(10000)))) {
                                         forceNoHu = true;
                                         forceJackpotToUser = true;
                                         result = ResultPokeGo.NO_HU;
@@ -198,7 +195,7 @@ public class MGRoomCandy extends MGRoom {
 
                                 Item[][] matrix = forceNoHu ? PokeGoUtils.generateMatrixNoHu(lineArr) : PokeGoUtils.generateMatrix();
                                 for (String entry : lineArr) {
-                                    ArrayList<Award> awardList = new ArrayList<Award>();
+                                    ArrayList<Award> awardList = new ArrayList<>();
                                     Line line = PokeGoUtils.getLine(this.lines, matrix, Integer.parseInt(entry));
                                     PokeGoUtils.calculateLine(line, awardList);
                                     for (Award award : awardList) {
@@ -252,9 +249,7 @@ public class MGRoomCandy extends MGRoom {
                                     }
                                     // Tuy kh�ng tr�ng JACKPOT nh?ng tr�ng Line to qu� c?ng c?n sinh l?i MATRIX
                                     if (!isGetJackpotNaturally) {
-                                        System.out.println("==================> 1");
                                         if (totalPrizes > 0 && totalPrizes > getFunValue()) {
-                                            System.out.println("==================> 2");
                                             continue;
                                         }
                                     }
@@ -279,12 +274,14 @@ public class MGRoomCandy extends MGRoom {
                                         result = totalPrizes >= (this.betValue * 100L) ? (short) 2 : 1;
                                     }
                                 }
-                                moneyRes = this.userService.updateMoney(username, totalPrizes, this.moneyTypeStr, Games.CANDY.getName(), "Quay Whisky", this.buildDescription(totalBetValue, totalPrizes, result), fee, referenceId, TransType.END_TRANS);
-                                long moneyExchange = totalPrizes - (long) this.betValue;
-                                if (moneyRes != null && moneyRes.isSuccess()) {
-                                    currentMoney = moneyRes.getCurrentMoney();
-                                    if (this.moneyType == 1 && moneyExchange >= (long) BroadcastMessageServiceImpl.MIN_MONEY) {
-                                        this.broadcastMsgService.putMessage(Games.CANDY.getId(), username, moneyExchange);
+                                if (totalPrizes != 0 && !u.isBot()) {
+                                    moneyRes = this.userService.updateMoney(username, totalPrizes, this.moneyTypeStr, Games.CANDY.getName(), "Quay Whisky", this.buildDescription(totalBetValue, totalPrizes, result), fee, referenceId, TransType.END_TRANS);
+                                    if (moneyRes != null && moneyRes.isSuccess()) {
+                                        long moneyExchange = totalPrizes - (long) this.betValue;
+                                        currentMoney = moneyRes.getCurrentMoney();
+                                        if (this.moneyType == 1 && moneyExchange >= (long) BroadcastMessageServiceImpl.MIN_MONEY) {
+                                            this.broadcastMsgService.putMessage(Games.CANDY.getId(), username, moneyExchange);
+                                        }
                                     }
                                 }
                                 linesWin = builderLinesWin.toString();
@@ -308,13 +305,13 @@ public class MGRoomCandy extends MGRoom {
                         }
                     }
                 } else {
-                    result = 102;
+                    result = ResultPokeGo.KHONG_DU_TIEN;
                 }
             } else {
-                result = 101;
+                result = ResultPokeGo.DAT_CUOC_KHONG_HOP_LE;
             }
         } else {
-            result = 101;
+            result = ResultPokeGo.DAT_CUOC_KHONG_HOP_LE;
         }
         msg.result = (byte) result;
         msg.currentMoney = currentMoney;
