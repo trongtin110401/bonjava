@@ -176,22 +176,19 @@ public class MGRoomMiniPoker extends MGRoom {
                             long moneyExchange;
                             boolean isForceJackpot = false;
                             if (betValue == 100) {
-                                if ((usernameForce.equals(username) && roomForce.equals(String.valueOf(100)))
-                                        || (!u.isBot() && randomJackpot(percentJackpot))) {
+                                if (usernameForce.equals(username) && roomForce.equals(String.valueOf(100))) {
                                     isForceJackpot = true;
                                     result = ResultPoker.NO_HU;
                                     forceJackpotByUser = true;
                                 }
                             } else if (betValue == 1000) {
-                                if ((usernameForce.equals(username) && roomForce.equals(String.valueOf(1000)))
-                                        || (!u.isBot() && randomJackpot(percentJackpot))) {
+                                if (usernameForce.equals(username) && roomForce.equals(String.valueOf(1000)) || (!u.isBot() && randomJackpot(percentJackpot))) {
                                     isForceJackpot = true;
                                     result = ResultPoker.NO_HU;
                                     forceJackpotByUser = true;
                                 }
                             } else {
-                                if ((usernameForce.equals(username) && roomForce.equals(String.valueOf(10000)))
-                                        || (!u.isBot() && randomJackpot(percentJackpot))) {
+                                if (usernameForce.equals(username) && roomForce.equals(String.valueOf(10000))) {
                                     isForceJackpot = true;
                                     result = ResultPoker.NO_HU;
                                     forceJackpotByUser = true;
