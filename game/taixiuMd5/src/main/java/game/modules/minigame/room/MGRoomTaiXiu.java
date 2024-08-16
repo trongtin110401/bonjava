@@ -332,7 +332,7 @@ public class MGRoomTaiXiu extends MGRoom {
                             // giải thưởng, hay nói cách khác là số tiền thắng
                             tran.prize = Math.round((long) ((float) tran.betValue * (100.0f - this.tax) / 100.0f) + tran.betValue);
                             if (tran.userId != 0) {
-                                tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon += Math.round((long) ((float) tran.betValue * (100.0f - this.tax) / 100.0f));
+                                tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon +=tran.betValue;
                             }
 
                             // Cộng dồn để tính tổng số tiền trả lại
@@ -391,7 +391,7 @@ public class MGRoomTaiXiu extends MGRoom {
                             tran.prize = Math.round((long) ((float) tran.betValue * (100.0f - this.tax) / 100.0f) + tran.betValue);
 
                             if (tran.userId != 0) {
-                                tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon += Math.round((long) ((float) tran.betValue * (100.0f - this.tax) / 100.0f));
+                                tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon += tran.betValue;
                             }
 
                             rs.totalPrize += tran.prize;
