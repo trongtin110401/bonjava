@@ -208,8 +208,8 @@ public class ReportMoneySystemNewProcessor implements BaseProcessor<HttpServletR
                         || log.actionName.equals(Games.LADY_NIGHT.getName())
                         || log.actionName.equals(Games.BONG_LAI_CAC.getName())
                         || log.actionName.equals(Games.LIEN_MINH.getName()))
-                        && log.moneyExchange < 0) {
-            log.setMoneyExchange(log.moneyExchange - (log.moneyExchange) / 100);
+                        && log.getDescription().startsWith("Đặt cược")) {
+//            log.setMoneyExchange(log.moneyExchange - (log.moneyExchange) / 100);
             if (log.moneyExchange < 0) {
                 model.moneyLost += log.moneyExchange;
             } else {
