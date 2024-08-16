@@ -590,7 +590,6 @@ public class TaiXiuModule
     }
 
     private void generateTaiXiuDices(MGRoomTaiXiu roomTXVin, MGRoomTaiXiu roomTXXu) throws KeyNotFoundException {
-        Debug.info((Object) ("FORCE==============" + this.forceBetSide));
         String keyBeCang = "auto";
         try {
 //            keyBeCang = cacheService.getValueStr("tai_xiu_be_cang");
@@ -615,7 +614,6 @@ public class TaiXiuModule
             }
         }
         long chenhLechTien = Math.abs(totalRealBetTai - totalRealBetXiu);
-        Debug.info("xxxxx " + totalRealBetTai + "  vvvvvv" + totalRealBetXiu);
         if ("auto".equals(keyBeCang)) {
             try {
                 //tin duoc tien chenh lech
@@ -650,7 +648,6 @@ public class TaiXiuModule
 //                    }
                 }
             } catch (Exception e) {
-                Debug.info((Object) ("hahahaa check log" + e.getMessage()));
                 cacheService.setValue("min_fund_tx_auto", 0);
                 cacheService.setValue("max_fund_tx_auto", 0);
                 cacheService.setValue("fund_tx_auto", 0);

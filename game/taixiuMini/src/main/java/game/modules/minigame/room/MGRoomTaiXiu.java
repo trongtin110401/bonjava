@@ -550,7 +550,8 @@ public class MGRoomTaiXiu
                             tran.prize = Math.round((long) ((float) tienDuocTinh * (100.0f - this.tax) / 100.0f) + tienDuocTinh);
 
                             if (tran.userId != 0) {
-                                tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon += Math.round((long) ((float) tienDuocTinh * (100.0f - this.tax) / 100.0f));
+//                                tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon += Math.round((long) ((float) tienDuocTinh * (100.0f - this.tax) / 100.0f));
+                                tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon += tienDuocTinh;
                             }
 
                             // kiểm tra nếu có nổ hũ thì tính cộng thêm tiền nổ hũ
@@ -630,7 +631,7 @@ public class MGRoomTaiXiu
 //                            }
 
                             if (tran.userId != 0) {
-                                tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon += Math.round((long) ((float) tienDuocTinh * (100.0f - this.tax) / 100.0f));
+                                tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon += tienDuocTinh;
                             }
 
                             rs.totalPrize += tran.prize;
@@ -638,17 +639,10 @@ public class MGRoomTaiXiu
                                 totalCashOut += tran.prize;
                             tran.refund = tran.betValue - tienDuocTinh;
 
-                            /*//kiểm tra nếu có nổ hũ thì tính cộng thêm tiền nổ hũ
-                            if (totalDice == 3 || totalDice == 18) {
-                                totalCashOut += (tienDuocTinh * HU_TX / tongTienHopLe);
-                            }*/
                             rs.totalRefundTai += tran.refund;
 
                             if (tran.userId != 0)
                                 totalCashOut += tran.refund;
-//                            if (totalDice != 3 & totalDice != 18) {
-//                                TaiXiuModule.moneyHu += (long) (PHAN_TRAM_TIEN_HU * (tran.prize - tienDuocTinh));
-//                            }
                             //Tổng tiền lỗ lãi
                             //tran.totalExchange = tran.prize - tienDuocTinh;
                             this.updateSumTran(sumTXTMap, tran);
@@ -678,8 +672,7 @@ public class MGRoomTaiXiu
 
                         tran.refund = tran.betValue - tienDuocTinh;
                         rs.totalRefundXiu += tran.refund;
-                        if (tran.userId != 0)
-                            totalCashOut += tran.refund;
+                        if (tran.userId != 0) totalCashOut += tran.refund;
                         //tran.totalExchange = tran.prize - tienDuocTinh;
                         this.updateSumTran(sumTXTMap, tran);
                         this.updateSumTran(sumXiu, tran);
@@ -759,16 +752,16 @@ public class MGRoomTaiXiu
         UpdateMoneyTXTask taskTai = new UpdateMoneyTXTask(sumTai);
         taskTai.start();
         if (this.moneyType == 1) {
-            Debug.trace((Object) ("TX phien= " + referenceId + ", cap nhat xong ben tai"));
+            Debug.trace("TX phien= " + referenceId + ", cap nhat xong ben tai");
         }
         UpdateMoneyTXTask taskXiu = new UpdateMoneyTXTask(sumXiu);
         taskXiu.start();
         if (this.moneyType == 1) {
-            Debug.trace((Object) ("TX phien= " + referenceId + ", cap nhat xong ben xiu"));
+            Debug.trace("TX phien= " + referenceId + ", cap nhat xong ben xiu");
         }
         try {
             // lưu kết quả tài xỉu
-            Debug.trace((Object) ("Ket qua của phiên sẽ lưu "));
+            Debug.trace("Ket qua của phiên sẽ lưu ");
             this.taiXiuService.saveResultTaiXiu(rs);
         } catch (Exception e) {
             Debug.info(ExceptionUtils.getStackTrace(e));
@@ -807,7 +800,7 @@ public class MGRoomTaiXiu
                     module.updateFunValue((tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon - tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon));
                 }
             }
-            this.module.updateFund();
+            this.module.saveFun();
         } catch (Exception e) {
             Debug.info(ExceptionUtils.getStackTrace(e));
         }

@@ -36,7 +36,6 @@ import bitzero.server.BitZeroServer;
 import bitzero.server.core.BZEventParam;
 import bitzero.server.core.BZEventType;
 import bitzero.server.core.IBZEvent;
-import bitzero.server.core.IBZEventParam;
 import bitzero.server.entities.User;
 import bitzero.server.exceptions.BZException;
 import bitzero.server.extensions.BaseClientRequestHandler;
@@ -193,14 +192,14 @@ public class TaiXiuModule extends BaseClientRequestHandler {
 
     public void handleServerEvent(IBZEvent ibzevent) throws BZException {
         if (ibzevent.getType() == BZEventType.USER_DISCONNECT) {
-            User user = (User) ibzevent.getParameter((IBZEventParam) BZEventParam.USER);
+            User user = (User) ibzevent.getParameter(BZEventParam.USER);
             this.userDis(user);
         }
     }
 
     // user out room todo: user rời khỏi phòng
     private void userDis(User user) {
-        MGRoom room = (MGRoom) user.getProperty((Object) "MGROOM_TAI_XIU_INFO");  // lấy ra object room tài xỉu info trong map thuộc tính
+        MGRoom room = (MGRoom) user.getProperty("MGROOM_TAI_XIU_INFO");  // lấy ra object room tài xỉu info trong map thuộc tính
         if (room != null) {
             room.quitRoom(user); // management room quit user xóa user khỏi list user trong phòng
         }
@@ -214,13 +213,13 @@ public class TaiXiuModule extends BaseClientRequestHandler {
             this.lichSuPhienTX = this.txService.getListLichSuPhien(100, 1);
         } catch (SQLException e) {
             sendLogToTele(e.getMessage());
-            Debug.trace((Object[]) new Object[]{"Load reference error ", e.getMessage()});
+            Debug.trace("Load reference error ", e.getMessage());
         }
         try {
             this.generationTX.readConfig();
         } catch (IOException e) {
             sendLogToTele(e.getMessage());
-            Debug.trace((Object[]) new Object[]{"Load cau tai xiu error ", e.getMessage()});
+            Debug.trace("Load cau tai xiu error ", e.getMessage());
         }
         try {
             this.fundRutLoc = this.txService.getPotTanLoc();
@@ -229,7 +228,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
             }
         } catch (SQLException e) {
             sendLogToTele(e.getMessage());
-            Debug.trace((Object[]) new Object[]{"Load fund tan loc error ", e.getMessage()});
+            Debug.trace("Load fund tan loc error ", e.getMessage());
         }
     }
 
@@ -408,7 +407,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         taiXiuAdminReportObj.setContributors(roomVin.getListTransaction());
         taiXiuAdminReportObj.setRealTime(roomVin.getRemainTime());
         taiXiuAdminReportObj.setBettingRound(roomVin.bettingRound);
-        List<TaiXiuChatMsg> listChat = new ArrayList<>();
+        List<TaiXiuChatMsg> listChat;
         try {
             listChat = (List<TaiXiuChatMsg>) cacheService.getObject("lstTaiXiuAdminMsg");
         } catch (KeyNotFoundException e) {
@@ -527,7 +526,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
 //        miniGameService.saveFund(Games.TAI_XIU.getName(), fundTx);
 //    }
 
-    public void updateFund() throws Exception {
+    public void saveFun() throws Exception {
         miniGameService.saveFund(Games.TAI_XIU.getName(), getFunValue());
     }
 
@@ -616,21 +615,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         this.resetForceBalance();
         short total = (short) (dices[0] + dices[1] + dices[2]);
         this.result = total > 10 ? (short) 1 : 0;
-
-        // cong lai tien vao hu nguoi choi
-//        try {
-//            if (this.result == 1) {
-//                // ve tai
-//                fundTx += totalRealBetXiu - totalRealBetTai;
-//            } else {
-//                // ve xiu
-//                fundTx += totalRealBetTai - totalRealBetXiu;
-//            }
-//
-//            cacheService.setValue("fund_tx_auto", String.valueOf(fundTx));
-//        } catch (Exception e) {
-//            cacheService.setValue("fund_tx_auto", (long) fundTx);
-//        }
 
         /**
          * Show ket qua ra man
@@ -855,7 +839,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         cacheService.setValue(key, value);
     }
 
-    public void updateFunValue(long value) {
+    public synchronized void updateFunValue(long value) {
         setFunValue(getFunValue() + value);
     }
 }
