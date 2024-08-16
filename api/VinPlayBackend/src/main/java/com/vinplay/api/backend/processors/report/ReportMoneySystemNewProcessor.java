@@ -212,6 +212,7 @@ public class ReportMoneySystemNewProcessor implements BaseProcessor<HttpServletR
 //            log.setMoneyExchange(log.moneyExchange - (log.moneyExchange) / 100);
             if (log.moneyExchange < 0) {
                 model.moneyLost += log.moneyExchange;
+                model.setMoneyOther(log.moneyExchange / 100);
             } else {
                 model.moneyWin += log.moneyExchange;
             }
