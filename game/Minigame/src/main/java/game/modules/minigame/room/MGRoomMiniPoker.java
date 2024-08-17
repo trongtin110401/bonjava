@@ -322,7 +322,6 @@ public class MGRoomMiniPoker extends MGRoom {
                                 this.userService.updateMoney(username, tienThuongX2, this.moneyTypeStr, this.gameName, des, "Thắng X2", 0L, null, TransType.NO_VIPPOINT);
                             }
                             if (!u.isBot()) {
-                                System.out.println("Save end trans: " + fee);
                                 moneyRes = this.userService.updateMoney(username, moneyAdded, this.moneyTypeStr, Games.MINI_POKER.getName(), des, this.buildDescription(betValue, moneyAdded, result), 0, referenceId, TransType.END_TRANS);
                             }
                             moneyExchange = prize - betValue;
