@@ -153,15 +153,16 @@ public class MGRoomMiniPoker extends MGRoom {
         if (betValue > 0L) {
             if (currentMoney >= betValue) {
                 MoneyResponse moneyRes = new MoneyResponse(false, "1001");
+                long fee = (long) (betValue * percentFee / 100.0f);
                 if (!u.isBot()) {
-                    moneyRes = this.userService.updateMoney(username, -betValue, this.moneyTypeStr, Games.MINI_POKER.getName(), "Quay MiniPoker", "Đặt cược MiniPoker", 0L, referenceId, TransType.START_TRANS);
+                    moneyRes = this.userService.updateMoney(username, -betValue, this.moneyTypeStr, Games.MINI_POKER.getName(), "Quay MiniPoker", "Đặt cược MiniPoker", fee, referenceId, TransType.START_TRANS);
                 } else {
                     moneyRes.setSuccess(true);
                 }
                 if (moneyRes != null && moneyRes.isSuccess()) {
                     boolean enoughToPair = false;
                     long moneyToPot = betValue / 100L;
-                    long fee = (long) (betValue * percentFee / 100.0f);
+
                     long moneyToFund = betValue - moneyToPot - fee;
                     long tienThuongX2;
                     this.pot += moneyToPot;
@@ -322,7 +323,7 @@ public class MGRoomMiniPoker extends MGRoom {
                             }
                             if (!u.isBot()) {
                                 System.out.println("Save end trans: " + fee);
-                                moneyRes = this.userService.updateMoney(username, moneyAdded, this.moneyTypeStr, Games.MINI_POKER.getName(), des, this.buildDescription(betValue, moneyAdded, result), fee, referenceId, TransType.END_TRANS);
+                                moneyRes = this.userService.updateMoney(username, moneyAdded, this.moneyTypeStr, Games.MINI_POKER.getName(), des, this.buildDescription(betValue, moneyAdded, result), 0, referenceId, TransType.END_TRANS);
                             }
                             moneyExchange = prize - betValue;
                             if (moneyRes != null && moneyRes.isSuccess()) {
