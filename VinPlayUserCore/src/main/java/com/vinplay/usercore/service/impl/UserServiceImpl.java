@@ -178,8 +178,8 @@ public class UserServiceImpl implements UserService {
     public long getMoneyUserCache(String nickname, String moneyType) {
         HazelcastInstance client = HazelcastClientFactory.getInstance();
         IMap<String, UserModel> userMap = client.getMap("users");
-        if (userMap.containsKey((Object) nickname)) {
-            UserCacheModel user = (UserCacheModel) userMap.get((Object) nickname);
+        if (userMap.containsKey(nickname)) {
+            UserCacheModel user = (UserCacheModel) userMap.get(nickname);
             return user.getMoney(moneyType);
         }
         return 0L;
@@ -317,7 +317,6 @@ public class UserServiceImpl implements UserService {
     // todo : update tiền của user vào cache
     @Override
     public MoneyResponse updateMoney(String nickname, long money, String moneyType, String gameName, String serviceName, String description, long fee, Long transId, TransType type) {
-        //logger.debug((Object)("Request updateMoney:  nickname: " + nickname + ", money: " + money + ", moneyType: " + moneyType + ", gameName: " + gameName + ", serviceName: " + serviceName + ", description: " + description + ", fee: " + fee + ", transId: " + transId + ", TransType: " + type.getId()));
         MoneyResponse response = new MoneyResponse(false, "1001");
         HazelcastInstance client = HazelcastClientFactory.getInstance();
         if (client == null) {
@@ -326,7 +325,7 @@ public class UserServiceImpl implements UserService {
             return response;
         }
         IMap<String, UserModel> userMap = client.getMap("users"); // lấy list user trong cache ra ngoài
-        if (userMap.containsKey((Object) nickname)) {
+        if (userMap.containsKey(nickname)) {
             try {
                 userMap.lock(nickname); // lock lại thằng user đó
                 UserCacheModel user = (UserCacheModel) userMap.get((Object) nickname);
