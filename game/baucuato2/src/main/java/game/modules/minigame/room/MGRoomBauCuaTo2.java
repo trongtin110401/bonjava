@@ -252,7 +252,6 @@ public class MGRoomBauCuaTo2 extends MGRoom {
                             MoneyResponse response = new MoneyResponse(false, "1001");
                             if (!this.isBot(username)) {
                                 response = this.userService.updateMoney(username, -totalBetValue, this.moneyTypeStr, GAME_NAME, "Bầu cua: Đặt cược", "Phiên " + this.referenceId, fee, this.referenceId, TransType.START_TRANS);
-
                             } else {
                                 response.setSuccess(true);
                             }
@@ -431,7 +430,7 @@ public class MGRoomBauCuaTo2 extends MGRoom {
         cacheService.setObject("bettingStateBauCua", bettingState);
     }
 
-    public long calculatePrizes() {
+    public void calculatePrizes() {
         boolean isNohu = false;
         transactionsMapRealtime.clear();
         allTransactionsMapRealtime.clear();
@@ -440,7 +439,6 @@ public class MGRoomBauCuaTo2 extends MGRoom {
         int potIdNohu = -1;
         int[] tiLe = this.calculateTiLe(this.dices);
 
-        long totalVinPay = 0L;
         long totalPrizesUser = 0L;
         long totalUserBetInRoom = 0L;
         long[] totalBetValuesInRoom = new long[6];
@@ -454,13 +452,15 @@ public class MGRoomBauCuaTo2 extends MGRoom {
                 int n;
                 long[] arrl;
                 if (tiLe[i] > 0) {
-                    if (tiLe[i] == 3 && pots.get(i).getTotalValue() > 0) { // noo hu
+                    long prize;
+                    long fee;
+                    if (tiLe[i] == 3 && pots.get(i).getTotalValue() > 0) { // Nổ Hũ
                         isNohu = true;
                         potIdNohu = i;
                         long bet = tran.betValues[i];
                         long win = bet * tiLe[i];
-                        long fee = (long) (win * (tax / 100));
-                        long prize = (long) (bet * ((double) (this.jackPot) / pots.get(i).getTotalValue()) + (win - fee));
+                        fee = (long) (win * (tax / 100));
+                        prize = (long) (bet * ((double) (this.jackPot) / pots.get(i).getTotalValue()) + (win - fee));
                         totalFee += fee;
                         totalPrize += prize;
                         tran.prizes[i] = prize;
@@ -473,8 +473,8 @@ public class MGRoomBauCuaTo2 extends MGRoom {
                     } else {
                         long bet = tran.betValues[i];
                         long win = bet * tiLe[i];
-                        long fee = (long) (win * (tax / 100.0f));
-                        long prize = (win + bet - fee);
+                        fee = (long) (win * (tax / 100.0f));
+                        prize = (win + bet - fee);
                         totalPrize += prize;
                         totalFee += fee;
                         tran.prizes[i] = prize;
@@ -485,6 +485,9 @@ public class MGRoomBauCuaTo2 extends MGRoom {
                         n = i;
                         arrl[n] = arrl[n] + (tran.betValues[i] * (long) tiLe[i] + tran.betValues[i]);
                     }
+                    if (!isBot(tran.username)) updateFunValue(-(prize - tran.betValues[i] - fee));
+                } else {
+                    if (!isBot(tran.username)) updateFunValue(tran.betValues[i]);
                 }
 
                 totalBetValues += tran.betValues[i];
@@ -496,9 +499,6 @@ public class MGRoomBauCuaTo2 extends MGRoom {
 
             if (totalPrize > 0L) {
                 MoneyResponse response;
-                if (this.moneyType == 1) {
-                    totalVinPay += totalPrize;
-                }
                 if (!isBot(tran.username) && (response = this.userService.updateMoney(tran.username, totalPrize, this.moneyTypeStr, GAME_NAME, "Bầu cua: Trận thắng", "Phiên " + this.referenceId, totalFee, this.referenceId, TransType.END_TRANS)) != null && response.isSuccess()) {
                     UpdateBauCuaPrizeMsg msg = new UpdateBauCuaPrizeMsg();
                     msg.prize = totalPrize;
@@ -530,9 +530,10 @@ public class MGRoomBauCuaTo2 extends MGRoom {
             totalPrizesUser += totalPrize; // calculate total prizes in current room
             totalUserBetInRoom += totalBetValues; // calculate total bet value
 
-            if (!isBot(tran.username)) {
-                updateFunValue(-(totalPrize - totalBetValues - totalFee));
-            }
+            // cập nhật quỹ
+//            if (!isBot(tran.username)) {
+//                updateFunValue(-(totalPrize - totalBetValues - totalFee));
+//            }
         }
 
         this.jackPot += totalUserBetInRoom / 100;
@@ -581,7 +582,6 @@ public class MGRoomBauCuaTo2 extends MGRoom {
         msg.funds = this.jackPot;
         msg.isNohu = isNohu;
         this.sendMessageToRoom(msg);
-        return totalVinPay;
     }
 
     private String getDateTime() {
@@ -703,10 +703,6 @@ public class MGRoomBauCuaTo2 extends MGRoom {
         saveBettingUserList();
 
         userRoomInfoList.remove(user.getName());
-    }
-
-    public float getTax() {
-        return this.tax;
     }
 
     public byte getMoneyType() {
