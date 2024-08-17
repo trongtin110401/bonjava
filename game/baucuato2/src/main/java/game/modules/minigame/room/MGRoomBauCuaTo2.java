@@ -485,7 +485,7 @@ public class MGRoomBauCuaTo2 extends MGRoom {
                         n = i;
                         arrl[n] = arrl[n] + (tran.betValues[i] * (long) tiLe[i] + tran.betValues[i]);
                     }
-                    if (!isBot(tran.username)) updateFunValue(-(prize - tran.betValues[i] - fee));
+                    if (!isBot(tran.username)) updateFunValue(-(prize - tran.betValues[i]));
                 } else {
                     if (!isBot(tran.username)) updateFunValue(tran.betValues[i]);
                 }
