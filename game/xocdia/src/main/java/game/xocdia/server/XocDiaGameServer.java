@@ -111,8 +111,7 @@ import org.json.JSONObject;
 import scala.collection.mutable.StringBuilder;
 import scala.util.Random;
 
-public class XocDiaGameServer
-        extends GameServer {
+public class XocDiaGameServer extends GameServer {
     private final Runnable gameLoopTask = new GameLoopTask();
     private ScheduledFuture<?> task;
     private final Runnable bossTask = new BossTask();
@@ -227,7 +226,7 @@ public class XocDiaGameServer
                 PotType pt = PotType.findPotType(i);
                 this.potList.add(new GamePot(pt.getId(), pt.getRatio(), pt.getName(), Math.round(pt.getMaxRatioBet() * (double) this.moneyBet)));
             }
-            this.playerList = new ConcurrentHashMap<String, GamePlayer>();
+            this.playerList = new ConcurrentHashMap<>();
             this.playerReportList = new ConcurrentHashMap<>();
             this.purchaseStatus = 0;
             this.moneyDif = 0L;
@@ -425,7 +424,6 @@ public class XocDiaGameServer
     private synchronized void gameLoop() {
         try {
             ++this.countTime;
-//            cacheService.setValue("XocDia_Flag_Time", String.valueOf(this.getCountTime())); // get all time
             cacheService.setValue("XocDia_Flag_Time", String.valueOf(33 - this.countTime)); // get all time
             cacheService.setValue("XocDia_Flag_GameState", this.gameState); // get all time
             cacheService.setValue("XocDia_Flag_betting", String.valueOf(this.enableBetting));
@@ -444,7 +442,7 @@ public class XocDiaGameServer
                         this.startBetting();
                         break;
                     }
-                    Debug.trace((Object[]) new Object[]{"Waiting START NEW GAME", this.roomId, this.gameId});
+                    Debug.trace("Waiting START NEW GAME", this.roomId, this.gameId);
                     --this.countTime;
                     break;
                 }
@@ -1430,7 +1428,7 @@ public class XocDiaGameServer
                 long moneyBankerBefore = 0L;
                 long moneyBankerAfter = 0L;
 
-                Debug.trace(new Object[]{"Tính tiền nhà cái: " + this.bankerName + " " + moneyBankerExchange, this.roomId, this.gameId});
+                Debug.trace("Tính tiền nhà cái: " + this.bankerName + " " + moneyBankerExchange, this.roomId, this.gameId);
                 ArrayList<SubBanker> subListMsg = new ArrayList<SubBanker>();
 
                 ArrayList<String> removeRW = new ArrayList();
@@ -1445,7 +1443,7 @@ public class XocDiaGameServer
                         this.gameLog.append((String) entry.getKey()).append("/").append(model.moneyWin).append("/").append(mnres.getErrorCode()).append(";");
                         rewardMap.put((String) entry.getKey(), model);
                         this.setPlayer((String) entry.getKey(), gPlayer);
-                        Debug.trace(new Object[]{"Tính tiền người chơi: " + (String) entry.getKey() + " " + model.moneyWin, this.roomId, this.gameId});
+                        Debug.trace("Tính tiền người chơi: " + entry.getKey() + " " + model.moneyWin, this.roomId, this.gameId);
                         if (!gPlayer.isBot) {
                             totalFeeUser += model.fee;
                             totalRevenueUser += model.moneyWin - model.moneyBet;
@@ -1475,13 +1473,14 @@ public class XocDiaGameServer
 
                 // calculate fund value and save to db
                 try {
-                    if (tienChenhLechChuaTinhPhe > 0) { // nhà cái thắng
-                        long value = tienChenhLechChuaTinhPhe - totalFeeUser;
-                        updateFunValue(value);
-                    } else if (tienChenhLechChuaTinhPhe < 0) { // nhà cái thua
-                        long value = tienChenhLechChuaTinhPhe + totalFeeUser;
-                        updateFunValue(value);
-                    }
+//                    if (tienChenhLechChuaTinhPhe > 0) { // nhà cái thắng
+//                        long value = tienChenhLechChuaTinhPhe - totalFeeUser;
+//                        updateFunValue(value);
+//                    } else if (tienChenhLechChuaTinhPhe < 0) { // nhà cái thua
+//                        long value = tienChenhLechChuaTinhPhe + totalFeeUser;
+//                        updateFunValue(value);
+//                    }
+                    updateFunValue(tienChenhLechChuaTinhPhe);
                     mgService.saveFund(Games.XOC_DIA.getName(), getFunValue());
                 } catch (Exception e) {
                     Debug.trace(e);
@@ -1948,7 +1947,7 @@ public class XocDiaGameServer
         cacheService.setValue(key, value);
     }
 
-    public void updateFunValue(long value) {
+    public synchronized void updateFunValue(long value) {
         setFunValue(getFunValue() + value);
     }
 }
