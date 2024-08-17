@@ -51,7 +51,6 @@ import com.vinplay.vbee.common.statics.TransType;
 import com.vinplay.vbee.common.utils.CommonUtils;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
 import game.entities.PlayerInfo;
-import game.modules.minigame.BauCuaModuleTo2;
 import game.modules.minigame.cmd.send.baucua.*;
 import game.modules.minigame.entities.*;
 
@@ -62,7 +61,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.stream.Collectors;
 
 public class MGRoomBauCuaTo2 extends MGRoom {
     private static final double RATE_NO_HU = 0.3;
@@ -603,9 +601,12 @@ public class MGRoomBauCuaTo2 extends MGRoom {
 
     }
 
-    public long tryCalculatePrizes(int[] tiLe, byte[] dices) {
+    public boolean isContinueGeneratingResults(int[] tiLe, byte[] dices) {
+        // phần thưởng cho người chơi
         long totalPrizes = 0L;
+        // lợi nhuận cho nhà cái
         long totalProfit = 0L;
+
         long fund = getFunValue();
         Map<Integer, Integer> mResults = new HashMap<>();
         for (byte i : dices) {
@@ -622,11 +623,11 @@ public class MGRoomBauCuaTo2 extends MGRoom {
                 }
             }
         }
-        System.out.println("total prize: " + totalProfit + " - total profit: " + totalProfit + " - fund: " + fund + " <> " + (totalPrizes - totalProfit));
-        if (totalPrizes <= (totalProfit + fund)) {
-            return 0;
+        System.out.println("total prize: " + totalPrizes + " - total profit: " + totalProfit + " - fund: " + fund + " <> " + (totalPrizes - totalProfit));
+        if (totalPrizes <= 0 || totalPrizes <= totalProfit || (totalPrizes <= (totalProfit + fund))) {
+            return true;
         } else {
-            return totalPrizes;
+            return false;
         }
     }
 
@@ -726,8 +727,7 @@ public class MGRoomBauCuaTo2 extends MGRoom {
                 return generateDices();
             }
             System.out.println("trying calculate prize...");
-            long totalPrizes = this.tryCalculatePrizes(tiLe, dices);
-            if (getFunValue() - totalPrizes >= 0L) {
+            if (isContinueGeneratingResults(tiLe, dices)) {
                 return dices;
             }
         }
