@@ -198,6 +198,7 @@ public class XocDiaGameServer extends GameServer {
             long fundXd = 0;
             try {
                 fundXd = mgService.getFund(Games.XOC_DIA.getName());
+//                cacheService.setValue("fund_xd_auto", (int) fundXd);
                 setFunValue(fundXd);
             } catch (Exception e) {
                 fundXd = 0;
@@ -291,7 +292,7 @@ public class XocDiaGameServer extends GameServer {
         try {
             if (!this.isRegisterLoop) {
                 GamePlayer banker;
-                Debug.trace("START LOOP", this.roomId, this.gameId);
+                Debug.trace((Object[]) new Object[]{"START LOOP", this.roomId, this.gameId});
                 if (!this.bankerName.isEmpty() && (banker = this.getPlayer(this.bankerName)) != null) {
                     banker.setPlaying(this.roomId);
                     this.setPlayer(this.bankerName, banker);
@@ -305,7 +306,7 @@ public class XocDiaGameServer extends GameServer {
         } catch (Exception e) {
             String content = "Xoc Dia exception: " + e.getMessage() + ", function: init() " + this.roomId + " " + this.gameId;
             MsgUtils.alertServer(content, false, true);
-            Debug.trace(e);
+            Debug.trace((Object) e);
         }
     }
 
@@ -611,19 +612,11 @@ public class XocDiaGameServer extends GameServer {
                         money2 = moneyUser;
                         isNext = false;
                     }
-
-                    int tyleVaoSom = new java.util.Random().nextInt(2);
-                    int betStartTime2;
-                    if (tyleVaoSom == 0) {
-                        betStartTime2 = new java.util.Random().ints(18, 19).findFirst().getAsInt();
-                    } else {
-                        betStartTime2 = new java.util.Random().ints(1, 19).findFirst().getAsInt();
-                    }
-
+                    int betStartTime2 = NumberUtils.randomIntLimit((int) 6, (int) 13);
                     this.botBettingList.add(new BotBettingModel(gp.user, potChanLe, money2, betStartTime2));
                 }
-                if (!(!isNext || potChanLe == PotType.EVEN.getId() || !NumberUtils.isDoWithRatio(XocDiaConfig.normalRatioBet1))) {
-                    byte potId = (byte) NumberUtils.randomIntLimit(4, 5);
+                if (!(!isNext || potChanLe == PotType.EVEN.getId() || !NumberUtils.isDoWithRatio((double) XocDiaConfig.normalRatioBet1))) {
+                    byte potId = (byte) NumberUtils.randomIntLimit((int) 4, (int) 5);
 
                     money = 0L;
                     money = this.moneyBet == 50000 ? (long) (this.moneyBet * NumberUtils.randomIntLimit((int) XocDiaConfig._100Bet1Min, (int) XocDiaConfig._100Bet1Max)) : (long) (this.moneyBet * NumberUtils.randomIntLimit((int) 500, (int) 1000));
@@ -631,7 +624,7 @@ public class XocDiaGameServer extends GameServer {
                         money = moneyUser - totalBet + money;
                         isNext = false;
                     }
-                    betStartTime = NumberUtils.randomIntLimit(1, 19);
+                    betStartTime = NumberUtils.randomIntLimit((int) 6, (int) 13);
                     this.botBettingList.add(new BotBettingModel(gp.user, potId, money, betStartTime));
                 }
                 if (!(!isNext || potChanLe == PotType.ODD.getId() || !NumberUtils.isDoWithRatio((double) XocDiaConfig.normalRatioBet4))) {
@@ -681,7 +674,7 @@ public class XocDiaGameServer extends GameServer {
         try {
             for (int i = 0; i < this.botBettingList.size(); ++i) {
                 BotBettingModel model;
-                if (!NumberUtils.isDoWithRatio(XocDiaConfig.ratioBotBettingInGame) || (model = this.botBettingList.get(i)) == null || this.countTime < model.betStartTime)
+                if (!NumberUtils.isDoWithRatio((double) XocDiaConfig.ratioBotBettingInGame) || (model = this.botBettingList.get(i)) == null || this.countTime < model.betStartTime)
                     continue;
                 if (model.money < (long) this.moneyBet) {
                     this.botBettingList.remove(i);
@@ -1076,7 +1069,8 @@ public class XocDiaGameServer extends GameServer {
                     BetMsg msg = new BetMsg(user.getName());
                     msg.potId = potId;
                     MoneyResponse response = new MoneyResponse(false, "1001");
-                    response = this.userService.updateMoney(user.getName(), -money, "vin", "XocDia", "xoc dia : Đặt cược", "Phiên " + this.gameId, 0L, (long) this.gameId, TransType.START_TRANS);
+                    response = this.userService.updateMoney(user.getName(), -money, "vin", "XocDia", "xoc dia : \u0110\u1eb7t c\u01b0\u1ee3c", "Phi\u00ean " + this.gameId, 0L, Long.valueOf(this.gameId), TransType.START_TRANS);
+                    // MoneyResponse mnres = gp.gameMoneyInfo.updateMoney(-money, this.roomId, this.gameId, 0L, false);
                     if (response.isSuccess()) {
                         gp.setPlaying(this.roomId);
                         //       long moneySub = mnres.getSubtractMoney();
