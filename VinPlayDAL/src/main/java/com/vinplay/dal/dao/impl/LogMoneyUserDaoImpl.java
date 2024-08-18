@@ -716,7 +716,7 @@ public class LogMoneyUserDaoImpl
                     serviceName= "Nạp Tiền";
                 }
                 if (serviceName.equals("Deposit Momo")){
-                    serviceName= "Nạp Momo";
+                    serviceName= "Nạp Tiền";
                 }
 
                 tranlogmoney.serviceName = serviceName;
