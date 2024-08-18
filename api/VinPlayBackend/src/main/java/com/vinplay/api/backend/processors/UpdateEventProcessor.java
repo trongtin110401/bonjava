@@ -25,6 +25,11 @@ public class UpdateEventProcessor implements BaseProcessor<HttpServletRequest, S
     public String execute(Param<HttpServletRequest> param) {
         OtherService service = new OtherServiceImpl();
         HttpServletRequest request = param.get();
+        ListEventResponse eventResponse = new ListEventResponse(false, "1001");
+        if (service.checkIfHaveAnyEventActive()) {
+            eventResponse.setErrorCode("?ang có m?t event di?n ra");
+            return eventResponse.toJson();
+        }
         String timeStart = request.getParameter("timeStart");
         String timeEnd = request.getParameter("timeEnd");
         String eventName = request.getParameter("eventName");
@@ -32,7 +37,7 @@ public class UpdateEventProcessor implements BaseProcessor<HttpServletRequest, S
         long id = Long.parseLong(request.getParameter("id"));
         boolean status = Boolean.parseBoolean(request.getParameter("status"));
         service.updateEvent(id, timeStart, timeEnd, eventName, rate, status);
-        ListEventResponse eventResponse = service.getAllEvent(null, null, null, null, status);
+        eventResponse = service.getAllEvent(null, null, null, null, status);
         return eventResponse.toJson();
     }
 }

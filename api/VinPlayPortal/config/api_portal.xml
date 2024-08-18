@@ -1012,5 +1012,10 @@
             <name>request OTP Tele</name>
             <path>com.vinplay.api.processors.otp.RequestOTPTeleProcesser</path>
         </command>
+        <command>
+            <id>4126</id>
+            <name>Get All Events</name>
+            <path>com.vinplay.api.processors.GetAllEventProcessor</path>
+        </command>
     </commands>
 </portal>

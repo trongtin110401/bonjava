@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  com.mongodb.BasicDBObject
  *  com.mongodb.Block
@@ -31,6 +31,7 @@ import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.pools.ConnectionPool;
 import com.vinplay.vbee.common.response.GetUserInfoResponse;
 import com.vinplay.vbee.common.response.UserInfoResponse;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -39,11 +40,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
 public class UserInfoDaoImpl
-implements UserInfoDao {
+        implements UserInfoDao {
     @Override
     public List<UserInfoResponse> searchUserInfo(String nickName, String ip, String startDate, String endDate, String type, int page) {
         final ArrayList<UserInfoResponse> result = new ArrayList<UserInfoResponse>();
@@ -63,30 +65,33 @@ implements UserInfoDao {
         if (type != null && !type.equals("")) {
             conditions.put("type", Integer.parseInt(type));
         }
+        conditions.put("agent", new Document("$ne", ""));
         if (startDate != null && !startDate.equals("") && endDate != null && !endDate.equals("")) {
-            obj.put("$gte", (Object)startDate);
-            obj.put("$lte", (Object)endDate);
-            conditions.put("time_log", (Object)obj);
+            obj.put("$gte", (Object) startDate);
+            obj.put("$lte", (Object) endDate);
+            conditions.put("time_log", (Object) obj);
         }
         final UserServiceImpl service = new UserServiceImpl();
-        FindIterable iterable = db.getCollection("user_login_info").find((Bson)new Document(conditions)).skip(num_start).limit(50).sort((Bson)objsort);
-        iterable.forEach((Block)new Block<Document>(){
+        FindIterable iterable = db.getCollection("user_login_info").find((Bson) new Document(conditions)).skip(num_start).limit(50).sort((Bson) objsort);
+        iterable.forEach((Block) new Block<Document>() {
 
             public void apply(Document document) {
-                String nn = document.getString((Object)"nick_name");
+                String nn = document.getString((Object) "nick_name");
                 UserInfoResponse userinfo = new UserInfoResponse();
-                userinfo.user_id = document.getInteger((Object)"user_id");
-                userinfo.user_name = document.getString((Object)"user_name");
-                userinfo.nick_name = document.getString((Object)"nick_name");
-                userinfo.ip = document.getString((Object)"ip");
-                userinfo.agent = document.getString((Object)"agent");
-                userinfo.type = document.getInteger((Object)"type");
-                userinfo.time_log = document.getString((Object)"time_log");
+                userinfo.user_id = document.getInteger((Object) "user_id");
+                userinfo.user_name = document.getString((Object) "user_name");
+                userinfo.nick_name = document.getString((Object) "nick_name");
+                userinfo.ip = document.getString((Object) "ip");
+                userinfo.agent = document.getString((Object) "agent");
+                userinfo.type = document.getInteger((Object) "type");
+                userinfo.time_log = document.getString((Object) "time_log");
                 try {
-                    UserModel model = service.getUserByNickName(nn);
-                    userinfo.security = model.isHasMobileSecurity();
-                }
-                catch (SQLException e) {
+                    if (!nickName.isEmpty()){
+                        UserModel model = service.getUserByNickName(nn);
+                        userinfo.security = model.isHasMobileSecurity();
+                    }
+
+                } catch (SQLException e) {
                     e.printStackTrace();
                 }
                 result.add(userinfo);
@@ -113,22 +118,22 @@ implements UserInfoDao {
             conditions.put("type", Integer.parseInt(type));
         }
         if (startDate != null && !startDate.equals("") && endDate != null && !endDate.equals("")) {
-            obj.put("$gte", (Object)startDate);
-            obj.put("$lte", (Object)endDate);
-            conditions.put("time_log", (Object)obj);
+            obj.put("$gte", (Object) startDate);
+            obj.put("$lte", (Object) endDate);
+            conditions.put("time_log", (Object) obj);
         }
-        FindIterable iterable = db.getCollection("user_login_info").find((Bson)new Document(conditions)).sort((Bson)objsort);
-        iterable.forEach((Block)new Block<Document>(){
+        FindIterable iterable = db.getCollection("user_login_info").find((Bson) new Document(conditions)).sort((Bson) objsort);
+        iterable.forEach((Block) new Block<Document>() {
 
             public void apply(Document document) {
                 UserInfoResponse userinfo = new UserInfoResponse();
-                userinfo.user_id = document.getInteger((Object)"user_id");
-                userinfo.user_name = document.getString((Object)"user_name");
-                userinfo.nick_name = document.getString((Object)"nick_name");
-                userinfo.ip = document.getString((Object)"ip");
-                userinfo.agent = document.getString((Object)"agent");
-                userinfo.type = document.getInteger((Object)"type");
-                userinfo.time_log = document.getString((Object)"time_log");
+                userinfo.user_id = document.getInteger((Object) "user_id");
+                userinfo.user_name = document.getString((Object) "user_name");
+                userinfo.nick_name = document.getString((Object) "nick_name");
+                userinfo.ip = document.getString((Object) "ip");
+                userinfo.agent = document.getString((Object) "agent");
+                userinfo.type = document.getInteger((Object) "type");
+                userinfo.time_log = document.getString((Object) "time_log");
                 result.add(userinfo);
             }
         });
@@ -138,7 +143,7 @@ implements UserInfoDao {
     @Override
     public GetUserInfoResponse listGetNickName(String nickName) throws SQLException {
         GetUserInfoResponse userinfo = new GetUserInfoResponse();
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");){
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
             String sql = "SELECT * FROM users WHERE nick_name=?";
             PreparedStatement stm = conn.prepareStatement("SELECT * FROM users WHERE nick_name=?");
             stm.setString(1, nickName);
@@ -161,7 +166,7 @@ implements UserInfoDao {
     @Override
     public List<ExportUser> GetExportUser(String startDate, String endDate) throws SQLException {
         List<ExportUser> users = new ArrayList<>();
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");){
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
             String sql = "SELECT nick_name,mobile,recharge_money FROM vinplay.users where create_time >= ? and create_time <= ? and is_bot = 0 and dai_ly = 0 and mobile is not null and recharge_money > 0";
             PreparedStatement stm = conn.prepareStatement(sql);
             stm.setString(1, startDate);
@@ -170,7 +175,7 @@ implements UserInfoDao {
             while (rs.next()) {
                 ExportUser user = new ExportUser();
                 user.setNick_name(rs.getString("nick_name"));
-                user.setMobile(rs.getString("mobile"));       
+                user.setMobile(rs.getString("mobile"));
                 user.setRecharge_money(rs.getLong("recharge_money"));
                 users.add(user);
             }

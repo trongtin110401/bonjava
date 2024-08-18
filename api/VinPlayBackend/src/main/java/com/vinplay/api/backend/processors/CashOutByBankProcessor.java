@@ -117,11 +117,12 @@ public class CashOutByBankProcessor implements BaseProcessor<HttpServletRequest,
                     if (jsonObject.get("ex_stt").equals(-2.3)) {
                         this.sendMesToAdmin(transid, 3);
                         status = CashoutUtil.STATUS_ERROR;
-                        userService.refundWhenError(nickName, userWithdraw.AmountReal, 0);
+                        userService.refundWhenError(userWithdraw.Username, userWithdraw.AmountReal, 0);
+
                     }
                 }
                 boolean updateTrans = cashoutDao.UpdateCashoutBank(transid, status, userAprrove);
-                if (!updateTrans || status == CashoutUtil.STATUS_ERROR ) {
+                if (!updateTrans) {
                     return "false";
                 }
                 int type = Integer.parseInt(typeStr);
