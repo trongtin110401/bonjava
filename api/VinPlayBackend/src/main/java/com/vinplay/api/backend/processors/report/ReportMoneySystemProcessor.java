@@ -264,12 +264,15 @@ public class ReportMoneySystemProcessor
                 }
 
                 // add real cash out base on channel
-                vinOutUser.put("realCashoutByMomo", getCashOutByMoMoSucesss(startTime, endTime));
-                vinOutUser.put("realCashoutByBank", getCashOutByBankSucesss(startTime, endTime));
+                Long totalCashOutMomo = getCashOutByMoMoSucesss(startTime, endTime);
+                Long totalCashOutBank = getCashOutByBankSucesss(startTime, endTime);
+                totalOut = totalCashOutMomo + totalCashOutBank;
+                vinOutUser.put("realCashoutByMomo", totalCashOutMomo);
+                vinOutUser.put("realCashoutByBank", totalCashOutBank);
 
                 res = new ReportMoneySystemResponse(true, "0", taiXiu, taiXiuBot, actionGame, vinInUser, vinInEvent, totalInUser, totalInEvent, totalIn, vinOutUser, vinOutAgent, totalOutUser, totalOutAgent, totalOut, ratioCashout, vinOther, user, actionGameBot, bot);
-                String bill = GameCommon.getValueStr("BILLING");
-                res.billConfig = bill;
+//                String bill = GameCommon.getValueStr("BILLING");
+//                res.billConfig = bill;
             } catch (Exception e) {
                 e.printStackTrace();
                 logger.debug((Object) e);
