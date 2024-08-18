@@ -117,20 +117,21 @@ public class CashOutByBankProcessor implements BaseProcessor<HttpServletRequest,
                     if (jsonObject.get("ex_stt").equals(-2.3)) {
                         this.sendMesToAdmin(transid, 3);
                         status = CashoutUtil.STATUS_ERROR;
+                        userService.refundWhenError(nickName, userWithdraw.AmountReal, 0);
                     }
                 }
                 boolean updateTrans = cashoutDao.UpdateCashoutBank(transid, status, userAprrove);
-                if (!updateTrans) {
-                    return "update tran loi -:::";
+                if (!updateTrans || status == CashoutUtil.STATUS_ERROR ) {
+                    return "false";
                 }
                 int type = Integer.parseInt(typeStr);
                 historyTransService.update(transid, userWithdraw.Username, HistoryTransConst.RUT_BANK, this.getTrangthai(type), this.getTrangthaiDes(type));
                 BroadCastUserMoney.pushBroadCast(userWithdraw.Username);
                 NapRutGame nrg = new NapRutGame();
-                String codedl = nrg.getMaDaily(userWithdraw.Username);
+//                String codedl = nrg.getMaDaily(userWithdraw.Username);
                 long SoTien = userWithdraw.AmountReal * (-1);
                 if (!status.equals(CashoutUtil.STATUS_ERROR) && !status.equals(CashoutUtil.STATUS_REJECT)) {
-                    NapRutModel napgame = new NapRutModel(transid, userWithdraw.Username, codedl, SoTien, "Rut Bank", userWithdraw.CreatedAt);
+                    NapRutModel napgame = new NapRutModel(transid, userWithdraw.Username, "", SoTien, "Rut Bank", userWithdraw.CreatedAt);
                     if (!nrg.getTransID(transid)) {
                         nrg.NapRut(napgame);
                     }
