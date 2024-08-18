@@ -85,7 +85,7 @@ public class GetUserOnlineProcessor implements BaseProcessor<HttpServletRequest,
 
     private boolean isCashOutAction(String actionName) {
         return Consts.CASH_OUT_BY_BANK.equals(actionName) ||
-                Consts.CASH_OUT_BY_MOMO.equals(actionName) || Consts.REFUND_RECHARGE_ERROR.equals(actionName);
+                Consts.CASH_OUT_BY_MOMO.equals(actionName);
     }
 
     private int getParameter(HttpServletRequest request, String name, int defaultValue) {
