@@ -804,7 +804,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         setFunValue(getFunValue() + value);
     }
 
-    public void updateFund() throws Exception {
+    public void saveFund() throws Exception {
         miniGameService.saveFund(Games.TAI_XIU_MD5.getName(), getFunValue());
     }
 }
