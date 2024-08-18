@@ -703,12 +703,25 @@ public class LogMoneyUserDaoImpl
                 if (serviceName.equals("CashOutByBank")){
                     serviceName = "Rút tiền";
                 }
+                if (serviceName.equals("xoc dia : Tra thuong ")){
+                    serviceName= "Xóc đĩa : Trả thưởng";
+                }
+                if (serviceName.equals("xoc dia : Đặt cược")){
+                    serviceName= "Xóc đĩa : Đặc cược";
+                }
+                if (serviceName.equals("Deposit bank")){
+                    serviceName= "Nạp tiền";
+                }
+
                 tranlogmoney.serviceName = serviceName;
                 tranlogmoney.currentMoney = document.getLong((Object) "current_money");
                 tranlogmoney.moneyExchange = document.getLong((Object) "money_exchange");
                 String des = document.getString((Object) "description");
                 if (des.equals("withdraw to bank")) {
-                    des = "Rút Internet Banking";
+                    des = "Rút Ngân Hàng";
+                }
+                if (des.equals("Deposit bank")) {
+                    des = "Nạp Ngân Hàng";
                 }
                 tranlogmoney.description = des;
                 tranlogmoney.transactionTime = document.getString((Object) "trans_time");

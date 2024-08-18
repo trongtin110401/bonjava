@@ -207,12 +207,9 @@ public class HistoryTransDaoImpl implements HistoryTransDao {
             HashMap<String, Object> conditions = new HashMap<String, Object>();
             if (nickName != null && !nickName.isEmpty()) {
                 conditions.put("nickName", nickName.trim());
-
-                // Kiểm tra điều kiện hinhthucTrans với các giá trị MOMO, BANK, CARD
                 List<String> hinhthucTransList = Arrays.asList("MOMO", "BANK", "CARD", "recharge", "GIFT_CODE", "ADMIN_TRANSFER_TO_USER");
-                BasicDBObject hinhthucTransCondition = new BasicDBObject("$or", hinhthucTransList);
+                BasicDBObject hinhthucTransCondition = new BasicDBObject("$in", hinhthucTransList);
                 conditions.put("hinhthucTrans", hinhthucTransCondition);
-
                 BasicDBObject obj = new BasicDBObject();
                 obj.put("$gt", "0");
                 conditions.put("sotien", obj);
