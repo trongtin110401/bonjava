@@ -122,7 +122,7 @@ public class CashOutByBankProcessor implements BaseProcessor<HttpServletRequest,
                     }
                 }
                 boolean updateTrans = cashoutDao.UpdateCashoutBank(transid, status, userAprrove);
-                if (!updateTrans || status == CashoutUtil.STATUS_ERROR ) {
+                if (!updateTrans) {
                     return "false";
                 }
                 int type = Integer.parseInt(typeStr);
