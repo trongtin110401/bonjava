@@ -108,10 +108,14 @@ public class CashoutByMomoProcess implements BaseProcessor<HttpServletRequest, S
                         historyTransModel.setGhiChu("Thất bại");
                     } else {
                         JSONObject jsonObject = new JSONObject(output);
-                        if (jsonObject.get("ex_stt").toString().equals("-2.3")) {
+                        if (jsonObject.get("ex_stt").equals(-2.3)) {
                             this.sendMesToAdmin(transid, 3);
+                            status = CashoutUtil.STATUS_ERROR;
+                            UserServiceImpl userService = new UserServiceImpl();
+                            this.sendMesToAdmin(transid, 2);
                             historyTransModel.setTrangthai("Thất bại");
                             historyTransModel.setGhiChu("Thất bại");
+                            userService.refundWhenError(userWithdraw.Nickname, userWithdraw.AmountReal, 0);
                         }
                     }
                 }
