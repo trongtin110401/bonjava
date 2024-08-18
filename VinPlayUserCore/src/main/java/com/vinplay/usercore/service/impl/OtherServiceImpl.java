@@ -24,10 +24,7 @@ import org.python.parser.ast.Str;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -443,10 +440,24 @@ public class OtherServiceImpl implements OtherService {
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
                 if (rs.getString("Type").equals("1")) {
-                    TopCaoThu topCaoThu = new TopCaoThu();
-                    topCaoThu.setMoneyWin(rs.getInt("CashGain"));
-                    topCaoThu.setNickname(rs.getString("nickname"));
-                    result.add(topCaoThu);
+                    String nickname = rs.getString("nickname");
+                    int cashGain = rs.getInt("CashGain");
+
+                    // Check if the nickname already exists in the result list
+                    Optional<TopCaoThu> existingTopCaoThu = result.stream()
+                            .filter(topCaoThu -> topCaoThu.getNickname().equals(nickname))
+                            .findFirst();
+
+                    if (existingTopCaoThu.isPresent()) {
+                        // If found, add the new cash gain to the existing amount
+                        existingTopCaoThu.get().setMoneyWin(existingTopCaoThu.get().getMoneyWin() + cashGain);
+                    } else {
+                        // If not found, create a new TopCaoThu and add it to the result list
+                        TopCaoThu topCaoThu = new TopCaoThu();
+                        topCaoThu.setMoneyWin(cashGain);
+                        topCaoThu.setNickname(nickname);
+                        result.add(topCaoThu);
+                    }
                 }
             }
             rs.close();
