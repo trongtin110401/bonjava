@@ -3,6 +3,7 @@
  */
 package com.vinplay.usercore.service;
 
+import com.vinplay.vbee.common.models.TopCaoThu;
 import com.vinplay.vbee.common.response.*;
 import org.bson.Document;
 import org.python.parser.ast.Str;
@@ -38,6 +39,8 @@ public interface OtherService {
 
 
     long getTotalShootFishByNickname(String startTime, String endTime, String nickname);
+
+    List<TopCaoThu> getBanCa(String startTime, String endTime);
 
     void deleteExpenseById(String id);
 
