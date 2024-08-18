@@ -220,7 +220,7 @@ public class BauCuaModuleTo2 extends BaseClientRequestHandler {
         for (MGRoom entry : this.rooms.values()) {
             MGRoomBauCuaTo2 room = (MGRoomBauCuaTo2) entry;
             room.storeTimeToCache((byte) (33 - this.count), this.isBettingRound);
-            room.botBet(33 - this.count, this.isBettingRound);
+            room.botBet(20 - this.count, this.isBettingRound);
         }
     }
 
