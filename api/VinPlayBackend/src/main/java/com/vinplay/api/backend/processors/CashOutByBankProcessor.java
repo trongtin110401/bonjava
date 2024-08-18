@@ -110,6 +110,7 @@ public class CashOutByBankProcessor implements BaseProcessor<HttpServletRequest,
                     }
                 }
                 this.sendMesToAdmin(transid, 102);
+                String error = "";
                 if (status.equals(CashoutUtil.STATUS_SENDING)) {
                     CallAutoTransBank callBank = new CallAutoTransBank();
                     String output = callBank.CallAPI(userWithdraw); //Product
@@ -118,7 +119,8 @@ public class CashOutByBankProcessor implements BaseProcessor<HttpServletRequest,
                         this.sendMesToAdmin(transid, 3);
                         status = CashoutUtil.STATUS_ERROR;
                         userService.refundWhenError(userWithdraw.Username, userWithdraw.AmountReal, 0);
-
+                        typeStr = "4";
+                        error = "4";
                     }
                 }
                 boolean updateTrans = cashoutDao.UpdateCashoutBank(transid, status, userAprrove);
@@ -126,7 +128,12 @@ public class CashOutByBankProcessor implements BaseProcessor<HttpServletRequest,
                     return "false";
                 }
                 int type = Integer.parseInt(typeStr);
-                historyTransService.update(transid, userWithdraw.Username, HistoryTransConst.RUT_BANK, this.getTrangthai(type), this.getTrangthaiDes(type));
+                int typeDes = type;
+                if (!error.isEmpty()) {
+                    typeDes = 4;
+                    type = 4;
+                }
+                historyTransService.update(transid, userWithdraw.Username, HistoryTransConst.RUT_BANK, this.getTrangthai(type), this.getTrangthaiDes(typeDes));
                 BroadCastUserMoney.pushBroadCast(userWithdraw.Username);
                 NapRutGame nrg = new NapRutGame();
 //                String codedl = nrg.getMaDaily(userWithdraw.Username);
@@ -197,6 +204,8 @@ public class CashOutByBankProcessor implements BaseProcessor<HttpServletRequest,
                 return "Ngân hàng đang bảo trì!";
             case 3:
                 return "Vui lòng cược thêm!";
+            case 4:
+                return "Thất bại";
             case 105:
                 return "Giao dịch thành công!";
         }
@@ -209,6 +218,8 @@ public class CashOutByBankProcessor implements BaseProcessor<HttpServletRequest,
             case 2:
             case 3:
                 return "Từ chối";
+            case 4:
+                return "Thất bại";
             case 105:
                 return "Đã duyệt";
         }
