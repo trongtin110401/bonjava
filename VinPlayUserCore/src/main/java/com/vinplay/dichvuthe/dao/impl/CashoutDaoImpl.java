@@ -629,7 +629,7 @@ public class CashoutDaoImpl
     }
 
     @Override
-    public boolean UpdateCashoutCard(String Id, String status, String userApprove, String Seri , String Pin) {
+    public boolean UpdateCashoutCard(String Id, String status, String userApprove, String Seri, String Pin) {
         try {
             MongoDatabase db = MongoDBConnectionFactory.getDB();
             Document conditions = new Document();
@@ -729,5 +729,50 @@ public class CashoutDaoImpl
             return null;
         }
     }
+
+    @Override
+    public int getTotalCashOutBankByNickname(String nickname) {
+        int total = 0;
+        try {
+            MongoDatabase db = MongoDBConnectionFactory.getDB();
+            MongoCollection<Document> col = db.getCollection(CashoutUtil.CASHOUT_BY_BANK_COLLECTION);
+
+            HashMap<String, Object> conditions = new HashMap<>();
+            conditions.put("Username", nickname);
+            conditions.put("Status", "success");
+            FindIterable<Document> iterable = col.find(new Document(conditions));
+            for (Document document : iterable) {
+                total += document.getInteger("Amount", 0);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+
+        return total;
+    }
+
+    @Override
+    public int getTotalCashOutMomoByNickname(String nickname) {
+        int total = 0;
+        try {
+            MongoDatabase db = MongoDBConnectionFactory.getDB();
+            MongoCollection<Document> col = db.getCollection(CashoutUtil.CASHOUT_BY_MOMO_COLLECTION);
+
+            HashMap<String, Object> conditions = new HashMap<>();
+            conditions.put("Nickname", nickname);
+            conditions.put("Status", "success");
+            FindIterable<Document> iterable = col.find(new Document(conditions));
+            for (Document document : iterable) {
+                total += document.getInteger("Amount", 0);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+
+        return total;
+    }
 }
+
 
