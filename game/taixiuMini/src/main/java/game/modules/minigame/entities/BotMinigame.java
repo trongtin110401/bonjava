@@ -23,7 +23,10 @@ import com.vinplay.usercore.service.UserService;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.vbee.common.config.VBeePath;
 import com.vinplay.vbee.common.utils.DateTimeUtils;
+import game.modules.minigame.utils.RandomUtil;
 import game.utils.ConfigGame;
+import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang.math.RandomUtils;
 
 import java.io.*;
 import java.security.NoSuchAlgorithmException;
@@ -253,7 +256,7 @@ public class BotMinigame {
 
     public static List<BotTaiXiu> getBotTaiXiu(String moneyType) {
         Random rd = new Random();
-        int phanTramVaoSom = 80;
+        int phanTramVaoSom;
         int[] arr = new int[]{60, 70, 65, 55, 75};
         int index = rd.nextInt(arr.length);
         phanTramVaoSom = arr[index];
@@ -332,7 +335,7 @@ public class BotMinigame {
                     long betValue = betValues.get(n).intValue();
                     short bettingTime = (short) BotMinigame.randomBettingTime(minBettingTime, maxBettingTime, phanTramVaoSom);
                     System.out.println("username: " + nickname + " - Betting time: " + bettingTime);
-                    if(bettingTime > 49){
+                    if (bettingTime > 49) {
                         bettingTime = (short) BotMinigame.randomBettingTime(minBettingTime, 48, phanTramVaoSom);
                     }
                     short betSide = 0;
@@ -370,11 +373,11 @@ public class BotMinigame {
             int numberUserXiuMax = obj.getNumberUserXiuMax();
             int totalBot = numberUserTaiMax + numberUserXiuMax;
             List<String> botsName = BotMinigame.getBots(totalBot, moneyType);
-            for (int i = 0; i < totalBot && i < botsName.size() ; i++) {
+            for (int i = 0; i < totalBot && i < botsName.size(); i++) {
                 String nickname = botsName.get(i);
                 long betValue = minBetValue + (long) (Math.random() * (maxBetValue - minBetValue));
                 short bettingTime = (short) BotMinigame.randomBettingTime(minBettingTime, maxBettingTime, phanTramVaoSom);
-                if(bettingTime > 55){
+                if (bettingTime > 55) {
                     bettingTime = (short) BotMinigame.randomBettingTime(minBettingTime, 48, phanTramVaoSom);
                 }
                 short betSide = 0;
@@ -395,8 +398,10 @@ public class BotMinigame {
         Random rd = new Random();
         int n = rd.nextInt(100);
         if (n > phanTramVaoSom) {
-            int minTime5s = maxTime - 5;
-            return rd.nextInt(maxTime - minTime5s) + minTime5s;
+            Random random = new Random();
+            return random.ints(maxTime - 2, maxTime)
+                    .findFirst()
+                    .getAsInt();
         }
         return rd.nextInt(maxTime - minTime) + minTime;
     }
