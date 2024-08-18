@@ -162,14 +162,13 @@ public class BotBauCuaTo2 {
     }
 
 
-    private static int randomBettingTime(int minTime, int maxTime, int phanTramVaoSom) {
+    private static int randomBettingTime(int minTime, int maxTime, int phanTramVaoMuon) {
         Random rd = new Random();
         int n = rd.nextInt(100);
-        if (n > phanTramVaoSom) {
-            int minTime5s = maxTime - 5;
-            return rd.nextInt(maxTime - minTime5s) + minTime5s;
+        if (n > phanTramVaoMuon) {
+            return new Random().ints(maxTime, maxTime + 1).findFirst().getAsInt();
         }
-        return rd.nextInt(maxTime - minTime) + minTime;
+        return rd.nextInt(maxTime - 1);
     }
 
     public static List<BotBauCua> getBotBauCua(int roomId) {
@@ -194,7 +193,7 @@ public class BotBauCuaTo2 {
         List<String> botsName = BotBauCuaTo2.getBots(numBots, moneyType);
         for (int i = 0; i < numBots && i < botsName.size(); ++i) {
             String nickname = botsName.get(i);
-            short bettingTime = (short) BotBauCuaTo2.randomBettingTime(minBettingTime, maxBettingTime, 70);
+            short bettingTime = (short) BotBauCuaTo2.randomBettingTime(minBettingTime, maxBettingTime, 65);
             long[] betArr = new long[6];
             int j = maxBetSide;
             while (j > 0) {
