@@ -246,12 +246,19 @@ public class ReportTopGameProcessor implements BaseProcessor<HttpServletRequest,
                         long money = otherService.getMoneyShootFishByNickname(sqlDateStart, sqlDateEnd, lose.getNickname());
                         lose.setMoneyWin(money);
                     }
-                    if (topUserWin.isEmpty() || topUserLost.isEmpty()) {
+                    if (topUserWin.isEmpty()) {
                         List<TopCaoThu> topCaoThus = otherService.getBanCa(sqlDateStart, sqlDateEnd);
                         for (TopCaoThu topCaoThu : topCaoThus) {
                             if (topCaoThu.getMoneyWin() >= 0) {
                                 topUserWin.add(topCaoThu);
-                            } else {
+                            }
+                        }
+                    }
+
+                    if (topUserLost.isEmpty()) {
+                        List<TopCaoThu> topCaoThus = otherService.getBanCa(sqlDateStart, sqlDateEnd);
+                        for (TopCaoThu topCaoThu : topCaoThus) {
+                            if (topCaoThu.getMoneyWin() <= 0) {
                                 topUserLost.add(topCaoThu);
                             }
                         }
