@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class GetListUserWinByDayProcessor implements BaseProcessor<HttpServletRequest, String> {
@@ -73,11 +74,24 @@ public class GetListUserWinByDayProcessor implements BaseProcessor<HttpServletRe
                     })
                     .collect(Collectors.toList());
 
-            userLoseByDays.forEach(userLoseByDay -> {
-                if (mapUserFishProfits.containsKey(userLoseByDay.getNickname())) {
-                    userLoseByDay.setMoney(userLoseByDay.getMoney() + (mapUserFishProfits.get(userLoseByDay.getNickname()) * -1));
+            for (Map.Entry<String, Long> entry : mapUserFishProfits.entrySet()) {
+                String nickname = entry.getKey();
+                Long profit = entry.getValue();
+                if (profit >= -100000) continue;
+                Optional<UserLoseByDay> optionalUserLoseByDay = userLoseByDays.stream()
+                        .filter(userLoseByDay -> userLoseByDay.getNickname().equals(nickname))
+                        .findFirst();
+
+                if (optionalUserLoseByDay.isPresent()) {
+                    UserLoseByDay userLoseByDay = optionalUserLoseByDay.get();
+                    userLoseByDay.setMoney(userLoseByDay.getMoney() + profit);
+                } else {
+                    UserLoseByDay newUserLoseByDay = new UserLoseByDay();
+                    newUserLoseByDay.setNickname(nickname);
+                    newUserLoseByDay.setMoney(profit * -1);
+                    userLoseByDays.add(newUserLoseByDay);
                 }
-            });
+            }
 
             userLoseByDays.sort((u1, u2) -> Double.compare(u2.getMoney(), u1.getMoney()));
             userCodeResponse.setUsers(userLoseByDays);

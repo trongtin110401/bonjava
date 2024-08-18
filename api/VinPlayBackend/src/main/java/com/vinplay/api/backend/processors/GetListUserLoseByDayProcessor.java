@@ -26,10 +26,7 @@ import okhttp3.*;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -81,12 +78,27 @@ public class GetListUserLoseByDayProcessor implements BaseProcessor<HttpServletR
                     })
                     .collect(Collectors.toList());
 
-            userLoseByDays.forEach(userLoseByDay -> {
-                if (mapUserFishProfits.containsKey(userLoseByDay.getNickname())) {
-                    userLoseByDay.setMoney(userLoseByDay.getMoney() + (mapUserFishProfits.get(userLoseByDay.getNickname()) * -1));
+            for (Map.Entry<String, Long> entry : mapUserFishProfits.entrySet()) {
+                String nickname = entry.getKey();
+                Long profit = entry.getValue();
+                if (profit <= 100000) continue;
+                Optional<UserLoseByDay> optionalUserLoseByDay = userLoseByDays.stream()
+                        .filter(userLoseByDay -> userLoseByDay.getNickname().equals(nickname))
+                        .findFirst();
+
+                if (optionalUserLoseByDay.isPresent()) {
+                    UserLoseByDay userLoseByDay = optionalUserLoseByDay.get();
+                    userLoseByDay.setMoney(userLoseByDay.getMoney() + profit);
+                } else {
+                    UserLoseByDay newUserLoseByDay = new UserLoseByDay();
+                    newUserLoseByDay.setNickname(nickname);
+                    newUserLoseByDay.setMoney(profit * -1);
+                    userLoseByDays.add(newUserLoseByDay);
                 }
-            });
-            userLoseByDays.sort((u1, u2) -> Double.compare(u1.getMoney(), u2.getMoney()));
+            }
+
+
+            userLoseByDays.sort(Comparator.comparingDouble(UserLoseByDay::getMoney));
             userCodeResponse.setUsers(userLoseByDays);
             userCodeResponse.setTotalRecord(userLoseByDays.size());
 
