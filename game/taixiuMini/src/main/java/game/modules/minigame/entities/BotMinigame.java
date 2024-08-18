@@ -394,9 +394,9 @@ public class BotMinigame {
         Random rd = new Random();
         int n = rd.nextInt(100);
         if (n > phanTramVaoMuon) {
-            return new Random().ints(maxTime - 2, maxTime).findFirst().getAsInt();
+            return new Random().ints(maxTime - 3, maxTime - 1).findFirst().getAsInt();
         }
-        return rd.nextInt(maxTime);
+        return rd.nextInt(maxTime - 1);
     }
 
 
