@@ -252,7 +252,7 @@ public class ReportTopGameProcessor implements BaseProcessor<HttpServletRequest,
                             if (topCaoThu.getMoneyWin() >= 0) {
                                 topUserWin.add(topCaoThu);
                             } else {
-                                topBotLost.add(topCaoThu);
+                                topUserLost.add(topCaoThu);
                             }
                         }
                     }
