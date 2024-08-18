@@ -63,6 +63,7 @@ implements UserInfoDao {
         if (type != null && !type.equals("")) {
             conditions.put("type", Integer.parseInt(type));
         }
+        conditions.put("agent", new Document("$ne", ""));
         if (startDate != null && !startDate.equals("") && endDate != null && !endDate.equals("")) {
             obj.put("$gte", (Object)startDate);
             obj.put("$lte", (Object)endDate);
