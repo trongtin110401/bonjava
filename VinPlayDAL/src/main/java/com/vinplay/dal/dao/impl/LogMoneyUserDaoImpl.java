@@ -701,16 +701,22 @@ public class LogMoneyUserDaoImpl
                 tranlogmoney.transId = document.getLong((Object) "trans_id");
                 String serviceName = document.getString("service_name");
                 if (serviceName.equals("CashOutByBank")){
-                    serviceName = "Rút tiền";
+                    serviceName = "Rút Tiền";
+                }
+                if (serviceName.equals("CashOutByMomo")){
+                    serviceName = "Rút Tiền";
                 }
                 if (serviceName.equals("xoc dia : Tra thuong ")){
-                    serviceName= "Xóc đĩa : Trả thưởng";
+                    serviceName= "Xóc đĩa : Trả Thưởng";
                 }
                 if (serviceName.equals("xoc dia : Đặt cược")){
-                    serviceName= "Xóc đĩa : Đặc cược";
+                    serviceName= "Xóc đĩa : Đặc Cược";
                 }
                 if (serviceName.equals("Deposit bank")){
-                    serviceName= "Nạp tiền";
+                    serviceName= "Nạp Tiền";
+                }
+                if (serviceName.equals("Deposit Momo")){
+                    serviceName= "Nạp Momo";
                 }
 
                 tranlogmoney.serviceName = serviceName;
@@ -722,6 +728,12 @@ public class LogMoneyUserDaoImpl
                 }
                 if (des.equals("Deposit bank")) {
                     des = "Nạp Ngân Hàng";
+                }
+                if (des.equals("withdraw to momo")) {
+                    des = "Rút Momo";
+                }
+                if (des.equals("Deposit Momo")) {
+                    des = "Nạp Momo";
                 }
                 tranlogmoney.description = des;
                 tranlogmoney.transactionTime = document.getString((Object) "trans_time");
