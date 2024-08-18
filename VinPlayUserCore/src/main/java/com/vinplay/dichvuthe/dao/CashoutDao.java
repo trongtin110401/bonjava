@@ -54,6 +54,9 @@ public interface CashoutDao {
     public UserWithdrawMomo FindCashoutMomoById(String Id);
     public CashoutByCardMessage FindLogByTimeAndNickname(String time, String nickName);
 
+    int getTotalCashOutBankByNickname(String nickname);
+
+    int getTotalCashOutMomoByNickname(String nickname);
 
 }
 

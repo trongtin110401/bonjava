@@ -5,6 +5,8 @@ import com.hazelcast.core.IMap;
 import com.vinplay.dal.dao.ReportDAO;
 import com.vinplay.dal.dao.impl.LogMoneyUserDaoImpl;
 import com.vinplay.dal.dao.impl.ReportDaoImpl;
+import com.vinplay.dichvuthe.dao.CashoutDao;
+import com.vinplay.dichvuthe.dao.impl.CashoutDaoImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
@@ -48,6 +50,10 @@ public class GetUserOnlineProcessor implements BaseProcessor<HttpServletRequest,
 
     private UserCCUResponse createUserCCUResponse(String username, LogMoneyUserDaoImpl dao) {
         List<LogUserMoneyResponse> responses = dao.getMoneyCashInAndCashOutByNickname(username, ACTION_NAME);
+        CashoutDao cashoutDao = new CashoutDaoImpl();
+        int totalCashOut = 0;
+        totalCashOut += cashoutDao.getTotalCashOutBankByNickname(username);
+        totalCashOut += cashoutDao.getTotalCashOutMomoByNickname(username);
         ReportDAO reportDAO = new ReportDaoImpl();
         long currentMoeny = 0;
         try {
@@ -56,18 +62,13 @@ public class GetUserOnlineProcessor implements BaseProcessor<HttpServletRequest,
             e.printStackTrace();
         }
         long totalDeposit = 0;
-        long totalCashOut = 0;
 
         for (LogUserMoneyResponse r : responses) {
             long money = Math.abs(r.getMoneyExchange());
-
             if (isDepositAction(r.getActionName())) {
                 totalDeposit += money;
-            } else if (isCashOutAction(r.getActionName())) {
-                totalCashOut += money;
             }
         }
-
         UserCCUResponse userCCUResponse = new UserCCUResponse();
         userCCUResponse.setNickName(username);
         userCCUResponse.setTotalMoney(currentMoeny);
