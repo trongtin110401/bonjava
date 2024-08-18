@@ -335,7 +335,7 @@ public class BotMinigame {
                     long betValue = betValues.get(n).intValue();
                     short bettingTime = (short) BotMinigame.randomBettingTime(minBettingTime, maxBettingTime, phanTramVaoSom);
                     System.out.println("username: " + nickname + " - Betting time: " + bettingTime);
-                    if (bettingTime > 49) {
+                    if (bettingTime > 59) {
                         bettingTime = (short) BotMinigame.randomBettingTime(minBettingTime, 48, phanTramVaoSom);
                     }
                     short betSide = 0;
