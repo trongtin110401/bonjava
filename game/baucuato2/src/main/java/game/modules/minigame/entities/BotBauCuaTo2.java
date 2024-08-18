@@ -254,7 +254,12 @@ public class BotBauCuaTo2 {
             case 4: {
                 return 100000L;
             }
-
+            case 5: {
+                return 500000L;
+            }
+//            case 6: {
+//                return 1000000;
+//            }
         }
         return 100000L;
     }
