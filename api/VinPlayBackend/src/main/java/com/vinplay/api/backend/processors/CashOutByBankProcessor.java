@@ -114,8 +114,9 @@ public class CashOutByBankProcessor implements BaseProcessor<HttpServletRequest,
                     CallAutoTransBank callBank = new CallAutoTransBank();
                     String output = callBank.CallAPI(userWithdraw); //Product
                     JSONObject jsonObject = new JSONObject(output);
-                    if (jsonObject.get("ex_stt").equals("-2.3")) {
+                    if (jsonObject.get("ex_stt").equals(-2.3)) {
                         this.sendMesToAdmin(transid, 3);
+                        status = CashoutUtil.STATUS_ERROR;
                     }
                 }
                 boolean updateTrans = cashoutDao.UpdateCashoutBank(transid, status, userAprrove);
