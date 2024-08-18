@@ -450,7 +450,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                     amountBotXiuFake += (taiXiuSetAmountBotFake.getNumberBotXiuFake()) / 40;
                 }
             } catch (KeyNotFoundException ex) {
-//                sendLogToTele(ex.getMessage());
                 amountBotXiuFake = 0;
                 amountBotTaiFake = 0;
             }
