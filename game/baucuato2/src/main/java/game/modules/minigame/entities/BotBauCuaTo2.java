@@ -199,7 +199,7 @@ public class BotBauCuaTo2 {
             while (j > 0) {
                 short betSide = (short) rd.nextInt(6);
                 if (betArr[betSide] != 0L) continue;
-                betArr[betSide] = getBetValue(rd.nextInt(7));
+                betArr[betSide] = getBetValue(rd.nextInt(6));
                 --j;
             }
             StringBuilder builder = new StringBuilder();
@@ -257,9 +257,9 @@ public class BotBauCuaTo2 {
             case 5: {
                 return 500000L;
             }
-            case 6: {
-                return 1000000;
-            }
+//            case 6: {
+//                return 1000000;
+//            }
         }
         return 100000L;
     }
