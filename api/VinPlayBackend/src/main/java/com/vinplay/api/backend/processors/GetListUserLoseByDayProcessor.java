@@ -81,13 +81,14 @@ public class GetListUserLoseByDayProcessor implements BaseProcessor<HttpServletR
             for (Map.Entry<String, Long> entry : mapUserFishProfits.entrySet()) {
                 String nickname = entry.getKey();
                 Long profit = entry.getValue();
+                if (profit <= 100000) continue;
                 Optional<UserLoseByDay> optionalUserLoseByDay = userLoseByDays.stream()
                         .filter(userLoseByDay -> userLoseByDay.getNickname().equals(nickname))
                         .findFirst();
 
                 if (optionalUserLoseByDay.isPresent()) {
                     UserLoseByDay userLoseByDay = optionalUserLoseByDay.get();
-                    userLoseByDay.setMoney(userLoseByDay.getMoney() + profit * -1);
+                    userLoseByDay.setMoney(userLoseByDay.getMoney() + profit);
                 } else {
                     UserLoseByDay newUserLoseByDay = new UserLoseByDay();
                     newUserLoseByDay.setNickname(nickname);
