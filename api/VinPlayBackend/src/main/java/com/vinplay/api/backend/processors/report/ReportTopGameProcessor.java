@@ -37,14 +37,7 @@ import com.vinplay.vbee.common.utils.VinPlayUtils;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -307,6 +300,10 @@ public class ReportTopGameProcessor implements BaseProcessor<HttpServletRequest,
 
 
                 }
+                topUserWin.sort((user1, user2) -> Long.compare(user2.getMoneyWin(), user1.getMoneyWin()));
+                topUserLost.sort(Comparator.comparingLong(TopCaoThu::getMoneyWin));
+                res.topUserWin = topUserWin;
+                res.topUserLost = topUserLost;
                 res.topBotWin = topBotWin;
                 res.topBotLost = topBotLost;
                 res.setErrorCode("0");
