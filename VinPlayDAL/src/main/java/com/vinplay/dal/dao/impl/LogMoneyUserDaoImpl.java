@@ -701,14 +701,14 @@ public class LogMoneyUserDaoImpl
                 tranlogmoney.transId = document.getLong((Object) "trans_id");
                 String serviceName = document.getString("service_name");
                 if (serviceName.equals("CashOutByBank")){
-                    serviceName = "R˙t ti?n";
+                    serviceName = "R√∫t ti·ªÅn";
                 }
                 tranlogmoney.serviceName = serviceName;
                 tranlogmoney.currentMoney = document.getLong((Object) "current_money");
                 tranlogmoney.moneyExchange = document.getLong((Object) "money_exchange");
                 String des = document.getString((Object) "description");
                 if (des.equals("withdraw to bank")) {
-                    des = "R˙t Internet Banking";
+                    des = "R√∫t Internet Banking";
                 }
                 tranlogmoney.description = des;
                 tranlogmoney.transactionTime = document.getString((Object) "trans_time");
