@@ -3,7 +3,6 @@ package game.modules.minigame.room;
 
 import bitzero.server.BitZeroServer;
 import bitzero.server.entities.User;
-import bitzero.server.extensions.data.BaseMsg;
 import bitzero.util.common.business.Debug;
 import com.vinplay.dal.service.BroadcastMessageService;
 import com.vinplay.dal.service.MiniGameService;
@@ -15,7 +14,6 @@ import com.vinplay.dal.service.impl.PokeGoServiceImpl;
 import com.vinplay.usercore.service.UserService;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.vbee.common.enums.Games;
-import com.vinplay.vbee.common.models.UserModel;
 import com.vinplay.vbee.common.models.cache.UserCacheModel;
 import com.vinplay.vbee.common.response.MoneyResponse;
 import com.vinplay.vbee.common.statics.TransType;
@@ -30,7 +28,10 @@ import game.modules.minigame.utils.PokeGoUtils;
 import game.utils.ConfigGame;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -150,9 +151,9 @@ public class MGRoomCandy extends MGRoom {
         if (lineArr.length > 0 && !linesStr.isEmpty()) {
             if (totalBetValue > 0L) {
                 if (totalBetValue <= currentMoney) {
-                    MoneyResponse moneyRes = this.userService.updateMoney(username, -totalBetValue, this.moneyTypeStr, Games.CANDY.getName(), "Quay Whisky", "Đặt cược Quay " + this.gameName, 0L, referenceId, TransType.START_TRANS);
+                    long fee = totalBetValue * percentFee / 100L;
+                    MoneyResponse moneyRes = this.userService.updateMoney(username, -totalBetValue, this.moneyTypeStr, Games.CANDY.getName(), "Quay Whisky", "Đặt cược Quay " + this.gameName, fee, referenceId, TransType.START_TRANS);
                     if (moneyRes != null && moneyRes.isSuccess()) {
-                        long fee = totalBetValue * percentFee / 100L;
                         long moneyToPot = totalBetValue / 100L;
                         long moneyToFund = totalBetValue - fee - moneyToPot;
                         if (!u.isBot() && moneyToFund > 0) {
@@ -271,11 +272,11 @@ public class MGRoomCandy extends MGRoom {
                                         }
                                     } else {
                                         if (!u.isBot()) updateFunValue(-totalPrizes);
-                                        result = totalPrizes >= (this.betValue * 100L) ? (short) 2 : 1;
+                                        result = totalPrizes >= (this.betValue * 100L) ? ResultPokeGo.THANG_LON : ResultPokeGo.THANG;
                                     }
                                 }
                                 if (totalPrizes != 0 && !u.isBot()) {
-                                    moneyRes = this.userService.updateMoney(username, totalPrizes, this.moneyTypeStr, Games.CANDY.getName(), "Quay Whisky", this.buildDescription(totalBetValue, totalPrizes, result), fee, referenceId, TransType.END_TRANS);
+                                    moneyRes = this.userService.updateMoney(username, totalPrizes, this.moneyTypeStr, Games.CANDY.getName(), "Quay Whisky", this.buildDescription(totalBetValue, totalPrizes, result), 0, referenceId, TransType.END_TRANS);
                                     if (moneyRes != null && moneyRes.isSuccess()) {
                                         long moneyExchange = totalPrizes - (long) this.betValue;
                                         currentMoney = moneyRes.getCurrentMoney();
