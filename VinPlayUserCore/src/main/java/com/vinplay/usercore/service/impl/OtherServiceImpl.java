@@ -11,6 +11,7 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Sorts;
 import com.mongodb.client.model.UpdateOptions;
 import com.vinplay.usercore.service.OtherService;
+import com.vinplay.vbee.common.models.TopCaoThu;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.pools.ConnectionPool;
 import com.vinplay.vbee.common.response.*;
@@ -429,6 +430,31 @@ public class OtherServiceImpl implements OtherService {
         }
         totalProfit = totalProfit * -1;
         return totalProfit;
+    }
+
+    @Override
+    public List<TopCaoThu> getBanCa(String startTime, String endTime) {
+        List<TopCaoThu> result = new ArrayList<>();
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_banca");) {
+            String sql = "SELECT * FROM cgame.bc_trans_log c " + "JOIN users u ON c.UserId = u.user_id " + "WHERE c.time >= ? AND c.time <= ?";
+            PreparedStatement stm = conn.prepareStatement(sql);
+            stm.setTimestamp(1, Timestamp.valueOf(startTime + " 00:00:00"));
+            stm.setTimestamp(2, Timestamp.valueOf(endTime + " 23:59:59"));
+            ResultSet rs = stm.executeQuery();
+            while (rs.next()) {
+                if (rs.getString("Type").equals("1")) {
+                    TopCaoThu topCaoThu = new TopCaoThu();
+                    topCaoThu.setMoneyWin(rs.getInt("CashGain"));
+                    topCaoThu.setNickname(rs.getString("nickname"));
+                    result.add(topCaoThu);
+                }
+            }
+            rs.close();
+            stm.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     @Override

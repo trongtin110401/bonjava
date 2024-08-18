@@ -12,6 +12,9 @@ public class TopCaoThu {
         this.moneyWin = moneyWin;
     }
 
+    public TopCaoThu() {
+    }
+
     public String getNickname() {
         return this.nickname;
     }
