@@ -699,10 +699,18 @@ public class LogMoneyUserDaoImpl
             public void apply(Document document) {
                 LogMoneyUserResponse tranlogmoney = new LogMoneyUserResponse();
                 tranlogmoney.transId = document.getLong((Object) "trans_id");
-                tranlogmoney.serviceName = document.getString((Object) "service_name");
+                String serviceName = document.getString("service_name");
+                if (serviceName.equals("CashOutByBank")){
+                    serviceName = "Rút tiền";
+                }
+                tranlogmoney.serviceName = serviceName;
                 tranlogmoney.currentMoney = document.getLong((Object) "current_money");
                 tranlogmoney.moneyExchange = document.getLong((Object) "money_exchange");
-                tranlogmoney.description = document.getString((Object) "description");
+                String des = document.getString((Object) "description");
+                if (des.equals("withdraw to bank")) {
+                    des = "Rút Internet Banking";
+                }
+                tranlogmoney.description = des;
                 tranlogmoney.transactionTime = document.getString((Object) "trans_time");
                 tranlogmoney.actionName = document.getString((Object) "action_name");
                 results.add(tranlogmoney);
