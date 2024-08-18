@@ -246,23 +246,37 @@ public class ReportTopGameProcessor implements BaseProcessor<HttpServletRequest,
                         long money = otherService.getMoneyShootFishByNickname(sqlDateStart, sqlDateEnd, lose.getNickname());
                         lose.setMoneyWin(money);
                     }
+                    List<TopCaoThu> topCaoThus = otherService.getBanCa(sqlDateStart, sqlDateEnd);
+
                     if (topUserWin.isEmpty()) {
-                        List<TopCaoThu> topCaoThus = otherService.getBanCa(sqlDateStart, sqlDateEnd);
                         for (TopCaoThu topCaoThu : topCaoThus) {
                             if (topCaoThu.getMoneyWin() >= 0) {
                                 topUserWin.add(topCaoThu);
                             }
                         }
                     }
-
                     if (topUserLost.isEmpty()) {
-                        List<TopCaoThu> topCaoThus = otherService.getBanCa(sqlDateStart, sqlDateEnd);
                         for (TopCaoThu topCaoThu : topCaoThus) {
                             if (topCaoThu.getMoneyWin() <= 0) {
                                 topUserLost.add(topCaoThu);
                             }
                         }
                     }
+                    for (TopCaoThu topCaoThu : topCaoThus) {
+                        boolean exists = topUserLost.stream()
+                                .anyMatch(user -> user.getNickname().equals(topCaoThu.getNickname())) ||
+                                topUserWin.stream()
+                                        .anyMatch(user -> user.getNickname().equals(topCaoThu.getNickname()));
+                        if (!exists) {
+                            if (topCaoThu.getMoneyWin() <= 0) {
+                                topUserLost.add(topCaoThu);
+                            } else if (topCaoThu.getMoneyWin() >= 0) {
+                                topUserWin.add(topCaoThu);
+                            }
+                        }
+                    }
+
+
                 }
                 res.topBotWin = topBotWin;
                 res.topBotLost = topBotLost;
