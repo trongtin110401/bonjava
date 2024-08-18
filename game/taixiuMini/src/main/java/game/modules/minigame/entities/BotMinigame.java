@@ -331,6 +331,7 @@ public class BotMinigame {
                     //random số tiền cho bot trong mảng đã add "betValues"
                     long betValue = betValues.get(n).intValue();
                     short bettingTime = (short) BotMinigame.randomBettingTime(minBettingTime, maxBettingTime, phanTramVaoSom);
+                    System.out.println("username: " + nickname + " - Betting time: " + bettingTime);
                     if(bettingTime > 49){
                         bettingTime = (short) BotMinigame.randomBettingTime(minBettingTime, 48, phanTramVaoSom);
                     }
