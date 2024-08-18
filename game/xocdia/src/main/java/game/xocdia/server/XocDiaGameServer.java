@@ -673,7 +673,7 @@ public class XocDiaGameServer extends GameServer {
         try {
             for (int i = 0; i < this.botBettingList.size(); ++i) {
                 BotBettingModel model;
-                if (!NumberUtils.isDoWithRatio(XocDiaConfig.ratioBotBettingInGame) || (model = this.botBettingList.get(i)) == null || this.countTime != model.betStartTime)
+                if (!NumberUtils.isDoWithRatio(XocDiaConfig.ratioBotBettingInGame) || (model = this.botBettingList.get(i)) == null || this.countTime < model.betStartTime)
                     continue;
                 if (model.money < (long) this.moneyBet) {
                     this.botBettingList.remove(i);
