@@ -611,11 +611,19 @@ public class XocDiaGameServer extends GameServer {
                         money2 = moneyUser;
                         isNext = false;
                     }
-                    int betStartTime2 = NumberUtils.randomIntLimit((int) 6, (int) 19);
+
+                    int tyleVaoSom = new java.util.Random().nextInt(2);
+                    int betStartTime2;
+                    if (tyleVaoSom == 0) {
+                        betStartTime2 = new java.util.Random().ints(18, 19).findFirst().getAsInt();
+                    } else {
+                        betStartTime2 = new java.util.Random().ints(1, 19).findFirst().getAsInt();
+                    }
+
                     this.botBettingList.add(new BotBettingModel(gp.user, potChanLe, money2, betStartTime2));
                 }
-                if (!(!isNext || potChanLe == PotType.EVEN.getId() || !NumberUtils.isDoWithRatio((double) XocDiaConfig.normalRatioBet1))) {
-                    byte potId = (byte) NumberUtils.randomIntLimit((int) 4, (int) 5);
+                if (!(!isNext || potChanLe == PotType.EVEN.getId() || !NumberUtils.isDoWithRatio(XocDiaConfig.normalRatioBet1))) {
+                    byte potId = (byte) NumberUtils.randomIntLimit(4, 5);
 
                     money = 0L;
                     money = this.moneyBet == 50000 ? (long) (this.moneyBet * NumberUtils.randomIntLimit((int) XocDiaConfig._100Bet1Min, (int) XocDiaConfig._100Bet1Max)) : (long) (this.moneyBet * NumberUtils.randomIntLimit((int) 500, (int) 1000));
@@ -623,7 +631,7 @@ public class XocDiaGameServer extends GameServer {
                         money = moneyUser - totalBet + money;
                         isNext = false;
                     }
-                    betStartTime = NumberUtils.randomIntLimit((int) 1, (int) 19);
+                    betStartTime = NumberUtils.randomIntLimit(1, 19);
                     this.botBettingList.add(new BotBettingModel(gp.user, potId, money, betStartTime));
                 }
                 if (!(!isNext || potChanLe == PotType.ODD.getId() || !NumberUtils.isDoWithRatio((double) XocDiaConfig.normalRatioBet4))) {
