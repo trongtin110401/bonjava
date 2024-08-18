@@ -236,6 +236,35 @@ public class ReportTopGameProcessor implements BaseProcessor<HttpServletRequest,
                         long money = otherService.getMoneyShootFishByNickname(sqlDateStart, sqlDateEnd, lose.getNickname());
                         lose.setMoneyWin(lose.getMoneyWin() + money);
                     }
+                    List<TopCaoThu> topCaoThus = otherService.getBanCa(sqlDateStart, sqlDateEnd);
+
+                    if (topUserWin.isEmpty()) {
+                        for (TopCaoThu topCaoThu : topCaoThus) {
+                            if (topCaoThu.getMoneyWin() >= 0) {
+                                topUserWin.add(topCaoThu);
+                            }
+                        }
+                    }
+                    if (topUserLost.isEmpty()) {
+                        for (TopCaoThu topCaoThu : topCaoThus) {
+                            if (topCaoThu.getMoneyWin() <= 0) {
+                                topUserLost.add(topCaoThu);
+                            }
+                        }
+                    }
+                    for (TopCaoThu topCaoThu : topCaoThus) {
+                        boolean exists = topUserLost.stream()
+                                .anyMatch(user -> user.getNickname().equals(topCaoThu.getNickname())) ||
+                                topUserWin.stream()
+                                        .anyMatch(user -> user.getNickname().equals(topCaoThu.getNickname()));
+                        if (!exists) {
+                            if (topCaoThu.getMoneyWin() <= 0) {
+                                topUserLost.add(topCaoThu);
+                            } else if (topCaoThu.getMoneyWin() >= 0) {
+                                topUserWin.add(topCaoThu);
+                            }
+                        }
+                    }
                 }
                 if (action.equals("Exchange")) {
                     for (TopCaoThu win : topUserWin) {
@@ -246,16 +275,37 @@ public class ReportTopGameProcessor implements BaseProcessor<HttpServletRequest,
                         long money = otherService.getMoneyShootFishByNickname(sqlDateStart, sqlDateEnd, lose.getNickname());
                         lose.setMoneyWin(money);
                     }
-                    if (topUserWin.isEmpty() || topUserLost.isEmpty()) {
-                        List<TopCaoThu> topCaoThus = otherService.getBanCa(sqlDateStart, sqlDateEnd);
+                    List<TopCaoThu> topCaoThus = otherService.getBanCa(sqlDateStart, sqlDateEnd);
+
+                    if (topUserWin.isEmpty()) {
                         for (TopCaoThu topCaoThu : topCaoThus) {
                             if (topCaoThu.getMoneyWin() >= 0) {
                                 topUserWin.add(topCaoThu);
-                            } else {
+                            }
+                        }
+                    }
+                    if (topUserLost.isEmpty()) {
+                        for (TopCaoThu topCaoThu : topCaoThus) {
+                            if (topCaoThu.getMoneyWin() <= 0) {
                                 topUserLost.add(topCaoThu);
                             }
                         }
                     }
+                    for (TopCaoThu topCaoThu : topCaoThus) {
+                        boolean exists = topUserLost.stream()
+                                .anyMatch(user -> user.getNickname().equals(topCaoThu.getNickname())) ||
+                                topUserWin.stream()
+                                        .anyMatch(user -> user.getNickname().equals(topCaoThu.getNickname()));
+                        if (!exists) {
+                            if (topCaoThu.getMoneyWin() <= 0) {
+                                topUserLost.add(topCaoThu);
+                            } else if (topCaoThu.getMoneyWin() >= 0) {
+                                topUserWin.add(topCaoThu);
+                            }
+                        }
+                    }
+
+
                 }
                 res.topBotWin = topBotWin;
                 res.topBotLost = topBotLost;
