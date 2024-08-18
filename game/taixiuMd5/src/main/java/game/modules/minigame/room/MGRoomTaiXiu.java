@@ -40,7 +40,6 @@ import com.vinplay.dal.service.impl.CacheServiceImpl;
 import com.vinplay.dal.service.impl.TaiXiuMd5ServiceImpl;
 import com.vinplay.usercore.service.UserService;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
-import com.vinplay.utils.TelegramAlert;
 import com.vinplay.vbee.common.enums.Games;
 import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
 import com.vinplay.vbee.common.messages.BetTXMD5Message;
@@ -332,7 +331,7 @@ public class MGRoomTaiXiu extends MGRoom {
                             // giải thưởng, hay nói cách khác là số tiền thắng
                             tran.prize = Math.round((long) ((float) tran.betValue * (100.0f - this.tax) / 100.0f) + tran.betValue);
                             if (tran.userId != 0) {
-                                tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon +=tran.betValue;
+                                tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon += tran.betValue;
                             }
 
                             // Cộng dồn để tính tổng số tiền trả lại
@@ -530,7 +529,7 @@ public class MGRoomTaiXiu extends MGRoom {
                     module.updateFunValue((tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon - tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon));
                 }
             }
-            this.module.updateFund();
+            this.module.saveFund();
         } catch (Exception e) {
             Debug.info(ExceptionUtils.getStackTrace(e));
         }
