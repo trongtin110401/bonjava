@@ -166,7 +166,7 @@ public class BotBauCuaTo2 {
         Random rd = new Random();
         int n = rd.nextInt(100);
         if (n > phanTramVaoMuon) {
-            return new Random().ints(maxTime - 1, maxTime).findFirst().getAsInt();
+            return new Random().ints(maxTime, maxTime + 1).findFirst().getAsInt();
         }
         return rd.nextInt(maxTime - 1);
     }
@@ -193,7 +193,7 @@ public class BotBauCuaTo2 {
         List<String> botsName = BotBauCuaTo2.getBots(numBots, moneyType);
         for (int i = 0; i < numBots && i < botsName.size(); ++i) {
             String nickname = botsName.get(i);
-            short bettingTime = (short) BotBauCuaTo2.randomBettingTime(minBettingTime, maxBettingTime, 70);
+            short bettingTime = (short) BotBauCuaTo2.randomBettingTime(minBettingTime, maxBettingTime, 65);
             long[] betArr = new long[6];
             int j = maxBetSide;
             while (j > 0) {
