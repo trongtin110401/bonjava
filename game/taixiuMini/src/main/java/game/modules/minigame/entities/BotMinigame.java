@@ -256,10 +256,10 @@ public class BotMinigame {
 
     public static List<BotTaiXiu> getBotTaiXiu(String moneyType) {
         Random rd = new Random();
-        int phanTramVaoSom;
+
         int[] arr = new int[]{60, 70, 65, 55, 75};
         int index = rd.nextInt(arr.length);
-        phanTramVaoSom = arr[index];
+        int phanTramVaoSom = arr[index];
         ArrayList<BotTaiXiu> results = new ArrayList<BotTaiXiu>();
         ArrayList<Integer> betValues = new ArrayList<Integer>(betValueDefault);
         try {
@@ -377,6 +377,7 @@ public class BotMinigame {
                 String nickname = botsName.get(i);
                 long betValue = minBetValue + (long) (Math.random() * (maxBetValue - minBetValue));
                 short bettingTime = (short) BotMinigame.randomBettingTime(minBettingTime, maxBettingTime, phanTramVaoSom);
+                Debug.trace((Object) ("Username: " + nickname + " - Betting time" + bettingTime));
                 if (bettingTime > 55) {
                     bettingTime = (short) BotMinigame.randomBettingTime(minBettingTime, 48, phanTramVaoSom);
                 }
