@@ -231,6 +231,12 @@ public class PortalUtils {
     public static String getIpAddress(HttpServletRequest request) {
         String ipAddress = request.getHeader("X-FORWARDED-FOR");
         if (ipAddress == null) {
+            ipAddress = request.getHeader("X-Forwarded-For");
+        }
+        if (ipAddress == null) {
+            ipAddress = request.getHeader("X-Real-IP");
+        }
+        if (ipAddress == null) {
             ipAddress = request.getRemoteAddr();
         }
         return ipAddress;
