@@ -61,10 +61,10 @@ public class LogMoneyUserServiceImpl
 
     @Override
     public List<LogMoneyUserResponse> getHistoryTransactionLogMoney(String nickName, int moneyType, int page) {
-        HazelcastInstance client = HazelcastClientFactory.getInstance();
-        IMap transMap = client.getMap("cacheTransaction");
-        String key = nickName + "-" + moneyType;
-        List result = null;
+//        HazelcastInstance client = HazelcastClientFactory.getInstance();
+//        IMap transMap = client.getMap("cacheTransaction");
+//        String key = nickName + "-" + moneyType;
+//        List result = null;
 //        if (page <= 5) {
 //            if (transMap.containsKey((Object)key)) {
 //                TransactionList tranList = (TransactionList)transMap.get((Object)key);
