@@ -612,7 +612,7 @@ public class XocDiaGameServer extends GameServer {
                         money2 = moneyUser;
                         isNext = false;
                     }
-                    int betStartTime2 = NumberUtils.randomIntLimit((int) 1, (int) 13);
+                    int betStartTime2 = NumberUtils.randomIntLimit((int) 1, (int) 19);
                     this.botBettingList.add(new BotBettingModel(gp.user, potChanLe, money2, betStartTime2));
                 }
                 if (!(!isNext || potChanLe == PotType.EVEN.getId() || !NumberUtils.isDoWithRatio((double) XocDiaConfig.normalRatioBet1))) {
@@ -624,7 +624,7 @@ public class XocDiaGameServer extends GameServer {
                         money = moneyUser - totalBet + money;
                         isNext = false;
                     }
-                    betStartTime = NumberUtils.randomIntLimit((int) 1, (int) 13);
+                    betStartTime = NumberUtils.randomIntLimit((int) 1, (int) 19);
                     this.botBettingList.add(new BotBettingModel(gp.user, potId, money, betStartTime));
                 }
                 if (!(!isNext || potChanLe == PotType.ODD.getId() || !NumberUtils.isDoWithRatio((double) XocDiaConfig.normalRatioBet4))) {
@@ -640,7 +640,7 @@ public class XocDiaGameServer extends GameServer {
                         money = moneyUser - totalBet + money;
                         isNext = false;
                     }
-                    betStartTime = NumberUtils.randomIntLimit((int) 1, (int) 13);
+                    betStartTime = NumberUtils.randomIntLimit((int) 1, (int) 19);
                     this.botBettingList.add(new BotBettingModel(gp.user, potId, money, betStartTime));
                 }
                 if (isNext && NumberUtils.isDoWithRatio((double) XocDiaConfig.normalRatioBuyPot)) {
