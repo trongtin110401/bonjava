@@ -335,8 +335,8 @@ public class BotMinigame {
                     long betValue = betValues.get(n).intValue();
                     short bettingTime = (short) BotMinigame.randomBettingTime(minBettingTime, maxBettingTime, phanTramVaoSom);
                     System.out.println("username: " + nickname + " - Betting time: " + bettingTime);
-                    if (bettingTime > 59) {
-                        bettingTime = (short) BotMinigame.randomBettingTime(minBettingTime, 48, phanTramVaoSom);
+                    if (bettingTime > 49) {
+                        bettingTime = 49;
                     }
                     short betSide = 0;
                     if (i < numBetTai) {
@@ -378,8 +378,8 @@ public class BotMinigame {
                 long betValue = minBetValue + (long) (Math.random() * (maxBetValue - minBetValue));
                 short bettingTime = (short) BotMinigame.randomBettingTime(minBettingTime, maxBettingTime, phanTramVaoSom);
                 Debug.trace((Object) ("Username: " + nickname + " - Betting time" + bettingTime));
-                if (bettingTime > 55) {
-                    bettingTime = (short) BotMinigame.randomBettingTime(minBettingTime, 48, phanTramVaoSom);
+                if (bettingTime > 49) {
+                    bettingTime = 49;
                 }
                 short betSide = 0;
                 if (i < numberUserTaiMax) {

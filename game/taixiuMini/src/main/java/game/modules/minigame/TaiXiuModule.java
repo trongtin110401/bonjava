@@ -493,8 +493,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                     try {
                         this.startNewRoundTX();
 
-//                        checkUpdateFundFromCMS();
-
                         amountBotTaiFake = 0;
                         amountBotXiuFake = 0;
                         this.count = 0;
