@@ -28,7 +28,7 @@ public class SearchUserAdminProcessor
 
     public String execute(Param<HttpServletRequest> param) {
         ResultUserReponse response = new ResultUserReponse(false, "1001");
-        HttpServletRequest request = (HttpServletRequest) param.get();
+            HttpServletRequest request = (HttpServletRequest) param.get();
         String userName = request.getParameter("un");
         String nickName = request.getParameter("nn");
         String mobile = request.getParameter("m");
@@ -50,7 +50,14 @@ public class SearchUserAdminProcessor
         }
         UserForAdminServiceImpl service = new UserForAdminServiceImpl();
         try {
-            List trans = service.searchUserAdmin(userName, nickName, mobile, field, sort, daily, timeStart + " 00:00:00", timeEnd + " 23:59:59", page, total, bot, like, email);
+            if (timeStart != null && timeStart.isEmpty()){
+                timeStart += " 00:00:00";
+            }
+            if (timeEnd != null && !timeEnd.isEmpty()){
+                timeEnd += " 23:59:59";
+            }
+
+            List trans = service.searchUserAdmin(userName, nickName, mobile, field, sort, daily, timeStart, timeEnd, page, total, bot, like, email);
             int totalRecord = service.countSearchUserAdmin(userName, nickName, mobile, field, sort, daily, timeStart, timeEnd, bot);
             double totalPages = Math.ceil((double) totalRecord / (double) total);
             response.setTotal((long) totalPages);

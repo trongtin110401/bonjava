@@ -517,26 +517,14 @@ public class UserDaoImpl implements UserDao {
             int num_start = (page - 1) * totalrecord;
             int index = 1;
             String limit = " LIMIT " + num_start + ", " + totalrecord + "";
-            if (like.equals("1")) {
-                if (userName != null && !userName.equals("")) {
-                    sql = sql + " AND user_name like ?";
-                }
-                if (nickName != null && !nickName.equals("")) {
-                    sql = sql + " AND nick_name like ?";
-                }
-                if (emailAddress != null && !emailAddress.equals("")) {
-                    sql = sql + " AND email like ?";
-                }
-            } else {
-                if (userName != null && !userName.equals("")) {
-                    sql = sql + " AND user_name =?";
-                }
-                if (nickName != null && !nickName.equals("")) {
-                    sql = sql + " AND nick_name=?";
-                }
-                if (emailAddress != null && !emailAddress.equals("")) {
-                    sql = sql + " AND email = ?";
-                }
+            if (userName != null && !userName.equals("")) {
+                sql = sql + " AND user_name =?";
+            }
+            if (nickName != null && !nickName.equals("")) {
+                sql = sql + " AND nick_name=?";
+            }
+            if (emailAddress != null && !emailAddress.equals("")) {
+                sql = sql + " AND email = ?";
             }
             if (phone != null && !phone.equals("")) {
                 sql = sql + " AND mobile=?";
