@@ -656,8 +656,6 @@ public class XocDiaGameServer extends GameServer {
                 tongBotKhongDuTien +=1;
             }
 
-            System.out.println("===> Tong Bot: " + tongBot + " - Tong Bot Du Tien: " + tongBotDuTien + " - Tong Bot Khong Du Tien: " + tongBotKhongDuTien);
-
             if (this.roomType == 0 && gp.isBot && this.bankerName.equals(gp.user.getName())) {
                 boolean isSellPot = NumberUtils.isDoWithRatio((double) XocDiaConfig.bkRatioSellPot);
                 int sellStartTime = NumberUtils.randomIntLimit((int) 36, (int) 40);
