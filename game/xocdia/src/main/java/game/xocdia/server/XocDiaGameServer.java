@@ -381,7 +381,6 @@ public class XocDiaGameServer extends GameServer {
     // todo : game loop
     private void notifyListUserBE() { // như bình thường
         cacheService.setValue("Xocdia_Change", "ischange");
-        //ArrayList<GamePot> list = new ArrayList<GamePot>(potList);
 
         cacheService.setValue("XocDia_Pot0", getPotReport(potList.get(0), 0).toJson()); // cho nay phai luu dang json vi no ko cung model va no ko serilizable dc do model no
         cacheService.setValue("XocDia_Pot1", getPotReport(potList.get(1), 1).toJson());
