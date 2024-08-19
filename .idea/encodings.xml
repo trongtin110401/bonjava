@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding" defaultCharsetForPropertiesFiles="UTF-8">
-    <file url="file://$PROJECT_DIR$" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/VinPlayUserCore/src/main/java/com/vinplay/lognaprut/impl/HistoryTransDaoImpl.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/api/VinPlayBackend/src/main/java/com/vinplay/api/backend/processors/SendGiftCodeToUserWinProcessor.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/api/VinPlayPortal/src/main/java/com/vinplay/api/processors/rutbankapi/RutBankAPIProcess.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/env-setup/config/mysql/20240730_012400.sql" charset="UTF-8" />
     <file url="PROJECT" charset="UTF-8" />
   </component>

@@ -609,22 +609,21 @@ public class XocDiaGameServer extends GameServer {
                 int betStartTime;
                 long money;
                 byte potChanLe = 10;
-                if (NumberUtils.isDoWithRatio((double) XocDiaConfig.normalRatioBetChanLe)) {
+                if (NumberUtils.isDoWithRatio(XocDiaConfig.normalRatioBetChanLe)) {
                     potChanLe = (byte) this.rd.nextInt(2);
                     long money2 = 0L;
-                    money2 = this.moneyBet == 50000 ? (long) (this.moneyBet * NumberUtils.randomIntLimit((int) XocDiaConfig._100BetChanLeMin, (int) XocDiaConfig._100BetChanLeMax)) : (long) (this.moneyBet * NumberUtils.randomIntLimit((int) 500, (int) 1000));
+                    money2 = this.moneyBet == 50000 ? ((long) this.moneyBet * NumberUtils.randomIntLimit(XocDiaConfig._100BetChanLeMin, XocDiaConfig._100BetChanLeMax)) : ((long) this.moneyBet * NumberUtils.randomIntLimit(500, 1000));
                     if ((totalBet += money2) > moneyUser) {
                         money2 = moneyUser;
                         isNext = false;
                     }
-                    int betStartTime2 = NumberUtils.randomIntLimit((int) 1, (int) 19);
+                    int betStartTime2 = NumberUtils.randomIntLimit(1, 19);
                     this.botBettingList.add(new BotBettingModel(gp.user, potChanLe, money2, betStartTime2));
                 }
-                if (!(!isNext || potChanLe == PotType.EVEN.getId() || !NumberUtils.isDoWithRatio((double) XocDiaConfig.normalRatioBet1))) {
-                    byte potId = (byte) NumberUtils.randomIntLimit((int) 4, (int) 5);
+                if (!(!isNext || potChanLe == PotType.EVEN.getId() || !NumberUtils.isDoWithRatio(XocDiaConfig.normalRatioBet1))) {
+                    byte potId = (byte) NumberUtils.randomIntLimit(4, 5);
 
-                    money = 0L;
-                    money = this.moneyBet == 50000 ? (long) (this.moneyBet * NumberUtils.randomIntLimit((int) XocDiaConfig._100Bet1Min, (int) XocDiaConfig._100Bet1Max)) : (long) (this.moneyBet * NumberUtils.randomIntLimit((int) 500, (int) 1000));
+                    money = this.moneyBet == 50000 ? (long) this.moneyBet * NumberUtils.randomIntLimit(XocDiaConfig._100Bet1Min, XocDiaConfig._100Bet1Max) : (long) this.moneyBet * NumberUtils.randomIntLimit(500, 1000);
                     if ((totalBet += money) > moneyUser) {
                         money = moneyUser - totalBet + money;
                         isNext = false;
