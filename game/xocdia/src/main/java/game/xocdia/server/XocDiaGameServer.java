@@ -600,7 +600,12 @@ public class XocDiaGameServer extends GameServer {
             long moneyUser = gp.getMoneyUseInGame();
             long totalBet = 0L;
             boolean isNext = true;
+            int tongBot = 0;
+            int tongBotDuTien = 0;
+            int tongBotKhongDuTien = 0;
             if (gp.isBot && !gp.user.getName().equals(this.bankerName) && moneyUser >= (long) this.moneyBet) {
+                tongBot += 1;
+                tongBotDuTien +=1;
                 int betStartTime;
                 long money;
                 byte potChanLe = 10;
@@ -629,11 +634,6 @@ public class XocDiaGameServer extends GameServer {
                 }
                 if (!(!isNext || potChanLe == PotType.ODD.getId() || !NumberUtils.isDoWithRatio((double) XocDiaConfig.normalRatioBet4))) {
                     byte potId = (byte) NumberUtils.randomIntLimit((int) 2, (int) 3);
-//                    if (pot4T.isLock) {
-//                        potId = 3;
-//                    } else if (pot4D.isLock) {
-//                        potId = 2;
-//                    }
                     money = 0L;
                     money = this.moneyBet == 100 ? (long) (this.moneyBet * NumberUtils.randomIntLimit((int) XocDiaConfig._100Bet4Min, (int) XocDiaConfig._100Bet4Max)) : (long) (this.moneyBet * NumberUtils.randomIntLimit((int) XocDiaConfig.normalBet4Min, (int) XocDiaConfig.normalBet4Max));
                     if ((totalBet += money) > moneyUser) {
@@ -653,7 +653,13 @@ public class XocDiaGameServer extends GameServer {
                     int reqStartTime = NumberUtils.randomIntLimit((int) 6, (int) 65);
                     this.botReqBankerList.add(new BotRequestBankerModel(gp.user, reqStartTime));
                 }
+            } else {
+                tongBot += 1;
+                tongBotKhongDuTien +=1;
             }
+
+            System.out.println("===> Tong Bot: " + tongBot + " - Tong Bot Du Tien: " + tongBotDuTien + " - Tong Bot Khong Du Tien: " + tongBotKhongDuTien);
+
             if (this.roomType == 0 && gp.isBot && this.bankerName.equals(gp.user.getName())) {
                 boolean isSellPot = NumberUtils.isDoWithRatio((double) XocDiaConfig.bkRatioSellPot);
                 int sellStartTime = NumberUtils.randomIntLimit((int) 36, (int) 40);
