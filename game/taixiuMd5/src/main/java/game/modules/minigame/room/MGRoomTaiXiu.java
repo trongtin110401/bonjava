@@ -208,7 +208,7 @@ public class MGRoomTaiXiu extends MGRoom {
 
                         MoneyResponse res = new MoneyResponse(false, "1001");
                         if (!isBot) { // trừ tiền đặt cược
-                            res = this.userService.updateMoney(nickname, -betValue, this.moneyTypeStr, Games.TAI_XIU_MD5.getName(), "Tài Xỉu MD5: Đặt cược", "Phiên " + this.referenceId + ": đặt " + betSideStr + " (" + inputTime + ")", 0L, Long.valueOf(this.referenceId), TransType.START_TRANS);
+                            res = this.userService.updateMoney(nickname, -betValue, this.moneyTypeStr, Games.TAI_XIU_MD5.getName(), "T.Xỉu MD5: Đặt cược", "Phiên " + this.referenceId + ": đặt " + betSideStr + " (" + inputTime + ")", 0L, Long.valueOf(this.referenceId), TransType.START_TRANS);
                             try {
                                 BetTXMD5Message message = new BetTXMD5Message();
                                 message.setBetSide(betSide);
@@ -227,7 +227,7 @@ public class MGRoomTaiXiu extends MGRoom {
                             if (!this.enableBetting) { // kiểm tra xem có phải đang trong quá trình đặt cược hay ko , nếu ko
                                 result = 1;
                                 if (!isBot) { // hoàn trả tiền cược
-                                    this.userService.updateMoney(nickname, betValue, this.moneyTypeStr, Games.TAI_XIU_MD5.getName(), "T\u00e0i x\u1ec9u: Tr\u1ea3 c\u01b0\u1ee3c", "Ho\u00e0n tr\u1ea3 \u0111\u1eb7t c\u01b0\u1ee3c phi\u00ean " + this.referenceId, 0L, Long.valueOf(this.referenceId), TransType.END_TRANS);
+                                    this.userService.updateMoney(nickname, betValue, this.moneyTypeStr, Games.TAI_XIU_MD5.getName(), "Tài xỉu: Trả cược", "Hoàn trả đặt cược phiên " + this.referenceId, 0L, Long.valueOf(this.referenceId), TransType.END_TRANS);
 
                                 }
                             } else { // nếu đang trong quá trình đặt cược
