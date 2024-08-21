@@ -59,7 +59,7 @@ public class XocDiaResult {
         this.dinces.clear();
     }
 
-    public long generateResult2(List<Integer> rsCheat, XocDiaForceResult xdForce, Vector<GamePot> potList) {
+    public long generateResult2(Vector<GamePot> potList) {
 
         SetBauCuaKetqua setBauCuaKetqua = null;
 
@@ -67,7 +67,6 @@ public class XocDiaResult {
             try {
                 setBauCuaKetqua = (SetBauCuaKetqua) cacheService.getObject("BeCauXocDia");
             } catch (KeyNotFoundException e) {
-
             }
             if (setBauCuaKetqua != null) {
                 if (setBauCuaKetqua.getStatus().equals("be")) {
@@ -90,15 +89,15 @@ public class XocDiaResult {
 
                     return tinhToanTienChechLech(potList);
                 } else {
-                    return this.autoGenerateValue2(rsCheat, xdForce, potList);
+                    return this.autoGenerateValue2(potList);
                 }
             } else {
-                return this.autoGenerateValue2(rsCheat, xdForce, potList);
+                return this.autoGenerateValue2(potList);
             }
 
         } catch (Exception e) {
             Debug.trace((Object) e);
-            return this.autoGenerateValue2(rsCheat, xdForce, potList);
+            return this.autoGenerateValue2(potList);
         }
     }
 
@@ -119,7 +118,7 @@ public class XocDiaResult {
         }
     }
 
-    public long autoGenerateValue2(List<Integer> rsCheat, XocDiaForceResult xdForce, Vector<GamePot> potList) {
+    public long autoGenerateValue2(Vector<GamePot> potList) {
         // tinh toan hu
         long fund = 0;
         try {
@@ -143,9 +142,9 @@ public class XocDiaResult {
             }
             try {
                 benefit = tinhToanTienChechLech(potList);
-                if (benefit >= 0) { // nh� c�i th?ng
+                if (benefit >= 0) { // nh� c�i th?ng
                     break;
-                } else if (fund >= benefit * -1) { // qu? v?n c�n b� l?
+                } else if (fund >= benefit * -1) { // qu? v?n c�n b� l?
                     break;
                 }
             } catch (Exception e) {
@@ -209,24 +208,25 @@ public class XocDiaResult {
                         break;
                     }
                 }
+                Map<String, Long> dataUser = potList.get(gateIndex).userBetMap;
                 if (isGateWin) {
                     // tinh toan tien lo
-                    Map<String, Long> dataUser = potList.get(gateIndex).userBetMap;
                     for (String key : dataUser.keySet()) {
-                        if (gateIndex == 0 || gateIndex == 1) {         // Sap Doi
+                        if (gateIndex == 0 || gateIndex == 1) {         // User đánh sấp đôi hoặc lẻ
                             totalLo += dataUser.get(key) * 2;
-                        } else if (gateIndex == 2 || gateIndex == 3) { // Tu Tu
+                        } else if (gateIndex == 2 || gateIndex == 3) { // User đánh vị tứ tử
                             totalLo += dataUser.get(key) * 16;
-                        } else if (gateIndex == 4 || gateIndex == 5) {  // Sap 3
+                        } else if (gateIndex == 4 || gateIndex == 5) {  // User đánh vị sấp 3
                             totalLo += dataUser.get(key) * 4;
+                        } else {
+                            // do nothing
                         }
                     }
-                }
-
-                // tinh toan tien lai
-                Map<String, Long> dataUser = potList.get(gateIndex).userBetMap;
-                for (String key : dataUser.keySet()) {
-                    totalLai += dataUser.get(key);
+                } else {
+                    // tinh toan tien lai
+                    for (String key : dataUser.keySet()) {
+                        totalLai += dataUser.get(key);
+                    }
                 }
             }
             return totalLai - totalLo;
