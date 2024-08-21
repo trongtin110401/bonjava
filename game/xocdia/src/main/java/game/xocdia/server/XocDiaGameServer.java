@@ -1379,13 +1379,6 @@ public class XocDiaGameServer extends GameServer {
 
                 // calculate fund value and save to db
                 try {
-//                    if (tienChenhLechChuaTinhPhe > 0) { // nhà cái thắng
-//                        long value = tienChenhLechChuaTinhPhe - totalFeeUser;
-//                        updateFunValue(value);
-//                    } else if (tienChenhLechChuaTinhPhe < 0) { // nhà cái thua
-//                        long value = tienChenhLechChuaTinhPhe + totalFeeUser;
-//                        updateFunValue(value);
-//                    }
                     updateFunValue(tienChenhLechChuaTinhPhe);
                     mgService.saveFund(Games.XOC_DIA.getName(), getFunValue());
                 } catch (Exception e) {

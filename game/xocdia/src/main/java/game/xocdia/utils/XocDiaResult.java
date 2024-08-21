@@ -247,12 +247,12 @@ public class XocDiaResult {
         switch (this.count) {
             case 0: {
                 potsId.add(PotType.EVEN.getId());
-                potsId.add(PotType.FOUR_BLACK.getId());
+                potsId.add(PotType.FOUR_WHITE.getId());
                 break;
             }
             case 1: {
                 potsId.add(PotType.ODD.getId());
-                potsId.add(PotType.ONE_WHITE.getId());
+                potsId.add(PotType.ONE_BLACK.getId());
                 break;
             }
             case 2: {
@@ -261,12 +261,12 @@ public class XocDiaResult {
             }
             case 3: {
                 potsId.add(PotType.ODD.getId());
-                potsId.add(PotType.ONE_BLACK.getId());
+                potsId.add(PotType.ONE_WHITE.getId());
                 break;
             }
             case 4: {
                 potsId.add(PotType.EVEN.getId());
-                potsId.add(PotType.FOUR_WHITE.getId());
+                potsId.add(PotType.FOUR_BLACK.getId());
                 break;
             }
         }
