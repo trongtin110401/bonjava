@@ -130,29 +130,26 @@ public class XocDiaResult {
         }
 
         ArrayList<List<Integer>> listDiceRandom = listDicesRandom();
-        long benefit = 0;
+        long tienChenhLech = 0;
         for (int index = 0; index < 16; index++) {
-            //random ket qua
+            // random ket qua
             this.dinces = listDiceRandom.get(index);
             this.count = 0;
-            for (Integer i : dinces) {
-                if (i % 2 == 0) {
-                    this.count = (byte) (this.count + 1);
-                }
-            }
-            try {
-                benefit = tinhToanTienChechLech(potList);
-                if (benefit >= 0) { // nh� c�i th?ng
-                    break;
-                } else if (fund >= benefit * -1) { // qu? v?n c�n b� l?
-                    break;
-                }
-            } catch (Exception e) {
+            this.count = (byte) dinces.stream().mapToInt(value -> value).sum();
+//            for (int i : dinces) {
+//                if (i == 0) {
+//                    this.count = (byte) (this.count + 1);
+//                }
+//            }
+
+            tienChenhLech = tinhToanTienChechLech(potList);
+            if (tienChenhLech >= 0) { // nhà cái thắng
+                break;
+            } else if (fund >= tienChenhLech * -1) { // Qũy vẫn còn đủ để bù lỗ
                 break;
             }
         }
-
-        return benefit;
+        return tienChenhLech;
     }
 
     public static ArrayList<List<Integer>> listDicesRandom() {
@@ -311,10 +308,6 @@ public class XocDiaResult {
     public void setFunValue(long value) {
         String key = Games.XOC_DIA.getName();
         cacheService.setValue(key, value);
-    }
-
-    public void updateFunValue(long value) {
-        setFunValue(getFunValue() + value);
     }
 }
 
