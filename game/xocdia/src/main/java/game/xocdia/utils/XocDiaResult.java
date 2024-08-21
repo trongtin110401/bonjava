@@ -76,15 +76,15 @@ public class XocDiaResult {
                     dinces.add((int) listDices[1]);
                     dinces.add((int) listDices[2]);
                     dinces.add((int) listDices[3]);
-                    this.count = 0;
-                    for (Integer i : this.dinces) {
-                        if (i % 2 != 0) {
-                            continue;
-                        } else {
-                            this.count = (byte) (this.count + 1);
-                        }
-
-                    }
+                    this.count = (byte) dinces.stream().mapToInt(value -> value).sum();
+//                    for (Integer i : this.dinces) {
+//                        if (i % 2 != 0) {
+//                            continue;
+//                        } else {
+//                            this.count = (byte) (this.count + 1);
+//                        }
+//
+//                    }
                     cacheService.setObject("BeCauXocDia", new SetBauCuaKetqua("auto", new byte[]{}));
 
                     return tinhToanTienChechLech(potList);
