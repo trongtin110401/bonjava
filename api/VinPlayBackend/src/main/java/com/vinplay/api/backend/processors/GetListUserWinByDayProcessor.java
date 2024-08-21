@@ -77,7 +77,9 @@ public class GetListUserWinByDayProcessor implements BaseProcessor<HttpServletRe
             for (Map.Entry<String, Long> entry : mapUserFishProfits.entrySet()) {
                 String nickname = entry.getKey();
                 Long profit = entry.getValue();
-                if (profit >= -100000) continue;
+                if (profit == 0) {
+                    continue;
+                }
                 Optional<UserLoseByDay> optionalUserLoseByDay = userLoseByDays.stream()
                         .filter(userLoseByDay -> userLoseByDay.getNickname().equals(nickname))
                         .findFirst();
