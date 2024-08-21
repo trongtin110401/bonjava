@@ -166,6 +166,7 @@ public class UpdateFundProcessor implements BaseProcessor<HttpServletRequest, St
                     currentFunValue += amount;
                 } else if (type.equals(WITHDRAW)) {
                     // check if fund value in cache is not enough
+                    System.out.println("Nạp/Rút Quỹ: " + currentFunValue + " | " + amount);
                     if (currentFunValue < amount) {
                         response.setSuccess(false);
                         response.setErrorCode("Số tiền rút lớn hơn quỹ");
