@@ -189,12 +189,12 @@ public class MGRoomCaoThap extends MGRoom {
                         nextCard = deck.deal();
                     } else {
                         nextCard = CaoThapUtils.randomWithoutA(info.getDeck());
-                        while (nextCard.getRank() == Rank.Ace
-                                || nextCard.getRank() == Rank.King
-                                || nextCard.getRank() == Rank.Two
-                                || nextCard.getRank() == Rank.Three) {
-                            continue block4;
-                        }
+//                        while (nextCard.getRank() == Rank.Ace
+//                                || nextCard.getRank() == Rank.King
+//                                || nextCard.getRank() == Rank.Two
+//                                || nextCard.getRank() == Rank.Three) {
+//                            continue block4;
+//                        }
                         deck = info.getDeck();
                         deck.popCard(nextCard);
                     }
@@ -220,7 +220,8 @@ public class MGRoomCaoThap extends MGRoom {
                     }
 
                     if (result == ResultCaoThap.THANG && moneyWin > 0 && getFunValue() < moneyWin) {
-                        continue;
+                        if (info.getCard().getRank() != Rank.Ace || info.getCard().getRank() != Rank.Two)
+                            continue;
                     }
                     if (nextCard.getRank() == Rank.Ace && (numA = (byte) (numA + 1)) == 3)
                         result = ResultCaoThap.NO_HU;
