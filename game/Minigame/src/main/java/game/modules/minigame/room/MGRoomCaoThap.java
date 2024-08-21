@@ -246,10 +246,10 @@ public class MGRoomCaoThap extends MGRoom {
                     // ngoài ra
                     //      nếu hòa ở bước 1: Quỹ  chi trả lại 99%
                     //      từ bước 2: quỹ không thay đổi
-                    if (!isBot(user.getName()) && info.getStep() == ResultCaoThap.STEP_ONE) {
+//                    if (!isBot(user.getName()) && info.getStep() == ResultCaoThap.STEP_ONE) {
                         updateFunValue(-moneyWin);
                         this.saveFund();
-                    }
+//                    }
 
                     this.savePot();
                     askUserNext = true;
