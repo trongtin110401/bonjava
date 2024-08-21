@@ -16,10 +16,9 @@ import com.vinplay.vbee.common.messages.minigame.UpdateFundMessage;
 import com.vinplay.vbee.dao.impl.TaiXiuDaoImpl;
 import java.sql.SQLException;
 
-public class UpdateFundProcessor
-implements BaseProcessor<byte[], Boolean> {
+public class UpdateFundProcessor implements BaseProcessor<byte[], Boolean> {
     public Boolean execute(Param<byte[]> param) {
-        UpdateFundMessage message = (UpdateFundMessage)BaseMessage.fromBytes((byte[])((byte[])param.get()));
+        UpdateFundMessage message = (UpdateFundMessage)BaseMessage.fromBytes(param.get());
         TaiXiuDaoImpl dao = new TaiXiuDaoImpl();
         boolean success = false;
         try {

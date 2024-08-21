@@ -275,16 +275,11 @@ implements TaiXiuDao {
         Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");
         CallableStatement call = null;
         call = conn.prepareCall("CALL update_fund(?, ?)");
-        int param = 1;
-        call.setString(param++, message.fundName);
-        call.setLong(param++, message.newValue);
+        call.setString(1, message.fundName);
+        call.setLong(2, message.newValue);
         success = call.execute();
-        if (call != null) {
-            call.close();
-        }
-        if (conn != null) {
-            conn.close();
-        }
+        call.close();
+        conn.close();
         return success;
     }
     public int getTotalTrans() throws SQLException {
