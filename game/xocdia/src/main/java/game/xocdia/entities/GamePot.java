@@ -201,16 +201,12 @@ public class GamePot {
                 return "even";
             case "Lẻ":
                 return "odd";
-
             case "4 den":
                 return "zeroWhite";
-
             case "4 trang":
                 return "fourWhite";
-
             case "1 den":
                 return "threeWhite";
-
             case "1 trang":
                 return "oneWhite";
         }

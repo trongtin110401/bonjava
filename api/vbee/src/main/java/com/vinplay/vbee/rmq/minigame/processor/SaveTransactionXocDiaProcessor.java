@@ -13,7 +13,6 @@ import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.enums.Games;
 import com.vinplay.vbee.common.messages.TransactionXocDiaMessage;
-import com.vinplay.vbee.common.messages.minigame.TransactionTaiXiuMessage;
 import com.vinplay.vbee.dao.impl.XocDiaDaoImpl;
 import com.vinplay.vbee.dto.TopVinhDanhDto;
 import com.vinplay.vbee.rmq.report.processor.TopVinhDanhProcessor;

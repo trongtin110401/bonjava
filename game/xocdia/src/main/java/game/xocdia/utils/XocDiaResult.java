@@ -277,11 +277,11 @@ public class XocDiaResult {
         String result = "";
         switch (this.count) {
             case 0: {
-                result = "zeroWhite";
+                result = "fourWhite";
                 break;
             }
             case 1: {
-                result = "oneWhite";
+                result = "threeWhite";
                 break;
             }
             case 2: {
@@ -289,11 +289,11 @@ public class XocDiaResult {
                 break;
             }
             case 3: {
-                result = "threeWhite";
+                result = "oneWhite";
                 break;
             }
             case 4: {
-                result = "fourWhite";
+                result = "zeroWhite";
                 break;
             }
         }

@@ -27,8 +27,7 @@ import com.vinplay.vbee.common.utils.VinPlayUtils;
 import com.vinplay.vbee.dao.XocDiaDao;
 import org.bson.Document;
 
-public class XocDiaDaoImpl
-        implements XocDiaDao {
+public class XocDiaDaoImpl implements XocDiaDao {
 
     @Override
     public void saveTransactionXocDia(TransactionXocDiaMessage msg) {
