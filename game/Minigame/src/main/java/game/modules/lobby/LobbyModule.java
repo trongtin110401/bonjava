@@ -2637,7 +2637,7 @@ public class LobbyModule extends BaseClientRequestHandler {
             long miniPoker1000 = cacheService.getValueLong(MGRoom.CACHE_JACK_POT_VALUE_SLOT + "_" + 1000 + "_" + Games.MINI_POKER.getName(), 0);
             long miniPoker10000 = cacheService.getValueLong(MGRoom.CACHE_JACK_POT_VALUE_SLOT + "_" + 10000 + "_" + Games.MINI_POKER.getName(), 0);
 
-            long pokeGo100 = cacheService.getValueLong(MGRoom.CACHE_JACK_POT_VALUE_SLOT + "_" + 1000 + "_" + Games.CANDY.getName(), 0);
+            long pokeGo100 = cacheService.getValueLong(MGRoom.CACHE_JACK_POT_VALUE_SLOT + "_" + 100 + "_" + Games.CANDY.getName(), 0);
             long pokeGo1000 = cacheService.getValueLong(MGRoom.CACHE_JACK_POT_VALUE_SLOT + "_" + 1000 + "_" + Games.CANDY.getName(), 0);
             long pokeGo10000 = cacheService.getValueLong(MGRoom.CACHE_JACK_POT_VALUE_SLOT + "_" + 10000 + "_" + Games.CANDY.getName(), 0);
 
