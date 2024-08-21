@@ -241,15 +241,16 @@ public class MGRoomCaoThap extends MGRoom {
                     }
                 } else if (result == ResultCaoThap.HOA) {
                     moneyToUser = moneyWin;
-                    this.pot += info.getMoney() - moneyWin;
+                    long moneyToPot = info.getMoney() - moneyWin;
+                    this.pot += moneyToPot;
                     // nếu hòa người chơi mất 1% tổng tiền ở bước hiện tại để cho vào hũ JACKPOT
                     // ngoài ra
                     //      nếu hòa ở bước 1: Quỹ  chi trả lại 99%
                     //      từ bước 2: quỹ không thay đổi
-//                    if (!isBot(user.getName()) && info.getStep() == ResultCaoThap.STEP_ONE) {
-                        updateFunValue(-moneyWin);
+                    if (!isBot(user.getName()) && info.getStep() == ResultCaoThap.STEP_ONE) {
+                        updateFunValue(-moneyToPot);
                         this.saveFund();
-//                    }
+                    }
 
                     this.savePot();
                     askUserNext = true;
