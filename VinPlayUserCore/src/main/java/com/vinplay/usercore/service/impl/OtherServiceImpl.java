@@ -533,8 +533,11 @@ public class OtherServiceImpl implements OtherService {
             eventResponse.setId(String.valueOf(doc.getLong("id")));
             eventResponse.setSuccess(true);
             eventResponse.setErrorCode("200");
+            return eventResponse;
         }
-        return eventResponse;
+        else {
+            return null;
+        }
     }
 
     @Override
