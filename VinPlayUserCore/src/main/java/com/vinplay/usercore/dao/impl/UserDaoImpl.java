@@ -1052,6 +1052,10 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public int countUserSecurity(String startTime, String endTime) throws SQLException {
+
+
+
+
         endTime += " 23:59:59";
         int cnt = 0;
         String sql = "";

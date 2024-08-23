@@ -11,11 +11,12 @@
  */
 package com.vinplay.api.backend.processors;
 
+import com.vinplay.usercore.service.OtherService;
+import com.vinplay.usercore.service.impl.OtherServiceImpl;
 import com.vinplay.usercore.service.impl.UserForAdminServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
-import com.vinplay.vbee.common.response.ReportUserResponse;
-import com.vinplay.vbee.common.response.ResultUserReponse;
+import com.vinplay.vbee.common.response.*;
 import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,7 +26,9 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ReportUserProcessor
         implements BaseProcessor<HttpServletRequest, String> {
@@ -51,11 +54,22 @@ public class ReportUserProcessor
         try {
             int totalRecord = service.countUser(ts, te);
             int userPay = service.countUserPay(ts, te);
-            int userSecurity = service.countUserSecurity(ts, te);
+            OtherService otherService = new OtherServiceImpl();
+            UserActivePhoneResponse userActivePhoneResponse = otherService.getAllUserActivePhoneByDay(timeStart, timeEnd);
+            UserActiveTeleResponse userActiveTeleResponse = otherService.getAllUserActiveTeleByDay(timeStart,timeEnd);
+            Set<String> userSecurityPhone = new HashSet<>();
+            for (UserPhone userPhone : userActivePhoneResponse.getUsers()){
+                userSecurityPhone.add(userPhone.getNickname());
+            }
+            Set<String> userSecurityTele = new HashSet<>();
+            for (UserTele userTele : userActiveTeleResponse.getUsers()){
+                userSecurityTele.add(userTele.getNickname());
+            }
+            userSecurityPhone.retainAll(userSecurityTele);
             int userPayAndSecurity = service.countUserPayAndSecurity(ts, te);
             response.setTotal(totalRecord);
             response.setUserPay(userPay);
-            response.setUserSecurity(userSecurity);
+            response.setUserSecurity(userSecurityPhone.size());
             response.setUserPayAndSecurity(userPayAndSecurity);
             response.setSuccess(true);
             response.setErrorCode("0");

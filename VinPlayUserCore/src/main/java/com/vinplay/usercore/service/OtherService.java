@@ -85,5 +85,9 @@ public interface OtherService {
     ListEventResponse getAllEvent(String timeStart, String timeEnd, String eventName, String rate, Boolean status);
 
     void updateEvent(long id, String timeStart, String timeEnd, String eventName, int rate, boolean status);
+
+    UserActivePhoneResponse getAllUserActivePhoneByDay(String timeStart, String timeEnd);
+
+    UserActiveTeleResponse getAllUserActiveTeleByDay(String timeStart, String timeEnd);
 }
 
