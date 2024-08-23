@@ -94,8 +94,8 @@ public class MGRoomCaoThap extends MGRoom {
         StartPlayCaoThapMsg msg = new StartPlayCaoThapMsg();
         synchronized (this.usersCaoThap) {
             if (!this.usersCaoThap.containsKey(user.getName())) {
-                long moneyUse = this.userService.getMoneyUserCache(user.getName(), this.moneyTypeStr);
-                if (moneyUse >= (long) betValue) {
+                long moneyUser = this.userService.getMoneyUserCache(user.getName(), this.moneyTypeStr);
+                if (moneyUser >= (long) betValue) {
                     Deck deck = new Deck();
                     deck.shuffle();
                     Card card = CaoThapUtils.randomWithoutA(deck);
@@ -112,8 +112,6 @@ public class MGRoomCaoThap extends MGRoom {
                     if (card.getRank() == Rank.Ace) {
                         numA = 1;
                     }
-//                    long fee = Math.round((float) betValue * this.tax / 100.0f);
-//                    long moneyToFund = (long) betValue - fee;
                     long moneyToFund = betValue;
                     MoneyResponse moneyResponse = new MoneyResponse(false, "1001");
                     if (!isBot(user.getName())) {
@@ -181,7 +179,6 @@ public class MGRoomCaoThap extends MGRoom {
                     noHu = (this.baseBetValue < 100000 || this.userService.getTotalRechargeMoney(user.getName()) >= Math.round((double) this.pot * 0.1)) && CaoThapUtils.isDoWithRatio(1000.0);
                 }
 
-                block4:
                 while (true) {
                     numA = info.getNumA();
                     if (noHu) {
@@ -189,12 +186,6 @@ public class MGRoomCaoThap extends MGRoom {
                         nextCard = deck.deal();
                     } else {
                         nextCard = CaoThapUtils.randomWithoutA(info.getDeck());
-//                        while (nextCard.getRank() == Rank.Ace
-//                                || nextCard.getRank() == Rank.King
-//                                || nextCard.getRank() == Rank.Two
-//                                || nextCard.getRank() == Rank.Three) {
-//                            continue block4;
-//                        }
                         deck = info.getDeck();
                         deck.popCard(nextCard);
                     }
@@ -219,7 +210,11 @@ public class MGRoomCaoThap extends MGRoom {
                         }
                     }
 
-                    if (result == ResultCaoThap.THANG && moneyWin > 0 && getFunValue() < moneyWin) {
+                    long moneyToFund = info.getStep() == ResultCaoThap.STEP_ONE
+                            ? moneyWin
+                            : moneyWin - info.getMoney();
+
+                    if (result == ResultCaoThap.THANG && moneyWin > 0 && getFunValue() < moneyToFund) {
                         if (info.getCard().getRank() != Rank.Ace || info.getCard().getRank() != Rank.Two)
                             continue;
                     }
@@ -234,9 +229,7 @@ public class MGRoomCaoThap extends MGRoom {
                     moneyToUser = moneyWin;
                     askUserNext = true;
                     if (!isBot(user.getName())) {
-                        long moneyToFund = info.getStep() == ResultCaoThap.STEP_ONE
-                                ? moneyWin
-                                : moneyWin - info.getMoney();
+                        long moneyToFund = info.getStep() == ResultCaoThap.STEP_ONE ? moneyWin: moneyWin - info.getMoney();
                         updateFunValue(-moneyToFund);
                         this.saveFund();
                     }
