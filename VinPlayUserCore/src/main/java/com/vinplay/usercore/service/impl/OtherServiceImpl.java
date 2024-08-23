@@ -543,8 +543,7 @@ public class OtherServiceImpl implements OtherService {
             eventResponse.setSuccess(true);
             eventResponse.setErrorCode("200");
             return eventResponse;
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -630,6 +629,81 @@ public class OtherServiceImpl implements OtherService {
         updateFields.append("status", status);
         Document updateOperation = new Document("$set", updateFields);
         collection.updateOne(filter, updateOperation);
+    }
+
+    @Override
+    public UserActivePhoneResponse getAllUserActivePhoneByDay(String timeStart, String timeEnd) {
+        timeStart += " 00:00:00";
+        timeEnd += " 23:59:59";
+        UserActivePhoneResponse userActivePhoneResponse = new UserActivePhoneResponse(true, "0");
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("user_phone");
+        SimpleDateFormat inputDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat outputDateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        try {
+            Date startDate = inputDateFormat.parse(timeStart);
+            Date endDate = inputDateFormat.parse(timeEnd);
+            String formattedStartDate = outputDateFormat.format(startDate);
+            String formattedEndDate = outputDateFormat.format(endDate);
+            Document query = new Document("$and", Arrays.asList(
+                    new Document("createdDate", new Document("$gte", formattedStartDate).append("$lte", formattedEndDate)),
+                    new Document("isActive", true)
+            ));
+            List<UserPhone> result = new ArrayList<>();
+            MongoCursor<Document> cursor = collection.find(query).iterator();
+            while (cursor.hasNext()) {
+                Document doc = cursor.next();
+                UserPhone userPhone = new UserPhone();
+                userPhone.setActive(doc.getBoolean("isActive"));
+                userPhone.setNickname(doc.getString("nickname"));
+                userPhone.setPhoneNumber(doc.getString("phone"));
+                userPhone.setCreatedDate(doc.getString("createdDate"));
+                userPhone.setId(doc.getObjectId("_id").toString());
+                result.add(userPhone);
+            }
+            userActivePhoneResponse.setUsers(result);
+        } catch (Exception e) {
+            e.printStackTrace(); // Xử lý ngoại lệ nếu định dạng thời gian không đúng
+        }
+
+        return userActivePhoneResponse;
+    }
+
+    @Override
+    public UserActiveTeleResponse getAllUserActiveTeleByDay(String timeStart, String timeEnd) {
+        UserActiveTeleResponse userActivePhoneResponse = new UserActiveTeleResponse(true, "0");
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        timeStart += " 00:00:00";
+        timeEnd += " 23:59:59";
+        MongoCollection<Document> collection = db.getCollection("user_tele");
+        SimpleDateFormat inputDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat outputDateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        try {
+            Date startDate = inputDateFormat.parse(timeStart);
+            Date endDate = inputDateFormat.parse(timeEnd);
+            String formattedStartDate = outputDateFormat.format(startDate);
+            String formattedEndDate = outputDateFormat.format(endDate);
+            Document query = new Document("$and", Arrays.asList(
+                    new Document("createdDate", new Document("$gte", formattedStartDate).append("$lte", formattedEndDate)),
+                    new Document("isActive", true)
+            ));
+            List<UserTele> result = new ArrayList<>();
+            MongoCursor<Document> cursor = collection.find(query).iterator();
+            while (cursor.hasNext()) {
+                Document doc = cursor.next();
+                UserTele userPhone = new UserTele();
+                userPhone.setActive(doc.getBoolean("isActive"));
+                userPhone.setNickname(doc.getString("nickname"));
+                userPhone.setPhoneNumber(doc.getString("phoneNumber"));
+                userPhone.setCreatedDate(doc.getString("createdDate"));
+                userPhone.setId(doc.getObjectId("_id").toString());
+                result.add(userPhone);
+            }
+            userActivePhoneResponse.setUsers(result);
+        } catch (Exception e) {
+            e.printStackTrace(); // Xử lý ngoại lệ nếu định dạng thời gian không đúng
+        }
+        return userActivePhoneResponse;
     }
 
     @Override
