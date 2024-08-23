@@ -11,7 +11,6 @@
 package game.xocdia.utils;
 
 import bitzero.util.common.business.Debug;
-import com.google.gson.Gson;
 import com.vinplay.dal.service.MiniGameService;
 import com.vinplay.dal.service.impl.MiniGameServiceImpl;
 import com.vinplay.usercore.service.CacheService;
@@ -21,7 +20,6 @@ import com.vinplay.vbee.common.exceptions.KeyNotFoundException;
 import com.vinplay.vbee.common.response.BauCuaTo2.SetBauCuaKetqua;
 import game.xocdia.conf.XocDiaForceResult;
 import game.xocdia.entities.GamePot;
-import game.xocdia.entities.GamePotReportModel;
 import game.xocdia.entities.PotType;
 
 import java.util.*;
@@ -29,20 +27,20 @@ import java.util.*;
 public class XocDiaResult {
 
     private MiniGameService mgService = new MiniGameServiceImpl();
-    private byte count;
+    private byte blackCount;
     private List<Integer> dinces;
     private CacheService cacheService = new CacheServiceImpl();
 
-    public XocDiaResult(byte count) {
-        this.count = count;
+    public XocDiaResult(byte blackCount) {
+        this.blackCount = blackCount;
     }
 
-    public byte getCount() {
-        return this.count;
+    public byte getBlackCount() {
+        return this.blackCount;
     }
 
-    public void setCount(byte count) {
-        this.count = count;
+    public void setBlackCount(byte blackCount) {
+        this.blackCount = blackCount;
     }
 
     public List<Integer> getDinces() {
@@ -54,63 +52,65 @@ public class XocDiaResult {
     }
 
     public XocDiaResult() {
-        this.count = 0;
+        this.blackCount = 0;
         this.dinces = new ArrayList<Integer>();
         this.dinces.clear();
     }
 
-    public long generateResult2(Vector<GamePot> potList) {
-
-        SetBauCuaKetqua setBauCuaKetqua = null;
-
+    /**
+     * sinh kết quả và trả về tiền chênh lệch
+     * nếu tiền chênh lệch âm, có nghĩa là nhà cái thua
+     * nều tiền chênh lệch dương, có nghĩa là nhà thắng
+     *
+     * @param potList
+     * @return
+     */
+    public long sinhKetQuaVaTraVeTienChenhLech(Vector<GamePot> potList) {
         try {
-            try {
-                setBauCuaKetqua = (SetBauCuaKetqua) cacheService.getObject("BeCauXocDia");
-            } catch (KeyNotFoundException e) {
-            }
-            if (setBauCuaKetqua != null) {
-                if (setBauCuaKetqua.getStatus().equals("be")) {
-                    this.dinces = new ArrayList<>();
-                    byte[] listDices = setBauCuaKetqua.getListDices();
-                    dinces.add((int) listDices[0]);
-                    dinces.add((int) listDices[1]);
-                    dinces.add((int) listDices[2]);
-                    dinces.add((int) listDices[3]);
-                    this.count = (byte) dinces.stream().mapToInt(value -> value).sum();
-//                    for (Integer i : this.dinces) {
-//                        if (i % 2 != 0) {
-//                            continue;
-//                        } else {
-//                            this.count = (byte) (this.count + 1);
-//                        }
-//
-//                    }
-                    cacheService.setObject("BeCauXocDia", new SetBauCuaKetqua("auto", new byte[]{}));
-
-                    return tinhToanTienChechLech(potList);
-                } else {
-                    return this.autoGenerateValue2(potList);
-                }
-            } else {
+            SetBauCuaKetqua setBauCuaKetqua = checkBeCauTuCms();
+            if (setBauCuaKetqua != null && setBauCuaKetqua.getStatus().equals("be")) {  // nếu có lệnh bẻ cầu từ CMS
+                this.dinces = new ArrayList<>();
+                byte[] listDices = setBauCuaKetqua.getListDices();
+                dinces.add((int) listDices[0]);
+                dinces.add((int) listDices[1]);
+                dinces.add((int) listDices[2]);
+                dinces.add((int) listDices[3]);
+                this.blackCount = (byte) dinces.stream().mapToInt(value -> value).sum();
+                cacheService.setObject("BeCauXocDia", new SetBauCuaKetqua("auto", new byte[]{}));
+                return tinhToanTienChenhLech(potList);
+            } else { // Không có lệnh bẻ cầu từ CMS, tự động sinh kết quả
                 return this.autoGenerateValue2(potList);
             }
-
         } catch (Exception e) {
-            Debug.trace((Object) e);
-            return this.autoGenerateValue2(potList);
+            Debug.trace(e);
+            throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Kiểm tra xem liệu lệnh can thiệp kêt quả từ CMS không
+     *
+     * @return
+     */
+    private SetBauCuaKetqua checkBeCauTuCms() {
+        SetBauCuaKetqua setBauCuaKetqua = null;
+        try {
+            setBauCuaKetqua = (SetBauCuaKetqua) cacheService.getObject("BeCauXocDia");
+        } catch (KeyNotFoundException e) {
+        }
+        return setBauCuaKetqua;
     }
 
     public void autoGenerateValue(List<Integer> rsCheat, XocDiaForceResult xdForce) {
         {
             this.dinces = new ArrayList<Integer>();
             this.dinces.clear();
-            this.count = 0;
+            this.blackCount = 0;
             for (int i = 0; i < 4; ++i) {
                 int value = (int) (Math.round(Math.random()) + 0); // random value
                 if (value % 2 == 0) {
                     this.dinces.add(0);
-                    this.count = (byte) (this.count + 1);
+                    this.blackCount = (byte) (this.blackCount + 1);
                     continue;
                 }
                 this.dinces.add(1);
@@ -120,29 +120,17 @@ public class XocDiaResult {
 
     public long autoGenerateValue2(Vector<GamePot> potList) {
         // tinh toan hu
-        long fund = 0;
-        try {
-            fund = getFunValue();
-        } catch (Exception e) {
-            cacheService.setValue("min_fund_xd_auto", 0);
-            cacheService.setValue("max_fund_xd_auto", 0);
-            setFunValue(0);
-        }
-
+        long fund = getFundValue();
         ArrayList<List<Integer>> listDiceRandom = listDicesRandom();
         long tienChenhLech = 0;
-        for (int index = 0; index < 16; index++) {
+        int TONG_SO_KET_QUA = 16;
+        for (int i = 0; i < TONG_SO_KET_QUA; i++) {
             // random ket qua
-            this.dinces = listDiceRandom.get(index);
-            this.count = 0;
-            this.count = (byte) dinces.stream().mapToInt(value -> value).sum();
-//            for (int i : dinces) {
-//                if (i == 0) {
-//                    this.count = (byte) (this.count + 1);
-//                }
-//            }
-
-            tienChenhLech = tinhToanTienChechLech(potList);
+            this.dinces = listDiceRandom.get(i);
+            // tổng số vị màu đen
+            this.blackCount = (byte) dinces.stream().mapToInt(value -> value).sum();
+            // tính toán tiền chênh lệch
+            tienChenhLech = tinhToanTienChenhLech(potList);
             if (tienChenhLech >= 0) { // nhà cái thắng
                 break;
             } else if (fund >= tienChenhLech * -1) { // Qũy vẫn còn đủ để bù lỗ
@@ -150,6 +138,17 @@ public class XocDiaResult {
             }
         }
         return tienChenhLech;
+    }
+
+    private long getFundValue() {
+        try {
+            return getFunValue();
+        } catch (Exception e) {
+            cacheService.setValue("min_fund_xd_auto", 0);
+            cacheService.setValue("max_fund_xd_auto", 0);
+            setFunValue(0);
+            return 0;
+        }
     }
 
     public static ArrayList<List<Integer>> listDicesRandom() {
@@ -192,37 +191,35 @@ public class XocDiaResult {
         return list;
     }
 
-    public long tinhToanTienChechLech(Vector<GamePot> potList) {
+    public long tinhToanTienChenhLech(Vector<GamePot> potList) {
         try {
             long totalLai = 0;
             long totalLo = 0;
-            List<Byte> listWin = getPotsWin();
-            for (byte gateIndex = 0; gateIndex < 6; gateIndex++) {
-                boolean isGateWin = false;
-                for (Byte gateWin : listWin) {
-                    if (gateIndex == gateWin) {
-                        isGateWin = true;
-                        break;
-                    }
-                }
-                Map<String, Long> dataUser = potList.get(gateIndex).userBetMap;
+            int TONG_SO_CUA = 6;
+            List<Byte> listGateWin = getPotsWin();
+            for (byte gateId = 0; gateId < TONG_SO_CUA; gateId++) {
+                boolean isGateWin = isGateWin(listGateWin, gateId);
+                Map<String, Long> betWinUsers = potList.get(gateId).userBetMap;
                 if (isGateWin) {
                     // tinh toan tien lo
-                    for (String key : dataUser.keySet()) {
-                        if (gateIndex == 0 || gateIndex == 1) {         // User đánh sấp đôi hoặc lẻ
-                            totalLo += dataUser.get(key) * 2;
-                        } else if (gateIndex == 2 || gateIndex == 3) { // User đánh vị tứ tử
-                            totalLo += dataUser.get(key) * 16;
-                        } else if (gateIndex == 4 || gateIndex == 5) {  // User đánh vị sấp 3
-                            totalLo += dataUser.get(key) * 4;
+                    for (String key : betWinUsers.keySet()) {
+                        if (gateId == 0 || gateId == 1) {         // User đánh sấp đôi hoặc lẻ
+//                            totalLo += betWinUsers.get(key) * 2;
+                            totalLo += betWinUsers.get(key);
+                        } else if (gateId == 2 || gateId == 3) { // User đánh vị tứ tử
+//                            totalLo += betWinUsers.get(key) * 16;
+                            totalLo += betWinUsers.get(key) * 15;
+                        } else if (gateId == 4 || gateId == 5) {  // User đánh vị sấp 3
+//                            totalLo += betWinUsers.get(key) * 4;
+                            totalLo += betWinUsers.get(key) * 3;
                         } else {
                             // do nothing
                         }
                     }
                 } else {
                     // tinh toan tien lai
-                    for (String key : dataUser.keySet()) {
-                        totalLai += dataUser.get(key);
+                    for (String key : betWinUsers.keySet()) {
+                        totalLai += betWinUsers.get(key);
                     }
                 }
             }
@@ -232,19 +229,21 @@ public class XocDiaResult {
         }
     }
 
-
-    private boolean checkListWinSuccess(List<Byte> listPWin) {
-        List<Byte> listPotCanWin = this.getPotsWin();
-        for (Byte pWin : listPotCanWin) {
-            if (listPWin.contains(pWin)) continue;
-            return false;
+    private static boolean isGateWin(List<Byte> listGateWin, byte gateId) {
+        boolean isGateWin = false;
+        for (byte gateWinId : listGateWin) {
+            if (gateId == gateWinId) {
+                isGateWin = true;
+                break;
+            }
         }
-        return true;
+        return isGateWin;
     }
+
 
     public List<Byte> getPotsWin() {
         ArrayList<Byte> potsId = new ArrayList<>();
-        switch (this.count) {
+        switch (this.blackCount) {
             case 0: {
                 potsId.add(PotType.EVEN.getId());
                 potsId.add(PotType.FOUR_WHITE.getId());
@@ -275,7 +274,7 @@ public class XocDiaResult {
 
     public String getResult() {
         String result = "";
-        switch (this.count) {
+        switch (this.blackCount) {
             case 0: {
                 result = "fourWhite";
                 break;

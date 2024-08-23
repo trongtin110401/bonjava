@@ -90,7 +90,7 @@ public class GamePot {
         return false;
     }
 
-    public long bet(String nickname, long money, boolean bLimit, int moneyType, boolean isBot) {
+    public synchronized long bet(String nickname, long money, boolean bLimit, int moneyType, boolean isBot) {
         try {
 
             if (money > 0L) {

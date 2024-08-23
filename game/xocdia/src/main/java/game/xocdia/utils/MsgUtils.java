@@ -82,9 +82,9 @@ public class MsgUtils {
 
     public static void alertServer(String content, boolean isMaintain, boolean alertAdmin) {
         try {
-            Debug.trace((Object)(VinPlayUtils.getCurrentDateTime() + " ===ERROR=== " + content));
+            Debug.trace(VinPlayUtils.getCurrentDateTime() + " ===ERROR=== " + content);
             if (isMaintain) {
-                Debug.trace((Object)(VinPlayUtils.getCurrentDateTime() + " ===MAINTAIN===" + content));
+                Debug.trace(VinPlayUtils.getCurrentDateTime() + " ===MAINTAIN===" + content);
                 GameUtils.isMainTain = true;
             }
             if (alertAdmin) {
@@ -92,7 +92,7 @@ public class MsgUtils {
             }
         }
         catch (Exception e) {
-            Debug.trace((Object)e);
+            Debug.trace(e);
         }
     }
 

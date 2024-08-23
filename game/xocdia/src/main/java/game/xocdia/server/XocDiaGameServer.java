@@ -52,11 +52,8 @@ import com.vinplay.dal.service.impl.MiniGameServiceImpl;
 import com.vinplay.gamebai.entities.XocDiaBoss;
 import com.vinplay.usercore.logger.MoneyLogger;
 import com.vinplay.usercore.service.CacheService;
-import com.vinplay.usercore.service.MoneyInGameService;
 import com.vinplay.usercore.service.UserService;
-import com.vinplay.usercore.service.XocDiaService;
 import com.vinplay.usercore.service.impl.CacheServiceImpl;
-import com.vinplay.usercore.service.impl.MoneyInGameServiceImpl;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.usercore.service.impl.XocDiaServiceImpl;
 import com.vinplay.vbee.common.enums.Games;
@@ -85,12 +82,9 @@ import game.utils.NumberUtils;
 import game.xocdia.bot.BotPurchaseModel;
 import game.xocdia.bot.BotRejectModel;
 import game.xocdia.bot.BotRequestBankerModel;
-import game.xocdia.bot.BotSellPotModel;
 import game.xocdia.cmd.rev.BetCmd;
 import game.xocdia.cmd.rev.ChatCmd;
-import game.xocdia.conf.XocDiaBetBotModel;
 import game.xocdia.conf.XocDiaConfig;
-import game.xocdia.conf.XocDiaForceResult;
 import game.xocdia.utils.MsgUtils;
 
 import java.io.IOException;
@@ -145,7 +139,7 @@ public class XocDiaGameServer extends GameServer {
     private volatile byte gameState;
     private volatile int countTime;
     private volatile int gameId;
-    private Map<String, GamePlayer> playerList;
+    private final Map<String, GamePlayer> playerList = new ConcurrentHashMap<>();
     private List<String> playerListrp;
     private volatile boolean isRegisterLoop;
     private ArrayList<Byte> rsList;
@@ -220,7 +214,6 @@ public class XocDiaGameServer extends GameServer {
                 PotType pt = PotType.findPotType(i);
                 this.potList.add(new GamePot(pt.getId(), pt.getRatio(), pt.getName(), Math.round(pt.getMaxRatioBet() * (double) this.moneyBet)));
             }
-            this.playerList = new ConcurrentHashMap<>();
             this.purchaseStatus = 0;
             this.moneyDif = 0L;
             this.finishStep = false;
@@ -327,10 +320,10 @@ public class XocDiaGameServer extends GameServer {
                     }
                     this.reset();
                     if (this.playerList.size() >= 2) {
-                        Debug.trace((Object[]) new Object[]{"\u0110\u1ee7 2 ng\u01b0\u1eddi ch\u01a1i, b\u1eaft \u0111\u1ea7u game m\u1edbi", this.roomId, this.gameId});
+                        Debug.trace("Đủ 2 người chơi, bắt đầu game mới", this.roomId, this.gameId);
                         this.init();
                     } else if (isNextGame) {
-                        Debug.trace((Object[]) new Object[]{"Kh\u00f4ng \u0111\u1ee7 ng\u01b0\u1eddi ch\u01a1i => k\u1ebft th\u00fac game", this.roomId, this.gameId});
+                        Debug.trace("Không đủ người chơi => kết thúc game", this.roomId, this.gameId);
                         this.notifyStopGame();
                     }
                 }
@@ -345,7 +338,7 @@ public class XocDiaGameServer extends GameServer {
 
     private void reset() {
         try {
-            Debug.trace((Object[]) new Object[]{"RESET NEW GAME", this.roomId, this.gameId});
+            Debug.trace("RESET NEW GAME", this.roomId, this.gameId);
             for (int i = 0; i < 6; ++i) {
                 GamePot gPot = this.getPot(i);
                 gPot.reset();
@@ -450,7 +443,7 @@ public class XocDiaGameServer extends GameServer {
                         this.finishStep = true;
                         break;
                     }
-                    Debug.trace((Object[]) new Object[]{"Waiting BALANCE", this.roomId, this.gameId});
+                    Debug.trace(new Object[]{"Waiting BALANCE", this.roomId, this.gameId});
                     --this.countTime;
                     break;
                 }
@@ -550,7 +543,7 @@ public class XocDiaGameServer extends GameServer {
             if (this.moneyType == 1) {
                 BotXocDiaManager.instance().startNewGame(this.roomId, this.gameId);
             }
-            Debug.trace((Object[]) new Object[]{"START NEW GAME", VinPlayUtils.getCurrentDateTime(), this.roomId, this.gameId});
+            Debug.trace("START NEW GAME", VinPlayUtils.getCurrentDateTime(), this.roomId, this.gameId);
             this.gameLog.append("XDBD<").append(this.moneyType).append(";");
             this.botBettingList.clear();
             this.botPurchaseList.clear();
@@ -590,12 +583,7 @@ public class XocDiaGameServer extends GameServer {
             long moneyUser = gp.getMoneyUseInGame();
             long totalBet = 0L;
             boolean isNext = true;
-            int tongBot = 0;
-            int tongBotDuTien = 0;
-            int tongBotKhongDuTien = 0;
             if (gp.isBot && !gp.user.getName().equals(this.bankerName) && moneyUser >= (long) this.moneyBet) {
-                tongBot += 1;
-                tongBotDuTien +=1;
                 int betStartTime;
                 long money;
                 byte potChanLe = 10;
@@ -643,8 +631,6 @@ public class XocDiaGameServer extends GameServer {
                     this.botReqBankerList.add(new BotRequestBankerModel(gp.user, reqStartTime));
                 }
             } else {
-                tongBot += 1;
-                tongBotKhongDuTien +=1;
             }
 
             if (this.roomType == 0 && gp.isBot && this.bankerName.equals(gp.user.getName())) {
@@ -664,15 +650,16 @@ public class XocDiaGameServer extends GameServer {
     // todo : bot betting
     private synchronized void botBetting() {
         try {
+            List<Integer> notEnoughMoneyBotIndexes = new ArrayList<>();
             for (int i = 0; i < this.botBettingList.size(); ++i) {
                 BotBettingModel model;
-                if (!NumberUtils.isDoWithRatio((double) XocDiaConfig.ratioBotBettingInGame) || (model = this.botBettingList.get(i)) == null || this.countTime < model.betStartTime)
+                if (!NumberUtils.isDoWithRatio(XocDiaConfig.ratioBotBettingInGame) || (model = this.botBettingList.get(i)) == null || this.countTime < model.betStartTime)
                     continue;
                 if (model.money < (long) this.moneyBet) {
-                    this.botBettingList.remove(i);
+                    notEnoughMoneyBotIndexes.add(i);
                     continue;
                 }
-                long money = this.listCoins.get(this.rd.nextInt(this.listCoins.size())) * this.moneyBet;
+                long money = (long) listCoins.get(this.rd.nextInt(this.listCoins.size())) * this.moneyBet;
                 boolean remove = false;
                 if (money >= model.money) {
                     money = model.money;
@@ -685,12 +672,17 @@ public class XocDiaGameServer extends GameServer {
                     remove = true;
                 }
                 if (!remove) continue;
-                this.botBettingList.remove(i);
+                notEnoughMoneyBotIndexes.add(i);
+            }
+
+            // remove the bot that is not enough money
+            for (int notEnoughMoneyBotIndex : notEnoughMoneyBotIndexes) {
+                botBettingList.remove(notEnoughMoneyBotIndex);
             }
         } catch (Exception e) {
             String content = "Xoc Dia exception: " + e.getMessage() + ", function: botBetting() " + this.roomId + " " + this.gameId;
             MsgUtils.alertServer(content, false, false);
-            Debug.trace((Object) e);
+            Debug.trace(e);
         }
     }
 
@@ -736,34 +728,10 @@ public class XocDiaGameServer extends GameServer {
         }
     }
 
-    private void calculateMoneyDif(GamePlayer banker) {
-        try {
-            long moneyPotEven = this.getPot((int) PotType.EVEN.getId()).totalMoney;
-            long moneyPotOdd = this.getPot((int) PotType.ODD.getId()).totalMoney;
-            this.moneyDif = moneyPotEven - moneyPotOdd;
-            if (banker != null) {
-                long moneyBanker = banker.getMoneyUseInGame();
-                long moneyEx = moneyBanker + Math.abs(this.moneyDif);
-                if (this.moneyDif > 0L) {
-                    this.moneyPurchaseEven = moneyEx >= moneyPotEven ? moneyPotEven : moneyEx;
-                    this.moneyPurchaseOdd = moneyBanker >= moneyPotOdd ? moneyPotOdd : moneyBanker;
-                } else {
-                    this.moneyPurchaseOdd = moneyEx >= moneyPotOdd ? moneyPotOdd : moneyEx;
-                    this.moneyPurchaseEven = moneyBanker >= moneyPotEven ? moneyPotEven : moneyBanker;
-                }
-            }
-        } catch (Exception e) {
-            String content = "Xoc Dia exception: " + e.getMessage() + ", function: calculateMoneyDif() " + this.roomId + " " + this.gameId;
-            MsgUtils.alertServer(content, false, true);
-            Debug.trace((Object) e);
-        }
-    }
-
-
     private synchronized void startReward() {
         try {
             {
-                Debug.trace((Object[]) new Object[]{"START REWARD", VinPlayUtils.getCurrentDateTime(), this.roomId, this.gameId});
+                Debug.trace("START REWARD", VinPlayUtils.getCurrentDateTime(), this.roomId, this.gameId);
                 this.gameState = (byte) 6;
                 this.gameLog.append(">").append("XDKQ<");
                 this.notifyActionGamme((byte) 6, (byte) 10);
@@ -1035,9 +1003,9 @@ public class XocDiaGameServer extends GameServer {
             long currentMoney = userService.getCurrentMoneyUserCache(user.getName(), "vin");
             BetCmd cmd = new BetCmd(dataCmd);
             byte potId = cmd.pot;
-            long money = cmd.money;
-            if (money > currentMoney) return;
-            this.uBet(user, potId, money);
+            long betValue = cmd.money;
+            if (betValue > currentMoney) return;
+            this.uBet(user, potId, betValue);
         } catch (Exception e) {
             String content = "Xoc Dia exception: " + e.getMessage() + ", function: bet() " + this.roomId + " " + this.gameId;
             MsgUtils.alertServer(content, false, false);
@@ -1049,49 +1017,44 @@ public class XocDiaGameServer extends GameServer {
     /*
      * WARNING - Removed try catching itself - possible behaviour change.
      */
-    private boolean uBet(User user, byte potId, long money) {
+    private synchronized boolean uBet(User user, byte potId, long betValue) {
         boolean res = false;
         try {
-            Map<String, GamePlayer> map = this.playerList;
-            synchronized (map) {
-                GamePot gPot = this.getPot(potId);
-                GamePlayer gp = this.getPlayer(user.getName());
-                if (gp.getCurrentMoney() < money) return false; // check money can bet
-                if (this.checkBetting(gPot, gp) && money >= (long) this.moneyBet) { // money bet phai lon hon money bet min
-                    BetMsg msg = new BetMsg(user.getName());
-                    msg.potId = potId;
-                    MoneyResponse response = new MoneyResponse(false, "1001");
-                    response = this.userService.updateMoney(user.getName(), -money, "vin", "XocDia", "xoc dia : \u0110\u1eb7t c\u01b0\u1ee3c", "Phi\u00ean " + this.gameId, 0L, Long.valueOf(this.gameId), TransType.START_TRANS);
-                    // MoneyResponse mnres = gp.gameMoneyInfo.updateMoney(-money, this.roomId, this.gameId, 0L, false);
-                    if (response.isSuccess()) {
-                        gp.setPlaying(this.roomId);
-                        //       long moneySub = mnres.getSubtractMoney();
-                        long mnBet = gPot.bet(user.getName(), money, false, this.moneyType, gp.isBot);
-                        if (mnBet > 0L) {
-                            this.setPot(potId, gPot);
+            GamePot gamePot = this.getPot(potId);
+            GamePlayer gamePlayer = this.getPlayer(user.getName());
+            if (gamePlayer.getCurrentMoney() < betValue) return false; // check betValue can bet
+            if (this.checkBetting(gamePot, gamePlayer) && betValue >= (long) this.moneyBet) { // betValue bet phai lon hon betValue bet min
+                BetMsg msg = new BetMsg(user.getName());
+                msg.potId = potId;
+                MoneyResponse response;
+                response = userService.updateMoney(user.getName(), -betValue, "vin", "XocDia", "xoc dia : Đặt cược", "Phiên " + this.gameId, 0L, (long) this.gameId, TransType.START_TRANS);
+                if (response.isSuccess()) {
+                    gamePlayer.setPlaying(this.roomId);
+                    long mnBet = gamePot.bet(user.getName(), betValue, false, this.moneyType, gamePlayer.isBot);
+                    if (mnBet > 0L) {
+                        this.setPot(potId, gamePot);
 
-                            this.totalReveneu -= money;
-                            this.logBetting(user.getName(), potId, money, 0);
-                            msg.betMoney = money;
-                            msg.currentMoney = userService.getCurrentMoneyUserCache(user.getName(), "vin");
-                            msg.potMoney = gPot.totalMoney;
-                            msg.Error = 0;
-                            MsgUtils.sendToRoom(msg, this.playerList);
-                            res = true;
-                        } else {
-                            msg.currentMoney = userService.getCurrentMoneyUserCache(user.getName(), "vin");
-                            msg.potMoney = gPot.totalMoney;
-                            msg.Error = 2;
-                            MsgUtils.send(msg, user, gp.revMsg);
-                        }
+                        this.totalReveneu -= betValue;
+                        this.logBetting(user.getName(), potId, betValue, 0);
+                        msg.betMoney = betValue;
+                        msg.currentMoney = userService.getCurrentMoneyUserCache(user.getName(), "vin");
+                        msg.potMoney = gamePot.totalMoney;
+                        msg.Error = 0;
+                        MsgUtils.sendToRoom(msg, this.playerList);
+                        res = true;
                     } else {
                         msg.currentMoney = userService.getCurrentMoneyUserCache(user.getName(), "vin");
-                        msg.potMoney = gPot.totalMoney;
-                        msg.Error = 1;
-                        MsgUtils.send(msg, user, gp.revMsg);
+                        msg.potMoney = gamePot.totalMoney;
+                        msg.Error = 2;
+                        MsgUtils.send(msg, user, gamePlayer.revMsg);
                     }
-                    this.setPlayer(user.getName(), gp);
+                } else {
+                    msg.currentMoney = userService.getCurrentMoneyUserCache(user.getName(), "vin");
+                    msg.potMoney = gamePot.totalMoney;
+                    msg.Error = 1;
+                    MsgUtils.send(msg, user, gamePlayer.revMsg);
                 }
+                this.setPlayer(user.getName(), gamePlayer);
             }
         } catch (Exception e) {
             String content = "Xoc Dia exception: " + e.getMessage() + ", function: uBet() " + this.roomId + " " + this.gameId;
@@ -1186,13 +1149,13 @@ public class XocDiaGameServer extends GameServer {
     /*
      * WARNING - Removed try catching itself - possible behaviour change.
      */
-    private void reward() {
+    private synchronized void reward() {
         try {
-            Map<String, GamePlayer> map = this.playerList;
-            synchronized (map) {
+            synchronized (playerList) {
                 MoneyResponse mnres;
                 XocDiaResult xdResult = new XocDiaResult();
-                long tienChenhLechChuaTinhPhe = xdResult.generateResult2(this.potList);
+                long tienChenhLechChuaTinhPhe = xdResult.sinhKetQuaVaTraVeTienChenhLech(this.potList);
+
                 List<Integer> dinces = xdResult.getDinces();
 
                 Iterator<Integer> iterator = dinces.iterator();
@@ -1215,14 +1178,14 @@ public class XocDiaGameServer extends GameServer {
                         this.rsList.add(bt);
 
                         continue;
-                    }
-                    if (bt != PotType.ODD.getId()) continue;
-                    ++this.totalOdd;
-                    if (rsList.size() >= 32) {
-                        this.rsList.remove(0);
+                    } else {
+                        if (bt != PotType.ODD.getId()) continue;
+                        ++this.totalOdd;
+                        if (rsList.size() >= 32) {
+                            this.rsList.remove(0);
+                        }
                     }
                     this.rsList.add(bt);
-
                 }
 
 
@@ -1279,7 +1242,7 @@ public class XocDiaGameServer extends GameServer {
                             moneyWin -= fee;
                             RewardModel model = new RewardModel();
                             if (rewardMap.containsKey(nickname)) {
-                                model = (RewardModel) rewardMap.get(nickname);
+                                model = rewardMap.get(nickname);
                                 model.moneyWin += moneyWin;
                                 model.moneyBet += moneyBet;
                                 model.fee += fee;
@@ -1376,14 +1339,6 @@ public class XocDiaGameServer extends GameServer {
                 msg.rewardMap = rewardMap;
                 msg.subListMsg = subListMsg;
                 MsgUtils.sendToRoom(msg, this.playerList);
-
-                // calculate fund value and save to db
-                try {
-                    updateFunValue(tienChenhLechChuaTinhPhe);
-                    mgService.saveFund(Games.XOC_DIA.getName(), getFunValue());
-                } catch (Exception e) {
-                    Debug.trace(e);
-                }
             }
         } catch (Exception e) {
             String content = "Xoc Dia exception: " + e.getMessage() + ", function: reward() " + this.roomId + " " + this.gameId;
@@ -1757,7 +1712,7 @@ public class XocDiaGameServer extends GameServer {
                 ++i;
             }
             for (GamePot gp : this.potList) {
-                json.put("_p" + gp.id + "_" + gp.name, (Object) gp.toString());
+                json.put("_p" + gp.id + "_" + gp.name, gp.toString());
             }
             return json;
         } catch (Exception e) {
@@ -1824,8 +1779,7 @@ public class XocDiaGameServer extends GameServer {
         }
     }
 
-    private final class GameLoopTask
-            implements Runnable {
+    private final class GameLoopTask implements Runnable {
         @Override
         public void run() {
             try {
