@@ -22,9 +22,12 @@ import org.bson.types.ObjectId;
 import org.python.parser.ast.Str;
 
 import java.sql.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.Date;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -248,7 +251,10 @@ public class OtherServiceImpl implements OtherService {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("user_tele");
         Document filter = new Document("nickname", nickname);
-        Document update = new Document("$set", new Document("isActive", true));
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Date date = new Date();
+        Document update = new Document("$set", new Document("isActive", true)
+                .append("createdDate", dateFormat.format(date)));
         collection.updateOne(filter, update);
     }
 
@@ -257,7 +263,10 @@ public class OtherServiceImpl implements OtherService {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("user_phone");
         Document filter = new Document("nickname", nickname);
-        Document update = new Document("$set", new Document("isActive", true));
+        Date date = new Date();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Document update = new Document("$set", new Document("isActive", true)
+                .append("createdDate", dateFormat.format(date)));
         collection.updateOne(filter, update);
     }
 
