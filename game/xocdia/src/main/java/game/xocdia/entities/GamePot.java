@@ -113,6 +113,7 @@ public class GamePot {
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
             String content = "Xoc Dia exception: " + e.getMessage() + ", function: GamePot.bet()";
             MsgUtils.alertServer(content, false, true);
         }
