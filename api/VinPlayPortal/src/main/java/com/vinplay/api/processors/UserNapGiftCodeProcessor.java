@@ -81,7 +81,7 @@ public class UserNapGiftCodeProcessor
             service.saveUserUseGiftCode(userGiftCode);
             service.updateGiftCode(giftCodeDto);
             HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
-            historyTransDao.insertTransaction(new HistoryTransModel("Nạp Gift Code", "Hệ Thống",
+            historyTransDao.insertTransaction(new HistoryTransModel("Nạp Giftcode", "Hệ Thống",
                     "recharge", String.valueOf(giftCodeDto.getPrice()), "Thành công", code, nickName, "GIFT_CODE", UUID.randomUUID().toString()));
             userService.updateMoney(nickName, giftCodeDto.getPrice(), "vin", "Gift Code", "Gift Code", "Mã: " + code, 0L, null, TransType.NO_VIPPOINT);
             TelegramAlert.SendMessageDepositGiftCode(userGiftCode);
