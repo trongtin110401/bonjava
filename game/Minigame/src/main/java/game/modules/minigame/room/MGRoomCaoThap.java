@@ -193,7 +193,7 @@ public class MGRoomCaoThap extends MGRoom {
                     moneyWin = 0L;
                     if (nextCard.getRank().getRank() == info.getCard().getRank().getRank()) {
                         result = ResultCaoThap.HOA;
-                        moneyWin = Math.round((float) (info.getMoney() * 9L) / 10L);
+                        moneyWin = info.getMoney() * 9L / 10L;
                     } else if (nextCard.getRank().getRank() > info.getCard().getRank().getRank()) {
                         if (choose == TREN) {
                             result = ResultCaoThap.THANG;
@@ -229,7 +229,7 @@ public class MGRoomCaoThap extends MGRoom {
                     moneyToUser = moneyWin;
                     askUserNext = true;
                     if (!isBot(user.getName())) {
-                        long moneyToFund = info.getStep() == ResultCaoThap.STEP_ONE ? moneyWin: moneyWin - info.getMoney();
+                        long moneyToFund = info.getStep() == ResultCaoThap.STEP_ONE ? moneyWin : moneyWin - info.getMoney();
                         updateFunValue(-moneyToFund);
                         this.saveFund();
                     }
