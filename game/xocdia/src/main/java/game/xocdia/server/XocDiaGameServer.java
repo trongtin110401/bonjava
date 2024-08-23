@@ -1339,6 +1339,14 @@ public class XocDiaGameServer extends GameServer {
                 msg.rewardMap = rewardMap;
                 msg.subListMsg = subListMsg;
                 MsgUtils.sendToRoom(msg, this.playerList);
+
+                // calculate fund value and save to db
+                try {
+                    updateFunValue(tienChenhLechChuaTinhPhe);
+                    mgService.saveFund(Games.XOC_DIA.getName(), getFunValue());
+                } catch (Exception e) {
+                    Debug.trace(e);
+                }
             }
         } catch (Exception e) {
             String content = "Xoc Dia exception: " + e.getMessage() + ", function: reward() " + this.roomId + " " + this.gameId;

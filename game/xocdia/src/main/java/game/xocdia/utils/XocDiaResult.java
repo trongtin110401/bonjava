@@ -203,18 +203,14 @@ public class XocDiaResult {
                 if (isGateWin) {
                     // tinh toan tien lo
                     for (String key : betWinUsers.keySet()) {
-                        if (gateId == 0 || gateId == 1) {         // User đánh sấp đôi hoặc lẻ
-//                            totalLo += betWinUsers.get(key) * 2;
+                        if (gateId == PotType.EVEN.getId() || gateId == PotType.ODD.getId()) {         // User đánh sấp đôi hoặc lẻ
                             totalLo += betWinUsers.get(key);
-                        } else if (gateId == 2 || gateId == 3) { // User đánh vị tứ tử
-//                            totalLo += betWinUsers.get(key) * 16;
+                        } else if (gateId == PotType.FOUR_BLACK.getId() || gateId == PotType.FOUR_WHITE.getId()) { // User đánh vị tứ tử
                             totalLo += betWinUsers.get(key) * 15;
-                        } else if (gateId == 4 || gateId == 5) {  // User đánh vị sấp 3
-//                            totalLo += betWinUsers.get(key) * 4;
+                        } else if (gateId == PotType.ONE_WHITE.getId() || gateId == PotType.ONE_BLACK.getId()) {  // User đánh vị sấp 3
                             totalLo += betWinUsers.get(key) * 3;
-                        } else {
-                            // do nothing
                         }
+
                     }
                 } else {
                     // tinh toan tien lai
