@@ -212,11 +212,6 @@ public class MGRoomCaoThap extends MGRoom {
                     long moneyToFund = info.getStep() == ResultCaoThap.STEP_ONE
                             ? moneyWin
                             : moneyWin - info.getMoney();
-//                    System.out.println("BƯỚC: " + info.getStep() + " - Tiền vốn: " + info.getMoney() + " - Tiền Thắng/Thua:" + moneyToFund);
-
-//                    long moneyToFund = info.getStep() == ResultCaoThap.STEP_ONE
-//                            ? moneyWin
-//                            : moneyWin - info.getMoney();
 
                     if (result == ResultCaoThap.THANG && moneyWin > 0 && getFunValue() < moneyToFund) {
                         if (info.getCard().getRank() != Rank.Ace || info.getCard().getRank() != Rank.Two)
@@ -253,7 +248,7 @@ public class MGRoomCaoThap extends MGRoom {
                         updateFunValue(-moneyWin);
                         this.saveFund();
                         System.out.println("============>" + result + ": update fund: current fund = " + currentFund + " - update value = -" + moneyToPot + " - updated fund value: " + getFunValue());
-                    } else {
+                    } else if (!isBot(user.getName()) && info.getStep() != ResultCaoThap.STEP_ONE) {
                         updateFunValue(moneyToPot);
                     }
 
