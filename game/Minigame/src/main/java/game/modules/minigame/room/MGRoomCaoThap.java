@@ -212,7 +212,7 @@ public class MGRoomCaoThap extends MGRoom {
                     long moneyToFund = info.getStep() == ResultCaoThap.STEP_ONE
                             ? moneyWin
                             : moneyWin - info.getMoney();
-                    System.out.println("BƯỚC: " + info.getStep() + " - Tiền vốn: " + info.getMoney() + " - Tiền Thắng/Thua:" + moneyToFund);
+//                    System.out.println("BƯỚC: " + info.getStep() + " - Tiền vốn: " + info.getMoney() + " - Tiền Thắng/Thua:" + moneyToFund);
 
 //                    long moneyToFund = info.getStep() == ResultCaoThap.STEP_ONE
 //                            ? moneyWin
@@ -247,12 +247,14 @@ public class MGRoomCaoThap extends MGRoom {
                     // nếu hòa người chơi mất 1% tổng tiền ở bước hiện tại để cho vào hũ JACKPOT
                     // ngoài ra
                     //      nếu hòa ở bước 1: Quỹ  chi trả lại 99%
-                    //      từ bước 2: quỹ không thay đổi
+                    //      từ bước 2: quỹ cộng 1% của JACKPOT vào quỹ. Số tiền 1% này được cộng vào quỹ và khi có NỔ HŨ thì trích quỹ ra chi trả
                     if (!isBot(user.getName()) && info.getStep() == ResultCaoThap.STEP_ONE) {
                         long currentFund = getFunValue();
-                        updateFunValue(-moneyToPot);
+                        updateFunValue(-moneyWin);
                         this.saveFund();
                         System.out.println("============>" + result + ": update fund: current fund = " + currentFund + " - update value = -" + moneyToPot + " - updated fund value: " + getFunValue());
+                    } else {
+                        updateFunValue(moneyToPot);
                     }
 
                     this.savePot();
@@ -263,7 +265,7 @@ public class MGRoomCaoThap extends MGRoom {
                         long currentFund = getFunValue();
                         updateFunValue(info.getMoney());
                         this.saveFund();
-                        System.out.println("============> " + result + ": update fund: current fund = " + currentFund + " - update value = -" + info.getMoney() + " - updated fund value: " + getFunValue());
+                        System.out.println("============> " + result + ": update fund: current fund = " + currentFund + " - update value = +" + info.getMoney() + " - updated fund value: " + getFunValue());
                     }
                     currentMoney = this.userService.getCurrentMoneyUserCache(user.getName(), this.moneyTypeStr);
                     if (!isBot(user.getName())) {
@@ -273,13 +275,15 @@ public class MGRoomCaoThap extends MGRoom {
                 } else if (result == ResultCaoThap.NO_HU) {
                     if (info.getMoney() > moneyWin) {
                         this.pot += info.getMoney() - moneyWin;
-                    } else {
-                        updateFunValue(-(moneyWin - info.getMoney()));
-                        this.saveFund();
                     }
                     moneyToUser = Math.round(this.pot / 2L);
+
+                    updateFunValue(-moneyToUser);
+                    this.saveFund();
+
                     this.pot -= moneyToUser;
                     this.savePot();
+
                     MoneyResponse moneyResponse = this.userService.updateMoney(user.getName(), moneyToUser += moneyWin, this.moneyTypeStr, "CaoThap", "Cao thấp: Nổ hũ", "Phiên: " + info.getReferenceId() + ", Bước: " + info.getStep(), 0L, info.getReferenceId(), TransType.END_TRANS);
                     if (moneyResponse != null && moneyResponse.isSuccess()) {
                         if (this.moneyType == 1) {
