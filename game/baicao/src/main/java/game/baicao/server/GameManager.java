@@ -11,25 +11,15 @@
  */
 package game.baicao.server;
 
-import bitzero.server.entities.User;
-import bitzero.server.extensions.data.BaseMsg;
-import game.baicao.server.BaicaoGameServer;
-import game.baicao.server.GameLogic;
-import game.baicao.server.GamePlayer;
 import game.baicao.server.cmd.send.SendUpdateAutoStart;
-import game.baicao.server.logic.CardSuit;
 import game.baicao.server.logic.Gamble;
 import game.baicao.server.logic.GroupCard;
 import game.modules.bot.BotManager;
-import game.modules.gameRoom.entities.GameRoom;
-import game.modules.gameRoom.entities.GameRoomSetting;
 import game.utils.GameUtils;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Vector;
 
 public class GameManager {
     public static final int GS_NO_START = 0;
@@ -59,6 +49,9 @@ public class GameManager {
     }
 
     public void gameLoop() {
+        if(gameState == GS_NO_START &&  countDown >= 100) {
+            countDown = 0;
+        }
         gameServer.log("===> gameState + " + gameState + " - game action: " + gameAction + " - count down: " + countDown);
         if (this.gameState == GS_NO_START && this.isAutoStart) {
             --this.countDown;

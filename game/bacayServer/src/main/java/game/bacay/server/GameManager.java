@@ -63,6 +63,11 @@ public class GameManager {
     }
 
     public void gameLoop() {
+
+        if (gameState == GS_NO_START && countDown >= 100) {
+            countDown = 0;
+        }
+
         if (this.gameState == GS_NO_START && this.isAutoStart) {
             --this.countDown;
             if (this.countDown <= 0) {
