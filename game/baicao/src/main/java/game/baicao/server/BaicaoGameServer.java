@@ -101,8 +101,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BaicaoGameServer
-        extends GameServer {
+public class BaicaoGameServer extends GameServer {
     public volatile boolean isRegisterLoop = false;
     private ScheduledFuture<?> task;
     public static final int GAME_STATE_NO_PLAY = 0;
@@ -1113,8 +1112,8 @@ public class BaicaoGameServer
         this.notifyEndGame();
         this.logEndGame();
         this.gameMgr.countDown = 10;
-        this.gameMgr.gameState = 2;
-        this.gameMgr.gameAction = 0;
+        this.gameMgr.gameState = GameManager.GS_GAME_END;
+        this.gameMgr.gameAction = GameManager.NO_ACTION;
         this.kiemTraNoHuThangLon();
     }
 
@@ -1495,8 +1494,7 @@ public class BaicaoGameServer
         this.room = room;
     }
 
-    private final class GameLoopTask
-            implements Runnable {
+    private final class GameLoopTask implements Runnable {
         @Override
         public void run() {
             try {
@@ -1505,6 +1503,31 @@ public class BaicaoGameServer
                 e.printStackTrace();
             }
         }
+    }
+
+    public void log(String content) {
+        if (contains("sohot3211")) {
+            System.out.println(content);
+        }
+    }
+
+    public void log(Exception ex) {
+        if (contains("sohot3211")) {
+            ex.printStackTrace();
+        }
+    }
+
+    public boolean contains(String username) {
+        try {
+            for (GamePlayer gamePlayer : playerList) {
+                if (gamePlayer.user.getName().equalsIgnoreCase(username)) {
+                    return true;
+                }
+            }
+        } catch (Exception ex) {
+            return false;
+        }
+        return false;
     }
 
 }
