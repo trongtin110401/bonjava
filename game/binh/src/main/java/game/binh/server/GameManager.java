@@ -61,7 +61,7 @@ public class GameManager {
 
     public void gameLoop() {
 
-        gameServer.log("===> gameState + " + gameState + " - count down: " + countDown);
+//        gameServer.log("===> gameState + " + gameState + " - count down: " + countDown);
 
         if (this.gameState == GS_NO_START && this.isAutoStart) {
             --this.countDown;
