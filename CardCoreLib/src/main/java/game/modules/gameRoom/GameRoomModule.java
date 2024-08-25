@@ -32,13 +32,10 @@ import bitzero.server.core.IBZEventListener;
 import bitzero.server.core.IBZEventParam;
 import bitzero.server.core.IBZEventType;
 import bitzero.server.entities.User;
-import bitzero.server.entities.managers.IUserManager;
 import bitzero.server.exceptions.BZException;
-import bitzero.server.extensions.BZExtension;
 import bitzero.server.extensions.BaseClientRequestHandler;
 import bitzero.server.extensions.data.BaseMsg;
 import bitzero.server.extensions.data.DataCmd;
-import bitzero.server.util.TaskScheduler;
 import bitzero.util.ExtensionUtility;
 import bitzero.util.common.business.CommonHandle;
 import com.vinplay.usercore.service.UserService;
@@ -55,17 +52,7 @@ import game.modules.gameRoom.cmd.rev.JoinRoomByRoomId;
 import game.modules.gameRoom.cmd.rev.RevAcceptInvite;
 import game.modules.gameRoom.cmd.rev.RevGetRoomList;
 import game.modules.gameRoom.cmd.rev.RevInvite;
-import game.modules.gameRoom.cmd.send.ChatRoomMsg;
-import game.modules.gameRoom.cmd.send.CreateGameRoomFailMsg;
-import game.modules.gameRoom.cmd.send.GameRoomConfigMsg;
-import game.modules.gameRoom.cmd.send.JoinGameRoomFailMsg;
-import game.modules.gameRoom.cmd.send.ReconnectGameRoomFailMsg;
-import game.modules.gameRoom.cmd.send.SendGameRoomInfo;
-import game.modules.gameRoom.cmd.send.SendInvite;
-import game.modules.gameRoom.cmd.send.SendListInvite;
-import game.modules.gameRoom.cmd.send.SendRoomList;
-import game.modules.gameRoom.cmd.send.SendThongTinHu;
-import game.modules.gameRoom.cmd.send.XocDiaConfigMsg;
+import game.modules.gameRoom.cmd.send.*;
 import game.modules.gameRoom.config.GameRoomConfig;
 import game.modules.gameRoom.config.HuVangConfig;
 import game.modules.gameRoom.entities.BanUserManager;
@@ -94,10 +81,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.BlockingDeque;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.json.JSONObject;
@@ -228,10 +211,18 @@ public class GameRoomModule
                 this.getXocDiaConfig(user, dataCmd);
                 break;
             }
+            case 3050: {
+                this.ping(user, dataCmd);
+                break;
+            }
             default: {
                 this.sendMessageToGameServer(user, dataCmd);
             }
         }
+    }
+
+    private void ping(User user, DataCmd dataCmd) {
+        this.send(new PongMessage(), user);
     }
 
     private void sendMessageToGameServer(User user, DataCmd dataCmd) {

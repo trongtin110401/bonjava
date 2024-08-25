@@ -333,7 +333,7 @@ public class BinhGameServer extends GameServer {
                 if (gp.getPlayerStatus() != 0 && gp.pInfo != null && gp.pInfo.nickName.equalsIgnoreCase(user.getName())) {
                     this.gameLog.append("RE<").append(i).append(">");
                     final GameMoneyInfo moneyInfo = (GameMoneyInfo) user.getProperty((Object) "GAME_MONEY_INFO");
-                    if (moneyInfo != null && gp.gameMoneyInfo.sessionId != moneyInfo.sessionId) {
+                    if (moneyInfo != null && !Objects.equals(gp.gameMoneyInfo.sessionId, moneyInfo.sessionId)) {
                         ListGameMoneyInfo.instance().removeGameMoneyInfo(moneyInfo, -1);
                     }
                     user.setProperty((Object) "user_chair", (Object) gp.chair);
