@@ -144,7 +144,7 @@ public class GamePlayer
         this.pInfo = pInfo;
         this.gameMoneyInfo = moneyInfo;
         this.reqQuitRoom = false;
-        user.setProperty((Object)"user_chair", (Object)this.chair);
+        user.setProperty("user_chair", this.chair);
     }
     
     public boolean isPlaying() {

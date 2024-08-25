@@ -60,6 +60,9 @@ public class GameManager {
     }
 
     public void gameLoop() {
+
+        gameServer.log("===> gameState + " + gameState + " - count down: " + countDown);
+
         if (this.gameState == GS_NO_START && this.isAutoStart) {
             --this.countDown;
             if (this.countDown <= 0) {
@@ -77,7 +80,6 @@ public class GameManager {
                         this.chiaBai();
                     } else if (this.gameAction == BINH_SO_CHI) {
                         this.gameAction = HIEN_KET_QUA;
-                        System.out.println("=====> End game");
                         this.gameServer.endGame();
                     }
                 }
@@ -100,7 +102,7 @@ public class GameManager {
     }
 
     public void notifyAutoStartToUsers(final int after) {
-         SendUpdateAutoStart msg = new SendUpdateAutoStart();
+        SendUpdateAutoStart msg = new SendUpdateAutoStart();
         msg.isAutoStart = this.isAutoStart;
         msg.autoStartTime = (byte) after;
         this.gameServer.send(msg);
@@ -138,17 +140,14 @@ public class GameManager {
         }
         if (botCount == 0) {
             this.chiaBaiNgauNhien();
-        }
-        else if (BotManager.instance().balanceMode == 0) {
+        } else if (BotManager.instance().balanceMode == 0) {
             final int x = BotManager.instance().getRandomNumber(2);
             if (x == 0 && this.gameServer.getRoom().setting.moneyBet >= 5000L) {
                 this.chiaBaiCanBang(true, botCount);
-            }
-            else {
+            } else {
                 this.chiaBaiNgauNhien();
             }
-        }
-        else {
+        } else {
             final boolean isUp = BotManager.instance().balanceMode == 1;
             int x2 = BotManager.instance().getRandomNumber(3);
             if (isUp && this.gameServer.getRoom().setting.moneyBet >= 5000L) {
@@ -156,8 +155,7 @@ public class GameManager {
             }
             if (x2 != 0) {
                 this.chiaBaiCanBang(isUp, botCount);
-            }
-            else {
+            } else {
                 this.chiaBaiNgauNhien();
             }
         }
@@ -174,8 +172,7 @@ public class GameManager {
             if (gp.getUser() != null && gp.getUser().isBot()) {
                 final GroupCard gc = cards.get(i).getOrderGroupCard();
                 gp.addCards(gc, this.game.isCheat, this.gameServer.getRoom().setting.rule);
-            }
-            else {
+            } else {
                 final GroupCard gc = cards.get(i).getRandomGroupCard();
                 gp.addCards(gc, this.game.isCheat, this.gameServer.getRoom().setting.rule);
             }
@@ -184,7 +181,7 @@ public class GameManager {
         this.gameAction = 2;
         this.countDown = 66;
     }
-    
+
     public void chiaBaiCanBang(final boolean isUp, final int botCount) {
         final boolean canJackpot = this.gameServer.getRoom().setting.moneyBet < 1000L;
         final List<BinhGroup> cards = this.game.suit.dealCards(this.gameServer.getRoom().setting.rule, false);
@@ -198,8 +195,7 @@ public class GameManager {
         for (int i = 0; i < 4; ++i) {
             if (i < highSize) {
                 high.add(cards.get(i));
-            }
-            else {
+            } else {
                 low.add(cards.get(i));
             }
         }

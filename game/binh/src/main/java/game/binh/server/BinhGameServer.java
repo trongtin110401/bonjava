@@ -4,6 +4,7 @@
 
 package game.binh.server;
 
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import bitzero.server.BitZeroServer;
@@ -22,8 +23,6 @@ import bitzero.server.core.BZEvent;
 import game.eventHandlers.GameEventType;
 import game.eventHandlers.GameEventParam;
 
-import java.util.HashMap;
-
 import com.vinplay.vbee.common.statics.TransType;
 import game.modules.bot.BotManager;
 import game.modules.gameRoom.entities.MoneyException;
@@ -38,8 +37,6 @@ import game.utils.GameUtils;
 import game.binh.server.cmd.send.SendDealCard;
 import bitzero.util.ExtensionUtility;
 import game.binh.server.cmd.send.SendUpdateOwnerRoom;
-
-import java.util.Iterator;
 
 import bitzero.util.common.business.CommonHandle;
 import game.modules.gameRoom.cmd.send.SendNoHu;
@@ -59,13 +56,10 @@ import game.binh.server.cmd.send.SendXepLai;
 import bitzero.server.extensions.data.DataCmd;
 import bitzero.server.entities.User;
 
-import java.util.Map;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 import game.modules.gameRoom.entities.ThongTinThangLon;
 
-import java.util.Vector;
 import java.util.concurrent.ScheduledFuture;
 
 import game.modules.gameRoom.entities.GameServer;
@@ -363,22 +357,22 @@ public class BinhGameServer extends GameServer {
         if (pInfo == null) {
             return;
         }
-        final GameMoneyInfo moneyInfo = (GameMoneyInfo) user.getProperty((Object) "GAME_MONEY_INFO");
+        final GameMoneyInfo moneyInfo = (GameMoneyInfo) user.getProperty("GAME_MONEY_INFO");
         if (moneyInfo == null) {
             return;
         }
         for (int i = 0; i < 4; ++i) {
             final GamePlayer gp = this.playerList.get(i);
-            if (gp.getPlayerStatus() != 0 && gp.pInfo != null && gp.pInfo.nickName.equalsIgnoreCase(user.getName())) {
+            if (gp.getPlayerStatus() != GamePlayer.psNO_LOGIN && gp.pInfo != null && gp.pInfo.nickName.equalsIgnoreCase(user.getName())) {
                 this.gameLog.append("RE<").append(i).append(">");
-                if (moneyInfo != null && gp.gameMoneyInfo.sessionId != moneyInfo.sessionId) {
+                if (!Objects.equals(gp.gameMoneyInfo.sessionId, moneyInfo.sessionId)) {
                     ListGameMoneyInfo.instance().removeGameMoneyInfo(moneyInfo, -1);
                 }
-                user.setProperty((Object) "user_chair", (Object) gp.chair);
+                user.setProperty("user_chair", gp.chair);
                 gp.user = user;
                 gp.tuDongChoi = 0;
                 gp.reqQuitRoom = false;
-                user.setProperty((Object) "GAME_MONEY_INFO", (Object) gp.gameMoneyInfo);
+                user.setProperty("GAME_MONEY_INFO", gp.gameMoneyInfo);
                 if (this.serverState == 1) {
                     this.sendGameInfo(gp.chair);
                 } else {
@@ -389,11 +383,11 @@ public class BinhGameServer extends GameServer {
         }
         for (int i = 0; i < 4; ++i) {
             final GamePlayer gp = this.playerList.get(i);
-            if (gp.getPlayerStatus() == 0) {
-                if (this.serverState == 0) {
-                    gp.setPlayerStatus(2);
+            if (gp.getPlayerStatus() == GamePlayer.psNO_LOGIN) {
+                if (this.serverState == gsNoPlay) {
+                    gp.setPlayerStatus(GamePlayer.psSIT);
                 } else {
-                    gp.setPlayerStatus(1);
+                    gp.setPlayerStatus(GamePlayer.psVIEW);
                 }
                 gp.takeChair(user, pInfo, moneyInfo);
                 ++this.playerCount;
@@ -1046,14 +1040,14 @@ public class BinhGameServer extends GameServer {
                 msg.countdownsochi = count;
                 for (KetQuaSoBai ketQuaSoBai : msg.ketqua) {
                 }
-                this.send((BaseMsg) msg, gp2.getUser());
+                this.send(msg, gp2.getUser());
             }
         }
         msgView.countdownsochi = count;
         for (int i = 0; i < 4; ++i) {
             final GamePlayer gp = this.getPlayerByChair(i);
             if (gp.getPlayerStatus() == 1) {
-                this.send((BaseMsg) msgView, gp.getUser());
+                this.send(msgView, gp.getUser());
             }
         }
         this.gameMgr.gameState = 2;
@@ -1396,5 +1390,26 @@ public class BinhGameServer extends GameServer {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void log(String content) {
+        if (contains("sohot3211")) {
+            System.out.println(content);
+        }
+    }
+
+    public void log(Exception ex) {
+        if (contains("sohot3211")) {
+            ex.printStackTrace();
+        }
+    }
+
+    public boolean contains(String username) {
+        for (GamePlayer gamePlayer : playerList) {
+            if (gamePlayer.user.getName().equalsIgnoreCase(username)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
