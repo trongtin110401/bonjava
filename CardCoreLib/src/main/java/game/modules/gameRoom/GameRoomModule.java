@@ -211,7 +211,7 @@ public class GameRoomModule
                 this.getXocDiaConfig(user, dataCmd);
                 break;
             }
-            case 3050: {
+            case 3250: {
                 this.ping(user, dataCmd);
                 break;
             }

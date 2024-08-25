@@ -21,8 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SystemController
-extends AbstractController {
+public class SystemController extends AbstractController {
     private static final Map commandMap = new HashMap();
     private static final String commandPackage = "bitzero.server.controllers.system.";
     private static final String adminPackage = "bitzero.server.controllers.admin.";

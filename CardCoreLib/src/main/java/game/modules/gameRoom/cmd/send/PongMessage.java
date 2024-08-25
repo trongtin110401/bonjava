@@ -7,7 +7,7 @@ import java.nio.ByteBuffer;
 public class PongMessage extends BaseMsg {
 
     public PongMessage() {
-        super((short) 3050);
+        super((short) 3250);
     }
 
     public byte[] createData() {
