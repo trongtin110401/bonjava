@@ -60,28 +60,29 @@ public class GameManager {
     }
 
     public void gameLoop() {
-        if (this.gameState == 0 && this.isAutoStart) {
+        if (this.gameState == GS_NO_START && this.isAutoStart) {
             --this.countDown;
             if (this.countDown <= 0) {
-                this.gameState = 1;
+                this.gameState = GS_GAME_PLAYING;
                 this.gameServer.start();
             }
-        } else if (this.gameState == 1) {
-            if (this.gameAction != 0) {
+        } else if (this.gameState == GS_GAME_PLAYING) {
+            if (this.gameAction != NO_ACTION) {
                 --this.countDown;
-                if (GameUtils.isBot && this.gameAction == 2) {
+                if (GameUtils.isBot && this.gameAction == BINH_SO_CHI) {
                     this.gameServer.botAutoPlay();
                 }
                 if (this.countDown <= 0) {
-                    if (this.gameAction == 1) {
+                    if (this.gameAction == CHIA_BAI) {
                         this.chiaBai();
-                    } else if (this.gameAction == 2) {
-                        this.gameAction = 3;
+                    } else if (this.gameAction == BINH_SO_CHI) {
+                        this.gameAction = HIEN_KET_QUA;
+                        System.out.println("=====> End game");
                         this.gameServer.endGame();
                     }
                 }
             }
-        } else if (this.gameState == 2) {
+        } else if (this.gameState == GS_GAME_END) {
             --this.countDown;
             if (this.countDown == 5) {
                 this.gameServer.notifyNoHu();
