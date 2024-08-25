@@ -269,7 +269,7 @@ public class ExtensionUtility
         }
         if (isOk == 0) {
             u = new User(userInfo.getUsername(), session);
-            u.setId(Integer.valueOf(userInfo.getUserId()));
+            u.setId(Integer.parseInt(userInfo.getUserId()));
             u.setProperty("user_info", userInfo);
             u.setProperty("sessionKey", password);
         }

@@ -228,6 +228,9 @@ implements IBZApi {
             this.log.warn("Login failed: " + user.getName() + " , session is already expired!");
             return;
         }
+
+        System.out.println("=======================>    Login error: " + loginOK + ". Requested by: " + sender);
+
         Response response = new Response();
         response.setId(SystemRequest.Login.getId());
         response.setTargetController(DefaultConstants.CORE_EXTENSIONS_CONTROLLER_ID);
