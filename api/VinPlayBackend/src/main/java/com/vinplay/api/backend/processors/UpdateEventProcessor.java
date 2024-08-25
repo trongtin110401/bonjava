@@ -32,6 +32,9 @@ public class UpdateEventProcessor implements BaseProcessor<HttpServletRequest, S
         String eventName = request.getParameter("eventName");
         int rate = Integer.parseInt(request.getParameter("rate"));
         long id = Long.parseLong(request.getParameter("id"));
+        String type = request.getParameter("type");
+        String url = request.getParameter("url");
+        String action = request.getParameter("action");
         if (response != null) {
             if (!response.getId().equals(String.valueOf(id))) {
                 eventResponse.setErrorCode("Đang có một sự kiện diễn ra");
@@ -39,7 +42,7 @@ public class UpdateEventProcessor implements BaseProcessor<HttpServletRequest, S
             }
         }
         boolean status = Boolean.parseBoolean(request.getParameter("status"));
-        service.updateEvent(id, timeStart, timeEnd, eventName, rate, status);
+        service.updateEvent(id, timeStart, timeEnd, eventName, rate, status, type, url, action);
         eventResponse = service.getAllEvent(null, null, null, null, null, null, null, null);
         return eventResponse.toJson();
     }
