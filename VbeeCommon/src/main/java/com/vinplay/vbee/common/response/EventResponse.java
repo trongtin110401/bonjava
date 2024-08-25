@@ -9,6 +9,9 @@ public class EventResponse extends BaseResponseModel {
     private int rate;
     private String eventName;
     private boolean status;
+    private String type;
+    private String url;
+    private String action;
 
     public EventResponse(boolean success, String errorCode) {
         super(success, errorCode);
@@ -60,5 +63,29 @@ public class EventResponse extends BaseResponseModel {
 
     public void setEventName(String eventName) {
         this.eventName = eventName;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
     }
 }

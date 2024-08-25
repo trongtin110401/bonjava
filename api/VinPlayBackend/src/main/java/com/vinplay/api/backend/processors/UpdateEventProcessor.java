@@ -40,7 +40,7 @@ public class UpdateEventProcessor implements BaseProcessor<HttpServletRequest, S
         }
         boolean status = Boolean.parseBoolean(request.getParameter("status"));
         service.updateEvent(id, timeStart, timeEnd, eventName, rate, status);
-        eventResponse = service.getAllEvent(null, null, null, null, status);
+        eventResponse = service.getAllEvent(null, null, null, null, null, null, null, null);
         return eventResponse.toJson();
     }
 }

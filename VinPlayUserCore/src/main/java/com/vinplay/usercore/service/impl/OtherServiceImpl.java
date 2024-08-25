@@ -574,7 +574,7 @@ public class OtherServiceImpl implements OtherService {
     }
 
     @Override
-    public ListEventResponse getAllEvent(String timeStart, String timeEnd, String eventName, String rate, Boolean status) {
+    public ListEventResponse getAllEvent(String timeStart, String timeEnd, String eventName, String rate, Boolean status, String type, String url, String action) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("event");
         Document filter = new Document();
@@ -589,6 +589,18 @@ public class OtherServiceImpl implements OtherService {
 
         if (eventName != null && !eventName.isEmpty()) {
             filter.append("event_name", eventName);
+        }
+
+        if (type != null && !type.isEmpty()) {
+            filter.append("type", type);
+        }
+
+        if (url != null && !url.isEmpty()) {
+            filter.append("url", url);
+        }
+
+        if (action != null && !action.isEmpty()) {
+            filter.append("action", action);
         }
 
         if (rate != null && !rate.isEmpty()) {
@@ -609,6 +621,9 @@ public class OtherServiceImpl implements OtherService {
             eventResponse.setStatus(doc.getBoolean("status"));
             eventResponse.setTimeStart(doc.getString("start_time"));
             eventResponse.setId(String.valueOf(doc.getLong("id")));
+            eventResponse.setAction(doc.getString("action"));
+            eventResponse.setType(doc.getString("type"));
+            eventResponse.setUrl(doc.getString("url"));
             events.add(eventResponse);
         }
         ListEventResponse eventResponse = new ListEventResponse(true, "200");
@@ -853,6 +868,9 @@ public class OtherServiceImpl implements OtherService {
         document.put("event_name", eventResponse.getEventName());
         document.put("rate", eventResponse.getRate());
         document.put("status", true);
+        document.put("type", eventResponse.getType());
+        document.put("action", eventResponse.getAction());
+        document.put("url", eventResponse.getUrl());
         try {
             collection.insertOne(document);
             return true;

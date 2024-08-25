@@ -28,6 +28,9 @@ public class CreateEventProcessor implements BaseProcessor<HttpServletRequest, S
         String timeStart = request.getParameter("timeStart");
         String timeEnd = request.getParameter("timeEnd");
         String eventName = request.getParameter("eventName");
+        String type = request.getParameter("type");
+        String url = request.getParameter("url");
+        String action = request.getParameter("action");
         int rate = Integer.parseInt(request.getParameter("rate"));
         if (service.checkIfHaveAnyEventActive()) {
             eventResponse.setErrorCode("Đang có một event diễn ra");
@@ -38,6 +41,9 @@ public class CreateEventProcessor implements BaseProcessor<HttpServletRequest, S
         eventResponse.setTimeEnd(timeEnd);
         eventResponse.setRate(rate);
         eventResponse.setStatus(true);
+        eventResponse.setType(type);
+        eventResponse.setUrl(url);
+        eventResponse.setAction(action);
         boolean isSuccess = service.createEvent(eventResponse);
         if (!isSuccess) {
             return eventResponse.toJson();

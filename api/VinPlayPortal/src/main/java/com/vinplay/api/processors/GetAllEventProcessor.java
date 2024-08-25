@@ -22,6 +22,9 @@ public class GetAllEventProcessor
         String timeEnd = request.getParameter("timeEnd");
         String eventName = request.getParameter("eventName");
         String rate = request.getParameter("rate");
+        String type = request.getParameter("type");
+        String url = request.getParameter("url");
+        String action = request.getParameter("action");
         Boolean status = null;
         try {
             if (!request.getParameter("status").isEmpty()) {
@@ -30,7 +33,7 @@ public class GetAllEventProcessor
         } catch (Exception e) {
             e.printStackTrace();
         }
-        ListEventResponse eventResponse = service.getAllEvent(timeStart, timeEnd, eventName, rate, status);
+        ListEventResponse eventResponse = service.getAllEvent(timeStart, timeEnd, eventName, rate, status, type, url, action);
         return eventResponse.toJson();
     }
 }

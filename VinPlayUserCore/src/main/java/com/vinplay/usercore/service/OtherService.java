@@ -82,7 +82,7 @@ public interface OtherService {
 
     void saveUserNapTienEvent(UserEvent userEvent);
 
-    ListEventResponse getAllEvent(String timeStart, String timeEnd, String eventName, String rate, Boolean status);
+    ListEventResponse getAllEvent(String timeStart, String timeEnd, String eventName, String rate, Boolean status, String type, String url, String action);
 
     void updateEvent(long id, String timeStart, String timeEnd, String eventName, int rate, boolean status);
 
