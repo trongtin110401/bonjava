@@ -40,7 +40,7 @@ extends BaseMsg {
     public GamePlayer[] pInfos = new GamePlayer[5];
 
     public SendGameInfo() {
-        super((short)3110);
+        super((short) 3110);
     }
 
     public byte[] createData() {

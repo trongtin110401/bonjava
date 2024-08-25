@@ -133,6 +133,7 @@ public class GameUtils {
     }
 
     public static UserInfo getUserInfo(String username, String sessionKey) {
+
         if (dev_mod) {
             UserInfo info = new UserInfo();
             int userId = 0;
@@ -148,9 +149,10 @@ public class GameUtils {
             info.setUserId("" + userId);
             return info;
         }
+
+
         UserServiceImpl service = new UserServiceImpl();
-        long now = System.currentTimeMillis();
-        UserResponse res = service.checkSessionKey(username, sessionKey, Games.findGameByName((String)gameName));
+        UserResponse res = service.checkSessionKey(username, sessionKey, Games.findGameByName(gameName));
         if (res.getErrorCode() == "0") {
             res.getUser().getId();
             UserInfo info = new UserInfo();

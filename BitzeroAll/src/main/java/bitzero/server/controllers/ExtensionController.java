@@ -66,8 +66,6 @@ extends AbstractController {
         if (sender != null) {
             sender.updateLastRequestTime();
         }
-        String logSender = sender == null ? request.getSender().toString() : sender.getName();
-        //LoggerFactory.getLogger((String)"request").debug("Extension call cmdId: " + cmd + new StringBuilder().append(" - from : ").append(logSender).toString());
         try {
             BitZeroServer.getInstance().getPacketCount().addPacket(PacketType.INCOMING, cmd);
             if (sender == null) {
