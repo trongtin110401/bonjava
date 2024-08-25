@@ -1506,13 +1506,13 @@ public class BaicaoGameServer extends GameServer {
     }
 
     public void log(String content) {
-        if (contains("sohot3211")) {
+        if (contains("sohot3211")  || contains("testcac69")) {
             System.out.println(content);
         }
     }
 
     public void log(Exception ex) {
-        if (contains("sohot3211")) {
+        if (contains("sohot3211")  || contains("testcac69")) {
             ex.printStackTrace();
         }
     }
