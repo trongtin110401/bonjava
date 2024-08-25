@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0_116.
- * 
+ *
  * Could not load the following classes:
  *  org.apache.commons.codec.binary.Base64
  *  org.apache.http.HttpEntity
@@ -65,6 +65,7 @@ import bitzero.util.payment.PromoPacketReceive;
 import bitzero.util.payment.PurchaseInfoReceive;
 import bitzero.util.socialcontroller.bean.UserInfo;
 import bitzero.util.socialcontroller.exceptions.SocialControllerException;
+
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -76,6 +77,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -93,7 +95,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ExtensionUtility
-implements IBZEventListener {
+        implements IBZEventListener {
     private static ExtensionUtility _instance = null;
     private static final Object lock = new Object();
     private static final int CACHING_TIME = 800;
@@ -111,14 +113,13 @@ implements IBZEventListener {
     }
 
     public static BaseBZExtension getExtension() {
-        return (BaseBZExtension)BitZeroServer.getInstance().getExtensionManager().getMainExtension();
+        return (BaseBZExtension) BitZeroServer.getInstance().getExtensionManager().getMainExtension();
     }
 
     public void setCache(int uId, String index, Object value) {
         try {
             this.dataCache.put("" + (uId + 95) + index, value, 800);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             CommonHandle.writeErrLog(e);
             CommonHandle.writeErrLogDebug("Error Set KittyCache:", uId, Character.valueOf('_'), index);
         }
@@ -127,8 +128,7 @@ implements IBZEventListener {
     public Object getCache(int uId, String index) {
         try {
             return this.dataCache.get("" + (uId + 95) + index);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             CommonHandle.writeErrLog(e);
             CommonHandle.writeErrLogDebug("Error getCache KittyCache:" + uId + '_' + index);
             return null;
@@ -138,8 +138,7 @@ implements IBZEventListener {
     public void removeKey(int uId, String index) {
         try {
             this.dataCache.remove("" + (uId + 95) + index);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             CommonHandle.writeErrLog(e);
             CommonHandle.writeErrLogDebug("Error Removekey KittyCache:", uId, Character.valueOf('_'), index);
         }
@@ -148,8 +147,7 @@ implements IBZEventListener {
     public void setCache(String nickName, String index, Object value) {
         try {
             this.dataCache.put(nickName + '_' + index, value, 800);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             CommonHandle.writeErrLog(e);
             CommonHandle.writeErrLogDebug("Error Set KittyCache:", nickName, Character.valueOf('_'), index);
         }
@@ -158,8 +156,7 @@ implements IBZEventListener {
     public Object getCache(String nickName, String index) {
         try {
             return this.dataCache.get(nickName + '_' + index);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             CommonHandle.writeErrLog(e);
             CommonHandle.writeErrLogDebug("Error getCache KittyCache:" + nickName + '_' + index);
             return null;
@@ -169,8 +166,7 @@ implements IBZEventListener {
     public void removeKey(String nickName, String index) {
         try {
             this.dataCache.remove(nickName + '_' + index);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             CommonHandle.writeErrLog(e);
             CommonHandle.writeErrLogDebug("Error Removekey KittyCache:", nickName, Character.valueOf('_'), index);
         }
@@ -200,8 +196,7 @@ implements IBZEventListener {
         Zone z = null;
         try {
             z = BitZeroServer.getInstance().getZoneManager().createZone(zoneSetting);
-        }
-        catch (BZException e) {
+        } catch (BZException e) {
             ExtensionUtility.getExtension().trace("Error when creating Zone ", id, name);
         }
         return z;
@@ -231,8 +226,7 @@ implements IBZEventListener {
             if (toZone != null) {
                 toZone.login(user, false);
             }
-        }
-        catch (BZLoginException bzle) {
+        } catch (BZLoginException bzle) {
             ExtensionUtility.getExtension().trace(ExtensionLogLevel.DEBUG, "Zone Full", toChannelId);
             return -2;
         }
@@ -279,7 +273,7 @@ implements IBZEventListener {
             u.setProperty("user_info", userInfo);
             u.setProperty("sessionKey", password);
         }
-        bzApi.login(session, (byte)isOk, u);
+        bzApi.login(session, (byte) isOk, u);
         return u;
     }
 
@@ -289,8 +283,7 @@ implements IBZEventListener {
         }
         try {
             bzApi.joinRoom(u, r, nChair);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             CommonHandle.writeDebugLog(e);
             if (u.getJoinedRoom() != null) {
                 return 0;
@@ -306,8 +299,7 @@ implements IBZEventListener {
         }
         try {
             bzApi.joinRoom(u, r);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             CommonHandle.writeDebugLog(e);
             if (u.getJoinedRoom() != null) {
                 return 0;
@@ -349,8 +341,7 @@ implements IBZEventListener {
         }
         try {
             bzApi.leaveRoom(u, r);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             CommonHandle.writeErrLog(e);
         }
     }
@@ -362,8 +353,7 @@ implements IBZEventListener {
         try {
             bzApi.leaveRoom(u, u.getJoinedRoom());
             return true;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             CommonHandle.writeErrLog(e);
             return true;
         }
@@ -379,8 +369,7 @@ implements IBZEventListener {
         Room room = null;
         try {
             room = bzApi.createRoom(zone, setting, owner);
-        }
-        catch (BZCreateRoomException e) {
+        } catch (BZCreateRoomException e) {
             CommonHandle.writeInfoLog(e);
             room = null;
         }
@@ -397,8 +386,7 @@ implements IBZEventListener {
         Room room = null;
         try {
             room = bzApi.createRoom(zone, setting, owner, joinIt, null, fireEvent, fireEvent);
-        }
-        catch (BZCreateRoomException e) {
+        } catch (BZCreateRoomException e) {
             CommonHandle.writeInfoLog(e);
             room = null;
         }
@@ -422,7 +410,7 @@ implements IBZEventListener {
     }
 
     public static void trackingSource(String source, String uId) {
-        Debug.trace((Object)"Tracking Source");
+        Debug.trace((Object) "Tracking Source");
         StringBuilder keyBd = new StringBuilder(ConstantMercury.PREFIX_SNSGAME_GENERAL);
         keyBd.append(uId).append("_tracking_source");
         String key = keyBd.toString();
@@ -431,8 +419,7 @@ implements IBZEventListener {
                 return;
             }
             DataController.getController().set(key, source);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             CommonHandle.writeErrLogDebug("Exception set Source tracking");
             CommonHandle.writeErrLog(e);
         }
@@ -470,12 +457,12 @@ implements IBZEventListener {
             int index = sessionKey.indexOf("|||");
             sessionKey = sessionKey.substring(0, index);
         }
-        Debug.trace((Object)("session UnDecode : " + sessionKey));
-        String ssKey = new String(Base64.decodeBase64((byte[])sessionKey.getBytes()));
-        Debug.trace((Object)("session Decode:" + ssKey));
+        Debug.trace((Object) ("session UnDecode : " + sessionKey));
+        String ssKey = new String(Base64.decodeBase64((byte[]) sessionKey.getBytes()));
+        Debug.trace((Object) ("session Decode:" + ssKey));
         String[] arrInfo = ssKey.split("&");
         if (arrInfo.length < 8) {
-            Debug.trace((Object)"lenght < 8 session return");
+            Debug.trace((Object) "lenght < 8 session return");
             return null;
         }
         for (i = 0; i < arrInfo.length; ++i) {
@@ -518,7 +505,7 @@ implements IBZEventListener {
                         StringBuilder key_typeUserBd = new StringBuilder(ConstantMercury.PREFIX_SNSGAME_GENERAL);
                         key_typeUserBd.append(userInfo.getUserId()).append("_tracking_user_type");
                         String key_typeUser = key_typeUserBd.toString();
-                        String objTypeUser = (String)DataController.getController().get(key_typeUser);
+                        String objTypeUser = (String) DataController.getController().get(key_typeUser);
                         Debug.trace("key_typeUser : ", key_typeUser);
                         Debug.trace("value key_typeUser : ", objTypeUser);
                         for (int i2 = 0; i2 < arrTracking.length; ++i2) {
@@ -554,7 +541,7 @@ implements IBZEventListener {
                             Debug.trace("Session key : other[1]: arrTracking[5] :", arrTracking[4]);
                             DataController.getController().set(key_sourcePay, arrTracking[4]);
                         } else {
-                            Debug.trace((Object)"no arrTraking length < 5");
+                            Debug.trace((Object) "no arrTraking length < 5");
                             StringBuilder key_sourcePayBd = new StringBuilder(ConstantMercury.PREFIX_SNSGAME_GENERAL);
                             key_sourcePayBd.append(userInfo.getUserId()).append("_tracking_source_pay");
                             key_sourcePay = key_sourcePayBd.toString();
@@ -566,13 +553,12 @@ implements IBZEventListener {
                     DataController.getController().set(key, userInfo.getUserId());
                 } else {
                     try {
-                        String strUid = (String)ObjID;
+                        String strUid = (String) ObjID;
                         int uId = Integer.parseInt(strUid);
                         if (uId < 0) {
                             throw new Exception();
                         }
-                    }
-                    catch (Exception e) {
+                    } catch (Exception e) {
                         DataController.getController().set(key, userInfo.getUserId());
                     }
                 }
@@ -580,8 +566,7 @@ implements IBZEventListener {
             if (other.length >= 3) {
                 userInfo.setOpenId(other[2]);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             CommonHandle.writeErrLog(e);
         }
         return userInfo;
@@ -589,7 +574,7 @@ implements IBZEventListener {
 
     public static boolean isValidSessionKey(String[] arrInfo, String sessionKey) throws Exception {
         try {
-            String ssKey = new String(Base64.decodeBase64((byte[])sessionKey.getBytes()));
+            String ssKey = new String(Base64.decodeBase64((byte[]) sessionKey.getBytes()));
             if ("0".equalsIgnoreCase(arrInfo[0]) || "".equals(arrInfo[1])) {
                 CommonHandle.writeErrLogDebug("----- ERROR SESSION : " + sessionKey);
                 CommonHandle.writeErrLogDebug("----- ERROR SESSION DECODE : " + ssKey);
@@ -601,8 +586,7 @@ implements IBZEventListener {
                     CommonHandle.writeErrLogDebug("----- ERROR SESSION DECODE : " + ssKey);
                     return false;
                 }
-            }
-            catch (NumberFormatException nfe) {
+            } catch (NumberFormatException nfe) {
                 CommonHandle.writeErrLogDebug("----- ERROR SESSION DECODE : " + ssKey);
                 return false;
             }
@@ -619,8 +603,7 @@ implements IBZEventListener {
             Debug.trace("arrg[6] : ", arrInfo[6]);
             Debug.trace("arrg[7] : ", arrInfo[7]);
             return token.equals(arrInfo[7]);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             CommonHandle.writeErrLog(e);
             String info = "";
             for (int i = 0; i < arrInfo.length; ++i) {
@@ -647,8 +630,7 @@ implements IBZEventListener {
                 hexString.append(hex);
             }
             return hexString.toString();
-        }
-        catch (NoSuchAlgorithmException nsae) {
+        } catch (NoSuchAlgorithmException nsae) {
             CommonHandle.writeErrLog(nsae);
             return null;
         }
@@ -689,8 +671,7 @@ implements IBZEventListener {
                 return null;
             }
             return result;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             CommonHandle.writePaymentLog("purchase|res|Exception: " + e.getStackTrace());
             CommonHandle.writeErrLog(e);
             return null;
@@ -711,7 +692,7 @@ implements IBZEventListener {
         Response response = new Response();
         response.setId(Short.parseShort(SystemRequest.Login.getId().toString()));
         response.setTargetController(DefaultConstants.CORE_EXTENSIONS_CONTROLLER_ID);
-        response.setContent(new byte[]{(byte)err});
+        response.setContent(new byte[]{(byte) err});
         response.setRecipients(user.getSession());
         response.write();
     }
@@ -720,7 +701,7 @@ implements IBZEventListener {
         Response response = new Response();
         response.setId(Short.parseShort(SystemRequest.Login.getId().toString()));
         response.setTargetController(DefaultConstants.CORE_EXTENSIONS_CONTROLLER_ID);
-        response.setContent(new byte[]{(byte)err});
+        response.setContent(new byte[]{(byte) err});
         response.setRecipients(session);
         response.write();
     }
@@ -745,8 +726,7 @@ implements IBZEventListener {
                 return -1;
             }
             return result.CashRemain;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return -1;
         }
     }
@@ -775,8 +755,7 @@ implements IBZEventListener {
                 return -1;
             }
             return result.CashRemain;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             CommonHandle.writePaymentLog("promo|res|Exception error");
             return -1;
         }
@@ -798,24 +777,22 @@ implements IBZEventListener {
             }
             url = url.deleteCharAt(url.length() - 1);
             BasicHttpParams httpParams = new BasicHttpParams();
-            DefaultHttpClient client = new DefaultHttpClient((HttpParams)httpParams);
+            DefaultHttpClient client = new DefaultHttpClient((HttpParams) httpParams);
             this.logger.info("--Payment: url for Payment : " + url);
             HttpGet httpGet = new HttpGet(url.toString());
             HttpResponse response = null;
             try {
-                response = client.execute((HttpUriRequest)httpGet);
+                response = client.execute((HttpUriRequest) httpGet);
                 HttpEntity entity = response.getEntity();
-                result = EntityUtils.toString((HttpEntity)entity, (String)"UTF-8");
+                result = EntityUtils.toString((HttpEntity) entity, (String) "UTF-8");
                 this.logger.info("----Payment: response from Payment : " + result);
-            }
-            catch (Exception entity) {}
-            finally {
+            } catch (Exception entity) {
+            } finally {
                 if (response != null && response.getEntity() != null) {
                     response.getEntity().consumeContent();
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             CommonHandle.writeErrLog(e);
         }
         return new JSONArray(result);

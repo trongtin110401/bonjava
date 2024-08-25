@@ -57,6 +57,7 @@ import game.modules.gameRoom.entities.ThongTinHuVang;
 import game.modules.gameRoom.entities.ThongTinThangLon;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -153,7 +154,7 @@ public class GameUtils {
 
         UserServiceImpl service = new UserServiceImpl();
         UserResponse res = service.checkSessionKey(username, sessionKey, Games.findGameByName(gameName));
-        if (res.getErrorCode() == "0") {
+        if (Objects.equals(res.getErrorCode(), "0")) {
             res.getUser().getId();
             UserInfo info = new UserInfo();
             info.setUserId(String.valueOf(res.getUser().getId()));
@@ -165,7 +166,7 @@ public class GameUtils {
             }
             return info;
         }
-        if (res.getErrorCode() == "1111") {
+        if (Objects.equals(res.getErrorCode(), "1111")) {
             UserInfo info = new UserInfo();
             info.setUsername("");
             return info;

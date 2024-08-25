@@ -69,7 +69,7 @@ extends BaseBZExtension {
         try {
             IClientRequestHandler handler = (IClientRequestHandler)this.handlerFactory.findHandler(requestId);
             if (handler == null) {
-                throw new BZRuntimeException("Request handler not found: '" + requestId + "'. Make sure the handler is registered in your extension using addRequestHandler()");
+//                throw new BZRuntimeException("Request handler not found: '" + requestId + "'. Make sure the handler is registered in your extension using addRequestHandler()");
             }
             dataCmd.setId(requestId);
             handler.handleClientRequest(sender, dataCmd);
