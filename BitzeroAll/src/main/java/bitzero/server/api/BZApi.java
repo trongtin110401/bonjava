@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0_116.
- * 
+ *
  * Could not load the following classes:
  *  org.slf4j.Logger
  *  org.slf4j.LoggerFactory
@@ -49,15 +49,17 @@ import bitzero.server.util.IDisconnectionReason;
 import bitzero.server.util.UsersUtil;
 import bitzero.util.config.bean.ConstantMercury;
 import bitzero.util.datacontroller.business.DataController;
+
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class BZApi
-implements IBZApi {
+        implements IBZApi {
     protected final BitZeroServer bz;
     protected final Logger log;
     protected IUserManager globalUserManager;
@@ -107,8 +109,7 @@ implements IBZApi {
         } else if (session.isConnected()) {
             try {
                 session.close();
-            }
-            catch (IOException err) {
+            } catch (IOException err) {
                 throw new BZRuntimeException(err);
             }
         }
@@ -142,11 +143,9 @@ implements IBZApi {
                 user.getSession().close();
             }
             user.setConnected(false);
-        }
-        catch (Exception err) {
+        } catch (Exception err) {
             err.printStackTrace();
-        }
-        finally {
+        } finally {
             if (zone != null) {
                 zone.removeUser(user);
             }
@@ -162,7 +161,7 @@ implements IBZApi {
         evtParams.put(BZEventParam.ZONE, zone);
         evtParams.put(BZEventParam.JOINED_ROOMS, room);
         evtParams.put(BZEventParam.PLAYER_ID, playerId);
-        IDisconnectionReason disconnectionReason = (IDisconnectionReason)user.getSession().getSystemProperty("disconnectionReason");
+        IDisconnectionReason disconnectionReason = (IDisconnectionReason) user.getSession().getSystemProperty("disconnectionReason");
         evtParams.put(BZEventParam.DISCONNECTION_REASON, disconnectionReason != null ? disconnectionReason : ClientDisconnectionReason.UNKNOWN);
         if (forceLogin.booleanValue()) {
             this.bz.getEventManager().dispatchImmediateEvent(new BZEvent(BZEventType.USER_DISCONNECT, evtParams));
@@ -179,8 +178,7 @@ implements IBZApi {
         String key = ConstantMercury.PREFIX_SNSGAME_GENERAL + "server_address_login_cached" + "|" + userId;
         try {
             DataController.getController().deleteCache(key);
-        }
-        catch (Exception var3_3) {
+        } catch (Exception var3_3) {
             // empty catch block
         }
     }
@@ -189,8 +187,7 @@ implements IBZApi {
         String key = ConstantMercury.PREFIX_SNSGAME_GENERAL + "server_address_cached" + "|" + userId;
         try {
             DataController.getController().deleteCache(key);
-        }
-        catch (Exception var3_3) {
+        } catch (Exception var3_3) {
             // empty catch block
         }
     }
@@ -260,7 +257,8 @@ implements IBZApi {
             user.setConnected(true);
             sender.setLoggedIn(true);
             this.globalUserManager.addUser(user);
-            this.log.info("Login in, " + user.getName() + ", " + user.toString());
+            this.log.info("Login in, " + user.getName() + ", " + user);
+            System.out.println("Login in, " + user.getName() + ", " + user);
             user.updateLastRequestTime();
             HashMap<BZEventParam, User> evtParams = new HashMap<BZEventParam, User>();
             evtParams.put(BZEventParam.USER, user);
@@ -315,7 +313,7 @@ implements IBZApi {
             resObj.putInt("id", user.getId());
             resObj.putUtfString("zn", "");
             resObj.putUtfString("un", user.getName());
-            resObj.putShort("rs", (short)999);
+            resObj.putShort("rs", (short) 999);
             resObj.putShort("pi", user.getPrivilegeId());
             resObj.putNull("rl");
             response.write();
@@ -371,16 +369,14 @@ implements IBZApi {
                 eventParams.put(BZEventParam.ROOM, theRoom);
                 this.bz.getEventManager().dispatchEvent(new BZEvent(BZEventType.ROOM_ADDED, eventParams));
             }
-        }
-        catch (BZCreateRoomException err) {
+        } catch (BZCreateRoomException err) {
             String message = String.format("Room creation error. %s, %s, %s", err.getMessage(), zone, owner);
             throw new BZCreateRoomException(message);
         }
         if (theRoom != null && owner != null && joinIt) {
             try {
                 this.joinRoom(owner, theRoom, theRoom.getPassword(), false, roomToLeave, true, fireClientEvent);
-            }
-            catch (BZJoinRoomException e) {
+            } catch (BZJoinRoomException e) {
                 this.log.warn("Unable to join the just created Room: " + theRoom + ", reason: " + e.getMessage());
             }
         }
@@ -452,12 +448,10 @@ implements IBZApi {
             if (roomToLeave != null) {
                 this.leaveRoom(user, roomToLeave);
             }
-        }
-        catch (BZJoinRoomException err) {
+        } catch (BZJoinRoomException err) {
             String message = String.format("Join Error - %s", err.getMessage());
             throw new BZJoinRoomException(message, err.getErrorData());
-        }
-        finally {
+        } finally {
             user.setJoining(false);
         }
     }
@@ -503,12 +497,10 @@ implements IBZApi {
             if (roomToLeave != null) {
                 this.leaveRoom(user, roomToLeave);
             }
-        }
-        catch (BZJoinRoomException err) {
+        } catch (BZJoinRoomException err) {
             String message = String.format("Join Error - %s", err.getMessage());
             throw new BZJoinRoomException(message, err.getErrorData());
-        }
-        finally {
+        } finally {
             user.setJoining(false);
         }
     }
@@ -620,7 +612,7 @@ implements IBZApi {
         if (sender != null) {
             sender.updateLastRequestTime();
         }
-        GenericMessageMsg msg = new GenericMessageMsg((short)type.getId());
+        GenericMessageMsg msg = new GenericMessageMsg((short) type.getId());
         msg.sender = sender.getName();
         msg.message = message;
         if (params != null) {
