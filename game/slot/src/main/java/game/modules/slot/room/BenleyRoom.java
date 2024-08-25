@@ -486,7 +486,8 @@ public class BenleyRoom extends SlotRoom {
                                 this.userService.updateMoney(username, tienThuongX2, this.moneyTypeStr, this.gameName, "Quay " + gameName, "Thưởng hũ X2", 0L, null, TransType.NO_VIPPOINT);
                             }
                             // only save real user
-                            if (moneyExchange != 0 && !u.isBot()) {
+//                            if (moneyExchange != 0 && !u.isBot()) {
+                            if (moneyExchange != 0) {
                                 moneyRes = this.userService.updateMoney(username, moneyExchange, this.moneyTypeStr, this.gameName, "Quay " + gameName, this.buildDescription(totalBetValue, totalPrizes, result), 0L, referenceId, TransType.END_TRANS);
                                 if (moneyRes != null && moneyRes.isSuccess()) {
                                     currentMoney = moneyRes.getCurrentMoney();
