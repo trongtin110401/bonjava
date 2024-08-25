@@ -632,7 +632,7 @@ public class OtherServiceImpl implements OtherService {
     }
 
     @Override
-    public void updateEvent(long id, String timeStart, String timeEnd, String eventName, int rate, boolean status) {
+    public void updateEvent(long id, String timeStart, String timeEnd, String eventName, int rate, boolean status, String type, String url, String action) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("event");
         Document filter = new Document("id", id);
@@ -642,6 +642,9 @@ public class OtherServiceImpl implements OtherService {
         updateFields.append("event_name", eventName);
         updateFields.append("rate", rate);
         updateFields.append("status", status);
+        updateFields.append("type", type);
+        updateFields.append("url", url);
+        updateFields.append("action", action);
         Document updateOperation = new Document("$set", updateFields);
         collection.updateOne(filter, updateOperation);
     }

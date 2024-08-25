@@ -506,7 +506,8 @@ extends SlotRoom {
                             if (tienThuongX2 > 0L && !u.isBot()) {
                                 this.userService.updateMoney(username, tienThuongX2, this.moneyTypeStr, this.gameName, "Quay " + gn, "Th\u01b0\u1edfng h\u0169 X2", 0L, (Long)null, TransType.NO_VIPPOINT);
                             }
-                            if(moneyExchange != 0 && !u.isBot()){
+//                            if(moneyExchange != 0 && !u.isBot()){
+                                if(moneyExchange != 0){
                                 if ((moneyRes = this.userService.updateMoney(username, moneyExchange, this.moneyTypeStr, this.gameName, "Quay " + gn, this.buildDescription(totalBetValue, totalPrizes, result), 0L, Long.valueOf(referenceId), TransType.END_TRANS)) != null && moneyRes.isSuccess()) {
                                     currentMoney = moneyRes.getCurrentMoney();
                                     if (this.moneyType == 1 && moneyExchange - totalBetValue >= (long)BroadcastMessageServiceImpl.MIN_MONEY) {

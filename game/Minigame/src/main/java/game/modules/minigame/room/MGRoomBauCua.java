@@ -286,12 +286,18 @@ public class MGRoomBauCua
                 if (this.moneyType == 1) {
                     totalVinPay += totalPrize;
                 }
-                if (!isBot(tran.username) && (response = this.userService.updateMoney(tran.username, totalPrize, this.moneyTypeStr, GAME_NAME, "B\u1ea7u cua: Tr\u1eadn th\u1eafng", "Phi\u00ean " + this.referenceId, 0L, Long.valueOf(this.referenceId), TransType.END_TRANS)) != null && response.isSuccess()) {
+                boolean isSendBroadCast = false;
+                if (!isBot(tran.username) && (response = this.userService.updateMoney
+                        (tran.username, totalPrize, this.moneyTypeStr, GAME_NAME, "B\u1ea7u cua: Tr\u1eadn th\u1eafng", "Phi\u00ean "
+                                + this.referenceId, 0L, Long.valueOf(this.referenceId), TransType.END_TRANS)) != null && response.isSuccess()) {
+                    isSendBroadCast = true;
                     UpdateBauCuaPrizeMsg msg = new UpdateBauCuaPrizeMsg();
                     msg.prize = totalPrize;
                     msg.currentMoney = response.getCurrentMoney();
                     msg.room = this.id;
                     this.sendMessageToUser((BaseMsg) msg, tran.username);
+                }
+                if (isSendBroadCast) {
                     if (this.moneyType == 1 && totalPrize >= (long) BroadcastMessageServiceImpl.MIN_MONEY) {
                         this.broadcastMsgService.putMessage(Games.BAU_CUA.getId(), tran.username, totalPrize);
                     }
