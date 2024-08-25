@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0_116.
- * 
+ *
  * Could not load the following classes:
  *  bitzero.server.BitZeroServer
  *  bitzero.server.core.BZEventParam
@@ -89,6 +89,7 @@ import game.utils.LoggerUtils;
 import game.utils.NumberUtils;
 import game.xocdia.conf.XocDiaConfig;
 import game.xocdia.conf.XocDiaGameUtils;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -98,21 +99,23 @@ import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+
 import org.json.JSONObject;
 
 public class GameRoomModule
-extends BaseClientRequestHandler {
+        extends BaseClientRequestHandler {
     private final Runnable gameRoomLoopTask;
     private static UserService userService = new UserServiceImpl();
+
     public GameRoomModule() {
         this.gameRoomLoopTask = new GameLoopTask();
     }
 
     private void gameRoomLoop() {
         try {
-            if (GameUtils.isHuVang) {
-                ThongTinHuVang.instance().addMoneyInLoop();
-            }
+//            if (GameUtils.isHuVang) {
+//                ThongTinHuVang.instance().addMoneyInLoop();
+//            }
             if (GameUtils.gameName.equalsIgnoreCase("PokerTour")) {
                 int today = Calendar.getInstance().get(7);
                 if (TourManager.instance().lastDay != today) {
@@ -123,9 +126,8 @@ extends BaseClientRequestHandler {
                 TourManager.instance().registerTourForBot();
                 TourManager.instance().updateVipTourPlayers();
             }
-        }
-        catch (Exception e) {
-            CommonHandle.writeInfoLog((Throwable)e);
+        } catch (Exception e) {
+            CommonHandle.writeInfoLog((Throwable) e);
         }
     }
 
@@ -138,10 +140,10 @@ extends BaseClientRequestHandler {
         GameRoomManager.instance();
         ListGameMoneyInfo.instance();
         BanUserManager.instance();
-        this.getParentExtension().addEventListener((IBZEventType)BZEventType.USER_DISCONNECT, (IBZEventListener)this);
-        this.getParentExtension().addEventListener((IBZEventType)GameEventType.GAME_ROOM_USER_JOIN, (IBZEventListener)this);
-        this.getParentExtension().addEventListener((IBZEventType)GameEventType.GAME_ROOM_USER_LEAVE, (IBZEventListener)this);
-        this.getParentExtension().addEventListener((IBZEventType)GameEventType.THANG_LON, (IBZEventListener)this);
+        this.getParentExtension().addEventListener((IBZEventType) BZEventType.USER_DISCONNECT, (IBZEventListener) this);
+        this.getParentExtension().addEventListener((IBZEventType) GameEventType.GAME_ROOM_USER_JOIN, (IBZEventListener) this);
+        this.getParentExtension().addEventListener((IBZEventType) GameEventType.GAME_ROOM_USER_LEAVE, (IBZEventListener) this);
+        this.getParentExtension().addEventListener((IBZEventType) GameEventType.THANG_LON, (IBZEventListener) this);
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameRoomLoopTask, 3, 60, TimeUnit.SECONDS);
         BossManager.instance().initialBoss();
     }
@@ -150,24 +152,24 @@ extends BaseClientRequestHandler {
         GameRoom room;
         User user;
         if (ibzevent.getType() == GameEventType.GAME_ROOM_USER_JOIN) {
-            user = (User)ibzevent.getParameter((IBZEventParam)GameEventParam.USER);
-            room = (GameRoom)ibzevent.getParameter((IBZEventParam)GameEventParam.GAMEROOM);
-            Boolean isReconnect = (Boolean)ibzevent.getParameter((IBZEventParam)GameEventParam.IS_RECONNECT);
+            user = (User) ibzevent.getParameter((IBZEventParam) GameEventParam.USER);
+            room = (GameRoom) ibzevent.getParameter((IBZEventParam) GameEventParam.GAMEROOM);
+            Boolean isReconnect = (Boolean) ibzevent.getParameter((IBZEventParam) GameEventParam.IS_RECONNECT);
             this.userJoinRoomSuccess(user, room, isReconnect);
         }
         if (ibzevent.getType() == GameEventType.THANG_LON) {
-            user = (User)ibzevent.getParameter((IBZEventParam)GameEventParam.USER);
-            room = (GameRoom)ibzevent.getParameter((IBZEventParam)GameEventParam.GAMEROOM);
-            ThongTinThangLon info = (ThongTinThangLon)ibzevent.getParameter((IBZEventParam)GameEventParam.THONG_TIN_THANG_LON);
+            user = (User) ibzevent.getParameter((IBZEventParam) GameEventParam.USER);
+            room = (GameRoom) ibzevent.getParameter((IBZEventParam) GameEventParam.GAMEROOM);
+            ThongTinThangLon info = (ThongTinThangLon) ibzevent.getParameter((IBZEventParam) GameEventParam.THONG_TIN_THANG_LON);
             this.xuLiThangLon(user, room, info);
         }
         if (ibzevent.getType() == GameEventType.GAME_ROOM_USER_LEAVE) {
-            user = (User)ibzevent.getParameter((IBZEventParam)GameEventParam.USER);
-            room = (GameRoom)ibzevent.getParameter((IBZEventParam)GameEventParam.GAMEROOM);
+            user = (User) ibzevent.getParameter((IBZEventParam) GameEventParam.USER);
+            room = (GameRoom) ibzevent.getParameter((IBZEventParam) GameEventParam.GAMEROOM);
             this.userLeaveRoom(user, room);
         }
         if (ibzevent.getType() == BZEventType.USER_DISCONNECT) {
-            user = (User)ibzevent.getParameter((IBZEventParam)BZEventParam.USER);
+            user = (User) ibzevent.getParameter((IBZEventParam) BZEventParam.USER);
             this.userDisconnected(user);
         }
     }
@@ -233,7 +235,7 @@ extends BaseClientRequestHandler {
     }
 
     private void sendMessageToGameServer(User user, DataCmd dataCmd) {
-        GameRoom room = (GameRoom)user.getProperty((Object)"GAME_ROOM");
+        GameRoom room = (GameRoom) user.getProperty((Object) "GAME_ROOM");
         if (room != null) {
             GameServer gs = room.getGameServer();
             gs.onGameMessage(user, dataCmd);
@@ -243,7 +245,7 @@ extends BaseClientRequestHandler {
     private void getXocDiaConfig(User user, DataCmd dataCmd) {
         XocDiaConfigMsg msg = new XocDiaConfigMsg();
         msg.fundVipMinRegis = XocDiaConfig.fundVipMinRegis;
-        this.send((BaseMsg)msg, user);
+        this.send((BaseMsg) msg, user);
     }
 
     public void getGameRoomById(User user, DataCmd data) {
@@ -256,7 +258,7 @@ extends BaseClientRequestHandler {
         } else {
             msg.Error = Byte.valueOf("1");
         }
-        this.send((BaseMsg)msg, user);
+        this.send((BaseMsg) msg, user);
     }
 
     public void joinGameRoomById(User user, DataCmd data) {
@@ -264,11 +266,11 @@ extends BaseClientRequestHandler {
         GameRoom room = GameRoomManager.instance().getGameRoomToJoin(cmd.roomId, cmd.password, user);
         if (room != null) {
             if (room.isFull()) {
-                this.notifyJoinRoomFail(user, (byte)9, false);
+                this.notifyJoinRoomFail(user, (byte) 9, false);
                 return;
             }
             if (BanUserManager.instance().isBan(room.getId(), user.getName())) {
-                this.notifyJoinRoomFail(user, (byte)10, false);
+                this.notifyJoinRoomFail(user, (byte) 10, false);
                 return;
             }
             boolean check = this.preJoinRoom(user, room.getId(), false);
@@ -280,7 +282,7 @@ extends BaseClientRequestHandler {
             if (moneyCheck) {
                 GameRoomManager.instance().joinRoom(user, room, false);
             } else {
-                this.notifyJoinRoomFail(user, (byte)3, false);
+                this.notifyJoinRoomFail(user, (byte) 3, false);
             }
         }
     }
@@ -288,7 +290,7 @@ extends BaseClientRequestHandler {
     public void create_room(User user, DataCmd dataCmd) {
         CreateGameRoomCmd cmd = new CreateGameRoomCmd(dataCmd);
         if (cmd.maxUserPerRoom > 2 && !GameCommonUtils.canCreateRoom()) {
-            this.notifyCreateJoinRoomFail(user, (byte)14);
+            this.notifyCreateJoinRoomFail(user, (byte) 14);
             return;
         }
         GameRoomSetting setting = new GameRoomSetting(cmd);
@@ -299,7 +301,7 @@ extends BaseClientRequestHandler {
                 moneyRequire = cmd.moneyRequire;
                 setting.roomName = user.getName();
             } else {
-                this.notifyCreateJoinRoomFail(user, (byte)error);
+                this.notifyCreateJoinRoomFail(user, (byte) error);
                 return;
             }
         }
@@ -312,19 +314,19 @@ extends BaseClientRequestHandler {
             return;
         }
         RevInvite cmd = new RevInvite(dataCmd);
-        GameRoom room = (GameRoom)user.getProperty((Object)"GAME_ROOM");
+        GameRoom room = (GameRoom) user.getProperty((Object) "GAME_ROOM");
         if (room != null && cmd.users != null) {
             for (int i = 0; i < cmd.users.length; ++i) {
                 GameRoom room2;
                 User u = ExtensionUtility.globalUserManager.getUserByName(cmd.users[i]);
-                if (u == null || (room2 = (GameRoom)u.getProperty((Object)"GAME_ROOM")) != null) continue;
+                if (u == null || (room2 = (GameRoom) u.getProperty((Object) "GAME_ROOM")) != null) continue;
                 SendInvite msg = new SendInvite();
                 msg.inviter = user.getName();
                 msg.maxUserPerRoom = room.setting.maxUserPerRoom;
                 msg.roomID = room.getId();
                 msg.moneyBet = room.setting.moneyBet;
                 msg.rule = room.setting.rule;
-                this.send((BaseMsg)msg, u);
+                this.send((BaseMsg) msg, u);
             }
         }
     }
@@ -333,8 +335,8 @@ extends BaseClientRequestHandler {
         RevAcceptInvite cmd = new RevAcceptInvite(dataCmd);
         User u = ExtensionUtility.globalUserManager.getUserByName(cmd.inviter);
         if (user != null) {
-            GameRoom room1 = (GameRoom)user.getProperty((Object)"GAME_ROOM");
-            GameRoom room2 = (GameRoom)u.getProperty((Object)"GAME_ROOM");
+            GameRoom room1 = (GameRoom) user.getProperty((Object) "GAME_ROOM");
+            GameRoom room2 = (GameRoom) u.getProperty((Object) "GAME_ROOM");
             if (room1 == null && room2 != null && this.checkJoinRoom(user, room2)) {
                 GameRoomManager.instance().joinRoom(user, room2, false);
             }
@@ -345,20 +347,20 @@ extends BaseClientRequestHandler {
         if (room.isFull()) {
             return false;
         }
-        if (user.getProperty((Object)"GAME_ROOM") != null) {
+        if (user.getProperty((Object) "GAME_ROOM") != null) {
             return false;
         }
         GameMoneyInfo moneyInfo = new GameMoneyInfo(user, room.setting);
         boolean result = moneyInfo.startGameUpdateMoney();
         if (result) {
-            user.setProperty((Object)"GAME_MONEY_INFO", (Object)moneyInfo);
+            user.setProperty((Object) "GAME_MONEY_INFO", (Object) moneyInfo);
             return true;
         }
         return false;
     }
 
     public void listInvite(User user, DataCmd dataCmd) {
-        GameRoom room = (GameRoom)user.getProperty((Object)"GAME_ROOM");
+        GameRoom room = (GameRoom) user.getProperty((Object) "GAME_ROOM");
         if (room == null || room.setting.moneyType != 1 || room.isFull() || room.isLocked()) {
             return;
         }
@@ -379,8 +381,9 @@ extends BaseClientRequestHandler {
         int c = 0;
         for (User u : users) {
             long money;
-            GameRoom r = (GameRoom)u.getProperty((Object)"GAME_ROOM");
-            if (r != null || (money = GameMoneyInfo.userService.getMoneyUserCache(u.getName(), "vin")) < expected) continue;
+            GameRoom r = (GameRoom) u.getProperty((Object) "GAME_ROOM");
+            if (r != null || (money = GameMoneyInfo.userService.getMoneyUserCache(u.getName(), "vin")) < expected)
+                continue;
             names.add(u.getName());
             moneyList.add(money);
             if (++c != 10) continue;
@@ -390,17 +393,17 @@ extends BaseClientRequestHandler {
         msg.listMoney = new long[c];
         msg.listName = new String[c];
         for (int i = 0; i < c; ++i) {
-            msg.listName[i] = (String)names.get(i);
-            msg.listMoney[i] = (Long)moneyList.get(i);
+            msg.listName[i] = (String) names.get(i);
+            msg.listMoney[i] = (Long) moneyList.get(i);
         }
-        this.send((BaseMsg)msg, user);
+        this.send((BaseMsg) msg, user);
     }
 
     public void notifyJoinRoomFail(User user, byte error, boolean isCreate) {
         if (!isCreate) {
             JoinGameRoomFailMsg msg = new JoinGameRoomFailMsg();
             msg.Error = Byte.valueOf(error);
-            this.send((BaseMsg)msg, user);
+            this.send((BaseMsg) msg, user);
         } else {
             this.notifyCreateJoinRoomFail(user, error);
         }
@@ -409,7 +412,7 @@ extends BaseClientRequestHandler {
     public void notifyCreateJoinRoomFail(User user, byte error) {
         CreateGameRoomFailMsg msg = new CreateGameRoomFailMsg();
         msg.Error = Byte.valueOf(error);
-        this.send((BaseMsg)msg, user);
+        this.send((BaseMsg) msg, user);
     }
 
     public boolean preJoinRoom(User user, int roomId, boolean isCreate) {
@@ -422,19 +425,19 @@ extends BaseClientRequestHandler {
             return false;
         }
         if (GameUtils.isMainTain) {
-            this.notifyJoinRoomFail(user, (byte)6, isCreate);
+            this.notifyJoinRoomFail(user, (byte) 6, isCreate);
             return false;
         }
         long last = user.getLastJoinRoomTime();
         long now = System.currentTimeMillis();
         long interval = now - last;
         if (interval < GameRoomConfig.instance().getJoinRoomIntervalTime()) {
-            this.notifyJoinRoomFail(user, (byte)5, isCreate);
+            this.notifyJoinRoomFail(user, (byte) 5, isCreate);
             return false;
         }
         user.setLastJoinRoomTime(now);
         if (!isBoss && !(check = GameUtils.infoCheck(user))) {
-            this.notifyJoinRoomFail(user, (byte)1, isCreate);
+            this.notifyJoinRoomFail(user, (byte) 1, isCreate);
             return false;
         }
         return true;
@@ -454,19 +457,19 @@ extends BaseClientRequestHandler {
             }
         }
         if (group == null) {
-            this.notifyJoinRoomFail(user, (byte)4, isCreate);
+            this.notifyJoinRoomFail(user, (byte) 4, isCreate);
             return;
         }
         boolean result = this.checkMoneyJoinRoom(user, group.setting, moneyRequire);
         if (!result) {
-            this.notifyJoinRoomFail(user, (byte)3, isCreate);
+            this.notifyJoinRoomFail(user, (byte) 3, isCreate);
             return;
         }
         boolean isBossCreate = moneyRequire > 0;
         int res = group.joinRoom(user, setting, isBossCreate, isBossJoin);
         if (res != 0) {
-            this.notifyJoinRoomFail(user, (byte)4, isCreate);
-            GameMoneyInfo info = (GameMoneyInfo)user.getProperty((Object)"GAME_MONEY_INFO");
+            this.notifyJoinRoomFail(user, (byte) 4, isCreate);
+            GameMoneyInfo info = (GameMoneyInfo) user.getProperty((Object) "GAME_MONEY_INFO");
             info.restoreMoney(-1);
             return;
         }
@@ -478,6 +481,7 @@ extends BaseClientRequestHandler {
         LoggerUtils.debug("game_room", "joinGameRoom", cmd.moneyType, cmd.maxUserPerRoom, setting.maxUserPerRoom, setting.moneyType, setting.rule);
         this.joinGameRoom(user, setting, -1, false, BossManager.instance().checkBossName(user.getName()));
     }
+
     // todo : check money join room khi du tien
     public boolean checkMoneyJoinRoom(User user, GameRoomSetting setting, long moneyRequire) {
         boolean result;
@@ -487,7 +491,7 @@ extends BaseClientRequestHandler {
         }
 
         if (result = moneyInfo.startGameUpdateMoney()) {
-            user.setProperty((Object)"GAME_MONEY_INFO", (Object)moneyInfo);
+            user.setProperty((Object) "GAME_MONEY_INFO", (Object) moneyInfo);
             return true;
         }
         return false;
@@ -500,16 +504,16 @@ extends BaseClientRequestHandler {
             gs.onGameUserReturn(user);
             LoggerUtils.debug("tour", "userJoinRoomSuccess onGameUserReturn", user.getName(), "room", room.getId(), "isReconnect", isReconnect);
         } else {
-            GameMoneyInfo info = (GameMoneyInfo)user.getProperty((Object)"GAME_MONEY_INFO");
+            GameMoneyInfo info = (GameMoneyInfo) user.getProperty((Object) "GAME_MONEY_INFO");
             if (info != null) {
                 info.roomId = room.getId();
             }
             gs.onGameUserEnter(user);
             LoggerUtils.debug("tour", "userJoinRoomSuccess onGameUserEnter", user.getName(), "room", room.getId(), "isReconnect", isReconnect);
-            User enemy = (User)user.getProperty((Object)"ENEMY_USER");
+            User enemy = (User) user.getProperty((Object) "ENEMY_USER");
             if (enemy != null) {
-                user.removeProperty((Object)"ENEMY_USER");
-                enemy.removeProperty((Object)"ENEMY_USER");
+                user.removeProperty((Object) "ENEMY_USER");
+                enemy.removeProperty((Object) "ENEMY_USER");
                 FightingManager.instance().removeOnFightUser(enemy);
                 FightingManager.instance().removeOnFightUser(user);
                 GameRoomManager.instance().joinRoom(enemy, room, false);
@@ -524,17 +528,17 @@ extends BaseClientRequestHandler {
         if (GameUtils.isBot && user.isBot()) {
             BotManager.instance().releaseBot(user);
         }
-        if ((newRoom = (GameRoom)user.getProperty((Object)"NEW_JOIN_ROOM")) != null) {
+        if ((newRoom = (GameRoom) user.getProperty((Object) "NEW_JOIN_ROOM")) != null) {
             GameRoomManager.instance().joinRoom(user, newRoom, false);
             LoggerUtils.debug("tour", "userLeaveRoom Join New Room", user.getName(), "room", room.getId());
-            user.removeProperty((Object)"NEW_JOIN_ROOM");
+            user.removeProperty((Object) "NEW_JOIN_ROOM");
         } else {
             FightingManager.instance().addOnFightUser(user);
         }
     }
 
     public void userDisconnected(User user) {
-        GameRoom room = (GameRoom)user.getProperty((Object)"GAME_ROOM");
+        GameRoom room = (GameRoom) user.getProperty((Object) "GAME_ROOM");
         if (room != null) {
             GameServer gs = room.getGameServer();
             gs.onGameUserDis(user);
@@ -547,7 +551,7 @@ extends BaseClientRequestHandler {
             this.reconnectGameRoomUser(user, -1);
         } else {
             ReconnectGameRoomFailMsg msg = new ReconnectGameRoomFailMsg();
-            this.send((BaseMsg)msg, user);
+            this.send((BaseMsg) msg, user);
         }
     }
 
@@ -563,7 +567,7 @@ extends BaseClientRequestHandler {
 
     private void requestConfig(User user, DataCmd dataCmd) {
         GameRoomConfigMsg msg = new GameRoomConfigMsg();
-        this.send((BaseMsg)msg, user);
+        this.send((BaseMsg) msg, user);
     }
 
     private void thongTinHuVang(User user, DataCmd dataCmd) {
@@ -581,14 +585,13 @@ extends BaseClientRequestHandler {
                 msg.gameName = json.getString("gameName");
                 msg.remainTime = HuVangConfig.instance().kiemTraHuVangTheoThoiGian(json);
                 msg.goldAmmount = ThongTinHuVang.instance().getGoldAmount(msg.gameName);
-                this.send((BaseMsg)msg, user);
+                this.send((BaseMsg) msg, user);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             if (json != null) {
-                CommonHandle.writeErrLog((String)json.toString());
+                CommonHandle.writeErrLog((String) json.toString());
             }
-            CommonHandle.writeErrLog((Throwable)e);
+            CommonHandle.writeErrLog((Throwable) e);
         }
     }
 
@@ -597,8 +600,7 @@ extends BaseClientRequestHandler {
             if (info.noHu) {
                 this.congTienThangHu(user, room, info);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return;
         }
     }
@@ -613,15 +615,15 @@ extends BaseClientRequestHandler {
 
     private void onChatRoom(User user, DataCmd data) {
         long delta;
-        Long lastChat = (Long)user.getProperty((Object)"last_chat_time");
+        Long lastChat = (Long) user.getProperty((Object) "last_chat_time");
         long now = System.currentTimeMillis();
         if (lastChat != null && (delta = now - lastChat) < 3000) {
             return;
         }
-        user.setProperty((Object)"last_chat_time", (Object)now);
+        user.setProperty((Object) "last_chat_time", (Object) now);
         ChatRoomCmd cmd = new ChatRoomCmd(data);
-        GameRoom room = (GameRoom)user.getProperty((Object)"GAME_ROOM");
-        Integer chair = (Integer)user.getProperty((Object)"user_chair");
+        GameRoom room = (GameRoom) user.getProperty((Object) "GAME_ROOM");
+        Integer chair = (Integer) user.getProperty((Object) "user_chair");
         if (chair == null) {
             chair = 0;
         }
@@ -634,7 +636,7 @@ extends BaseClientRequestHandler {
             for (Map.Entry<String, User> entry : room.userManager.entrySet()) {
                 User u = entry.getValue();
                 if (u == null || u.isBot() || !u.isConnected()) continue;
-                this.send((BaseMsg)msg, u);
+                this.send((BaseMsg) msg, u);
             }
         }
     }
@@ -679,14 +681,16 @@ extends BaseClientRequestHandler {
                 msg.roomList.add(room222);
                 break;
             }
-            this.send((BaseMsg)msg, user);
+            this.send((BaseMsg) msg, user);
         } else {
             int from = -1;
             int to = -1;
             SendRoomList msg = new SendRoomList();
-            block4 : for (Map.Entry<String, GameRoomGroup> entry : GameRoomManager.instance().gameRoomGroups.entrySet()) {
+            block4:
+            for (Map.Entry<String, GameRoomGroup> entry : GameRoomManager.instance().gameRoomGroups.entrySet()) {
                 group = entry.getValue();
-                if (group.setting.moneyType != setting.moneyType || group.setting.rule != setting.rule && !XocDiaGameUtils.isXocDia() || group.setting.maxUserPerRoom != setting.maxUserPerRoom && !XocDiaGameUtils.isXocDia()) continue;
+                if (group.setting.moneyType != setting.moneyType || group.setting.rule != setting.rule && !XocDiaGameUtils.isXocDia() || group.setting.maxUserPerRoom != setting.maxUserPerRoom && !XocDiaGameUtils.isXocDia())
+                    continue;
                 for (GameRoom room322 : group.freeRooms) {
                     ++to;
                     if (++from < cmd.from) continue;
@@ -713,12 +717,12 @@ extends BaseClientRequestHandler {
                     continue block4;
                 }
             }
-            this.send((BaseMsg)msg, user);
+            this.send((BaseMsg) msg, user);
         }
     }
 
     private class GameLoopTask
-    implements Runnable {
+            implements Runnable {
         private GameLoopTask() {
         }
 

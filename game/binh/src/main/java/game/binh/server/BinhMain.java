@@ -7,10 +7,10 @@ package game.binh.server;
 import bitzero.server.BitZeroServer;
 import com.vinplay.vbee.common.config.VBeePath;
 
-public class BinhMain
-{
+public class BinhMain {
+
     public static void main(final String[] args) {
-        VBeePath.initBasePath((Class)BinhMain.class);
+        VBeePath.initBasePath(BinhMain.class);
         boolean clusterMode = false;
         boolean useConsole = false;
         if (args.length > 0) {

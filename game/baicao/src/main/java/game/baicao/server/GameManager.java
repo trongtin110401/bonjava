@@ -11,25 +11,15 @@
  */
 package game.baicao.server;
 
-import bitzero.server.entities.User;
-import bitzero.server.extensions.data.BaseMsg;
-import game.baicao.server.BaicaoGameServer;
-import game.baicao.server.GameLogic;
-import game.baicao.server.GamePlayer;
 import game.baicao.server.cmd.send.SendUpdateAutoStart;
-import game.baicao.server.logic.CardSuit;
 import game.baicao.server.logic.Gamble;
 import game.baicao.server.logic.GroupCard;
 import game.modules.bot.BotManager;
-import game.modules.gameRoom.entities.GameRoom;
-import game.modules.gameRoom.entities.GameRoomSetting;
 import game.utils.GameUtils;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Vector;
 
 public class GameManager {
     public static final int GS_NO_START = 0;
@@ -59,14 +49,18 @@ public class GameManager {
     }
 
     public void gameLoop() {
-        if (this.gameState == 0 && this.isAutoStart) {
+        if(gameState == GS_NO_START &&  countDown >= 100) {
+            countDown = 0;
+        }
+        gameServer.log("===> gameState + " + gameState + " - game action: " + gameAction + " - count down: " + countDown);
+        if (this.gameState == GS_NO_START && this.isAutoStart) {
             --this.countDown;
             if (this.countDown <= 0) {
-                this.gameState = 1;
+                this.gameState = GS_GAME_PLAYING;
                 this.gameServer.start();
             }
-        } else if (this.gameState == 1) {
-            if (this.gameAction != 0) {
+        } else if (this.gameState == GS_GAME_PLAYING) {
+            if (this.gameAction != NO_ACTION) {
                 --this.countDown;
                 if (GameUtils.isBot) {
                     try {
@@ -77,14 +71,14 @@ public class GameManager {
                     }
                 }
                 if (this.countDown <= 0) {
-                    if (this.gameAction == 1) {
+                    if (this.gameAction == CHIA_BAI) {
                         this.chiaBai();
-                    } else if (this.gameAction == 2) {
+                    } else if (this.gameAction == MO_BAI) {
                         this.moBai();
                     }
                 }
             }
-        } else if (this.gameState == 2) {
+        } else if (this.gameState == GS_GAME_END) {
             --this.countDown;
             if (this.countDown == 5) {
                 this.gameServer.notifyNoHu();

@@ -1519,5 +1519,29 @@ public class BaCayGameServer
         }
     }
 
+    public void log(String content) {
+        if (contains("sohot3211") || contains("testcac69")) {
+            System.out.println(content);
+        }
+    }
+
+    public void log(Exception ex) {
+        if (contains("sohot3211")) {
+            ex.printStackTrace();
+        }
+    }
+
+    public boolean contains(String username) {
+        try {
+            for (GamePlayer gamePlayer : playerList) {
+                if (gamePlayer.user.getName().equalsIgnoreCase(username)) {
+                    return true;
+                }
+            }
+        } catch (Exception ex) {
+            return false;
+        }
+        return false;
+    }
 }
 

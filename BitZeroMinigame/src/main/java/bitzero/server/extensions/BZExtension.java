@@ -20,8 +20,7 @@ import bitzero.server.extensions.IHandlerFactory;
 import bitzero.server.extensions.IServerEventHandler;
 import bitzero.server.extensions.data.DataCmd;
 
-public abstract class BZExtension
-extends BaseBZExtension {
+public abstract class BZExtension extends BaseBZExtension {
     public static final String MULTIHANDLER_REQUEST_ID = "__[[REQUEST_ID]]__";
     public final IHandlerFactory handlerFactory;
 

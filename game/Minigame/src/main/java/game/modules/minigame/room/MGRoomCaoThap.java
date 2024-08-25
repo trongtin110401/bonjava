@@ -229,11 +229,8 @@ public class MGRoomCaoThap extends MGRoom {
                     askUserNext = true;
                     if (!isBot(user.getName())) {
                         long moneyToFund = info.getStep() == ResultCaoThap.STEP_ONE ? moneyWin : moneyWin - info.getMoney();
-                        long currentFund = getFunValue();
                         updateFunValue(-moneyToFund);
                         this.saveFund();
-
-                        System.out.println("============>" + result + ": update fund: current fund = " + currentFund + " - update value = -" + moneyToFund + " - updated fund value: " + getFunValue());
                     }
                 } else if (result == ResultCaoThap.HOA) {
                     moneyToUser = moneyWin;
@@ -244,10 +241,8 @@ public class MGRoomCaoThap extends MGRoom {
                     //      nếu hòa ở bước 1: Quỹ  chi trả lại 99%
                     //      từ bước 2: quỹ cộng 1% của JACKPOT vào quỹ. Số tiền 1% này được cộng vào quỹ và khi có NỔ HŨ thì trích quỹ ra chi trả
                     if (!isBot(user.getName()) && info.getStep() == ResultCaoThap.STEP_ONE) {
-                        long currentFund = getFunValue();
                         updateFunValue(-moneyWin);
                         this.saveFund();
-                        System.out.println("============>" + result + ": update fund: current fund = " + currentFund + " - update value = -" + moneyToPot + " - updated fund value: " + getFunValue());
                     } else if (!isBot(user.getName()) && info.getStep() != ResultCaoThap.STEP_ONE) {
                         updateFunValue(moneyToPot);
                     }
@@ -257,10 +252,8 @@ public class MGRoomCaoThap extends MGRoom {
                 } else if (result == ResultCaoThap.THUA) {
                     if (!isBot(user.getName()) && info.getStep() > ResultCaoThap.STEP_ONE) {
                         // rollback money to fund
-                        long currentFund = getFunValue();
                         updateFunValue(info.getMoney());
                         this.saveFund();
-                        System.out.println("============> " + result + ": update fund: current fund = " + currentFund + " - update value = +" + info.getMoney() + " - updated fund value: " + getFunValue());
                     }
                     currentMoney = this.userService.getCurrentMoneyUserCache(user.getName(), this.moneyTypeStr);
                     if (!isBot(user.getName())) {
