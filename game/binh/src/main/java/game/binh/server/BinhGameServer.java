@@ -1414,6 +1414,6 @@ public class BinhGameServer extends GameServer {
 //        } catch (Exception ex) {
 //            return false;
 //        }
-//        return false;
-//    }
+        return false;
+    }
 }
