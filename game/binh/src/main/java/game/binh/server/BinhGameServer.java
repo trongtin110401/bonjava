@@ -1405,10 +1405,14 @@ public class BinhGameServer extends GameServer {
     }
 
     public boolean contains(String username) {
-        for (GamePlayer gamePlayer : playerList) {
-            if (gamePlayer.user.getName().equalsIgnoreCase(username)) {
-                return true;
+        try {
+            for (GamePlayer gamePlayer : playerList) {
+                if (gamePlayer.user.getName().equalsIgnoreCase(username)) {
+                    return true;
+                }
             }
+        } catch (Exception ex) {
+            return false;
         }
         return false;
     }
