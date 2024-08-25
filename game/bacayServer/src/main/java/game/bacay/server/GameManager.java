@@ -68,6 +68,8 @@ public class GameManager {
             countDown = 0;
         }
 
+        gameServer.log("===> gameState + " + gameState + " - game action: " + gameAction + " - count down: " + countDown);
+
         if (this.gameState == GS_NO_START && this.isAutoStart) {
             --this.countDown;
             if (this.countDown <= 0) {
