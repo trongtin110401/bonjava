@@ -403,7 +403,7 @@ public class BinhGameServer extends GameServer
                 break;
             }
         }
-        this.kiemTraTuDongBatDau(20);
+        this.kiemTraTuDongBatDau(5);
     }
     
     public synchronized void onNoHu(final ThongTinThangLon info) {
@@ -1261,7 +1261,7 @@ public class BinhGameServer extends GameServer
     private void pBatDau(final User user, final DataCmd dataCmd) {
         final int nextGamePlayerCount = this.demSoNguoiChoiTiep();
         if (nextGamePlayerCount >= 2) {
-            this.gameMgr.makeAutoStart(10);
+            this.gameMgr.makeAutoStart(5);
         }
     }
     

@@ -56,7 +56,7 @@ public class GameManager {
     public void prepareNewGame() {
         this.game.reset();
         this.isAutoStart = false;
-        this.gameServer.kiemTraTuDongBatDau(20);
+        this.gameServer.kiemTraTuDongBatDau(5);
     }
 
     public void gameLoop() {
@@ -91,7 +91,7 @@ public class GameManager {
             }
         } else {
             ++this.countDown;
-            this.gameServer.kiemTraTuDongBatDau(20);
+            this.gameServer.kiemTraTuDongBatDau(5);
             if (this.countDown % 11 == 10) {
                 this.gameServer.botJoinRoom();
             }
