@@ -556,18 +556,24 @@ public class BaCayGameServer
     }
 
     public synchronized void onGameUserEnter(User user) {
+
+        log("===============> On user enter 1");
+
         try {
             int i;
             GamePlayer gp;
             if (user == null) {
+                log("===============> On user enter 2");
                 return;
             }
             PlayerInfo pInfo = PlayerInfo.getInfo((User) user);
             if (pInfo == null) {
+                log("===============> On user enter 2");
                 return;
             }
             GameMoneyInfo moneyInfo = (GameMoneyInfo) user.getProperty((Object) "GAME_MONEY_INFO");
             if (moneyInfo == null) {
+                log("===============> On user enter 3");
                 return;
             }
             if (this.room.setting.maxUserPerRoom == 8) {
@@ -585,8 +591,10 @@ public class BaCayGameServer
                     gp.reqQuitRoom = false;
                     user.setProperty("GAME_MONEY_INFO", gp.gameMoneyInfo);
                     if (this.serverState == 1) {
+                        log("===============> On user enter 4");
                         this.sendGameInfo(gp.chair);
                     } else {
+                        log("===============> On user enter 5");
                         this.notifyUserEnter(gp);
                     }
                     return;
@@ -615,8 +623,9 @@ public class BaCayGameServer
                 this.notifyUserEnter(gp);
                 break;
             }
-
+            log("===============> On user enter 6");
             this.kiemTraTuDongBatDau(5);
+            log("===============> On user enter 7");
         } catch (Exception ex) {
             ex.printStackTrace();
             throw new RuntimeException("BaCayGameServer.onGameUserEnter error", ex);
