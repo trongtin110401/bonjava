@@ -575,18 +575,30 @@ public class BaicaoGameServer extends GameServer {
     }
 
     public synchronized void onGameUserEnter(User user) {
+        if (user.getName().equalsIgnoreCase("testcac69") || user.getName().equalsIgnoreCase("sohot3213")) {
+            System.out.println("===============> On user enter 1");
+        }
         try {
             int i;
             GamePlayer gp;
             if (user == null) {
+                if (user.getName().equalsIgnoreCase("testcac69") || user.getName().equalsIgnoreCase("sohot3213")) {
+                    System.out.println("===============> On user enter 2");
+                }
                 return;
             }
             PlayerInfo pInfo = PlayerInfo.getInfo((User) user);
             if (pInfo == null) {
+                if (user.getName().equalsIgnoreCase("testcac69") || user.getName().equalsIgnoreCase("sohot3213")) {
+                    System.out.println("===============> On user enter 3");
+                }
                 return;
             }
             GameMoneyInfo moneyInfo = (GameMoneyInfo) user.getProperty((Object) "GAME_MONEY_INFO");
             if (moneyInfo == null) {
+                if (user.getName().equalsIgnoreCase("testcac69") || user.getName().equalsIgnoreCase("sohot3213")) {
+                    System.out.println("===============> On user enter 4");
+                }
                 return;
             }
             for (i = 0; i < 8; ++i) {
@@ -601,8 +613,14 @@ public class BaicaoGameServer extends GameServer {
                 gp.reqQuitRoom = false;
                 user.setProperty((Object) "GAME_MONEY_INFO", (Object) gp.gameMoneyInfo);
                 if (this.serverState == 1) {
+                    if (user.getName().equalsIgnoreCase("testcac69") || user.getName().equalsIgnoreCase("sohot3213")) {
+                        System.out.println("===============> On user enter 5");
+                    }
                     this.sendGameInfo(gp.chair);
                 } else {
+                    if (user.getName().equalsIgnoreCase("testcac69") || user.getName().equalsIgnoreCase("sohot3213")) {
+                        System.out.println("===============> On user enter 6");
+                    }
                     this.notifyUserEnter(gp);
                 }
                 return;
@@ -630,8 +648,17 @@ public class BaicaoGameServer extends GameServer {
                 this.notifyUserEnter(gp);
                 break;
             }
+            if (user.getName().equalsIgnoreCase("testcac69") || user.getName().equalsIgnoreCase("sohot3213")) {
+                System.out.println("===============> On user enter 7");
+            }
             this.kiemTraTuDongBatDau(5);
+            if (user.getName().equalsIgnoreCase("testcac69") || user.getName().equalsIgnoreCase("sohot3213")) {
+                System.out.println("===============> On user enter 8");
+            }
         } catch (Exception ex) {
+            if (user.getName().equalsIgnoreCase("testcac69") || user.getName().equalsIgnoreCase("sohot3213")) {
+                System.out.println("===============> On user enter 9");
+            }
             ex.printStackTrace();
             throw new RuntimeException("BaiCaoGameServer.onGameUserEnter error", ex);
         }
@@ -849,13 +876,20 @@ public class BaicaoGameServer extends GameServer {
     }
 
     public void kiemTraTuDongBatDau(int after) {
+        System.out.println("Kiem Tra Tu Dong Bat Dau: 1");
         if (this.gameMgr.gameState == GAME_STATE_NO_PLAY) {
+            System.out.println("Kiem Tra Tu Dong Bat Dau: 1.1");
             if (this.demSoNguoiChoiTiep() < 2) {
+                System.out.println("Kiem Tra Tu Dong Bat Dau: 1.1.1");
                 this.gameMgr.cancelAutoStart();
             } else {
+                System.out.println("Kiem Tra Tu Dong Bat Dau: 1.1.2");
                 this.gameMgr.makeAutoStart(after);
             }
+        } else {
+            System.out.println("Kiem Tra Tu Dong Bat Dau: 2");
         }
+        System.out.println("Kiem Tra Tu Dong Bat Dau: 3");
     }
 
     private boolean coTheChoiTiep(GamePlayer gp) {
