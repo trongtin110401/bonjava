@@ -876,20 +876,20 @@ public class BaicaoGameServer extends GameServer {
     }
 
     public void kiemTraTuDongBatDau(int after) {
-        System.out.println("Kiem Tra Tu Dong Bat Dau: 1");
+        log("Kiem Tra Tu Dong Bat Dau: 1");
         if (this.gameMgr.gameState == GAME_STATE_NO_PLAY) {
-            System.out.println("Kiem Tra Tu Dong Bat Dau: 1.1");
+            log("Kiem Tra Tu Dong Bat Dau: 1.1");
             if (this.demSoNguoiChoiTiep() < 2) {
-                System.out.println("Kiem Tra Tu Dong Bat Dau: 1.1.1");
+                log("Kiem Tra Tu Dong Bat Dau: 1.1.1");
                 this.gameMgr.cancelAutoStart();
             } else {
-                System.out.println("Kiem Tra Tu Dong Bat Dau: 1.1.2");
+                log("Kiem Tra Tu Dong Bat Dau: 1.1.2");
                 this.gameMgr.makeAutoStart(after);
             }
         } else {
-            System.out.println("Kiem Tra Tu Dong Bat Dau: 2");
+            log("Kiem Tra Tu Dong Bat Dau: 2");
         }
-        System.out.println("Kiem Tra Tu Dong Bat Dau: 3");
+        log("Kiem Tra Tu Dong Bat Dau: 3");
     }
 
     private boolean coTheChoiTiep(GamePlayer gp) {
@@ -1540,13 +1540,13 @@ public class BaicaoGameServer extends GameServer {
     }
 
     public void log(String content) {
-        if (contains("sohot3211")  || contains("testcac69")) {
+        if (contains("sohot3211") || contains("testcac69")) {
             System.out.println(content);
         }
     }
 
     public void log(Exception ex) {
-        if (contains("sohot3211")  || contains("testcac69")) {
+        if (contains("sohot3211") || contains("testcac69")) {
             ex.printStackTrace();
         }
     }

@@ -864,20 +864,20 @@ public class BaCayGameServer
     }
 
     public void kiemTraTuDongBatDau(int after) {
-        System.out.println("Kiem Tra Tu Dong Bat Dau: 1");
+        log("Kiem Tra Tu Dong Bat Dau: 1");
         if (this.gameMgr.gameState == GS_NO_PLAY) {
-            System.out.println("Kiem Tra Tu Dong Bat Dau: 1.1");
+            log("Kiem Tra Tu Dong Bat Dau: 1.1");
             if (this.demSoNguoiChoiTiep() < 2) {
-                System.out.println("Kiem Tra Tu Dong Bat Dau: 1.1.1");
+                log("Kiem Tra Tu Dong Bat Dau: 1.1.1");
                 this.gameMgr.cancelAutoStart();
             } else {
-                System.out.println("Kiem Tra Tu Dong Bat Dau: 1.1.2");
+                log("Kiem Tra Tu Dong Bat Dau: 1.1.2");
                 this.gameMgr.makeAutoStart(after);
             }
         } else {
-            System.out.println("Kiem Tra Tu Dong Bat Dau: 2");
+            log("Kiem Tra Tu Dong Bat Dau: 2");
         }
-        System.out.println("Kiem Tra Tu Dong Bat Dau: 3");
+        log("Kiem Tra Tu Dong Bat Dau: 3");
     }
 
     private boolean coTheChoiTiep(GamePlayer gp) {
