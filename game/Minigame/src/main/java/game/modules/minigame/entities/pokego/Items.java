@@ -3,13 +3,12 @@
  */
 package game.modules.minigame.entities.pokego;
 
-import game.modules.minigame.entities.pokego.Item;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 public class Items {
-    private int[] config = new int[]{1, 6, 12, 12, 20, 20};
+    private int[] config = new int[]{10, 20, 30, 40, 60, 80};
     public List<Item> items = new ArrayList<Item>();
 
     public Items() {

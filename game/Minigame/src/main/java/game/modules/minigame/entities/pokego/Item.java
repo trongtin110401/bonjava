@@ -4,14 +4,14 @@
 package game.modules.minigame.entities.pokego;
 
 public enum Item {
-    NONE("none", (byte)-1),
-    POKER_BALL("poker_ball", (byte)0),
-    PIKACHU("pikachu", (byte)1),
-    BULBASAUR("bulbasaur", (byte)2),
-    CLEFABLE("clefable", (byte)3),
-    MOUSE("mouse", (byte)4),
-    TOGEPI("togepi", (byte)5);
-    
+    NONE("none", (byte) -1),
+    POKER_BALL("poker_ball", (byte) 0),
+    PIKACHU("pikachu", (byte) 1),
+    BULBASAUR("bulbasaur", (byte) 2),
+    CLEFABLE("clefable", (byte) 3),
+    MOUSE("mouse", (byte) 4),
+    TOGEPI("togepi", (byte) 5);
+
     private String name;
     private byte id;
 
