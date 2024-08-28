@@ -887,7 +887,7 @@ public class BaicaoGameServer extends GameServer {
                 this.gameMgr.makeAutoStart(after);
             }
         } else {
-            log("Kiem Tra Tu Dong Bat Dau: 2");
+            log("Kiem Tra Tu Dong Bat Dau: 2 => Đang chơi dở ván, GAME STATE = " + gameMgr.gameState + ", count: " + gameMgr.countDown);
         }
         log("Kiem Tra Tu Dong Bat Dau: 3");
     }

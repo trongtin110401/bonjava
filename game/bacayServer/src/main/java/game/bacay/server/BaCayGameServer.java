@@ -599,14 +599,12 @@ public class BaCayGameServer
                     gp.reqQuitRoom = false;
                     user.setProperty("GAME_MONEY_INFO", gp.gameMoneyInfo);
                     if (this.serverState == 1) {
-                        if (user.getName().equalsIgnoreCase("testcac69") || user.getName().equalsIgnoreCase("sohot3213"))
-                        {
+                        if (user.getName().equalsIgnoreCase("testcac69") || user.getName().equalsIgnoreCase("sohot3213")) {
                             System.out.println("===============> On user enter 5");
                         }
                         this.sendGameInfo(gp.chair);
                     } else {
-                        if (user.getName().equalsIgnoreCase("testcac69") || user.getName().equalsIgnoreCase("sohot3213"))
-                        {
+                        if (user.getName().equalsIgnoreCase("testcac69") || user.getName().equalsIgnoreCase("sohot3213")) {
                             System.out.println("===============> On user enter 6");
                         }
                         this.notifyUserEnter(gp);
@@ -875,7 +873,7 @@ public class BaCayGameServer
                 this.gameMgr.makeAutoStart(after);
             }
         } else {
-            log("Kiem Tra Tu Dong Bat Dau: 2");
+            log("Kiem Tra Tu Dong Bat Dau: 2 => Đang chơi dở ván, GAME STATE = " + gameMgr.gameState + ", count: " + gameMgr.countDown);
         }
         log("Kiem Tra Tu Dong Bat Dau: 3");
     }
