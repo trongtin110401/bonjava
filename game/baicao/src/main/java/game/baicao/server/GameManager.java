@@ -80,9 +80,9 @@ public class GameManager {
             }
         } else if (this.gameState == GS_GAME_END) {
             --this.countDown;
-            if (this.countDown == 5) {
-                this.gameServer.notifyNoHu();
-            }
+//            if (this.countDown == 5) {
+//                this.gameServer.notifyNoHu();
+//            }
             if (this.countDown <= 0) {
                 this.gameServer.pPrepareNewGame();
             }
