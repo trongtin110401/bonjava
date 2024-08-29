@@ -3,10 +3,18 @@ package com.vinplay.api.processors.otp;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import com.vinplay.common.HttpCommon;
+import com.vinplay.usercore.utils.GameCommon;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.response.UserTele;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.bson.Document;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -16,14 +24,24 @@ public class OTPTeleService {
     private SecureRandom random = new SecureRandom();
 
     public void sendOTP(String chatId, String otp) {
-//        SendMessage message = new SendMessage();
-//        message.setChatId(chatId);
-//        message.setText("M„ OTP c?a b?n l‡ : " + otp + " v‡ cÛ hi?u l?c trong vÚng 5 ph˙t.");
-//        try {
-//            execute(message);
-//        } catch (TelegramApiException e) {
-//            e.printStackTrace();
-//        }
+        String message = "M√£ OTP c·ªßa b·∫°n l√† : " + otp + " v√† c√≥ hi·ªáu l·ª±c trong v√≤ng 5 ph√∫t";
+        try {
+            String bootToken = "6831621160:AAHPfkEON1-u2e44F8WAVdu5vT9ySql8ztA";
+            OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
+                    .build();
+            Request request = new Request.Builder()
+                    .url("https://api.telegram.org/bot" + bootToken + "/sendMessage?text=" + encodeValue(message) + "&chat_id=" + chatId + "&parse_mode=HTML")
+                    .method("GET", null)
+                    .build();
+            Response response = client.newCall(request).execute();
+            response.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static String encodeValue(String value) throws UnsupportedEncodingException {
+        return URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
     }
 
     public void saveOTP(String chatId, String otp) {
