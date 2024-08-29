@@ -155,6 +155,7 @@ import game.utils.ServerUtil;
 import okhttp3.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Logger;
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -3285,7 +3286,7 @@ public class LobbyModule extends BaseClientRequestHandler {
     }
 
     private void broadcastMessageService() {
-
+        long startTime = System.currentTimeMillis();
         String message = broadcastMessageService.toJson();
         if (StringUtils.isEmpty(message)) {
             return;
@@ -3296,8 +3297,13 @@ public class LobbyModule extends BaseClientRequestHandler {
         if (users != null) {
             this.send(msg, users);
         }
+        long timeBeforeClear = System.currentTimeMillis();
         broadcastMessageService.clearMessage();
-
+        long endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
+        long durationBeforeClear = timeBeforeClear - startTime;
+        System.out.println("Time taken to execute broadcastMessageService: " + duration + " ms");
+        System.out.println("Time taken to execute broadcastMessageService before clear : " + durationBeforeClear + " ms");
     }
 
     private synchronized void loginFromOtherDevice() {
