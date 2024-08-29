@@ -947,7 +947,7 @@ public class SamGameServer
             // empty if block
         }
         this.gameMgr.countDown = this.gameMgr.game.baosam ? 17 : 15;
-        this.kiemTraNoHuThangLon();
+//        this.kiemTraNoHuThangLon();
     }
 
     private boolean dispatchEventThangLon(GamePlayer gp, boolean isNoHu) {

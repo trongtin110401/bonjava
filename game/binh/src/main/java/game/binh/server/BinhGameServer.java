@@ -1052,7 +1052,7 @@ public class BinhGameServer extends GameServer {
         }
         this.gameMgr.gameState = 2;
         this.gameMgr.countDown = count;
-        this.kiemTraNoHuThangLon();
+//        this.kiemTraNoHuThangLon();
     }
 
     private boolean dispatchEventThangLon(final GamePlayer gp, final boolean isNoHu) {

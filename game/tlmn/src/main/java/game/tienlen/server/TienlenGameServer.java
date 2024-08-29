@@ -914,7 +914,7 @@ extends GameServer {
             // empty if block
         }
         this.gameMgr.countDown = 15;
-        this.kiemTraNoHuThangLon();
+//        this.kiemTraNoHuThangLon();
     }
 
     private boolean dispatchEventThangLon(GamePlayer gp, boolean isNoHu) {
