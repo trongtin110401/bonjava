@@ -334,11 +334,11 @@ public class Slot20Room extends SlotRoom {
                                 if (totalPrizes != 0 && !u.isBot()) {
                                     if ((moneyRes = this.userService.updateMoney(username, totalPrizes, this.moneyTypeStr, this.gameName, "Quay " + gn, this.buildDescription(totalBetValue, totalPrizes, result), 0L, referenceId, TransType.END_TRANS)) != null && moneyRes.isSuccess()) {
                                         currentMoney = moneyRes.getCurrentMoney();
-                                        // thông báo tới toàn hệ thống số tiền thắng của người chơi
-                                        if (this.moneyType == 1 && moneyExchange >= (long) BroadcastMessageServiceImpl.MIN_MONEY) {
-                                            this.broadcastMsgService.putMessage(Games.findGameByName(gameName).getId(), username, moneyExchange - totalBetValue);
-                                        }
                                     }
+                                }
+                                if (moneyType == 1 && totalPrizes >= (long) BroadcastMessageServiceImpl.MIN_MONEY){
+                                    // thông báo tới toàn hệ thống số tiền thắng của người chơi
+                                    this.broadcastMsgService.putMessage(Games.findGameByName(gameName).getId(), username, moneyExchange - totalBetValue);
                                 }
                                 linesWin = builderLinesWin.toString();
                                 prizesOnLine = builderPrizesOnLine.toString();

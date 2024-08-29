@@ -550,6 +550,10 @@ public class Slot25ExtendRoom extends SlotRoom {
                         }
                     }
                 }
+                // thông báo tới toàn hệ thống số tiền thắng của người chơi
+                if (this.moneyType == 1 && moneyExchange - this.betValue >= (totalBetValue * 1.5)) {
+                    this.broadcastMsgService.putMessage(Games.findGameByName(gameName).getId(), username, moneyExchange - (long) this.betValue);
+                }
                 String linesWin = builderLinesWin.toString();
                 String prizesOnLine = builderPrizesOnLine.toString();
                 playResponse.referenceId = referenceId;

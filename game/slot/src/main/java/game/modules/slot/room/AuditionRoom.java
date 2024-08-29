@@ -436,12 +436,11 @@ public class AuditionRoom
                             if (totalPrizes != 0 && !u.isBot()) {
                                 if ((moneyRes = this.userService.updateMoney(username, totalPrizes, this.moneyTypeStr, Games.LIEN_MINH.getName(), "Quay " + gn, this.buildDescription(totalBetValue, totalPrizes, result), 0L, referenceId, TransType.END_TRANS)) != null && moneyRes.isSuccess()) {
                                     currentMoney = moneyRes.getCurrentMoney();
-                                    if (this.moneyType == 1 && moneyExchange >= (long) BroadcastMessageServiceImpl.MIN_MONEY) {
-                                        this.broadcastMsgService.putMessage(Games.LIEN_MINH.getId(), username, moneyExchange - totalBetValue);
-                                    }
                                 }
                             }
-
+                            if (this.moneyType == 1 && moneyExchange >= (long) BroadcastMessageServiceImpl.MIN_MONEY) {
+                                this.broadcastMsgService.putMessage(Games.LIEN_MINH.getId(), username, moneyExchange - totalBetValue);
+                            }
                             linesWin = builderLinesWin.toString();
                             prizesOnLine = builderPrizesOnLine.toString();
                             msg.referenceId = referenceId;

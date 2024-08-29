@@ -549,12 +549,11 @@ extends SlotRoom {
                             if(totalPrizes != 0 && !u.isBot()){
                                 if ((moneyRes = this.userService.updateMoney(username, totalPrizes, this.moneyTypeStr, this.gameName, des, this.buildDescription(totalBetValue, totalPrizes, result), 0L, Long.valueOf(referenceId), TransType.END_TRANS)) != null && moneyRes.isSuccess()) {
                                     currentMoney = moneyRes.getCurrentMoney();
-                                    if (this.moneyType == 1 && moneyExchange >= (long)BroadcastMessageServiceImpl.MIN_MONEY) {
-                                        this.broadcastMsgService.putMessage(Games.FAST_AND_FURIOUS.getId(), username, moneyExchange - totalBetValue);
-                                    }
                                 }
                             }
-
+                            if (this.moneyType == 1 && moneyExchange >= (long)BroadcastMessageServiceImpl.MIN_MONEY) {
+                                this.broadcastMsgService.putMessage(Games.FAST_AND_FURIOUS.getId(), username, moneyExchange - totalBetValue);
+                            }
                             linesWin = builderLinesWin.toString();
                             prizesOnLine = builderPrizesOnLine.toString();
                             msg.referenceId = referenceId;

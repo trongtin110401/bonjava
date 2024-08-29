@@ -276,14 +276,15 @@ public class MGRoomCandy extends MGRoom {
                                     }
                                 }
                                 if (totalPrizes != 0 && !u.isBot()) {
+//                                if (totalPrizes != 0 && !u.isBot()) {
                                     moneyRes = this.userService.updateMoney(username, totalPrizes, this.moneyTypeStr, Games.CANDY.getName(), "Quay Whisky", this.buildDescription(totalBetValue, totalPrizes, result), 0, referenceId, TransType.END_TRANS);
                                     if (moneyRes != null && moneyRes.isSuccess()) {
-                                        long moneyExchange = totalPrizes - (long) this.betValue;
                                         currentMoney = moneyRes.getCurrentMoney();
-                                        if (this.moneyType == 1 && moneyExchange >= (long) BroadcastMessageServiceImpl.MIN_MONEY) {
-                                            this.broadcastMsgService.putMessage(Games.CANDY.getId(), username, moneyExchange);
-                                        }
                                     }
+                                }
+                                long moneyExchange = totalPrizes - (long) this.betValue;
+                                if (this.moneyType == 1 && moneyExchange >= (long) BroadcastMessageServiceImpl.MIN_MONEY) {
+                                    this.broadcastMsgService.putMessage(Games.CANDY.getId(), username, moneyExchange);
                                 }
                                 linesWin = builderLinesWin.toString();
                                 prizesOnLine = builderPrizesOnLine.toString();
