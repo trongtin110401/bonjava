@@ -1136,7 +1136,7 @@ public class BaCayGameServer
         this.gameMgr.countDown = 12;
         this.gameMgr.gameState = 2;
         this.gameMgr.gameAction = 0;
-        this.kiemTraNoHuThangLon();
+//        this.kiemTraNoHuThangLon();
     }
 
     public void soGa() {

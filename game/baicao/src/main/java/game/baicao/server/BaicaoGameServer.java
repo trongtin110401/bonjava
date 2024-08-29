@@ -1148,7 +1148,7 @@ public class BaicaoGameServer extends GameServer {
         this.gameMgr.countDown = 10;
         this.gameMgr.gameState = GameManager.GS_GAME_END;
         this.gameMgr.gameAction = GameManager.NO_ACTION;
-        this.kiemTraNoHuThangLon();
+//        this.kiemTraNoHuThangLon();
     }
 
     public void soGa() {
