@@ -738,7 +738,7 @@ public class MGRoomTaiXiu extends MGRoom {
                                 currentMoney = res2.getCurrentMoney();
                                 long totalExchange = Math.round((long) ((float) txt.totalPrize * (100.0f - MGRoomTaiXiu.this.tax) / (200.0f - MGRoomTaiXiu.this.tax)));
                                 if (MGRoomTaiXiu.this.moneyType == 1 && totalExchange >= (long) BroadcastMessageServiceImpl.MIN_MONEY) {
-                                    MGRoomTaiXiu.this.broadcastMsgService.putMessage(Games.TAI_XIU.getId(), username, totalExchange);
+                                    MGRoomTaiXiu.this.broadcastMsgService.putMessage(Games.TAI_XIU_MD5.getId(), username, totalExchange);
                                 }
                             }
                         }
