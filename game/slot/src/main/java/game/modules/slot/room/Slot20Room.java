@@ -287,7 +287,7 @@ public class Slot20Room extends SlotRoom {
                                     }
                                     // Tuy không trúng JACKPOT nhưng trúng Line to quá cũng cần sinh lại MATRIX
                                     if (!isGetJackpotNaturally) {
-                                        if (totalPrizes > 0 && totalPrizes > getFunValue()) continue;
+                                        if (totalPrizes > 0 && totalPrizes > getFunValue() && !u.isBot()) continue;
                                     }
                                 }
                                 // điều kiện trúng thưởng đã thỏa mãn, dừng vòng lặp

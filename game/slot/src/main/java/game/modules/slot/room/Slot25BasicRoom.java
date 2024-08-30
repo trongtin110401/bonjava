@@ -322,8 +322,7 @@ public class Slot25BasicRoom extends SlotRoom {
                                     }
                                     // Tuy không trúng JACKPOT nhưng trúng Line to quá cũng cần sinh lại MATRIX
                                     if (!isGetJackpotNaturally) {
-//                                    if ((totalPrizes - totalBetValue > 0 && totalPrizes > getFunValue()) || totalPrizes >= totalBetValue * 25)
-                                        if (totalPrizes > 0 && totalPrizes > getFunValue())
+                                        if (totalPrizes > 0 && totalPrizes > getFunValue() && !u.isBot())
                                             continue;
                                     }
                                 }
