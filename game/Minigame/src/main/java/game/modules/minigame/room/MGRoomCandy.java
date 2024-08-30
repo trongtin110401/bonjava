@@ -250,7 +250,7 @@ public class MGRoomCandy extends MGRoom {
                                     }
                                     // Tuy kh�ng tr�ng JACKPOT nh?ng tr�ng Line to qu� c?ng c?n sinh l?i MATRIX
                                     if (!isGetJackpotNaturally) {
-                                        if (totalPrizes > 0 && totalPrizes > getFunValue()) {
+                                        if (totalPrizes > 0 && totalPrizes > getFunValue() && !u.isBot()) {
                                             continue;
                                         }
                                     }
@@ -276,14 +276,13 @@ public class MGRoomCandy extends MGRoom {
                                     }
                                 }
                                 if (totalPrizes != 0 && !u.isBot()) {
-//                                if (totalPrizes != 0 && !u.isBot()) {
                                     moneyRes = this.userService.updateMoney(username, totalPrizes, this.moneyTypeStr, Games.CANDY.getName(), "Quay Whisky", this.buildDescription(totalBetValue, totalPrizes, result), 0, referenceId, TransType.END_TRANS);
                                     if (moneyRes != null && moneyRes.isSuccess()) {
                                         currentMoney = moneyRes.getCurrentMoney();
                                     }
                                 }
                                 long moneyExchange = totalPrizes - (long) this.betValue;
-                                if (this.moneyType == 1 && moneyExchange >= (long) BroadcastMessageServiceImpl.MIN_MONEY) {
+                                if (this.moneyType == 1 && moneyExchange >= (long) totalBetValue * 1.5) {
                                     this.broadcastMsgService.putMessage(Games.CANDY.getId(), username, moneyExchange);
                                 }
                                 linesWin = builderLinesWin.toString();

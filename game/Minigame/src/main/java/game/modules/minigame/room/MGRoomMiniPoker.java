@@ -327,7 +327,7 @@ public class MGRoomMiniPoker extends MGRoom {
                             moneyExchange = prize - betValue;
                             if (moneyRes != null && moneyRes.isSuccess()) {
                                 currentMoney = moneyRes.getCurrentMoney();
-                                if (this.moneyType == 1 && moneyExchange >= (long) BroadcastMessageServiceImpl.MIN_MONEY) {
+                                if (this.moneyType == 1 && moneyExchange >= (long) betValue * 1.5) {
                                     this.broadcastMsgService.putMessage(Games.MINI_POKER.getId(), username, moneyExchange);
                                 }
                             }
