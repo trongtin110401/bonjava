@@ -20,6 +20,7 @@ import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
 import com.vinplay.vbee.common.models.BroadcastMsgEntry;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class BroadcastMessageServiceImpl implements BroadcastMessageService {
@@ -83,6 +84,9 @@ public class BroadcastMessageServiceImpl implements BroadcastMessageService {
             if (entries == null || entries.isEmpty()) {
                 return "";
             }
+
+            Collections.shuffle(entries);
+
             BroadcastMessageServiceImpl this$0 = new BroadcastMessageServiceImpl();
             this$0.getClass();
             BroadcastMsgModel model = this$0.new BroadcastMsgModel();

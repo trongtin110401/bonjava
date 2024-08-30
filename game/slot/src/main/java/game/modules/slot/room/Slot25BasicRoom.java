@@ -373,12 +373,16 @@ public class Slot25BasicRoom extends SlotRoom {
                                     moneyRes = this.userService.updateMoney(username, moneyExchange, this.moneyTypeStr, this.gameName, "Quay " + gameName, this.buildDescription(totalBetValue, totalPrizes, result), 0L, referenceId, TransType.END_TRANS);
                                     if (moneyRes != null && moneyRes.isSuccess()) {
                                         currentMoney = moneyRes.getCurrentMoney();
-                                        // thông báo tới toàn hệ thống số tiền thắng của người chơi
-                                        if (this.moneyType == 1 && moneyExchange - this.betValue >= (totalBetValue * 1.5)) {
-                                            this.broadcastMsgService.putMessage(Games.findGameByName(gameName).getId(), username, moneyExchange - (long) this.betValue);
-                                        }
                                     }
                                 }
+
+                                if (moneyRes != null && moneyRes.isSuccess()) {
+                                    // thông báo tới toàn hệ thống số tiền thắng của người chơi
+                                    if (this.moneyType == 1 && moneyExchange - this.betValue >= (totalBetValue * 1.5)) {
+                                        this.broadcastMsgService.putMessage(Games.findGameByName(gameName).getId(), username, moneyExchange - (long) this.betValue);
+                                    }
+                                }
+
                                 String linesWin = builderLinesWin.toString();
                                 String prizesOnLine = builderPrizesOnLine.toString();
                                 playResponse.referenceId = referenceId;

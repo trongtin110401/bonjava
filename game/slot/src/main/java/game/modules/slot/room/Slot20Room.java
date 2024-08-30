@@ -336,10 +336,16 @@ public class Slot20Room extends SlotRoom {
                                         currentMoney = moneyRes.getCurrentMoney();
                                     }
                                 }
-                                if (moneyType == 1 && totalPrizes >= (long) BroadcastMessageServiceImpl.MIN_MONEY){
+
+
+                                if (moneyRes != null && moneyRes.isSuccess()) {
                                     // thông báo tới toàn hệ thống số tiền thắng của người chơi
-                                    this.broadcastMsgService.putMessage(Games.findGameByName(gameName).getId(), username, moneyExchange - totalBetValue);
+                                    if (this.moneyType == 1 && moneyExchange - this.betValue >= (totalBetValue * 1.5)) {
+                                        this.broadcastMsgService.putMessage(Games.findGameByName(gameName).getId(), username, moneyExchange - (long) this.betValue);
+                                    }
                                 }
+
+
                                 linesWin = builderLinesWin.toString();
                                 prizesOnLine = builderPrizesOnLine.toString();
                                 playResponse.referenceId = referenceId;
