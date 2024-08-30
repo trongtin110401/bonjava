@@ -226,7 +226,7 @@ public class LobbyModule extends BaseClientRequestHandler {
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.checkCodePayStatusTask, 1, 1, TimeUnit.SECONDS);
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.checkOutGameTask, 1, 500, TimeUnit.MILLISECONDS);
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.checkCodePayHuyStatusTask, 1, 1, TimeUnit.SECONDS);
-        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.broadcastMessageTask, 1, 70, TimeUnit.SECONDS);
+        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.broadcastMessageTask, 1, 30, TimeUnit.SECONDS);
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this::loginFromOtherDevice, 1, 100, TimeUnit.MILLISECONDS);
         try {
             this.initVP();
