@@ -586,9 +586,9 @@ public class PokerGameServer
                 this.gameMgr.cancelAutoStart();
             } else {
                 this.gameMgr.makeAutoStart(after);
-                if (count > 2) {
-                    this.xuLiDanhCap(count);
-                }
+//                if (count > 2) {
+//                    this.xuLiDanhCap(count);
+//                }
             }
         }
     }
