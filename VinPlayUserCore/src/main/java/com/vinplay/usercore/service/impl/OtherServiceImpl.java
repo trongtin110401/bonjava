@@ -156,6 +156,14 @@ public class OtherServiceImpl implements OtherService {
             }
 
             fund.put("createdTime", document.getString("time_log"));
+            long currentMoney = 0;
+            try {
+                currentMoney = document.getLong("currentMoney");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            fund.put("currentMoney", currentMoney);
+            fund.put("updatedBy", document.getString("updatedBy"));
             transactions.add(fund);
         }
         response.setTransactions(transactions);

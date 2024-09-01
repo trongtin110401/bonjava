@@ -159,6 +159,8 @@ public class UpdateFundProcessor implements BaseProcessor<HttpServletRequest, St
         String fundName = request.getParameter("fundName");
         long amount = Long.parseLong(request.getParameter("amount"));
         String type = request.getParameter("type");
+        long currentMoney =  Long.parseLong(request.getParameter("currentMoney"));
+        String updatedBy = request.getParameter("updatedBy");
         try {
             if (funds.containsKey(fundName)) {
                 long currentFunValue = cacheService.getValueLong(funds.get(fundName), 0);
@@ -179,7 +181,7 @@ public class UpdateFundProcessor implements BaseProcessor<HttpServletRequest, St
                 // save to db
                 service.saveFund(fundName, currentFunValue);
                 // save log
-                saveFunLog(fund2GameName.get(fundName), fundName, amount, type);
+                saveFunLog(fund2GameName.get(fundName), fundName, amount, type, currentMoney,updatedBy);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -187,13 +189,15 @@ public class UpdateFundProcessor implements BaseProcessor<HttpServletRequest, St
         return response.toJson();
     }
 
-    private static void saveFunLog(String gameName, String fundName, long amount, String type) {
+    private static void saveFunLog(String gameName, String fundName, long amount, String type, long currentMoney, String updatedBy) {
         Document document = new Document();
         document.put("game_name", gameName);
         document.put("fund_name", fundName);
         document.put("amount", amount);
         document.put("type", type);
         document.put("time_log", VinPlayUtils.getCurrentDateTime());
+        document.put("currentMoney", currentMoney);
+        document.put("updatedBy", updatedBy);
         OtherService otherService = new OtherServiceImpl();
         otherService.saveTransactionUpdateFund(document);
     }
