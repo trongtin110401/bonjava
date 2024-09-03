@@ -111,6 +111,39 @@ public class SlotCMD {
     public static final short BLC_MINIMIZE = 7013;
     public static final short BLC_RESULT_MINIMIZE = 7014;
 
+    // Las Vegas
+    public static final short PLAY_LASVEGAS= 8001;
+    public static final short UPDATE_POT_LASVEGAS= 8002;
+    public static final short SUBSCRIBE_LASVEGAS= 8003;
+    public static final short UNSUBSCRIBE_LASVEGAS= 8004;
+    public static final short CHANGE_ROOM_LASVEGAS= 8005;
+    public static final short AUTO_PLAY_LASVEGAS= 8006;
+    public static final short STOP_PLAY_LASVEGAS= 8007;
+    public static final short FORCE_STOP_PLAY_LASVEGAS= 8008;
+    public static final short LASVEGAS_INFO = 8009;
+    public static final short BIG_WIN_LASVEGAS= 8010;
+    public static final short LASVEGAS_TOTAL_FREE_SPIN = 8011;
+    public static final short LASVEGAS_FREE_DAILY = 8012;
+    public static final short LASVEGAS_MINIMIZE = 8013;
+    public static final short LASVEGAS_RESULT_MINIMIZE = 8014;
+
+    // halloween
+    public static final short PLAY_HALLOWEEN= 9001;
+    public static final short UPDATE_POT_HALLOWEEN= 9002;
+    public static final short SUBSCRIBE_HALLOWEEN= 9003;
+    public static final short UNSUBSCRIBE_HALLOWEEN= 9004;
+    public static final short CHANGE_ROOM_HALLOWEEN= 9005;
+    public static final short AUTO_PLAY_HALLOWEEN= 9006;
+    public static final short STOP_PLAY_HALLOWEEN= 9007;
+    public static final short FORCE_STOP_PLAY_HALLOWEEN= 9008;
+    public static final short HALLOWEEN_INFO = 9009;
+    public static final short BIG_WIN_HALLOWEEN= 9010;
+    public static final short HALLOWEEN_TOTAL_FREE_SPIN = 9011;
+    public static final short HALLOWEEN_FREE_DAILY = 9012;
+    public static final short HALLOWEEN_MINIMIZE = 9013;
+    public static final short HALLOWEEN_RESULT_MINIMIZE = 9014;
+
+
 
     public static final short PLAY_VQV = 5001;
     public static final short UPDATE_POT_VQV = 5002;
@@ -141,6 +174,7 @@ public class SlotCMD {
     public static final short SPARTAN_FREE_DAILY = 10012;
     public static final short SPARTAN_MINIMIZE = 10013;
     public static final short SPARTAN_RESULT_MINIMIZE = 10014;
+
     // Audition
     public static final short PLAY_AUDITION = 11001;
     public static final short UPDATE_POT_AUDITION = 11002;

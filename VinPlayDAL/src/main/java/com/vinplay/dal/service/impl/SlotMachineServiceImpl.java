@@ -123,6 +123,24 @@ public class SlotMachineServiceImpl implements SlotMachineService {
     }
 
     @Override
+    public void logLasVegas(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) throws IOException, TimeoutException, InterruptedException {
+        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.LAS_VEGAS.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
+        this.publishSlotMsg("queue_benley", msg, 8006);
+    }
+
+    @Override
+    public void logHalloween(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) throws IOException, TimeoutException, InterruptedException {
+        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.HALLOWEEN.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
+        this.publishSlotMsg("queue_benley", msg, 8006);
+    }
+
+    @Override
+    public void logBigCityBoy(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) throws IOException, TimeoutException, InterruptedException {
+        LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.BIG_CITY_BOY.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
+        this.publishSlotMsg("queue_benley", msg, 8006);
+    }
+
+    @Override
     public void logBLC(long referenceId, String username, long betValue, String linesBetting, String linesWin, String prizesOnLine, short result, long totalPrizes, String time, String matrix) throws IOException, TimeoutException, InterruptedException {
         LogSlotMachineMessage msg = this.buildLogSlotMsg(Games.BONG_LAI_CAC.getName(), referenceId, username, betValue, linesBetting, linesWin, prizesOnLine, result, totalPrizes, time, matrix);
         this.publishSlotMsg("queue_benley", msg, 8006);

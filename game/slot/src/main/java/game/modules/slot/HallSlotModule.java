@@ -1,18 +1,4 @@
-/*
- * Decompiled with CFR 0.144.
- *
- * Could not load the following classes:
- *  bitzero.server.BitZeroServer
- *  bitzero.server.entities.User
- *  bitzero.server.extensions.BaseClientRequestHandler
- *  bitzero.server.extensions.data.BaseMsg
- *  bitzero.server.extensions.data.DataCmd
- *  bitzero.server.util.TaskScheduler
- *  bitzero.util.common.business.Debug
- *  com.vinplay.dal.service.impl.CacheServiceImpl
- *  com.vinplay.vbee.common.enums.Games
- *  org.json.simple.JSONObject
- */
+
 package game.modules.slot;
 
 import bitzero.server.BitZeroServer;
@@ -36,21 +22,21 @@ import org.json.simple.JSONObject;
 
 public class HallSlotModule extends BaseClientRequestHandler {
 
-    private Set<User> usersSub = new HashSet<>();
-    private Runnable updateJackpotsTask = new UpdateJackpotsTask();
+    private final Set<User> usersSub = new HashSet<>();
 
     public HallSlotModule() {
-        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.updateJackpotsTask, 10, 4, TimeUnit.SECONDS);
+        Runnable updateJackpotsTask = new UpdateJackpotsTask();
+        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(updateJackpotsTask, 10, 4, TimeUnit.SECONDS);
     }
 
     public void handleClientRequest(User user, DataCmd dataCmd) {
         switch (dataCmd.getId()) {
             case SlotCMD.SUBSCRIBE_HALL: {
-                this.subScribe(user, dataCmd);
+                this.subScribe(user);
                 break;
             }
             case SlotCMD.UNSUBSCRIBE_HALL: {
-                this.unSubscribe(user, dataCmd);
+                this.unSubscribe(user);
             }
         }
     }
@@ -58,39 +44,24 @@ public class HallSlotModule extends BaseClientRequestHandler {
     /*
      * WARNING - Removed try catching itself - possible behaviour change.
      */
-    protected void subScribe(User user, DataCmd dataCmd) {
-        boolean auto;
-        Set<User> set = this.usersSub;
-        synchronized (set) {
+    protected void subScribe(User user) {
+
+        synchronized (this.usersSub) {
             this.usersSub.add(user);
         }
+
         UpdateJackpotsMsg msg = new UpdateJackpotsMsg();
         msg.json = this.buildJsonJackpots();
         this.send(msg, user);
         ListAutoPlayInfoMsg listAutoMsg = new ListAutoPlayInfoMsg();
-        if (user.getProperty("auto_" + Games.KHO_BAU.getName()) != null) {
-            listAutoMsg.autoKhoBau = (Boolean) user.getProperty("auto_" + Games.KHO_BAU.getName());
-        }
-        if (user.getProperty("auto_" + Games.NU_DIEP_VIEN.getName()) != null) {
-            listAutoMsg.autoNDV = (Boolean) user.getProperty("auto_" + Games.NU_DIEP_VIEN.getName());
-        }
-        if (user.getProperty("auto_" + Games.AVENGERS.getName()) != null) {
-            listAutoMsg.autoAvenger = (Boolean) user.getProperty("auto_" + Games.AVENGERS.getName());
-        }
-        if (user.getProperty("auto_" + Games.VUONG_QUOC_VIN.getName()) != null) {
-            listAutoMsg.autoVQV = (Boolean) user.getProperty("auto_" + Games.VUONG_QUOC_VIN.getName());
-        }
         this.send(listAutoMsg, user);
     }
 
     /*
      * WARNING - Removed try catching itself - possible behaviour change.
      */
-    protected void unSubscribe(User user, DataCmd dataCmd) {
-        Set<User> set = this.usersSub;
-        synchronized (set) {
-            this.usersSub.remove(user);
-        }
+    protected synchronized void unSubscribe(User user) {
+        this.usersSub.remove(user);
     }
 
     private String buildJsonJackpots() {
@@ -114,6 +85,9 @@ public class HallSlotModule extends BaseClientRequestHandler {
         JSONObject jsonBLC = this.buildGameSlotInfo(Games.BONG_LAI_CAC.getName());
         json.put(Games.BONG_LAI_CAC.getName(), jsonBLC);
 
+        JSONObject jsonLasVegas = this.buildGameSlotInfo(Games.LAS_VEGAS.getName());
+        json.put(Games.LAS_VEGAS.getName(), jsonLasVegas);
+
         return json.toJSONString();
     }
 
@@ -126,7 +100,7 @@ public class HallSlotModule extends BaseClientRequestHandler {
             jsonGame.put("1000", room101);
             JSONObject room102 = this.buildRoomSlotInfo(gameName, 10000);
             jsonGame.put("10000", room102);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return jsonGame;
     }
@@ -139,7 +113,7 @@ public class HallSlotModule extends BaseClientRequestHandler {
             jsonValue.put("p", pot);
             int x2 = cacheService.getValueInt(SlotRoom.CACHE_JACK_POT_VALUE_SLOT + "_" + room + "_" + gameName + "_x2");
             jsonValue.put("x2", x2);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return jsonValue;
     }
@@ -161,15 +135,14 @@ public class HallSlotModule extends BaseClientRequestHandler {
                 String result = HallSlotModule.this.buildJsonJackpots();
                 UpdateJackpotsMsg msg = new UpdateJackpotsMsg();
                 msg.json = result;
-                Set set = HallSlotModule.this.usersSub;
-                synchronized (set) {
+                synchronized (HallSlotModule.this.usersSub) {
                     for (User user : HallSlotModule.this.usersSub) {
                         if (user == null) continue;
                         HallSlotModule.access$2(HallSlotModule.this, msg, user);
                     }
                 }
             } catch (Exception e) {
-                Debug.trace((Object) ("Update slot exception: " + e.getMessage()));
+                Debug.trace("Update slot exception: " + e.getMessage());
             }
         }
     }
