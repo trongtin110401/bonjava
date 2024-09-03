@@ -2642,31 +2642,31 @@ public class LobbyModule extends BaseClientRequestHandler {
             long pokeGo1000 = cacheService.getValueLong(MGRoom.CACHE_JACK_POT_VALUE_SLOT + "_" + 1000 + "_" + Games.CANDY.getName(), 0);
             long pokeGo10000 = cacheService.getValueLong(MGRoom.CACHE_JACK_POT_VALUE_SLOT + "_" + 10000 + "_" + Games.CANDY.getName(), 0);
 
-            long khoBau100 = cacheService.getValueLong(Games.KHO_BAU.getName() + "_vin_100", 0);
-            long khoBau1000 = cacheService.getValueLong(Games.KHO_BAU.getName() + "_vin_1000", 0);
-            long khoBau10000 = cacheService.getValueLong(Games.KHO_BAU.getName() + "_vin_10000", 0);
+            long khoBau100 = 0;
+            long khoBau1000 = 0;
+            long khoBau10000 = 0;
 
-            long ndv100 = cacheService.getValueLong(Games.NU_DIEP_VIEN.getName() + "_vin_100", 0);
-            long ndv1000 = cacheService.getValueLong(Games.NU_DIEP_VIEN.getName() + "_vin_1000", 0);
-            long ndv10000 = cacheService.getValueLong(Games.NU_DIEP_VIEN.getName() + "_vin_10000", 0);
+            long ndv100 = 0;
+            long ndv1000 = 0;
+            long ndv10000 = 0;
 
-            long avengers100 = cacheService.getValueLong(Games.AVENGERS.getName() + "_vin_100", 0);
-            long avengers1000 = cacheService.getValueLong(Games.AVENGERS.getName() + "_vin_1000", 0);
-            long avengers10000 = cacheService.getValueLong(Games.AVENGERS.getName() + "_vin_10000", 0);
+            long avengers100 = 0;
+            long avengers1000 = 0;
+            long avengers10000 = 0;
 
-            long vqv100 = cacheService.getValueLong(Games.VUONG_QUOC_VIN.getName() + "_vin_100", 0);
-            long vqv1000 = cacheService.getValueLong(Games.VUONG_QUOC_VIN.getName() + "_vin_1000", 0);
-            long vqv10000 = cacheService.getValueLong(Games.VUONG_QUOC_VIN.getName() + "_vin_10000", 0);
+            long vqv100 = 0;
+            long vqv1000 = 0;
+            long vqv10000 = 0;
 
             long fish100 = cacheService.getValueLong(Games.HAM_CA_MAP.getName() + "_vin_100", 0);
             long fish1000 = cacheService.getValueLong(Games.HAM_CA_MAP.getName() + "_vin_1000", 0);
 
             //spartan game
 
-            long spartan100 = cacheService.getValueLong(Games.LADY_NIGHT.getName() + "_vin_100", 0);
-            long spartan1000 = cacheService.getValueLong(Games.LADY_NIGHT.getName() + "_vin_1000", 0);
-            long spartan5000 = cacheService.getValueLong(Games.LADY_NIGHT.getName() + "_vin_5000", 0);
-            long spartan10000 = cacheService.getValueLong(Games.LADY_NIGHT.getName() + "_vin_10000", 0);
+            long spartan100 = 0;
+            long spartan1000 = 0;
+            long spartan5000 = 0;
+            long spartan10000 = 0;
             long baucauto = cacheService.getValueLong("Hu_Bau_cua_to20", 0);
 
             UpdateJackpotMsg msg = new UpdateJackpotMsg();
@@ -2730,11 +2730,9 @@ public class LobbyModule extends BaseClientRequestHandler {
     }
 
     private void gameLoop() {
-
         ++this.countUpdateJackpot;
         if (this.countUpdateJackpot >= (long) ConfigGame.getIntValue("update_jackpot_time")) {
             this.updateJackpot();
-//            this.bauCuaJackpot();
             this.txJackpot();
             this.txMd5Jackpot();
             this.countUpdateJackpot = 0L;
