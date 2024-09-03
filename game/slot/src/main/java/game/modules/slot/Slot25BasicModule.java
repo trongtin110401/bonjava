@@ -29,10 +29,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public abstract class Slot25BasicModule extends SlotModule {
-    private long referenceId = 1L;
-    private final String fullLines = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25";
-    private Slot25CommandCollection commandCollection;
-    private SlotLogListener slotLogListener;
+    
+    protected long referenceId = 1L;
+    protected final String fullLines = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25";
+    protected Slot25CommandCollection commandCollection;
+    protected SlotLogListener slotLogListener;
 
     public Slot25BasicModule(String gameName) {
         this.gameName = gameName;
@@ -128,7 +129,7 @@ public abstract class Slot25BasicModule extends SlotModule {
         }
     }
 
-    private void userDis(User user) {
+    protected void userDis(User user) {
         Slot25BasicRoom room = (Slot25BasicRoom) user.getProperty("MGROOM_" + this.gameName + "_INFO");
         if (room != null) {
             room.quitRoom(user);
@@ -156,7 +157,7 @@ public abstract class Slot25BasicModule extends SlotModule {
         BroadCastUserState.popBroadCast(user.getName());
     }
 
-    private void updateRoomInfo(User user, Slot25BasicRoom room) {
+    protected void updateRoomInfo(User user, Slot25BasicRoom room) {
         Slot25InfoMsg msg = new Slot25InfoMsg(commandCollection.INFO_MESSAGE);
         msg.ngayX2 = "";
         msg.remain = 0;

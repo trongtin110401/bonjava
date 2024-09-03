@@ -44,7 +44,6 @@ public class SlotCMD {
     public static final short FAST_AND_FURIOUS_MINIMIZE = 3013;
     public static final short FAST_AND_FURIOUS_RESULT_MINIMIZE = 3014;
 
-
     // COWBOY
     public static final short PLAY_COWBOY = 4001;
     public static final short UPDATE_POT_COWBOY = 4002;
@@ -144,6 +143,22 @@ public class SlotCMD {
     public static final short HALLOWEEN_RESULT_MINIMIZE = 9014;
 
 
+    // Fast And Furious
+    public static final short PLAY_BIG_CITY_BOY = 11001;
+    public static final short UPDATE_POT_BIG_CITY_BOY = 11002;
+    public static final short SUBSCRIBE_BIG_CITY_BOY = 11003;
+    public static final short UNSUBSCRIBE_BIG_CITY_BOY = 11004;
+    public static final short CHANGE_ROOM_BIG_CITY_BOY = 11005;
+    public static final short AUTO_PLAY_BIG_CITY_BOY = 11006;
+    public static final short STOP_PLAY_BIG_CITY_BOY = 11007;
+    public static final short FORCE_STOP_PLAY_BIG_CITY_BOY = 11008;
+    public static final short BIG_CITY_BOY_INFO = 11009;
+    public static final short BIG_WIN_BIG_CITY_BOY = 11010;
+    public static final short BIG_CITY_BOY_TOTAL_FREE_SPIN = 11011;
+    public static final short BIG_CITY_BOY_FREE_DAILY = 11012;
+    public static final short BIG_CITY_BOY_MINIMIZE = 11013;
+    public static final short BIG_CITY_BOY_RESULT_MINIMIZE = 11014;
+
 
     public static final short PLAY_VQV = 5001;
     public static final short UPDATE_POT_VQV = 5002;
@@ -189,6 +204,7 @@ public class SlotCMD {
     public static final short AUDITION_FREE_DAILY = 11012;
     public static final short AUDITION_MINIMIZE = 11013;
     public static final short AUDITION_RESULT_MINIMIZE = 11014;
+
     // SamTruyen
     public static final short PLAY_SAMTRUYEN = 12001;
     public static final short UPDATE_POT_SAMTRUYEN = 12002;

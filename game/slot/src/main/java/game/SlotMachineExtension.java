@@ -26,6 +26,7 @@ import game.util.GameUtils;
 import java.util.concurrent.TimeUnit;
 
 public class SlotMachineExtension extends BZExtension {
+
     private int countReloadConfig = 0;
     private final Runnable gameLoopTask = new GameLoopTask();
 
@@ -55,6 +56,9 @@ public class SlotMachineExtension extends BZExtension {
         this.addRequestHandler((short) 5000, LadyNightModule.class);
         this.addRequestHandler((short) 6000, SexyDanceModule.class);
         this.addRequestHandler((short) 7000, BongLaiCacModule.class);
+        this.addRequestHandler((short) 8000, LasVegasModule.class);
+        this.addRequestHandler((short) 9000, HalloweenModule.class);
+        this.addRequestHandler((short) 11000, BigCityBoyModule.class);
 
         this.addEventHandler(BZEventType.USER_LOGIN, LoginSuccessHandler.class);
         this.addEventHandler(BZEventType.USER_DISCONNECT, LoginSuccessHandler.class);

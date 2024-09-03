@@ -1,14 +1,9 @@
-/*
- * Decompiled with CFR 0.144.
- */
+
 package game.modules.slot.utils;
 
 import game.modules.slot.entities.slot.Cell;
 import game.modules.slot.entities.slot.Line;
 import game.modules.slot.entities.slot.MiniGameSlotResponse;
-import game.modules.slot.entities.slot.line20extend.Slot20ExtendAward;
-import game.modules.slot.entities.slot.line20extend.Slot20ExtendAwards;
-import game.modules.slot.entities.slot.line20extend.Slot20ExtendItem;
 import game.modules.slot.entities.slot.line25basic.*;
 
 import java.util.*;
@@ -64,27 +59,6 @@ public class Slot25BasicUtil {
 
     public static boolean isSpecialItem(SlotBasic25Item item) {
         return item == SlotBasic25Item.BONUS || item == SlotBasic25Item.SCATTER || item == SlotBasic25Item.JACKPOT || item == SlotBasic25Item.WILD;
-    }
-
-    public static SlotBasic25Item[][] generateMatrixFreeSpin(String itemsWild) {
-        int i;
-        String[] arr = itemsWild.split(",");
-        Slot25BasicFreeSpinItems items = new Slot25BasicFreeSpinItems();
-        SlotBasic25Item[][] matrix = new SlotBasic25Item[3][5];
-        if (arr.length > 0) {
-            for (i = 0; i < arr.length - 1; i += 2) {
-                int r = Integer.parseInt(arr[i]);
-                int c = Integer.parseInt(arr[i + 1]);
-                matrix[r][c] = SlotBasic25Item.WILD;
-            }
-        }
-        for (i = 0; i < 3; ++i) {
-            for (int j = 0; j < 5; ++j) {
-                if (matrix[i][j] != null) continue;
-                matrix[i][j] = items.random(j);
-            }
-        }
-        return matrix;
     }
 
     public static SlotBasic25Item[][] generateMatrixNoHu(String[] lineArr) {
@@ -180,18 +154,6 @@ public class Slot25BasicUtil {
     }
 
     public static void main(String[] args) {
-//        int n = 1000;
-//        long total = 0L;
-//        for (int i = 0; i < 1000; ++i) {
-//            MiniGameSlotResponse res = AvengersUtils.generateMiniGameSlot(1000);
-//            total += res.getTotalPrize();
-//            System.out.println(res.getTotalPrize());
-//        }
-//        System.out.println("Trung binh: " + total / 1000L);
-
-
-//        System.out.println(matrixToString(generateMatrix()));
-
         Map<String, Integer> counter = new HashMap<>();
         AtomicInteger countWild = new AtomicInteger();
         String items = "A,A,WILD,WILD,BONUS";
@@ -302,57 +264,6 @@ public class Slot25BasicUtil {
             }
         });
     }
-
-
-//    public static void calculateMoneyAwardInLine(Line line, List<Slot25BasicAward> awardList) {
-//        // số lương wild xuất hiện trên line
-//        int countWild = 0;
-//        // ánh xạ giữa item và số lượng xuất hiện của nó trên 1 Line
-//        Map<Byte, Integer> itemId2Count = new HashMap<>();
-//        // duyệt qua các cell trên 1 line để tính toán số lần xuất hiện
-//        for (int cellIndex = 0; cellIndex < line.getCells().size(); cellIndex++) {
-//            Cell cell = line.getCell(cellIndex);
-//            SlotBasic25Item avengersItem = (SlotBasic25Item) cell.getItem();
-//            Integer countNumberItem = itemId2Count.get(avengersItem.getId());
-//            if (countNumberItem == null) {
-//                countNumberItem = 1;
-//            } else {
-//                countNumberItem += 1;
-//            }
-//            itemId2Count.put(avengersItem.getId(), countNumberItem);
-//
-//            if (avengersItem == SlotBasic25Item.WILD) {
-//                countWild += 1;
-//            }
-//        }
-//        // WILD có thể thay thế tất cả items (trừ SCATTER, BONUS và chính nó)
-//        if (countWild > 0) {
-//            int finalCountWild = countWild;
-//            itemId2Count.forEach((id, numOfItem) -> {
-//                SlotBasic25Item item = SlotBasic25Item.findItem(id);
-//                if (item != SlotBasic25Item.BONUS
-//                        && item != SlotBasic25Item.SCATTER
-//                        && item != SlotBasic25Item.WILD) {
-//                    itemId2Count.put(id, numOfItem + finalCountWild);
-//                }
-//            });
-//        }
-//        // bắt đầu tính toán giải thưởng đạt được trên 1 line
-//        itemId2Count.forEach((id, countNumItem) -> {
-//            // Chỉ có item có số lần xuất hiện lớn hơn hoặc bằng 2 thì mới tính toán giải thưởng
-//            if (countNumItem >= 2) {
-//                SlotBasic25Item item = SlotBasic25Item.findItem(id);
-//                // Bởi vì BONUS và SCATTER không có giải thưởng tiền trên 1 LINE
-//                // nên ta có thể bỏ qua mà không cần tính toán
-//                if (item != SlotBasic25Item.BONUS && item != SlotBasic25Item.SCATTER) {
-//                    Slot25BasicAward award = Slot25BasicAwards.getAward(item, countNumItem);
-//                    if (award != null) {
-//                        awardList.add(award);
-//                    }
-//                }
-//            }
-//        });
-//    }
 
     public static SlotBasic25Item[][] revertMatrix(SlotBasic25Item[][] m) {
         SlotBasic25Item[][] matrix = new SlotBasic25Item[3][5];
