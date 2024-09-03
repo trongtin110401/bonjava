@@ -10,7 +10,7 @@ public class SlotFeeResponse extends BaseResponseModel {
     private int Cowboy = 0;
     private int FastAndFurious = 0;
     private int LadyNight = 0;
-    private int Caribe = 0;
+    private int BigCityBoy = 0;
     private int BongLaiCac = 0;
     private int Halloween = 0;
     private int LasVegas = 0;
@@ -41,8 +41,8 @@ public class SlotFeeResponse extends BaseResponseModel {
     }
 
     @JsonProperty("Caribe")
-    public int getCaribe() {
-        return Caribe;
+    public int getBigCityBoy() {
+        return BigCityBoy;
     }
 
     @JsonProperty("BongLaiCac")
@@ -83,8 +83,8 @@ public class SlotFeeResponse extends BaseResponseModel {
         LadyNight = ladyNight;
     }
 
-    public void setCaribe(int caribe) {
-        Caribe = caribe;
+    public void setBigCityBoy(int bigCityBoy) {
+        BigCityBoy = bigCityBoy;
     }
 
     public void setBongLaiCac(int bongLaiCac) {

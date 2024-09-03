@@ -65,9 +65,9 @@ public class UpdateFundProcessor implements BaseProcessor<HttpServletRequest, St
         funds.put("LadyNight_vin_1000", "LadyNight_vin_1000");
         funds.put("LadyNight_vin_10000", "LadyNight_vin_10000");
 
-        funds.put("Caribe_vin_100", "Caribe_vin_100");
-        funds.put("Caribe_vin_1000", "Caribe_vin_1000");
-        funds.put("Caribe_vin_10000", "Caribe_vin_10000");
+        funds.put("BigCityBoy_vin_100", "Caribe_vin_100");
+        funds.put("BigCityBoy_vin_1000", "Caribe_vin_1000");
+        funds.put("BigCityBoy_vin_10000", "Caribe_vin_10000");
 
         funds.put("BongLaiCac_vin_100", "BongLaiCac_vin_100");
         funds.put("BongLaiCac_vin_1000", "BongLaiCac_vin_1000");
@@ -125,9 +125,9 @@ public class UpdateFundProcessor implements BaseProcessor<HttpServletRequest, St
         fund2GameName.put("LadyNight_vin_1000", Games.LADY_NIGHT.getName());
         fund2GameName.put("LadyNight_vin_10000", Games.LADY_NIGHT.getName());
 
-        fund2GameName.put("Caribe_vin_100", Games.CARIBE.getName());
-        fund2GameName.put("Caribe_vin_1000", Games.CARIBE.getName());
-        fund2GameName.put("Caribe_vin_10000", Games.CARIBE.getName());
+        fund2GameName.put("BigCityBoy_vin_100", Games.BIG_CITY_BOY.getName());
+        fund2GameName.put("BigCityBoy_vin_1000", Games.BIG_CITY_BOY.getName());
+        fund2GameName.put("BigCityBoy_vin_10000", Games.BIG_CITY_BOY.getName());
 
         fund2GameName.put("BongLaiCac_vin_1000", Games.BONG_LAI_CAC.getName());
         fund2GameName.put("BongLaiCac_vin_10000", Games.BONG_LAI_CAC.getName());

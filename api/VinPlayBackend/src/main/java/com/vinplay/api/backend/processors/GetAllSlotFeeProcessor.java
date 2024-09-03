@@ -20,7 +20,7 @@ public class GetAllSlotFeeProcessor implements BaseProcessor<HttpServletRequest,
         setGameValue(response, cacheService, Games.COWBOY);
         setGameValue(response, cacheService, Games.FAST_AND_FURIOUS);
         setGameValue(response, cacheService, Games.LADY_NIGHT);
-        setGameValue(response, cacheService, Games.CARIBE);
+        setGameValue(response, cacheService, Games.BIG_CITY_BOY);
         setGameValue(response, cacheService, Games.BONG_LAI_CAC);
         setGameValue(response, cacheService, Games.HALLOWEEN);
         setGameValue(response, cacheService, Games.LAS_VEGAS);
@@ -52,8 +52,8 @@ public class GetAllSlotFeeProcessor implements BaseProcessor<HttpServletRequest,
             case LADY_NIGHT:
                 response.setLadyNight(value);
                 break;
-            case CARIBE:
-                response.setCaribe(value);
+            case BIG_CITY_BOY:
+                response.setBigCityBoy(value);
                 break;
             case BONG_LAI_CAC:
                 response.setBongLaiCac(value);

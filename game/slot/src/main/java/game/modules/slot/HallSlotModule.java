@@ -88,11 +88,11 @@ public class HallSlotModule extends BaseClientRequestHandler {
         JSONObject jsonLasVegas = this.buildGameSlotInfo(Games.LAS_VEGAS.getName());
         json.put(Games.LAS_VEGAS.getName(), jsonLasVegas);
 
-        JSONObject jsonLasVegas = this.buildGameSlotInfo(Games.HALLOWEEN.getName());
-        json.put(Games.LAS_VEGAS.getName(), jsonLasVegas);
+        JSONObject jsonHalloween = this.buildGameSlotInfo(Games.HALLOWEEN.getName());
+        json.put(Games.HALLOWEEN.getName(), jsonHalloween);
 
-        JSONObject jsonLasVegas = this.buildGameSlotInfo(Games.BIG_CITY_BOY.getName());
-        json.put(Games.LAS_VEGAS.getName(), jsonLasVegas);
+        JSONObject jsonBigCityBoy = this.buildGameSlotInfo(Games.BIG_CITY_BOY.getName());
+        json.put(Games.BIG_CITY_BOY.getName(), jsonBigCityBoy);
 
         return json.toJSONString();
     }
