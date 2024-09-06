@@ -30,6 +30,8 @@ public class CodeTanThu {
                 check = false;
             }
         }
+        rs.close();
+        stm.close();
 
         return check;
     }

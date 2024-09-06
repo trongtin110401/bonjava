@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.HashMap;
 
 public class GetConfigureHotUpdate implements BaseProcessor<HttpServletRequest, String> {
@@ -18,7 +19,7 @@ public class GetConfigureHotUpdate implements BaseProcessor<HttpServletRequest, 
         HttpServletRequest request = (HttpServletRequest) param.get();
         String t = request.getParameter("t");
         String k = request.getParameter("k");
-        logger.error(t+" | " + k);
+        logger.error(t + " | " + k);
         if (k.equalsIgnoreCase("1asdfasdfasdf2ef2efsfd")) {
             try {
                 logger.error("conecct mysql");
@@ -29,7 +30,8 @@ public class GetConfigureHotUpdate implements BaseProcessor<HttpServletRequest, 
                 ResultSet rs = stm.executeQuery();
                 if (rs.next()) {
                     String code = rs.getString("value");
-                    logger.error("có code"+ code);
+                    logger.error("có code" + code);
+                    closeConnection(conn, rs, stm);
                     return code;
                 }
                 logger.error("khong co");
@@ -39,5 +41,23 @@ public class GetConfigureHotUpdate implements BaseProcessor<HttpServletRequest, 
             }
         }
         return "{\"code\":1,\"description\":\"Da co loi xay ra\"}";
+    }
+
+    private void closeConnection(Connection connection, ResultSet resultSet, Statement statement) {
+        try {
+            if (connection != null) {
+                connection.close();
+            }
+
+            if (resultSet != null) {
+                resultSet.close();
+            }
+
+            if (statement != null) {
+                statement.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
