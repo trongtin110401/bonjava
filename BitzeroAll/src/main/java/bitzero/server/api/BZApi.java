@@ -171,7 +171,7 @@ public class BZApi
         if (room != null) {
             zone.checkAndRemove(room);
         }
-        this.log.info("User disconnected: " + user);
+//        this.log.info("User disconnected: " + user);
     }
 
     private void removeUserServerLoginAddress(int userId) {
@@ -254,8 +254,7 @@ public class BZApi
             user.setConnected(true);
             sender.setLoggedIn(true);
             this.globalUserManager.addUser(user);
-            this.log.info("Login in, " + user.getName() + ", " + user);
-            System.out.println("Login in, " + user.getName() + ", " + user);
+//            this.log.info("Login in, " + user.getName() + ", " + user);
             user.updateLastRequestTime();
             HashMap<BZEventParam, User> evtParams = new HashMap<BZEventParam, User>();
             evtParams.put(BZEventParam.USER, user);

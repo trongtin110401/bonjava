@@ -173,7 +173,7 @@ implements IBZApi {
         if (room != null) {
             zone.checkAndRemove(room);
         }
-        this.log.info("User disconnected: " + user);
+//        this.log.info("User disconnected: " + user);
     }
 
     private void removeUserServerLoginAddress(int userId) {
@@ -258,7 +258,7 @@ implements IBZApi {
             user.setConnected(true);
             sender.setLoggedIn(true);
             this.globalUserManager.addUser(user);
-            this.log.info("Login in, " + user.getName() + ", " + user.toString());
+//            this.log.info("Login in, " + user.getName() + ", " + user.toString());
             user.updateLastRequestTime();
             HashMap<BZEventParam, User> evtParams = new HashMap<BZEventParam, User>();
             evtParams.put(BZEventParam.USER, user);
