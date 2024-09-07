@@ -1791,7 +1791,7 @@ namespace BanCa.WebService
                 string sqlfile = parameters.sqlfile;
                 int type = parameters.type;
                 var add = this.Request.UserHostAddress;
-                if ("localhost".Equals(add) || "10.40.112.3".Equals(add) || "::1".Equals(add))
+                if ("localhost".Equals(add) || "10.40.112.5".Equals(add) || "::1".Equals(add))
                 {
                     try
                     {
