@@ -247,20 +247,18 @@ public class UserDaoImpl implements UserDao {
         UserModel user = null;
 
         String sql = "SELECT * FROM users WHERE user_name=?";
-
         try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
-             PreparedStatement stm = conn.prepareStatement(sql);
-             ResultSet rs = stm.executeQuery()) {
-
+             PreparedStatement stm = conn.prepareStatement(sql)) {
             stm.setString(1, username);
-
-            if (rs.next()) {
-                user = UserUtil.parseResultSetToUserModel(rs);
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    user = UserUtil.parseResultSetToUserModel(rs);
+                }
             }
         }
-
         return user;
     }
+
 
 
     @Override
