@@ -7,7 +7,7 @@
       <string>100.101.102.103</string>
     </addressBlackList>
     <addressWhiteList>
-      <string>10.40.112.3</string>
+      <string>10.40.112.5</string>
     </addressWhiteList>
     <maxConnectionsPerAddress>20</maxConnectionsPerAddress>
   </ipFilter>
@@ -65,7 +65,7 @@
   </admin>
   <webSocket>
     <isActive>true</isActive>
-    <bindAddress>10.40.112.3</bindAddress>
+    <bindAddress>0.0.0.0</bindAddress>
     <tcpPort>2344</tcpPort>
     <sslPort>2345</sslPort>
     <validDomains/>

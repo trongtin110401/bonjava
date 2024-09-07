@@ -36,7 +36,7 @@
   <!-- UNCOMMENT TO ACTIVATE
   <context-param>
     <param-name>org.mortbay.jetty.servlet.SessionDomain</param-name>
-    <param-value>10.40.112.3</param-value>
+    <param-value>10.40.112.5</param-value>
   </context-param>
 
   <context-param>
