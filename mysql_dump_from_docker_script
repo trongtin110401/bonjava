@@ -3,4 +3,4 @@ GRANT ALL ON *.* TO 'vakagame'@'%' IDENTIFIED BY 'AVeAQbajvRtXQ9Twk7AjMRgy73Mq';
 FLUSH PRIVILEGES;
 
 - execute command to dump
-docker exec bdbaec1c601e /usr/bin/mysqldump --default-character-set=utf8 --single-transaction --routines --events --databases -u root --password=AVeAQbajvRtXQ9Twk7AjMRgy73Mq@CD6S --databases cgame vinplay vinplay_admin vinplay_gamebai vinplay_minigame > 20240519.sql
+docker exec bdbaec1c601e /usr/bin/mysqldump --default-character-set=utf8 --single-transaction --routines --events --databases -u root --password=0Db20H9CP6T4jRNBB70bVTrf5o7IG9 --databases cgame vinplay vinplay_admin vinplay_gamebai vinplay_minigame > 20240519.sql
