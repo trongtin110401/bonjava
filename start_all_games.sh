@@ -6,7 +6,7 @@ chmod -R 700 *
 sysctl -w vm.max_map_count=262144
 
 # global environment
-export ELASTICSEARCH_URL="http://localhost:9200"
+export ELASTICSEARCH_URL="http://10.40.112.5:9200"
 export TZ="Asia/Ho_Chi_Minh"
 
 # make log server
