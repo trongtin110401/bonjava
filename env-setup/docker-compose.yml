@@ -20,7 +20,7 @@ services:
     container_name: game-mongo
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: Linh742@ASdfH
+      MONGO_INITDB_ROOT_PASSWORD: MgqzAtRymcxyNoFnkwX7sGUlmj0YQI
       MONGO_INITDB_DATABASE: win123club
     ports:
       - '27017-27019:27017-27019'
@@ -55,7 +55,7 @@ services:
     container_name: game-rabbitmq
     environment:
       - "RABBITMQ_DEFAULT_USER=demo"
-      - "RABBITMQ_DEFAULT_PASS=Linh742@ASdfH"
+      - "RABBITMQ_DEFAULT_PASS=MgqzAtRymcxyNoFnkwX7sGUlmj0YQI"
     ports:
         - '5672:5672'
         - '15672:15672'

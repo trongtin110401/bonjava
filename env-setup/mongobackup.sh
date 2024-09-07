@@ -25,7 +25,7 @@ MONGO_PORT='27017'
 
 AUTH_ENABLED=1
 MONGO_USER='admin'
-MONGO_PASSWD='Linh742@ASdfH'
+MONGO_PASSWD='MgqzAtRymcxyNoFnkwX7sGUlmj0YQI'
 
 
 # Set DATABASE_NAMES to "ALL" to backup all databases.
