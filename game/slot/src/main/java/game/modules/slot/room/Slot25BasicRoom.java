@@ -53,7 +53,7 @@ import java.util.logging.Logger;
 public class Slot25BasicRoom extends SlotRoom {
     protected final Runnable gameLoopTask = new GameLoopTask();
     protected final Runnable checkResetPotTask = new CheckResetPot();
-    protected final Slot25BasicLines lines = new Slot25BasicLines();
+    protected Slot25BasicLines lines = new Slot25BasicLines();
     protected long lastTimeUpdatePotToRoom = 0L;
     protected long lastTimeUpdateFundToRoom = 0L;
     protected final ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
@@ -622,5 +622,6 @@ public class Slot25BasicRoom extends SlotRoom {
     protected void afterPlay(Slot25ResultMsg msg) {
         // do nothing by default
     }
+
 }
 

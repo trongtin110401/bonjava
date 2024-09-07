@@ -6,8 +6,10 @@ import game.modules.slot.entities.slot.Line;
 import game.modules.slot.entities.slot.MiniGameSlotResponse;
 import game.modules.slot.entities.slot.line25basic.*;
 
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 public class Slot25BasicUtil {
 
@@ -153,35 +155,35 @@ public class Slot25BasicUtil {
         return response;
     }
 
-    public static void main(String[] args) {
-        Map<String, Integer> counter = new HashMap<>();
-        AtomicInteger countWild = new AtomicInteger();
-        String items = "A,A,WILD,WILD,BONUS";
-        Arrays.stream(items.split(","))
-                .forEach(item -> {
-                    Integer count = counter.get(item);
-                    if (count == null) {
-                        count = 1;
-                    } else {
-                        count += 1;
-                    }
-                    counter.put(item, count);
-
-                    // count wild
-                    if (item.equals("WILD")) {
-                        countWild.addAndGet(1);
-                    }
-                });
-        // if wild appears, increase item
-        counter.forEach((item, count) -> {
-            if (!item.equals("BONUS") && !item.equals("SCATTER") && !item.equals("WILD")) {
-                int newCount = counter.get(item) + countWild.get();
-                counter.put(item, newCount);
-            }
-        });
-
-        System.out.println(counter.toString());
-    }
+//    public static void main(String[] args) {
+//        Map<String, Integer> counter = new HashMap<>();
+//        AtomicInteger countWild = new AtomicInteger();
+//        String items = "A,A,WILD,WILD,BONUS";
+//        Arrays.stream(items.split(","))
+//                .forEach(item -> {
+//                    Integer count = counter.get(item);
+//                    if (count == null) {
+//                        count = 1;
+//                    } else {
+//                        count += 1;
+//                    }
+//                    counter.put(item, count);
+//
+//                    // count wild
+//                    if (item.equals("WILD")) {
+//                        countWild.addAndGet(1);
+//                    }
+//                });
+//        // if wild appears, increase item
+//        counter.forEach((item, count) -> {
+//            if (!item.equals("BONUS") && !item.equals("SCATTER") && !item.equals("WILD")) {
+//                int newCount = counter.get(item) + countWild.get();
+//                counter.put(item, newCount);
+//            }
+//        });
+//
+//        System.out.println(counter.toString());
+//    }
 
     public static void calculateAward(Line line, List<Slot25BasicAward> awardList) {
         int countNumItems = 0;

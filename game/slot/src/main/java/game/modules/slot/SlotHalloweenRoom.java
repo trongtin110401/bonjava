@@ -16,6 +16,7 @@ import game.modules.slot.entities.slot.MiniGameSlotResponse;
 import game.modules.slot.entities.slot.line25basic.SlotBasic25Item;
 import game.modules.slot.entities.slot.line25basic.SlotHalloweenAward;
 import game.modules.slot.entities.slot.line25basic.SlotHalloweenAwards;
+import game.modules.slot.entities.slot.line25basic.SlotHalloweenLines;
 import game.modules.slot.listener.SlotLogListener;
 import game.modules.slot.room.Slot25BasicRoom;
 import game.modules.slot.utils.SlotHalloweenUtil;
@@ -29,6 +30,7 @@ public class SlotHalloweenRoom extends Slot25BasicRoom {
 
     public SlotHalloweenRoom(SlotModule module, Slot25CommandCollection commandCollection, SlotLogListener logListener, String gameName, byte id, String room, short moneyType, long pot, long fund, int betValue, long initJackpotValue) {
         super(module, commandCollection, logListener, gameName, id, room, moneyType, pot, fund, betValue, initJackpotValue);
+        this.lines = new SlotHalloweenLines();
     }
 
     public Slot25ResultMsg playNormal(String username, String linesStr, long referenceId) {
