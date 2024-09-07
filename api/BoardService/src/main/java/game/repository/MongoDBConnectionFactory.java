@@ -21,7 +21,7 @@ public class MongoDBConnectionFactory {
     private static String MONGODB_DATABASE = "win123club";
     private static String MONGODB_AUTH_DATABASE = "admin";
     private static String MONGODB_USERNAME = "admin";
-    private static String MONGODB_PASSWORD = "Linh742@ASdfH";
+    private static String MONGODB_PASSWORD = "MgqzAtRymcxyNoFnkwX7sGUlmj0YQI";
     private static int MONGODB_PORT = 27017;
     private static MongoClient mongoClient;
 

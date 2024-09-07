@@ -28,7 +28,7 @@
 
     <group>
         <name>dev</name>
-        <password>Linh742@ASdfH</password>
+        <password>MgqzAtRymcxyNoFnkwX7sGUlmj0YQI</password>
     </group>
     <properties>
         <property name="hazelcast.tcp.join.port.try.count">3</property>

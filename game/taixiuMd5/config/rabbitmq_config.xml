@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <rabbitmq>
     <user>demo</user>
-    <pass>Linh742@ASdfH</pass>
+    <pass>MgqzAtRymcxyNoFnkwX7sGUlmj0YQI</pass>
     <server_addr>10.40.112.3</server_addr>
     <port>5672</port>
     <reconnect_delay>5000</reconnect_delay>

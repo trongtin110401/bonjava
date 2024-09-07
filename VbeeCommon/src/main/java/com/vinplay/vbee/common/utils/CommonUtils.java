@@ -99,7 +99,7 @@ public class CommonUtils {
     public static void clearHazelcastMap(String name, List<String> objects) {
         ArrayList<String> address = new ArrayList<String>();
         address.add("45.76.178.154:5701");
-        HazelcastClientFactory.init(address, "dev", "Linh742@ASdfH");
+        HazelcastClientFactory.init(address, "dev", "MgqzAtRymcxyNoFnkwX7sGUlmj0YQI");
         HazelcastInstance instance = HazelcastClientFactory.getInstance();
         IMap map = instance.getMap(name);
         for (String object : objects) {
