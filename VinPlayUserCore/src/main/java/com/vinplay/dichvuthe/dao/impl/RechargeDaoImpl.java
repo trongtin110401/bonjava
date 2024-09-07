@@ -1559,7 +1559,6 @@ public class RechargeDaoImpl implements RechargeDao {
         } catch (Exception e) {
             e.printStackTrace();
             RechargeDaoImpl.logger.error(e);
-            System.out.println("======================> " + ExceptionUtils.getStackTrace(e));
             return null;
         }
     }

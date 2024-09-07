@@ -556,32 +556,18 @@ public class BaCayGameServer
     }
 
     public synchronized void onGameUserEnter(User user) {
-
-        if (user.getName().equalsIgnoreCase("testcac69") || user.getName().equalsIgnoreCase("sohot3213")) {
-            System.out.println("===============> On user enter 1");
-        }
-
         try {
             int i;
             GamePlayer gp;
             if (user == null) {
-                if (user.getName().equalsIgnoreCase("testcac69") || user.getName().equalsIgnoreCase("sohot3213")) {
-                    System.out.println("===============> On user enter 2");
-                }
                 return;
             }
             PlayerInfo pInfo = PlayerInfo.getInfo((User) user);
             if (pInfo == null) {
-                if (user.getName().equalsIgnoreCase("testcac69") || user.getName().equalsIgnoreCase("sohot3213")) {
-                    System.out.println("===============> On user enter 3");
-                }
                 return;
             }
             GameMoneyInfo moneyInfo = (GameMoneyInfo) user.getProperty((Object) "GAME_MONEY_INFO");
             if (moneyInfo == null) {
-                if (user.getName().equalsIgnoreCase("testcac69") || user.getName().equalsIgnoreCase("sohot3213")) {
-                    System.out.println("===============> On user enter 4");
-                }
                 return;
             }
             if (this.room.setting.maxUserPerRoom == 8) {
@@ -599,14 +585,8 @@ public class BaCayGameServer
                     gp.reqQuitRoom = false;
                     user.setProperty("GAME_MONEY_INFO", gp.gameMoneyInfo);
                     if (this.serverState == 1) {
-                        if (user.getName().equalsIgnoreCase("testcac69") || user.getName().equalsIgnoreCase("sohot3213")) {
-                            System.out.println("===============> On user enter 5");
-                        }
                         this.sendGameInfo(gp.chair);
                     } else {
-                        if (user.getName().equalsIgnoreCase("testcac69") || user.getName().equalsIgnoreCase("sohot3213")) {
-                            System.out.println("===============> On user enter 6");
-                        }
                         this.notifyUserEnter(gp);
                     }
                     return;
@@ -635,17 +615,8 @@ public class BaCayGameServer
                 this.notifyUserEnter(gp);
                 break;
             }
-            if (user.getName().equalsIgnoreCase("testcac69") || user.getName().equalsIgnoreCase("sohot3213")) {
-                System.out.println("===============> On user enter 7");
-            }
             this.kiemTraTuDongBatDau(5);
-            if (user.getName().equalsIgnoreCase("testcac69") || user.getName().equalsIgnoreCase("sohot3213")) {
-                System.out.println("===============> On user enter 8");
-            }
         } catch (Exception ex) {
-            if (user.getName().equalsIgnoreCase("testcac69") || user.getName().equalsIgnoreCase("sohot3213")) {
-                System.out.println("===============> On user enter 9F");
-            }
             ex.printStackTrace();
             throw new RuntimeException("BaCayGameServer.onGameUserEnter error", ex);
         }

@@ -110,7 +110,6 @@ public class BaseGameExtension
         }
         LoginCmd cmd = new LoginCmd(dataCmd);
         UserInfo info = GameUtils.dev_mod ? GameUtils.getUserInfoDev(cmd.nickname, cmd.sessionKey) : GameUtils.getUserInfo(cmd.nickname, cmd.sessionKey);
-        System.out.println("==============> User info " + new Gson().toJson(info));
         if (info != null) {
             System.out.println("===> CASE 1");
             if (info.getUsername() == null || info.getUsername().length() == 0) {
