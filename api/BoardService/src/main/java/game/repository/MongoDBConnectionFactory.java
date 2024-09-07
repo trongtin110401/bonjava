@@ -13,11 +13,13 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoDatabase;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Arrays;
 
 public class MongoDBConnectionFactory {
-    private static String MONGODB_HOST = "45.76.178.154";
+
+    private static String MONGODB_HOST = "10.40.112.5";
     private static String MONGODB_DATABASE = "win123club";
     private static String MONGODB_AUTH_DATABASE = "admin";
     private static String MONGODB_USERNAME = "admin";

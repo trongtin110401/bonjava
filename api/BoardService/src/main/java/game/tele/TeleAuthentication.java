@@ -183,7 +183,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
 
 
     private void saveUserInfo(String nickname, String chatId) {
-        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoDatabase db = MongoDBConnectionFactory.`getDB();
         MongoCollection<Document> collection = db.getCollection("user_tele");
         Document document = new Document();
         document.put("nickname", nickname);
