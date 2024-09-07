@@ -82,6 +82,11 @@ public class MsgUtils {
 
     public static void alertServer(String content, boolean isMaintain, boolean alertAdmin) {
         try {
+            StackTraceElement[] elements = Thread.currentThread().getStackTrace();
+            for (int i = 1; i < elements.length; i++) {
+                StackTraceElement s = elements[i];
+                System.out.println("\tat " + s.getClassName() + "." + s.getMethodName() + "(" + s.getFileName() + ":" + s.getLineNumber() + ")");
+            }
             Debug.trace(VinPlayUtils.getCurrentDateTime() + " ===ERROR=== " + content);
             if (isMaintain) {
                 Debug.trace(VinPlayUtils.getCurrentDateTime() + " ===MAINTAIN===" + content);

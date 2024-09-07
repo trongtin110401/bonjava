@@ -111,16 +111,12 @@ public class BaseGameExtension
         LoginCmd cmd = new LoginCmd(dataCmd);
         UserInfo info = GameUtils.dev_mod ? GameUtils.getUserInfoDev(cmd.nickname, cmd.sessionKey) : GameUtils.getUserInfo(cmd.nickname, cmd.sessionKey);
         if (info != null) {
-            System.out.println("===> CASE 1");
             if (info.getUsername() == null || info.getUsername().length() == 0) {
-                System.out.println("===> CASE 1.1");
                 ExtensionUtility.instance().sendLoginResponse(iSession, 2);
             } else {
-                System.out.println("===> CASE 1.2");
                 User user = ExtensionUtility.instance().canLogin(info, "", iSession);
             }
         } else {
-            System.out.println("===> CASE 2");
             ExtensionUtility.instance().sendLoginResponse(iSession, 1);
         }
     }
