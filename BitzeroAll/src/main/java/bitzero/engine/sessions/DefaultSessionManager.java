@@ -200,7 +200,7 @@ implements ISessionManager {
         if (this.config.isClustered()) {
             this.sessionsById.remove(id);
         }
-        this.logger.info("Session removed: " + session);
+//        this.logger.info("Session removed: " + session);
     }
 
     @Override

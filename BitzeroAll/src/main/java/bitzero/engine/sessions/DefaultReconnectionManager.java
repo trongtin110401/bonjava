@@ -146,7 +146,7 @@ IReconnectionManager {
 
     private void removeSession(ISession session) {
         this.frozenSessionsByHash.remove(session.getHashId());
-        this.logger.debug("Session removed from ReconnectionManager: " + session);
+//        this.logger.debug("Session removed from ReconnectionManager: " + session);
     }
 
     private void dispatchSessionReconnectionSuccessEvent(ISession session) {
