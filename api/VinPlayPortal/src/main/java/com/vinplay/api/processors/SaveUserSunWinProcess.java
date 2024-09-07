@@ -305,21 +305,22 @@ public class SaveUserSunWinProcess implements BaseProcessor<HttpServletRequest, 
         }
     }
 
-    public void UpdateSDTOTP(String nickname, String phone) throws Exception{
-        Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
-        ArrayList<UserOTP> list_otp = new ArrayList<>();
+    public void UpdateSDTOTP(String nickname, String phone) throws Exception {
         String sql = "UPDATE vinplay.users SET mobile=? WHERE nick_name=?";
-        PreparedStatement stm = conn.prepareStatement(sql);
-        stm.setString(1, phone);
-        stm.setString(2, nickname);
-        stm.executeUpdate();
 
-        stm.close();
-        if (conn != null) {
-            conn.close();
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
+            stm.setString(1, phone);
+            stm.setString(2, nickname);
+            stm.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace(); // Ideally, use a logging framework for production code
+            throw e; // Rethrow the exception to maintain the method contract
         }
-
     }
+
 
 
 }

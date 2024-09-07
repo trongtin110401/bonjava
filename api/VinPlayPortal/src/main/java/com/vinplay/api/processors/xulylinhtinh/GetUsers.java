@@ -10,31 +10,28 @@ import java.util.ArrayList;
 
 public class GetUsers {
 
-    public ArrayList<String> getNicknameOK(int num){
-        try {
-            ArrayList<String> list_nickname = new ArrayList<>();
-        Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
-        String sql = "SELECT * FROM users WHERE `is_bot` = 0 AND `nick_name` IS NOT NULL LIMIT ?,300;";
-        PreparedStatement stm = conn.prepareStatement("SELECT * FROM users WHERE `is_bot` = 0 AND `nick_name` IS NOT NULL LIMIT ?,300;");
+    public ArrayList<String> getNicknameOK(int num) {
+        ArrayList<String> list_nickname = new ArrayList<>();
+        String sql = "SELECT nick_name FROM users WHERE is_bot = 0 AND nick_name IS NOT NULL LIMIT ?";
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
             stm.setInt(1, num);
-            ResultSet rs = stm.executeQuery();
-            while (rs.next()) {
+
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
                     String nickname = rs.getString("nick_name");
                     list_nickname.add(nickname);
+                }
             }
-            rs.close();
-            stm.close();
-            if (conn != null) {
-                conn.close();
-            }
-            return list_nickname;
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
 
+        return list_nickname;
     }
+
 
 
 }

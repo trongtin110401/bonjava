@@ -246,11 +246,12 @@ public class SaveUserV8Process implements BaseProcessor<HttpServletRequest, Stri
 
     }
 
-    private void InsertActive(UserOTP uotp) throws Exception{
-        Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
-        try {
-            String sql = "INSERT INTO vinplay.active (nickname,username,phone,otp,active,creat_time,active_time,turn,timelog) VALUES(?,?,?,?,?,?,?,?,?)";
-            PreparedStatement stm = conn.prepareStatement(sql);
+    private void InsertActive(UserOTP uotp) throws Exception {
+        String sql = "INSERT INTO vinplay.active (nickname, username, phone, otp, active, creat_time, active_time, turn, timelog) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
             stm.setString(1, uotp.getNickname());
             stm.setString(2, uotp.getUsername());
             stm.setString(3, uotp.getPhone());
@@ -259,33 +260,32 @@ public class SaveUserV8Process implements BaseProcessor<HttpServletRequest, Stri
             stm.setLong(6, uotp.getCreat_time());
             stm.setLong(7, uotp.getActive_time());
             stm.setInt(8, uotp.getTurn());
-            stm.setString(9,uotp.getTimelog());
-            int rs = stm.executeUpdate();
-            stm.close();
-            if (conn != null) {
-                conn.close();
-            }
-        }catch (Exception e) {
-            throw e;
+            stm.setString(9, uotp.getTimelog());
+
+            stm.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace(); // Ideally, use a logging framework for production code
+            throw e; // Rethrow the exception to indicate failure
         }
     }
 
-    public void UpdateSDTOTP(String nickname, String phone) throws Exception{
-        Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
-        ArrayList<UserOTP> list_otp = new ArrayList<>();
+
+    public void UpdateSDTOTP(String nickname, String phone) throws Exception {
         String sql = "UPDATE vinplay.users SET mobile=? WHERE nick_name=?";
-        PreparedStatement stm = conn.prepareStatement(sql);
-        stm.setString(1, phone);
-        stm.setString(2, nickname);
-        stm.executeUpdate();
 
-        stm.close();
-        if (conn != null) {
-            conn.close();
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
+            stm.setString(1, phone);
+            stm.setString(2, nickname);
+            stm.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace(); // Ideally, use a logging framework for production code
+            throw e; // Rethrow the exception to indicate failure
         }
-
     }
-
 
 
 }

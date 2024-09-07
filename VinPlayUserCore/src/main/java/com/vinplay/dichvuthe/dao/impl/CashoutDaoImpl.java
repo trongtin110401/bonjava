@@ -58,36 +58,57 @@ public class CashoutDaoImpl
     @Override
     public long getSystemCashout() throws SQLException {
         long money = 0L;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            String sql = "SELECT money FROM system_cashout WHERE date=?";
-            PreparedStatement stm = conn.prepareStatement("SELECT money FROM system_cashout WHERE date=?");
+
+        String sql = "SELECT money FROM system_cashout WHERE date = ?";
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
             stm.setString(1, VinPlayUtils.getCurrentDate());
-            ResultSet rs = stm.executeQuery();
-            if (rs.next()) {
-                money = rs.getLong("money");
+
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    money = rs.getLong("money");
+                }
             }
-            rs.close();
-            stm.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace(); // Consider using a logging framework
+            throw e; // Re-throw the exception to be handled by the calling code
         }
+
         return money;
     }
+
 
     @Override
     public boolean updateSystemCashout(long money) throws SQLException {
         boolean res = false;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            String sql = "INSERT INTO system_cashout(date, money, update_time) VALUES(?, ?, now()) ON DUPLICATE KEY UPDATE money=money+?, update_time=now()";
-            PreparedStatement stm = conn.prepareStatement("INSERT INTO system_cashout(date, money, update_time) VALUES(?, ?, now()) ON DUPLICATE KEY UPDATE money=money+?, update_time=now()");
+
+        String sql = "INSERT INTO system_cashout(date, money, update_time) " +
+                "VALUES(?, ?, now()) " +
+                "ON DUPLICATE KEY UPDATE money = money + ?, update_time = now()";
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
             stm.setString(1, VinPlayUtils.getCurrentDate());
             stm.setLong(2, money);
             stm.setLong(3, money);
-            if (stm.executeUpdate() == 1) {
+
+            int rowsAffected = stm.executeUpdate();
+            if (rowsAffected == 1) {
                 res = true;
             }
-            stm.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace(); // Consider logging the exception instead
+            throw e; // Re-throw exception to allow calling code to handle it
         }
+
         return res;
     }
+
 
     @Override
     public void logCashoutByBank(CashoutByBankMessage message) throws Exception {
@@ -113,22 +134,31 @@ public class CashoutDaoImpl
     @Override
     public BankAccountInfo getBankAccountInfo(String nickname) throws SQLException {
         BankAccountInfo info = null;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_admin");) {
-            String sql = "SELECT * FROM useragent WHERE nickname=? AND parentid = -1 AND active = 1";
-            PreparedStatement stm = conn.prepareStatement("SELECT * FROM useragent WHERE nickname=? AND parentid = -1 AND active = 1");
+
+        String sql = "SELECT * FROM useragent WHERE nickname=? AND parentid = -1 AND active = 1";
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_admin");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
             stm.setString(1, nickname);
-            ResultSet rs = stm.executeQuery();
-            if (rs.next()) {
-                String bank = rs.getString("namebank");
-                String name = rs.getString("nameaccount");
-                String account = rs.getString("numberaccount");
-                info = new BankAccountInfo(bank, name, account);
+
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    String bank = rs.getString("namebank");
+                    String name = rs.getString("nameaccount");
+                    String account = rs.getString("numberaccount");
+                    info = new BankAccountInfo(bank, name, account);
+                }
             }
-            rs.close();
-            stm.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace(); // Consider logging the exception instead
+            throw e; // Re-throw exception to allow calling code to handle it
         }
+
         return info;
     }
+
 
     @Override
     public CashoutUserDailyResponse getCashoutUserToday(String nickname) {

@@ -36,10 +36,7 @@ import com.vinplay.vbee.common.utils.DateTimeUtils;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
 import com.vinplay.vbee.dao.LogMoneyUserDao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -205,10 +202,15 @@ public class LogMoneyUserDaoImpl implements LogMoneyUserDao {
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
         }
-        if (conn != null) {
-            conn.close();
-        }
+
     }
 
     @Override
@@ -230,22 +232,41 @@ public class LogMoneyUserDaoImpl implements LogMoneyUserDao {
     }
 
     @Override
-    public boolean checkBot(String nickname) throws SQLException {
+    public boolean checkBot(String nickname) {
         boolean res = false;
-        Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
-        String sql = "SELECT is_bot FROM users WHERE nick_name=?";
-        PreparedStatement stm = conn.prepareStatement("SELECT is_bot FROM users WHERE nick_name=?");
-        stm.setString(1, nickname);
-        ResultSet rs = stm.executeQuery();
-        if (rs.next() && rs.getInt("is_bot") == 1) {
-            res = true;
-        }
-        rs.close();
-        stm.close();
-        if (conn != null) {
-            conn.close();
+        Connection conn = null;
+        PreparedStatement stm = null;
+        ResultSet rs = null;
+        try {
+            conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+            stm = conn.prepareStatement("SELECT is_bot FROM users WHERE nick_name=?");
+            stm.setString(1, nickname);
+            rs = stm.executeQuery();
+            if (rs.next() && rs.getInt("is_bot") == 1) {
+                res = true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeConnection(stm, rs, conn);
         }
         return res;
+    }
+
+    private void closeConnection(Statement statement, ResultSet resultSet, Connection connection) {
+        try {
+            if (resultSet != null) {
+                resultSet.close();
+            }
+            if (statement != null) {
+                statement.close();
+            }
+            if (connection != null) {
+                connection.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

@@ -62,103 +62,127 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public boolean updateMoney(MoneyMessageInMinigame message, int type) throws SQLException {
-        Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+        Connection conn = null;
         CallableStatement call = null;
-        call = conn.prepareCall("CALL update_money_user(?,?,?,?,?,?,?,?,?,?)");
-        int param = 1;
-        call.setInt(param++, message.getUserId());
-        call.setLong(param++, message.getMoneyExchange());
-        call.setLong(param++, message.getAfterMoneyUse());
-        call.setLong(param++, message.getAfterMoney());
-        call.setString(param++, message.getMoneyType());
-        call.setLong(param++, message.getFee());
-        call.setString(param++, message.getActionName());
-        call.setInt(param++, message.getMoneyVP());
-        call.setInt(param++, message.getVp());
-        call.setInt(param++, type);
-        call.executeUpdate();
-        if (call != null) {
-            call.close();
+
+        try {
+            conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+            call = conn.prepareCall("CALL update_money_user(?,?,?,?,?,?,?,?,?,?)");
+
+            int param = 1;
+            call.setInt(param++, message.getUserId());
+            call.setLong(param++, message.getMoneyExchange());
+            call.setLong(param++, message.getAfterMoneyUse());
+            call.setLong(param++, message.getAfterMoney());
+            call.setString(param++, message.getMoneyType());
+            call.setLong(param++, message.getFee());
+            call.setString(param++, message.getActionName());
+            call.setInt(param++, message.getMoneyVP());
+            call.setInt(param++, message.getVp());
+            call.setInt(param++, type);
+
+            call.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e; // Re-throwing the exception after logging/printing it
+        } finally {
+            if (call != null) {
+                call.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
         }
-        if (conn != null) {
-            conn.close();
-        }
-        return true;
     }
+
 
 
     @Override
     public boolean checkUsername(String username) throws SQLException {
-        boolean res = false;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            int cnt;
-            String sql = "SELECT COUNT(1) as cnt FROM users WHERE user_name=? OR nick_name=?";
-            PreparedStatement stm = conn.prepareStatement("SELECT COUNT(1) as cnt FROM users WHERE user_name=? OR nick_name=?");
+        String sql = "SELECT COUNT(1) AS cnt FROM users WHERE user_name = ? OR nick_name = ?";
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
             stm.setString(1, username);
             stm.setString(2, username);
-            ResultSet rs = stm.executeQuery();
-            if (rs.next() && (cnt = rs.getInt("cnt")) == 1) {
-                res = true;
+
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    int cnt = rs.getInt("cnt");
+                    return cnt > 0; // Return true if count is greater than 0
+                }
             }
-            rs.close();
-            stm.close();
         }
-        return res;
+
+        return false; // Return false if no matching username found
     }
+
 
     @Override
     public boolean checkNickname(String nickname) throws SQLException {
         boolean res = false;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            int cnt;
-            String sql = "SELECT COUNT(1) as cnt FROM users WHERE nick_name=?";
-            PreparedStatement stm = conn.prepareStatement("SELECT COUNT(1) as cnt FROM users WHERE nick_name=?");
+        String sql = "SELECT COUNT(1) as cnt FROM users WHERE nick_name=?";
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
             stm.setString(1, nickname);
-            ResultSet rs = stm.executeQuery();
-            if (rs.next() && (cnt = rs.getInt("cnt")) == 1) {
-                res = true;
+
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next() && rs.getInt("cnt") == 1) {
+                    res = true;
+                }
             }
-            rs.close();
-            stm.close();
         }
+
         return res;
     }
+
 
     @Override
     public int checkAgent(String nickname) throws SQLException {
         int res = -1;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            String sql = "SELECT dai_ly FROM users WHERE nick_name=?";
-            PreparedStatement stm = conn.prepareStatement("SELECT dai_ly FROM users WHERE nick_name=?");
+        String sql = "SELECT dai_ly FROM users WHERE nick_name=?";
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
             stm.setString(1, nickname);
-            ResultSet rs = stm.executeQuery();
-            if (rs.next()) {
-                res = rs.getInt("dai_ly");
+
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    res = rs.getInt("dai_ly");
+                }
             }
-            rs.close();
-            stm.close();
         }
+
         return res;
     }
+
 
     @Override
     public boolean checkNicknameExist(String nickname) throws SQLException {
         boolean res = false;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            int cnt;
-            String sql = "SELECT COUNT(1) as cnt FROM users WHERE nick_name=? OR user_name=?";
-            PreparedStatement stm = conn.prepareStatement("SELECT COUNT(1) as cnt FROM users WHERE nick_name=? OR user_name=?");
+
+        String sql = "SELECT COUNT(1) as cnt FROM users WHERE nick_name=? OR user_name=?";
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
             stm.setString(1, nickname);
             stm.setString(2, nickname);
-            ResultSet rs = stm.executeQuery();
-            if (rs.next() && (cnt = rs.getInt("cnt")) == 1) {
-                res = true;
+
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next() && rs.getInt("cnt") == 1) {
+                    res = true;
+                }
             }
-            rs.close();
-            stm.close();
         }
+
         return res;
     }
+
 
     @Override
     public boolean updateMoney(int userId, long money, String moneyType) throws SQLException {
@@ -187,168 +211,218 @@ public class UserDaoImpl implements UserDao {
     @Override
     public boolean updateRechargeMoney(int userId, long money) throws SQLException {
         boolean res = false;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            String sql = "update users set recharge_money = recharge_money + ? where id=?";
-            PreparedStatement stm = conn.prepareStatement("update users set recharge_money = recharge_money + ? where id=?");
+        String sql = "UPDATE users SET recharge_money = recharge_money + ? WHERE id=?";
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
             stm.setLong(1, money);
             stm.setInt(2, userId);
             if (stm.executeUpdate() == 1) {
                 res = true;
             }
-            stm.close();
         }
         return res;
     }
 
+
     @Override
     public List<String> getAllUsers() throws SQLException {
         List<String> users = new ArrayList<>();
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            PreparedStatement stm = conn.prepareStatement("SELECT * FROM vinplay.users WHERE is_bot = 0");
-            ResultSet rs = stm.executeQuery();
+
+        String sql = "SELECT nick_name FROM vinplay.users WHERE is_bot = 0";
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql);
+             ResultSet rs = stm.executeQuery()) {
+
             while (rs.next()) {
                 users.add(rs.getString("nick_name"));
             }
-            rs.close();
-            stm.close();
         }
+
         return users;
     }
 
+
     public UserModel getUserByUserName(String username) throws SQLException {
         UserModel user = null;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            String sql = "SELECT * FROM users WHERE user_name=?";
-            PreparedStatement stm = conn.prepareStatement("SELECT * FROM users WHERE user_name=?");
+
+        String sql = "SELECT * FROM users WHERE user_name=?";
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql);
+             ResultSet rs = stm.executeQuery()) {
+
             stm.setString(1, username);
-            ResultSet rs = stm.executeQuery();
+
             if (rs.next()) {
-                user = UserUtil.parseResultSetToUserModel((ResultSet) rs);
+                user = UserUtil.parseResultSetToUserModel(rs);
             }
-            rs.close();
-            stm.close();
         }
+
         return user;
     }
+
 
     @Override
     public UserModel getUserByNickName(String nickname) throws SQLException {
         UserModel user = null;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            String sql = "SELECT * FROM users WHERE nick_name=?";
-            PreparedStatement stm = conn.prepareStatement("SELECT * FROM users WHERE nick_name=?");
+
+        String sql = "SELECT * FROM users WHERE nick_name=?";
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql);
+             ResultSet rs = stm.executeQuery()) {
+
             stm.setString(1, nickname);
-            ResultSet rs = stm.executeQuery();
+
             if (rs.next()) {
-                user = UserUtil.parseResultSetToUserModel((ResultSet) rs);
+                user = UserUtil.parseResultSetToUserModel(rs);
             }
-            rs.close();
-            stm.close();
         }
+
         return user;
     }
+
 
     @Override
     public UserModel getUserByFBId(String fbId) throws SQLException {
         UserModel user = null;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            String sql = "SELECT * FROM users WHERE facebook_id=?";
-            PreparedStatement stm = conn.prepareStatement("SELECT * FROM users WHERE facebook_id=?");
+
+        String sql = "SELECT * FROM users WHERE facebook_id=?";
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
             stm.setString(1, fbId);
-            ResultSet rs = stm.executeQuery();
-            if (rs.next()) {
-                user = UserUtil.parseResultSetToUserModel((ResultSet) rs);
+
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    user = UserUtil.parseResultSetToUserModel(rs);
+                }
             }
-            rs.close();
-            stm.close();
         }
+
         return user;
     }
+
 
     @Override
     public UserModel getUserByGGId(String ggId) throws SQLException {
         UserModel user = null;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            String sql = "SELECT * FROM users WHERE google_id=?";
-            PreparedStatement stm = conn.prepareStatement("SELECT * FROM users WHERE google_id=?");
+
+        String sql = "SELECT * FROM users WHERE google_id=?";
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
             stm.setString(1, ggId);
-            ResultSet rs = stm.executeQuery();
-            if (rs.next()) {
-                user = UserUtil.parseResultSetToUserModel((ResultSet) rs);
+
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    user = UserUtil.parseResultSetToUserModel(rs);
+                }
             }
-            rs.close();
-            stm.close();
         }
+
         return user;
     }
+
 
     @Override
     public long getMoneyUser(String nickname, String moneyType) throws SQLException {
         long money = 0L;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            String sql = "SELECT " + moneyType + " FROM users WHERE nick_name=?";
-            PreparedStatement stm = conn.prepareStatement(sql);
-            stm.setString(1, nickname);
-            ResultSet rs = stm.executeQuery();
-            if (rs.next()) {
-                money = rs.getLong(moneyType);
-            }
-            rs.close();
-            stm.close();
+
+        // Validate moneyType to avoid SQL injection
+        if (!"balance".equals(moneyType) && !"recharge_money".equals(moneyType)) {
+            throw new IllegalArgumentException("Invalid moneyType parameter.");
         }
+        String sql = "SELECT " + moneyType + " FROM users WHERE nick_name=?";
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
+            stm.setString(1, nickname);
+
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    money = rs.getLong(moneyType);
+                }
+            }
+        }
+
         return money;
     }
+
 
     @Override
     public long getCurrentMoney(String nickname, String moneyType) throws SQLException {
         long money = 0L;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            String sql = "SELECT " + moneyType + "_total FROM users WHERE nick_name=?";
-            PreparedStatement stm = conn.prepareStatement(sql);
-            stm.setString(1, nickname);
-            ResultSet rs = stm.executeQuery();
-            if (rs.next()) {
-                money = rs.getLong(moneyType + "_total");
-            }
-            rs.close();
-            stm.close();
+
+        // Validate moneyType to avoid SQL injection
+        if (!"balance".equals(moneyType) && !"recharge_money".equals(moneyType)) {
+            throw new IllegalArgumentException("Invalid moneyType parameter.");
         }
+
+        String sql = "SELECT " + moneyType + "_total FROM users WHERE nick_name=?";
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
+            stm.setString(1, nickname);
+
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    money = rs.getLong(moneyType + "_total");
+                }
+            }
+        }
+
         return money;
     }
+
 
     @Override
     public int getIdByNickname(String nickname) throws SQLException {
         int userId = 0;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            String sql = "SELECT id FROM users WHERE nick_name=?";
-            PreparedStatement stm = conn.prepareStatement("SELECT id FROM users WHERE nick_name=?");
+
+        String sql = "SELECT id FROM users WHERE nick_name=?";
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
             stm.setString(1, nickname);
-            ResultSet rs = stm.executeQuery();
-            if (rs.next()) {
-                userId = rs.getInt("id");
+
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    userId = rs.getInt("id");
+                }
             }
-            rs.close();
-            stm.close();
         }
+
         return userId;
     }
+
 
     @Override
     public int getIdByUsername(String username) throws SQLException {
         int userId = 0;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            String sql = "SELECT id FROM users WHERE user_name=?";
-            PreparedStatement stm = conn.prepareStatement("SELECT id FROM users WHERE user_name=?");
+
+        String sql = "SELECT id FROM users WHERE user_name=?";
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
             stm.setString(1, username);
-            ResultSet rs = stm.executeQuery();
-            if (rs.next()) {
-                userId = rs.getInt("id");
+
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    userId = rs.getInt("id");
+                }
             }
-            rs.close();
-            stm.close();
         }
         return userId;
     }
+
 
     @Override
     public boolean restoreMoneyByAdmin(int userId, long moneyUse, long moneyTotal, long moneySafe, String moneyType) throws SQLException {
@@ -378,136 +452,162 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public boolean checkMobile(String mobile) throws SQLException {
-        boolean res = false;
-        int cnt = 0;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            String sql = "SELECT COUNT(1) as cnt FROM users WHERE mobile=?";
-            PreparedStatement stm = conn.prepareStatement("SELECT COUNT(1) as cnt FROM users WHERE mobile=?");
+        String sql = "SELECT COUNT(1) as cnt FROM users WHERE mobile=?";
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
             stm.setString(1, mobile);
-            ResultSet rs = stm.executeQuery();
-            if (rs.next()) {
-                cnt = rs.getInt("cnt");
+
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("cnt") >= 1;
+                }
             }
-            rs.close();
-            stm.close();
         }
-        res = cnt >= 1;
-        return res;
+
+        return false; // Return false if no rows are found
     }
+
 
     @Override
     public boolean checkMobileDaiLy(String mobile) throws SQLException {
-        boolean res = false;
-        int status = -1;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            String sql = "SELECT status FROM users WHERE mobile=? AND dai_ly <> 0";
-            PreparedStatement stm = conn.prepareStatement("SELECT status FROM users WHERE mobile=? AND dai_ly <> 0");
+        String sql = "SELECT status FROM users WHERE mobile=? AND dai_ly <> 0";
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
             stm.setString(1, mobile);
-            ResultSet rs = stm.executeQuery();
-            while (rs.next()) {
-                status = rs.getInt("status");
+
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    int status = rs.getInt("status");
+                    return status >= 0 && StatusUser.checkStatus(status, 4);
+                }
             }
-            rs.close();
-            stm.close();
         }
-        if (status >= 0 && StatusUser.checkStatus((int) status, (int) 4)) {
-            res = true;
-        }
-        return res;
+
+        return false; // Return false if no rows are found
     }
+
 
     @Override
     public boolean checkMobileSecurity(String mobile) throws SQLException {
-        boolean res = false;
-        int status = 0;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            String sql = "SELECT status FROM users WHERE mobile=?";
-            PreparedStatement stm = conn.prepareStatement("SELECT status FROM users WHERE mobile=?");
+        String sql = "SELECT status FROM users WHERE mobile=?";
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
             stm.setString(1, mobile);
-            ResultSet rs = stm.executeQuery();
-            while (rs.next()) {
-                status = rs.getInt("status");
-                if ((status & 16) == 0) continue;
-                res = true;
-                break;
+
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    int status = rs.getInt("status");
+                    return (status & 16) != 0; // Directly return the result of the condition
+                }
             }
-            rs.close();
-            stm.close();
         }
-        return res;
+
+        return false; // Return false if no matching status found
     }
+
+
 
     @Override
     public boolean checkEmailSecurity(String email) throws SQLException {
-        boolean res = false;
-        int status = 0;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            String sql = "SELECT status FROM users WHERE email=?";
-            PreparedStatement stm = conn.prepareStatement("SELECT status FROM users WHERE email=?");
+        String sql = "SELECT status FROM users WHERE email=?";
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
             stm.setString(1, email);
-            ResultSet rs = stm.executeQuery();
-            while (rs.next()) {
-                status = rs.getInt("status");
-                if ((status & 32) == 0) continue;
-                res = true;
-                break;
+
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    int status = rs.getInt("status");
+                    return (status & 32) != 0; // Directly return the result of the condition
+                }
             }
-            rs.close();
-            stm.close();
         }
-        return res;
+
+        return false; // Return false if no matching status found
     }
+
+
 
     @Override
     public List<TopCaoThu> getTopCaoThu(String date, String moneyType, int num) {
-        final ArrayList<TopCaoThu> results = new ArrayList<TopCaoThu>();
-        MongoDatabase db = MongoDBConnectionFactory.getDB();
-        FindIterable iterable = null;
-        Document conditions = new Document();
-        conditions.put("date", (Object) date);
-        conditions.put("money_win", (Object) new BasicDBObject("$gt", (Object) 0));
-        BasicDBObject sortCondtions = new BasicDBObject();
-        sortCondtions.put("money_win", -1);
-        iterable = moneyType.equals("vin") ? db.getCollection("top_user_play_game_vin").find((Bson) conditions).sort((Bson) sortCondtions).limit(num) : db.getCollection("top_user_play_game_xu").find((Bson) conditions).sort((Bson) sortCondtions).limit(num);
-        iterable.forEach((Block) new Block<Document>() {
+        List<TopCaoThu> results = new ArrayList<>();
 
-            public void apply(Document document) {
-                results.add(new TopCaoThu(document.getString((Object) "nick_name"), document.getLong((Object) "money_win").longValue()));
-            }
-        });
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+
+        // Prepare query conditions
+        Document conditions = new Document("date", date)
+                .append("money_win", new Document("$gt", 0));
+
+        // Determine the collection and sort conditions
+        String collectionName = moneyType.equals("vin") ? "top_user_play_game_vin" : "top_user_play_game_xu";
+        BasicDBObject sortConditions = new BasicDBObject("money_win", -1);
+
+        // Query the collection
+        MongoCollection<Document> collection = db.getCollection(collectionName);
+        FindIterable<Document> iterable = collection.find(conditions).sort(sortConditions).limit(num);
+
+        // Process the results
+        for (Document document : iterable) {
+            String nickName = document.getString("nick_name");
+            long moneyWin = document.getLong("money_win");
+            results.add(new TopCaoThu(nickName, moneyWin));
+        }
+
         return results;
     }
+
 
     @Override
     public UserModel getUserNormalByNickName(String nickName) throws SQLException {
         UserModel user = null;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            String sql = "SELECT * FROM users WHERE nick_name=? and dai_ly=0";
-            PreparedStatement stm = conn.prepareStatement("SELECT * FROM users WHERE nick_name=? and dai_ly=0");
+        String sql = "SELECT * FROM users WHERE nick_name=? AND dai_ly=0";
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
+            // Set parameters
             stm.setString(1, nickName);
-            ResultSet rs = stm.executeQuery();
-            if (rs.next()) {
-                user = UserUtil.parseResultSetToUserModel((ResultSet) rs);
+
+            // Execute query
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    user = UserUtil.parseResultSetToUserModel(rs);
+                }
             }
-            rs.close();
-            stm.close();
         }
+
         return user;
     }
+
 
     @Override
     public boolean updateStatusDailyByNickName(String nickName, int status) throws SQLException {
         boolean res = false;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            String sql = "update users set dai_ly='" + status + "' where nick_name='" + nickName + "'";
-            PreparedStatement stm = conn.prepareStatement(sql);
+        String sql = "UPDATE users SET dai_ly = ? WHERE nick_name = ?";
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
+            // Set parameters
+            stm.setInt(1, status);
+            stm.setString(2, nickName);
+
+            // Execute update
             if (stm.executeUpdate() == 1) {
                 res = true;
             }
-            stm.close();
         }
+
         return res;
     }
+
 
     @Override
     public List<UserAdminInfo> searchUserAdmin(String userName, String nickName, String phone, String field, String sort, String daily, String timeStart, String timeEnd, int page, int totalrecord, String bot, String like, String emailAddress) throws SQLException {
@@ -642,70 +742,95 @@ public class UserDaoImpl implements UserDao {
     @Override
     public int countSearchUserAdmin(String userName, String nickName, String phone, String field, String sort, String daily, String timeStart, String timeEnd, String bot) throws SQLException {
         int cnt = 0;
-        String order = "";
-        String sort2 = "";
-        String sql = "";
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            String query = "select count(*) as cnt from users where 1=1";
-            String condition = "";
-            if (userName != null && !userName.equals("")) {
-                condition = condition + " AND user_name like '%" + userName + "%'";
-            }
-            if (nickName != null && !nickName.equals("")) {
-                condition = condition + " AND nick_name like '%" + nickName + "%'";
-            }
-            if (phone != null && !phone.equals("")) {
-                condition = condition + " AND mobile = '" + phone + "'";
-            }
-            if (timeStart != null && !timeStart.equals("") && timeEnd != null && !timeEnd.equals("")) {
-                condition = condition + " AND create_time BETWEEN '" + timeStart + "' AND '" + timeEnd + "'";
-            }
-            if (daily != null && !daily.equals("")) {
-                condition = condition + " AND dai_ly=" + Integer.parseInt(daily);
-            }
-            if (bot != null && !bot.equals(null)) {
-                condition = condition + " AND is_bot=" + Integer.parseInt(bot);
-            }
-            if (field != null && !field.equals("")) {
-                if (field.equals("1")) {
-                    order = order + " order by vin_total";
-                }
-                if (field.equals("2")) {
-                    order = order + " order by xu_total";
-                }
-                if (field.equals("3")) {
-                    order = order + " order by safe";
-                }
-                if (field.equals("4")) {
-                    order = order + " order by vip_point";
-                }
-                if (field.equals("5")) {
-                    order = order + " order by vip_point_save";
-                }
-                if (field.equals("6")) {
-                    order = order + " order by recharge_money";
-                }
-                if (sort.equals("1")) {
-                    sort2 = sort2 + " ASC";
-                }
-                if (sort.equals("2")) {
-                    sort2 = sort2 + " DESC";
-                }
-                sql = "select count(*) as cnt from users where 1=1" + condition + order + sort2;
-            } else {
-                order = " order by id DESC";
-                sql = "select count(*) as cnt from users where 1=1" + condition + order;
-            }
-            PreparedStatement stm = conn.prepareStatement(sql);
-            ResultSet rs = stm.executeQuery();
-            if (rs.next()) {
-                cnt = rs.getInt("cnt");
-            }
-            rs.close();
-            stm.close();
+
+        // Define base query
+        String baseQuery = "SELECT COUNT(*) AS cnt FROM users WHERE 1=1";
+
+        // Construct condition part
+        StringBuilder condition = new StringBuilder();
+        List<Object> parameters = new ArrayList<>();
+
+        if (userName != null && !userName.trim().isEmpty()) {
+            condition.append(" AND user_name LIKE ?");
+            parameters.add("%" + userName + "%");
         }
+        if (nickName != null && !nickName.trim().isEmpty()) {
+            condition.append(" AND nick_name LIKE ?");
+            parameters.add("%" + nickName + "%");
+        }
+        if (phone != null && !phone.trim().isEmpty()) {
+            condition.append(" AND mobile = ?");
+            parameters.add(phone);
+        }
+        if (timeStart != null && !timeStart.trim().isEmpty() && timeEnd != null && !timeEnd.trim().isEmpty()) {
+            condition.append(" AND create_time BETWEEN ? AND ?");
+            parameters.add(timeStart);
+            parameters.add(timeEnd);
+        }
+        if (daily != null && !daily.trim().isEmpty()) {
+            condition.append(" AND dai_ly = ?");
+            parameters.add(Integer.parseInt(daily));
+        }
+        if (bot != null && !bot.trim().isEmpty()) {
+            condition.append(" AND is_bot = ?");
+            parameters.add(Integer.parseInt(bot));
+        }
+
+        // Construct sorting part
+        String orderBy = "";
+        if (field != null && !field.trim().isEmpty()) {
+            switch (field) {
+                case "1":
+                    orderBy = " ORDER BY vin_total";
+                    break;
+                case "2":
+                    orderBy = " ORDER BY xu_total";
+                    break;
+                case "3":
+                    orderBy = " ORDER BY safe";
+                    break;
+                case "4":
+                    orderBy = " ORDER BY vip_point";
+                    break;
+                case "5":
+                    orderBy = " ORDER BY vip_point_save";
+                    break;
+                case "6":
+                    orderBy = " ORDER BY recharge_money";
+                    break;
+                default:
+                    orderBy = "";
+                    break;
+            }
+            if (sort != null && !sort.trim().isEmpty()) {
+                orderBy += sort.equals("1") ? " ASC" : " DESC";
+            }
+        } else {
+            orderBy = " ORDER BY id DESC";
+        }
+
+        // Combine query parts
+        String sql = baseQuery + condition.toString() + orderBy;
+
+        // Execute query
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
+            // Set parameters
+            for (int i = 0; i < parameters.size(); i++) {
+                stm.setObject(i + 1, parameters.get(i));
+            }
+
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    cnt = rs.getInt("cnt");
+                }
+            }
+        }
+
         return cnt;
     }
+
 
     @Override
     public boolean insertBot(String un, String nn, String pw, long vin, long xu, int status) throws SQLException {
@@ -753,114 +878,147 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public List<UserInfoModel> checkPhoneByUser(String phone) throws SQLException {
-        ArrayList<UserInfoModel> user = new ArrayList<UserInfoModel>();
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            String sql = "SELECT user_name,nick_name,recharge_money,status,mobile,dai_ly FROM users WHERE mobile in (" + phone + ")";
-            PreparedStatement stm = conn.prepareStatement(sql);
-            ResultSet rs = stm.executeQuery();
-            while (rs.next()) {
-                UserInfoModel model = new UserInfoModel();
-                model.nickName = rs.getString("nick_name");
-                model.userName = rs.getString("user_name");
-                model.rechargeMoney = rs.getLong("recharge_money");
-                model.mobile = rs.getString("mobile");
-                if ((rs.getInt("status") & 16) != 0) {
-                    model.isHasSercurityMobile = true;
-                }
-                model.dai_ly = rs.getInt("dai_ly");
-                user.add(model);
-            }
-            rs.close();
-            stm.close();
+        List<UserInfoModel> users = new ArrayList<>();
+
+        // Ensure the phone parameter is not empty and is properly formatted
+        if (phone == null || phone.trim().isEmpty()) {
+            return users; // Return an empty list if phone is null or empty
         }
-        return user;
+
+        // Create a SQL query with parameter placeholders
+        String sql = "SELECT user_name, nick_name, recharge_money, status, mobile, dai_ly FROM users WHERE mobile IN (" + phone + ")";
+
+        // Establish the database connection and prepare the statement
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    UserInfoModel model = new UserInfoModel();
+                    model.nickName = rs.getString("nick_name");
+                    model.userName = rs.getString("user_name");
+                    model.rechargeMoney = rs.getLong("recharge_money");
+                    model.mobile = rs.getString("mobile");
+                    model.isHasSercurityMobile = (rs.getInt("status") & 16) != 0;
+                    model.dai_ly = rs.getInt("dai_ly");
+                    users.add(model);
+                }
+            }
+        }
+
+        return users;
     }
+
+
+
 
     @Override
     public UserInfoModel checkPhoneExists(String phone) throws SQLException {
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            String sql = "SELECT user_name,nick_name,recharge_money,status,mobile FROM users WHERE mobile = '" + phone + "'";
-            PreparedStatement stm = conn.prepareStatement(sql);
-            ResultSet rs = stm.executeQuery();
-            while (rs.next()) {
-                UserInfoModel model = new UserInfoModel();
-                model.nickName = rs.getString("nick_name");
-                model.userName = rs.getString("user_name");
-                model.rechargeMoney = rs.getLong("recharge_money");
-                model.mobile = rs.getString("mobile");
-                if ((rs.getInt("status") & 16) != 0) {
-                    model.isHasSercurityMobile = true;
+        String sql = "SELECT user_name, nick_name, recharge_money, status, mobile FROM users WHERE mobile = ?";
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
+            stm.setString(1, phone);
+
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    UserInfoModel model = new UserInfoModel();
+                    model.nickName = rs.getString("nick_name");
+                    model.userName = rs.getString("user_name");
+                    model.rechargeMoney = rs.getLong("recharge_money");
+                    model.mobile = rs.getString("mobile");
+                    model.isHasSercurityMobile = (rs.getInt("status") & 16) != 0;
+                    return model;
                 }
-                return model;
             }
-            rs.close();
-            stm.close();
         }
         return null;
     }
 
+
     @Override
     public void resetUserMission() throws Exception {
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname")) {
             String[] matchMaxVin = GameCommon.getValueStr("MATCH_MAX_VIN").split(",");
-            String sqlVin = " UPDATE user_mission_vin SET level = 1,      match_win = 0,      match_max = ?,      received_reward_level = 0,      update_time = ? ";
-            PreparedStatement stmVin = conn.prepareStatement(" UPDATE user_mission_vin SET level = 1,      match_win = 0,      match_max = ?,      received_reward_level = 0,      update_time = ? ");
-            stmVin.setInt(1, Integer.parseInt(matchMaxVin[0]));
-            stmVin.setString(2, DateTimeUtils.getCurrentTime());
-            stmVin.executeUpdate();
             String[] matchMaxXu = GameCommon.getValueStr("MATCH_MAX_XU").split(",");
-            String sqlXu = " UPDATE user_mission_xu SET level = 1,      match_win = 0,      match_max = ?,      received_reward_level = 0,      update_time = ? ";
-            PreparedStatement stmXu = conn.prepareStatement(" UPDATE user_mission_xu SET level = 1,      match_win = 0,      match_max = ?,      received_reward_level = 0,      update_time = ? ");
-            stmXu.setInt(1, Integer.parseInt(matchMaxXu[0]));
-            stmXu.setString(2, DateTimeUtils.getCurrentTime());
-            stmXu.executeUpdate();
+            String currentTime = DateTimeUtils.getCurrentTime();
+
+            String sqlVin = "UPDATE user_mission_vin SET level = 1, match_win = 0, match_max = ?, received_reward_level = 0, update_time = ?";
+            try (PreparedStatement stmVin = conn.prepareStatement(sqlVin)) {
+                stmVin.setInt(1, Integer.parseInt(matchMaxVin[0]));
+                stmVin.setString(2, currentTime);
+                stmVin.executeUpdate();
+            }
+
+            String sqlXu = "UPDATE user_mission_xu SET level = 1, match_win = 0, match_max = ?, received_reward_level = 0, update_time = ?";
+            try (PreparedStatement stmXu = conn.prepareStatement(sqlXu)) {
+                stmXu.setInt(1, Integer.parseInt(matchMaxXu[0]));
+                stmXu.setString(2, currentTime);
+                stmXu.executeUpdate();
+            }
         }
     }
+
 
     @Override
     public UserMissionCacheModel getListMissionByNickName(String nickName, String moneyType, int maxLevel) throws SQLException {
-        Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+        String tableName = moneyType.equals("vin") ? "user_mission_vin" : "user_mission_xu";
+        String sql = "SELECT user_id, user_name, nick_name, mission_name, level, match_win, match_max, received_reward_level " +
+                "FROM " + tableName + " WHERE nick_name = ?";
+
         UserMissionCacheModel response = new UserMissionCacheModel();
-        ArrayList<MissionObj> listMissionObjResponse = new ArrayList<MissionObj>();
-        boolean completeMission = false;
-        boolean completeAllLevel = false;
-        try {
-            String tableName = "";
-            tableName = moneyType.equals("vin") ? "user_mission_vin" : "user_mission_xu";
-            String sql = " SELECT user_id,         user_name,         nick_name,         mission_name,         level,         match_win,         match_max,         received_reward_level  FROM " + tableName + " WHERE nick_name = ? ";
-            PreparedStatement stm = conn.prepareStatement(sql);
+        List<MissionObj> listMissionObjResponse = new ArrayList<>();
+        boolean completeMission;
+        boolean completeAllLevel;
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
             stm.setString(1, nickName);
-            ResultSet rs = stm.executeQuery();
-            while (rs.next()) {
-                completeMission = rs.getInt("match_win") >= rs.getInt("match_max");
-                completeAllLevel = rs.getInt("level") == maxLevel && rs.getInt("match_win") == rs.getInt("match_max");
-                MissionObj missionObj = new MissionObj(rs.getString("mission_name"), rs.getInt("level"), rs.getInt("match_win"), rs.getInt("match_max"), completeMission, completeAllLevel, rs.getInt("received_reward_level"));
-                listMissionObjResponse.add(missionObj);
-                response.setUserId(rs.getInt("user_id"));
-                response.setUserName(rs.getString("user_name"));
-                response.setNickName(rs.getString("nick_name"));
+
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    completeMission = rs.getInt("match_win") >= rs.getInt("match_max");
+                    completeAllLevel = rs.getInt("level") == maxLevel && rs.getInt("match_win") == rs.getInt("match_max");
+
+                    MissionObj missionObj = new MissionObj(
+                            rs.getString("mission_name"),
+                            rs.getInt("level"),
+                            rs.getInt("match_win"),
+                            rs.getInt("match_max"),
+                            completeMission,
+                            completeAllLevel,
+                            rs.getInt("received_reward_level")
+                    );
+
+                    listMissionObjResponse.add(missionObj);
+
+                    // Set user details; assumes they are the same for all rows
+                    response.setUserId(rs.getInt("user_id"));
+                    response.setUserName(rs.getString("user_name"));
+                    response.setNickName(rs.getString("nick_name"));
+                }
             }
+
             response.setListMission(listMissionObjResponse);
-            rs.close();
-            stm.close();
         } catch (SQLException e) {
             e.printStackTrace();
             throw e;
-        } finally {
-            if (conn != null) {
-                conn.close();
-            }
         }
+
         return response;
     }
 
+
     @Override
     public void insertUserMission(String moneyType, MissionObj mission, UserModel user) throws SQLException {
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            String tableName = "";
-            tableName = moneyType.equals("vin") ? "user_mission_vin" : "user_mission_xu";
-            String sql = " INSERT INTO " + tableName + " (user_id, user_name, nick_name, mission_name, level, match_win, match_max, received_reward_level, create_time, update_time)  VALUES  (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ";
-            PreparedStatement stm = conn.prepareStatement(sql);
+        String tableName = moneyType.equals("vin") ? "user_mission_vin" : "user_mission_xu";
+        String sql = "INSERT INTO " + tableName + " (user_id, user_name, nick_name, mission_name, level, match_win, match_max, received_reward_level, create_time, update_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
             stm.setInt(1, user.getId());
             stm.setString(2, user.getUsername());
             stm.setString(3, user.getNickname());
@@ -871,18 +1029,20 @@ public class UserDaoImpl implements UserDao {
             stm.setInt(8, mission.getRecReLev());
             stm.setString(9, DateTimeUtils.getCurrentTime());
             stm.setString(10, DateTimeUtils.getCurrentTime());
+
             stm.executeUpdate();
-            stm.close();
         }
     }
 
+
     @Override
     public void updateUserMission(String moneyType, String nickName, MissionObj mission) throws SQLException {
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            String tableName = "";
-            tableName = moneyType.equals("vin") ? "user_mission_vin" : "user_mission_xu";
-            String sql = " UPDATE " + tableName + " SET level = ?,      match_win = ?,      match_max = ?,      received_reward_level = ?,      update_time = ?  WHERE nick_name = ?    AND mission_name = ? ";
-            PreparedStatement stm = conn.prepareStatement(sql);
+        String tableName = moneyType.equals("vin") ? "user_mission_vin" : "user_mission_xu";
+        String sql = "UPDATE " + tableName + " SET level = ?, match_win = ?, match_max = ?, received_reward_level = ?, update_time = ? WHERE nick_name = ? AND mission_name = ?";
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
             stm.setInt(1, mission.getMisLev());
             stm.setInt(2, mission.getMisWin());
             stm.setInt(3, mission.getMisMax());
@@ -890,10 +1050,11 @@ public class UserDaoImpl implements UserDao {
             stm.setString(5, DateTimeUtils.getCurrentTime());
             stm.setString(6, nickName);
             stm.setString(7, mission.getMisNa());
+
             stm.executeUpdate();
-            stm.close();
         }
     }
+
 
     @Override
     public UserCacheModel getUserByNickNameCache(String nickName) throws SQLException {
@@ -918,10 +1079,12 @@ public class UserDaoImpl implements UserDao {
     @Override
     public List<UserCacheModel> GetNickNameFreeze() throws SQLException {
         List<UserCacheModel> response = new ArrayList<>();
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            String sql = "SELECT id, nick_name , vin, vin_total FROM vinplay.users WHERE vin != vin_total and is_bot = 0";
-            PreparedStatement stm = conn.prepareStatement(sql);
-            ResultSet rs = stm.executeQuery();
+        String sql = "SELECT id, nick_name, vin, vin_total FROM vinplay.users WHERE vin != vin_total AND is_bot = 0";
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql);
+             ResultSet rs = stm.executeQuery()) {
+
             while (rs.next()) {
                 UserCacheModel user = new UserCacheModel();
                 user.setId(rs.getInt("id"));
@@ -930,152 +1093,200 @@ public class UserDaoImpl implements UserDao {
                 user.setVinTotal(rs.getLong("vin_total"));
                 response.add(user);
             }
-            rs.close();
-            stm.close();
         }
+
         return response;
     }
 
+
+
     @Override
     public void insertCommission(int userId, String nickName, long fee, String month) throws SQLException {
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            String sql = " INSERT INTO vinplay.user_fee  (user_id, nick_name, fee, month, create_time, update_time)  VALUES  (?, ?, ?, ?, ?, ?) ";
-            PreparedStatement stm = conn.prepareStatement(" INSERT INTO vinplay.user_fee  (user_id, nick_name, fee, month, create_time, update_time)  VALUES  (?, ?, ?, ?, ?, ?) ");
+        String sql = "INSERT INTO vinplay.user_fee (user_id, nick_name, fee, month, create_time, update_time) VALUES (?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
+            String currentTime = DateTimeUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss");
+
             stm.setInt(1, userId);
             stm.setString(2, nickName);
             stm.setLong(3, fee);
             stm.setString(4, month);
-            stm.setString(5, DateTimeUtils.getCurrentTime((String) "yyyy-MM-dd HH:mm:ss"));
-            stm.setString(6, DateTimeUtils.getCurrentTime((String) "yyyy-MM-dd HH:mm:ss"));
+            stm.setString(5, currentTime);
+            stm.setString(6, currentTime);
+
             stm.executeUpdate();
-            stm.close();
+        } catch (SQLException e) {
+            e.printStackTrace(); // Consider logging the exception or handling it appropriately
+            throw e;
         }
     }
+
 
     @Override
     public boolean updateFishMoney(String nickName, long amount) throws SQLException {
-        boolean res = false;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_banca");) {
-            String sql = "update users set cash = cash + ? where nickname = ?";
-            PreparedStatement stm = conn.prepareStatement(sql);
+        String sql = "UPDATE users SET cash = cash + ? WHERE nickname = ?";
+        boolean result = false;
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_banca");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
             stm.setLong(1, amount);
             stm.setString(2, nickName);
-            if (stm.executeUpdate() == 1) {
-                res = true;
-            }
-            stm.close();
+
+            // Execute update and check if exactly one row was affected
+            result = stm.executeUpdate() == 1;
+        } catch (SQLException e) {
+            e.printStackTrace(); // Consider logging the exception or handling it appropriately
+            throw e;
         }
-        return res;
+
+        return result;
     }
 
+
     public boolean updateUserPhone(String nickName, String phone) throws SQLException {
-        boolean res = false;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            String sql = "update users set mobile =  ? where nick_name = ?";
-            PreparedStatement stm = conn.prepareStatement(sql);
+        String sql = "UPDATE users SET mobile = ? WHERE nick_name = ?";
+        boolean result = false;
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
             stm.setString(1, phone);
             stm.setString(2, nickName);
-            if (stm.executeUpdate() == 1) {
-                res = true;
-            }
-            stm.close();
+
+            // Execute update and check if exactly one row was affected
+            result = stm.executeUpdate() == 1;
+        } catch (SQLException e) {
+            e.printStackTrace(); // Consider logging the exception or handling it appropriately
+            throw e;
         }
-        return res;
+
+        return result;
     }
+
 
     @Override
     public UserFish GetUserFishByNickname(String nickName) throws SQLException {
         UserFish user = null;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_banca");) {
-            String sql = "SELECT * from users where nickname = ?";
-            PreparedStatement stm = conn.prepareStatement(sql);
+        String sql = "SELECT * FROM users WHERE nickname = ?";
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_banca");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
             stm.setString(1, nickName);
-            ResultSet rs = stm.executeQuery();
-            while (rs.next()) {
-                user = new UserFish();
-                user.setId(rs.getInt("user_id"));
-                user.setUsername(rs.getString("username"));
-                user.setNickname(rs.getString("nickname"));
-                user.setCash(rs.getLong("cash"));
+
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    user = new UserFish();
+                    user.setId(rs.getInt("user_id"));
+                    user.setUsername(rs.getString("username"));
+                    user.setNickname(rs.getString("nickname"));
+                    user.setCash(rs.getLong("cash"));
+                }
             }
-            rs.close();
-            stm.close();
+        } catch (SQLException e) {
+            e.printStackTrace(); // Consider logging the exception or handling it appropriately
+            throw e;
         }
+
         return user;
     }
 
+
     @Override
     public int countUser(String startTime, String endTime) throws SQLException {
-        endTime += " 23:59:59";
         int cnt = 0;
-        String sql = "";
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            String condition = "";
+        String sql = "SELECT COUNT(*) AS cnt FROM users WHERE is_bot = 0";
 
-            if (startTime != null && !startTime.equals("") && endTime != null && !endTime.equals("")) {
-                condition = condition + " AND create_time BETWEEN '" + startTime + "' AND '" + endTime + "'";
-            }
-            sql = "select count(*) as cnt from users where 1=1" + condition + " AND is_bot = 0";
-            PreparedStatement stm = conn.prepareStatement(sql);
-            ResultSet rs = stm.executeQuery();
-            if (rs.next()) {
-                cnt = rs.getInt("cnt");
-            }
-            rs.close();
-            stm.close();
+        if (startTime != null && !startTime.isEmpty() && endTime != null && !endTime.isEmpty()) {
+            sql += " AND create_time BETWEEN ? AND ?";
         }
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
+            if (startTime != null && !startTime.isEmpty() && endTime != null && !endTime.isEmpty()) {
+                stm.setString(1, startTime + " 00:00:00");
+                stm.setString(2, endTime + " 23:59:59");
+            }
+
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    cnt = rs.getInt("cnt");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Consider logging the exception or handling it appropriately
+            throw e;
+        }
+
         return cnt;
     }
+
 
     @Override
     public int countUserPay(String startTime, String endTime) throws SQLException {
-        endTime += " 23:59:59";
         int cnt = 0;
-        String sql = "";
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            String condition = "";
+        String sql = "SELECT COUNT(*) AS cnt FROM users WHERE is_bot = 0 AND recharge_money > 0";
 
-            if (startTime != null && !startTime.equals("") && endTime != null && !endTime.equals("")) {
-                condition = condition + " AND create_time BETWEEN '" + startTime + "' AND '" + endTime + "'";
-            }
-            sql = "select count(*) as cnt from users where 1=1" + condition + " AND is_bot = 0 AND recharge_money > 0";
-            PreparedStatement stm = conn.prepareStatement(sql);
-            ResultSet rs = stm.executeQuery();
-            if (rs.next()) {
-                cnt = rs.getInt("cnt");
-            }
-            rs.close();
-            stm.close();
+        if (startTime != null && !startTime.isEmpty() && endTime != null && !endTime.isEmpty()) {
+            sql += " AND create_time BETWEEN ? AND ?";
         }
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
+            if (startTime != null && !startTime.isEmpty() && endTime != null && !endTime.isEmpty()) {
+                stm.setString(1, startTime + " 00:00:00");
+                stm.setString(2, endTime + " 23:59:59");
+            }
+
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    cnt = rs.getInt("cnt");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Consider logging the exception or handling it appropriately
+            throw e;
+        }
+
         return cnt;
     }
+
 
     @Override
     public int countUserSecurity(String startTime, String endTime) throws SQLException {
-
-
-
-
-        endTime += " 23:59:59";
         int cnt = 0;
-        String sql = "";
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            String condition = "";
+        String sql = "SELECT COUNT(*) AS cnt FROM users WHERE is_bot = 0 AND security_time IS NOT NULL";
 
-            if (startTime != null && !startTime.equals("") && endTime != null && !endTime.equals("")) {
-                condition = condition + " AND create_time BETWEEN '" + startTime + "' AND '" + endTime + "'";
-            }
-            sql = "select count(*) as cnt from users where 1=1" + condition + " AND is_bot = 0 AND security_time is not null";
-            PreparedStatement stm = conn.prepareStatement(sql);
-            ResultSet rs = stm.executeQuery();
-            if (rs.next()) {
-                cnt = rs.getInt("cnt");
-            }
-            rs.close();
-            stm.close();
+        if (startTime != null && !startTime.isEmpty() && endTime != null && !endTime.isEmpty()) {
+            sql += " AND create_time BETWEEN ? AND ?";
         }
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
+            if (startTime != null && !startTime.isEmpty() && endTime != null && !endTime.isEmpty()) {
+                stm.setString(1, startTime + " 00:00:00");
+                stm.setString(2, endTime + " 23:59:59");
+            }
+
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    cnt = rs.getInt("cnt");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Consider logging the exception or handling it appropriately
+            throw e;
+        }
+
         return cnt;
     }
+
 
     @Override
     public int countUserPayAndSecurity(String startTime, String endTime) throws SQLException {

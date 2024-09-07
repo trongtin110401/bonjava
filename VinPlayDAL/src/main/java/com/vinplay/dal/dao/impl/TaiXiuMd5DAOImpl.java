@@ -57,36 +57,45 @@ public class TaiXiuMd5DAOImpl
 
     @Override
     public List<ResultTaiXiu> getLichSuPhien(int number, int moneyType) throws SQLException {
-        ArrayList<ResultTaiXiu> results = new ArrayList<ResultTaiXiu>();
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");) {
-            String sql = "SELECT * FROM result_tai_xiu_md5 WHERE money_type=" + moneyType + " ORDER BY `timestamp` DESC LIMIT 0," + number;
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                ResultTaiXiu entry = new ResultTaiXiu();
-                entry.referenceId = rs.getLong("reference_id");
-                entry.result = rs.getInt("result");
-                entry.dice1 = rs.getInt("dice1");
-                entry.dice2 = rs.getInt("dice2");
-                entry.dice3 = rs.getInt("dice3");
-                entry.totalTai = rs.getLong("total_tai");
-                entry.totalXiu = rs.getLong("total_xiu");
-                entry.numBetTai = rs.getInt("num_bet_tai");
-                entry.numBetXiu = rs.getInt("num_bet_xiu");
-                entry.totalPrize = rs.getLong("total_prize");
-                entry.totalRefundTai = rs.getLong("total_refund_tai");
-                entry.totalRefundXiu = rs.getLong("total_refund_xiu");
-                entry.totalRevenue = rs.getLong("total_revenue");
-                entry.moneyType = rs.getInt("money_type");
-                Timestamp timestamp = rs.getTimestamp("timestamp");
-                entry.timestamp = CommonUtils.convertTimestampToString((java.util.Date) timestamp);
-                results.add(0, entry);
+        List<ResultTaiXiu> results = new ArrayList<>();
+        String sql = "SELECT * FROM result_tai_xiu_md5 WHERE money_type = ? ORDER BY `timestamp` DESC LIMIT ?";
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, moneyType);
+            stmt.setInt(2, number);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    ResultTaiXiu entry = new ResultTaiXiu();
+                    entry.referenceId = rs.getLong("reference_id");
+                    entry.result = rs.getInt("result");
+                    entry.dice1 = rs.getInt("dice1");
+                    entry.dice2 = rs.getInt("dice2");
+                    entry.dice3 = rs.getInt("dice3");
+                    entry.totalTai = rs.getLong("total_tai");
+                    entry.totalXiu = rs.getLong("total_xiu");
+                    entry.numBetTai = rs.getInt("num_bet_tai");
+                    entry.numBetXiu = rs.getInt("num_bet_xiu");
+                    entry.totalPrize = rs.getLong("total_prize");
+                    entry.totalRefundTai = rs.getLong("total_refund_tai");
+                    entry.totalRefundXiu = rs.getLong("total_refund_xiu");
+                    entry.totalRevenue = rs.getLong("total_revenue");
+                    entry.moneyType = rs.getInt("money_type");
+                    Timestamp timestamp = rs.getTimestamp("timestamp");
+                    entry.timestamp = CommonUtils.convertTimestampToString((java.util.Date) timestamp);
+                    results.add(entry);
+                }
             }
-            rs.close();
-            stmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace(); // Consider using a logging framework
+            throw e; // Re-throw the exception to be handled by the calling code
         }
+
         return results;
     }
+
 
     @Override
     public List<TransactionTaiXiu> getLichSuGiaoDich(String nickname, int number, int moneyType) throws SQLException {
@@ -330,36 +339,45 @@ public class TaiXiuMd5DAOImpl
     @Override
     public ResultTaiXiu getKetQuaPhien(long referenceId, int moneyType) throws SQLException {
         ResultTaiXiuMd5 entry = null;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");) {
-            String sql = "SELECT * FROM result_tai_xiu_md5 WHERE reference_id=" + referenceId + " AND money_type=" + moneyType;
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                entry = new ResultTaiXiuMd5();
-                entry.referenceId = rs.getLong("reference_id");
-                entry.result = rs.getInt("result");
-                entry.dice1 = rs.getInt("dice1");
-                entry.dice2 = rs.getInt("dice2");
-                entry.dice3 = rs.getInt("dice3");
-                entry.totalTai = rs.getLong("total_tai");
-                entry.totalXiu = rs.getLong("total_xiu");
-                entry.numBetTai = rs.getInt("num_bet_tai");
-                entry.numBetXiu = rs.getInt("num_bet_xiu");
-                entry.totalPrize = rs.getLong("total_prize");
-                entry.totalRefundTai = rs.getLong("total_refund_tai");
-                entry.totalRefundXiu = rs.getLong("total_refund_xiu");
-                entry.totalRevenue = rs.getLong("total_revenue");
-                entry.moneyType = rs.getInt("money_type");
-                Timestamp timestamp = rs.getTimestamp("timestamp");
-                entry.timestamp = CommonUtils.convertTimestampToString((java.util.Date) timestamp);
-                entry.setPlantTextResult(rs.getString("plainText"));
-                entry.setMd5TextResult(rs.getString("md5"));
+        String sql = "SELECT * FROM result_tai_xiu_md5 WHERE reference_id = ? AND money_type = ?";
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setLong(1, referenceId);
+            stmt.setInt(2, moneyType);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    entry = new ResultTaiXiuMd5();
+                    entry.referenceId = rs.getLong("reference_id");
+                    entry.result = rs.getInt("result");
+                    entry.dice1 = rs.getInt("dice1");
+                    entry.dice2 = rs.getInt("dice2");
+                    entry.dice3 = rs.getInt("dice3");
+                    entry.totalTai = rs.getLong("total_tai");
+                    entry.totalXiu = rs.getLong("total_xiu");
+                    entry.numBetTai = rs.getInt("num_bet_tai");
+                    entry.numBetXiu = rs.getInt("num_bet_xiu");
+                    entry.totalPrize = rs.getLong("total_prize");
+                    entry.totalRefundTai = rs.getLong("total_refund_tai");
+                    entry.totalRefundXiu = rs.getLong("total_refund_xiu");
+                    entry.totalRevenue = rs.getLong("total_revenue");
+                    entry.moneyType = rs.getInt("money_type");
+                    Timestamp timestamp = rs.getTimestamp("timestamp");
+                    entry.timestamp = CommonUtils.convertTimestampToString((java.util.Date) timestamp);
+                    entry.setPlantTextResult(rs.getString("plainText"));
+                    entry.setMd5TextResult(rs.getString("md5"));
+                }
+            } catch (SQLException e) {
+                e.printStackTrace(); // Consider using a logging framework
+                throw e; // Re-throw the exception to be handled by the calling code
             }
-            rs.close();
-            stmt.close();
         }
+
         return entry;
     }
+
 
     @Override
     public List<ThanhDuTXModel> getTopThanhDuDaily(String startTime, String endTime, short type) throws SQLException {

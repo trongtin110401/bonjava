@@ -895,19 +895,26 @@ public class LogMoneyUserDaoImpl
     @Override
     public UserModel getUserByNickName(String nickname) throws SQLException {
         UserModel user = null;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            String sql = "SELECT * FROM users WHERE nick_name=?";
-            PreparedStatement stm = conn.prepareStatement("SELECT * FROM users WHERE nick_name=?");
+        String sql = "SELECT * FROM users WHERE nick_name = ?";
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
             stm.setString(1, nickname);
-            ResultSet rs = stm.executeQuery();
-            if (rs.next()) {
-                user = UserUtil.parseResultSetToUserModel((ResultSet) rs);
+
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    user = UserUtil.parseResultSetToUserModel(rs);
+                }
             }
-            rs.close();
-            stm.close();
+        } catch (SQLException e) {
+            e.printStackTrace(); // Consider logging the exception or handling it appropriately
+            throw e;
         }
+
         return user;
     }
+
 
     @Override
     public List<LogUserMoneyResponse> searchLogMoneyTranferUser(String nickName, String timeStart, String timeEnd, String type, int page) {
@@ -988,21 +995,32 @@ public class LogMoneyUserDaoImpl
     }
 
     @Override
-    public boolean UpdateProcessLogChuyenTienDaiLyMySQL(String nickNameSend, String nickNameReceive, String timeLog, String Status) throws SQLException {
-        String sql = " UPDATE vinplay.log_tranfer_agent  SET process = ?,      update_time = ?  WHERE trans_time = ?        AND nick_name_send = ?        AND nick_name_receive = ? ";
-        PreparedStatement stmt = null;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            stmt = conn.prepareStatement(" UPDATE vinplay.log_tranfer_agent  SET process = ?,      update_time = ?  WHERE trans_time = ?        AND nick_name_send = ?        AND nick_name_receive = ? ");
-            stmt.setInt(1, Integer.parseInt(Status));
-            stmt.setString(2, DateTimeUtils.getCurrentTime((String) "yyyy-MM-dd HH:mm:ss"));
+    public boolean UpdateProcessLogChuyenTienDaiLyMySQL(String nickNameSend, String nickNameReceive, String timeLog, String status) throws SQLException {
+        String sql = "UPDATE vinplay.log_tranfer_agent SET process = ?, update_time = ? WHERE trans_time = ? AND nick_name_send = ? AND nick_name_receive = ?";
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, Integer.parseInt(status)); // Convert status to int
+            stmt.setString(2, DateTimeUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")); // Use current time in the specified format
             stmt.setString(3, timeLog);
             stmt.setString(4, nickNameSend);
             stmt.setString(5, nickNameReceive);
-            stmt.executeUpdate();
-            stmt.close();
+
+            int rowsAffected = stmt.executeUpdate();
+
+            // Optionally, check if any rows were updated
+            return rowsAffected > 0;
+
+        } catch (NumberFormatException e) {
+            e.printStackTrace(); // Handle the case where Status is not a valid integer
+            throw new SQLException("Invalid status format", e);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
         }
-        return true;
     }
+
 
     public List<LogUserMoneyResponse> getMoneyCashInAndCashOutByNickname(String nickName, List<String> actionNames) {
         final ArrayList<LogUserMoneyResponse> results = new ArrayList<>();

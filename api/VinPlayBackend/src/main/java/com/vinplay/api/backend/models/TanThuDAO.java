@@ -10,24 +10,20 @@ import java.util.ArrayList;
 
 public class TanThuDAO {
     public void InsertCodeTT(CodeTT codett) throws Exception {
-        Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
-        try {
-            String sql = "INSERT INTO vinplay.giftcodett (code,money, timelog,stop) VALUES(?,?,?,?)";
-            PreparedStatement stm = conn.prepareStatement(sql);
+        String sql = "INSERT INTO vinplay.giftcodett (code, money, timelog, stop) VALUES (?, ?, ?, ?)";
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
             stm.setString(1, codett.getCode());
             stm.setInt(2, codett.getMoney());
             stm.setString(3, codett.getTimelog());
             stm.setInt(4, codett.getStop());
-            int rs = stm.executeUpdate();
-            stm.close();
-            if (conn != null) {
-                conn.close();
-            }
+            stm.executeUpdate();
         } catch (Exception e) {
             throw e;
         }
-
     }
+
 
     public void DeleteCodeTT(String codett) {
         Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");

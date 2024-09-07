@@ -411,115 +411,121 @@ public class OtherServiceImpl implements OtherService {
 
     @Override
     public long getTotalShootFishByNickname(String startTime, String endTime, String nickname) {
-        MoneyShootFishResponse response = new MoneyShootFishResponse(false, "1001");
         long totalProfit = 0;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_banca");) {
-            String sql;
-            if (nickname != null && !nickname.isEmpty()) {
-                sql = "SELECT * FROM cgame.bc_trans_log c " + "JOIN users u ON c.UserId = u.user_id " + "WHERE c.time >= ? AND c.time <= ? AND u.nickname = ?";
-            } else {
-                sql = "SELECT * FROM cgame.bc_trans_log WHERE time >= ? AND time <= ?";
-            }
-            PreparedStatement stm = conn.prepareStatement(sql);
+
+        String sql = nickname != null && !nickname.isEmpty()
+                ? "SELECT * FROM cgame.bc_trans_log c JOIN users u ON c.UserId = u.user_id WHERE c.time >= ? AND c.time <= ? AND u.nickname = ?"
+                : "SELECT * FROM cgame.bc_trans_log WHERE time >= ? AND time <= ?";
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_banca");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
             stm.setTimestamp(1, Timestamp.valueOf(startTime + " 00:00:00"));
             stm.setTimestamp(2, Timestamp.valueOf(endTime + " 23:59:59"));
+
             if (nickname != null && !nickname.isEmpty()) {
                 stm.setString(3, nickname);
             }
-            ResultSet rs = stm.executeQuery();
 
-            totalProfit = 0;
-
-            while (rs.next()) {
-                if (rs.getString("Type").equals("1")) {
-                    totalProfit += rs.getInt("CashGain");
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    if ("1".equals(rs.getString("Type"))) {
+                        totalProfit += rs.getInt("CashGain");
+                    }
                 }
             }
-            rs.close();
-            stm.close();
+
         } catch (Exception e) {
-            response.setSuccess(false);
-            response.setErrorCode(e.getMessage());
-            e.printStackTrace();
+            e.printStackTrace(); // Consider logging the exception instead
         }
-        totalProfit = totalProfit * -1;
-        return totalProfit;
+
+        return totalProfit * -1;
     }
 
     @Override
     public List<TopCaoThu> getBanCa(String startTime, String endTime) {
         List<TopCaoThu> result = new ArrayList<>();
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_banca");) {
-            String sql = "SELECT * FROM cgame.bc_trans_log c " + "JOIN users u ON c.UserId = u.user_id " + "WHERE c.time >= ? AND c.time <= ?";
-            PreparedStatement stm = conn.prepareStatement(sql);
+
+        String sql = "SELECT * FROM cgame.bc_trans_log c " +
+                "JOIN users u ON c.UserId = u.user_id " +
+                "WHERE c.time >= ? AND c.time <= ?";
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_banca");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
             stm.setTimestamp(1, Timestamp.valueOf(startTime + " 00:00:00"));
             stm.setTimestamp(2, Timestamp.valueOf(endTime + " 23:59:59"));
-            ResultSet rs = stm.executeQuery();
-            while (rs.next()) {
-                if (rs.getString("Type").equals("1")) {
-                    String nickname = rs.getString("nickname");
-                    int cashGain = rs.getInt("CashGain");
 
-                    // Check if the nickname already exists in the result list
-                    Optional<TopCaoThu> existingTopCaoThu = result.stream()
-                            .filter(topCaoThu -> topCaoThu.getNickname().equals(nickname))
-                            .findFirst();
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    if ("1".equals(rs.getString("Type"))) {
+                        String nickname = rs.getString("nickname");
+                        int cashGain = rs.getInt("CashGain");
 
-                    if (existingTopCaoThu.isPresent()) {
-                        // If found, add the new cash gain to the existing amount
-                        existingTopCaoThu.get().setMoneyWin(existingTopCaoThu.get().getMoneyWin() + cashGain);
-                    } else {
-                        // If not found, create a new TopCaoThu and add it to the result list
-                        TopCaoThu topCaoThu = new TopCaoThu();
-                        topCaoThu.setMoneyWin(cashGain);
-                        topCaoThu.setNickname(nickname);
-                        result.add(topCaoThu);
+                        TopCaoThu existingTopCaoThu = result.stream()
+                                .filter(topCaoThu -> topCaoThu.getNickname().equals(nickname))
+                                .findFirst()
+                                .orElse(null);
+
+                        if (existingTopCaoThu != null) {
+                            // If found, add the new cash gain to the existing amount
+                            existingTopCaoThu.setMoneyWin(existingTopCaoThu.getMoneyWin() + cashGain);
+                        } else {
+                            // If not found, create a new TopCaoThu and add it to the result list
+                            TopCaoThu topCaoThu = new TopCaoThu();
+                            topCaoThu.setMoneyWin(cashGain);
+                            topCaoThu.setNickname(nickname);
+                            result.add(topCaoThu);
+                        }
                     }
                 }
             }
-            rs.close();
-            stm.close();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return result;
     }
 
+
     @Override
     public long getMoneyShootFishByNickname(String startTime, String endTime, String nickname) {
-        MoneyShootFishResponse response = new MoneyShootFishResponse(false, "1001");
         long totalProfit = 0;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_banca");) {
-            String sql;
-            if (nickname != null && !nickname.isEmpty()) {
-                sql = "SELECT * FROM cgame.bc_trans_log c " + "JOIN users u ON c.UserId = u.user_id " + "WHERE c.time >= ? AND c.time <= ? AND u.nickname = ?";
-            } else {
-                sql = "SELECT * FROM cgame.bc_trans_log WHERE time >= ? AND time <= ?";
-            }
-            PreparedStatement stm = conn.prepareStatement(sql);
+
+        String sql;
+        if (nickname != null && !nickname.isEmpty()) {
+            sql = "SELECT * FROM cgame.bc_trans_log c " +
+                    "JOIN users u ON c.UserId = u.user_id " +
+                    "WHERE c.time >= ? AND c.time <= ? AND u.nickname = ?";
+        } else {
+            sql = "SELECT * FROM cgame.bc_trans_log WHERE time >= ? AND time <= ?";
+        }
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_banca");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
             stm.setTimestamp(1, Timestamp.valueOf(startTime + " 00:00:00"));
             stm.setTimestamp(2, Timestamp.valueOf(endTime + " 23:59:59"));
             if (nickname != null && !nickname.isEmpty()) {
                 stm.setString(3, nickname);
             }
-            ResultSet rs = stm.executeQuery();
 
-            totalProfit = 0;
-
-            while (rs.next()) {
-                if (rs.getString("Type").equals("1")) {
-                    totalProfit += rs.getInt("CashGain");
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    if ("1".equals(rs.getString("Type"))) {
+                        totalProfit += rs.getInt("CashGain");
+                    }
                 }
             }
-            rs.close();
-            stm.close();
         } catch (Exception e) {
-            response.setSuccess(false);
-            response.setErrorCode(e.getMessage());
             e.printStackTrace();
+            // Consider logging the error or rethrowing if necessary
         }
+
         return totalProfit;
     }
+
 
     @Override
     public boolean checkIfHaveAnyEventActive() {
@@ -734,47 +740,42 @@ public class OtherServiceImpl implements OtherService {
 
     @Override
     public List<MoneyShootFishResponse> getTotalShootFish(String startTime, String endTime, String nickname) throws Exception {
-
         List<MoneyShootFishResponse> responses = new ArrayList<>();
-        long totalProfit = 0;
-        PreparedStatement stm = null;
-        ResultSet rs = null;
 
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_banca");) {
-            String sql = "SELECT u.nickname, sum(c.CashGain) as CashGain " + "FROM cgame.bc_trans_log c JOIN cgame.users u ON c.UserId = u.user_id " + "WHERE c.time >= ?  AND c.time <= ? AND c.type = 1 ";
+        String sql = "SELECT u.nickname, SUM(c.CashGain) AS CashGain " +
+                "FROM cgame.bc_trans_log c " +
+                "JOIN cgame.users u ON c.UserId = u.user_id " +
+                "WHERE c.time >= ? AND c.time <= ? AND c.type = 1 ";
 
-            boolean findByNickName = false;
-            if (StringUtils.isNotEmpty(nickname)) {
-                sql += " AND u.nickname = ? ";
-                findByNickName = true;
-            }
-            sql += "GROUP BY u.nickname";
+        boolean findByNickName = StringUtils.isNotEmpty(nickname);
+        if (findByNickName) {
+            sql += "AND u.nickname = ? ";
+        }
+        sql += "GROUP BY u.nickname";
 
-            stm = conn.prepareStatement(sql);
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_banca");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
             stm.setTimestamp(1, Timestamp.valueOf(LocalDateTime.parse(startTime + " 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))));
             stm.setTimestamp(2, Timestamp.valueOf(LocalDateTime.parse(endTime + " 23:59:59", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))));
             if (findByNickName) {
                 stm.setString(3, nickname);
             }
-            rs = stm.executeQuery();
 
-            MoneyShootFishResponse response = null;
-            while (rs.next()) {
-                response = new MoneyShootFishResponse(true, "0", rs.getString("nickname"), rs.getLong("CashGain") * -1);
-                responses.add(response);
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    MoneyShootFishResponse response = new MoneyShootFishResponse(true, "0", rs.getString("nickname"), rs.getLong("CashGain") * -1);
+                    responses.add(response);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            if (rs != null) {
-                rs.close();
-            }
-            if (stm != null) {
-                stm.close();
-            }
+            throw e; // Ensure exceptions are propagated after logging
         }
+
         return responses;
     }
+
 
     @Override
     public void deleteExpenseById(String id) {
