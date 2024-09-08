@@ -45,6 +45,7 @@ import org.bson.conversions.Bson;
 
 public class UserDaoImpl
 implements UserDao {
+
     @Override
     public UserModel getUserByNickName(String nickname) throws SQLException {
         UserModel user = null;
