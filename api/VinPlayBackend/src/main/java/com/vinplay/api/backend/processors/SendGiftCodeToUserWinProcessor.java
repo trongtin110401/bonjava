@@ -185,6 +185,7 @@ public class SendGiftCodeToUserWinProcessor implements BaseProcessor<HttpServlet
     }
 
     public static void sendMessage(String chatId, String message) {
+        Response response = null;
         try {
 //            String bootToken = GameCommon.getValueStr("Telegram_boot_bon_token");
             String bot = "6831621160:AAHPfkEON1-u2e44F8WAVdu5vT9ySql8ztA";
@@ -199,10 +200,11 @@ public class SendGiftCodeToUserWinProcessor implements BaseProcessor<HttpServlet
                     .build();
 
             OkHttpClient client = new OkHttpClient();
-            Response response = client.newCall(request).execute();
-            response.close();
+            response = client.newCall(request).execute();
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            response.close();
         }
     }
 

@@ -21,7 +21,7 @@ import java.util.Locale;
 
 public class CheckNap {
 
-    public naptmp tongnapTheELK(String nickname){
+    public naptmp tongnapTheELK(String nickname) {
         try {
             long tong = 0;
             long tongthe = 0;
@@ -37,9 +37,9 @@ public class CheckNap {
             HistoryTransModel his = null;
             ArrayList<HistoryTransModel> list_his = new ArrayList<>();
             int retry = 3;
-            do{
+            do {
                 retry--;
-                if(retry < 0) {
+                if (retry < 0) {
                     break;
                 }
                 OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
@@ -53,7 +53,7 @@ public class CheckNap {
                         .build();
                 Response response = client.newCall(request).execute();
                 String data = response.body().string();
-                if(data.contains(sig) == true){
+                if (data.contains(sig) == true) {
                     check = true;
                 }
                 timeretry--;
@@ -80,20 +80,20 @@ public class CheckNap {
                     listtien.add(checkn);
 //                    list_his.add(his);
                 }
-            }while (check == false && timeretry > 0);
+            } while (check == false && timeretry > 0);
 
-            for(checknapEnity s : listtien){
+            for (checknapEnity s : listtien) {
 //            if(s.getHinhtruc().equalsIgnoreCase("CARD") || s.getHinhtruc().equalsIgnoreCase("BANK") || s.getHinhtruc().equalsIgnoreCase("CodePay")
 //                    || s.getHinhtruc().equalsIgnoreCase("ONE_PAY") || s.getHinhtruc().equalsIgnoreCase("ADMIN_TRANSFER_TO_USER")){
 
-                if(s.getHinhtruc().equalsIgnoreCase("CARD")){
+                if (s.getHinhtruc().equalsIgnoreCase("CARD")) {
                     tongthe = tongthe + s.getSotien();
-                }else if(s.getHinhtruc().equalsIgnoreCase("ADMIN_TRANSFER_TO_USER")){
+                } else if (s.getHinhtruc().equalsIgnoreCase("ADMIN_TRANSFER_TO_USER")) {
                     tongadmin = tongadmin + s.getSotien();
-                }else if(s.getHinhtruc().equalsIgnoreCase("BANK")){
+                } else if (s.getHinhtruc().equalsIgnoreCase("BANK")) {
                     tong = tong + s.getSotien();
                     tongbank = tongbank + s.getSotien();
-                }else if(s.getHinhtruc().equalsIgnoreCase("MOMO")){
+                } else if (s.getHinhtruc().equalsIgnoreCase("MOMO")) {
                     tong = tong + s.getSotien();
                     tongmomo = tongmomo + s.getSotien();
                 }
@@ -104,13 +104,13 @@ public class CheckNap {
             ntmp.setNapmomo(tongmomo);
             return ntmp;
 
-        }catch(Exception e){
+        } catch (Exception e) {
             return null;
         }
 
     }
 
-    public long tongrutELK(String nickname){
+    public long tongrutELK(String nickname) {
         try {
             long tong = 0;
             ArrayList<checknapEnity> listtien = new ArrayList<>();
@@ -119,9 +119,9 @@ public class CheckNap {
             boolean check = false;
             String sig = "\"successful\":1";
             int retry = 3;
-            do{
+            do {
                 retry--;
-                if(retry < 0) {
+                if (retry < 0) {
                     break;
                 }
                 OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
@@ -135,7 +135,7 @@ public class CheckNap {
                         .build();
                 Response response = client.newCall(request).execute();
                 String data = response.body().string();
-                if(data.contains(sig) == true){
+                if (data.contains(sig) == true) {
                     check = true;
                 }
                 timeretry--;
@@ -161,17 +161,17 @@ public class CheckNap {
                     checknapEnity checkn = new checknapEnity(nickName, hinhthucTrans, sotien);
                     listtien.add(checkn);
                 }
-            }while (check == false && timeretry > 0);
-            for(checknapEnity s : listtien){
+            } while (check == false && timeretry > 0);
+            for (checknapEnity s : listtien) {
                 tong = tong + s.getSotien();
             }
             return tong;
-        }catch (Exception e){
+        } catch (Exception e) {
             return 0;
         }
     }
 
-    public long xinlocELK(String nickname){
+    public long xinlocELK(String nickname) {
         try {
             long tong = 0;
             ArrayList<checknapEnity> listtien = new ArrayList<>();
@@ -180,9 +180,9 @@ public class CheckNap {
             boolean check = false;
             String sig = "\"successful\":1";
             int retry = 3;
-            do{
+            do {
                 retry--;
-                if(retry < 0) {
+                if (retry < 0) {
                     break;
                 }
                 OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
@@ -196,7 +196,7 @@ public class CheckNap {
                         .build();
                 Response response = client.newCall(request).execute();
                 String data = response.body().string();
-                if(data.contains(sig) == true){
+                if (data.contains(sig) == true) {
                     check = true;
                 }
                 timeretry--;
@@ -223,18 +223,18 @@ public class CheckNap {
                     listtien.add(checkn);
                 }
 
-            }while (check == false && timeretry > 0);
-            for(checknapEnity s : listtien){
+            } while (check == false && timeretry > 0);
+            for (checknapEnity s : listtien) {
                 tong = tong + s.getSotien();
             }
             return tong;
 
-        }catch (Exception e){
+        } catch (Exception e) {
             return 0;
         }
     }
 
-    public naptmp tongnapThe(String nickname){
+    public naptmp tongnapThe(String nickname) {
         long tong = 0;
         long tongthe = 0;
         long tongadmin = 0;
@@ -258,19 +258,19 @@ public class CheckNap {
                 listtien.add(check);
             }
         });
-        for(checknapEnity s : listtien){
+        for (checknapEnity s : listtien) {
 //            if(s.getHinhtruc().equalsIgnoreCase("CARD") || s.getHinhtruc().equalsIgnoreCase("BANK") || s.getHinhtruc().equalsIgnoreCase("CodePay")
 //                    || s.getHinhtruc().equalsIgnoreCase("ONE_PAY") || s.getHinhtruc().equalsIgnoreCase("ADMIN_TRANSFER_TO_USER")){
-                tong = tong + s.getSotien();
-                if(s.getHinhtruc().equalsIgnoreCase("CARD")){
-                    tongthe = tongthe + s.getSotien();
-                }else if(s.getHinhtruc().equalsIgnoreCase("ADMIN_TRANSFER_TO_USER")){
-                    tongadmin = tongadmin + s.getSotien();
-                }else if(s.getHinhtruc().equalsIgnoreCase("BANK")){
-                    tongbank = tongbank + s.getSotien();
-                }else if(s.getHinhtruc().equalsIgnoreCase("MOMO")){
-                    tongmomo = tongmomo + s.getSotien();
-                }
+            tong = tong + s.getSotien();
+            if (s.getHinhtruc().equalsIgnoreCase("CARD")) {
+                tongthe = tongthe + s.getSotien();
+            } else if (s.getHinhtruc().equalsIgnoreCase("ADMIN_TRANSFER_TO_USER")) {
+                tongadmin = tongadmin + s.getSotien();
+            } else if (s.getHinhtruc().equalsIgnoreCase("BANK")) {
+                tongbank = tongbank + s.getSotien();
+            } else if (s.getHinhtruc().equalsIgnoreCase("MOMO")) {
+                tongmomo = tongmomo + s.getSotien();
+            }
 
         }
         naptmp ntmp = new naptmp(nickname, tong, tongthe, tongadmin);
@@ -279,7 +279,7 @@ public class CheckNap {
         return ntmp;
     }
 
-    public long tongrut(String nickname){
+    public long tongrut(String nickname) {
         long tong = 0;
         ArrayList<checknapEnity> listtien = new ArrayList<>();
         HashMap<String, Object> conditions = new HashMap<String, Object>();
@@ -299,7 +299,7 @@ public class CheckNap {
                 listtien.add(check);
             }
         });
-        for(checknapEnity s : listtien){
+        for (checknapEnity s : listtien) {
             tong = tong + s.getSotien();
 
 
@@ -307,7 +307,7 @@ public class CheckNap {
         return tong;
     }
 
-    public long xinloc(String nickname){
+    public long xinloc(String nickname) {
         long tong = 0;
         ArrayList<checknapEnity> listtien = new ArrayList<>();
         HashMap<String, Object> conditions = new HashMap<String, Object>();
@@ -328,13 +328,13 @@ public class CheckNap {
                 listtien.add(check);
             }
         });
-        for(checknapEnity s : listtien){
+        for (checknapEnity s : listtien) {
             tong = tong + s.getSotien();
         }
         return tong;
     }
 
-    public stkRut LaySTK(String nickname){
+    public stkRut LaySTK(String nickname) {
         long tong = 0;
         ArrayList<stkRut> listtien = new ArrayList<>();
         HashMap<String, Object> conditions = new HashMap<String, Object>();
@@ -350,18 +350,19 @@ public class CheckNap {
                 String number = document.getString((Object) "BankAccountNumber");
                 String bank = document.getString((Object) "BankName");
                 long tien = document.getLong((Object) "AmountReal");
-                stkRut rutx = new stkRut(nickname, number, name, bank,tien);
+                stkRut rutx = new stkRut(nickname, number, name, bank, tien);
                 listtien.add(rutx);
             }
         });
-        if(listtien.size() == 0){
-            stkRut rutx = new stkRut(nickname, "","","",0);
+        if (listtien.size() == 0) {
+            stkRut rutx = new stkRut(nickname, "", "", "", 0);
             listtien.add(rutx);
         }
-        return listtien.get(listtien.size()-1);
+        return listtien.get(listtien.size() - 1);
     }
 
-    public void Notify(String nickname, long tiennap, long tienrut, long tongrut, long thecao, long xinloc, long napadmin, long sodu, long bankx, long taixiu){
+    public void Notify(String nickname, long tiennap, long tienrut, long tongrut, long thecao, long xinloc, long napadmin, long sodu, long bankx, long taixiu) {
+        Response response = null;
         try {
 
             Locale localeEN = new Locale("en", "EN");
@@ -376,20 +377,21 @@ public class CheckNap {
             String str8 = en.format(bankx);
             String str9 = en.format(taixiu);
 
-            String noidung = "- Nick name: "+nickname+"%0A%0A- Số dư: "+str7+"%0A%0A- Số tiền nạp: "+str1+"%0A- Nạp ngân hàng và momo: "+str8+"%0A- Nạp thẻ cào: "+str4+"%0A- Nạp Admin: "+str6+"%0A%0A- Số tiền rút: "+str3+"%0A%0A- Xin lộc: "+str5+"%0A%0Ayêu cầu rút: "+str2;
+            String noidung = "- Nick name: " + nickname + "%0A%0A- Số dư: " + str7 + "%0A%0A- Số tiền nạp: " + str1 + "%0A- Nạp ngân hàng và momo: " + str8 + "%0A- Nạp thẻ cào: " + str4 + "%0A- Nạp Admin: " + str6 + "%0A%0A- Số tiền rút: " + str3 + "%0A%0A- Xin lộc: " + str5 + "%0A%0Ayêu cầu rút: " + str2;
 
             OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
                     .build();
             Request request = new Request.Builder()
-                    .url("https://api.telegram.org/bot5281176154:AAHZdXuMV2ZJkkSD6KhUwQcX6MNdT9YSLQ8/sendMessage?chat_id=-772126416&text="+noidung)
+                    .url("https://api.telegram.org/bot5281176154:AAHZdXuMV2ZJkkSD6KhUwQcX6MNdT9YSLQ8/sendMessage?chat_id=-772126416&text=" + noidung)
                     .method("GET", null)
                     .build();
-            Response response = client.newCall(request).execute();
+            response = client.newCall(request).execute();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            response.close();
         }
     }
-
 
 
 }

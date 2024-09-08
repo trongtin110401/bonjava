@@ -25,6 +25,7 @@ public class OTPTeleService {
 
     public void sendOTP(String chatId, String otp) {
         String message = "Mã OTP của bạn là : " + otp + " và có hiệu lực trong vòng 5 phút";
+        Response response = null;
         try {
             String bootToken = "6831621160:AAHPfkEON1-u2e44F8WAVdu5vT9ySql8ztA";
             OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
@@ -33,10 +34,12 @@ public class OTPTeleService {
                     .url("https://api.telegram.org/bot" + bootToken + "/sendMessage?text=" + encodeValue(message) + "&chat_id=" + chatId + "&parse_mode=HTML")
                     .method("GET", null)
                     .build();
-            Response response = client.newCall(request).execute();
+            response = client.newCall(request).execute();
             response.close();
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            response.close();
         }
     }
 

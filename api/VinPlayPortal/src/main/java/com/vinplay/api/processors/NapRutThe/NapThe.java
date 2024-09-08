@@ -33,13 +33,13 @@ public class NapThe {
 
             this.validateCharge(cardType, pin, seri);
             String telo = "";
-            if(cardType.equals("VT")){
+            if (cardType.equals("VT")) {
                 telo = "VTT";
-            }else if(cardType.equals("Vina")){
+            } else if (cardType.equals("Vina")) {
                 telo = "VNP";
-            }else if(cardType.equals("Mobi")){
+            } else if (cardType.equals("Mobi")) {
                 telo = "VMS";
-            }else{
+            } else {
                 telo = "Error";
             }
 
@@ -48,7 +48,7 @@ public class NapThe {
 
             long t0 = System.nanoTime();
             MediaType mediaType = MediaType.parse("application/json");
-            RequestBody body = RequestBody.create(mediaType, "{\"username\":\""+username+"\",\"password\":\""+pass+"\",\"amount\":\""+amount+"\",\"serial\":\""+seri+"\",\"telco\":\""+telo+"\",\"pincode\":\""+pin+"\",\"requestid\":\""+transId+"\"}");
+            RequestBody body = RequestBody.create(mediaType, "{\"username\":\"" + username + "\",\"password\":\"" + pass + "\",\"amount\":\"" + amount + "\",\"serial\":\"" + seri + "\",\"telco\":\"" + telo + "\",\"pincode\":\"" + pin + "\",\"requestid\":\"" + transId + "\"}");
             Request request = new Request.Builder()
 //                    .url("http://45.77.183.1:8899/checkcard")
                     .url("http://45.32.106.125:8899/checkcard")
@@ -66,24 +66,24 @@ public class NapThe {
             }
 
             String resul_resp = response.body().string();
-            if(resul_resp == null){
-                String response_end = "{\"msg\":"+"null respose"+",\"errorCode\":"+"100"+"}";
+            if (resul_resp == null) {
+                String response_end = "{\"msg\":" + "null respose" + ",\"errorCode\":" + "100" + "}";
                 JSONObject json = (JSONObject) new JSONParser().parse(response_end);
                 return json;
-            }else{
-                if(resul_resp.contains("errorcode")){
+            } else {
+                if (resul_resp.contains("errorcode")) {
                     String[] data1 = resul_resp.split(",");
                     String data2 = "";
                     String data2_plus = "";
                     String data2_plusplus = "";
-                    for(String xx : data1){
-                        if(xx.contains("errorcode")){
+                    for (String xx : data1) {
+                        if (xx.contains("errorcode")) {
                             data2 = xx;
                         }
-                        if(xx.contains("description")){
+                        if (xx.contains("description")) {
                             data2_plus = xx;
                         }
-                        if(xx.contains("requestid")){
+                        if (xx.contains("requestid")) {
                             data2_plusplus = xx;
                         }
                     }
@@ -91,29 +91,29 @@ public class NapThe {
                     String[] data4 = data2_plus.split(":");
                     String[] data5 = data2_plusplus.split(":");
                     String codex = data3[1];
-                    codex = codex.replaceAll("}","");
-                    codex = codex.replaceAll("\\{","");
-                    codex = codex.replaceAll("\"","");
+                    codex = codex.replaceAll("}", "");
+                    codex = codex.replaceAll("\\{", "");
+                    codex = codex.replaceAll("\"", "");
                     int code1 = Integer.parseInt(codex);
                     String code2 = data4[1];
-                    code2 = code2.replaceAll("}","");
-                    code2 = code2.replaceAll("\\{","");
+                    code2 = code2.replaceAll("}", "");
+                    code2 = code2.replaceAll("\\{", "");
                     String code3 = data5[1];
-                    code3 = code3.replaceAll("}","");
-                    code3 = code3.replaceAll("\\{","");
+                    code3 = code3.replaceAll("}", "");
+                    code3 = code3.replaceAll("\\{", "");
 
                     int code0 = 0;
-                    if(code1 == 1){
+                    if (code1 == 1) {
                         code0 = 0;
-                    }else {
+                    } else {
                         code0 = code1;
                     }
 
-                    String response_end = "{\"msg\":"+code2+",\"errorCode\":"+code0+"}";
+                    String response_end = "{\"msg\":" + code2 + ",\"errorCode\":" + code0 + "}";
                     JSONObject json = (JSONObject) new JSONParser().parse(response_end);
                     return json;
-                }else{
-                    String response_end = "{\"msg\":"+"null respose"+",\"errorCode\":"+"100"+"}";
+                } else {
+                    String response_end = "{\"msg\":" + "null respose" + ",\"errorCode\":" + "100" + "}";
                     JSONObject json = (JSONObject) new JSONParser().parse(response_end);
                     return json;
                 }
@@ -122,12 +122,13 @@ public class NapThe {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        String response_end = "{\"msg\":"+"null respose"+",\"errorCode\":"+"100"+"}";
+        String response_end = "{\"msg\":" + "null respose" + ",\"errorCode\":" + "100" + "}";
         JSONObject json = (JSONObject) new JSONParser().parse(response_end);
         return json;
 
 
     }
+
     private boolean validateCharge(String cardType, String pin, String seri) throws GachTheException {
         if (cardType == null || cardType.isEmpty()) {
             throw new GachTheException("Ch\u01b0a c\u00f3 lo\u1ea1i th\u1ebb", 1);
@@ -143,6 +144,7 @@ public class NapThe {
     }
 
     public void NotifyProxy(String noidung) {
+        Response response = null;
         try {
 
             OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
@@ -151,9 +153,11 @@ public class NapThe {
                     .url("https://api.telegram.org/bot5629083296:AAHSvVRVnvSTj8VNusqBn1-NRVTICB36S30/sendMessage?chat_id=-779731749&text=" + noidung)
                     .method("GET", null)
                     .build();
-            Response response = client.newCall(request).execute();
+            response = client.newCall(request).execute();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            response.close();
         }
     }
 
@@ -161,14 +165,14 @@ public class NapThe {
 
         this.validateCharge(cardType, pin, seri);
 
-        String apiToken="XX5tHU5mcbMja9reuGb1Uty8Dlh1SJOY2hcFNiGFTI4z4HfffecMD0DLg50GrOni";
-        String signature = VinPlayUtils.getMD5Hash(apiToken+amount+transId+seri);
+        String apiToken = "XX5tHU5mcbMja9reuGb1Uty8Dlh1SJOY2hcFNiGFTI4z4HfffecMD0DLg50GrOni";
+        String signature = VinPlayUtils.getMD5Hash(apiToken + amount + transId + seri);
 
-        String urlCallBack="https://apisieunhangao.net/api?c=4001&";
+        String urlCallBack = "https://apisieunhangao.net/api?c=4001&";
         OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
                 .build();
         MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
-        RequestBody body = RequestBody.create(mediaType, "CardSeri="+seri+"&CardCode="+pin+"&Amount="+amount+"&Signature="+signature+"&TransID="+transId+"&CardType="+cardType+"&ApiToken="+apiToken+"&UrlCallBack="+urlCallBack+"");
+        RequestBody body = RequestBody.create(mediaType, "CardSeri=" + seri + "&CardCode=" + pin + "&Amount=" + amount + "&Signature=" + signature + "&TransID=" + transId + "&CardType=" + cardType + "&ApiToken=" + apiToken + "&UrlCallBack=" + urlCallBack + "");
         Request request = new Request.Builder()
                 .url("http://66.42.62.119:8082/partner/RequestPayment")
                 .method("POST", body)
@@ -184,15 +188,15 @@ public class NapThe {
     }
 
 
-    public JSONObject napTheAuto(String cardType, String pin, String seri, String transId,long amount) throws Exception {
+    public JSONObject napTheAuto(String cardType, String pin, String seri, String transId, long amount) throws Exception {
         NapTienGaClient napTienGaClient = new NapTienGaClient();
         napTienGaClient.installAllTrustManager();
 
         AutoBankEntity autoBank = new AutoBankEntity();
 
         String url = autoBank.getUrl() + ":" + autoBank.getPort() + autoBank.getApiCard()
-                + "?apiKey=" + autoBank.getApiKey() + "&code="+ pin +"&serial="+ seri +"&type="+ cardType +"&menhGia="+ amount +"&requestId=" + transId;
-        JSONObject json = (JSONObject)new JSONParser().parse(APIProcess.responseGetAPI(url, null));
+                + "?apiKey=" + autoBank.getApiKey() + "&code=" + pin + "&serial=" + seri + "&type=" + cardType + "&menhGia=" + amount + "&requestId=" + transId;
+        JSONObject json = (JSONObject) new JSONParser().parse(APIProcess.responseGetAPI(url, null));
         return json;
     }
 

