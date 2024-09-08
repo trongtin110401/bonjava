@@ -75,10 +75,14 @@ public class TelegramUtil {
                 .url("https://api.telegram.org/bot" + token + "/sendMessage?text=" + encodeValue(mess) + "&chat_id=" + chatId + "&parse_mode=HTML")
                 .method("GET", null)
                 .build();
+        Response response = null;
         try {
-            Response response = client.newCall(request).execute();
-        } catch (IOException e) {
+            response = client.newCall(request).execute();
 
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            response.close();
         }
     }
 
@@ -87,6 +91,7 @@ public class TelegramUtil {
     }
 
     public void sendMessageNap(String message) {
+        Response response = null;
         try {
             String chatId = GameCommon.getValueStr("Telegram_chat_id");
             String bootToken = GameCommon.getValueStr("Telegram_boot_token");
@@ -96,13 +101,17 @@ public class TelegramUtil {
                     .url("https://api.telegram.org/bot" + bootToken + "/sendMessage?text=" + encodeValue(message) + "&chat_id=" + chatId + "&parse_mode=HTML")
                     .method("GET", null)
                     .build();
-            Response response = client.newCall(request).execute();
-        } catch (Exception e) {
+            response = client.newCall(request).execute();
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            response.close();
         }
     }
 
     public void sendMessageNapGiftCode(String message) {
+        Response response = null;
         try {
             String chatId = GameCommon.getValueStr("Telegram_giftcode_id");
             String bootToken = GameCommon.getValueStr("Telegram_boot_token");
@@ -112,13 +121,16 @@ public class TelegramUtil {
                     .url("https://api.telegram.org/bot" + bootToken + "/sendMessage?text=" + encodeValue(message) + "&chat_id=" + chatId + "&parse_mode=HTML")
                     .method("GET", null)
                     .build();
-            Response response = client.newCall(request).execute();
+            response = client.newCall(request).execute();
         } catch (Exception e) {
-
+            e.printStackTrace();
+        } finally {
+            response.close();
         }
     }
 
     public void sendMessageRut(String message) {
+        Response response = null;
         try {
 //            String chatId = GameCommon.getValueStr("Telegram_rut_chat_id");
             String chatId = "-4138070971";
@@ -129,13 +141,16 @@ public class TelegramUtil {
                     .url("https://api.telegram.org/bot" + bootToken + "/sendMessage?text=" + encodeValue(message) + "&chat_id=" + chatId + "&parse_mode=HTML")
                     .method("GET", null)
                     .build();
-            Response response = client.newCall(request).execute();
+            response = client.newCall(request).execute();
         } catch (Exception e) {
-
+            e.printStackTrace();
+        } finally {
+            response.close();
         }
     }
 
     public void sendMessageBetTX(String message) {
+        Response response = null;
         try {
 //            String chatId = GameCommon.getValueStr("Telegram_rut_chat_id");
             String chatId = "-1002087063529";
@@ -146,13 +161,16 @@ public class TelegramUtil {
                     .url("https://api.telegram.org/bot" + bootToken + "/sendMessage?text=" + encodeValue(message) + "&chat_id=" + chatId + "&parse_mode=HTML")
                     .method("GET", null)
                     .build();
-            Response response = client.newCall(request).execute();
+            response = client.newCall(request).execute();
         } catch (Exception e) {
-
+            e.printStackTrace();
+        } finally {
+            response.close();
         }
     }
 
     public void sendMessageBetTXMD5(String message) {
+        Response response = null;
         try {
             //            String chatId = GameCommon.getValueStr("Telegram_rut_chat_id");
             String chatId = "-1002101792441";
@@ -163,9 +181,11 @@ public class TelegramUtil {
                     .url("https://api.telegram.org/bot" + bootToken + "/sendMessage?text=" + encodeValue(message) + "&chat_id=" + chatId + "&parse_mode=HTML")
                     .method("GET", null)
                     .build();
-            Response response = client.newCall(request).execute();
+            response = client.newCall(request).execute();
         } catch (Exception e) {
-
+            e.printStackTrace();
+        } finally {
+            response.close();
         }
     }
 
