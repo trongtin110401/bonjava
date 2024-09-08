@@ -1,6 +1,8 @@
+-- PHẢI TẠO USER BÊN DƯỚI TRƯỚC VÌ KO THỰC HIỆN ĐƯỢC BẰNG TK ROOT
+
 - Create identifier user if it dose not exist
 GRANT ALL ON *.* TO 'vakagame'@'%' IDENTIFIED BY 'AVeAQbajvRtXQ9Twk7AjMRgy73Mq';
 FLUSH PRIVILEGES;
 
 - execute command to dump
-docker exec bdbaec1c601e /usr/bin/mysqldump --default-character-set=utf8 --single-transaction --routines --events --databases -u root --password=0Db20H9CP6T4jRNBB70bVTrf5o7IG9 --databases cgame vinplay vinplay_admin vinplay_gamebai vinplay_minigame > 20240519.sql
+docker exec 93b594f3374f /usr/bin/mysqldump --default-character-set=utf8 --single-transaction --routines --events --databases -u vakagame --password=AVeAQbajvRtXQ9Twk7AjMRgy73Mq --databases cgame vinplay vinplay_admin vinplay_gamebai vinplay_minigame > 20240907.sql
