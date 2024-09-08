@@ -264,22 +264,22 @@ public class UserDaoImpl implements UserDao {
     @Override
     public UserModel getUserByNickName(String nickname) throws SQLException {
         UserModel user = null;
-
         String sql = "SELECT * FROM users WHERE nick_name=?";
-
         try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
-             PreparedStatement stm = conn.prepareStatement(sql);
-             ResultSet rs = stm.executeQuery()) {
+             PreparedStatement stm = conn.prepareStatement(sql)) {
 
+            // Set the parameter before executing the query
             stm.setString(1, nickname);
 
-            if (rs.next()) {
-                user = UserUtil.parseResultSetToUserModel(rs);
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    user = UserUtil.parseResultSetToUserModel(rs);
+                }
             }
         }
-
         return user;
     }
+
 
 
     @Override
@@ -374,7 +374,6 @@ public class UserDaoImpl implements UserDao {
                 }
             }
         }
-
         return money;
     }
 
