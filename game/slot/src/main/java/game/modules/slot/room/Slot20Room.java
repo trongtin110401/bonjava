@@ -298,10 +298,8 @@ public class Slot20Room extends SlotRoom {
                                 // BẮT ĐẦU QUÁ TRÌNH LƯU TRỮ THÔNG TIN VÀ TRẢ THƯỞNG
                                 String matrixStr = Slot20Utils.matrixToString(matrix);
                                 if (totalPrizes > 0L) {
+                                    updateFunValue(-totalPrizes);
                                     if (result == ResultSlot.JACKPOT) {
-                                        if (!u.isBot()) {
-                                            updateFunValue(-this.pot);
-                                        }
                                         this.pot = this.initJackpotValues;
 
                                         // get usercache
@@ -314,9 +312,6 @@ public class Slot20Room extends SlotRoom {
                                         }
                                         this.slotService.logNoHu(referenceId, this.gameName, username, this.betValue, linesStr, matrixStr, builderLinesWin.toString(), builderPrizesOnLine.toString(), totalPrizes, result, currentTimeStr);
                                     } else {
-                                        if (!u.isBot()) {
-                                            updateFunValue(-totalPrizes);
-                                        }
                                         if (result == ResultSlot.MISSED) {
                                             result = totalPrizes >= (this.betValue * 175L) ? ResultSlot.BIG_WIN : ResultSlot.WIN;
                                         }
