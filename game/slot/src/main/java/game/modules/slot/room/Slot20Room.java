@@ -298,7 +298,9 @@ public class Slot20Room extends SlotRoom {
                                 // BẮT ĐẦU QUÁ TRÌNH LƯU TRỮ THÔNG TIN VÀ TRẢ THƯỞNG
                                 String matrixStr = Slot20Utils.matrixToString(matrix);
                                 if (totalPrizes > 0L) {
-                                    updateFunValue(-totalPrizes);
+                                    if (!u.isBot()) {
+                                        updateFunValue(-totalPrizes);
+                                    }
                                     if (result == ResultSlot.JACKPOT) {
                                         this.pot = this.initJackpotValues;
 
