@@ -38,7 +38,6 @@ public class GetListUserWinByDayProcessor implements BaseProcessor<HttpServletRe
             HttpServletRequest request = param.get();
             String timeStart = request.getParameter("timeStart");
             String timeEnd = request.getParameter("timeEnd");
-
             // get Fish profit
             OtherService otherService = new OtherServiceImpl();
             List<MoneyShootFishResponse> userFishProfits = otherService.getTotalShootFish(timeStart, timeEnd, null);
@@ -49,18 +48,6 @@ public class GetListUserWinByDayProcessor implements BaseProcessor<HttpServletRe
             List<LogUserMoneyResponse> list = dao.getLogMoneyUser(timeStart, timeEnd);
 
             List<UserLoseByDay> userLoseByDays = list.stream()
-//                .filter(log -> !"Admin".equals(log.getActionName())
-//                        && !"Gift Code".equals(log.getActionName())
-//                        && !"Gift Code".equals(log.getServiceName())
-//                        && !"RechargeByBank".equals(log.getActionName())
-//                        && !"RechargeByMomo".equals(log.getActionName())
-//                        && !"ChargeSMS".equals(log.getActionName())
-//                        && !"CashOutByBank".equals(log.getActionName())
-//                        && !"RefundRechargeError".equals(log.getActionName())
-//                        && !"CashOutByMomo".equals(log.getActionName())
-//                        && !"RechargeByCard".equals(log.getActionName())
-//                        && !"RechargeBySMS".equals(log.getActionName())
-//                        && !"Exchange".equals(log.getActionName()))
                     .filter(log -> !Consts.NO_GAME.contains(log.getActionName()) && !"Exchange".equals(log.getActionName()))
                     .collect(Collectors.groupingBy(LogUserMoneyResponse::getNickName,
                             Collectors.summingLong(LogUserMoneyResponse::getMoneyExchange)))
@@ -94,11 +81,12 @@ public class GetListUserWinByDayProcessor implements BaseProcessor<HttpServletRe
                     userLoseByDays.add(newUserLoseByDay);
                 }
             }
-
+            userLoseByDays = userLoseByDays.stream()
+                    .filter(user -> user.getMoney() >= 100000)
+                    .collect(Collectors.toList());
             userLoseByDays.sort((u1, u2) -> Double.compare(u2.getMoney(), u1.getMoney()));
             userCodeResponse.setUsers(userLoseByDays);
             userCodeResponse.setTotalRecord(userLoseByDays.size());
-
             return userCodeResponse.toJson();
         } catch (Exception ex) {
             throw new RuntimeException(ex);
