@@ -69,7 +69,6 @@ public class GetListUserLoseByDayProcessor implements BaseProcessor<HttpServletR
                     .collect(Collectors.groupingBy(LogUserMoneyResponse::getNickName,
                             Collectors.summingLong(LogUserMoneyResponse::getMoneyExchange)))
                     .entrySet().stream()
-                    .filter(entry -> entry.getValue() <= -100000)
                     .map(entry -> {
                         UserLoseByDay userLoseByDay = new UserLoseByDay();
                         userLoseByDay.setNickname(entry.getKey());
@@ -101,6 +100,9 @@ public class GetListUserLoseByDayProcessor implements BaseProcessor<HttpServletR
 
 
             userLoseByDays.sort(Comparator.comparingDouble(UserLoseByDay::getMoney));
+            userLoseByDays = userLoseByDays.stream()
+                    .filter(user -> user.getMoney() <= -100000)
+                    .collect(Collectors.toList());
             userCodeResponse.setUsers(userLoseByDays);
             userCodeResponse.setTotalRecord(userLoseByDays.size());
 
