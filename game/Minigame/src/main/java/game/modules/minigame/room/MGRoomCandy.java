@@ -155,16 +155,17 @@ public class MGRoomCandy extends MGRoom {
                     MoneyResponse moneyRes = this.userService.updateMoney(username, -totalBetValue, this.moneyTypeStr, Games.CANDY.getName(), "Quay Whisky", "Đặt cược Quay " + this.gameName, fee, referenceId, TransType.START_TRANS);
                     if (moneyRes != null && moneyRes.isSuccess()) {
                         long moneyToPot = totalBetValue / 100L;
-                        long moneyToFund = totalBetValue - fee - moneyToPot;
+                        long moneyToFund = totalBetValue - fee ;
                         if (!u.isBot() && moneyToFund > 0) {
                             updateFunValue(moneyToFund);
                         }
 
-                        this.pot += moneyToPot;
+
                         boolean enoughPair = false;
                         ArrayList<AwardsOnLine> awardsOnLines = new ArrayList<>();
                         long totalPrizes;
                         synchronized (this) {
+                            this.pot += moneyToPot;
                             block4:
                             while (!enoughPair) {
                                 result = 0;
@@ -259,9 +260,9 @@ public class MGRoomCandy extends MGRoom {
                                 // ?i?u ki?n tr�ng th??ng ?� th?a m�n, d?ng v�ng l?p
                                 enoughPair = true;
                                 if (totalPrizes > 0L) {
+                                    if (!u.isBot()) updateFunValue(-totalPrizes);
                                     if (result == ResultPokeGo.NO_HU) {
                                         this.pot = this.initPotValue;
-                                        if (!u.isBot()) updateFunValue(-initPotValue);
                                         if (forceNoHu) {
                                             try {
                                                 cacheService.removeKey(CACHE_NAME_USER_SPOT + this.gameName);
@@ -271,7 +272,6 @@ public class MGRoomCandy extends MGRoom {
                                             }
                                         }
                                     } else {
-                                        if (!u.isBot()) updateFunValue(-totalPrizes);
                                         result = totalPrizes >= (this.betValue * 100L) ? ResultPokeGo.THANG_LON : ResultPokeGo.THANG;
                                     }
                                 }
@@ -282,7 +282,7 @@ public class MGRoomCandy extends MGRoom {
                                     }
                                 }
                                 long moneyExchange = totalPrizes - (long) this.betValue;
-                                if (this.moneyType == 1 && moneyExchange >= (long) totalBetValue * 1.5) {
+                                if (this.moneyType == 1 && moneyExchange >= totalBetValue * 1.5) {
                                     this.broadcastMsgService.putMessage(Games.CANDY.getId(), username, moneyExchange);
                                 }
                                 linesWin = builderLinesWin.toString();

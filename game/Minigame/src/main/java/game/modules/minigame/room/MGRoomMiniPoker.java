@@ -163,13 +163,14 @@ public class MGRoomMiniPoker extends MGRoom {
                     boolean enoughToPair = false;
                     long moneyToPot = betValue / 100L;
 
-                    long moneyToFund = betValue - moneyToPot - fee;
+                    long moneyToFund = betValue - fee;
                     long tienThuongX2;
-                    this.pot += moneyToPot;
+
                     if (!u.isBot()) {
                         updateFunValue(moneyToFund);
                     }
                     synchronized (this) {
+                        this.pot += moneyToPot;
                         while (!enoughToPair) {
                             GroupType groupType;
                             prize = 0L;
@@ -296,6 +297,7 @@ public class MGRoomMiniPoker extends MGRoom {
                                 resultMiniPokerMsg.card5 = (byte) cards.get(4).getCode();
                             }
                             if (prize > 0L) {
+                                if (!u.isBot()) updateFunValue(-fundExchange);
                                 if (result == ResultPoker.NO_HU) {
                                     if (this.huX2) {
                                         result = ResultPoker.NO_HU_X2;
@@ -303,15 +305,12 @@ public class MGRoomMiniPoker extends MGRoom {
                                     if (isForceJackpot) {
                                         try {
                                             this.pot = this.initPotValue;
-                                            if (!u.isBot()) updateFunValue(-initPotValue);
                                             sv.removeKey(CACHE_NAME_USER_SPOT + this.gameName);
                                             sv.removeKey(CACHE_BET_VALUE_SLOT + this.gameName);
                                         } catch (Exception exception) {
                                             exception.printStackTrace();
                                         }
                                     }
-                                } else {
-                                    if (!u.isBot()) updateFunValue(-fundExchange);
                                 }
                             }
 
