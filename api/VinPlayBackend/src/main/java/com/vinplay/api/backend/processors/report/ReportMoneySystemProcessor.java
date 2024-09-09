@@ -217,6 +217,7 @@ public class ReportMoneySystemProcessor
                     }
                     if (Consts.VIN_IN_USER.contains(actionname3)) {
                         vinInUser.put(actionname3, model3.moneyOther);
+
                         continue;
                     }
                     if (Consts.VIN_IN_EVENT.contains(actionname3)) {
