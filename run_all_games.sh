@@ -191,12 +191,12 @@ runSam() {
 
 runAllApi() {
   runBoardService
-  runPortal
   runVbee
+  runPortal
   runWspay
   runWsReport
   runBackend
-}
+}git p
 
 main() {
   killProcess
