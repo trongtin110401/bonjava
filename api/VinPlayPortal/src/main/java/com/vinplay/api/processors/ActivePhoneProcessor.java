@@ -68,6 +68,7 @@ public class ActivePhoneProcessor implements BaseProcessor<HttpServletRequest, S
         response.setActive(false);
         response.setNickname(nickName);
         response.setPhoneNumber(phoneNumber);
+
         if (check) {
             UserService userService = new UserServiceImpl();
             userService.updateMoney(nickName, -1000, "vin", Consts.CHARGE_SMS, Consts.CHARGE_SMS, "SMS OTP", 0, null, TransType.NO_VIPPOINT);
