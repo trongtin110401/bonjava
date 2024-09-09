@@ -35,8 +35,9 @@ public class ReportMoneySystemResponse
     public Map<String, Long> user;
     public Map<String, ReportMoneySystemModel> actionGameBot;
     public Map<String, Long> bot;
-    public String billConfig;
     private long totalShootFishProfit;
+    private long countInUser;
+    public long countOutUser;
 
     public ReportMoneySystemResponse(boolean success, String errorCode) {
         super(success, errorCode);
@@ -62,6 +63,22 @@ public class ReportMoneySystemResponse
         this.user = user;
         this.actionGameBot = actionGameBot;
         this.bot = bot;
+    }
+
+    public long getCountInUser() {
+        return countInUser;
+    }
+
+    public void setCountInUser(long countInUser) {
+        this.countInUser = countInUser;
+    }
+
+    public long getCountOutUser() {
+        return countOutUser;
+    }
+
+    public void setCountOutUser(long countOutUser) {
+        this.countOutUser = countOutUser;
     }
 
     public long getTotalShootFishProfit() {

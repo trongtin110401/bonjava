@@ -25,7 +25,6 @@ import java.util.List;
 
 import com.vinplay.vbee.common.response.RechargeByCardReponse;
 import org.bson.Document;
-import org.python.parser.ast.Str;
 
 public interface RechargeDao {
     public List<RechargeByCardMessage> getListCardPending(String var1, String var2) throws NumberFormatException, KeyNotFoundException;
@@ -208,5 +207,11 @@ public interface RechargeDao {
     DepositMobileCardModel FindDepositMobileCardById(String Id);
 
     public RechargeByCardReponse searchRechargeByCard(String transId);
+
+    DepositCardResponse getListDepositCardSuccess(String fromTime, String endTime);
+
+    DepositMomoReponse getListDepositMomoSuccess(String fromTime, String endTime);
+
+    DepositBankReponse getListDepositBankSuccess(String fromTime, String endTime);
 }
 

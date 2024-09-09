@@ -58,5 +58,8 @@ public interface CashoutDao {
 
     int getTotalCashOutMomoByNickname(String nickname);
 
+    public CashoutBankResponse getListCashoutBankSuccess(String fromTime, String endTime);
+    public CashoutMomoResponse getListCashoutMomoSuccess(String fromTime, String endTime);
+
 }
 

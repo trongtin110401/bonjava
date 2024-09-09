@@ -28,9 +28,10 @@ import com.vinplay.dal.entities.report.ReportMoneySystemModel;
 import com.vinplay.dal.entities.report.ReportTXModel;
 import com.vinplay.dal.entities.report.ReportTotalMoneyModel;
 import com.vinplay.dichvuthe.dao.CashoutDao;
+import com.vinplay.dichvuthe.dao.RechargeDao;
 import com.vinplay.dichvuthe.dao.impl.CashoutDaoImpl;
-import com.vinplay.dichvuthe.entities.CashoutBankResponse;
-import com.vinplay.dichvuthe.entities.CashoutMomoResponse;
+import com.vinplay.dichvuthe.dao.impl.RechargeDaoImpl;
+import com.vinplay.dichvuthe.entities.*;
 import com.vinplay.payment.entities.UserWithdraw;
 import com.vinplay.payment.entities.UserWithdrawMomo;
 import com.vinplay.usercore.utils.GameCommon;
@@ -42,9 +43,7 @@ import com.vinplay.vbee.common.statics.Consts;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -202,7 +201,7 @@ public class ReportMoneySystemProcessor
                     String actionname3 = (String) entry3.getKey();
                     ReportMoneySystemModel model3 = (ReportMoneySystemModel) entry3.getValue();
                     if (Consts.GAMES.contains(actionname3)) {
-                        if (((String) entry3.getKey()).equals("TaiXiu")) {
+                        if (entry3.getKey().equals("TaiXiu")) {
                             taiXiu.fee = model3.fee;
                             taiXiu.moneyLost = model3.moneyLost;
                             taiXiu.moneyWin = model3.fee * 50L;
@@ -217,7 +216,6 @@ public class ReportMoneySystemProcessor
                     }
                     if (Consts.VIN_IN_USER.contains(actionname3)) {
                         vinInUser.put(actionname3, model3.moneyOther);
-
                         continue;
                     }
                     if (Consts.VIN_IN_EVENT.contains(actionname3)) {
@@ -274,6 +272,37 @@ public class ReportMoneySystemProcessor
                 res = new ReportMoneySystemResponse(true, "0", taiXiu, taiXiuBot, actionGame, vinInUser, vinInEvent, totalInUser, totalInEvent, totalIn, vinOutUser, vinOutAgent, totalOutUser, totalOutAgent, totalOut, ratioCashout, vinOther, user, actionGameBot, bot);
 //                String bill = GameCommon.getValueStr("BILLING");
 //                res.billConfig = bill;
+                RechargeDao rechargeDao = new RechargeDaoImpl();
+                DepositCardResponse depositCardResponse = rechargeDao.getListDepositCardSuccess(startTime, endTime);
+                DepositMomoReponse getListDepositMomo = rechargeDao.getListDepositMomoSuccess(startTime, endTime);
+                DepositBankReponse depositBankReponse = rechargeDao.getListDepositBankSuccess(startTime, endTime);
+                List<DepositMobileCardModel> listTransCard = depositCardResponse.ListTrans;
+                List<DepositMomoModel> listTransMomo = getListDepositMomo.ListTrans;
+                List<DepositBankModel> listTrans = depositBankReponse.ListTrans;
+                Set<String> userDeposit = new HashSet<>();
+                for (DepositMobileCardModel depositMobileCardModel : listTransCard) {
+                    userDeposit.add(depositMobileCardModel.Nickname);
+                }
+                for (DepositMomoModel model : listTransMomo) {
+                    userDeposit.add(model.Nickname);
+                }
+                for (DepositBankModel depositBankModel : listTrans) {
+                    userDeposit.add(depositBankModel.Nickname);
+                }
+                res.setCountInUser(userDeposit.size());
+                CashoutDao cashoutDao = new CashoutDaoImpl();
+                CashoutBankResponse responseBank = cashoutDao.getListCashoutBankSuccess(startTime, endTime);
+                CashoutMomoResponse responseMomo = cashoutDao.getListCashoutMomoSuccess(startTime, endTime);
+                Set<String> userCashout = new HashSet<>();
+                List<UserWithdraw> ListCashoutBank = responseBank.ListTrans;
+                List<UserWithdrawMomo> ListTransMomo = responseMomo.ListTrans;
+                for (UserWithdraw withdrawBank : ListCashoutBank) {
+                    userCashout.add(withdrawBank.Username);
+                }
+                for (UserWithdrawMomo withdrawMomo : ListTransMomo) {
+                    userCashout.add(withdrawMomo.Nickname);
+                }
+                res.setCountOutUser(userCashout.size());
             } catch (Exception e) {
                 e.printStackTrace();
                 logger.debug((Object) e);

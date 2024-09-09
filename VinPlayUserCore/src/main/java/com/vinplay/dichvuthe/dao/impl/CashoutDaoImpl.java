@@ -803,6 +803,70 @@ public class CashoutDaoImpl
 
         return total;
     }
+
+    @Override
+    public CashoutBankResponse getListCashoutBankSuccess(String fromTime, String endTime) {
+        try {
+            final ArrayList<UserWithdraw> records = new ArrayList<UserWithdraw>();
+            MongoDatabase db = MongoDBConnectionFactory.getDB();
+            MongoCollection col = db.getCollection(CashoutUtil.CASHOUT_BY_BANK_COLLECTION);
+            HashMap<String, Object> conditions = new HashMap<String, Object>();
+            conditions.put("Status", "success");
+            if (!fromTime.isEmpty() && !endTime.isEmpty()) {
+                BasicDBObject obj = new BasicDBObject();
+                obj.put("$gte", fromTime);
+                obj.put("$lte", endTime);
+                conditions.put("CreatedAt", obj);
+            }
+            FindIterable iterable = col.find((Bson) new Document(conditions));
+            iterable.forEach((Block) new Block<Document>() {
+                public void apply(Document document) {
+                    Gson gson = new Gson();
+                    UserWithdraw model = gson.fromJson(document.toJson(), UserWithdraw.class);
+                    records.add(model);
+                }
+            });
+            CashoutBankResponse res = new CashoutBankResponse(0,0,0, records);
+            return res;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public CashoutMomoResponse getListCashoutMomoSuccess(String fromTime, String endTime) {
+        try {
+            final ArrayList<UserWithdrawMomo> records = new ArrayList<UserWithdrawMomo>();
+            final ArrayList<Long> num = new ArrayList<Long>();
+            num.add(0, 0L);
+            num.add(1, 0L);
+            num.add(2, 0L);
+            MongoDatabase db = MongoDBConnectionFactory.getDB();
+            MongoCollection col = db.getCollection(CashoutUtil.CASHOUT_BY_MOMO_COLLECTION);
+            HashMap<String, Object> conditions = new HashMap<String, Object>();
+            conditions.put("Status", "success");
+            if (fromTime != null && !fromTime.isEmpty() && endTime != null && !endTime.isEmpty()) {
+                BasicDBObject obj = new BasicDBObject();
+                obj.put("$gte", fromTime);
+                obj.put("$lte", endTime);
+                conditions.put("CreatedAt", (Object) obj);
+            }
+            FindIterable iterable = col.find((Bson) new Document(conditions));
+            iterable.forEach((Block) new Block<Document>() {
+                public void apply(Document document) {
+                    Gson gson = new Gson();
+                    UserWithdrawMomo model = gson.fromJson(document.toJson(), UserWithdrawMomo.class);
+                    records.add(model);
+                }
+            });
+            CashoutMomoResponse res = new CashoutMomoResponse(0,0,0, records);
+            return res;
+
+
+        } catch (Exception e) {
+            return null;
+        }
+    }
 }
 
 

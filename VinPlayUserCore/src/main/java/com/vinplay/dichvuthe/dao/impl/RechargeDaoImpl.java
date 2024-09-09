@@ -2923,5 +2923,132 @@ public class RechargeDaoImpl implements RechargeDao {
         });
         return bank;
     }
+
+    @Override
+    public DepositCardResponse getListDepositCardSuccess(String fromTime, String endTime) {
+        try {
+            final ArrayList<DepositMobileCardModel> records = new ArrayList<>();
+            final ArrayList<Long> num = new ArrayList<Long>();
+
+            MongoDatabase db = MongoDBConnectionFactory.getDB();
+            MongoCollection col = db.getCollection("Card_mobile_Auto");
+
+            HashMap<String, Object> conditions = new HashMap<>();
+            conditions.put("Status", DvtConst.STATUS_APPROVE);
+            if (!fromTime.isEmpty() && !endTime.isEmpty()) {
+                BasicDBObject obj = new BasicDBObject();
+                obj.put("$gte", fromTime);
+                obj.put("$lte", endTime);
+            }
+            FindIterable iterable = col.find(new Document(conditions));
+            iterable.forEach((Block) new Block<Document>() {
+                public void apply(Document document) {
+
+                    DepositMobileCardModel model = new DepositMobileCardModel(document.getString("Id"), document.getString("Nickname"), document.getString((Object) "CreatedAt"), document.getString((Object) "UpdatedAt"), document.getLong((Object) "Amount"), document.getInteger((Object) "Status"), document.getString((Object) "Seri"), document.getString((Object) "Pin"), document.getString((Object) "Provider"), document.getString((Object) "Description"), document.getString((Object) "UserApprove"));
+                    records.add(model);
+                }
+            });
+            DepositCardResponse res = new DepositCardResponse(0, 0,0, records);
+            return res;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public DepositBankReponse getListDepositBankSuccess(String fromTime, String endTime) {
+        try {
+            final ArrayList<DepositBankModel> records = new ArrayList<DepositBankModel>();
+            final ArrayList<Long> num = new ArrayList<Long>();
+            num.add(0, 0L);
+            num.add(1, 0L);
+            num.add(2, 0L);
+            MongoDatabase db = MongoDBConnectionFactory.getDB();
+            MongoCollection col = db.getCollection(DvtConst.DEPOSIT_BANK_COLLECTION);
+            BasicDBObject objsort = new BasicDBObject();
+            objsort.put("_id", -1);
+            HashMap<String, Object> conditions = new HashMap<String, Object>();
+
+            conditions.put("Status", DvtConst.STATUS_APPROVE);
+            if (!fromTime.isEmpty() && !endTime.isEmpty()) {
+                BasicDBObject obj = new BasicDBObject();
+                obj.put("$gte", (Object) fromTime);
+                obj.put("$lte", (Object) endTime);
+                conditions.put("CreatedAt", (Object) obj);
+            }
+
+            FindIterable iterable = col.find(new Document(conditions)).sort(objsort);
+            iterable.forEach((Block) new Block<Document>() {
+
+                public void apply(Document document) {
+                    long amount;
+                    try {
+                        amount = document.getLong("Amount");
+                    } catch (Exception e) {
+                        amount = document.getInteger("Amount").longValue();
+                    }
+                    DepositBankModel model = new DepositBankModel(
+
+                            String.valueOf(document.getInteger("Id")), document.getString("Nickname"), document.getString("CreatedAt"), document.getString("UpdatedAt"), amount, document.getInteger("Status"), document.getString("BankCode"), document.getString("BankAccountNumber"), document.getString("BankAccountName"), document.getString("Description"), document.getString("UserApprove")
+
+                    );
+                    model.setUserSender(document.getString((Object) "UserSender"));
+                    if (!model.getUserSender().equalsIgnoreCase("momo")) {
+                        records.add(model);
+                    }
+
+                }
+            });
+
+            DepositBankReponse res = new DepositBankReponse(0,0,0, records);
+            res.setSuccess(true);
+            res.setErrorCode("0");
+            return res;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            RechargeDaoImpl.logger.error(e);
+            return null;
+        }
+    }
+
+    @Override
+    public DepositMomoReponse getListDepositMomoSuccess(String fromTime, String endTime) {
+        try {
+            final ArrayList<DepositMomoModel> records = new ArrayList<DepositMomoModel>();
+            final ArrayList<Long> num = new ArrayList<Long>();
+            num.add(0, 0L);
+            num.add(1, 0L);
+            num.add(2, 0L);
+            MongoDatabase db = MongoDBConnectionFactory.getDB();
+            MongoCollection col = db.getCollection(DvtConst.DEPOSIT_MOMO_COLLECTION);
+            BasicDBObject objsort = new BasicDBObject();
+            objsort.put("_id", -1);
+            HashMap<String, Object> conditions = new HashMap<String, Object>();
+
+            conditions.put("Status", DvtConst.STATUS_APPROVE);
+            if (!fromTime.isEmpty() && !endTime.isEmpty()) {
+                BasicDBObject obj = new BasicDBObject();
+                obj.put("$gte", (Object) fromTime);
+                obj.put("$lte", (Object) endTime);
+                conditions.put("CreatedAt", (Object) obj);
+            }
+            FindIterable iterable = col.find((Bson) new Document(conditions)).sort((Bson) objsort);
+            iterable.forEach((Block) new Block<Document>() {
+
+                public void apply(Document document) {
+
+                    DepositMomoModel model = new DepositMomoModel(document.getString((Object) "Id"), document.getString((Object) "Nickname"), document.getString((Object) "CreatedAt"), document.getString((Object) "UpdatedAt"), document.getLong((Object) "Amount"), document.getInteger((Object) "Status"), document.getString((Object) "ReceivedPhoneNumber"), document.getString((Object) "ReceivedName"), document.getString((Object) "SendFromNumber"), document.getString((Object) "Description"), document.getString((Object) "UserApprove"));
+                    records.add(model);
+                }
+            });
+            DepositMomoReponse res = new DepositMomoReponse(0,0,0, records);
+            return res;
+
+
+        } catch (Exception e) {
+            return null;
+        }
+    }
 }
 
