@@ -190,12 +190,12 @@ runSam() {
 }
 
 runAllApi() {
+  runBoardService
   runPortal
   runVbee
   runWspay
   runWsReport
   runBackend
-  runBoardService
 }
 
 main() {
