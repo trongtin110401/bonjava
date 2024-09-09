@@ -142,12 +142,12 @@ public class Slot20Room extends SlotRoom {
                     if (moneyRes != null && moneyRes.isSuccess()) {
                         // 2 phần trăm cho vào hũ JACKPOT
                         long moneyToPot = !isSpinningFree ? totalBetValue / 100L : 0;
-                        this.pot += moneyToPot;
+
 
                         // số tiền còn lại sau khi trừ phế và 2% POT cho vào quỹ thưởng
-                        long moneyToFund = !isSpinningFree ? totalBetValue - fee - moneyToPot : 0;
+                        long moneyToFund = !isSpinningFree ? totalBetValue - fee : 0;
                         if (!u.isBot() && moneyToFund > 0) {
-                            updateFunValue(moneyToFund);
+                            updateFunValue(moneyToFund + moneyToPot);
                         }
                         // cờ này được sử dụng để check liệu có tiếp tục vòng lặp để sinh Matrix hay không
                         boolean enoughPair = false;
@@ -156,6 +156,8 @@ public class Slot20Room extends SlotRoom {
                         ArrayList<AwardsOnLine> awardsOnLines = new ArrayList<>();
 
                         synchronized (this) {
+                            this.pot += moneyToPot;
+
                             block4:
                             while (!enoughPair) {
                                 result = 0;
@@ -297,8 +299,10 @@ public class Slot20Room extends SlotRoom {
                                 String matrixStr = Slot20Utils.matrixToString(matrix);
                                 if (totalPrizes > 0L) {
                                     if (result == ResultSlot.JACKPOT) {
+                                        if (!u.isBot()) {
+                                            updateFunValue(-this.pot);
+                                        }
                                         this.pot = this.initJackpotValues;
-                                        if (!u.isBot()) updateFunValue(-initJackpotValues);
 
                                         // get usercache
                                         if (forceJackpotToUser) {
@@ -501,8 +505,9 @@ public class Slot20Room extends SlotRoom {
             int isReset = cacheService.getValueInt("reset_pot_" + this.gn + "_" + this.betValue);
             if (isReset == 1) {
                 this.pot = this.initJackpotValues;
-//                updateFunValue(-getFunValue());
                 this.savePot();
+
+//                updateFunValue(-getFunValue());
 //                this.saveFund();
                 this.cacheService.removeKey("reset_pot_" + this.gn + "_" + this.betValue);
             }
