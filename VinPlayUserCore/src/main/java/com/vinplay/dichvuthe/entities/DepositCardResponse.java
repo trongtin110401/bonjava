@@ -8,6 +8,7 @@ public class DepositCardResponse extends BaseResponseModel {
     public long TotalTrans;
     public long TotalMoney;
     public long TotalSuccess;
+
     public List<DepositMobileCardModel> ListTrans;
     public DepositCardResponse(boolean success, String errorCode) {
         super(success, errorCode);
