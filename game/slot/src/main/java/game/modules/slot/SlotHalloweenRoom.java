@@ -90,7 +90,7 @@ public class SlotHalloweenRoom extends Slot25BasicRoom {
                         this.pot += moneyToPot;
 
                         // số tiền còn lại sau khi trừ phế và 2% POT cho vào quỹ thưởng
-                        long moneyToFund = !isSpinningFree ? totalBetValue - fee - moneyToPot : 0;
+                        long moneyToFund = !isSpinningFree ? totalBetValue - fee : 0;
                         if (!u.isBot() && moneyToFund > 0) {
                             updateFunValue(moneyToFund);
                         }
@@ -108,6 +108,7 @@ public class SlotHalloweenRoom extends Slot25BasicRoom {
                         ArrayList<AwardsOnLine<SlotHalloweenAward>> awardsOnLines = new ArrayList<>();
 
                         synchronized (this) {
+                            this.pot += moneyToPot;
                             block4:
                             while (!enoughPair) {
                                 // khởi tạo lại các giá trị mặc định sau mỗi lần lặp
@@ -253,10 +254,9 @@ public class SlotHalloweenRoom extends Slot25BasicRoom {
                                 // BẮT ĐẦU QUÁ TRÌNH LƯU TRỮ THÔNG TIN VÀ TRẢ THƯỞNG
                                 String matrixStr = SlotHalloweenUtil.matrixToString(matrix);
                                 if (totalPrizes > 0L) {
+                                    if (!u.isBot()) updateFunValue(-totalPrizes);
                                     if (result == ResultSlot.JACKPOT) {
                                         this.pot = this.initJackpotValues;
-                                        if (!u.isBot()) updateFunValue(-initJackpotValues);
-
                                         // get user cache
                                         String displayName = username;
                                         if (forceJackpotToUser) {
@@ -269,9 +269,6 @@ public class SlotHalloweenRoom extends Slot25BasicRoom {
                                         }
                                         this.slotService.logNoHu(referenceId, this.gameName, displayName, this.betValue, linesStr, matrixStr, builderLinesWin.toString(), builderPrizesOnLine.toString(), totalPrizes, result, currentTimeStr);
                                     } else {
-                                        if (!u.isBot()) {
-                                            updateFunValue(-totalPrizes);
-                                        }
                                         if (result == ResultSlot.MISSED) {
                                             result = totalPrizes >= (this.betValue * 175L) ? ResultSlot.BIG_WIN : ResultSlot.WIN;
                                         }

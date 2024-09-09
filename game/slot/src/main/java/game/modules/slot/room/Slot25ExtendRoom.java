@@ -158,7 +158,7 @@ public class Slot25ExtendRoom extends SlotRoom {
                         this.pot += moneyToPot;
 
                         // số tiền còn lại sau khi trừ phế và 2% POT cho vào quỹ thưởng
-                        long moneyToFund = totalBetValue - fee - moneyToPot;
+                        long moneyToFund = totalBetValue - fee;
                         if (!u.isBot() && moneyToFund > 0) {
                             updateFunValue(moneyToFund);
                         }
@@ -176,7 +176,7 @@ public class Slot25ExtendRoom extends SlotRoom {
                         ArrayList<AwardsOnLine<Slot25ExtendAward>> awardsOnLines = new ArrayList<>();
 
                         synchronized (this) {
-                            String beforeFund = username + "*" + getFunValue();
+                            this.pot += moneyToPot;
                             // BẮT ĐẦU QUÁ TRÌNH SINH MA TRẬN KẾT QUẢ VÀ TÍNH TOÁN GIẢI THƯỞNG
                             block4:
                             while (!enoughPair) {
@@ -330,10 +330,9 @@ public class Slot25ExtendRoom extends SlotRoom {
                                 // BẮT ĐẦU QUÁ TRÌNH LƯU TRỮ THÔNG TIN VÀ TRẢ THƯỞNG
                                 String matrixStr = Slot25ExtendUtil.matrixToString(matrix);
                                 if (totalPrizes > 0L) {
+                                    if (!u.isBot()) updateFunValue(-totalPrizes);
                                     if (result == ResultSlot.JACKPOT) {
                                         this.pot = this.initJackpotValues;
-                                        if (!u.isBot()) updateFunValue(-initJackpotValues);
-
                                         // get user cache
                                         String displayName = username;
                                         if (forceJackpotToUser) {
@@ -346,9 +345,6 @@ public class Slot25ExtendRoom extends SlotRoom {
                                         }
                                         this.slotService.logNoHu(referenceId, this.gameName, displayName, this.betValue, linesStr, matrixStr, builderLinesWin.toString(), builderPrizesOnLine.toString(), totalPrizes, result, currentTimeStr);
                                     } else {
-                                        if (!u.isBot()) {
-                                            updateFunValue(-totalPrizes);
-                                        }
                                         if (result == ResultSlot.MISSED) {
                                             result = totalPrizes >= (this.betValue * 175L) ? ResultSlot.BIG_WIN : ResultSlot.WIN;
                                         }
@@ -414,8 +410,6 @@ public class Slot25ExtendRoom extends SlotRoom {
                                     // empty catch block
                                 }
                                 // lưu thông tin quỹ
-                                if (!u.isBot())
-                                    System.out.println("BeforeFun: " + beforeFund + " - Current Fun Value: " + getFunValue() + " - MoneyToFund: " + moneyToFund + " - Prize: " + totalPrizes + " - Fee: " + fee);
                                 this.saveFund();
                                 // lưu thông tin HŨ
                                 this.savePot();
@@ -694,9 +688,7 @@ public class Slot25ExtendRoom extends SlotRoom {
             int isReset = cacheService.getValueInt("reset_pot_" + gameName + "_" + this.betValue);
             if (isReset == 1) {
                 this.pot = this.initJackpotValues;
-//                updateFunValue(-getFunValue());
                 this.savePot();
-//                this.saveFund();
                 this.cacheService.removeKey("reset_pot_" + gameName + "_" + this.betValue);
 
             }
