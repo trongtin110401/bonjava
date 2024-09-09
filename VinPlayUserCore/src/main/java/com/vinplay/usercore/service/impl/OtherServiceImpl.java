@@ -336,9 +336,7 @@ public class OtherServiceImpl implements OtherService {
         if (code != null && !code.isEmpty()) {
             filter.append("code", code);
         }
-
         FindIterable<Document> result = collection.find(filter).skip(pageIndex * pageSize).limit(pageSize).sort(Sorts.descending("createdDate"));
-
         List<UserLoseByDay> users = new ArrayList<>();
         for (Document document : result) {
             UserLoseByDay userLoseByDay = new UserLoseByDay();
@@ -357,6 +355,7 @@ public class OtherServiceImpl implements OtherService {
             userLoseByDay.setActiveDate(document.getString("activeDate"));
             users.add(userLoseByDay);
         }
+        users.sort(Comparator.comparingLong(UserLoseByDay::getMoneyCashBack));
         userLoseByDayResponse.setUsers(users);
         userLoseByDayResponse.setTotalRecord((int) collection.count());
         return userLoseByDayResponse;
