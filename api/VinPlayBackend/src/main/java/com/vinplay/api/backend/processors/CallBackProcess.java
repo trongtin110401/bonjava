@@ -181,7 +181,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
                 return response.toJson();
             }
             EventResponse eventResponse = checkEventNapTien(trans.Nickname);
-            if (!eventResponse.isSuccess()) {
+            if (eventResponse.isSuccess()) {
                 tien = tien * eventResponse.getRate();
                 long eventAmount = tien * eventResponse.getRate();
                 UserEvent userEvent = new UserEvent();
