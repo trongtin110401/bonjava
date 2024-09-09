@@ -147,7 +147,7 @@ public class Slot20Room extends SlotRoom {
                         // số tiền còn lại sau khi trừ phế và 2% POT cho vào quỹ thưởng
                         long moneyToFund = !isSpinningFree ? totalBetValue - fee : 0;
                         if (!u.isBot() && moneyToFund > 0) {
-                            updateFunValue(moneyToFund + moneyToPot);
+                            updateFunValue(moneyToFund);
                         }
                         // cờ này được sử dụng để check liệu có tiếp tục vòng lặp để sinh Matrix hay không
                         boolean enoughPair = false;
