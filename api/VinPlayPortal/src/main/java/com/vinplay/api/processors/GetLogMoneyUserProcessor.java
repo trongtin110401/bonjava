@@ -41,7 +41,6 @@ implements BaseProcessor<HttpServletRequest, String> {
             LogMoneyUserServiceImpl service = new LogMoneyUserServiceImpl();
             try {
                 List trans = service.getHistoryTransactionLogMoney(nickName, moneyType, page);
-                int totalPages = 5;
                 response.setTotalPages(5);
                 response.setTransactions(trans);
                 response.setSuccess(true);
