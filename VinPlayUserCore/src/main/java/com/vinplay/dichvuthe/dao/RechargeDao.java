@@ -210,6 +210,7 @@ public interface RechargeDao {
 
     DepositCardResponse getListDepositCardSuccess(String fromTime, String endTime);
 
+
     DepositMomoReponse getListDepositMomoSuccess(String fromTime, String endTime);
 
     DepositBankReponse getListDepositBankSuccess(String fromTime, String endTime);
