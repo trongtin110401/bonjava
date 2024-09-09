@@ -53,18 +53,6 @@ public class GetListUserLoseByDayProcessor implements BaseProcessor<HttpServletR
 
 
             List<UserLoseByDay> userLoseByDays = list.stream()
-//                .filter(log -> !"Admin".equals(log.getActionName())
-//                        && !"Gift Code".equals(log.getActionName())
-//                        && !"Gift Code".equals(log.getServiceName())
-//                        && !"RechargeByBank".equals(log.getActionName())
-//                        && !"RechargeByMomo".equals(log.getActionName())
-//                        && !"ChargeSMS".equals(log.getActionName())
-//                        && !"CashOutByBank".equals(log.getActionName())
-//                        && !"RefundRechargeError".equals(log.getActionName())
-//                        && !"CashOutByMomo".equals(log.getActionName())
-//                        && !"RechargeByCard".equals(log.getActionName())
-//                        && !"RechargeBySMS".equals(log.getActionName())
-//                        && !"Exchange".equals(log.getActionName()))
                     .filter(log -> !Consts.NO_GAME.contains(log.getActionName()) && !"Exchange".equals(log.getActionName()))
                     .collect(Collectors.groupingBy(LogUserMoneyResponse::getNickName,
                             Collectors.summingLong(LogUserMoneyResponse::getMoneyExchange)))

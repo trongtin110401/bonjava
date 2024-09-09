@@ -61,20 +61,6 @@ public class LogMoneyUserServiceImpl
 
     @Override
     public List<LogMoneyUserResponse> getHistoryTransactionLogMoney(String nickName, int moneyType, int page) {
-//        HazelcastInstance client = HazelcastClientFactory.getInstance();
-//        IMap transMap = client.getMap("cacheTransaction");
-//        String key = nickName + "-" + moneyType;
-//        List result = null;
-//        if (page <= 5) {
-//            if (transMap.containsKey((Object)key)) {
-//                TransactionList tranList = (TransactionList)transMap.get((Object)key);
-//                result = tranList.get(page);
-//            }
-//            if (result == null || result.size() == 0) {
-//                result = this.pushHistoryTransactionDBToCache((IMap<String, TransactionList>)transMap, nickName, moneyType);
-//            }
-//            return result;
-//        }
         LogMoneyUserDaoImpl dao = new LogMoneyUserDaoImpl();
         return dao.getHistoryTransactionLogMoney(nickName, moneyType, page);
     }

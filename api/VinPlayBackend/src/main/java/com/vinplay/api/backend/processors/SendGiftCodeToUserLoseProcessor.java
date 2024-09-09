@@ -44,7 +44,6 @@ public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServle
             String timeStart = request.getParameter("timeStart");
             String timeEnd = request.getParameter("timeEnd");
             String message = request.getParameter("message");
-
             OtherService service = new OtherServiceImpl();
             UserCodeReponse userCodeResponse = new UserCodeReponse(true, "200");
             if (service.checkIsSendBackCodeByDay("LOSE", "", timeStart, timeEnd)) {
@@ -52,55 +51,12 @@ public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServle
                 userCodeResponse.setSuccess(false);
                 return userCodeResponse.toJson();
             }
-
             long percent;
             try {
                 percent = Long.parseLong(request.getParameter("percent"));
             } catch (Exception e) {
                 percent = 3;
             }
-
-//            // get Fish profit
-//            OtherService otherService = new OtherServiceImpl();
-//            List<MoneyShootFishResponse> userFishProfits = otherService.getTotalShootFish(timeStart, timeEnd);
-//            Map<String, Long> mapUserFishProfits = new HashMap<>();
-//            userFishProfits.forEach(moneyShootFishResponse -> mapUserFishProfits.put(moneyShootFishResponse.getNickname(), moneyShootFishResponse.getTotalProfit()));
-//
-//
-//            LogMoneyUserDaoImpl dao = new LogMoneyUserDaoImpl();
-//            Map<String, Long> users = new HashMap<>();
-//            List<LogUserMoneyResponse> list = dao.getLogMoneyUser(timeStart, timeEnd);
-//            for (LogUserMoneyResponse response : list) {
-//                if ("Gift Code".equalsIgnoreCase(response.serviceName)) {
-//                    continue;
-//                }
-//                users.merge(response.nickName, response.moneyExchange, Long::sum);
-//            }
-//
-//            for (Map.Entry<String, Long> entry : users.entrySet()) {
-//                if (entry.getValue() < 0) {
-//                    UserTele userTele = otherService.getUserTeleInfoByNickname(entry.getKey());
-//                    if (userTele != null && userTele.getChatID() != null) {
-//                        int price = (int) (entry.getValue() * percent / 100 * -1);
-//                        if (price <= -100000) {
-//                            price = price * -1;
-//                        }
-//                        String giftCode = VinPlayUtils.genGiftCode(10);
-//                        String content = message + " : " + genCode(price, giftCode);
-//                        mailService.sendMailGiftCode(userTele.getNickname(), giftCode, "Hoan Tra Tien Cuoc", content);
-//                        sendMessage(userTele.getChatID(), content);
-//                        saveUserTeleCashBack(userTele, giftCode, price, entry.getValue());
-//                    }
-//                }
-//            }
-//
-//            UserCodeReponse userCodeResponse = new UserCodeReponse(true, "200");
-//            Map<String, Long> filteredUsers = users.entrySet().stream()
-//                    .filter(entry -> entry.getValue() <= -100000)
-//                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-//            userCodeResponse.setUsers(filteredUsers);
-//            return userCodeResponse.toJson();
-
             return process(message, timeStart, timeEnd, percent);
         } catch (Exception ex) {
             System.out.println(ExceptionUtils.getStackTrace(ex));
@@ -122,23 +78,10 @@ public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServle
 
 
             List<UserLoseByDay> userLoseByDays = list.stream()
-//                .filter(log -> !"Admin".equals(log.getActionName())
-//                        && !"Gift Code".equals(log.getActionName())
-//                        && !"Gift Code".equals(log.getServiceName())
-//                        && !"RechargeByBank".equals(log.getActionName())
-//                        && !"RechargeByMomo".equals(log.getActionName())
-//                        && !"ChargeSMS".equals(log.getActionName())
-//                        && !"CashOutByBank".equals(log.getActionName())
-//                        && !"RefundRechargeError".equals(log.getActionName())
-//                        && !"CashOutByMomo".equals(log.getActionName())
-//                        && !"RechargeByCard".equals(log.getActionName())
-//                        && !"RechargeBySMS".equals(log.getActionName())
-//                        && !"Exchange".equals(log.getActionName()))
                     .filter(log -> !Consts.NO_GAME.contains(log.getActionName()) && !"Exchange".equals(log.getActionName()))
                     .collect(Collectors.groupingBy(LogUserMoneyResponse::getNickName,
                             Collectors.summingLong(LogUserMoneyResponse::getMoneyExchange)))
                     .entrySet().stream()
-                    .filter(entry -> entry.getValue() <= -100000)
                     .map(entry -> {
                         UserLoseByDay userLoseByDay = new UserLoseByDay();
                         userLoseByDay.setNickname(entry.getKey());
@@ -153,6 +96,10 @@ public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServle
                 }
             });
 
+            userLoseByDays = userLoseByDays.stream()
+                    .filter(user -> user.getMoney() <= -100000)
+                    .collect(Collectors.toList());
+
             userLoseByDays.forEach(userLoseByDay -> {
                 int price = (int) (userLoseByDay.getMoney() * percent / 100 * -1);
                 if (price < 0) {
@@ -160,15 +107,13 @@ public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServle
                 }
                 String giftCode = VinPlayUtils.genGiftCode(10);
                 String content = message + " : " + genCode(price, giftCode);
-
-
                 try {
                     mailService.sendMailGiftCode(userLoseByDay.getNickname(), giftCode, "Hoàn Trả Tiền Cược", content);
                     UserTele userTele = otherService.getUserTeleInfoByNickname(userLoseByDay.getNickname());
                     if (userTele != null) {
                         sendMessage(userTele.getChatID(), content);
-                        saveUserTeleCashBack(userTele, giftCode, price, userLoseByDay.getMoney());
                     }
+                    saveUserTeleCashBack(userLoseByDay.getNickname(), giftCode, price, userLoseByDay.getMoney());
                     OtherService service = new OtherServiceImpl();
                     service.updateStatusSendBackCodeByDay("LOSE", "", timeStart, timeEnd);
                 } catch (SQLException e) {
@@ -186,10 +131,10 @@ public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServle
         }
     }
 
-    public void saveUserTeleCashBack(UserTele userTele, String code, int price, long money) {
+    public void saveUserTeleCashBack(String nickname, String code, int price, long money) {
         OtherService otherService = new OtherServiceImpl();
         Document document = new Document();
-        document.put("nickname", userTele.getNickname());
+        document.put("nickname", nickname);
         document.put("money", money);
         document.put("code", code);
         document.put("cashBack", price);

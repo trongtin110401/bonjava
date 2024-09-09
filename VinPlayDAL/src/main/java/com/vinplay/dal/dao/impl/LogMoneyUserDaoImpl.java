@@ -698,48 +698,41 @@ public class LogMoneyUserDaoImpl
 
             public void apply(Document document) {
                 LogMoneyUserResponse tranlogmoney = new LogMoneyUserResponse();
-                tranlogmoney.transId = document.getLong((Object) "trans_id");
-                String serviceName = document.getString("service_name");
-                if (serviceName.equals("CashOutByBank")){
-                    serviceName = "Rút Tiền";
-                }
-                if (serviceName.equals("CashOutByMomo")){
-                    serviceName = "Rút Tiền";
-                }
-                if (serviceName.equals("xoc dia : Tra thuong ")){
-                    serviceName= "Xóc đĩa : Trả Thưởng";
-                }
-                if (serviceName.equals("xoc dia : Đặt cược")){
-                    serviceName= "Xóc đĩa : Đặc Cược";
-                }
-                if (serviceName.equals("Deposit bank")){
-                    serviceName= "Nạp Tiền";
-                }
-                if (serviceName.equals("Deposit Momo")){
-                    serviceName= "Nạp Tiền";
-                }
+                tranlogmoney.transId = document.getLong("trans_id");
 
-                tranlogmoney.serviceName = serviceName;
-                tranlogmoney.currentMoney = document.getLong((Object) "current_money");
-                tranlogmoney.moneyExchange = document.getLong((Object) "money_exchange");
-                String des = document.getString((Object) "description");
-                if (des.equals("withdraw to bank")) {
-                    des = "Rút Ngân Hàng";
-                }
-                if (des.equals("Deposit bank")) {
-                    des = "Nạp Ngân Hàng";
-                }
-                if (des.equals("withdraw to momo")) {
-                    des = "Rút Momo";
-                }
-                if (des.equals("Deposit Momo")) {
-                    des = "Nạp Momo";
-                }
-                tranlogmoney.description = des;
-                tranlogmoney.transactionTime = document.getString((Object) "trans_time");
-                tranlogmoney.actionName = document.getString((Object) "action_name");
+                // Mapping for service name replacements
+                Map<String, String> serviceNameMap = new HashMap<>();
+                serviceNameMap.put("CashOutByBank", "Rút Tiền");
+                serviceNameMap.put("CashOutByMomo", "Rút Tiền");
+                serviceNameMap.put("xoc dia : Tra thuong", "Xóc đĩa : Trả Thưởng");
+                serviceNameMap.put("xoc dia : Đặt cược", "Xóc đĩa : Đặc Cược");
+                serviceNameMap.put("Deposit bank", "Nạp Tiền");
+                serviceNameMap.put("Deposit Momo", "Nạp Tiền");
+                serviceNameMap.put("RechargeByCard", "Nạp Tiền");
+
+                String serviceName = document.getString("service_name");
+                tranlogmoney.serviceName = serviceNameMap.getOrDefault(serviceName, serviceName);
+
+                tranlogmoney.currentMoney = document.getLong("current_money");
+                tranlogmoney.moneyExchange = document.getLong("money_exchange");
+
+                // Mapping for description replacements
+                Map<String, String> descriptionMap = new HashMap<>();
+                descriptionMap.put("withdraw to bank", "Rút Ngân Hàng");
+                descriptionMap.put("Deposit bank", "Nạp Ngân Hàng");
+                descriptionMap.put("withdraw to momo", "Rút Momo");
+                descriptionMap.put("Deposit Momo", "Nạp Momo");
+                descriptionMap.put("RechargeByCard", "Nạp Thẻ");
+
+                String des = document.getString("description");
+                tranlogmoney.description = descriptionMap.getOrDefault(des, des);
+
+                tranlogmoney.transactionTime = document.getString("trans_time");
+                tranlogmoney.actionName = document.getString("action_name");
+
                 results.add(tranlogmoney);
             }
+
         });
         return results;
     }
