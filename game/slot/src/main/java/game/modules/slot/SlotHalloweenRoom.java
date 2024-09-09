@@ -361,4 +361,26 @@ public class SlotHalloweenRoom extends Slot25BasicRoom {
         }
         return playResponse;
     }
+
+    @Override
+    protected int setFreeSpin(String nickName, String lines, int countFreeSpin, int remainAmountOfFreeSpin) {
+        int soLuot = 0;
+        switch (countFreeSpin) {
+            case 3: {
+                soLuot = 3 + remainAmountOfFreeSpin;
+                slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, soLuot, 1, betValue);
+                break;
+            }
+            case 4: {
+                soLuot = 6 + remainAmountOfFreeSpin;
+                slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, soLuot, 2, betValue);
+                break;
+            }
+            case 5: {
+                soLuot = 18 + remainAmountOfFreeSpin;
+                slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, soLuot, 3, betValue);
+            }
+        }
+        return Math.max(soLuot, remainAmountOfFreeSpin);
+    }
 }
