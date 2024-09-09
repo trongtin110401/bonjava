@@ -5,18 +5,18 @@ package game.modules.slot.entities.slot.line25basic;
 
 public enum SlotHalloweenAward {
 
-    PENTA_SCATTER("PENTA_SCATTER", 0, (byte) 1, SlotBasic25Item.SCATTER, (byte) 5, 22f),
-    QUADAR_SCATTER("QUADAR_SCATTER", 1, (byte) 2, SlotBasic25Item.SCATTER, (byte) 4, 8f),
-    TRIPLE_SCATTER("TRIPLE_SCATTER", 2, (byte) 3, SlotBasic25Item.SCATTER, (byte) 3, 4f),
+    PENTA_SCATTER("PENTA_SCATTER", 0, (byte) 1, SlotBasic25Item.SCATTER, (byte) 5, 18f),
+    QUADAR_SCATTER("QUADAR_SCATTER", 1, (byte) 2, SlotBasic25Item.SCATTER, (byte) 4, 6f),
+    TRIPLE_SCATTER("TRIPLE_SCATTER", 2, (byte) 3, SlotBasic25Item.SCATTER, (byte) 3, 3f),
 
     PENTA_BONUS("PENTA_BONUS", 3, (byte) 4, SlotBasic25Item.BONUS, (byte) 5, 0f),
     QUADAR_BONUS("QUADAR_BONUS", 4, (byte) 5, SlotBasic25Item.BONUS, (byte) 4, 0f),
     TRIPLE_BONUS("TRIPLE_BONUS", 5, (byte) 6, SlotBasic25Item.BONUS, (byte) 3, 0f),
 
-    PENTA_WILD("PENTA_WILD", 6, (byte) 7, SlotBasic25Item.WILD, (byte) 5, 5000.0f),
+    PENTA_WILD("PENTA_WILD", 6, (byte) 7, SlotBasic25Item.WILD, (byte) 5, 10000.0f),
     QUADAR_WILD("QUADAR_WILD", 7, (byte) 8, SlotBasic25Item.WILD, (byte) 4, 1000.0f),
     TRIPLE_WILD("TRIPLE_WILD", 8, (byte) 9, SlotBasic25Item.WILD, (byte) 3, 50.0f),
-    DOUBLE_WILD("TRIPLE_WILD", 9, (byte) 10, SlotBasic25Item.WILD, (byte) 2, 10.0f),
+    DOUBLE_WILD("DOUBLE_WILD", 9, (byte) 10, SlotBasic25Item.WILD, (byte) 2, 8.0f),
 
     PENTA_JACKPOT("PENTA_JACK_POT", 11, (byte) 10, SlotBasic25Item.JACKPOT, (byte) 5, 0f),
     QUADAR_JACKPOT("QUADAR_JACK_POT", 12, (byte) 11, SlotBasic25Item.JACKPOT, (byte) 4, 100.0f),

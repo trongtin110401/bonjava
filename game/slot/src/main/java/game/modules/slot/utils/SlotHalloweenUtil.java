@@ -2,6 +2,7 @@
 package game.modules.slot.utils;
 
 import game.modules.slot.entities.slot.Line;
+import game.modules.slot.entities.slot.MiniGameSlotResponse;
 import game.modules.slot.entities.slot.line25basic.SlotBasic25Item;
 import game.modules.slot.entities.slot.line25basic.SlotHalloweenAward;
 import game.modules.slot.entities.slot.line25basic.SlotHalloweenAwards;
@@ -9,6 +10,7 @@ import game.modules.slot.entities.slot.line25basic.SlotHalloweenAwards;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class SlotHalloweenUtil extends Slot25BasicUtil {
 
@@ -17,7 +19,7 @@ public class SlotHalloweenUtil extends Slot25BasicUtil {
      * mà không bao gồm việc tính toán số lần quay miễn phí và giải thưởng cho BONUS game
      */
 
-    public static void calculateMoneyAwardInLine2(Line line, List<SlotHalloweenAward> awardList) {
+    public static void calculatHalloweenMoneyAwardInLine(Line line, List<SlotHalloweenAward> awardList) {
         // kiểm tra jackpot trước
         List cels = line.getCells();
         if (cels.get(0) == SlotBasic25Item.JACKPOT
@@ -69,6 +71,17 @@ public class SlotHalloweenUtil extends Slot25BasicUtil {
                 awardList.add(award);
             }
         });
+    }
+
+    public static MiniGameSlotResponse buildHalloweenBonusGameData(int betValue, int countBonus) {
+        Random rd = new Random();
+        int indexRatioCol = rd.nextInt(3);
+        int indexRatioRow = countBonus - 3;
+        int ratio = Constant.SLOT25_BONUS_RATIO[indexRatioRow][indexRatioCol];
+        MiniGameSlotResponse res = Slot25BasicUtil.generateMiniGameSlot(betValue);
+        res.setTotalPrize(res.getTotalPrize() * (long) ratio);
+        res.setPrizes(res.getPrizes() + "," + ratio + "," + countBonus);
+        return res;
     }
 }
 

@@ -174,7 +174,7 @@ public class SlotHalloweenRoom extends Slot25BasicRoom {
 
                                 // Tính toán phần thưởng cho BONUS GAME
                                 if (countBonus >= 3) {
-                                    bonusGameResponse = SlotHalloweenUtil.buildBonusGameData(this.betValue, countBonus);
+                                    bonusGameResponse = SlotHalloweenUtil.buildHalloweenBonusGameData(this.betValue, countBonus);
                                     SlotHalloweenAward bonusAward = SlotHalloweenAwards.getAward(SlotBasic25Item.BONUS, countBonus);
                                     AwardsOnLine<SlotHalloweenAward> aol = new AwardsOnLine<>(bonusAward, bonusGameResponse.getTotalPrize(), "line0");
                                     awardsOnLines.add(aol);
@@ -188,7 +188,7 @@ public class SlotHalloweenRoom extends Slot25BasicRoom {
                                     ArrayList<SlotHalloweenAward> awardList = new ArrayList<>();
                                     int lineNumber = Integer.parseInt(selectedLine);
                                     Line line = SlotHalloweenUtil.getLine(this.lines, matrixWild, lineNumber);
-                                    SlotHalloweenUtil.calculateMoneyAwardInLine2(line, awardList);
+                                    SlotHalloweenUtil.calculatHalloweenMoneyAwardInLine(line, awardList);
                                     for (SlotHalloweenAward award : awardList) {
                                         long moneyOnLine;
                                         if (award == SlotHalloweenAward.PENTA_JACKPOT) {
