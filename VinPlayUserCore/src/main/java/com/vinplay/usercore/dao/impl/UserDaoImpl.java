@@ -242,6 +242,35 @@ public class UserDaoImpl implements UserDao {
         return users;
     }
 
+    @Override
+    public List<String> getListUserPay(String startTime, String endTime) throws SQLException {
+        List<String> users = new ArrayList<>();
+        String sql = "SELECT nick_name FROM users WHERE is_bot = 0 AND recharge_money > 0";
+
+        if (startTime != null && !startTime.isEmpty() && endTime != null && !endTime.isEmpty()) {
+            sql += " AND create_time BETWEEN ? AND ?";
+        }
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
+            if (startTime != null && !startTime.isEmpty() && endTime != null && !endTime.isEmpty()) {
+                stm.setString(1, startTime + " 00:00:00");
+                stm.setString(2, endTime + " 23:59:59");
+            }
+
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    users.add(rs.getString("nick_name"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Consider logging the exception or handling it appropriately
+            throw e;
+        }
+        return users;
+    }
+
 
     public UserModel getUserByUserName(String username) throws SQLException {
         UserModel user = null;
@@ -1249,7 +1278,6 @@ public class UserDaoImpl implements UserDao {
             e.printStackTrace(); // Consider logging the exception or handling it appropriately
             throw e;
         }
-
         return cnt;
     }
 
