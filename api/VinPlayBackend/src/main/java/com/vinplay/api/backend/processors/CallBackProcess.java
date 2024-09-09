@@ -182,8 +182,8 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
             }
             EventResponse eventResponse = checkEventNapTien(trans.Nickname);
             if (eventResponse.isSuccess()) {
-                tien = tien * eventResponse.getRate();
-                long eventAmount = tien * eventResponse.getRate();
+                long eventAmount = tien * eventResponse.getRate() / 100;
+                tien += eventAmount;
                 UserEvent userEvent = new UserEvent();
                 userEvent.setEventName(eventResponse.getEventName());
                 userEvent.setEventAmount(eventAmount);
@@ -277,8 +277,8 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
 
             EventResponse eventResponse = checkEventNapTien(trans.nickName);
             if (eventResponse.isSuccess()) {
-                tien = tien * eventResponse.getRate();
-                long eventAmount = tien * eventResponse.getRate();
+                long eventAmount = tien * eventResponse.getRate() / 100;
+                tien += eventAmount;
                 UserEvent userEvent = new UserEvent();
                 userEvent.setEventName(eventResponse.getEventName());
                 userEvent.setEventAmount(eventAmount);
@@ -368,8 +368,8 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
 
                 EventResponse eventResponse = checkEventNapTien(trans.Nickname);
                 if (eventResponse.isSuccess()) {
-                    tien = tien * eventResponse.getRate();
-                    long eventAmount = tien * eventResponse.getRate();
+                    long eventAmount = tien * eventResponse.getRate() / 100;
+                    tien += eventAmount;
                     UserEvent userEvent = new UserEvent();
                     userEvent.setEventName(eventResponse.getEventName());
                     userEvent.setEventAmount(eventAmount);
