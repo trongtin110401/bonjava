@@ -11,6 +11,7 @@
  */
 package com.vinplay.api.backend.processors;
 
+import com.vinplay.usercore.dao.impl.UserDaoImpl;
 import com.vinplay.usercore.service.OtherService;
 import com.vinplay.usercore.service.impl.OtherServiceImpl;
 import com.vinplay.usercore.service.impl.UserForAdminServiceImpl;
@@ -53,24 +54,27 @@ public class ReportUserProcessor
         UserForAdminServiceImpl service = new UserForAdminServiceImpl();
         try {
             int totalRecord = service.countUser(ts, te);
-            int userPay = service.countUserPay(ts, te);
+            UserDaoImpl userDao = new UserDaoImpl();
+            List<String> usersPay = userDao.getListUserPay(ts, te);
             OtherService otherService = new OtherServiceImpl();
             UserActivePhoneResponse userActivePhoneResponse = otherService.getAllUserActivePhoneByDay(timeStart, timeEnd);
-            UserActiveTeleResponse userActiveTeleResponse = otherService.getAllUserActiveTeleByDay(timeStart,timeEnd);
+            UserActiveTeleResponse userActiveTeleResponse = otherService.getAllUserActiveTeleByDay(timeStart, timeEnd);
             Set<String> userSecurityPhone = new HashSet<>();
-            for (UserPhone userPhone : userActivePhoneResponse.getUsers()){
+            for (UserPhone userPhone : userActivePhoneResponse.getUsers()) {
                 userSecurityPhone.add(userPhone.getNickname());
             }
             Set<String> userSecurityTele = new HashSet<>();
-            for (UserTele userTele : userActiveTeleResponse.getUsers()){
+            for (UserTele userTele : userActiveTeleResponse.getUsers()) {
                 userSecurityTele.add(userTele.getNickname());
             }
             userSecurityPhone.retainAll(userSecurityTele);
-            int userPayAndSecurity = service.countUserPayAndSecurity(ts, te);
             response.setTotal(totalRecord);
-            response.setUserPay(userPay);
+            response.setUserPay(usersPay.size());
+            long count = usersPay.stream()
+                    .filter(userSecurityPhone::contains)
+                    .count();
             response.setUserSecurity(userSecurityPhone.size());
-            response.setUserPayAndSecurity(userPayAndSecurity);
+            response.setUserPayAndSecurity(count);
             response.setSuccess(true);
             response.setErrorCode("0");
         } catch (SQLException e) {
