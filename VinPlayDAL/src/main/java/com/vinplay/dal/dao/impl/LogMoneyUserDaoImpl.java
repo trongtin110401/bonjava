@@ -722,7 +722,7 @@ public class LogMoneyUserDaoImpl
                 descriptionMap.put("Deposit bank", "Nạp Ngân Hàng");
                 descriptionMap.put("withdraw to momo", "Rút Momo");
                 descriptionMap.put("Deposit Momo", "Nạp Momo");
-                descriptionMap.put("RechargeByCard", "Nạp Thẻ");
+                descriptionMap.put("Deposit Cart", "Nạp Thẻ");
 
                 String des = document.getString("description");
                 tranlogmoney.description = descriptionMap.getOrDefault(des, des);
