@@ -238,9 +238,6 @@ public abstract class Slot20Module extends SlotModule {
 
     protected void play(User user, DataCmd dataCmd) {
         Slot20PlayCmd cmd = new Slot20PlayCmd(dataCmd);
-
-        Debug.info("=====> LIEN MINH BETVALUE: " + cmd.betValue);
-
         Slot20Room room = (Slot20Room) user.getProperty("MGROOM_" + this.gameName + "_INFO");
         if (room != null) {
             room.play(user, cmd.lines);
