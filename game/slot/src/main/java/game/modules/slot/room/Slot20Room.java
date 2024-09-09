@@ -145,7 +145,7 @@ public class Slot20Room extends SlotRoom {
 
 
                         // số tiền còn lại sau khi trừ phế và 2% POT cho vào quỹ thưởng
-                        long moneyToFund = !isSpinningFree ? totalBetValue - fee - moneyToPot : 0;
+                        long moneyToFund = !isSpinningFree ? totalBetValue - fee : 0;
                         if (!u.isBot() && moneyToFund > 0) {
                             updateFunValue(moneyToFund + moneyToPot);
                         }
@@ -299,8 +299,9 @@ public class Slot20Room extends SlotRoom {
                                 String matrixStr = Slot20Utils.matrixToString(matrix);
                                 if (totalPrizes > 0L) {
                                     if (result == ResultSlot.JACKPOT) {
-                                        if (!u.isBot())
+                                        if (!u.isBot()) {
                                             updateFunValue(-this.pot);
+                                        }
                                         this.pot = this.initJackpotValues;
 
                                         // get usercache
