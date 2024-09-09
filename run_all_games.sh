@@ -196,7 +196,7 @@ runAllApi() {
   runWspay
   runWsReport
   runBackend
-}git p
+}
 
 main() {
   killProcess
