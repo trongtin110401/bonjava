@@ -125,7 +125,7 @@ public class Slot25BasicUtil {
         return res;
     }
 
-    private static MiniGameSlotResponse generateMiniGameSlot(int baseBetting) {
+    public static MiniGameSlotResponse generateMiniGameSlot(int baseBetting) {
         MiniGameSlotResponse response = new MiniGameSlotResponse();
         int step = 0;
         long tongGiai = 0L;

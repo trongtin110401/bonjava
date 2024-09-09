@@ -31,6 +31,14 @@ public class Constant {
                     {4, 5, 6},
                     {7, 8, 9}
             };
+
+    public static final int[][] SLOT25_BASIC_HALLOWEEN_RATIO = new int[][]
+            {
+                    {1, 2, 3},
+                    {2, 3, 4},
+                    {3, 4, 5}
+            };
+
     public static final int[] SLOT25_TANK_TI_LE_TRUOT = new int[]{0, 1, 10, 20, 30, 50, 60, 70, 85, 90, 95, 100};
     public static final int[][] SLOT25_TANK_PRIZES = new int[][]
             {
