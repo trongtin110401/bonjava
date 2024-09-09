@@ -538,13 +538,13 @@ public class OtherServiceImpl implements OtherService {
 
     @Override
     public EventResponse getCurrentEvent() {
+        EventResponse eventResponse = new EventResponse(false, "1001");
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("event");
         String currentDate = VinPlayUtils.getCurrentDate();
         Document filter = new Document("status", true)
                 .append("end_time", new Document("$gte", currentDate));
         MongoCursor<Document> cursor = collection.find(filter).iterator();
-        EventResponse eventResponse = new EventResponse(true, "1001");
 
         if (cursor.hasNext()) {
             Document doc = cursor.next();
@@ -558,7 +558,7 @@ public class OtherServiceImpl implements OtherService {
             eventResponse.setErrorCode("200");
             return eventResponse;
         } else {
-            return null;
+            return eventResponse;
         }
     }
 
