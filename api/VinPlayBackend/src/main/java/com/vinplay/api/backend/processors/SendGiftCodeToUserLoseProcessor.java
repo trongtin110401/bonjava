@@ -52,6 +52,11 @@ public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServle
                 return userCodeResponse.toJson();
             }
             long percent = 3;
+            try {
+                percent = Long.parseLong(request.getParameter("percent"));
+            } catch (Exception e) {
+                percent = 3;
+            }
             return process(message, timeStart, timeEnd, percent);
         } catch (Exception ex) {
             System.out.println(ExceptionUtils.getStackTrace(ex));
