@@ -1,108 +1,63 @@
-
 package game.modules.slot.room;
 
-import bitzero.server.BitZeroServer;
 import bitzero.server.entities.User;
-import bitzero.util.common.business.Debug;
 import com.vinplay.dal.service.impl.CacheServiceImpl;
 import com.vinplay.vbee.common.enums.Games;
-import com.vinplay.vbee.common.models.cache.SlotFreeDaily;
 import com.vinplay.vbee.common.models.cache.UserCacheModel;
-import com.vinplay.vbee.common.models.slot.SlotFreeSpin;
 import com.vinplay.vbee.common.response.MoneyResponse;
 import com.vinplay.vbee.common.statics.TransType;
 import com.vinplay.vbee.common.utils.DateTimeUtils;
-import game.modules.slot.Slot25ExtendModule;
 import game.modules.slot.SlotModule;
 import game.modules.slot.cmd.Slot25CommandCollection;
-import game.modules.slot.cmd.send.slot25extend.*;
-import game.modules.slot.entities.slot.AutoUser;
+import game.modules.slot.cmd.send.slot25extend.Slot25BigWinMsg;
+import game.modules.slot.cmd.send.slot25extend.Slot25FreeDailyMsg;
+import game.modules.slot.cmd.send.slot25extend.Slot25MinimizeResultMsg;
+import game.modules.slot.cmd.send.slot25extend.Slot25ResultMsg;
 import game.modules.slot.entities.slot.AwardsOnLine;
 import game.modules.slot.entities.slot.Line;
 import game.modules.slot.entities.slot.MiniGameSlotResponse;
-import game.modules.slot.entities.slot.line25extend.*;
+import game.modules.slot.entities.slot.line25extend.Slot25ExtendAward;
+import game.modules.slot.entities.slot.line25extend.Slot25ExtendAwards;
+import game.modules.slot.entities.slot.line25extend.Slot25ExtendItem;
 import game.modules.slot.listener.SlotLogListener;
 import game.modules.slot.utils.Slot25ExtendUtil;
 import game.modules.slot.utils.SlotUtils;
-import org.python.parser.ast.Str;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-public class Slot25ExtendRoom extends SlotRoom {
-    protected final Runnable gameLoopTask = new GameLoopTask();
-    protected final Runnable checkResetPotTask = new CheckResetPot();
-    protected final Slot25ExtendLines lines = new Slot25ExtendLines();
-    protected long lastTimeUpdatePotToRoom = 0L;
-    protected long lastTimeUpdateFundToRoom = 0L;
-    protected final ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
-    protected final Slot25CommandCollection commandCollection;
-    protected static final org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger("slot");
+public class SlotBLCRoom extends Slot25ExtendRoom {
 
-    protected SlotLogListener logListener;
-
-    int ROW = 3;
-    int COLUMN = 5;
-
-    public Slot25ExtendRoom(SlotModule module, Slot25CommandCollection commandCollection, SlotLogListener logListener, String gameName, byte id, String room, short moneyType, long pot, long fund, int betValue, long initJackpotValue) {
-
-        super(id, gameName, room, betValue, moneyType, pot, fund, initJackpotValue);
-
-        this.module = module;
-        this.commandCollection = commandCollection;
-        this.logListener = logListener;
-        this.moneyType = moneyType;
-        this.gameName = gameName;
-        this.cacheFreeSpinName = this.gameName + betValue;
-
-        // init jackpot value
-//        CacheServiceImpl cacheService = new CacheServiceImpl();
-//        cacheService.setValue(room, (int) pot);
-
-        this.betValue = betValue;
-        this.initJackpotValues = initJackpotValue;
-
-        setPercentFee();
-        setPercentJackpot();
-
-        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
-        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.checkResetPotTask, 10, 10, TimeUnit.SECONDS);
+    public SlotBLCRoom(SlotModule module, Slot25CommandCollection commandCollection, SlotLogListener logListener, String gameName, byte id, String room, short moneyType, long pot, long fund, int betValue, long initJackpotValue) {
+        super(module, commandCollection, logListener, gameName, id, room, moneyType, pot, fund, betValue, initJackpotValue);
     }
 
-    /*
-     * WARNING - Removed try catching itself - possible behaviour change.
-     */
-    @Override
-    public void forceStopAutoPlay(User user) {
-        super.forceStopAutoPlay(user);
-        synchronized (this.usersAuto) {
-            this.usersAuto.remove(user.getName());
-            Slot25ForceStopAutoPlayMsg msg = new Slot25ForceStopAutoPlayMsg(commandCollection.FORCE_AUTO_PLAY_MESSAGE);
+    public short play(User user, String linesStr) throws Exception {
+
+        String username = user.getName();
+
+        Slot25FreeDailyMsg freeDailyMsg = new Slot25FreeDailyMsg(commandCollection.FREE_DAILY_MESSAGE);
+        freeDailyMsg.remain = 0;
+
+
+        Slot25ResultMsg msg = this.play(username, linesStr);
+
+        if (this.isUserMinimize(user)) {
+            Slot25MinimizeResultMsg miniMsg = new Slot25MinimizeResultMsg(commandCollection.MINIMIZE_RESULT_MESSAGE);
+            miniMsg.prize = msg.prize;
+            miniMsg.curretMoney = msg.currentMoney;
+            miniMsg.result = msg.result;
+            SlotUtils.sendMessageToUser(miniMsg, user);
+        } else {
             SlotUtils.sendMessageToUser(msg, user);
+            SlotUtils.sendMessageToUser(freeDailyMsg, user);
         }
+        return msg.result;
     }
 
-    public Slot25ResultMsg play(String username, String linesStr) {
-        long referenceId = this.module.getNewReferenceId();
-        Slot25ResultMsg msg = this.playNormal(username, linesStr, referenceId);
-        return msg;
-    }
-
-    /**
-     * @param username    tên hiển thị người chơi
-     * @param linesStr    số line được chọn
-     * @param referenceId mã tham chiếu giao dịch
-     * @return ResultBenleyMsg model kết quả
-     */
+    @Override
     public Slot25ResultMsg playNormal(String username, String linesStr, long referenceId) {
-
         // kết quả mặc định
         short result = ResultSlot.MISSED;
         // thời điểm hiện tại
@@ -132,6 +87,9 @@ public class Slot25ExtendRoom extends SlotRoom {
         UserCacheModel u = userService.getUser(username);
         // số dư hiện tại của user
         long currentMoney = userService.getMoneyUserCache(username, this.moneyTypeStr);
+        // thông tin free spin
+        int numOfFreeSpin = getNumOfFreeSpin(username);
+        boolean isSpinningFree = numOfFreeSpin > 0;
         // số lines được chọn > 0
         if (selectedLines.length > 0 && !linesStr.isEmpty()) {
             // check tiền đặt cược hợp lệ
@@ -139,7 +97,7 @@ public class Slot25ExtendRoom extends SlotRoom {
                 // check đủ tiền
                 if (totalBetValue <= currentMoney) {
                     // trừ phế theo số % được cấu hình
-                    long fee = totalBetValue * percentFee / 100L;
+                    long fee = !isSpinningFree ? totalBetValue * percentFee / 100L : 0;
                     MoneyResponse moneyRes = new MoneyResponse(false, "1001");
                     // trừ tiền cược
                     // chỉ trừ tiền người chơi thật
@@ -153,7 +111,7 @@ public class Slot25ExtendRoom extends SlotRoom {
 
                     if (moneyRes != null && moneyRes.isSuccess()) {
                         // số tiền còn lại sau khi trừ phế và 2% POT cho vào quỹ thưởng
-                        long moneyToFund = totalBetValue - fee;
+                        long moneyToFund = !isSpinningFree ? totalBetValue - fee : 0;
                         if (!u.isBot() && moneyToFund > 0) {
                             updateFunValue(moneyToFund);
                         }
@@ -172,7 +130,7 @@ public class Slot25ExtendRoom extends SlotRoom {
 
                         synchronized (this) {
                             // 1 phần trăm cho vào hũ JACKPOT
-                            long moneyToPot = totalBetValue / 100L;
+                            long moneyToPot = !isSpinningFree ? totalBetValue / 100L : 0;
                             this.pot += moneyToPot;
                             // BẮT ĐẦU QUÁ TRÌNH SINH MA TRẬN KẾT QUẢ VÀ TÍNH TOÁN GIẢI THƯỞNG
                             block4:
@@ -240,6 +198,11 @@ public class Slot25ExtendRoom extends SlotRoom {
 
                                 // không cho phép BONUS và FREE SPIN xảy ra đồng thời
                                 if (countBonus >= 3 && countScatter >= 4) {
+                                    continue;
+                                }
+
+                                // ở chế độ Free Spin, không cho phép trúng BONUS hoặc SCATTER
+                                if (isSpinningFree && (countScatter >= 3 || countBonus >= 3)) {
                                     continue;
                                 }
 
@@ -355,7 +318,7 @@ public class Slot25ExtendRoom extends SlotRoom {
 
                                 // cập nhật và tính toán lượt quay miễn phí
                                 playResponse.freeSpin = (byte) this.setFreeSpin(username, linesStr, countScatter);
-                                if (countScatter >= 4) {
+                                if (countScatter >= 3) {
                                     playResponse.isFreeSpin = true;
                                     if (result != ResultSlot.BONUS_GAME && result != ResultSlot.JACKPOT) {
                                         result = ResultSlot.FREE_SPIN;
@@ -437,320 +400,23 @@ public class Slot25ExtendRoom extends SlotRoom {
         return playResponse;
     }
 
-    public Slot25ResultMsg playFreeSpin(String username, String linesStr, long referenceId) {
-        // kết quả mặc định
-        short result = ResultSlot.MISSED;
-        // thời điểm hiện tại
-        String currentTimeStr = DateTimeUtils.getCurrentTime();
-        // response message
-        Slot25ResultMsg playResponse = new Slot25ResultMsg(commandCollection.RESULT_MESSAGE);
-        // số line người chơi chọn
-        String[] selectedLines = linesStr.split(",");
-        // tổng cược
-        long totalBetValue = (long) selectedLines.length * this.betValue;
-        // lớp dịch vụ caching
-        CacheServiceImpl cacheService = new CacheServiceImpl();
-        // thông tin user
-        UserCacheModel u = userService.getUser(username);
-        // số dư hiện tại của user
-        long currentMoney = userService.getMoneyUserCache(username, this.moneyTypeStr);
-        // cờ này được sử dụng để check liệu có tiếp tục vòng lặp để sinh Matrix hay không
-        boolean enoughPair = false;
-        // tổng tiền thắng được tính toán trên toàn bộ Lines được chọn
-        long totalPrizes;
-        // danh sách giải thưởng được tính toán trên toàn bộ Lines được chọn
-        ArrayList<AwardsOnLine<Slot25ExtendFreeSpinAward>> awardsOnLines = new ArrayList<>();
-        // thông tin Free Spin
-        SlotFreeSpin freeSpinInfo = getFreeSpinInfo(username);
-        synchronized (this) {
-            while (!enoughPair) {
-                // khởi tạo lại các giá trị mặc định sau mỗi lần lặp
-                result = ResultSlot.MISSED;
-                awardsOnLines.clear();
-                totalPrizes = 0L;
-
-
-                // sinh Matrix
-                Slot25ExtendFreeSpinItem[][] matrix = Slot25ExtendUtil.generateMatrixFreeSpin("");
-
-
-                // Duyệt toàn bộ Lines được chọn bởi người chơi để tính toán giải thưởng trên từng Line
-                for (String selectedLine : selectedLines) {
-                    ArrayList<Slot25ExtendFreeSpinAward> awardList = new ArrayList<>();
-                    int lineNumber = Integer.parseInt(selectedLine);
-                    Line line = Slot25ExtendUtil.getLine(this.lines, matrix, lineNumber);
-                    Slot25ExtendUtil.calculateFreeSpinAwardInLine(line, awardList);
-                    for (Slot25ExtendFreeSpinAward award : awardList) {
-                        long moneyOnLine = (long) (award.getRatio() * this.betValue);
-                        AwardsOnLine<Slot25ExtendFreeSpinAward> aol2 = new AwardsOnLine<>(award, moneyOnLine, line.getName());
-                        awardsOnLines.add(aol2);
-                    }
-                }
-
-
-                // Tiếp theo, tính toán toàn bộ giải thưởng
-                StringBuilder builderLinesWin = new StringBuilder();
-                StringBuilder builderPrizesOnLine = new StringBuilder();
-                for (AwardsOnLine<Slot25ExtendFreeSpinAward> award : awardsOnLines) {
-                    totalPrizes += (award.getMoney() * freeSpinInfo.getRatio());
-
-                    builderLinesWin.append(",");
-                    builderLinesWin.append(award.getLineId());
-
-                    builderPrizesOnLine.append(",");
-                    builderPrizesOnLine.append(award.getMoney());
-                }
-                if (builderLinesWin.length() > 0) {
-                    builderLinesWin.deleteCharAt(0);
-                }
-                if (builderPrizesOnLine.length() > 0) {
-                    builderPrizesOnLine.deleteCharAt(0);
-                }
-
-                // Kiểm tra xem giải thưởng có LỚN hay không.
-                // Lớn quá thì sinh lại MATRIX kết quả kẻo anh em NPH vỡ nợ
-                if (totalPrizes > getFunValue())
-                    continue;
-
-
-                // điều kiện trúng thưởng đã thỏa mãn, dừng vòng lặp
-                enoughPair = true;
-                // BẮT ĐẦU QUÁ TRÌNH LƯU TRỮ THÔNG TIN VÀ TRẢ THƯỞNG
-                String matrixStr = Slot25ExtendUtil.matrixToString(matrix);
-                if (totalPrizes > 0L) {
-                    if (!u.isBot()) {
-                        updateFunValue(-totalPrizes);
-                    }
-                    result = ResultSlot.WIN;
-                }
-
-                // cập nhật và tính toán lượt quay miễn phí
-                SlotFreeSpin slotFreeSpin = slotService.updateLuotQuaySlotFree(cacheFreeSpinName, username);
-                playResponse.freeSpin = (byte) slotFreeSpin.getNum();
-                if (slotFreeSpin.getNum() > 0) {
-                    playResponse.isFreeSpin = true;
-                    playResponse.result = ResultSlot.FREE_SPIN;
-                }
-
-                // only save real user
-                long moneyExchange = totalPrizes;
-                if (moneyExchange != 0 && !u.isBot()) {
-                    MoneyResponse moneyRes = this.userService.updateMoney(username, moneyExchange, this.moneyTypeStr, this.gameName, "Quay " + gameName, this.buildDescription(totalBetValue, totalPrizes, result), 0L, referenceId, TransType.END_TRANS);
-                    if (moneyRes != null && moneyRes.isSuccess()) {
-                        currentMoney = moneyRes.getCurrentMoney();
-                        // thông báo tới toàn hệ thống số tiền thắng của người chơi
-                        if (this.moneyType == 1 && moneyExchange - this.betValue >= (totalBetValue * 1.5)) {
-                            this.broadcastMsgService.putMessage(Games.findGameByName(gameName).getId(), username, moneyExchange - (long) this.betValue);
-                        }
-                    }
-                }
-                // thông báo tới toàn hệ thống số tiền thắng của người chơi
-                if (this.moneyType == 1 && moneyExchange - this.betValue >= (totalBetValue * 1.5)) {
-                    this.broadcastMsgService.putMessage(Games.findGameByName(gameName).getId(), username, moneyExchange - (long) this.betValue);
-                }
-                String linesWin = builderLinesWin.toString();
-                String prizesOnLine = builderPrizesOnLine.toString();
-                playResponse.referenceId = referenceId;
-                playResponse.matrix = matrixStr;
-                playResponse.linesWin = linesWin;
-                playResponse.prize = totalPrizes;
-                playResponse.haiSao = "";
-
-                try {
-                    // lưu nhật ký chơi
-                    if (!u.isBot()) {
-                        this.logListener.log(referenceId, username, this.betValue, linesStr, linesWin, prizesOnLine, ResultSlot.LOG_FREE_SPIN, totalPrizes, currentTimeStr, matrixStr);
-                    }
-                } catch (InterruptedException | TimeoutException | IOException ignored) {
-                    // empty catch block
-                }
-                // lưu thông tin quỹ
-                this.saveFund();
-                // lưu thông tin HŨ
-                this.savePot();
-            }
-        }
-
-
-        playResponse.result = (byte) result;
-        playResponse.currentMoney = currentMoney;
-
-        // update cache tien hu
-        cacheService.setValue(CACHE_JACK_POT_VALUE_SLOT + "_" + this.betValue + "_" + gameName, String.valueOf(this.pot));
-
-        return playResponse;
-    }
-
+    @Override
     protected int setFreeSpin(String nickName, String lines, int countFreeSpin) {
         switch (countFreeSpin) {
+            case 3: {
+                slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, 3, 1, betValue);
+                return 3;
+            }
             case 4: {
-                slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, 8, 1, betValue);
-                return 8;
+                slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, 6, 1, betValue);
+                return 6;
             }
             case 5: {
-                slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, 8, 2, betValue);
-                return 8;
+                slotService.setLuotQuayFreeSlot(this.cacheFreeSpinName, nickName, lines, 18, 2, betValue);
+                return 18;
             }
         }
         return 0;
     }
 
-    public short play(User user, String linesStr) throws Exception {
-
-        String username = user.getName();
-        Slot25ResultMsg msg;
-        Slot25FreeDailyMsg freeDailyMsg = new Slot25FreeDailyMsg(commandCollection.FREE_DAILY_MESSAGE);
-        freeDailyMsg.remain = 0;
-
-
-        SlotFreeSpin slotFreeSpin = getFreeSpinInfo(username);
-        if (slotFreeSpin != null && slotFreeSpin.getNum() == 0) {
-            msg = this.play(username, linesStr);
-        } else {
-            long referenceId = this.module.getNewReferenceId();
-            msg = this.playFreeSpin(username, linesStr, referenceId);
-        }
-
-        if (this.isUserMinimize(user)) {
-            Slot25MinimizeResultMsg miniMsg = new Slot25MinimizeResultMsg(commandCollection.MINIMIZE_RESULT_MESSAGE);
-            miniMsg.prize = msg.prize;
-            miniMsg.curretMoney = msg.currentMoney;
-            miniMsg.result = msg.result;
-            SlotUtils.sendMessageToUser(miniMsg, user);
-        } else {
-            SlotUtils.sendMessageToUser(msg, user);
-            SlotUtils.sendMessageToUser(freeDailyMsg, user);
-        }
-        return msg.result;
-    }
-
-    protected void saveFund() {
-        long currentTime = System.currentTimeMillis();
-        if (currentTime - this.lastTimeUpdateFundToRoom >= 3000L) {
-            try {
-                this.miniGameService.saveFund(this.name, getFunValue());
-            } catch (IOException | InterruptedException | TimeoutException e) {
-                Debug.trace(this.gameName + ": update fund error ", e.getMessage());
-            }
-            this.lastTimeUpdateFundToRoom = currentTime;
-        }
-    }
-
-    protected void savePot() {
-        long currentTime = System.currentTimeMillis();
-        if (currentTime - this.lastTimeUpdatePotToRoom >= 1000L) {
-            this.lastTimeUpdatePotToRoom = currentTime;
-            try {
-                this.miniGameService.savePot(this.name, CACHE_JACK_POT_VALUE_SLOT + "_" + this.betValue + "_" + gameName, this.pot, this.huX2);
-            } catch (IOException | InterruptedException | TimeoutException e) {
-                Debug.trace(this.gameName + ": update pot error ", e.getMessage());
-            }
-        }
-
-        byte x2 = (byte) (this.huX2 ? 1 : 0);
-        ((Slot25ExtendModule) this.module).updatePot(this.id, this.pot, x2);
-    }
-
-    /*
-     * WARNING - Removed try catching itself - possible behaviour change.
-     */
-    @Override
-    protected void gameLoop() {
-
-        setPercentFee();
-        setPercentJackpot();
-
-        ArrayList<AutoUser> usersPlay = new ArrayList<>();
-        synchronized (this.usersAuto) {
-            for (AutoUser user : this.usersAuto.values()) {
-                boolean play = user.incCount();
-                if (!play) continue;
-                usersPlay.add(user);
-            }
-        }
-        int numThreads = usersPlay.size() / 100 + 1;
-        for (int i = 1; i <= numThreads; ++i) {
-            int fromIndex = (i - 1) * 100;
-            int toIndex = i * 100;
-            if (toIndex > usersPlay.size()) {
-                toIndex = usersPlay.size();
-            }
-            ArrayList<AutoUser> tmp = new ArrayList<>(usersPlay.subList(fromIndex, toIndex));
-            PlayListAutoUserTask task = new PlayListAutoUserTask(tmp);
-            this.executor.execute(task);
-        }
-        usersPlay.clear();
-    }
-
-    @Override
-    protected void checkResetPot() {
-        try {
-
-            int isReset = cacheService.getValueInt("reset_pot_" + gameName + "_" + this.betValue);
-            if (isReset == 1) {
-                this.pot = this.initJackpotValues;
-                this.savePot();
-                this.cacheService.removeKey("reset_pot_" + gameName + "_" + this.betValue);
-
-            }
-        } catch (Exception ignored) {
-        }
-    }
-
-    public boolean isBot(String nickName) {
-        try {
-            UserCacheModel u = this.userService.getUser(nickName);
-            return u.isBot();
-        } catch (Exception e) {
-            return true;
-        }
-    }
-
-    @Override
-    protected void playListAuto(List<AutoUser> users) {
-        for (AutoUser user : users) {
-            try {
-                short result = this.play(user.getUser(), user.getLines());
-                if (result == ResultSlot.JACKPOT
-                        || result == ResultSlot.JACKPOT_X2
-                        || result == ResultSlot.INVALID_BET_VALUE
-                        || result == ResultSlot.NOT_ENOUGH_MONEY
-                        || result == ResultSlot.SYSTEM_ERROR) {
-                    this.forceStopAutoPlay(user.getUser());
-                    continue;
-                }
-                if (result == ResultSlot.MISSED) {
-                    user.setMaxCount(5);
-                    continue;
-                }
-                if (result == ResultSlot.BONUS_GAME) {
-                    user.setMaxCount(20);
-                    continue;
-                }
-                user.setMaxCount(8);
-            } catch (Exception ex) {
-                Logger.getLogger(Slot25ExtendRoom.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        users.clear();
-    }
-
-    @Override
-    public boolean joinRoom(User user) {
-        boolean result = super.joinRoom(user);
-        SlotFreeDaily model = this.slotService.getLuotQuayFreeDaily(this.gameName, user.getName(), this.betValue);
-        Slot25FreeDailyMsg freeDailyMsg = new Slot25FreeDailyMsg(commandCollection.FREE_DAILY_MESSAGE);
-        if (model != null && model.getRotateFree() > 0) {
-            user.setProperty("numFreeDaily", model.getRotateFree());
-            freeDailyMsg.remain = (byte) model.getRotateFree();
-        } else {
-            user.removeProperty("numFreeDaily");
-        }
-        SlotUtils.sendMessageToUser(freeDailyMsg, user);
-        if (result) {
-            user.setProperty("MGROOM_" + this.gameName + "_INFO", this);
-        }
-        return result;
-    }
 }
-

@@ -29,13 +29,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public abstract class Slot25ExtendModule extends SlotModule {
-    private long referenceId = 1L;
-    private final String fullLines = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25";
+    protected long referenceId = 1L;
+    protected final String fullLines = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25";
 
-    private final byte[] x2Arr = new byte[4];
+    protected final byte[] x2Arr = new byte[4];
 
-    private Slot25CommandCollection commandCollection;
-    private SlotLogListener slotLogListener;
+    protected Slot25CommandCollection commandCollection;
+    protected SlotLogListener slotLogListener;
 
     public Slot25ExtendModule(String gameName) {
         this.gameName = gameName;
@@ -83,13 +83,6 @@ public abstract class Slot25ExtendModule extends SlotModule {
         this.rooms.put(this.gameName + "_vin_10000",
                 new Slot25ExtendRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 2, this.gameName + "_vin_10000", (short) 1, this.jackpots[2], funds[2], 10000, initJackpotValues[2]));
 
-//        this.rooms.put(this.gameName + "_vin_100",
-//                new Slot25ExtendRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 0, this.gameName + "_vin_100", (short) 1, this.jackpots[0], 10000000000L, 100, initJackpotValues[0]));
-//        this.rooms.put(this.gameName + "_vin_1000",
-//                new Slot25ExtendRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 1, this.gameName + "_vin_1000", (short) 1, this.jackpots[1], 10000000000L, 1000, initJackpotValues[1]));
-//        this.rooms.put(this.gameName + "_vin_10000",
-//                new Slot25ExtendRoom(this, this.commandCollection, slotLogListener, this.gameName, (byte) 2, this.gameName + "_vin_10000", (short) 1, this.jackpots[2], 10000000000L, 10000, initJackpotValues[2]));
-
         Debug.trace("INIT " + this.gameName + " DONE");
 
         this.referenceId = this.slotService.getLastReferenceId(this.gameName);
@@ -132,7 +125,7 @@ public abstract class Slot25ExtendModule extends SlotModule {
         }
     }
 
-    private void userDis(User user) {
+    protected void userDis(User user) {
         Slot25ExtendRoom room = (Slot25ExtendRoom) user.getProperty("MGROOM_" + this.gameName + "_INFO");
         if (room != null) {
             room.quitRoom(user);
@@ -160,7 +153,7 @@ public abstract class Slot25ExtendModule extends SlotModule {
         BroadCastUserState.popBroadCast(user.getName());
     }
 
-    private void updateRoomInfo(User user, Slot25ExtendRoom room) {
+    protected void updateRoomInfo(User user, Slot25ExtendRoom room) {
         Slot25InfoMsg msg = new Slot25InfoMsg(commandCollection.INFO_MESSAGE);
         msg.ngayX2 = "";
         msg.remain = 0;
