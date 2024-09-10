@@ -2927,6 +2927,8 @@ public class RechargeDaoImpl implements RechargeDao {
     @Override
     public DepositCardResponse getListDepositCardSuccess(String fromTime, String endTime) {
         try {
+            fromTime += " 00:00:00";
+            endTime += " 23:59:59";
             final ArrayList<DepositMobileCardModel> records = new ArrayList<>();
             final ArrayList<Long> num = new ArrayList<Long>();
 
@@ -2939,6 +2941,7 @@ public class RechargeDaoImpl implements RechargeDao {
                 BasicDBObject obj = new BasicDBObject();
                 obj.put("$gte", fromTime);
                 obj.put("$lte", endTime);
+                conditions.put("UpdatedAt", obj);
             }
             FindIterable iterable = col.find(new Document(conditions));
             iterable.forEach((Block) new Block<Document>() {
@@ -2948,7 +2951,7 @@ public class RechargeDaoImpl implements RechargeDao {
                     records.add(model);
                 }
             });
-            DepositCardResponse res = new DepositCardResponse(0, 0,0, records);
+            DepositCardResponse res = new DepositCardResponse(0, 0, 0, records);
             return res;
         } catch (Exception e) {
             return null;
@@ -2968,8 +2971,9 @@ public class RechargeDaoImpl implements RechargeDao {
             BasicDBObject objsort = new BasicDBObject();
             objsort.put("_id", -1);
             HashMap<String, Object> conditions = new HashMap<String, Object>();
-
-            conditions.put("Status", DvtConst.STATUS_APPROVE);
+            fromTime += " 00:00:00";
+            endTime += " 23:59:59";
+            conditions.put("Status", 2);
             if (!fromTime.isEmpty() && !endTime.isEmpty()) {
                 BasicDBObject obj = new BasicDBObject();
                 obj.put("$gte", (Object) fromTime);
@@ -3001,7 +3005,7 @@ public class RechargeDaoImpl implements RechargeDao {
             });
 
 
-            DepositBankReponse res = new DepositBankReponse(0,0,0, records);
+            DepositBankReponse res = new DepositBankReponse(0, 0, 0, records);
             res.setSuccess(true);
             res.setErrorCode("0");
             return res;
@@ -3016,6 +3020,8 @@ public class RechargeDaoImpl implements RechargeDao {
     @Override
     public DepositMomoReponse getListDepositMomoSuccess(String fromTime, String endTime) {
         try {
+            fromTime += " 00:00:00";
+            endTime += " 23:59:59";
             final ArrayList<DepositMomoModel> records = new ArrayList<DepositMomoModel>();
             final ArrayList<Long> num = new ArrayList<Long>();
             num.add(0, 0L);
@@ -3043,7 +3049,7 @@ public class RechargeDaoImpl implements RechargeDao {
                     records.add(model);
                 }
             });
-            DepositMomoReponse res = new DepositMomoReponse(0,0,0, records);
+            DepositMomoReponse res = new DepositMomoReponse(0, 0, 0, records);
             return res;
 
 

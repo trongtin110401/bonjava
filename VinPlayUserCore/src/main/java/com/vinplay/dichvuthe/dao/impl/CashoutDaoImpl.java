@@ -812,7 +812,10 @@ public class CashoutDaoImpl
             MongoCollection col = db.getCollection(CashoutUtil.CASHOUT_BY_BANK_COLLECTION);
             HashMap<String, Object> conditions = new HashMap<String, Object>();
             conditions.put("Status", "success");
+
             if (!fromTime.isEmpty() && !endTime.isEmpty()) {
+                fromTime += " 00:00:00";
+                endTime += " 23:59:59";
                 BasicDBObject obj = new BasicDBObject();
                 obj.put("$gte", fromTime);
                 obj.put("$lte", endTime);
@@ -847,6 +850,8 @@ public class CashoutDaoImpl
             conditions.put("Status", "success");
             if (fromTime != null && !fromTime.isEmpty() && endTime != null && !endTime.isEmpty()) {
                 BasicDBObject obj = new BasicDBObject();
+                fromTime += " 00:00:00";
+                endTime += " 23:59:59";
                 obj.put("$gte", fromTime);
                 obj.put("$lte", endTime);
                 conditions.put("CreatedAt", (Object) obj);
