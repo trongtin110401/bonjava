@@ -61,11 +61,15 @@ public class SendGiftCodeToUserWinProcessor implements BaseProcessor<HttpServlet
             } catch (Exception e) {
                 price = 50000;
             }
+            price = roundToNearestThousand(price);
             return process(nickname, message, timeStart, timeEnd, price);
         } catch (Exception ex) {
             System.out.println(ExceptionUtils.getStackTrace(ex));
             throw new RuntimeException(ex);
         }
+    }
+    public static int roundToNearestThousand(int amount) {
+        return (amount / 1000) * 1000;
     }
 
     public String process(String nickname, String message, String timeStart, String timeEnd, int price) throws Exception {
