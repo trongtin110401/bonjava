@@ -36,7 +36,7 @@ public class UpdateEventProcessor implements BaseProcessor<HttpServletRequest, S
         String url = request.getParameter("url");
         String action = request.getParameter("action");
         if (response != null) {
-            if (!response.getId().equals(String.valueOf(id))) {
+            if (response.getId() != null && !response.getId().equals(String.valueOf(id))) {
                 eventResponse.setErrorCode("Đang có một sự kiện diễn ra");
                 return eventResponse.toJson();
             }
