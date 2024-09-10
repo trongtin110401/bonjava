@@ -509,14 +509,14 @@ public class Slot25ExtendRoom extends SlotRoom {
 
                 // Kiểm tra xem giải thưởng có LỚN hay không.
                 // Lớn quá thì sinh lại MATRIX kết quả kẻo anh em NPH vỡ nợ
-                if (totalPrizes > getFunValue())
+                if (totalPrizes > 0 && totalPrizes > getFunValue() && !u.isBot())
                     continue;
 
 
                 // điều kiện trúng thưởng đã thỏa mãn, dừng vòng lặp
                 enoughPair = true;
                 // BẮT ĐẦU QUÁ TRÌNH LƯU TRỮ THÔNG TIN VÀ TRẢ THƯỞNG
-                String matrixStr = Slot25ExtendUtil.matrixToString(matrix);
+                String matrixStr = Slot25ExtendUtil.matrixToString( matrix);
                 if (totalPrizes > 0L) {
                     if (!u.isBot()) {
                         updateFunValue(-totalPrizes);
