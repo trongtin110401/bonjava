@@ -154,7 +154,6 @@ public class MGRoomCandy extends MGRoom {
                     long fee = totalBetValue * percentFee / 100L;
                     MoneyResponse moneyRes = this.userService.updateMoney(username, -totalBetValue, this.moneyTypeStr, Games.CANDY.getName(), "Quay Whisky", "Đặt cược Quay " + this.gameName, fee, referenceId, TransType.START_TRANS);
                     if (moneyRes != null && moneyRes.isSuccess()) {
-                        long moneyToPot = totalBetValue / 100L;
                         long moneyToFund = totalBetValue - fee ;
                         if (!u.isBot() && moneyToFund > 0) {
                             updateFunValue(moneyToFund);
@@ -165,7 +164,10 @@ public class MGRoomCandy extends MGRoom {
                         ArrayList<AwardsOnLine> awardsOnLines = new ArrayList<>();
                         long totalPrizes;
                         synchronized (this) {
+                            // 2 phần trăm cho vào hũ JACKPOT
+                            long moneyToPot = totalBetValue / 100L;
                             this.pot += moneyToPot;
+
                             block4:
                             while (!enoughPair) {
                                 result = 0;

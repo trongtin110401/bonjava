@@ -163,10 +163,6 @@ public class Slot20ExtendRoom extends SlotRoom {
                     }
 
                     if (moneyRes != null && moneyRes.isSuccess()) {
-                        // 2 phần trăm cho vào hũ JACKPOT
-                        long moneyToPot = !isSpinningFree ? totalBetValue * 1 / 100L : 0;
-                        this.pot += moneyToPot;
-
                         // số tiền còn lại sau khi trừ phế và 2% POT cho vào quỹ thưởng
                         long moneyToFund = !isSpinningFree ? totalBetValue - fee : 0;
                         if (!u.isBot() && moneyToFund > 0) {
@@ -186,6 +182,8 @@ public class Slot20ExtendRoom extends SlotRoom {
                         ArrayList<AwardsOnLine<Slot20ExtendAward>> awardsOnLines = new ArrayList<>();
 
                         synchronized (this) {
+                            // 2 phần trăm cho vào hũ JACKPOT
+                            long moneyToPot = !isSpinningFree ? totalBetValue / 100L : 0;
                             this.pot += moneyToPot;
                             // BẮT ĐẦU QUÁ TRÌNH SINH MA TRẬN KẾT QUẢ VÀ TÍNH TOÁN GIẢI THƯỞNG
                             block4:

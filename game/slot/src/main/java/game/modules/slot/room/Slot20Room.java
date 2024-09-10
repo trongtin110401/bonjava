@@ -140,10 +140,6 @@ public class Slot20Room extends SlotRoom {
                         moneyRes.setSuccess(true);
                     }
                     if (moneyRes != null && moneyRes.isSuccess()) {
-                        // 2 phần trăm cho vào hũ JACKPOT
-                        long moneyToPot = !isSpinningFree ? totalBetValue / 100L : 0;
-
-
                         // số tiền còn lại sau khi trừ phế và 2% POT cho vào quỹ thưởng
                         long moneyToFund = !isSpinningFree ? totalBetValue - fee : 0;
                         if (!u.isBot() && moneyToFund > 0) {
@@ -156,6 +152,8 @@ public class Slot20Room extends SlotRoom {
                         ArrayList<AwardsOnLine> awardsOnLines = new ArrayList<>();
 
                         synchronized (this) {
+                            // 2 phần trăm cho vào hũ JACKPOT
+                            long moneyToPot = !isSpinningFree ? totalBetValue / 100L : 0;
                             this.pot += moneyToPot;
 
                             block4:
@@ -298,9 +296,11 @@ public class Slot20Room extends SlotRoom {
                                 // BẮT ĐẦU QUÁ TRÌNH LƯU TRỮ THÔNG TIN VÀ TRẢ THƯỞNG
                                 String matrixStr = Slot20Utils.matrixToString(matrix);
                                 if (totalPrizes > 0L) {
+
                                     if (!u.isBot()) {
                                         updateFunValue(-totalPrizes);
                                     }
+
                                     if (result == ResultSlot.JACKPOT) {
                                         this.pot = this.initJackpotValues;
 
@@ -503,9 +503,6 @@ public class Slot20Room extends SlotRoom {
             if (isReset == 1) {
                 this.pot = this.initJackpotValues;
                 this.savePot();
-
-//                updateFunValue(-getFunValue());
-//                this.saveFund();
                 this.cacheService.removeKey("reset_pot_" + this.gn + "_" + this.betValue);
             }
         } catch (Exception ignored) {

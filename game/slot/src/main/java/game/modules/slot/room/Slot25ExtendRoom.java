@@ -152,11 +152,6 @@ public class Slot25ExtendRoom extends SlotRoom {
                     }
 
                     if (moneyRes != null && moneyRes.isSuccess()) {
-
-                        // 2 phần trăm cho vào hũ JACKPOT
-                        long moneyToPot = totalBetValue / 100L;
-                        this.pot += moneyToPot;
-
                         // số tiền còn lại sau khi trừ phế và 2% POT cho vào quỹ thưởng
                         long moneyToFund = totalBetValue - fee;
                         if (!u.isBot() && moneyToFund > 0) {
@@ -176,6 +171,8 @@ public class Slot25ExtendRoom extends SlotRoom {
                         ArrayList<AwardsOnLine<Slot25ExtendAward>> awardsOnLines = new ArrayList<>();
 
                         synchronized (this) {
+                            // 1 phần trăm cho vào hũ JACKPOT
+                            long moneyToPot = totalBetValue / 100L;
                             this.pot += moneyToPot;
                             // BẮT ĐẦU QUÁ TRÌNH SINH MA TRẬN KẾT QUẢ VÀ TÍNH TOÁN GIẢI THƯỞNG
                             block4:
@@ -330,7 +327,11 @@ public class Slot25ExtendRoom extends SlotRoom {
                                 // BẮT ĐẦU QUÁ TRÌNH LƯU TRỮ THÔNG TIN VÀ TRẢ THƯỞNG
                                 String matrixStr = Slot25ExtendUtil.matrixToString(matrix);
                                 if (totalPrizes > 0L) {
-                                    if (!u.isBot()) updateFunValue(-totalPrizes);
+
+                                    if (!u.isBot()) {
+                                        updateFunValue(-totalPrizes);
+                                    }
+
                                     if (result == ResultSlot.JACKPOT) {
                                         this.pot = this.initJackpotValues;
                                         // get user cache

@@ -161,8 +161,6 @@ public class MGRoomMiniPoker extends MGRoom {
                 }
                 if (moneyRes != null && moneyRes.isSuccess()) {
                     boolean enoughToPair = false;
-                    long moneyToPot = betValue / 100L;
-
                     long moneyToFund = betValue - fee;
                     long tienThuongX2;
 
@@ -170,6 +168,7 @@ public class MGRoomMiniPoker extends MGRoom {
                         updateFunValue(moneyToFund);
                     }
                     synchronized (this) {
+                        long moneyToPot = betValue / 100L;
                         this.pot += moneyToPot;
                         while (!enoughToPair) {
                             GroupType groupType;
