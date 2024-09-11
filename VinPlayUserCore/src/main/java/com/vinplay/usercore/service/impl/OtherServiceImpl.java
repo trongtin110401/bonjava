@@ -951,7 +951,9 @@ public class OtherServiceImpl implements OtherService {
             result.add(userPhone);
         }
         userActivePhoneResponse.setUsers(result);
-        userActivePhoneResponse.setTotalPage(Integer.parseInt(String.valueOf(collection.count(query))));
+        long totalRecord = collection.count(query);
+        long totalPage = (totalRecord + pageSize - 1) / pageSize;
+        userActivePhoneResponse.setTotalPage((int) totalPage);
         return userActivePhoneResponse;
     }
 
