@@ -126,12 +126,6 @@ public class ActivePhoneProcessor implements BaseProcessor<HttpServletRequest, S
                     .append("createdDate", dateFormat.format(date));
             collection.insertOne(newDocument);
         }
-        UserDaoImpl userDao = new UserDaoImpl();
-        try {
-            userDao.updateUserPhone(nickname, phone);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public boolean checkUserPhone(String nickname) {
