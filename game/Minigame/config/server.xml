@@ -19,7 +19,7 @@
   <extensionControllerThreadPoolSize>35</extensionControllerThreadPoolSize>
   <systemControllerRequestQueueSize>40000</systemControllerRequestQueueSize>
   <extensionControllerRequestQueueSize>90000</extensionControllerRequestQueueSize>
-  <schedulerThreadPoolSize>10</schedulerThreadPoolSize>
+  <schedulerThreadPoolSize>16</schedulerThreadPoolSize>
   <protocolCompressionThreshold>1024</protocolCompressionThreshold>
   <protocolMode>BINARY</protocolMode>
   <remoteAdmin>
@@ -54,7 +54,7 @@
   <startExtensionFileMonitor>false</startExtensionFileMonitor>
   <useFriendlyLogging>true</useFriendlyLogging>
   <useDebugMode>false</useDebugMode>
-  <sessionMaxIdleTime>10</sessionMaxIdleTime>
+  <sessionMaxIdleTime>60</sessionMaxIdleTime>
   <userReconnectionSeconds>0</userReconnectionSeconds>
   <userMaxIdleTime>864000</userMaxIdleTime>
   <ghostHunterEnabled>true</ghostHunterEnabled>
@@ -76,7 +76,7 @@
   </webSocket>
   <systemThreadPoolSettings>
     <name>Sys</name>
-    <coreThreads>4</coreThreads>
+    <coreThreads>8</coreThreads>
     <backupThreads>8</backupThreads>
     <maxBackups>16</maxBackups>
     <queueSizeTriggeringBackup>100</queueSizeTriggeringBackup>
@@ -88,7 +88,7 @@
   </systemThreadPoolSettings>
   <extensionThreadPoolSettings>
     <name>Ext</name>
-    <coreThreads>4</coreThreads>
+    <coreThreads>8</coreThreads>
     <backupThreads>8</backupThreads>
     <maxBackups>16</maxBackups>
     <queueSizeTriggeringBackup>100</queueSizeTriggeringBackup>
