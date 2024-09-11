@@ -185,29 +185,31 @@ public class LogMoneyUserDaoImpl
     public List<LogUserMoneyResponse> searchLogMoneyUser2(String nickName, String serviceName, String actionName, String timeStart, String timeEnd, int page, int totalRecord) {
         final ArrayList<LogUserMoneyResponse> results = new ArrayList<>();
         MongoDatabase db = MongoDBConnectionFactory.getDB();
-        HashMap<String, Object> conditions = new HashMap<>();
-        BasicDBObject obj = new BasicDBObject();
         int numStart = (page - 1) * totalRecord;
 
-        // Điều kiện tìm kiếm
+        Document conditions = new Document();
         if (nickName != null && !nickName.isEmpty()) {
-            conditions.put("nick_name", nickName);
+            conditions.append("nick_name", nickName);
         }
         if (actionName != null && !actionName.isEmpty()) {
-            conditions.put("action_name", actionName);
+            conditions.append("action_name", actionName);
         }
         if (serviceName != null && !serviceName.isEmpty()) {
-            conditions.put("service_name", serviceName);
+            conditions.append("service_name", serviceName);
         }
         if (timeStart != null && !timeStart.isEmpty() && timeEnd != null && !timeEnd.isEmpty()) {
-            try {
-                obj.put("$gte", timeStart + " 00:00:00");
-                obj.put("$lte", timeEnd + " 23:59:59");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            conditions.put("trans_time", obj);
+            conditions.append("trans_time", new Document("$gte", timeStart + " 00:00:00")
+                    .append("$lte", timeEnd + " 23:59:59"));
         }
+
+        Document projection = new Document("nick_name", 1)
+                .append("service_name", 1)
+                .append("current_money", 1)
+                .append("money_exchange", 1)
+                .append("description", 1)
+                .append("trans_time", 1)
+                .append("action_name", 1)
+                .append("fee", 1);
 
         // Tìm kiếm và phân trang
         MongoCollection<Document> collection = db.getCollection("log_money_user_vin");
@@ -216,9 +218,10 @@ public class LogMoneyUserDaoImpl
             iterable = collection.find(new Document(conditions))
                     .skip(numStart)
                     .limit(totalRecord)
+                    .projection(projection)
                     .batchSize(1000);
         } else {
-            iterable = collection.find(new Document(conditions)).batchSize(1000);
+            iterable = collection.find(new Document(conditions)).projection(projection).batchSize(1000);
         }
 
         // Xử lý kết quả tìm kiếm
