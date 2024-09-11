@@ -936,6 +936,7 @@ public class OtherServiceImpl implements OtherService {
         if (phone != null && !phone.isEmpty()) {
             query.append("phone", phone);
         }
+        query.append("isActive", true);
         Document sort = new Document("createdDate", -1);
         List<UserPhone> result = new ArrayList<>();
         MongoCursor<Document> cursor = collection.find(query).sort(sort).skip(pageIndex * pageSize).limit(pageSize).iterator();
