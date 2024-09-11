@@ -9,7 +9,7 @@
     <addressWhiteList>
       <string>10.40.112.5</string>
     </addressWhiteList>
-    <maxConnectionsPerAddress>20</maxConnectionsPerAddress>
+    <maxConnectionsPerAddress>200000</maxConnectionsPerAddress>
   </ipFilter>
   <flashCrossdomainPolicy>
     <useMasterSocketPolicy>true</useMasterSocketPolicy>
