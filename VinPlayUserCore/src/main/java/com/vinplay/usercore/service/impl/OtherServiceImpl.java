@@ -968,6 +968,7 @@ public class OtherServiceImpl implements OtherService {
         if (nickname != null && !nickname.isEmpty()) {
             query.append("nickname", nickname);
         }
+        query.append("isActive",true);
         Document sort = new Document("createdDate", -1);
         List<UserTele> result = new ArrayList<>();
         MongoCursor<Document> cursor = collection.find(query).sort(sort).skip(pageIndex * pageSize).limit(pageSize).iterator();
@@ -982,7 +983,9 @@ public class OtherServiceImpl implements OtherService {
             result.add(userPhone);
         }
         userActivePhoneResponse.setUsers(result);
-        userActivePhoneResponse.setTotalPage(Integer.parseInt(String.valueOf(collection.count(query))));
+        long totalRecord = collection.count(query);
+        long totalPage = (totalRecord + pageSize - 1) / pageSize;
+        userActivePhoneResponse.setTotalPage((int) totalPage);
         return userActivePhoneResponse;
     }
 }
