@@ -11,10 +11,8 @@ package com.vinplay.vbee.common.rmq;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.vinplay.vbee.common.messages.BaseMessage;
-import com.vinplay.vbee.common.rmq.RMQTask;
+
 import java.io.IOException;
-import java.util.Date;
-import java.util.Map;
 
 public class RMQPublishTask
 extends RMQTask {

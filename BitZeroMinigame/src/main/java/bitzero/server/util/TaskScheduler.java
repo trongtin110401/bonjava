@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0_116.
- * 
+ *
  * Could not load the following classes:
  *  org.slf4j.Logger
  *  org.slf4j.LoggerFactory
@@ -8,16 +8,18 @@
 package bitzero.server.util;
 
 import bitzero.engine.service.IService;
+
 import java.util.List;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TaskScheduler
-implements IService {
+        implements IService {
     private static AtomicInteger schedulerId = new AtomicInteger(0);
     private final ScheduledThreadPoolExecutor taskScheduler;
     private final String serviceName;
@@ -55,7 +57,7 @@ implements IService {
 
     public ScheduledFuture schedule(Runnable task, int delay, TimeUnit unit) {
         //this.logger.debug("Task scheduled: " + task + ", " + delay + " " + (Object)((Object)unit));
-        return this.taskScheduler.schedule(task, (long)delay, unit);
+        return this.taskScheduler.schedule(task, (long) delay, unit);
     }
 
     public ScheduledFuture scheduleAtFixedRate(Runnable task, int initialDelay, int period, TimeUnit unit) {

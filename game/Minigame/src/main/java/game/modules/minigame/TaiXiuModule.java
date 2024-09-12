@@ -965,6 +965,7 @@ public class TaiXiuModule
             } catch (Exception e) {
                 sendLogToTele(e.getMessage() + "Calculate TX " + this.roomId + ", phien= " + TaiXiuModule.this.referenceTaiXiuId + " error: ");
                 Debug.trace((Object) ("Calculate TX " + this.roomId + ", phien= " + TaiXiuModule.this.referenceTaiXiuId + " error: " + e.getMessage()));
+                Debug.error(e);
             }
             long endTime = System.currentTimeMillis();
             Debug.trace((Object) ("CALCUALTE PRIZE, time handle= " + (endTime - startTime) + " (ms)") + " Room " + (roomId == 1 ? "vin" : "xu"));

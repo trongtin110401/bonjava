@@ -723,8 +723,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         }
     }
 
-    private final class CalculatingTaiXiuPrize
-            implements Runnable {
+    private final class CalculatingTaiXiuPrize implements Runnable {
         private short roomId;
 
         public CalculatingTaiXiuPrize(short roomId) {
@@ -738,7 +737,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                 MGRoomTaiXiu room = TaiXiuModule.this.getRoomTX(this.roomId);
                 room.calculatePrize(TaiXiuModule.this.referenceTaiXiuId);
             } catch (Exception e) {
-                sendLogToTele(e.getMessage() + "Calculate TX " + this.roomId + ", phien= " + TaiXiuModule.this.referenceTaiXiuId + " error: ");
+//                sendLogToTele(e.getMessage() + "Calculate TX " + this.roomId + ", phien= " + TaiXiuModule.this.referenceTaiXiuId + " error: ");
                 Debug.trace((Object) ("Calculate TX " + this.roomId + ", phien= " + TaiXiuModule.this.referenceTaiXiuId + " error: " + e.getMessage()));
             }
             long endTime = System.currentTimeMillis();

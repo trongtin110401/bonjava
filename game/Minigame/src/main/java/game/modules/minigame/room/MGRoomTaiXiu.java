@@ -73,8 +73,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 // todo : con của MGRoom
-public class MGRoomTaiXiu
-        extends MGRoom {
+public class MGRoomTaiXiu extends MGRoom {
     private static final double PHAN_TRAM_TIEN_HU = 0.005;
     public long referenceId;
     private short moneyType;
@@ -801,15 +800,12 @@ public class MGRoomTaiXiu
     }
 
     private void updateSumTran(Map<String, TransactionTaiXiu> map, TransactionTaiXiuDetail tranDetail) {
-        if (tranDetail.username.equals("banhday"))
-            System.out.println(tranDetail.prize + "tien truoc khi nha lại");
         if (map.containsKey(tranDetail.username)) {
             TransactionTaiXiu txt = map.get(tranDetail.username);
             if (txt.betSide == tranDetail.betSide) {
                 txt.betValue += tranDetail.betValue;
                 txt.totalPrize += tranDetail.prize;
                 txt.totalRefund += tranDetail.refund;
-                //txt.totalExchange += tranDetail.totalExchange;
                 map.put(tranDetail.username, txt);
             }
         } else {
@@ -822,7 +818,6 @@ public class MGRoomTaiXiu
             tran.betValue = tranDetail.betValue;
             tran.totalPrize = tranDetail.prize;
             tran.totalRefund = tranDetail.refund;
-            //tran.totalExchange = tranDetail.totalExchange;
             map.put(tranDetail.username, tran);
         }
     }
