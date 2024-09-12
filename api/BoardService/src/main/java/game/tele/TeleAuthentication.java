@@ -46,7 +46,9 @@ public class TeleAuthentication extends TelegramLongPollingBot {
                     if (u != null && !Objects.equals(u.getNickname(), nickname) && u.isActive()) {
                         textMessage = "Tele đã liên kết với 1 tài khoản khác, hãy thử bằng 1 tele khác";
                         sendPhoneAndOTPRequest(chatId, textMessage);
-                    } else if (phone.isEmpty()) {
+                        return;
+                    }
+                    if (phone.isEmpty()) {
                         textMessage = "Vui lòng xác thực số điện thoại để sử dụng dịch vụ";
                         sendPhoneAndOTPRequest(chatId, textMessage);
                     } else {
@@ -60,13 +62,14 @@ public class TeleAuthentication extends TelegramLongPollingBot {
                         UserTele userTele = getInfoByChatID(chatId);
                         if (userTele == null) {
                             saveUserInfo(nickname, chatId);
-                        } else if (userTele.getPhoneNumber().isEmpty() && !userTele.isActive()) {
+                        } else if (userTele.getPhoneNumber().isEmpty() || !userTele.isActive()) {
                             textMessage = "Chào mừng " + userTele.getNickname() + " đến với hệ thống OTP miễn phí." + "\n"
                                     + "Để nhận OTP miễn phí vui lòng ấn nút 'Chia sẻ số điện thoại' bên dưới để xác thực tài khoản";
                             sendPhoneAndOTPRequest(chatId, textMessage);
                         } else {
                             String otp = generateOTP();
                             saveOTP(chatId, otp);
+                            savePhone(chatId, otp);
                             sendOTP(chatId, otp);
                         }
                     }
@@ -90,8 +93,9 @@ public class TeleAuthentication extends TelegramLongPollingBot {
             String chatId = callbackQuery.getMessage().getChatId().toString();
             if ("get_otp".equals(callbackData)) {
                 String otp = generateOTP();
-                sendOTP(chatId, otp);
                 saveOTP(chatId, otp);
+                savePhone(chatId, otp);
+                sendOTP(chatId, otp);
             }
         } else if (update.hasMessage() && update.getMessage().hasContact()) {
             Contact contact = update.getMessage().getContact();
@@ -121,8 +125,9 @@ public class TeleAuthentication extends TelegramLongPollingBot {
             sendMessage(chatId, "Vui lòng xác thực số điện thoại để sử dụng dịch vụ");
         } else {
             String otp = generateOTP();
-            sendOTP(chatId, otp);
             saveOTP(chatId, otp);
+            savePhone(chatId, otp);
+            sendOTP(chatId, otp);
         }
     }
 
