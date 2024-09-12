@@ -56,30 +56,30 @@ public class ActivePhoneProcessor implements BaseProcessor<HttpServletRequest, S
             response.setErrorCode("Số điện thoại đã kích hoạt cho tài khoản khác");
             return response.toJson();
         }
-        String otp = generateOTP();
-
-        boolean check = checkUserPhone(nickName);
-        saveOTP(nickName, otp, phoneNumber);
+//        String otp = generateOTP();
+//        boolean check = checkUserPhone(nickName);
+//        saveOTP(nickName, otp, phoneNumber);
+        saveUserPhone(nickName, "", phoneNumber);
         response.setActive(false);
         response.setNickname(nickName);
         response.setPhoneNumber(phoneNumber);
-        MoneyResponse moneyResponse = null;
-        if (check) {
-            UserService userService = new UserServiceImpl();
-            moneyResponse = userService.updateMoney(nickName, -1000, "vin", Consts.CHARGE_SMS, Consts.CHARGE_SMS, "SMS OTP", 0, null, TransType.NO_VIPPOINT);
-        }
-        if (moneyResponse != null && !moneyResponse.isSuccess()) {
-            response.setSuccess(false);
-            response.setErrorCode("Vui lòng nạp thêm tiền");
-            return response.toJson();
-        }
-        if (sendOTP(phoneNumber, otp)) {
-            response.setSuccess(true);
-            response.setErrorCode("0");
-        } else {
-            response.setSuccess(false);
-            response.setErrorCode("Số điện thoại không hợp lệ");
-        }
+//        MoneyResponse moneyResponse = null;
+//        if (check) {
+//            UserService userService = new UserServiceImpl();
+//            moneyResponse = userService.updateMoney(nickName, -1000, "vin", Consts.CHARGE_SMS, Consts.CHARGE_SMS, "SMS OTP", 0, null, TransType.NO_VIPPOINT);
+//        }
+//        if (moneyResponse != null && !moneyResponse.isSuccess()) {
+//            response.setSuccess(false);
+//            response.setErrorCode("Vui lòng nạp thêm tiền");
+//            return response.toJson();
+//        }
+//        if (sendOTP(phoneNumber, otp)) {
+//            response.setSuccess(true);
+//            response.setErrorCode("0");
+//        } else {
+//            response.setSuccess(false);
+//            response.setErrorCode("Số điện thoại không hợp lệ");
+//        }
         return response.toJson();
     }
 
@@ -108,6 +108,27 @@ public class ActivePhoneProcessor implements BaseProcessor<HttpServletRequest, S
     }
 
     private void saveOTP(String nickname, String otp, String phone) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("user_phone");
+        Document filter = new Document("nickname", nickname);
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Date date = new Date();
+        Document updateDocument = new Document("$set", new Document("otp", otp)
+                .append("timeToExpired", 300000).append("createdDate", dateFormat.format(date)).append("phone", phone));
+
+        UpdateResult result = collection.updateOne(filter, updateDocument);
+        if (result.getMatchedCount() == 0) {
+            Document newDocument = new Document("nickname", nickname)
+                    .append("isActive", false)
+                    .append("otp", otp)
+                    .append("phone", phone)
+                    .append("timeToExpired", 300000)
+                    .append("createdDate", dateFormat.format(date));
+            collection.insertOne(newDocument);
+        }
+    }
+
+    private void saveUserPhone(String nickname, String otp, String phone) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("user_phone");
         Document filter = new Document("nickname", nickname);

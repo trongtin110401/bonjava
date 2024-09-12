@@ -566,6 +566,7 @@ public class OtpServiceImpl
                     baseResponseModel.setSuccess(true);
                     OtherService otherService = new OtherServiceImpl();
                     otherService.activeUserPhone(nickname);
+                    otherService.activeUserTele(nickname);
                     UserDaoImpl userDao = new UserDaoImpl();
                     try {
                         String phone = doc.getString("phone");
