@@ -43,7 +43,12 @@ public class GetUserOnlineProcessor implements BaseProcessor<HttpServletRequest,
                 .map(username -> createUserCCUResponse(username, dao))
                 .sorted((u1, u2) -> Double.compare(u2.getTotalMoney(), u1.getTotalMoney()))
                 .collect(Collectors.toList());
-
+        int totalRecord = userOnline.size();
+        int totalPage = (totalRecord + pageSize - 1) / pageSize;
+        response.setTotalRecord(userOnline.size());
+        response.setTotalPage(totalPage);
+        response.setPageIndex(pageIndex);
+        response.setPageSize(pageSize);
         response.setUsers(userOnlineResponse);
         return response.toJson();
     }

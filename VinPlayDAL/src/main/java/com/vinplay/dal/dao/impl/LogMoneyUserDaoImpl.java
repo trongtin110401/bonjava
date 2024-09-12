@@ -33,10 +33,7 @@ import com.mongodb.AggregationOutput;
 import com.mongodb.BasicDBObject;
 import com.mongodb.Block;
 import com.mongodb.DBCollection;
-import com.mongodb.client.AggregateIterable;
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.*;
 import com.mongodb.client.model.Aggregates;
 
 import static com.mongodb.client.model.Filters.and;
@@ -186,55 +183,64 @@ public class LogMoneyUserDaoImpl
     }
 
     public List<LogUserMoneyResponse> searchLogMoneyUser2(String nickName, String serviceName, String actionName, String timeStart, String timeEnd, int page, int totalRecord) {
-        final ArrayList<LogUserMoneyResponse> results = new ArrayList<LogUserMoneyResponse>();
+        final ArrayList<LogUserMoneyResponse> results = new ArrayList<>();
         MongoDatabase db = MongoDBConnectionFactory.getDB();
-        HashMap<String, Object> conditions = new HashMap<String, Object>();
-        FindIterable iterable = null;
-        BasicDBObject obj = new BasicDBObject();
         int numStart = (page - 1) * totalRecord;
-        if (nickName != null && !nickName.equals("")) {
-            conditions.put("nick_name", nickName);
+
+        Document conditions = new Document();
+        if (nickName != null && !nickName.isEmpty()) {
+            conditions.append("nick_name", nickName);
+        }
+        if (actionName != null && !actionName.isEmpty()) {
+            conditions.append("action_name", actionName);
+        }
+        if (serviceName != null && !serviceName.isEmpty()) {
+            conditions.append("service_name", serviceName);
+        }
+        if (timeStart != null && !timeStart.isEmpty() && timeEnd != null && !timeEnd.isEmpty()) {
+            conditions.append("trans_time", new Document("$gte", timeStart + " 00:00:00")
+                    .append("$lte", timeEnd + " 23:59:59"));
         }
 
-        if (actionName != null && !actionName.equals("")) {
-            conditions.put("action_name", actionName);
-        }
-        if (serviceName != null && !serviceName.equals("")) {
-            conditions.put("service_name", serviceName);
-        }
-        if (timeStart != null && !timeStart.equals("") && timeEnd != null && !timeEnd.equals("")) {
-            try {
-                obj.put("$gte", timeStart + " 00:00:00");
-                obj.put("$lte", timeEnd + " 23:59:59");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        Document projection = new Document("nick_name", 1)
+                .append("service_name", 1)
+                .append("current_money", 1)
+                .append("money_exchange", 1)
+                .append("description", 1)
+                .append("trans_time", 1)
+                .append("action_name", 1)
+                .append("fee", 1);
 
-            conditions.put("trans_time", obj);
-        }
+        // Tìm kiếm và phân trang
+        MongoCollection<Document> collection = db.getCollection("log_money_user_vin");
+        MongoIterable<Document> iterable;
         if (numStart > -1 && totalRecord > -1) {
-            iterable = db.getCollection("log_money_user_vin").find((Bson) new Document(conditions)).skip(numStart).limit(totalRecord);
+            iterable = collection.find(new Document(conditions))
+                    .skip(numStart)
+                    .limit(totalRecord)
+                    .projection(projection)
+                    .batchSize(1000);
         } else {
-            iterable = db.getCollection("log_money_user_vin").find((Bson) new Document(conditions));
+            iterable = collection.find(new Document(conditions)).projection(projection).batchSize(1000);
         }
 
-        iterable.forEach((Block) new Block<Document>() {
-
-            public void apply(Document document) {
-                LogUserMoneyResponse tranlogmoney = new LogUserMoneyResponse();
-                tranlogmoney.nickName = document.getString((Object) "nick_name");
-                tranlogmoney.serviceName = document.getString((Object) "service_name");
-                tranlogmoney.currentMoney = document.getLong((Object) "current_money");
-                tranlogmoney.moneyExchange = document.getLong((Object) "money_exchange");
-                tranlogmoney.description = document.getString((Object) "description");
-                tranlogmoney.transactionTime = document.getString((Object) "trans_time");
-                tranlogmoney.actionName = document.getString((Object) "action_name");
-                tranlogmoney.fee = document.getLong((Object) "fee");
-                results.add(tranlogmoney);
-            }
+        // Xử lý kết quả tìm kiếm
+        iterable.forEach((Block<? super Document>) document -> {
+            LogUserMoneyResponse tranlogmoney = new LogUserMoneyResponse();
+            tranlogmoney.nickName = document.getString("nick_name");
+            tranlogmoney.serviceName = document.getString("service_name");
+            tranlogmoney.currentMoney = document.getLong("current_money");
+            tranlogmoney.moneyExchange = document.getLong("money_exchange");
+            tranlogmoney.description = document.getString("description");
+            tranlogmoney.transactionTime = document.getString("trans_time");
+            tranlogmoney.actionName = document.getString("action_name");
+            tranlogmoney.fee = document.getLong("fee");
+            results.add(tranlogmoney);
         });
+
         return results;
     }
+
 
 
     public List<LogUserMoneyResponse> getLogMoneyUser(String timeStart, String timeEnd) {

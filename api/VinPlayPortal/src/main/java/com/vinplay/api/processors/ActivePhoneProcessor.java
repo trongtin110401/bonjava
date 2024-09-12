@@ -17,6 +17,7 @@ import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.models.cache.UserExtraInfoModel;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.response.ActivePhoneResponse;
+import com.vinplay.vbee.common.response.MoneyResponse;
 import com.vinplay.vbee.common.response.UserPhone;
 import com.vinplay.vbee.common.statics.Consts;
 import com.vinplay.vbee.common.statics.TransType;
@@ -56,22 +57,28 @@ public class ActivePhoneProcessor implements BaseProcessor<HttpServletRequest, S
             return response.toJson();
         }
         String otp = generateOTP();
+
+        boolean check = checkUserPhone(nickName);
+        saveOTP(nickName, otp, phoneNumber);
+        response.setActive(false);
+        response.setNickname(nickName);
+        response.setPhoneNumber(phoneNumber);
+        MoneyResponse moneyResponse = null;
+        if (check) {
+            UserService userService = new UserServiceImpl();
+            moneyResponse = userService.updateMoney(nickName, -1000, "vin", Consts.CHARGE_SMS, Consts.CHARGE_SMS, "SMS OTP", 0, null, TransType.NO_VIPPOINT);
+        }
+        if (moneyResponse != null && !moneyResponse.isSuccess()) {
+            response.setSuccess(false);
+            response.setErrorCode("Vui lòng nạp thêm tiền");
+            return response.toJson();
+        }
         if (sendOTP(phoneNumber, otp)) {
             response.setSuccess(true);
             response.setErrorCode("0");
         } else {
             response.setSuccess(false);
             response.setErrorCode("Số điện thoại không hợp lệ");
-        }
-        boolean check = checkUserPhone(nickName);
-        saveOTP(nickName, otp, phoneNumber);
-        response.setActive(false);
-        response.setNickname(nickName);
-        response.setPhoneNumber(phoneNumber);
-
-        if (check) {
-            UserService userService = new UserServiceImpl();
-            userService.updateMoney(nickName, -1000, "vin", Consts.CHARGE_SMS, Consts.CHARGE_SMS, "SMS OTP", 0, null, TransType.NO_VIPPOINT);
         }
         return response.toJson();
     }
@@ -118,12 +125,6 @@ public class ActivePhoneProcessor implements BaseProcessor<HttpServletRequest, S
                     .append("timeToExpired", 300000)
                     .append("createdDate", dateFormat.format(date));
             collection.insertOne(newDocument);
-        }
-        UserDaoImpl userDao = new UserDaoImpl();
-        try {
-            userDao.updateUserPhone(nickname, phone);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 

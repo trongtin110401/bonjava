@@ -19,6 +19,9 @@ public class GetAllUserActiveTeleProcessor
         String nickname = request.getParameter("nickname");
         int pageIndex = Integer.parseInt(request.getParameter("pageIndex"));
         int pageSize = Integer.parseInt(request.getParameter("pageSize"));
+        if (pageIndex > 0) {
+            pageIndex = pageIndex - 1;
+        }
         OtherService otherService = new OtherServiceImpl();
         userActiveTeleResponse = otherService.getAllUserActiveTele(nickname, pageIndex, pageSize);
         return userActiveTeleResponse.toJson();

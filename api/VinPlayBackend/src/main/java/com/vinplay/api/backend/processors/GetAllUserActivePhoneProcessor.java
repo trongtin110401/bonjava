@@ -18,6 +18,9 @@ public class GetAllUserActivePhoneProcessor
         String nickname = request.getParameter("nickname");
         String phone = request.getParameter("phone");
         int pageIndex = Integer.parseInt(request.getParameter("pageIndex"));
+        if (pageIndex > 0) {
+            pageIndex = pageIndex - 1;
+        }
         int pageSize = Integer.parseInt(request.getParameter("pageSize"));
         OtherService otherService = new OtherServiceImpl();
         userActivePhoneResponse = otherService.getAllUserActivePhone(nickname, phone, pageIndex, pageSize);
