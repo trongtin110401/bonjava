@@ -147,7 +147,7 @@ public class MGRoomCandy extends MGRoom {
                     long fee = totalBetValue * percentFee / 100L;
                     MoneyResponse moneyRes = this.userService.updateMoney(username, -totalBetValue, this.moneyTypeStr, Games.CANDY.getName(), "Quay Whisky", "Đặt cược Quay " + this.gameName, fee, referenceId, TransType.START_TRANS);
                     if (moneyRes != null && moneyRes.isSuccess()) {
-                        long moneyToFund = totalBetValue - fee ;
+                        long moneyToFund = totalBetValue - fee;
                         if (!u.isBot() && moneyToFund > 0) {
                             updateFunValue(moneyToFund);
                         }
@@ -214,9 +214,7 @@ public class MGRoomCandy extends MGRoom {
                                                     continue block4;
                                                 }
                                             }
-                                            if (forceNoHu) {
-                                                money = this.pot;
-                                            }
+                                            money = this.pot;
                                         }
                                         AwardsOnLine aol = new AwardsOnLine(award, money, line.getName());
                                         awardsOnLines.add(aol);
@@ -234,7 +232,7 @@ public class MGRoomCandy extends MGRoom {
                                     builderPrizesOnLine.append(award.getMoney());
 
                                     if (!forceNoHu && award.getAward() == Award.TRIPLE_JACKPOT) {
-                                        result = 3;
+                                        result = ResultPokeGo.NO_HU;
                                         isGetJackpotNaturally = true;
                                     }
                                 }
