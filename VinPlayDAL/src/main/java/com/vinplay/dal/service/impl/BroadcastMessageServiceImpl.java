@@ -24,8 +24,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class BroadcastMessageServiceImpl implements BroadcastMessageService {
-    private static int MAX_SIZE = 20;
-    public static int MIN_MONEY = 10000;
+    private static int MAX_SIZE = 200;
+    public static int MIN_MONEY = 100000;
     private static final String KEY_BROADCAST = "keyBroadcast";
 
     /*
