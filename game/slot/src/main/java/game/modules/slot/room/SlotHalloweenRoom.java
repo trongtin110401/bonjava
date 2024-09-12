@@ -19,7 +19,6 @@ import game.modules.slot.entities.slot.line25basic.SlotHalloweenAward;
 import game.modules.slot.entities.slot.line25basic.SlotHalloweenAwards;
 import game.modules.slot.entities.slot.line25basic.SlotHalloweenLines;
 import game.modules.slot.listener.SlotLogListener;
-import game.modules.slot.room.Slot25BasicRoom;
 import game.modules.slot.utils.SlotHalloweenUtil;
 
 import java.io.IOException;
