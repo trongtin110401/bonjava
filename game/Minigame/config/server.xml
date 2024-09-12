@@ -19,7 +19,7 @@
   <extensionControllerThreadPoolSize>35</extensionControllerThreadPoolSize>
   <systemControllerRequestQueueSize>40000</systemControllerRequestQueueSize>
   <extensionControllerRequestQueueSize>90000</extensionControllerRequestQueueSize>
-  <schedulerThreadPoolSize>16</schedulerThreadPoolSize>
+  <schedulerThreadPoolSize>50</schedulerThreadPoolSize>
   <protocolCompressionThreshold>1024</protocolCompressionThreshold>
   <protocolMode>BINARY</protocolMode>
   <remoteAdmin>

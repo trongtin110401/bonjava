@@ -56,6 +56,7 @@ services:
     environment:
       - "RABBITMQ_DEFAULT_USER=demo"
       - "RABBITMQ_DEFAULT_PASS=MgqzAtRymcxyNoFnkwX7sGUlmj0YQI"
+      - "RABBITMQ_VM_MEMORY_HIGH_WATERMARK=0.31"
     ports:
         - '5672:5672'
         - '15672:15672'
