@@ -80,6 +80,7 @@ public class ActivePhoneProcessor implements BaseProcessor<HttpServletRequest, S
 //            response.setSuccess(false);
 //            response.setErrorCode("Số điện thoại không hợp lệ");
 //        }
+        response.setSuccess(true);
         return response.toJson();
     }
 
