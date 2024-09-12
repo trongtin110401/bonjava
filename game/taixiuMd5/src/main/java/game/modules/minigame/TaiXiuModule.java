@@ -512,7 +512,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         } else {
             this.forceBetSide = -1;
         }
-//        cacheService.setValue("tai_xiu_be_cang_md5", "auto");
+        cacheService.setValue("tai_xiu_be_cang_md5", "auto");
 
         short[] dices = new short[3];
 
