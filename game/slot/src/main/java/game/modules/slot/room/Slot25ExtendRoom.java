@@ -62,10 +62,6 @@ public class Slot25ExtendRoom extends SlotRoom {
         this.gameName = gameName;
         this.cacheFreeSpinName = this.gameName + betValue;
 
-        // init jackpot value
-//        CacheServiceImpl cacheService = new CacheServiceImpl();
-//        cacheService.setValue(room, (int) pot);
-
         this.betValue = betValue;
         this.initJackpotValues = initJackpotValue;
 
@@ -121,13 +117,6 @@ public class Slot25ExtendRoom extends SlotRoom {
         String roomForce;
         // Lớp dịch vụ caching
         CacheServiceImpl cacheService = new CacheServiceImpl();
-        try {
-            usernameForce = cacheService.getValueStr(CACHE_NAME_USER_SPOT + gameName);
-            roomForce = cacheService.getValueStr(CACHE_BET_VALUE_SLOT + gameName);
-        } catch (Exception e) {
-            usernameForce = "";
-            roomForce = "";
-        }
         // thông tin user
         UserCacheModel u = userService.getUser(username);
         // số dư hiện tại của user
@@ -171,6 +160,13 @@ public class Slot25ExtendRoom extends SlotRoom {
                         ArrayList<AwardsOnLine<Slot25ExtendAward>> awardsOnLines = new ArrayList<>();
 
                         synchronized (this) {
+                            try {
+                                usernameForce = cacheService.getValueStr(CACHE_NAME_USER_SPOT + gameName);
+                                roomForce = cacheService.getValueStr(CACHE_BET_VALUE_SLOT + gameName);
+                            } catch (Exception e) {
+                                usernameForce = "";
+                                roomForce = "";
+                            }
                             // 1 phần trăm cho vào hũ JACKPOT
                             long moneyToPot = totalBetValue / 100L;
                             this.pot += moneyToPot;

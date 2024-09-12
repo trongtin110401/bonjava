@@ -1,4 +1,4 @@
-package game.modules.slot;
+package game.modules.slot.room;
 
 import com.vinplay.dal.service.impl.CacheServiceImpl;
 import com.vinplay.vbee.common.enums.Games;
@@ -7,6 +7,7 @@ import com.vinplay.vbee.common.models.slot.SlotFreeSpin;
 import com.vinplay.vbee.common.response.MoneyResponse;
 import com.vinplay.vbee.common.statics.TransType;
 import com.vinplay.vbee.common.utils.DateTimeUtils;
+import game.modules.slot.SlotModule;
 import game.modules.slot.cmd.Slot25CommandCollection;
 import game.modules.slot.cmd.send.slot25linebasic.Slot25BigWinMsg;
 import game.modules.slot.cmd.send.slot25linebasic.Slot25ResultMsg;
@@ -52,13 +53,6 @@ public class SlotHalloweenRoom extends Slot25BasicRoom {
         String roomForce;
         // Lớp dịch vụ caching
         CacheServiceImpl cacheService = new CacheServiceImpl();
-        try {
-            usernameForce = cacheService.getValueStr(CACHE_NAME_USER_SPOT + gameName);
-            roomForce = cacheService.getValueStr(CACHE_BET_VALUE_SLOT + gameName);
-        } catch (Exception e) {
-            usernameForce = "";
-            roomForce = "";
-        }
         // thông tin user
         UserCacheModel u = userService.getUser(username);
         // số dư hiện tại của user
@@ -104,6 +98,13 @@ public class SlotHalloweenRoom extends Slot25BasicRoom {
                         ArrayList<AwardsOnLine<SlotHalloweenAward>> awardsOnLines = new ArrayList<>();
 
                         synchronized (this) {
+                            try {
+                                usernameForce = cacheService.getValueStr(CACHE_NAME_USER_SPOT + gameName);
+                                roomForce = cacheService.getValueStr(CACHE_BET_VALUE_SLOT + gameName);
+                            } catch (Exception e) {
+                                usernameForce = "";
+                                roomForce = "";
+                            }
                             // 2 phần trăm cho vào hũ JACKPOT
                             long moneyToPot = !isSpinningFree ? totalBetValue / 100L : 0;
                             this.pot += moneyToPot;

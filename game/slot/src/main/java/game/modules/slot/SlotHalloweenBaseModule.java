@@ -7,6 +7,7 @@ import bitzero.util.common.business.Debug;
 import com.vinplay.dal.service.impl.CacheServiceImpl;
 import com.vinplay.vbee.common.exceptions.KeyNotFoundException;
 import com.vinplay.vbee.common.utils.CommonUtils;
+import game.modules.slot.room.SlotHalloweenRoom;
 import game.util.ConfigGame;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 

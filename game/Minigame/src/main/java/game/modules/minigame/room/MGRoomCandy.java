@@ -141,13 +141,6 @@ public class MGRoomCandy extends MGRoom {
         String roomForce;
         // Lớp dịch vụ caching
         CacheServiceImpl cacheService = new CacheServiceImpl();
-        try {
-            usernameForce = cacheService.getValueStr(CACHE_NAME_USER_SPOT + gameName);
-            roomForce = cacheService.getValueStr(CACHE_BET_VALUE_SLOT + gameName);
-        } catch (Exception e) {
-            usernameForce = "";
-            roomForce = "";
-        }
         if (lineArr.length > 0 && !linesStr.isEmpty()) {
             if (totalBetValue > 0L) {
                 if (totalBetValue <= currentMoney) {
@@ -164,6 +157,15 @@ public class MGRoomCandy extends MGRoom {
                         ArrayList<AwardsOnLine> awardsOnLines = new ArrayList<>();
                         long totalPrizes;
                         synchronized (this) {
+
+                            try {
+                                usernameForce = cacheService.getValueStr(CACHE_NAME_USER_SPOT + gameName);
+                                roomForce = cacheService.getValueStr(CACHE_BET_VALUE_SLOT + gameName);
+                            } catch (Exception e) {
+                                usernameForce = "";
+                                roomForce = "";
+                            }
+
                             // 2 phần trăm cho vào hũ JACKPOT
                             long moneyToPot = totalBetValue / 100L;
                             this.pot += moneyToPot;

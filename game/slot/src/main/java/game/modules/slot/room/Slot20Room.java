@@ -112,13 +112,6 @@ public class Slot20Room extends SlotRoom {
         String roomForce;
         // Lớp dịch vụ caching
         CacheServiceImpl cacheService = new CacheServiceImpl();
-        try {
-            usernameForce = cacheService.getValueStr(CACHE_NAME_USER_SPOT + this.gn);
-            roomForce = cacheService.getValueStr(CACHE_BET_VALUE_SLOT + gameName);
-        } catch (Exception e) {
-            usernameForce = "";
-            roomForce = "";
-        }
         // thông tin user
         UserCacheModel u = this.userService.getUser(username);
         // số dư hiện tại của user
@@ -152,6 +145,15 @@ public class Slot20Room extends SlotRoom {
                         ArrayList<AwardsOnLine> awardsOnLines = new ArrayList<>();
 
                         synchronized (this) {
+
+                            try {
+                                usernameForce = cacheService.getValueStr(CACHE_NAME_USER_SPOT + this.gameName);
+                                roomForce = cacheService.getValueStr(CACHE_BET_VALUE_SLOT + gameName);
+                            } catch (Exception e) {
+                                usernameForce = "";
+                                roomForce = "";
+                            }
+
                             // 2 phần trăm cho vào hũ JACKPOT
                             long moneyToPot = !isSpinningFree ? totalBetValue / 100L : 0;
                             this.pot += moneyToPot;
@@ -290,6 +292,7 @@ public class Slot20Room extends SlotRoom {
                                         if (totalPrizes > 0 && totalPrizes > getFunValue() && !u.isBot()) continue;
                                     }
                                 }
+
                                 // điều kiện trúng thưởng đã thỏa mãn, dừng vòng lặp
                                 enoughPair = true;
 
@@ -375,8 +378,6 @@ public class Slot20Room extends SlotRoom {
                                     }
                                 } catch (InterruptedException | TimeoutException | IOException ignored) {
                                 }
-                                // lưu thông tin quỹ
-//                                System.out.println("BeforeFun: " + beforeFund + " - Current Fun Value: " + getFunValue() + " - MoneyToFund: " + moneyToFund);
                                 this.saveFund();
                                 // lưu thông tin HŨ
                                 this.savePot();

@@ -142,13 +142,6 @@ public class MGRoomMiniPoker extends MGRoom {
         // phòng được set nổ hũ
         String roomForce;
         boolean forceJackpotByUser = false;
-        try {
-            usernameForce = sv.getValueStr(CACHE_NAME_USER_SPOT + this.gameName);
-            roomForce = sv.getValueStr(CACHE_BET_VALUE_SLOT + this.gameName);
-        } catch (Exception e) {
-            usernameForce = "";
-            roomForce = "";
-        }
         long currentMoney = this.userService.getMoneyUserCache(username, this.moneyTypeStr);
         if (betValue > 0L) {
             if (currentMoney >= betValue) {
@@ -168,6 +161,14 @@ public class MGRoomMiniPoker extends MGRoom {
                         updateFunValue(moneyToFund);
                     }
                     synchronized (this) {
+                        try {
+                            usernameForce = cacheService.getValueStr(CACHE_NAME_USER_SPOT + gameName);
+                            roomForce = cacheService.getValueStr(CACHE_BET_VALUE_SLOT + gameName);
+                        } catch (Exception e) {
+                            usernameForce = "";
+                            roomForce = "";
+                        }
+
                         long moneyToPot = betValue / 100L;
                         this.pot += moneyToPot;
                         while (!enoughToPair) {
