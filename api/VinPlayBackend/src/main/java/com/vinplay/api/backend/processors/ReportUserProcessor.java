@@ -11,6 +11,9 @@
  */
 package com.vinplay.api.backend.processors;
 
+import com.vinplay.dichvuthe.dao.RechargeDao;
+import com.vinplay.dichvuthe.dao.impl.RechargeDaoImpl;
+import com.vinplay.dichvuthe.entities.*;
 import com.vinplay.usercore.dao.impl.UserDaoImpl;
 import com.vinplay.usercore.service.OtherService;
 import com.vinplay.usercore.service.impl.OtherServiceImpl;
@@ -54,8 +57,6 @@ public class ReportUserProcessor
         UserForAdminServiceImpl service = new UserForAdminServiceImpl();
         try {
             int totalRecord = service.countUser(ts, te);
-            UserDaoImpl userDao = new UserDaoImpl();
-            List<String> usersPay = userDao.getListUserPay(ts, te);
             OtherService otherService = new OtherServiceImpl();
             UserActivePhoneResponse userActivePhoneResponse = otherService.getAllUserActivePhoneByDay(timeStart, timeEnd);
             UserActiveTeleResponse userActiveTeleResponse = otherService.getAllUserActiveTeleByDay(timeStart, timeEnd);
@@ -69,12 +70,30 @@ public class ReportUserProcessor
             }
             userSecurityPhone.retainAll(userSecurityTele);
             response.setTotal(totalRecord);
-            response.setUserPay(usersPay.size());
-            long count = usersPay.stream()
+
+            RechargeDao rechargeDao = new RechargeDaoImpl();
+            DepositCardResponse depositCardResponse = rechargeDao.getListDepositCardSuccess(ts, te);
+            DepositMomoReponse getListDepositMomo = rechargeDao.getListDepositMomoSuccess(ts, te);
+            DepositBankReponse depositBankReponse = rechargeDao.getListDepositBankSuccess(ts, te);
+            List<DepositMobileCardModel> listTransCard = depositCardResponse.ListTrans;
+            List<DepositMomoModel> listTransMomo = getListDepositMomo.ListTrans;
+            List<DepositBankModel> listTrans = depositBankReponse.ListTrans;
+            Set<String> userDeposit = new HashSet<>();
+            for (DepositMobileCardModel depositMobileCardModel : listTransCard) {
+                userDeposit.add(depositMobileCardModel.Nickname);
+            }
+            for (DepositMomoModel model : listTransMomo) {
+                userDeposit.add(model.Nickname);
+            }
+            for (DepositBankModel depositBankModel : listTrans) {
+                userDeposit.add(depositBankModel.Nickname);
+            }
+            long count = userDeposit.stream()
                     .filter(userSecurityPhone::contains)
                     .count();
             response.setUserSecurity(userSecurityPhone.size());
             response.setUserPayAndSecurity(count);
+            response.setUserPay(userDeposit.size());
             response.setSuccess(true);
             response.setErrorCode("0");
         } catch (SQLException e) {
