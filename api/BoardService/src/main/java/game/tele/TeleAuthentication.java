@@ -69,7 +69,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
                         } else {
                             String otp = generateOTP();
                             saveOTP(chatId, otp);
-                            savePhone(chatId, otp);
+                            saveOTPPhone(chatId, otp);
                             sendOTP(chatId, otp);
                         }
                     }
@@ -83,8 +83,9 @@ public class TeleAuthentication extends TelegramLongPollingBot {
                     sendPhoneAndOTPRequest(chatId, textMessage);
                 } else {
                     String otp = generateOTP();
-                    sendOTP(chatId, otp);
                     saveOTP(chatId, otp);
+                    saveOTPPhone(chatId, otp);
+                    sendOTP(chatId, otp);
                 }
             }
         } else if (update.hasCallbackQuery()) {
@@ -94,7 +95,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
             if ("get_otp".equals(callbackData)) {
                 String otp = generateOTP();
                 saveOTP(chatId, otp);
-                savePhone(chatId, otp);
+                saveOTPPhone(chatId, otp);
                 sendOTP(chatId, otp);
             }
         } else if (update.hasMessage() && update.getMessage().hasContact()) {
@@ -126,7 +127,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
         } else {
             String otp = generateOTP();
             saveOTP(chatId, otp);
-            savePhone(chatId, otp);
+            saveOTPPhone(chatId, otp);
             sendOTP(chatId, otp);
         }
     }
@@ -267,6 +268,13 @@ public class TeleAuthentication extends TelegramLongPollingBot {
         collection.updateOne(filter, updateDocument);
     }
 
+    private void saveOTPPhone(String chatId, String otp) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("user_tele");
+        Document filter = new Document("chatID", chatId);
+        Document updateDocument = new Document("$set", new Document("otp", otp));
+        collection.updateOne(filter, updateDocument);
+    }
 
     private void handlePhoneNumber(String chatId, String phoneNumber) {
         try {
