@@ -260,7 +260,7 @@ public class LogMoneyUserDaoImpl
 
             conditions.put("trans_time", obj);
         }
-        iterable = db.getCollection("log_money_user_vin").find(new Document(conditions));
+        iterable = db.getCollection("log_money_user_vin").find(new Document(conditions)).batchSize(1000);
 
         iterable.forEach((Block) new Block<Document>() {
 
@@ -302,7 +302,7 @@ public class LogMoneyUserDaoImpl
         if (!nickname.equals("")) {
             conditions.put("nick_name", nickname);
         }
-        iterable = db.getCollection("log_money_user_vin").find(new Document(conditions));
+        iterable = db.getCollection("log_money_user_vin").find(new Document(conditions)).batchSize(1000);
 
         iterable.forEach((Block) new Block<Document>() {
 
