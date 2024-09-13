@@ -85,7 +85,10 @@ public class GetListUserLoseByDayProcessor implements BaseProcessor<HttpServletR
             // Set response
             userCodeResponse.setUsers(paginatedList);
             userCodeResponse.setTotalRecord(userLoseByDays.size());
-
+            userCodeResponse.setPageIndex(pageIndex);
+            userCodeResponse.setPageSize(pageSize);
+            int totalPage = (int) Math.ceil((double) userLoseByDays.size() / pageSize);
+            userCodeResponse.setTotalPage(totalPage);
             return userCodeResponse.toJson();
         } catch (Exception ex) {
             throw new RuntimeException(ex);
