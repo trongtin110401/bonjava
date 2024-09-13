@@ -466,7 +466,6 @@ public class TaiXiuModule
                     amountBotXiuFake += (taiXiuSetAmountBotFake.getNumberBotXiuFake()) / 40;
                 }
             } catch (KeyNotFoundException ex) {
-//                sendLogToTele(ex.getMessage());
                 amountBotXiuFake = 0;
                 amountBotTaiFake = 0;
             }
@@ -491,10 +490,7 @@ public class TaiXiuModule
                     break;
                 }
                 case 58: {
-                    //this.forceBalanceLateGame(roomTXVin);
-                    //this.forceBetSide = (short)(ThreadLocalRandom.current().nextInt(0, 1000560000) % 2)
                     this.forceBetSide = roomTXVin.suggestResult();
-                    //this.forceBetSide = -1;
                     break;
                 }
                 case 61: {
@@ -514,7 +510,6 @@ public class TaiXiuModule
                     break;
                 }
                 case 75: {
-//                    roomTXVin.getBalanceTX().startNewRound();  /// new round
                     try {
                         this.startNewRoundTX();
                         amountBotTaiFake = 0;
