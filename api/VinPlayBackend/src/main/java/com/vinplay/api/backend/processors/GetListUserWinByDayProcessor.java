@@ -23,74 +23,79 @@ import com.vinplay.vbee.common.response.UserLoseByDayResponse;
 import com.vinplay.vbee.common.statics.Consts;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class GetListUserWinByDayProcessor implements BaseProcessor<HttpServletRequest, String> {
 
     public String execute(Param<HttpServletRequest> param) {
-
         try {
             UserLoseByDayResponse userCodeResponse = new UserLoseByDayResponse(true, "200");
             HttpServletRequest request = param.get();
+
             String timeStart = request.getParameter("timeStart");
             String timeEnd = request.getParameter("timeEnd");
-            // get Fish profit
+            int pageIndex = getParameter(request, "pageIndex", 1);
+            int pageSize = getParameter(request, "pageSize", 50);
+
+            // Get fish profits
             OtherService otherService = new OtherServiceImpl();
-            List<MoneyShootFishResponse> userFishProfits = otherService.getTotalShootFish(timeStart, timeEnd, null);
-            Map<String, Long> mapUserFishProfits = new HashMap<>();
-            userFishProfits.forEach(moneyShootFishResponse -> mapUserFishProfits.put(moneyShootFishResponse.getNickname(), moneyShootFishResponse.getTotalProfit()));
+            Map<String, Long> mapUserFishProfits = otherService.getTotalShootFish(timeStart, timeEnd, null)
+                    .stream()
+                    .collect(Collectors.toMap(
+                            MoneyShootFishResponse::getNickname,
+                            MoneyShootFishResponse::getTotalProfit,
+                            Long::sum));
 
+            // Get user logs and aggregate their money exchanges
             LogMoneyUserDaoImpl dao = new LogMoneyUserDaoImpl();
-            List<LogUserMoneyResponse> list = dao.getLogMoneyUser(timeStart, timeEnd);
-
-            List<UserLoseByDay> userLoseByDays = list.stream()
+            Map<String, Long> userMoneyMap = dao.getLogMoneyUser(timeStart, timeEnd).stream()
                     .filter(log -> !Consts.NO_GAME.contains(log.getActionName()) && !"Exchange".equals(log.getActionName()))
-                    .collect(Collectors.groupingBy(LogUserMoneyResponse::getNickName,
-                            Collectors.summingLong(LogUserMoneyResponse::getMoneyExchange)))
-                    .entrySet().stream()
-                    .filter(entry -> entry.getValue() >= 100000)
+                    .collect(Collectors.groupingBy(
+                            LogUserMoneyResponse::getNickName,
+                            Collectors.summingLong(LogUserMoneyResponse::getMoneyExchange)));
+
+            // Merge fish profits with user logs
+            mapUserFishProfits.forEach((nickname, profit) -> {
+                if (profit != 0) {
+                    userMoneyMap.merge(nickname, profit, Long::sum); // Use merge to add profits
+                }
+            });
+
+            // Convert map entries to UserLoseByDay and sort by money
+            List<UserLoseByDay> userLoseByDays = userMoneyMap.entrySet().stream()
                     .map(entry -> {
                         UserLoseByDay userLoseByDay = new UserLoseByDay();
                         userLoseByDay.setNickname(entry.getKey());
                         userLoseByDay.setMoney(entry.getValue());
                         return userLoseByDay;
                     })
+                    .filter(user -> user.getMoney() >= 100000) // Filter before pagination
+                    .sorted(Comparator.comparingLong(UserLoseByDay::getMoney).reversed()) // Sort by money in descending order
                     .collect(Collectors.toList());
 
-            for (Map.Entry<String, Long> entry : mapUserFishProfits.entrySet()) {
-                String nickname = entry.getKey();
-                Long profit = entry.getValue();
-                if (profit == 0) {
-                    continue;
-                }
-                Optional<UserLoseByDay> optionalUserLoseByDay = userLoseByDays.stream()
-                        .filter(userLoseByDay -> userLoseByDay.getNickname().equals(nickname))
-                        .findFirst();
+            // Pagination: calculate start and end index
+            int start = Math.max((pageIndex - 1) * pageSize, 0);
+            int end = Math.min(start + pageSize, userLoseByDays.size());
+            List<UserLoseByDay> paginatedList = userLoseByDays.subList(start, end);
 
-                if (optionalUserLoseByDay.isPresent()) {
-                    UserLoseByDay userLoseByDay = optionalUserLoseByDay.get();
-                    userLoseByDay.setMoney(userLoseByDay.getMoney() + profit);
-                } else {
-                    UserLoseByDay newUserLoseByDay = new UserLoseByDay();
-                    newUserLoseByDay.setNickname(nickname);
-                    newUserLoseByDay.setMoney(profit * -1);
-                    userLoseByDays.add(newUserLoseByDay);
-                }
-            }
-            userLoseByDays = userLoseByDays.stream()
-                    .filter(user -> user.getMoney() >= 100000)
-                    .collect(Collectors.toList());
-            userLoseByDays.sort((u1, u2) -> Double.compare(u2.getMoney(), u1.getMoney()));
-            userCodeResponse.setUsers(userLoseByDays);
+            // Set response
+            userCodeResponse.setUsers(paginatedList);
             userCodeResponse.setTotalRecord(userLoseByDays.size());
+
             return userCodeResponse.toJson();
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
     }
+
+    private int getParameter(HttpServletRequest request, String name, int defaultValue) {
+        try {
+            return Integer.parseInt(request.getParameter(name));
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
+
 }
 
