@@ -976,6 +976,7 @@ public class OtherServiceImpl implements OtherService {
         List<UserTele> result = new ArrayList<>();
         MongoCursor<Document> cursor = collection.find(query).sort(sort).skip(pageIndex * pageSize).limit(pageSize).iterator();
         while (cursor.hasNext()) {
+
             Document doc = cursor.next();
             UserTele userPhone = new UserTele();
             userPhone.setActive(doc.getBoolean("isActive"));
