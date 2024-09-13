@@ -23,8 +23,8 @@
   "quit-cmd": "pm2",
   "quit-arg": "stop cgame",
 
-  "xxeng-backend": "http://10.40.112.3:19082",
-  "xxeng-host": "http://10.40.112.3:8081",
+  "xxeng-backend": "http://10.40.112.4:8082",
+  "xxeng-host": "http://10.40.112.4:8081",
 
   "coinpayment_privkey": "E64F4Fc62682D52a49BB19A82a304bA62fa3c6eB5D35F1F675651e0935ed2d4b",
   "coinpayment_pubkey": "27162ceb6f7b9b5412d691b74eefde7d0d3676ea7632f008c7817c4ee61d791c"
