@@ -13,21 +13,19 @@ package com.vinplay.api.backend.processors;
 
 import com.vinplay.dal.dao.impl.LogMoneyUserDaoImpl;
 import com.vinplay.usercore.service.OtherService;
-import com.vinplay.usercore.service.impl.GiftCodeServiceImpl;
 import com.vinplay.usercore.service.impl.OtherServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
-import com.vinplay.vbee.common.dto.GiftCodeDto;
-import com.vinplay.vbee.common.response.*;
+import com.vinplay.vbee.common.response.LogUserMoneyResponse;
+import com.vinplay.vbee.common.response.MoneyShootFishResponse;
+import com.vinplay.vbee.common.response.UserLoseByDay;
+import com.vinplay.vbee.common.response.UserLoseByDayResponse;
 import com.vinplay.vbee.common.statics.Consts;
-import com.vinplay.vbee.common.utils.VinPlayUtils;
-import okhttp3.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class GetListUserLoseByDayProcessor implements BaseProcessor<HttpServletRequest, String> {
