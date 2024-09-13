@@ -29,6 +29,7 @@ services:
       - '--auth'
       - '-f'
       - '/configFolder/mongod.conf'
+      - '--wiredTigerCacheSizeGB 1.5'
     volumes:
       - ./config/mongod:/configFolder
       - /home/data/mongo:/data/db
