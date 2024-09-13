@@ -969,7 +969,7 @@ public class OtherServiceImpl implements OtherService {
             query.append("nickname", nickname);
         }
         if (phone != null && !phone.isEmpty()) {
-            query.append("phone", phone);
+            query.append("phoneNumber", phone);
         }
         query.append("isActive",true);
         Document sort = new Document("createdDate", -1);
