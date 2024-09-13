@@ -12,5 +12,6 @@ public class CashoutUtil {
     public static final String STATUS_SENDING = "sending";
     public static final String STATUS_BET_MORE = "betMore";
     public static final String STATUS_INVALID_ACCOUNT = "invalidAccount";
+    public static final String STATUS_MAINTENANCE = "maintenance";
 
 }
