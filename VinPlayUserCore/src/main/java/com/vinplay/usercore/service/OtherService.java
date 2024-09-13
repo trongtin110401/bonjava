@@ -62,7 +62,7 @@ public interface OtherService {
 
     UserActivePhoneResponse getAllUserActivePhone(String nickname, String phone, int pageIndex, int pageSize);
 
-    UserActiveTeleResponse getAllUserActiveTele(String nickname, int pageIndex, int pageSize);
+    UserActiveTeleResponse getAllUserActiveTele(String nickname, String phone, int pageIndex, int pageSize);
 
     String getPhoneActiveByNickname(String nickname);
 

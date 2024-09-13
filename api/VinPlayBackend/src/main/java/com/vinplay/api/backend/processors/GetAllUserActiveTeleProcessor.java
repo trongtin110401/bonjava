@@ -17,13 +17,14 @@ public class GetAllUserActiveTeleProcessor
 
         HttpServletRequest request = param.get();
         String nickname = request.getParameter("nickname");
+        String phone = request.getParameter("phone");
         int pageIndex = Integer.parseInt(request.getParameter("pageIndex"));
         int pageSize = Integer.parseInt(request.getParameter("pageSize"));
         if (pageIndex > 0) {
             pageIndex = pageIndex - 1;
         }
         OtherService otherService = new OtherServiceImpl();
-        userActiveTeleResponse = otherService.getAllUserActiveTele(nickname, pageIndex, pageSize);
+        userActiveTeleResponse = otherService.getAllUserActiveTele(nickname, phone, pageIndex, pageSize);
         return userActiveTeleResponse.toJson();
 
     }
