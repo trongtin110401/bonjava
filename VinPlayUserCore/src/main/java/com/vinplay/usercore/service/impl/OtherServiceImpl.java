@@ -958,7 +958,7 @@ public class OtherServiceImpl implements OtherService {
     }
 
     @Override
-    public UserActiveTeleResponse getAllUserActiveTele(String nickname, int pageIndex, int pageSize) {
+    public UserActiveTeleResponse getAllUserActiveTele(String nickname, String phone, int pageIndex, int pageSize) {
         UserActiveTeleResponse userActivePhoneResponse = new UserActiveTeleResponse(true, "0");
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("user_tele");
@@ -968,11 +968,15 @@ public class OtherServiceImpl implements OtherService {
         if (nickname != null && !nickname.isEmpty()) {
             query.append("nickname", nickname);
         }
+        if (phone != null && !phone.isEmpty()) {
+            query.append("phoneNumber", phone);
+        }
         query.append("isActive",true);
         Document sort = new Document("createdDate", -1);
         List<UserTele> result = new ArrayList<>();
         MongoCursor<Document> cursor = collection.find(query).sort(sort).skip(pageIndex * pageSize).limit(pageSize).iterator();
         while (cursor.hasNext()) {
+
             Document doc = cursor.next();
             UserTele userPhone = new UserTele();
             userPhone.setActive(doc.getBoolean("isActive"));

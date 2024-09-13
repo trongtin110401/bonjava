@@ -85,12 +85,27 @@ public class CashoutByMomoProcess implements BaseProcessor<HttpServletRequest, S
                 }
 
                 // refund
-                if (status.equals(CashoutUtil.STATUS_ERROR) || status.equals(CashoutUtil.STATUS_REJECT) && userWithdraw.Status.equals(CashoutUtil.STATUS_PENDING)) {
+                if (status.equals(CashoutUtil.STATUS_ERROR) || status.equals(CashoutUtil.STATUS_REJECT)
+                        || status.equals(CashoutUtil.STATUS_INVALID_ACCOUNT)
+                        || status.equals(CashoutUtil.STATUS_BET_MORE)
+                        || status.equals(CashoutUtil.STATUS_MAINTENANCE)
+                        && userWithdraw.Status.equals(CashoutUtil.STATUS_PENDING)) {
                     UserServiceImpl userService = new UserServiceImpl();
                     long fee = userWithdraw.AmountReal - userWithdraw.Amount;
                     boolean refund = userService.refundWhenError(userWithdraw.Nickname, userWithdraw.AmountReal, fee);
-                    historyTransModel.setTrangthai("Từ chối");
-                    historyTransModel.setGhiChu("Từ chối");
+
+                    String trangThai = "Từ chối";
+                    if (status.equals(CashoutUtil.STATUS_INVALID_ACCOUNT)) {
+                        trangThai = "Sai Tài Khoản";
+                    }
+                    if (status.equals(CashoutUtil.STATUS_MAINTENANCE)) {
+                        trangThai = "Hệ Thống Bảo Trì";
+                    }
+                    if (status.equals(CashoutUtil.STATUS_BET_MORE)) {
+                        trangThai = "Vui Lòng Cược Thêm";
+                    }
+                    historyTransModel.setTrangthai(trangThai);
+                    historyTransModel.setGhiChu(trangThai);
                     if (!refund) {
                         return "";
                     }

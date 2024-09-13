@@ -47,12 +47,8 @@ import com.vinplay.dichvuthe.response.CashoutUserDailyResponse;
 import com.vinplay.dichvuthe.service.impl.AlertServiceImpl;
 import com.vinplay.usercore.dao.impl.VippointDaoImpl;
 import com.vinplay.usercore.service.MarketingService;
-import com.vinplay.usercore.service.impl.GameConfigServiceImpl;
-import com.vinplay.usercore.service.impl.LuckyServiceImpl;
-import com.vinplay.usercore.service.impl.MailBoxServiceImpl;
-import com.vinplay.usercore.service.impl.MarketingServiceImpl;
-import com.vinplay.usercore.service.impl.SecurityServiceImpl;
-import com.vinplay.usercore.service.impl.UserServiceImpl;
+import com.vinplay.usercore.service.OtherService;
+import com.vinplay.usercore.service.impl.*;
 import com.vinplay.usercore.utils.GameCommon;
 import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
 import com.vinplay.vbee.common.models.MarketingModel;
@@ -174,9 +170,19 @@ public class PortalUtils {
                     userMap.put((Object) userCache.getNickname(), (Object) userCache);
                 }
             }
-
-            int mobileSecure = userCache.isHasMobileSecurity() ? 1 : 0;
-            int appSecure = userCache.isHasAppSecurity() ? 1 : 0;
+            OtherService otherService = new OtherServiceImpl();
+            String phone = otherService.getPhoneActiveByNickname(userModel.getNickname());
+            int mobileSecure;
+            if (phone.isEmpty()) {
+                mobileSecure = 0;
+            } else {
+                mobileSecure = 1;
+            }
+            boolean appSec = otherService.checkActiveByNickname(userModel.getNickname());
+            int appSecure = 0;
+            if (appSec){
+                appSecure= 1;
+            }
             String birthday = "";
             if (userCache.getBirthday() != null && !userCache.getBirthday().isEmpty()) {
                 birthday = userCache.getBirthday();
