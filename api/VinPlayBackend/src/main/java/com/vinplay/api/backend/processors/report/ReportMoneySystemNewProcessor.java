@@ -217,7 +217,7 @@ public class ReportMoneySystemNewProcessor implements BaseProcessor<HttpServletR
     private List<MoneyInOut> processListMoneyNew(List<MoneyInOut> listReport, ReportMoneyModelNew log) {
         MoneyInOut model = new MoneyInOut();
         model.actionName = log.getActionName();
-        model.total += log.totalIn - log.totalOut;
+        model.total += log.totalIn + log.totalOut;
         model.fee += log.fee;
         listReport.add(model);
         return listReport;
