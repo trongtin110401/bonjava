@@ -123,7 +123,6 @@ public class ReportMoneySystemNewProcessor implements BaseProcessor<HttpServletR
             }
         }
         try {
-//        listReport = listGameReport;
             ReportMoneyModel reportMoneyModel = new ReportMoneyModel(listReport, listUserIn, listUserInEvent, listUserOut, listOther);
             reportMoneyModel.UserMoney = user;
 

@@ -121,7 +121,7 @@ public class LogMoneyUserProcessor implements BaseProcessor<byte[], Boolean> {
         model.isGame = Consts.GAMES.contains(log.getActionName());
         if (log.getActionName().equals(Consts.TAI_XIU)) {
             if (log.getMoneyExchange() < 0) {
-                model.totalOut = (-1) * log.getMoneyExchange();
+                model.totalOut = log.getMoneyExchange();
             } else if (log.getServiceName().contains("Hoàn trả")) {
                 model.totalRefund = log.getMoneyExchange();
             } else {
@@ -142,13 +142,13 @@ public class LogMoneyUserProcessor implements BaseProcessor<byte[], Boolean> {
                         || log.getActionName().equals(Games.BIG_CITY_BOY.getName())
                         && log.getDescription().startsWith("Đặt cược"))) {
             if (log.getMoneyExchange() < 0) {
-                model.totalOut = (-1) * log.getMoneyExchange();
+                model.totalOut =  log.getMoneyExchange();
             } else {
                 model.totalIn = log.getMoneyExchange();
             }
         } else {
             if (log.getMoneyExchange() < 0) {
-                model.totalOut = (-1) * log.getMoneyExchange();
+                model.totalOut = log.getMoneyExchange();
             } else {
                 model.totalIn = log.getMoneyExchange();
             }
