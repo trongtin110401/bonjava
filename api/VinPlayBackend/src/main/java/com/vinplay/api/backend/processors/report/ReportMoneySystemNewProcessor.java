@@ -119,7 +119,7 @@ public class ReportMoneySystemNewProcessor implements BaseProcessor<HttpServletR
             } else if (Consts.VIN_OTHER.contains(log.getActionName())) {
                 processListMoneyNew(listOther, log);
             } else if ("Exchange".equals(log.getActionName())) {
-                totalShootFishProfit = log.totalIn;
+                totalShootFishProfit = log.totalIn + log.totalOut;
             }
         }
         try {
@@ -216,6 +216,7 @@ public class ReportMoneySystemNewProcessor implements BaseProcessor<HttpServletR
 
     private List<MoneyInOut> processListMoneyNew(List<MoneyInOut> listReport, ReportMoneyModelNew log) {
         MoneyInOut model = new MoneyInOut();
+        model.actionName = log.getActionName();
         model.total += log.totalIn - log.totalOut;
         model.fee += log.fee;
         listReport.add(model);
