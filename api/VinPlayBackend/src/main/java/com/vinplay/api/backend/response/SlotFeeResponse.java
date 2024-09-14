@@ -40,7 +40,7 @@ public class SlotFeeResponse extends BaseResponseModel {
         return LadyNight;
     }
 
-    @JsonProperty("Caribe")
+    @JsonProperty("BigCityBoy")
     public int getBigCityBoy() {
         return BigCityBoy;
     }
