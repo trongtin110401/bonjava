@@ -155,7 +155,7 @@ public class LogMoneyUserProcessor implements BaseProcessor<byte[], Boolean> {
         }
         model.fee = log.getFee();
         //model.moneyExchange = log.getMoneyExchange();
-        model.revenue = (model.totalOut - model.totalIn - model.totalRefund);
+        model.revenue = (model.totalOut + model.totalIn + model.totalRefund);
 
         return model;
     }
