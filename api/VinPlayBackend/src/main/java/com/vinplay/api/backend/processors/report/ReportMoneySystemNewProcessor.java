@@ -251,6 +251,9 @@ public class ReportMoneySystemNewProcessor implements BaseProcessor<HttpServletR
         report.fee = log.getFee();
         report.revenue = log.getRevenue() - log.getFee();
         report.revenuePlayGame = log.getRevenue();
+        report.moneyLost = log.totalOut;
+        report.moneyWin = log.totalIn;
+        report.moneyOther = log.totalRefund;
         listReport.add(report);
         return listReport;
     }
