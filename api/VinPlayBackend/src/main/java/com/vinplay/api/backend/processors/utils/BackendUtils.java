@@ -12,7 +12,7 @@
  *  com.vinplay.vbee.common.exceptions.KeyNotFoundException
  *  com.vinplay.vbee.common.hazelcast.HazelcastClientFactory
  */
-package com.vinplay.api.backend.report.utils;
+package com.vinplay.api.backend.processors.utils;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
@@ -30,7 +30,6 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class BackendUtils {
     private static final List<String> MOBILE_ALERT = Arrays.asList(new String[0]);

@@ -4,6 +4,7 @@ public class CashoutUtil {
     public static final String CASHOUT_BY_BANK_COLLECTION = "cashout_by_bank_ls";
     public static final String CASHOUT_BY_CARD_COLLECTION = "cashout_by_card_ls";
     public static final String CASHOUT_BY_MOMO_COLLECTION = "cashout_by_momo_ls";
+    public static final String STAT_CASH_OUT_COLLECTION = "stat_money_in_out";
 
     public static final String STATUS_PENDING = "pending";
     public static final String STATUS_REJECT = "reject";

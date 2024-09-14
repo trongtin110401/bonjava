@@ -1,7 +1,9 @@
 package com.vinplay.api.backend.processors;
 
+import com.hazelcast.core.IMap;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.UpdateOptions;
 import com.vinplay.api.backend.models.CallBackModel;
 import com.vinplay.api.backend.processors.cashout.NapRutGame;
 import com.vinplay.api.backend.processors.cashout.NapRutModel;
@@ -9,6 +11,7 @@ import com.vinplay.common.notification.NotificationAdminObj;
 import com.vinplay.common.notification.SendToWS;
 import com.vinplay.common.report.EventactionAdminObj;
 import com.vinplay.dal.common.BroadCastUserMoney;
+import com.vinplay.dal.common.UserInfo;
 import com.vinplay.dichvuthe.dao.CashoutDao;
 import com.vinplay.dichvuthe.dao.RechargeDao;
 import com.vinplay.dichvuthe.dao.impl.CashoutDaoImpl;
@@ -32,6 +35,8 @@ import com.vinplay.usercore.utils.GameCommon;
 import com.vinplay.utils.TelegramAlert;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
+import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
+import com.vinplay.vbee.common.hazelcast.HazelcastUtils;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.response.BaseResponseModel;
 import com.vinplay.vbee.common.response.EventResponse;
@@ -44,6 +49,8 @@ import org.bson.conversions.Bson;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CallBackProcess implements BaseProcessor<HttpServletRequest, String> {
     @Override
@@ -91,6 +98,12 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
             userWithdraw.Status = CashoutUtil.STATUS_SUCCESS;
             TelegramAlert.SendMessageCashoutMomo(userWithdraw);
 
+            //20240914
+            try {
+                upsertStatisticMoneyInOut(userWithdraw.Nickname, 0L, 0L, 0L, userWithdraw.Amount, 0L);
+            } catch (Exception ex) {
+            }
+
         } else {
             UserServiceImpl userService = new UserServiceImpl();
             long fee = userWithdraw.AmountReal - userWithdraw.Amount;
@@ -130,6 +143,11 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
             userWithdraw.Status = "success";
             TelegramAlert.SendMessageCashout(userWithdraw);
             cashoutDao.UpdateCashoutBank(callBackModel.getRequestId(), CashoutUtil.STATUS_SUCCESS, "Auto_Bank");
+            try {
+                //20240914
+                upsertStatisticMoneyInOut(userWithdraw.Username, 0L, 0L, userWithdraw.Amount, 0L, 0L);
+            } catch (Exception ex) {
+            }
         } else {
             UserServiceImpl userService = new UserServiceImpl();
             long fee = userWithdraw.AmountReal - userWithdraw.Amount;
@@ -153,6 +171,47 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
         }
 
         return "true";
+    }
+
+
+    private void upsertStatisticMoneyInOut(String nickName, long depositMomo, long depositBank, long withdrawBank, long withdrawMomo, long depositCard) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> col = db.getCollection(CashoutUtil.STAT_CASH_OUT_COLLECTION);
+        Map<String, Object> map = new HashMap<>();
+        map.put("nick_name", nickName);
+
+        // Define the query filter
+        Document query = new Document(map);
+
+        // Define the update operation
+        Document updateOperations = new Document();
+        updateOperations.append("deposit_momo", depositMomo);
+        updateOperations.append("deposit_bank", depositBank);
+        updateOperations.append("withdraw_momo", withdrawMomo);
+        updateOperations.append("withdraw_bank", withdrawBank);
+        updateOperations.append("deposit_card", depositCard);
+        Document update = new Document("$inc", updateOperations);
+
+        // Define the options (upsert: true)
+        UpdateOptions options = new UpdateOptions().upsert(true);
+
+        // Perform the update operation with upsert
+        col.updateOne(query, update, options);
+
+        // update to cache
+        IMap iMap = HazelcastClientFactory.getInstance().getMap("USER_ONLINE");
+        try {
+            UserInfo userInfo = (UserInfo) iMap.get(nickName);
+            if (userInfo != null) {
+                userInfo.setTotalCashoutBank(userInfo.getTotalCashoutBank() + withdrawBank);
+                userInfo.setTotalCashoutMoMo(userInfo.getTotalCashoutMoMo() + withdrawMomo);
+                userInfo.setTotalDepositBank(userInfo.getTotalDepositBank() + depositBank);
+                userInfo.setTotalDepositCard(userInfo.getTotalDepositCard() + depositCard);
+                userInfo.setTotalCashoutMoMo(userInfo.getTotalDepositMoMo() + depositMomo);
+                iMap.set(nickName, userInfo);
+            }
+        } catch (Exception ex) {
+        }
     }
 
 
@@ -205,6 +264,15 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
                 model.setId(transId);
                 model.setStatus(status);
                 model.setType("DEPOSIT_MOMO");
+
+                //20240914
+                if (callBackModel.getStatus().equals("success")) {
+                    try {
+                        upsertStatisticMoneyInOut(trans.Nickname, Long.parseLong(callBackModel.getRegAmount()), 0L, 0L, 0L, 0L);
+                    } catch (Exception ex) {
+                    }
+                }
+
             }
             if (!resultUpdateTrans) {
                 return response.toJson();
@@ -291,7 +359,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
                 otherService.saveUserNapTienEvent(userEvent);
             }
             int status;
-            if (type == 0) {
+            if (type == 0) {//success
                 status = DvtConst.STATUS_APPROVE;
                 historyTransModel.setTrangthai("Thành công");
                 historyTransModel.setGhiChu("Thành công");
@@ -307,6 +375,15 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
 
             historyTransDao.updateTransaction(historyTransModel);
             dao.UpdateDepositCard(transId, status, trans.message, userApprove, Long.parseLong(callBackModel.getRegAmount()));
+
+            //20240914
+            if (callBackModel.getStatus().equals("success")) {
+                try {
+                    upsertStatisticMoneyInOut(trans.nickName, 0L, 0L, 0L, 0L, Long.parseLong(callBackModel.getRegAmount()));
+                } catch (Exception ex) {
+                }
+            }
+
             //update user money
             UserServiceImpl service = new UserServiceImpl();
             try {
@@ -387,6 +464,14 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
                 boolean resultUpdateTrans = dao.UpdateDepositBankManualStatusCallBack(transId, status, trans.getDescription(), userApprove, callBackModel.getRegAmount());
                 if (!resultUpdateTrans || type == 1) {
                     return response.toJson();
+                }
+
+                //20240914
+                if (callBackModel.getStatus().equals("success")) {
+                    try {
+                        upsertStatisticMoneyInOut(trans.Nickname, 0L, Long.parseLong(callBackModel.getRegAmount()), 0L, 0L, 0L);
+                    } catch (Exception ex) {
+                    }
                 }
 
                 BroadCastUserMoney.pushBroadTime2(trans.getNickname());
@@ -539,7 +624,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
     }
 
     public EventResponse checkEventNapTien(String nickname) {
-        EventResponse eventResponse = new EventResponse(false,"1001");
+        EventResponse eventResponse = new EventResponse(false, "1001");
         OtherService service = new OtherServiceImpl();
         eventResponse = service.getCurrentEvent();
         if (eventResponse == null) {

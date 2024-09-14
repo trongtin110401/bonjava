@@ -21,9 +21,8 @@
  *  org.bson.Document
  *  org.bson.conversions.Bson
  */
-package com.vinplay.api.backend.report.utils;
+package com.vinplay.api.backend.processors.utils;
 
-import com.google.gson.Gson;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.mongodb.BasicDBObject;
@@ -122,7 +121,7 @@ public class ReportMoneyUtils {
         iterable.forEach(new Block<Document>() {
             public void apply(Document document) {
                 String serviceName = document.getString((Object) "service_name");
-                if (serviceName != null && !serviceName.equals("Tài xi - Tán l\u1ed9c") && !serviceName.equals("Tài x\u1ec9u - R\u00fat l\u1ed9c")) {
+                if (serviceName != null && !serviceName.equals("Tï¿½i xi - Tï¿½n l\u1ed9c") && !serviceName.equals("Tï¿½i x\u1ec9u - R\u00fat l\u1ed9c")) {
                     String key;
                     String nickname = document.getString((Object) "nick_name");
                     String actionname = document.getString((Object) "action_name");

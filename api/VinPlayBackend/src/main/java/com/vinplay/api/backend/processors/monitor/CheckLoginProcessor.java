@@ -13,19 +13,16 @@
  */
 package com.vinplay.api.backend.processors.monitor;
 
-import com.vinplay.api.backend.report.utils.Config;
+import com.vinplay.api.backend.processors.utils.Config;
 import com.vinplay.dichvuthe.service.impl.AlertServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.utils.DateTimeUtils;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
 import java.io.BufferedReader;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.security.NoSuchAlgorithmException;
 import javax.servlet.http.HttpServletRequest;
 import org.json.JSONException;

@@ -10,7 +10,7 @@
  */
 package com.vinplay.api.backend.processors.vippoint;
 
-import com.vinplay.api.backend.report.utils.BackendUtils;
+import com.vinplay.api.backend.processors.utils.BackendUtils;
 import com.vinplay.usercore.service.impl.VippointServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;

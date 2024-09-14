@@ -13,11 +13,10 @@
  *  com.vinplay.vbee.common.utils.VinPlayUtils
  *  org.apache.log4j.Logger
  */
-package com.vinplay.api.backend.report.utils;
+package com.vinplay.api.backend.processors.utils;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
-import com.vinplay.api.backend.report.utils.ReportMoneyUtils;
 import com.vinplay.dal.dao.impl.ReportDaoImpl;
 import com.vinplay.dal.entities.report.ReportTotalMoneyModel;
 import com.vinplay.dal.service.LogPortalService;
@@ -26,13 +25,8 @@ import com.vinplay.usercore.utils.GameCommon;
 import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
-import java.util.Set;
 import java.util.TimerTask;
 
 import org.apache.log4j.Logger;
@@ -58,12 +52,12 @@ public class ReportMoneyTask extends TimerTask {
             HazelcastInstance client = HazelcastClientFactory.getInstance();
             ReportDaoImpl dao = new ReportDaoImpl();
 
-            // T?ng h?p báo cáo lu?ng ti?n hôm qua
+            // T?ng h?p bï¿½o cï¿½o lu?ng ti?n hï¿½m qua
             ReportMoneyUtils.fixYesterdayData(today, yesterday, false);
-            // T?ng h?p báo cáo lu?ng ti?n hôm nay
+            // T?ng h?p bï¿½o cï¿½o lu?ng ti?n hï¿½m nay
             ReportMoneyUtils.fixYesterdayData(tomorrow, today, true);
 
-            // T?ng h?p báo cáo bi?u ?? lu?ng ti?n
+            // T?ng h?p bï¿½o cï¿½o bi?u ?? lu?ng ti?n
             String superAgent = GameCommon.getValueStr((String) "SUPER_AGENT");
             ReportTotalMoneyModel model = dao.getTotalMoney(superAgent);
             dao.saveLogTotalMoney(model);

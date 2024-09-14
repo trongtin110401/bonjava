@@ -1,7 +1,7 @@
 /*
  * Decompiled with CFR 0.144.
  */
-package com.vinplay.api.backend.report.utils;
+package com.vinplay.api.backend.processors.utils;
 
 public class Config {
     public static final int MAX_ERROR_LOGIN = 2;

@@ -2,6 +2,7 @@ package com.vinplay.api.backend.processors;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
+import com.vinplay.dal.common.UserInfo;
 import com.vinplay.dal.dao.ReportDAO;
 import com.vinplay.dal.dao.impl.LogMoneyUserDaoImpl;
 import com.vinplay.dal.dao.impl.ReportDaoImpl;
@@ -10,6 +11,8 @@ import com.vinplay.dichvuthe.dao.impl.CashoutDaoImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
+import com.vinplay.vbee.common.hazelcast.HazelcastUtils;
+import com.vinplay.vbee.common.models.UserModel;
 import com.vinplay.vbee.common.response.LogUserMoneyResponse;
 import com.vinplay.vbee.common.response.UserCCUResponse;
 import com.vinplay.vbee.common.response.UserOnlineResponse;
@@ -31,21 +34,37 @@ public class GetUserOnlineProcessor implements BaseProcessor<HttpServletRequest,
         HttpServletRequest request = param.get();
         UserOnlineResponse response = new UserOnlineResponse(true, "200");
         HazelcastInstance instance = HazelcastClientFactory.getInstance();
-        IMap<String, Object> userOnline = instance.getMap("USER_ONLINE");
+        IMap<String, Object> userOnlines = instance.getMap("USER_ONLINE");
+
 
         int pageIndex = getParameter(request, "pageIndex", 1);
         int pageSize = getParameter(request, "pageSize", 50);
 
-        List<String> usernames = getPage(new ArrayList<>(userOnline.keySet()), pageIndex, pageSize);
-        LogMoneyUserDaoImpl dao = new LogMoneyUserDaoImpl();
+        List<String> usernames = getPage(new ArrayList<>(userOnlines.keySet()), pageIndex, pageSize);
+        List<UserCCUResponse> userOnlineResponse = usernames.stream().map(nickname -> {
+            UserInfo userInfo = (UserInfo) userOnlines.get(nickname);
 
-        List<UserCCUResponse> userOnlineResponse = usernames.stream()
-                .map(username -> createUserCCUResponse(username, dao))
-                .sorted((u1, u2) -> Double.compare(u2.getTotalMoney(), u1.getTotalMoney()))
-                .collect(Collectors.toList());
-        int totalRecord = userOnline.size();
+            UserModel userModel = (UserModel) HazelcastClientFactory.getInstance().getMap("cache_user").get(nickname);
+
+            UserCCUResponse userCCUResponse = new UserCCUResponse();
+            userCCUResponse.nickName = nickname;
+            userCCUResponse.totalCashOut = userInfo.getTotalCashoutBank() + userInfo.getTotalCashoutMoMo();
+            userCCUResponse.totalDeposit = userInfo.getTotalDepositMoMo() + userInfo.getTotalDepositBank() + userInfo.getTotalDepositCard();
+            userCCUResponse.totalMoney = userModel.getVinTotal();
+            return userCCUResponse;
+        }).collect(Collectors.toList());
+
+//        LogMoneyUserDaoImpl dao = new LogMoneyUserDaoImpl();
+//
+//        List<UserCCUResponse> userOnlineResponse = usernames.stream()
+//                .map(username -> createUserCCUResponse(username, dao))
+//                .sorted((u1, u2) -> Double.compare(u2.getTotalMoney(), u1.getTotalMoney()))
+//                .collect(Collectors.toList());
+
+
+        int totalRecord = userOnlines.size();
         int totalPage = (totalRecord + pageSize - 1) / pageSize;
-        response.setTotalRecord(userOnline.size());
+        response.setTotalRecord(userOnlines.size());
         response.setTotalPage(totalPage);
         response.setPageIndex(pageIndex);
         response.setPageSize(pageSize);

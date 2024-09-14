@@ -2,11 +2,10 @@ package com.vinplay.vbee.common.response;
 
 public class UserCCUResponse {
 
-    private String nickName;
-    private long totalDeposit;
-    private long totalCashOut;
-
-    private long totalMoney;
+    public String nickName;
+    public long totalDeposit;
+    public long totalCashOut;
+    public long totalMoney;
 
     public String getNickName() {
         return nickName;
