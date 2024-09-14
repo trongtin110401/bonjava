@@ -54,7 +54,9 @@ public class LogMoneyUserProcessor implements BaseProcessor<byte[], Boolean> {
             //20240914
             try {
                 upsertReportMoney(message);
-            }catch(Exception e){};
+            } catch (Exception e) {
+            }
+
 
             //===================
             if (message.getMoneyType().equalsIgnoreCase("vin")) {
@@ -90,7 +92,7 @@ public class LogMoneyUserProcessor implements BaseProcessor<byte[], Boolean> {
         // Define the update operation
         Document update = new Document("$inc",
                 new Document("money_win", report.getMoneyWin())
-                .append("money_lost", report.getMoneyLost())
+                        .append("money_lost", report.getMoneyLost())
                         .append("money_lost", report.getMoneyLost())
                         .append("fee", report.getFee())
                         .append("money_exchange", report.moneyExchange)
@@ -107,7 +109,7 @@ public class LogMoneyUserProcessor implements BaseProcessor<byte[], Boolean> {
 
     private ReportMoneyModelNew createReportMoney(LogMoneyUserMessage log) {
         ReportMoneyModelNew report = new ReportMoneyModelNew(log);
-        if (Consts.GAMES.contains(log.getActionName())) {
+        if (Consts.GAMES.contains(log.getActionName()) || "Exchange".contains(log.getActionName())) {
             report = processGame(report, log);
         }
         return report;
@@ -127,6 +129,7 @@ public class LogMoneyUserProcessor implements BaseProcessor<byte[], Boolean> {
                 model.setMoneyWin(log.getMoneyExchange());
             }
         } else if (
+            // these code for SLOT MACHINE GAME ONLY
                 (log.getActionName().equals(Games.MINI_POKER.getName())
                         || log.getActionName().equals(Games.CANDY.getName())
                         || log.getActionName().equals(Games.FAST_AND_FURIOUS.getName())

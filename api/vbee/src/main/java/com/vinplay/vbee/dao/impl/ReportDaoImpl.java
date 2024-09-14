@@ -28,6 +28,7 @@ import org.bson.Document;
 
 public class ReportDaoImpl
 implements ReportDao {
+
     @Override
     public boolean saveLogMoneyForReport(String nickname, String actioname, String date, ReportModel model, boolean isBot) throws ParseException {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
