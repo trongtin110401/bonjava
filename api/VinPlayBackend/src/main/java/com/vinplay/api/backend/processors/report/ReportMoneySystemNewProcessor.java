@@ -97,11 +97,11 @@ public class ReportMoneySystemNewProcessor implements BaseProcessor<HttpServletR
             user.put("userEnd", totalModelEnd.moneyUser);
 
             // search fund
-//            OtherService otherService = new OtherServiceImpl();
+            OtherService otherService = new OtherServiceImpl();
 
             //search all log with time
-//            return searchLogMoneyUser2(nickName, startTime, endTime, listReport, listUserIn, listUserInEvent, listUserOut, listOther, moneyAgentIn, moneyAgentOut, user, otherService);
-            return searchLogMoneyUser3(nickName, startTime, endTime, user);
+            return searchLogMoneyUser2(nickName, startTime, endTime, listReport, listUserIn, listUserInEvent, listUserOut, listOther, moneyAgentIn, moneyAgentOut, user, otherService);
+//            return searchLogMoneyUser3(nickName, startTime, endTime, user);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -264,6 +264,7 @@ public class ReportMoneySystemNewProcessor implements BaseProcessor<HttpServletR
         } else {
             model.actionName = log.actionName;
         }
+
 
         if (log.actionName.equals(Consts.TAI_XIU)) {
             if (log.moneyExchange < 0) {

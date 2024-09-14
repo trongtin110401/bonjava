@@ -91,10 +91,10 @@ public class LogMoneyUserProcessor implements BaseProcessor<byte[], Boolean> {
 
         // Define the update operation
         Document update = new Document("$inc",
-                new Document("money_win", report.getMoneyWin())
-                        .append("money_lost", report.getMoneyLost())
+                new Document("total_bet", report.totalBet)
+                        .append("total_refund", report.totalRefund)
+                        .append("total_win", report.totalWin)
                         .append("fee", report.getFee())
-                        .append("money_exchange", report.moneyExchange)
                         .append("revenue", report.getRevenue())
         );
 
@@ -120,10 +120,11 @@ public class LogMoneyUserProcessor implements BaseProcessor<byte[], Boolean> {
         if (log.getActionName().equals(Consts.TAI_XIU)) {
             if (log.getMoneyExchange() < 0) {
                 model.setMoneyLost(model.getMoneyLost() + log.getMoneyExchange());
+                model.totalBet =  (-1) * log.getMoneyExchange();
             } else if (log.getServiceName().contains("Hoàn trả")) {
-                model.setMoneyOther(log.getMoneyExchange());
+                model.totalRefund = log.getMoneyExchange();
             } else {
-                model.setMoneyWin(log.getMoneyExchange());
+                model.totalWin = log.getMoneyExchange();
             }
         } else if (
             // these code for SLOT MACHINE GAME ONLY
@@ -134,23 +135,26 @@ public class LogMoneyUserProcessor implements BaseProcessor<byte[], Boolean> {
                         || log.getActionName().equals(Games.COWBOY.getName())
                         || log.getActionName().equals(Games.LADY_NIGHT.getName())
                         || log.getActionName().equals(Games.BONG_LAI_CAC.getName())
-                        || log.getActionName().equals(Games.LIEN_MINH.getName()))
-                        && log.getDescription().startsWith("Đặt cược")) {
+                        || log.getActionName().equals(Games.LIEN_MINH.getName())
+                        || log.getActionName().equals(Games.LAS_VEGAS.getName())
+                        || log.getActionName().equals(Games.HALLOWEEN.getName())
+                        || log.getActionName().equals(Games.BIG_CITY_BOY.getName())
+                        && log.getDescription().startsWith("Đặt cược"))) {
             if (log.getMoneyExchange() < 0) {
-                model.moneyLost = log.getMoneyExchange();
+                model.totalBet = (-1) * log.getMoneyExchange();
             } else {
-                model.moneyWin = log.getMoneyExchange();
+                model.totalWin = log.getMoneyExchange();
             }
-        } else {
+        } else{
             if (log.getMoneyExchange() < 0) {
-                model.moneyLost = log.getMoneyExchange();
+                model.totalBet = (-1) * log.getMoneyExchange();
             } else {
-                model.moneyWin = log.getMoneyExchange();
+                model.totalWin = log.getMoneyExchange();
             }
         }
         model.fee = log.getFee();
-        model.moneyExchange = log.getMoneyExchange();
-        model.revenue = (log.getMoneyExchange() - log.getFee());
+        //model.moneyExchange = log.getMoneyExchange();
+        model.revenue = (model.totalBet - model.totalWin - model.totalRefund);
 
         return model;
     }

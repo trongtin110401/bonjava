@@ -16,6 +16,9 @@ public class ReportMoneyModelNew {
     public long moneyExchange = 0L;
     public long revenue = 0L;
     public boolean isGame = false;
+    public long totalBet;
+    public long totalRefund;
+    public long totalWin;
 
     public ReportMoneyModelNew() {
 
@@ -40,8 +43,12 @@ public class ReportMoneyModelNew {
         this.revenue = doc.getLong("revenue");
     }
 
-    public void exchange(LogMoneyUserMessage log){
-        this.moneyOther += log.getMoneyExchange();
+    public void exchange(long moneyExchange){
+        if (moneyExchange < 0) {
+            this.totalBet = (-1) *moneyExchange;
+        }else{
+            this.totalWin = moneyExchange;
+        }
     }
 
     public String getActionName() {
