@@ -94,11 +94,12 @@ public class LogMoneyUserProcessor implements BaseProcessor<byte[], Boolean> {
 
         // Define the update operation
         Document update = new Document("$inc",
-                new Document("total_bet", report.totalBet)
+                new Document("total_out", report.totalOut)
                         .append("total_refund", report.totalRefund)
-                        .append("total_win", report.totalWin)
+                        .append("total_in", report.totalIn)
                         .append("fee", report.getFee())
                         .append("revenue", report.getRevenue())
+                        .append("is_game", report.isGame())
         );
 
         // Define the options (upsert: true)
@@ -106,6 +107,8 @@ public class LogMoneyUserProcessor implements BaseProcessor<byte[], Boolean> {
 
         // Perform the update operation with upsert
         col.updateOne(query, update, options);
+
+
 
     }
 
@@ -116,14 +119,14 @@ public class LogMoneyUserProcessor implements BaseProcessor<byte[], Boolean> {
 
 
     private ReportMoneyModelNew processGame(ReportMoneyModelNew model, LogMoneyUserMessage log) {
-        model.isGame = true;
+        model.isGame = Consts.GAMES.contains(log.getActionName());
         if (log.getActionName().equals(Consts.TAI_XIU)) {
             if (log.getMoneyExchange() < 0) {
-                model.totalBet = (-1) * log.getMoneyExchange();
+                model.totalOut = (-1) * log.getMoneyExchange();
             } else if (log.getServiceName().contains("Hoàn trả")) {
                 model.totalRefund = log.getMoneyExchange();
             } else {
-                model.totalWin = log.getMoneyExchange();
+                model.totalIn = log.getMoneyExchange();
             }
         } else if (
             // these code for SLOT MACHINE GAME ONLY
@@ -140,20 +143,20 @@ public class LogMoneyUserProcessor implements BaseProcessor<byte[], Boolean> {
                         || log.getActionName().equals(Games.BIG_CITY_BOY.getName())
                         && log.getDescription().startsWith("Đặt cược"))) {
             if (log.getMoneyExchange() < 0) {
-                model.totalBet = (-1) * log.getMoneyExchange();
+                model.totalOut = (-1) * log.getMoneyExchange();
             } else {
-                model.totalWin = log.getMoneyExchange();
+                model.totalIn = log.getMoneyExchange();
             }
         } else {
             if (log.getMoneyExchange() < 0) {
-                model.totalBet = (-1) * log.getMoneyExchange();
+                model.totalOut = (-1) * log.getMoneyExchange();
             } else {
-                model.totalWin = log.getMoneyExchange();
+                model.totalIn = log.getMoneyExchange();
             }
         }
         model.fee = log.getFee();
         //model.moneyExchange = log.getMoneyExchange();
-        model.revenue = (model.totalBet - model.totalWin - model.totalRefund);
+        model.revenue = (model.totalOut - model.totalIn - model.totalRefund);
 
         return model;
     }

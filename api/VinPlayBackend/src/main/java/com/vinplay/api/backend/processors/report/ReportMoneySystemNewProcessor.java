@@ -21,8 +21,6 @@
 package com.vinplay.api.backend.processors.report;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.vinplay.api.backend.processors.UpdateFundProcessor;
 import com.vinplay.api.backend.response.ReportMoneySystemResponse;
 import com.vinplay.dal.dao.impl.ReportDaoImpl;
 import com.vinplay.dal.entities.report.*;
@@ -38,19 +36,16 @@ import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.enums.Games;
 import com.vinplay.vbee.common.response.AgentResponse;
 import com.vinplay.vbee.common.response.LogUserMoneyResponse;
-import com.vinplay.vbee.common.response.TransactionFundResponse;
 import com.vinplay.vbee.common.statics.Consts;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.log4j.Logger;
-import org.bson.Document;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.stream.Collectors;
 
 
 public class ReportMoneySystemNewProcessor implements BaseProcessor<HttpServletRequest, String> {
@@ -65,14 +60,8 @@ public class ReportMoneySystemNewProcessor implements BaseProcessor<HttpServletR
         String nickName = request.getParameter("nickname");
         res = new ReportMoneySystemResponse(false, "1001");
         Map<String, ReportMoneySystemModel> map = new HashMap();
-        List<ReportMoneySystemModelNew> listReport = new ArrayList<ReportMoneySystemModelNew>();
-        List<MoneyInOut> listUserIn = new ArrayList<MoneyInOut>();
-        List<MoneyInOut> listUserInEvent = new ArrayList<MoneyInOut>();
-        List<MoneyInOut> listUserOut = new ArrayList<MoneyInOut>();
-        List<MoneyInOut> listOther = new ArrayList<MoneyInOut>();
-        MoneyInOut moneyAgentIn = new MoneyInOut();
-        MoneyInOut moneyAgentOut = new MoneyInOut();
-        boolean endToday = true;
+
+
 
         Map<String, Long> MoneyIn = new HashedMap();
         try {
@@ -80,28 +69,15 @@ public class ReportMoneySystemNewProcessor implements BaseProcessor<HttpServletR
             Date st = format.parse(startTime);
             Date et = format.parse(endTime);
             Date currentDate = VinPlayUtils.getCurrentDates();
+            boolean endToday = true;
             if (et.getTime() < currentDate.getTime())
                 endToday = false;
 
-            // search report money user
-            HashMap<String, Long> user = new HashMap<String, Long>();
-            ReportDaoImpl dao = new ReportDaoImpl();
-            HashMap<String, Long> vinOutAgent = new HashMap<String, Long>();
-            ReportTotalMoneyModel totalModelStart = dao.getReportTotalMoneyAtTime(startTime, true);
-            ReportTotalMoneyModel totalModelEnd = new ReportTotalMoneyModel();
-            totalModelEnd = endToday ? dao.getTotalMoney(GameCommon.getValueStr((String) "SUPER_AGENT")) : dao.getReportTotalMoneyAtTime(endTime, false);
-            vinOutAgent.put("agentStart", totalModelStart.moneyAgent1 + totalModelStart.moneyAgent2 + totalModelStart.moneySuperAgent);
-            vinOutAgent.put("agentEnd", totalModelEnd.moneyAgent1 + totalModelEnd.moneyAgent2 + totalModelEnd.moneySuperAgent);
 
-            user.put("userStart", totalModelStart.moneyUser);
-            user.put("userEnd", totalModelEnd.moneyUser);
-
-            // search fund
-            OtherService otherService = new OtherServiceImpl();
 
             //search all log with time
-            return searchLogMoneyUser2(nickName, startTime, endTime, listReport, listUserIn, listUserInEvent, listUserOut, listOther, moneyAgentIn, moneyAgentOut, user, otherService);
-//            return searchLogMoneyUser3(nickName, startTime, endTime, user);
+//            return searchLogMoneyUser2(nickName, startTime, endTime, listReport, listUserIn, listUserInEvent, listUserOut, listOther, moneyAgentIn, moneyAgentOut, user, otherService);
+            return searchLogMoneyUser3(nickName, startTime, endTime);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -109,10 +85,19 @@ public class ReportMoneySystemNewProcessor implements BaseProcessor<HttpServletR
         return res.toJson();
     }
 
-    private String searchLogMoneyUser3(String nickName, String startTime, String endTime, HashMap<String, Long> user) {
+    private String searchLogMoneyUser3(String nickName, String startTime, String endTime) {
+
+        HashMap<String, Long> user = new HashMap<String, Long>();
+        HashMap<String, Long> vinOutAgent = new HashMap<String, Long>();
+        vinOutAgent.put("agentStart", 0L);
+        vinOutAgent.put("agentEnd", 0L);
+
+        user.put("userStart", 0L);
+        user.put("userEnd", 0L);
+
+
         ReportMoneyService reportMoneyService = new ReportMoneyServiceImpl();
         List<ReportMoneyModelNew> logs = reportMoneyService.search(nickName,"", startTime, endTime, 1, 100);
-        List<ReportMoneySystemModelNew> listGameReport = new ArrayList<>();
 
         List<ReportMoneySystemModelNew> listReport = new ArrayList<ReportMoneySystemModelNew>();
         List<MoneyInOut> listUserIn = new ArrayList<MoneyInOut>();
@@ -132,7 +117,7 @@ public class ReportMoneySystemNewProcessor implements BaseProcessor<HttpServletR
             } else if (Consts.VIN_OTHER.contains(log.getActionName())) {
                 processListMoneyNew(listOther, log);
             }else if(log.getActionName().equals("Exchange")) {
-                totalShootFishProfit = log.getMoneyExchange();
+                totalShootFishProfit = log.totalIn;
             }
         }
         try {
@@ -155,7 +140,30 @@ public class ReportMoneySystemNewProcessor implements BaseProcessor<HttpServletR
         }
     }
 
-    private String searchLogMoneyUser2(String nickName, String startTime, String endTime, List<ReportMoneySystemModelNew> listReport, List<MoneyInOut> listUserIn, List<MoneyInOut> listUserInEvent, List<MoneyInOut> listUserOut, List<MoneyInOut> listOther, MoneyInOut moneyAgentIn, MoneyInOut moneyAgentOut, HashMap<String, Long> user, OtherService otherService) {
+    private String searchLogMoneyUser2(String nickName, String startTime, String endTime, boolean endToday) throws Exception{
+        List<ReportMoneySystemModelNew> listReport = new ArrayList<ReportMoneySystemModelNew>();
+        List<MoneyInOut> listUserIn = new ArrayList<MoneyInOut>();
+        List<MoneyInOut> listUserInEvent = new ArrayList<MoneyInOut>();
+        List<MoneyInOut> listUserOut = new ArrayList<MoneyInOut>();
+        List<MoneyInOut> listOther = new ArrayList<MoneyInOut>();
+        MoneyInOut moneyAgentIn = new MoneyInOut();
+        MoneyInOut moneyAgentOut = new MoneyInOut();
+        // search report money user
+        HashMap<String, Long> user = new HashMap<String, Long>();
+        ReportDaoImpl dao = new ReportDaoImpl();
+        HashMap<String, Long> vinOutAgent = new HashMap<String, Long>();
+        ReportTotalMoneyModel totalModelStart = dao.getReportTotalMoneyAtTime(startTime, true);
+        ReportTotalMoneyModel totalModelEnd = new ReportTotalMoneyModel();
+        totalModelEnd = endToday ? dao.getTotalMoney(GameCommon.getValueStr((String) "SUPER_AGENT")) : dao.getReportTotalMoneyAtTime(endTime, false);
+        vinOutAgent.put("agentStart", totalModelStart.moneyAgent1 + totalModelStart.moneyAgent2 + totalModelStart.moneySuperAgent);
+        vinOutAgent.put("agentEnd", totalModelEnd.moneyAgent1 + totalModelEnd.moneyAgent2 + totalModelEnd.moneySuperAgent);
+
+        user.put("userStart", totalModelStart.moneyUser);
+        user.put("userEnd", totalModelEnd.moneyUser);
+
+        // search fund
+        OtherService otherService = new OtherServiceImpl();
+
         LogMoneyUserServiceImpl service = new LogMoneyUserServiceImpl();
         List<LogUserMoneyResponse> logs = service.searchLogMoneyUser2(nickName, "", "", startTime, endTime, -1, -1);
 //            if (logs == null || logs.isEmpty())
@@ -207,7 +215,7 @@ public class ReportMoneySystemNewProcessor implements BaseProcessor<HttpServletR
 
     private List<MoneyInOut> processListMoneyNew(List<MoneyInOut> listReport, ReportMoneyModelNew log) {
         MoneyInOut model = new MoneyInOut();
-        model.total += log.moneyExchange;
+        model.total += log.totalIn - log.totalOut;
         model.fee += log.fee;
         listReport.add(model);
         return listReport;
@@ -238,12 +246,9 @@ public class ReportMoneySystemNewProcessor implements BaseProcessor<HttpServletR
     private List<ReportMoneySystemModelNew> processListGameNew(List<ReportMoneySystemModelNew> listReport, ReportMoneyModelNew log) {
         ReportMoneySystemModelNew report = new ReportMoneySystemModelNew();
         report.actionName = log.getActionName();
-//        report.moneyWin = log.getMoneyWin();
-//        report.moneyLost = log.getMoneyLost();
-//        report.moneyOther= log.getMoneyOther();
         report.fee = log.getFee();
-        report.revenue = log.getRevenue();
-        report.revenuePlayGame = log.getMoneyExchange();
+        report.revenue = log.getRevenue() - log.getFee();
+        report.revenuePlayGame = log.getRevenue();
         listReport.add(report);
         return listReport;
     }

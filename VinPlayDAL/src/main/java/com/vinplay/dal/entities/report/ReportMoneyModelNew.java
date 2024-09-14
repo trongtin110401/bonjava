@@ -9,16 +9,12 @@ public class ReportMoneyModelNew {
     private String actionName;
     private String reportDate;
 
-    public long moneyWin = 0L;
-    public long moneyLost = 0L;
-    public long moneyOther = 0L;
     public long fee = 0L;
-    public long moneyExchange = 0L;
     public long revenue = 0L;
     public boolean isGame = false;
-    public long totalBet;
+    public long totalOut;
     public long totalRefund;
-    public long totalWin;
+    public long totalIn;
 
     public ReportMoneyModelNew() {
 
@@ -34,19 +30,19 @@ public class ReportMoneyModelNew {
     public ReportMoneyModelNew(Document doc) {
         this.nickName = doc.getString("nick_name");
         this.actionName = doc.getString("action_name");
-        this.moneyExchange = doc.getLong("money_exchange");
         this.fee = doc.getLong("fee");
-        this.moneyWin = doc.getLong("money_win");
-        this.moneyLost = doc.getLong("money_lost");
-        this.moneyOther = doc.getLong("money_other");
+        this.totalOut = doc.getLong("total_out");
+        this.totalRefund = doc.getLong("total_refund");
+        this.totalIn = doc.getLong("total_in");
         this.revenue = doc.getLong("revenue");
+        this.isGame = doc.getBoolean("is_game");
     }
 
     public void exchange(long moneyExchange){
         if (moneyExchange < 0) {
-            this.totalBet = (-1) *moneyExchange;
+            this.totalOut = (-1) *moneyExchange;
         }else{
-            this.totalWin = moneyExchange;
+            this.totalIn = moneyExchange;
         }
     }
 
@@ -91,12 +87,14 @@ public class ReportMoneyModelNew {
         this.revenue = revenue;
     }
 
-    public long getMoneyExchange() {
-        return this.moneyExchange;
+
+    public boolean isGame() {
+        return isGame;
     }
 
-    public void setMoneyExchange(long moneyExchange) {
-        this.moneyExchange = moneyExchange;
+    public void setGame(boolean game) {
+        isGame = game;
     }
+
 
 }
