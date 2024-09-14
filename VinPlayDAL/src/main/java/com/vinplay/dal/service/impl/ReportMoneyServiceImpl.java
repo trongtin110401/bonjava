@@ -53,8 +53,8 @@ public class ReportMoneyServiceImpl implements ReportMoneyService {
                         ,sum("total_refund", "$total_refund")
                         ,sum("total_in", "$total_in")
                         ,sum("fee", "$fee")
-                        ,sum("revenue", "$revenue"),
-                        first("action_name", "$action_name")
+//                        ,sum("revenue", "$revenue"),
+                        ,first("action_name", "$action_name")
                 )  // GROUP BY và SUM
 
         ));
