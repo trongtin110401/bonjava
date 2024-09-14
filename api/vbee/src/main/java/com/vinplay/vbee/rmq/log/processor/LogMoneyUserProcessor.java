@@ -87,6 +87,7 @@ public class LogMoneyUserProcessor implements BaseProcessor<byte[], Boolean> {
         map.put("nick_name", report.getNickName());
         map.put("action_name", report.getActionName());
         map.put("report_date", report.getReportDate());
+        map.put("s_game", report.isGame);
 
 
         // Define the query filter
@@ -98,9 +99,7 @@ public class LogMoneyUserProcessor implements BaseProcessor<byte[], Boolean> {
                         .append("total_refund", report.totalRefund)
                         .append("total_in", report.totalIn)
                         .append("fee", report.getFee())
-                        .append("revenue", report.getRevenue())
-                        .append("is_game", report.isGame())
-        );
+                        .append("revenue", report.getRevenue()));
 
         // Define the options (upsert: true)
         UpdateOptions options = new UpdateOptions().upsert(true);
