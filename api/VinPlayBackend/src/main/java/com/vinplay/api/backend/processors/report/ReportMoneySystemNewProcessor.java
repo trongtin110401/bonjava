@@ -118,7 +118,7 @@ public class ReportMoneySystemNewProcessor implements BaseProcessor<HttpServletR
                 processListMoneyNew(listUserOut, log);
             } else if (Consts.VIN_OTHER.contains(log.getActionName())) {
                 processListMoneyNew(listOther, log);
-            } else if (log.getActionName().equals("Exchange")) {
+            } else if ("Exchange".equals(log.getActionName())) {
                 totalShootFishProfit = log.totalIn;
             }
         }
