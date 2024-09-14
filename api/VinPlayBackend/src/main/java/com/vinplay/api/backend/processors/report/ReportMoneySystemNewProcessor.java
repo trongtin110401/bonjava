@@ -238,9 +238,9 @@ public class ReportMoneySystemNewProcessor implements BaseProcessor<HttpServletR
     private List<ReportMoneySystemModelNew> processListGameNew(List<ReportMoneySystemModelNew> listReport, ReportMoneyModelNew log) {
         ReportMoneySystemModelNew report = new ReportMoneySystemModelNew();
         report.actionName = log.getActionName();
-        report.moneyWin = log.getMoneyWin();
-        report.moneyLost = log.getMoneyLost();
-        report.moneyOther= log.getMoneyOther();
+//        report.moneyWin = log.getMoneyWin();
+//        report.moneyLost = log.getMoneyLost();
+//        report.moneyOther= log.getMoneyOther();
         report.fee = log.getFee();
         report.revenue = log.getRevenue();
         report.revenuePlayGame = log.getMoneyExchange();

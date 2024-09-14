@@ -119,7 +119,6 @@ public class LogMoneyUserProcessor implements BaseProcessor<byte[], Boolean> {
         model.isGame = true;
         if (log.getActionName().equals(Consts.TAI_XIU)) {
             if (log.getMoneyExchange() < 0) {
-                model.setMoneyLost(model.getMoneyLost() + log.getMoneyExchange());
                 model.totalBet =  (-1) * log.getMoneyExchange();
             } else if (log.getServiceName().contains("Hoàn trả")) {
                 model.totalRefund = log.getMoneyExchange();

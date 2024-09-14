@@ -28,7 +28,6 @@ public class ReportMoneyModelNew {
         this.nickName = log.getNickname();
         this.actionName = log.getActionName();
         this.fee = log.getFee();
-        this.moneyExchange = log.getMoneyExchange();
         this.reportDate = log.getCreateTime().substring(0,10);
     }
 
@@ -67,29 +66,6 @@ public class ReportMoneyModelNew {
         this.reportDate = reportDate;
     }
 
-    public long getMoneyWin() {
-        return moneyWin;
-    }
-
-    public void setMoneyWin(long moneyWin) {
-        this.moneyWin = moneyWin;
-    }
-
-    public long getMoneyLost() {
-        return moneyLost;
-    }
-
-    public void setMoneyLost(long moneyLost) {
-        this.moneyLost = moneyLost;
-    }
-
-    public long getMoneyOther() {
-        return moneyOther;
-    }
-
-    public void setMoneyOther(long moneyOther) {
-        this.moneyOther = moneyOther;
-    }
 
     public long getFee() {
         return fee;
