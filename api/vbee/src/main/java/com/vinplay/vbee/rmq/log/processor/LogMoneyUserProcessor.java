@@ -98,8 +98,7 @@ public class LogMoneyUserProcessor implements BaseProcessor<byte[], Boolean> {
                 new Document("total_out", report.totalOut)
                         .append("total_refund", report.totalRefund)
                         .append("total_in", report.totalIn)
-                        .append("fee", report.getFee())
-                        .append("revenue", report.getRevenue()));
+                        .append("fee", report.getFee()));
 
         // Define the options (upsert: true)
         UpdateOptions options = new UpdateOptions().upsert(true);
