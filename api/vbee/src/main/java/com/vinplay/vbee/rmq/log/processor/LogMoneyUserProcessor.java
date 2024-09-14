@@ -93,7 +93,6 @@ public class LogMoneyUserProcessor implements BaseProcessor<byte[], Boolean> {
         Document update = new Document("$inc",
                 new Document("money_win", report.getMoneyWin())
                         .append("money_lost", report.getMoneyLost())
-                        .append("money_lost", report.getMoneyLost())
                         .append("fee", report.getFee())
                         .append("money_exchange", report.moneyExchange)
                         .append("revenue", report.getRevenue())
@@ -113,8 +112,6 @@ public class LogMoneyUserProcessor implements BaseProcessor<byte[], Boolean> {
             report = processGame(report, log);
         }
         return report;
-
-
     }
 
 
@@ -151,9 +148,9 @@ public class LogMoneyUserProcessor implements BaseProcessor<byte[], Boolean> {
                 model.moneyWin = log.getMoneyExchange();
             }
         }
-//        model.fee += log.getFee();
-//        model.revenuePlayGame += log.getMoneyExchange();
-//        model.revenue += (log.getMoneyExchange() - log.getFee());
+        model.fee = log.getFee();
+        model.moneyExchange = log.getMoneyExchange();
+        model.revenue = (log.getMoneyExchange() - log.getFee());
 
         return model;
     }
