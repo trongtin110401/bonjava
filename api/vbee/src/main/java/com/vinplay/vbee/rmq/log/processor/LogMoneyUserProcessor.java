@@ -53,8 +53,11 @@ public class LogMoneyUserProcessor implements BaseProcessor<byte[], Boolean> {
 
             //20240914
             try {
-                upsertReportMoney(message);
+                if (message.getMoneyType().equals("vin")) {
+                    upsertReportMoney(message);
+                }
             } catch (Exception e) {
+                e.printStackTrace();
             }
 
 
@@ -108,10 +111,7 @@ public class LogMoneyUserProcessor implements BaseProcessor<byte[], Boolean> {
 
     private ReportMoneyModelNew createReportMoney(LogMoneyUserMessage log) {
         ReportMoneyModelNew report = new ReportMoneyModelNew(log);
-        if (Consts.GAMES.contains(log.getActionName()) || "Exchange".contains(log.getActionName())) {
-            report = processGame(report, log);
-        }
-        return report;
+        return processGame(report, log);
     }
 
 
@@ -119,7 +119,7 @@ public class LogMoneyUserProcessor implements BaseProcessor<byte[], Boolean> {
         model.isGame = true;
         if (log.getActionName().equals(Consts.TAI_XIU)) {
             if (log.getMoneyExchange() < 0) {
-                model.totalBet =  (-1) * log.getMoneyExchange();
+                model.totalBet = (-1) * log.getMoneyExchange();
             } else if (log.getServiceName().contains("Hoàn trả")) {
                 model.totalRefund = log.getMoneyExchange();
             } else {
@@ -144,7 +144,7 @@ public class LogMoneyUserProcessor implements BaseProcessor<byte[], Boolean> {
             } else {
                 model.totalWin = log.getMoneyExchange();
             }
-        } else{
+        } else {
             if (log.getMoneyExchange() < 0) {
                 model.totalBet = (-1) * log.getMoneyExchange();
             } else {
