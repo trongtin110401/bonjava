@@ -21,6 +21,7 @@
 package com.vinplay.api.backend.processors.report;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import com.vinplay.api.backend.response.ReportMoneySystemResponse;
 import com.vinplay.dal.dao.impl.ReportDaoImpl;
 import com.vinplay.dal.entities.report.*;
@@ -97,12 +98,15 @@ public class ReportMoneySystemNewProcessor implements BaseProcessor<HttpServletR
         ReportMoneyService reportMoneyService = new ReportMoneyServiceImpl();
         List<ReportMoneyModelNew> logs = reportMoneyService.search(nickName, "", startTime, endTime, 1, 100);
 
+        System.out.println(new Gson().toJson(logs));
+
         List<ReportMoneySystemModelNew> listReport = new ArrayList<ReportMoneySystemModelNew>();
         List<MoneyInOut> listUserIn = new ArrayList<MoneyInOut>();
         List<MoneyInOut> listUserInEvent = new ArrayList<MoneyInOut>();
         List<MoneyInOut> listUserOut = new ArrayList<MoneyInOut>();
         List<MoneyInOut> listOther = new ArrayList<MoneyInOut>();
         long totalShootFishProfit = 0L;
+
         for (ReportMoneyModelNew log : logs) {
             if (Consts.GAMES.contains(log.getActionName())) {
                 processListGameNew(listReport, log);
