@@ -39,8 +39,8 @@ public class ReportMoneyServiceImpl implements ReportMoneyService {
         }
         if (timeStart != null && !timeStart.isEmpty() && timeEnd != null && !timeEnd.isEmpty()) {
             try {
-                filters.add(gte("report_date", VinPlayUtils.getDateTimeStr(VinPlayUtils.getDateTimeFromDate(timeStart + " 00:00:00"))));
-                filters.add(lte("report_date", VinPlayUtils.getDateTimeStr(VinPlayUtils.getDateTimeFromDate(timeStart + " 23:59:59"))));
+                filters.add(gte("report_date", VinPlayUtils.getDateTimeStr(VinPlayUtils.getDateTimeFromDate(timeStart))));
+                filters.add(lte("report_date", VinPlayUtils.getDateTimeStr(VinPlayUtils.getDateTimeFromDate(timeEnd))));
             } catch (Exception e) {
                 e.printStackTrace();
             }
