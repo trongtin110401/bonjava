@@ -25,8 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class ReportMoneyServiceImpl implements ReportMoneyService {
-    public List<ReportMoneyModelNew> search(String nickName, String actionName, String timeStart,
-                                            String timeEnd, int page, int totalRecord){
+    public List<ReportMoneyModelNew> search(String nickName, String actionName, String timeStart, String timeEnd, int page, int totalRecord){
         MongoDatabase db = MongoDBConnectionFactory.getDB();
 
         List<Bson> filters = new ArrayList<>();
@@ -39,8 +38,8 @@ public class ReportMoneyServiceImpl implements ReportMoneyService {
         }
         if (timeStart != null && !timeStart.isEmpty() && timeEnd != null && !timeEnd.isEmpty()) {
             try {
-                filters.add(gte("report_date", VinPlayUtils.getDateTimeStr(VinPlayUtils.getDateTimeFromDate(timeStart))));
-                filters.add(lte("report_date", VinPlayUtils.getDateTimeStr(VinPlayUtils.getDateTimeFromDate(timeEnd))));
+                filters.add(gte("report_date", timeStart));
+                filters.add(lte("report_date", timeEnd));
             } catch (Exception e) {
                 e.printStackTrace();
             }
