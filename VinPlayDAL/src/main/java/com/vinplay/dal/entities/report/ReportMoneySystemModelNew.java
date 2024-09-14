@@ -85,5 +85,7 @@ public class ReportMoneySystemModelNew {
     public void setFund(long fund) {
         this.fund = fund;
     }
+
+
 }
 

@@ -26,8 +26,10 @@ import com.vinplay.api.backend.processors.UpdateFundProcessor;
 import com.vinplay.api.backend.response.ReportMoneySystemResponse;
 import com.vinplay.dal.dao.impl.ReportDaoImpl;
 import com.vinplay.dal.entities.report.*;
+import com.vinplay.dal.service.ReportMoneyService;
 import com.vinplay.dal.service.impl.AgentServiceImpl;
 import com.vinplay.dal.service.impl.LogMoneyUserServiceImpl;
+import com.vinplay.dal.service.impl.ReportMoneyServiceImpl;
 import com.vinplay.usercore.service.OtherService;
 import com.vinplay.usercore.service.impl.OtherServiceImpl;
 import com.vinplay.usercore.utils.GameCommon;
@@ -85,71 +87,126 @@ public class ReportMoneySystemNewProcessor implements BaseProcessor<HttpServletR
             HashMap<String, Long> user = new HashMap<String, Long>();
             ReportDaoImpl dao = new ReportDaoImpl();
             HashMap<String, Long> vinOutAgent = new HashMap<String, Long>();
-            ReportTotalMoneyModel totalModelStart = dao.getReportTotalMoneyAtTime(startTime, true);
-            ReportTotalMoneyModel totalModelEnd = new ReportTotalMoneyModel();
-            totalModelEnd = endToday ? dao.getTotalMoney(GameCommon.getValueStr((String) "SUPER_AGENT")) : dao.getReportTotalMoneyAtTime(endTime, false);
-            vinOutAgent.put("agentStart", totalModelStart.moneyAgent1 + totalModelStart.moneyAgent2 + totalModelStart.moneySuperAgent);
-            vinOutAgent.put("agentEnd", totalModelEnd.moneyAgent1 + totalModelEnd.moneyAgent2 + totalModelEnd.moneySuperAgent);
-
-            user.put("userStart", totalModelStart.moneyUser);
-            user.put("userEnd", totalModelEnd.moneyUser);
+//            ReportTotalMoneyModel totalModelStart = dao.getReportTotalMoneyAtTime(startTime, true);
+//            ReportTotalMoneyModel totalModelEnd = new ReportTotalMoneyModel();
+//            totalModelEnd = endToday ? dao.getTotalMoney(GameCommon.getValueStr((String) "SUPER_AGENT")) : dao.getReportTotalMoneyAtTime(endTime, false);
+//            vinOutAgent.put("agentStart", totalModelStart.moneyAgent1 + totalModelStart.moneyAgent2 + totalModelStart.moneySuperAgent);
+//            vinOutAgent.put("agentEnd", totalModelEnd.moneyAgent1 + totalModelEnd.moneyAgent2 + totalModelEnd.moneySuperAgent);
+//
+//            user.put("userStart", totalModelStart.moneyUser);
+//            user.put("userEnd", totalModelEnd.moneyUser);
 
             // search fund
-            OtherService otherService = new OtherServiceImpl();
+//            OtherService otherService = new OtherServiceImpl();
 
-            LogMoneyUserServiceImpl service = new LogMoneyUserServiceImpl();
             //search all log with time
-            List<LogUserMoneyResponse> logs = service.searchLogMoneyUser2(nickName, "", "", startTime, endTime, -1, -1);
-//            if (logs == null || logs.isEmpty())
-//                return res.toJson();
-
-            List<ReportMoneySystemModelNew> listGameReport = new ArrayList<>();
-            for (LogUserMoneyResponse log : logs) {
-                if (Consts.GAMES.contains(log.actionName)) {
-                    listGameReport = processListGame(listReport, log);
-                } else if (Consts.VIN_IN_USER.contains(log.actionName)) {
-                    listUserIn = processListMoney(listUserIn, log);
-                } else if (Consts.VIN_IN_EVENT.contains(log.actionName)) {
-                    listUserInEvent = processListMoney(listUserInEvent, log);
-                } else if (Consts.VIN_OUT_USER.contains(log.actionName)) {
-                    listUserOut = processListMoney(listUserOut, log);
-                } else if (Consts.VIN_OTHER.contains(log.actionName)) {
-                    listOther = processListMoney(listOther, log);
-                } else if (Consts.TRANSFER_MONEY.equals(log.actionName)) {
-                    if (log.moneyExchange < 0) {
-                        moneyAgentIn = processMoneyInToAgency(moneyAgentIn, log);
-                    } else {
-                        moneyAgentOut = processMoneyOutAgency(moneyAgentOut, log);
-                    }
-                }
-            }
-            try {
-                listReport = listGameReport;
-                ReportMoneyModel reportMoneyModel = new ReportMoneyModel(listReport, listUserIn, listUserInEvent, listUserOut, listOther);
-                reportMoneyModel.UserMoney = user;
-
-                reportMoneyModel.AgentMoneyIn = moneyAgentIn;
-                reportMoneyModel.AgentMoneyOut = moneyAgentOut;
-                ObjectMapper mapper = new ObjectMapper();
-
-                LocalDate dateStart = LocalDate.parse(startTime, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-                String sqlDateStart = dateStart.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-
-                LocalDate dateEnd = LocalDate.parse(endTime, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-                String sqlDateEnd = dateEnd.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-
-                reportMoneyModel.totalShootFishProfit = otherService.getTotalShootFishByNickname(sqlDateStart, sqlDateEnd, nickName);
-
-                return mapper.writeValueAsString((Object) reportMoneyModel);
-            } catch (Exception e) {
-                e.printStackTrace();
-                return "{\"success\":false,\"errorCode\":\"1001\"}";
-            }
+//            return searchLogMoneyUser2(nickName, startTime, endTime, listReport, listUserIn, listUserInEvent, listUserOut, listOther, moneyAgentIn, moneyAgentOut, user, otherService);
+            return searchLogMoneyUser3(nickName, startTime, endTime);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
         return res.toJson();
+    }
+
+    private String searchLogMoneyUser3(String nickName, String startTime, String endTime) {
+        ReportMoneyService reportMoneyService = new ReportMoneyServiceImpl();
+        List<ReportMoneyModelNew> logs = reportMoneyService.search(nickName,"", startTime, endTime, 1, 100);
+        List<ReportMoneySystemModelNew> listGameReport = new ArrayList<>();
+
+        List<ReportMoneySystemModelNew> listReport = new ArrayList<ReportMoneySystemModelNew>();
+        List<MoneyInOut> listUserIn = new ArrayList<MoneyInOut>();
+        List<MoneyInOut> listUserInEvent = new ArrayList<MoneyInOut>();
+        List<MoneyInOut> listUserOut = new ArrayList<MoneyInOut>();
+        List<MoneyInOut> listOther = new ArrayList<MoneyInOut>();
+            long totalShootFishProfit = 0L;
+        for (ReportMoneyModelNew log : logs) {
+            if (Consts.GAMES.contains(log.getActionName())  ) {
+                processListGameNew(listReport, log);
+            } else if (Consts.VIN_IN_USER.contains(log.getActionName())) {
+                processListMoneyNew(listUserIn, log);
+            } else if (Consts.VIN_IN_EVENT.contains(log.getActionName())) {
+                processListMoneyNew(listUserInEvent, log);
+            } else if (Consts.VIN_OUT_USER.contains(log.getActionName())) {
+                processListMoneyNew(listUserOut, log);
+            } else if (Consts.VIN_OTHER.contains(log.getActionName())) {
+                processListMoneyNew(listOther, log);
+            }else if(log.getActionName().equals("Exchange")) {
+                totalShootFishProfit = log.getMoneyExchange();
+            }
+        }
+        try {
+//        listReport = listGameReport;
+        ReportMoneyModel reportMoneyModel = new ReportMoneyModel(listReport, listUserIn, listUserInEvent, listUserOut, listOther);
+
+        ObjectMapper mapper = new ObjectMapper();
+
+
+        reportMoneyModel.totalShootFishProfit = totalShootFishProfit;
+
+        return mapper.writeValueAsString((Object) reportMoneyModel);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "{\"success\":false,\"errorCode\":\"1001\"}";
+        }
+    }
+
+    private String searchLogMoneyUser2(String nickName, String startTime, String endTime, List<ReportMoneySystemModelNew> listReport, List<MoneyInOut> listUserIn, List<MoneyInOut> listUserInEvent, List<MoneyInOut> listUserOut, List<MoneyInOut> listOther, MoneyInOut moneyAgentIn, MoneyInOut moneyAgentOut, HashMap<String, Long> user, OtherService otherService) {
+        LogMoneyUserServiceImpl service = new LogMoneyUserServiceImpl();
+        List<LogUserMoneyResponse> logs = service.searchLogMoneyUser2(nickName, "", "", startTime, endTime, -1, -1);
+//            if (logs == null || logs.isEmpty())
+//                return res.toJson();
+
+        List<ReportMoneySystemModelNew> listGameReport = new ArrayList<>();
+        for (LogUserMoneyResponse log : logs) {
+            if (Consts.GAMES.contains(log.actionName)) {
+                listGameReport = processListGame(listReport, log);
+            } else if (Consts.VIN_IN_USER.contains(log.actionName)) {
+                listUserIn = processListMoney(listUserIn, log);
+            } else if (Consts.VIN_IN_EVENT.contains(log.actionName)) {
+                listUserInEvent = processListMoney(listUserInEvent, log);
+            } else if (Consts.VIN_OUT_USER.contains(log.actionName)) {
+                listUserOut = processListMoney(listUserOut, log);
+            } else if (Consts.VIN_OTHER.contains(log.actionName)) {
+                listOther = processListMoney(listOther, log);
+            } else if (Consts.TRANSFER_MONEY.equals(log.actionName)) {
+                if (log.moneyExchange < 0) {
+                    moneyAgentIn = processMoneyInToAgency(moneyAgentIn, log);
+                } else {
+                    moneyAgentOut = processMoneyOutAgency(moneyAgentOut, log);
+                }
+            }
+        }
+        try {
+            listReport = listGameReport;
+            ReportMoneyModel reportMoneyModel = new ReportMoneyModel(listReport, listUserIn, listUserInEvent, listUserOut, listOther);
+            reportMoneyModel.UserMoney = user;
+
+            reportMoneyModel.AgentMoneyIn = moneyAgentIn;
+            reportMoneyModel.AgentMoneyOut = moneyAgentOut;
+            ObjectMapper mapper = new ObjectMapper();
+
+            LocalDate dateStart = LocalDate.parse(startTime, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            String sqlDateStart = dateStart.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+            LocalDate dateEnd = LocalDate.parse(endTime, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            String sqlDateEnd = dateEnd.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+            reportMoneyModel.totalShootFishProfit = otherService.getTotalShootFishByNickname(sqlDateStart, sqlDateEnd, nickName);
+
+            return mapper.writeValueAsString((Object) reportMoneyModel);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "{\"success\":false,\"errorCode\":\"1001\"}";
+        }
+    }
+
+    private List<MoneyInOut> processListMoneyNew(List<MoneyInOut> listReport, ReportMoneyModelNew log) {
+        MoneyInOut model = new MoneyInOut();
+        model.total += log.moneyExchange;
+        model.fee += log.fee;
+        listReport.add(model);
+        return listReport;
     }
 
     private List<MoneyInOut> processListMoney(List<MoneyInOut> listReport, LogUserMoneyResponse log) {
@@ -172,6 +229,19 @@ public class ReportMoneySystemNewProcessor implements BaseProcessor<HttpServletR
             e.printStackTrace();
             return null;
         }
+    }
+
+    private List<ReportMoneySystemModelNew> processListGameNew(List<ReportMoneySystemModelNew> listReport, ReportMoneyModelNew log) {
+        ReportMoneySystemModelNew report = new ReportMoneySystemModelNew();
+        report.actionName = log.getActionName();
+        report.moneyWin = log.getMoneyWin();
+        report.moneyLost = log.getMoneyLost();
+        report.moneyOther= log.getMoneyOther();
+        report.fee = log.getFee();
+        report.revenue = log.getRevenue();
+        report.revenuePlayGame = log.getMoneyExchange();
+        listReport.add(report);
+        return listReport;
     }
 
     private List<ReportMoneySystemModelNew> processListGame(List<ReportMoneySystemModelNew> listReport, LogUserMoneyResponse log) {
