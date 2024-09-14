@@ -62,7 +62,6 @@ public class ReportMoneySystemNewProcessor implements BaseProcessor<HttpServletR
         Map<String, ReportMoneySystemModel> map = new HashMap();
 
 
-
         Map<String, Long> MoneyIn = new HashedMap();
         try {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -72,7 +71,6 @@ public class ReportMoneySystemNewProcessor implements BaseProcessor<HttpServletR
             boolean endToday = true;
             if (et.getTime() < currentDate.getTime())
                 endToday = false;
-
 
 
             //search all log with time
@@ -97,16 +95,16 @@ public class ReportMoneySystemNewProcessor implements BaseProcessor<HttpServletR
 
 
         ReportMoneyService reportMoneyService = new ReportMoneyServiceImpl();
-        List<ReportMoneyModelNew> logs = reportMoneyService.search(nickName,"", startTime, endTime, 1, 100);
+        List<ReportMoneyModelNew> logs = reportMoneyService.search(nickName, "", startTime, endTime, 1, 100);
 
         List<ReportMoneySystemModelNew> listReport = new ArrayList<ReportMoneySystemModelNew>();
         List<MoneyInOut> listUserIn = new ArrayList<MoneyInOut>();
         List<MoneyInOut> listUserInEvent = new ArrayList<MoneyInOut>();
         List<MoneyInOut> listUserOut = new ArrayList<MoneyInOut>();
         List<MoneyInOut> listOther = new ArrayList<MoneyInOut>();
-            long totalShootFishProfit = 0L;
+        long totalShootFishProfit = 0L;
         for (ReportMoneyModelNew log : logs) {
-            if (Consts.GAMES.contains(log.getActionName())  ) {
+            if (Consts.GAMES.contains(log.getActionName())) {
                 processListGameNew(listReport, log);
             } else if (Consts.VIN_IN_USER.contains(log.getActionName())) {
                 processListMoneyNew(listUserIn, log);
@@ -116,31 +114,31 @@ public class ReportMoneySystemNewProcessor implements BaseProcessor<HttpServletR
                 processListMoneyNew(listUserOut, log);
             } else if (Consts.VIN_OTHER.contains(log.getActionName())) {
                 processListMoneyNew(listOther, log);
-            }else if(log.getActionName().equals("Exchange")) {
+            } else if (log.getActionName().equals("Exchange")) {
                 totalShootFishProfit = log.totalIn;
             }
         }
         try {
 //        listReport = listGameReport;
-        ReportMoneyModel reportMoneyModel = new ReportMoneyModel(listReport, listUserIn, listUserInEvent, listUserOut, listOther);
+            ReportMoneyModel reportMoneyModel = new ReportMoneyModel(listReport, listUserIn, listUserInEvent, listUserOut, listOther);
             reportMoneyModel.UserMoney = user;
 
             reportMoneyModel.AgentMoneyIn = new MoneyInOut();
             reportMoneyModel.AgentMoneyOut = new MoneyInOut();
 
-        ObjectMapper mapper = new ObjectMapper();
+            ObjectMapper mapper = new ObjectMapper();
+            reportMoneyModel.totalShootFishProfit = totalShootFishProfit;
 
-
-        reportMoneyModel.totalShootFishProfit = totalShootFishProfit;
-
-        return mapper.writeValueAsString((Object) reportMoneyModel);
+            String json =  mapper.writeValueAsString(reportMoneyModel);
+            System.out.println(json);
+            return json;
         } catch (Exception e) {
             e.printStackTrace();
             return "{\"success\":false,\"errorCode\":\"1001\"}";
         }
     }
 
-    private String searchLogMoneyUser2(String nickName, String startTime, String endTime, boolean endToday) throws Exception{
+    private String searchLogMoneyUser2(String nickName, String startTime, String endTime, boolean endToday) throws Exception {
         List<ReportMoneySystemModelNew> listReport = new ArrayList<ReportMoneySystemModelNew>();
         List<MoneyInOut> listUserIn = new ArrayList<MoneyInOut>();
         List<MoneyInOut> listUserInEvent = new ArrayList<MoneyInOut>();
