@@ -52,11 +52,11 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
             }
 
 
-            GiftCodeService giftCodeService = new GiftCodeServiceImpl();
-            if (!giftCodeService.checkUserTransactionAfterUseGiftCode(nickname)) {
-                baseResponseModel = new BaseResponseModel(false, "Bạn chưa cược đủ 50% giá trị nạp Giftcode. Vui lòng cược thêm.");
-                return baseResponseModel.toJson();
-            }
+//            GiftCodeService giftCodeService = new GiftCodeServiceImpl();
+//            if (!giftCodeService.checkUserTransactionAfterUseGiftCode(nickname)) {
+//                baseResponseModel = new BaseResponseModel(false, "Bạn chưa cược đủ 50% giá trị nạp Giftcode. Vui lòng cược thêm.");
+//                return baseResponseModel.toJson();
+//            }
 
             long totalBetToday = getTotalBetToday(nickname);
             long fistRechargeValueToday = getFirstRechargeToday(nickname);
