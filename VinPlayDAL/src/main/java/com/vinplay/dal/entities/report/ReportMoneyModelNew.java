@@ -34,8 +34,6 @@ public class ReportMoneyModelNew {
         this.totalOut = doc.getLong("total_out");
         this.totalRefund = doc.getLong("total_refund");
         this.totalIn = doc.getLong("total_in");
-        this.revenue = doc.getLong("revenue");
-//        this.isGame = doc.getBoolean("s_game");
     }
 
     public void exchange(long moneyExchange){
