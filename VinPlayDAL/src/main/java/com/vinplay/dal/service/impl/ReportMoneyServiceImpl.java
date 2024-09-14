@@ -49,12 +49,12 @@ public class ReportMoneyServiceImpl implements ReportMoneyService {
         AggregateIterable<Document> aggregateResult =  collection.aggregate(Arrays.asList(
                 match(and(filters)),
                 group("$action_name"
-                        ,sum("$action_name", "$action_name")
                         ,sum("total_out", "$total_out")
                         ,sum("total_refund", "$total_refund")
                         ,sum("total_in", "$total_in")
                         ,sum("fee", "$fee")
-                        ,sum("revenue", "$revenue")
+                        ,sum("revenue", "$revenue"),
+                        first("action_name", "$action_name")
                 )  // GROUP BY và SUM
 
         ));
