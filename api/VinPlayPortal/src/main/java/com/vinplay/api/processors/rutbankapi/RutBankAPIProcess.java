@@ -58,13 +58,13 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
 //                return baseResponseModel.toJson();
 //            }
 
-            long totalBetToday = getTotalBetToday(nickname);
-            long fistRechargeValueToday = getFirstRechargeToday(nickname);
-            System.out.println(" totalBetToday = " + totalBetToday + " - firstCharge = " + fistRechargeValueToday);
-            if (totalBetToday <= 0 || fistRechargeValueToday <= 0 || totalBetToday < fistRechargeValueToday / 2) {
-                baseResponseModel = new BaseResponseModel(false, "Bạn chưa cược đủ 50% giá trị mã nạp đầu tiên. Vui lòng cược thêm.");
-                return baseResponseModel.toJson();
-            }
+//            long totalBetToday = getTotalBetToday(nickname);
+//            long fistRechargeValueToday = getFirstRechargeToday(nickname);
+//            System.out.println(" totalBetToday = " + totalBetToday + " - firstCharge = " + fistRechargeValueToday);
+//            if (totalBetToday <= 0 || fistRechargeValueToday <= 0 || totalBetToday < fistRechargeValueToday / 2) {
+//                baseResponseModel = new BaseResponseModel(false, "Bạn chưa cược đủ 50% giá trị mã nạp đầu tiên. Vui lòng cược thêm.");
+//                return baseResponseModel.toJson();
+//            }
 
             String type = request.getParameter("type");
             bankacc = bankacc.replaceAll("_", " ");
