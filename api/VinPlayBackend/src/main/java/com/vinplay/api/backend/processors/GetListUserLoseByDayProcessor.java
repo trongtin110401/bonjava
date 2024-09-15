@@ -12,12 +12,10 @@
 package com.vinplay.api.backend.processors;
 
 import com.vinplay.dal.dao.impl.LogMoneyUserDaoImpl;
-import com.vinplay.usercore.service.OtherService;
-import com.vinplay.usercore.service.impl.OtherServiceImpl;
+import com.vinplay.dal.service.impl.ReportMoneyServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.response.LogUserMoneyResponse;
-import com.vinplay.vbee.common.response.MoneyShootFishResponse;
 import com.vinplay.vbee.common.response.UserLoseByDay;
 import com.vinplay.vbee.common.response.UserLoseByDayResponse;
 import com.vinplay.vbee.common.statics.Consts;
@@ -41,28 +39,26 @@ public class GetListUserLoseByDayProcessor implements BaseProcessor<HttpServletR
             int pageSize = getParameter(request, "pageSize", 50);
 
             // Get Fish profit and map by nickname
-            OtherService otherService = new OtherServiceImpl();
-            Map<String, Long> mapUserFishProfits = otherService.getTotalShootFish(timeStart, timeEnd, null)
-                    .stream()
-                    .collect(Collectors.toMap(
-                            MoneyShootFishResponse::getNickname,
-                            MoneyShootFishResponse::getTotalProfit,
-                            Long::sum)); // Merge profits in case of duplicate nicknames
+//            OtherService otherService = new OtherServiceImpl();
+//            Map<String, Long> mapUserFishProfits = otherService.getTotalShootFish(timeStart, timeEnd, null)
+//                    .stream()
+//                    .collect(Collectors.toMap(
+//                            MoneyShootFishResponse::getNickname,
+//                            MoneyShootFishResponse::getTotalProfit,
+//                            Long::sum)); // Merge profits in case of duplicate nicknames
 
             // Get user logs and aggregate their money exchanges
-            LogMoneyUserDaoImpl dao = new LogMoneyUserDaoImpl();
-            Map<String, Long> userMoneyMap = dao.getLogMoneyUser(timeStart, timeEnd).stream()
-                    .filter(log -> !Consts.NO_GAME.contains(log.getActionName()) && !"Exchange".equals(log.getActionName()))
-                    .collect(Collectors.groupingBy(
-                            LogUserMoneyResponse::getNickName,
-                            Collectors.summingLong(LogUserMoneyResponse::getMoneyExchange)));
+//            LogMoneyUserDaoImpl dao = new LogMoneyUserDaoImpl();
+            ReportMoneyServiceImpl reportMoneyService = new ReportMoneyServiceImpl();
+            Map<String, Long> userMoneyMap = reportMoneyService.getGameLoser(timeStart);
 
             // Adjust user money with fish profits using `Map.merge()`
-            mapUserFishProfits.forEach((nickname, profit) -> {
-                if (profit != 0) {
-                    userMoneyMap.merge(nickname, -profit, Long::sum); // Subtract profit from user money
-                }
-            });
+//            mapUserFishProfits.forEach((nickname, profit) -> {
+//                if (profit != 0) {
+//                    userMoneyMap.merge(nickname, -profit, Long::sum); // Subtract profit from user money
+//                }
+//            });
+
             // Convert map entries to UserLoseByDay and sort by money
             List<UserLoseByDay> userLoseByDays = userMoneyMap.entrySet().stream()
                     .map(entry -> {
@@ -100,7 +96,5 @@ public class GetListUserLoseByDayProcessor implements BaseProcessor<HttpServletR
             return defaultValue;
         }
     }
-
-
 }
 

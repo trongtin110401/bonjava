@@ -1,17 +1,13 @@
 package com.vinplay.dal.service.impl;
 
-import com.mongodb.BasicDBList;
-import com.mongodb.BasicDBObject;
-import com.mongodb.Block;
+import com.google.gson.Gson;
 import com.mongodb.client.AggregateIterable;
-import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.vinplay.dal.service.ReportMoneyService;
 import com.vinplay.dal.entities.report.ReportMoneyModelNew;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
-import com.vinplay.vbee.common.response.LogUserMoneyResponse;
-import com.vinplay.vbee.common.utils.VinPlayUtils;
+import com.vinplay.vbee.common.statics.Consts;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
@@ -19,13 +15,10 @@ import static com.mongodb.client.model.Aggregates.*;
 import static com.mongodb.client.model.Filters.*;
 import static com.mongodb.client.model.Accumulators.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class ReportMoneyServiceImpl implements ReportMoneyService {
-    public List<ReportMoneyModelNew> search(String nickName, String actionName, String timeStart, String timeEnd, int page, int totalRecord){
+    public List<ReportMoneyModelNew> search(String nickName, String actionName, String timeStart, String timeEnd, int page, int totalRecord) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
 
         List<Bson> filters = new ArrayList<>();
@@ -45,16 +38,15 @@ public class ReportMoneyServiceImpl implements ReportMoneyService {
             }
 
         }
-        MongoCollection<Document>  collection =  db.getCollection("report_money_game");
-        AggregateIterable<Document> aggregateResult =  collection.aggregate(Arrays.asList(
+        MongoCollection<Document> collection = db.getCollection("report_money_game");
+        AggregateIterable<Document> aggregateResult = collection.aggregate(Arrays.asList(
                 match(and(filters)),
                 group("$action_name"
-                        ,sum("total_out", "$total_out")
-                        ,sum("total_refund", "$total_refund")
-                        ,sum("total_in", "$total_in")
-                        ,sum("fee", "$fee")
-//                        ,sum("revenue", "$revenue"),
-                        ,first("action_name", "$action_name")
+                        , sum("total_out", "$total_out")
+                        , sum("total_refund", "$total_refund")
+                        , sum("total_in", "$total_in")
+                        , sum("fee", "$fee")
+                        , first("action_name", "$action_name")
                 )  // GROUP BY và SUM
 
         ));
@@ -67,4 +59,52 @@ public class ReportMoneyServiceImpl implements ReportMoneyService {
 
         return results;
     }
+
+
+    public Map<String, Long> getGameLoser(String reportDate) {
+
+        String games = new Gson().toJson(Consts.GAMES);
+
+        String query =
+                "  {\n" +
+                        "    $match: {\n" +
+                        "      report_date: \"" + reportDate + "\",\n" +
+                        "      action_name: { $in: " + games + ", $ne: \"HamCaMap\" }\n" +
+                        "    }\n" +
+                        "  },\n" +
+                        "  {\n" +
+                        "    $project: {\n" +
+                        "      nick_name: 1,\n" +
+                        "      total: { $add: [\"$total_in\", \"$total_out\", \"$total_refund\"] }\n" +
+                        "    }\n" +
+                        "  },\n" +
+                        "  {\n" +
+                        "    $match: {\n" +
+                        "      total: { $lt: 0 }\n" +
+                        "    }\n" +
+                        "  },\n" +
+                        "  {\n" +
+                        "    $group: {\n" +
+                        "      _id: \"$nick_name\",\n" +
+                        "      total: { $sum: \"$total\" }\n" +
+                        "    }\n" +
+                        "  },\n" +
+                        "  {\n" +
+                        "    $sort: { total: 1 } \n" +
+                        "  }";
+
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("report_money_game");
+        AggregateIterable<Document> aggregateIterable = collection.aggregate(Arrays.asList(Document.parse(query)));
+
+
+        Map<String, Long> results = new HashMap<>();
+        for (Document document : aggregateIterable) {
+            String nickname = document.getString("_id");
+            long amount = document.getLong("total");
+            results.put(nickname, amount);
+        }
+        return results;
+    }
+
 }

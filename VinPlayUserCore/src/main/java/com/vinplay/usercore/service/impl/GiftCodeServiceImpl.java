@@ -456,15 +456,6 @@ public class GiftCodeServiceImpl
             }
         }
 
-        // Thống kê GIFTCODE theo danh sách campain được truyền vào
-//        List<String> types = campaigns.keySet().stream().map(String::valueOf).collect(Collectors.toList());
-//        String strTypes = new Gson().toJson(types);
-
-        // Xây dựng pipeline để thực hiện truy vấn
-
-        // Danh sách type được truyền vào
-//        List<String> types = Arrays.asList("1725850870622", "someOtherType");
-
         // Tạo pipeline của aggregation
         MongoCollection<Document> col = db.getCollection("gift_code");
         AggregateIterable<Document> result = col.aggregate(Arrays.asList(
