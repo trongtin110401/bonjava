@@ -466,13 +466,20 @@ public class GiftCodeServiceImpl
         // Danh sách type được truyền vào
 //        List<String> types = Arrays.asList("1725850870622", "someOtherType");
 
-        /// Xây dựng pipeline để thực hiện truy vấn
-        AggregateIterable<Document> result = collection.aggregate(Arrays.asList(
+        // Xây dựng pipeline
+        List<Document> pipeline = Arrays.asList(
+                new Document("$match", new Document("type", new Document("$in", Arrays.asList("1725850870622", "someOtherType")))),
                 new Document("$group", new Document("_id", "$type")
                         .append("total_code", new Document("$sum", 1))
-                        .append("total_active", new Document("$sum", new Document("$cond", Arrays.asList(new Document("$eq", Arrays.asList("$active", true)), 1, 0))))
-                        .append("total_used", new Document("$sum", new Document("$cond", Arrays.asList(new Document("$ne", Arrays.asList("$used_time", null)), 1, 0))))
-                        .append("total_unused", new Document("$sum", new Document("$cond", Arrays.asList(new Document("$eq", Arrays.asList("$used_time", null)), 1, 0))))
+                        .append("total_active", new Document("$sum", new Document("$cond", new Document("if", new Document("$eq", Arrays.asList("$active", true)))
+                                .append("then", 1)
+                                .append("else", 0))))
+                        .append("total_used", new Document("$sum", new Document("$cond", new Document("if", new Document("$ne", Arrays.asList("$used_time", null)))
+                                .append("then", 1)
+                                .append("else", 0))))
+                        .append("total_unused", new Document("$sum", new Document("$cond", new Document("if", new Document("$eq", Arrays.asList("$used_time", null)))
+                                .append("then", 1)
+                                .append("else", 0))))
                 ),
                 new Document("$project", new Document("_id", 0)
                         .append("type", "$_id")
@@ -480,10 +487,10 @@ public class GiftCodeServiceImpl
                         .append("total_active", 1)
                         .append("total_used", 1)
                         .append("total_unused", 1))
-        ));
+        );
 
         // Gán lại kết quả thống kê cho campaign
-        for (Document doc : result) {
+        for (Document doc : pipeline) {
             String type = doc.getString("type");
             int totalCode = doc.getInteger("total_code", 0);
             int totalActive = doc.getInteger("total_active", 0);
