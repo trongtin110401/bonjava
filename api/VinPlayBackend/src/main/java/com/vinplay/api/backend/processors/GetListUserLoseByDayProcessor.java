@@ -50,7 +50,7 @@ public class GetListUserLoseByDayProcessor implements BaseProcessor<HttpServletR
             // Get user logs and aggregate their money exchanges
 //            LogMoneyUserDaoImpl dao = new LogMoneyUserDaoImpl();
             ReportMoneyServiceImpl reportMoneyService = new ReportMoneyServiceImpl();
-            Map<String, Long> userMoneyMap = reportMoneyService.getGameLoser(timeStart, pageIndex, pageSize);
+            Map<String, Long> userMoneyMap = reportMoneyService.getGameLoser(timeStart, null, pageIndex, pageSize);
 
             // Adjust user money with fish profits using `Map.merge()`
 //            mapUserFishProfits.forEach((nickname, profit) -> {
