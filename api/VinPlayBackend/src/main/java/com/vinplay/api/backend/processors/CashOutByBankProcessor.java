@@ -45,7 +45,7 @@ import java.util.LinkedList;
 public class CashOutByBankProcessor implements BaseProcessor<HttpServletRequest, String> {
     private static final Logger logger = Logger.getLogger((String) "backend");
     private static final int MAX_ITEM = 15;
-    private static LinkedList<BlockByTran> listTranBlock = new LinkedList<BlockByTran>();
+//    private static LinkedList<BlockByTran> listTranBlock = new LinkedList<BlockByTran>();
 
     public synchronized String execute(Param<HttpServletRequest> param) {
         ResultCashOutByBankResponse response = new ResultCashOutByBankResponse(false, "1001");
@@ -91,9 +91,9 @@ public class CashOutByBankProcessor implements BaseProcessor<HttpServletRequest,
                 if (status == null || status.isEmpty()) {
                     return "";
                 }
-                if (!checkBlockTran(transid)) {
-                    return "Thao tác quá nhanh";
-                }
+//                if (!checkBlockTran(transid)) {
+//                    return "Thao tác quá nhanh";
+//                }
                 //find trans
                 UserWithdraw userWithdraw = cashoutDao.FindCashoutBankById(transid);
                 if (userWithdraw == null) {
@@ -157,30 +157,30 @@ public class CashOutByBankProcessor implements BaseProcessor<HttpServletRequest,
     }
 
     public boolean checkBlockTran(String transid) {
-        try {
-            if (!listTranBlock.isEmpty() && listTranBlock.size() > 300) {
-                System.out.println("Đẩy 1 phần tử ra ngoài: " + listTranBlock.pop());
-            }
-            for (BlockByTran object : listTranBlock) {
-                if (object.transid.equals(transid)) {
-                    long curentTimeStamp = new Date().getTime();
-                    long difftime = curentTimeStamp - object.timeStamp;
-                    if (difftime < 20000) {
-                        return false;
-                    } else {
-                        object.timeStamp = new Date().getTime();
-                        return true;
-                    }
-                }
-            }
-            BlockByTran blockByTran = new BlockByTran();
-            blockByTran.transid = transid;
-            listTranBlock.add(blockByTran);
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
+//        try {
+////            if (!listTranBlock.isEmpty() && listTranBlock.size() > 300) {
+////                System.out.println("Đẩy 1 phần tử ra ngoài: " + listTranBlock.pop());
+////            }
+//            for (BlockByTran object : listTranBlock) {
+//                if (object.transid.equals(transid)) {
+//                    long curentTimeStamp = new Date().getTime();
+//                    long difftime = curentTimeStamp - object.timeStamp;
+//                    if (difftime < 20000) {
+//                        return false;
+//                    } else {
+//                        object.timeStamp = new Date().getTime();
+//                        return true;
+//                    }
+//                }
+//            }
+//            BlockByTran blockByTran = new BlockByTran();
+//            blockByTran.transid = transid;
+//            listTranBlock.add(blockByTran);
+//            return true;
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+        return true;
     }
 
     String sendMesToAdmin(String transID, int status) {

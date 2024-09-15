@@ -82,6 +82,13 @@ public class LogMoneyUserDaoImpl implements LogMoneyUserDao {
         HashMap<String, Object> conditions = new HashMap<String, Object>();
         FindIterable iterable = null;
         BasicDBObject obj = new BasicDBObject();
+
+        if (timeStart != null && !timeStart.equals("") && timeEnd != null && !timeEnd.equals("")) {
+            obj.put("$gte", (Object) timeStart);
+            obj.put("$lte", (Object) timeEnd);
+            conditions.put("trans_time", obj);
+        }
+
         int numStart = (page - 1) * totalRecord;
         if (nickName != null && !nickName.equals("")) {
             conditions.put("nick_name", nickName);
@@ -95,16 +102,10 @@ public class LogMoneyUserDaoImpl implements LogMoneyUserDao {
         if (serviceName != null && !serviceName.equals("")) {
             conditions.put("service_name", serviceName);
         }
-        if (timeStart != null && !timeStart.equals("") && timeEnd != null && !timeEnd.equals("")) {
-            obj.put("$gte", (Object) timeStart);
-            obj.put("$lte", (Object) timeEnd);
-            conditions.put("trans_time", obj);
-        }
         if (moneyType.equals("vin")) {
             BasicDBObject objsort = new BasicDBObject();
             objsort.put("trans_id", -1);
             iterable = db.getCollection("log_money_user_vin").find((Bson) new Document(conditions)).sort(objsort).skip(numStart).limit(totalRecord);
-
         }
 
         iterable.forEach((Block) new Block<Document>() {
