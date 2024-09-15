@@ -10,6 +10,7 @@
  */
 package com.vinplay.api.backend.processors;
 
+import com.vinplay.usercore.dao.impl.MailBoxDaoImpl;
 import com.vinplay.usercore.service.impl.MailBoxServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
@@ -24,8 +25,8 @@ implements BaseProcessor<HttpServletRequest, String> {
         String mailId = request.getParameter("mid");
         String nickname = request.getParameter("nickname");
         if (!mailId.isEmpty()) {
-            MailBoxServiceImpl service = new MailBoxServiceImpl();
-            int del = service.deleteMailBoxAdmin(mailId);
+            MailBoxDaoImpl dao = new MailBoxDaoImpl();
+            int del = dao.deleteMailBoxByIdAndNickname(mailId,nickname);
             if (del == 0) {
                 response.setErrorCode("0");
                 response.setSuccess(true);
