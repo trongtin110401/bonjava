@@ -79,7 +79,7 @@ public class ReportTopGameProcessor2 implements BaseProcessor<HttpServletRequest
             return res.toJson();
         } catch (Exception ex) {
             ex.printStackTrace();
-            return null;
+            return res.toJson();
         }
     }
 }
