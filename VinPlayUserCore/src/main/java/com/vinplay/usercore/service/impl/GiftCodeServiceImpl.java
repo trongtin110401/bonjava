@@ -466,7 +466,7 @@ public class GiftCodeServiceImpl
         // Danh sách type được truyền vào
 //        List<String> types = Arrays.asList("1725850870622", "someOtherType");
 
-        // Xây dựng pipeline để thực hiện truy vấn
+        /// Xây dựng pipeline để thực hiện truy vấn
         AggregateIterable<Document> result = collection.aggregate(Arrays.asList(
                 new Document("$group", new Document("_id", "$type")
                         .append("total_code", new Document("$sum", 1))
