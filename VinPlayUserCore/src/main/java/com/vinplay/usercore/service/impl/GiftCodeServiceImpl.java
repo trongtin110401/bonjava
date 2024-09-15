@@ -507,10 +507,10 @@ public class GiftCodeServiceImpl
         // gán lại kết quả thống kê cho campaign
         for (Document doc : result) {
             String type = doc.getString("type");
-            int totalCode = doc.getInteger("total_code");
-            int totalActive = doc.getInteger("total_active");
-            int totalUsed = doc.getInteger("total_used");
-            int totalUnused = doc.getInteger("total_unused");
+            long totalCode = doc.getLong("total_code");
+            long totalActive = doc.getLong("total_active");
+            long totalUsed = doc.getLong("total_used");
+            long totalUnused = doc.getLong("total_unused");
 
             campaigns.get(Long.valueOf(type)).setTotal(totalCode);
             campaigns.get(Long.valueOf(type)).setQuantityActiveCode(totalActive);
