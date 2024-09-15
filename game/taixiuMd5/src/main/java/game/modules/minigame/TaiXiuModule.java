@@ -493,6 +493,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         } else{
             this.result = 0;
         }
+        Debug.trace("GENERATE KẾT QUẢ MD5 TRƯỚC: " + dices[0] + " - " + dices[1] + " - " + dices[2] + "   " + this.result);
     }
 
 
