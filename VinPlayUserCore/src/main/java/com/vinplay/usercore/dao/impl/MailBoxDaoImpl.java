@@ -169,6 +169,28 @@ public class MailBoxDaoImpl
     }
 
     @Override
+    public int deleteMailBoxByIdAndNickname(String id, String nickname) {
+        final MongoDatabase db = MongoDBConnectionFactory.getDB();
+        final BasicDBObject obj = new BasicDBObject();
+        obj.put("mail_id", id);
+        HashMap<String, Object> conditions = new HashMap<String, Object>();
+        conditions.put("mail_id", id);
+        FindIterable iterable = db.getCollection("mail_box").find((Bson) new Document(conditions));
+        iterable.forEach((Block) new Block<Document>() {
+
+            public void apply(Document document) {
+                if (!document.getString((Object) "nick_name").equals("*")) {
+                    db.getCollection("mail_box").deleteOne((Bson) obj);
+                    MailBoxDaoImpl.this.flag = 0;
+                } else {
+                    MailBoxDaoImpl.this.flag = 1;
+                }
+            }
+        });
+        return this.flag;
+    }
+
+    @Override
     public int countMailBox(String nickName) {
         int record = 0;
         MongoDatabase db = MongoDBConnectionFactory.getDB();
@@ -313,7 +335,7 @@ public class MailBoxDaoImpl
         List<Bson> pipeline = new ArrayList<>();
 
         // Add nickname condition if it's not null
-        if (nickname != null) {
+        if (nickname != null && !nickname.isEmpty()) {
             pipeline.add(Aggregates.match(Filters.eq("nick_name", nickname)));
         }
 
