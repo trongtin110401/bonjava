@@ -443,22 +443,6 @@ public class GiftCodeServiceImpl
                 CampaignName campaign = new CampaignName();
                 campaign.setId(document.getLong("_id"));
                 campaign.setCampaignName(document.getString("name"));
-
-//                MongoCollection<Document> giftCode = db.getCollection("gift_code");
-//
-//                Bson activeQuery = Filters.and(Filters.eq("type", String.valueOf(document.getLong("_id"))), Filters.eq("active", true));
-//                Bson unusedQuery = Filters.and(Filters.eq("type", String.valueOf(document.getLong("_id"))), Filters.eq("used_time", null));
-//                Bson usedQuery = Filters.and(Filters.eq("type", String.valueOf(document.getLong("_id"))), Filters.ne("used_time", null));
-//
-//                long active = giftCode.count(activeQuery);
-//                long unused = giftCode.count(unusedQuery);
-//                long used = giftCode.count(usedQuery);
-//
-//                campaign.setQuantityActiveCode(active);
-//                campaign.setUnused(unused);
-//                campaign.setUsed(used);
-//                campaign.setTotal(unused + used);
-
                 campaigns.put(campaign.getId(), campaign);
             }
         }
