@@ -40,11 +40,13 @@ import com.vinplay.vbee.common.statics.Consts;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
+import org.python.parser.ast.Str;
 
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class GiftCodeServiceImpl
         implements GiftCodeService {
@@ -415,7 +417,6 @@ public class GiftCodeServiceImpl
     }
 
 
-
     public void insertCampaignName(String campaignName) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("campaign_gift_code");
@@ -430,35 +431,71 @@ public class GiftCodeServiceImpl
     }
 
     public List<CampaignName> getAllCampaign() {
-        List<CampaignName> campaignNames = new ArrayList<>();
+        Map<Long, CampaignName> campaigns = new HashMap<>();
+
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("campaign_gift_code");
         Document sortCriteria = new Document("_id", 1);
         try (MongoCursor<Document> cursor = collection.find().sort(sortCriteria).iterator()) {
             while (cursor.hasNext()) {
                 Document document = cursor.next();
-                CampaignName campaignName = new CampaignName();
-                campaignName.setId(document.getLong("_id"));
-                campaignName.setCampaignName(document.getString("name"));
+                CampaignName campaign = new CampaignName();
+                campaign.setId(document.getLong("_id"));
+                campaign.setCampaignName(document.getString("name"));
 
-                MongoCollection<Document> giftCode = db.getCollection("gift_code");
+//                MongoCollection<Document> giftCode = db.getCollection("gift_code");
+//
+//                Bson activeQuery = Filters.and(Filters.eq("type", String.valueOf(document.getLong("_id"))), Filters.eq("active", true));
+//                Bson unusedQuery = Filters.and(Filters.eq("type", String.valueOf(document.getLong("_id"))), Filters.eq("used_time", null));
+//                Bson usedQuery = Filters.and(Filters.eq("type", String.valueOf(document.getLong("_id"))), Filters.ne("used_time", null));
+//
+//                long active = giftCode.count(activeQuery);
+//                long unused = giftCode.count(unusedQuery);
+//                long used = giftCode.count(usedQuery);
+//
+//                campaign.setQuantityActiveCode(active);
+//                campaign.setUnused(unused);
+//                campaign.setUsed(used);
+//                campaign.setTotal(unused + used);
 
-                Bson activeQuery = Filters.and(Filters.eq("type", String.valueOf(document.getLong("_id"))), Filters.eq("active", true));
-                Bson unusedQuery = Filters.and(Filters.eq("type", String.valueOf(document.getLong("_id"))), Filters.eq("used_time", null));
-                Bson usedQuery = Filters.and(Filters.eq("type", String.valueOf(document.getLong("_id"))), Filters.ne("used_time", null));
-
-                long active = giftCode.count(activeQuery);
-                long unused = giftCode.count(unusedQuery);
-                long used = giftCode.count(usedQuery);
-                campaignName.setQuantityActiveCode(active);
-                campaignName.setUnused(unused);
-                campaignName.setUsed(used);
-                campaignName.setTotal(unused + used);
-
-                campaignNames.add(campaignName);
+                campaigns.put(campaign.getId(), campaign);
             }
         }
-        return campaignNames;
+
+        // Thống kê GIFTCODE theo danh sách campain được truyền vào
+        List<String> types = campaigns.keySet().stream().map(String::valueOf).collect(Collectors.toList());
+        AggregateIterable<Document> result = db.getCollection("gift_code").aggregate(Arrays.asList(
+                // Thêm điều kiện lọc theo danh sách type
+                new Document("$match", new Document("type", new Document("$in", types))),
+                new Document("$group", new Document("_id", "$type")
+                        .append("total_code", new Document("$sum", 1))
+                        .append("total_active", new Document("$sum", new Document("$cond", Arrays.asList(new Document("$eq", Arrays.asList("$active", true)), 1, 0))))
+                        .append("total_used", new Document("$sum", new Document("$cond", Arrays.asList(new Document("$ne", Arrays.asList("$used_time", null)), 1, 0))))
+                        .append("total_unused", new Document("$sum", new Document("$cond", Arrays.asList(new Document("$eq", Arrays.asList("$used_time", null)), 1, 0))))
+                ),
+                new Document("$project", new Document("_id", 0)
+                        .append("type", "$_id")
+                        .append("total_code", 1)
+                        .append("total_active", 1)
+                        .append("total_used", 1)
+                        .append("total_unused", 1))
+        ));
+
+        // gán lại kết quả thống kê cho campaign
+        for (Document doc : result) {
+            String type = doc.getString("type");
+            int totalCode = doc.getInteger("total_code");
+            int totalActive = doc.getInteger("total_active");
+            int totalUsed = doc.getInteger("total_used");
+            int totalUnused = doc.getInteger("total_unused");
+
+            campaigns.get(Long.valueOf(type)).setTotal(totalCode);
+            campaigns.get(Long.valueOf(type)).setQuantityActiveCode(totalActive);
+            campaigns.get(Long.valueOf(type)).setUsed(totalUsed);
+            campaigns.get(Long.valueOf(type)).setUsed(totalUnused);
+        }
+
+        return new ArrayList<>(campaigns.values());
     }
 
     public List<CampaignName> getAllCampaignWithoutGiftCodeInfo() {
