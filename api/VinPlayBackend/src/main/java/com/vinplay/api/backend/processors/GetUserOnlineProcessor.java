@@ -34,7 +34,7 @@ public class GetUserOnlineProcessor implements BaseProcessor<HttpServletRequest,
         HttpServletRequest request = param.get();
         UserOnlineResponse response = new UserOnlineResponse(true, "200");
         HazelcastInstance instance = HazelcastClientFactory.getInstance();
-        IMap<String, Object> userOnlines = instance.getMap("USER_ONLINE");
+        IMap<String, UserInfo> userOnlines = instance.getMap("USER_ONLINE");
 
 
         int pageIndex = getParameter(request, "pageIndex", 1);
@@ -42,7 +42,7 @@ public class GetUserOnlineProcessor implements BaseProcessor<HttpServletRequest,
 
         List<String> usernames = getPage(new ArrayList<>(userOnlines.keySet()), pageIndex, pageSize);
         List<UserCCUResponse> userOnlineResponse = usernames.stream().map(nickname -> {
-            UserInfo userInfo = (UserInfo) userOnlines.get(nickname);
+            UserInfo userInfo = userOnlines.get(nickname);
 
             UserModel userModel = (UserModel) HazelcastClientFactory.getInstance().getMap("cache_user").get(nickname);
 
