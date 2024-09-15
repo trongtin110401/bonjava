@@ -19,6 +19,7 @@
 package com.vinplay.usercore.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.gson.Gson;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.mongodb.BasicDBObject;
@@ -479,6 +480,8 @@ public class GiftCodeServiceImpl
             campaigns.get(Long.valueOf(type)).setUsed(totalUsed);
             campaigns.get(Long.valueOf(type)).setUsed(totalUnused);
         }
+
+        new Gson().toJson(campaigns.values());
 
         return new ArrayList<>(campaigns.values());
     }
