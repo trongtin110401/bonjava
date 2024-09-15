@@ -342,6 +342,7 @@ public class MailBoxDaoImpl
             pipeline.add(Aggregates.match(Filters.eq("nick_name", nickname)));
         }
 
+
         // Group by mail_id to ensure distinct mail_id records
         pipeline.add(Aggregates.group("$mail_id",
                 Accumulators.first("mail_id", "$mail_id"),
