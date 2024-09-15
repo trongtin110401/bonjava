@@ -496,7 +496,7 @@ public class GiftCodeServiceImpl
 
         // Gán lại kết quả thống kê cho campaign
         for (Document doc : result) {
-            String type = doc.getObjectId("_id").toString();
+            String type = doc.getString("_id");
             int totalCode = doc.getInteger("total_records", 0);
             int totalActive = doc.getInteger("total_active", 0);
             int totalUsed = doc.getInteger("total_used", 0);
