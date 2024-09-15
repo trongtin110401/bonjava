@@ -472,7 +472,7 @@ public class GiftCodeServiceImpl
                 Document.parse("[\n" +
                         "{\n" +
                                 "    $match: {\n" +
-                                "      type: { $in: [\"1725976072252\", \"1726189822450\", \"type3\"] } // Điều kiện lọc theo danh sách type\n" +
+                                "      type: { $in: [\"1725976072252\", \"1726189822450\", \"type3\"] } \n" +
                                 "    }\n" +
                                 "  }," +
                         "  {\n" +
