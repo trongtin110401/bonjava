@@ -469,11 +469,6 @@ public class GiftCodeServiceImpl
         // Tạo pipeline của aggregation
         MongoCollection<Document> col = db.getCollection("gift_code");
         AggregateIterable<Document> result = col.aggregate(Arrays.asList(
-                Document.parse("[{\n" +
-                        "    $match: {\n" +
-                        "      type: { $in: [\"1726103845294\", \"1725976072252\", \"type3\"] } \n" +
-                        "    }\n" +
-                        "  }]"),
                 Document.parse("[\n" +
                         "  {\n" +
                         "    $group: {\n" +
