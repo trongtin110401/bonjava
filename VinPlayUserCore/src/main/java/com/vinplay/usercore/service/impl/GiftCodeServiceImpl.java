@@ -469,17 +469,28 @@ public class GiftCodeServiceImpl
         // Tạo pipeline của aggregation
         MongoCollection<Document> col = db.getCollection("gift_code");
         AggregateIterable<Document> result = col.aggregate(Arrays.asList(
-                new Document("$group", new Document("_id", "$type")
-                        .append("total_records", new Document("$sum", 1))
-                        .append("total_active", new Document("$sum",
-                                new Document("$cond", Arrays.asList(
-                                        new Document("$eq", Arrays.asList("$active", true)), 1, 0))
-                        ))
-                        .append("total_used", new Document("$sum",
-                                new Document("$cond", Arrays.asList(
-                                        new Document("$gt", Arrays.asList("$used_time", "2024")), 1, 0))
-                        ))
-                )
+                Document.parse("[\n" +
+                        "  {\n" +
+                        "    $group: {\n" +
+                        "      _id: \"$type\",\n" +
+                        "      total_records: { $sum: 1 }, \n" +
+                        "      total_active: {\n" +
+                        "        $sum: {\n" +
+                        "          $cond: [{ $eq: [\"$active\", true] }, 1, 0]\n" +
+                        "        }\n" +
+                        "      },\n" +
+                        "      total_used: {\n" +
+                        "        $sum: {\n" +
+                        "          $cond: [\n" +
+                        "            { $gt: [\"$used_time\", \"2024\"] },\n" +
+                        "            1,\n" +
+                        "            0\n" +
+                        "          ]\n" +
+                        "        }\n" +
+                        "      }\n" +
+                        "    }\n" +
+                        "  }\n" +
+                        "]")
         ));
 
         // Gán lại kết quả thống kê cho campaign
