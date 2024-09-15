@@ -455,26 +455,54 @@ public class GiftCodeServiceImpl
 
         // Xây dựng pipeline để thực hiện truy vấn
 
-        AggregateIterable<Document> result = collection.aggregate(Arrays.asList(
-                new Document("$group", new Document("_id", "$type")
-                        .append("total_code", new Document("$sum", 1))
-                        .append("total_active", new Document("$sum", new Document("$cond", Arrays.asList(
-                                new Document("$eq", Arrays.asList("$active", true)), 1, 0
-                        ))))
-                        .append("total_used", new Document("$sum", new Document("$cond", Arrays.asList(
-                                new Document("$ne", Arrays.asList("$used_time", null)), 1, 0
-                        ))))
-                        .append("total_unused", new Document("$sum", new Document("$cond", Arrays.asList(
-                                new Document("$eq", Arrays.asList("$used_time", null)), 1, 0
-                        ))))
-                ),
-                new Document("$project", new Document("_id", 0)
-                        .append("type", "$_id")
-                        .append("total_code", 1)
-                        .append("total_active", 1)
-                        .append("total_used", 1)
-                        .append("total_unused", 1))
-        ));
+        String query = "{\n" +
+                "    $group: {\n" +
+                "      _id: \"$type\",\n" +
+                "      total_code: { $sum: 1 },\n" +
+                "      total_active: {\n" +
+                "        $sum: {\n" +
+                "          $cond: {\n" +
+                "            if: { $eq: [\"$active\", true] },\n" +
+                "            then: 1,\n" +
+                "            else: 0\n" +
+                "          }\n" +
+                "        }\n" +
+                "      },\n" +
+                "      total_used: {\n" +
+                "        $sum: {\n" +
+                "          $cond: {\n" +
+                "            if: { $ne: [\"$used_time\", null] },\n" +
+                "            then: 1,\n" +
+                "            else: 0\n" +
+                "          }\n" +
+                "        }\n" +
+                "      },\n" +
+                "      total_unused: {\n" +
+                "        $sum: {\n" +
+                "          $cond: {\n" +
+                "            if: { $eq: [\"$used_time\", null] },\n" +
+                "            then: 1,\n" +
+                "            else: 0\n" +
+                "          }\n" +
+                "        }\n" +
+                "      }\n" +
+                "    }\n" +
+                "  },\n" +
+                "  {\n" +
+                "    $project: {\n" +
+                "      _id: 0,\n" +
+                "      type: \"$_id\",\n" +
+                "      total_code: 1,\n" +
+                "      total_active: 1,\n" +
+                "      total_used: 1,\n" +
+                "      total_unused: 1\n" +
+                "    }\n" +
+                "  }\n" +
+                "]";
+
+        Document document = Document.parse(query);
+
+        AggregateIterable<Document> result = collection.aggregate(Arrays.asList(document ));
 
         // gán lại kết quả thống kê cho campaign
         for (Document doc : result) {
