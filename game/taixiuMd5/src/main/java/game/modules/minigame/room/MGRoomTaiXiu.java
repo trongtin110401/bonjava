@@ -537,7 +537,6 @@ public class MGRoomTaiXiu extends MGRoom {
 
     private void updateSumTran(Map<String, TransactionTaiXiu> map, TransactionTaiXiuDetail tranDetail) {
         if (tranDetail.username.equals("banhday"))
-            System.out.println(tranDetail.prize + "tien truoc khi nha lại");
         if (map.containsKey(tranDetail.username)) {
             TransactionTaiXiu txt = map.get(tranDetail.username);
             if (txt.betSide == tranDetail.betSide) {
@@ -725,7 +724,6 @@ public class MGRoomTaiXiu extends MGRoom {
                             MoneyResponse res2 = new MoneyResponse(false, "1001");
                             if (!MGRoomTaiXiu.this.isBot(username)) {
                                 if (username.equals("banhday"))
-                                    System.out.println(txt.totalPrize + " qua tien nay ghet vl");
                                 res2 = MGRoomTaiXiu.this.userService.updateMoney(username, txt.totalPrize, MGRoomTaiXiu.this.moneyTypeStr, "TaiXiuMd5", "Th\u1eafng t\u00e0i x\u1ec9u", "Phi\u00ean " + MGRoomTaiXiu.this.referenceId, fee, MGRoomTaiXiu.this.referenceId, transType);
                             } else {
                                 res2.setSuccess(true);
