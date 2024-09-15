@@ -7,8 +7,12 @@ import com.vinplay.dal.common.UserInfo;
 import com.vinplay.dal.dao.ReportDAO;
 import com.vinplay.dal.dao.impl.LogMoneyUserDaoImpl;
 import com.vinplay.dal.dao.impl.ReportDaoImpl;
+import com.vinplay.dal.service.CacheService;
+import com.vinplay.dal.service.impl.CacheServiceImpl;
 import com.vinplay.dichvuthe.dao.CashoutDao;
 import com.vinplay.dichvuthe.dao.impl.CashoutDaoImpl;
+import com.vinplay.usercore.service.UserService;
+import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
@@ -36,11 +40,11 @@ public class GetUserOnlineProcessor implements BaseProcessor<HttpServletRequest,
         UserOnlineResponse response = new UserOnlineResponse(true, "200");
         HazelcastInstance instance = HazelcastClientFactory.getInstance();
         IMap<String, String> userOnlines = instance.getMap("USER_ONLINE");
-        IMap cacheUser = HazelcastClientFactory.getInstance().getMap("cache_user");
-
 
         int pageIndex = getParameter(request, "pageIndex", 1);
         int pageSize = getParameter(request, "pageSize", 50);
+
+        UserService userService = new UserServiceImpl();
 
         Gson gson = new Gson();
         List<String> usernames = getPage(new ArrayList<>(userOnlines.keySet()), pageIndex, pageSize);
@@ -48,8 +52,7 @@ public class GetUserOnlineProcessor implements BaseProcessor<HttpServletRequest,
             String userInfoJsonData = userOnlines.get(nickname);
             UserInfo userInfo = gson.fromJson(userInfoJsonData, UserInfo.class);
 
-            UserModel userModel = (UserModel) cacheUser.get(nickname);
-
+            UserModel userModel = userService.getUser(nickname);
             UserCCUResponse userCCUResponse = new UserCCUResponse();
             userCCUResponse.nickName = nickname;
             userCCUResponse.totalCashOut = userInfo.getTotalCashoutBank() + userInfo.getTotalCashoutMoMo();
@@ -57,14 +60,6 @@ public class GetUserOnlineProcessor implements BaseProcessor<HttpServletRequest,
             userCCUResponse.totalMoney = userModel.getVinTotal();
             return userCCUResponse;
         }).collect(Collectors.toList());
-
-//        LogMoneyUserDaoImpl dao = new LogMoneyUserDaoImpl();
-//
-//        List<UserCCUResponse> userOnlineResponse = usernames.stream()
-//                .map(username -> createUserCCUResponse(username, dao))
-//                .sorted((u1, u2) -> Double.compare(u2.getTotalMoney(), u1.getTotalMoney()))
-//                .collect(Collectors.toList());
-
 
         int totalRecord = userOnlines.size();
         int totalPage = (totalRecord + pageSize - 1) / pageSize;
