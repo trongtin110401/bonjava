@@ -463,67 +463,47 @@ public class GiftCodeServiceImpl
 
         // Xây dựng pipeline để thực hiện truy vấn
 
-        String query = "{\n" +
-                "    $group: {\n" +
-                "      _id: \"$type\",\n" +
-                "      total_code: { $sum: 1 },\n" +
-                "      total_active: {\n" +
-                "        $sum: {\n" +
-                "          $cond: {\n" +
-                "            if: { $eq: [\"$active\", true] },\n" +
-                "            then: 1,\n" +
-                "            else: 0\n" +
-                "          }\n" +
-                "        }\n" +
-                "      },\n" +
-                "      total_used: {\n" +
-                "        $sum: {\n" +
-                "          $cond: {\n" +
-                "            if: { $ne: [\"$used_time\", null] },\n" +
-                "            then: 1,\n" +
-                "            else: 0\n" +
-                "          }\n" +
-                "        }\n" +
-                "      },\n" +
-                "      total_unused: {\n" +
-                "        $sum: {\n" +
-                "          $cond: {\n" +
-                "            if: { $eq: [\"$used_time\", null] },\n" +
-                "            then: 1,\n" +
-                "            else: 0\n" +
-                "          }\n" +
-                "        }\n" +
-                "      }\n" +
-                "    }\n" +
-                "  },\n" +
-                "  {\n" +
-                "    $project: {\n" +
-                "      _id: 0,\n" +
-                "      type: \"$_id\",\n" +
-                "      total_code: 1,\n" +
-                "      total_active: 1,\n" +
-                "      total_used: 1,\n" +
-                "      total_unused: 1\n" +
-                "    }\n" +
-                "  }\n" +
-                "]";
+        // Danh sách type được truyền vào
+        List<String> types = Arrays.asList("1725850870622", "someOtherType");
 
-        Document document = Document.parse(query);
+        // Xây dựng pipeline để thực hiện truy vấn
+        AggregateIterable<Document> result = collection.aggregate(Arrays.asList(
+                // Thêm điều kiện lọc theo danh sách type
+                new Document("$match", new Document("type", new Document("$in", types))),
+                new Document("$group", new Document("_id", "$type")
+                        .append("total_code", new Document("$sum", 1))
+                        .append("total_active", new Document("$sum", new Document("$cond", Arrays.asList(new Document("$eq", Arrays.asList("$active", true)), 1, 0))))
+                        .append("total_used", new Document("$sum", new Document("$cond", Arrays.asList(new Document("$ne", Arrays.asList("$used_time", null)), 1, 0))))
+                        .append("total_unused", new Document("$sum", new Document("$cond", Arrays.asList(new Document("$eq", Arrays.asList("$used_time", null)), 1, 0))))
+                ),
+                new Document("$project", new Document("_id", 0)
+                        .append("type", "$_id")
+                        .append("total_code", 1)
+                        .append("total_active", 1)
+                        .append("total_used", 1)
+                        .append("total_unused", 1))
+        ));
 
-        AggregateIterable<Document> result = collection.aggregate(Arrays.asList(document ));
-
-        // gán lại kết quả thống kê cho campaign
+        // Gán lại kết quả thống kê cho campaign
         for (Document doc : result) {
             String type = doc.getString("type");
-            Integer totalCode = doc.getInteger("total_code");
-            Integer totalActive = doc.getInteger("total_active");
-            Integer totalUsed = doc.getInteger("total_used");
-            Integer totalUnused = doc.getInteger("total_unused");
+            int totalCode = doc.getInteger("total_code", 0);
+            int totalActive = doc.getInteger("total_active", 0);
+            int totalUsed = doc.getInteger("total_used", 0);
+            int totalUnused = doc.getInteger("total_unused", 0);
 
-            campaigns.get(Long.valueOf(type)).setTotal(totalCode.longValue());
-            campaigns.get(Long.valueOf(type)).setQuantityActiveCode(totalCode.longValue());
-            campaigns.get(Long.valueOf(type)).setUsed(totalUsed.longValue());
-            campaigns.get(Long.valueOf(type)).setUsed(totalUnused.longValue());
+            // Hiển thị các giá trị để kiểm tra
+            System.out.println("Type: " + type);
+            System.out.println("Total Code: " + totalCode);
+            System.out.println("Total Active: " + totalActive);
+            System.out.println("Total Used: " + totalUsed);
+            System.out.println("Total Unused: " + totalUnused);
+            System.out.println("-----------------------------");
+
+            campaigns.get(Long.valueOf(type)).setTotal(totalCode);
+            campaigns.get(Long.valueOf(type)).setQuantityActiveCode(totalActive);
+            campaigns.get(Long.valueOf(type)).setUsed(totalUsed);
+            campaigns.get(Long.valueOf(type)).setUnused(totalUnused);
         }
 
         System.out.println(new Gson().toJson(campaigns.values()));
@@ -534,17 +514,17 @@ public class GiftCodeServiceImpl
 
     public List<CampaignName> getAllCampaignNew() {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
-        MongoCollection<Document>  collection =  db.getCollection("campaign_gift_code");
+        MongoCollection<Document> collection = db.getCollection("campaign_gift_code");
 
-        AggregateIterable<Document> aggregateResult =  collection.aggregate(Arrays.asList(
+        AggregateIterable<Document> aggregateResult = collection.aggregate(Arrays.asList(
                 //match(and(filters)),
                 group("$type"
-                        ,sum("total_code", "$total_code")
-                        ,sum("total_refund", "$total_refund")
-                        ,sum("total_in", "$total_in")
-                        ,sum("fee", "$fee")
+                        , sum("total_code", "$total_code")
+                        , sum("total_refund", "$active")
+                        , sum("total_used", "$used_time")
+                        , sum("total_unused", "$used_time")
 //                        ,sum("revenue", "$revenue"),
-                        ,first("action_name", "$action_name")
+                        //,first("action_name", "$action_name")
                 )  // GROUP BY và SUM
 
         ));
@@ -552,6 +532,7 @@ public class GiftCodeServiceImpl
         List<CampaignName> results = new ArrayList<>();
         return results;
     }
+
     public List<CampaignName> getAllCampaignWithoutGiftCodeInfo() {
         List<CampaignName> campaignNames = new ArrayList<>();
         MongoDatabase db = MongoDBConnectionFactory.getDB();
