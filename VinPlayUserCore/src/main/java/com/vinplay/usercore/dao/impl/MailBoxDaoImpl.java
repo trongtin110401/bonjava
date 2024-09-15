@@ -382,10 +382,11 @@ public class MailBoxDaoImpl
         });
         long totalRecords = db.getCollection("mail_box")
                 .aggregate(Arrays.asList(
-                        Aggregates.match(nickname != null ? Filters.eq("nick_name", nickname) : Filters.exists("mail_id")),
+                        Aggregates.match(!nickname.isEmpty() ? Filters.eq("nick_name", nickname) : Filters.exists("mail_id")),
                         Aggregates.group("$mail_id")
                 ))
                 .into(new ArrayList<>()).size();
+
         // Set results and total distinct records in response
         response.setTransactions(results);
         response.setTotalRecords((int) totalRecords);
