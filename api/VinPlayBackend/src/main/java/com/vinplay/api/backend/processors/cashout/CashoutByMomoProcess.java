@@ -93,19 +93,19 @@ public class CashoutByMomoProcess implements BaseProcessor<HttpServletRequest, S
                     UserServiceImpl userService = new UserServiceImpl();
                     long fee = userWithdraw.AmountReal - userWithdraw.Amount;
                     boolean refund = userService.refundWhenError(userWithdraw.Nickname, userWithdraw.AmountReal, fee);
-
-                    String trangThai = "Từ chối";
+                    String trangThai = "Thất bại";
+                    String ghiChu = "Từ chối";
                     if (status.equals(CashoutUtil.STATUS_INVALID_ACCOUNT)) {
-                        trangThai = "Sai Tài Khoản";
+                        ghiChu = "Sai Tài Khoản";
                     }
                     if (status.equals(CashoutUtil.STATUS_MAINTENANCE)) {
-                        trangThai = "Hệ Thống Bảo Trì";
+                        ghiChu = "Hệ Thống Bảo Trì";
                     }
                     if (status.equals(CashoutUtil.STATUS_BET_MORE)) {
-                        trangThai = "Vui Lòng Cược Thêm";
+                        ghiChu = "Vui Lòng Cược Thêm";
                     }
                     historyTransModel.setTrangthai(trangThai);
-                    historyTransModel.setGhiChu(trangThai);
+                    historyTransModel.setGhiChu(ghiChu);
                     if (!refund) {
                         return "";
                     }
