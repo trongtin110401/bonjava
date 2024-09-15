@@ -61,62 +61,20 @@ public class ReportMoneyServiceImpl implements ReportMoneyService {
     }
 
 
-    public Map<String, Long> getGameLoser(String reportDate) {
+    public Map<String, Long> getGameLoser(String reportDate, int pageNumber, int pageSize) {
 
-        String games = new Gson().toJson(Consts.GAMES);
         Map<String, Long> results = new HashMap<>();
-
-        String query =
-                "  {\n" +
-                        "    $match: {\n" +
-                        "      report_date: \"" + reportDate + "\",\n" +
-                        "      action_name: { $in: " + games + ", $ne: \"HamCaMap\" }\n" +
-                        "    }\n" +
-                        "  },\n" +
-                        "  {\n" +
-                        "    $project: {\n" +
-                        "      nick_name: 1,\n" +
-                        "      total: { $add: [\"$total_in\", \"$total_out\", \"$total_refund\"] }\n" +
-                        "    }\n" +
-                        "  },\n" +
-                        "  {\n" +
-                        "    $match: {\n" +
-                        "      total: { $lt: 0 }\n" +
-                        "    }\n" +
-                        "  },\n" +
-                        "  {\n" +
-                        "    $group: {\n" +
-                        "      _id: \"$nick_name\",\n" +
-                        "      total: { $sum: \"$total\" }\n" +
-                        "    }\n" +
-                        "  },\n" +
-                        "  {\n" +
-                        "    $sort: { total: 1 } \n" +
-                        "  }";
-
-//        MongoDatabase db = MongoDBConnectionFactory.getDB();
-//        MongoCollection<Document> collection = db.getCollection("report_money_game");
-//        AggregateIterable<Document> aggregateIterable = collection.aggregate(Arrays.asList(Document.parse(query)));
-//
-//
-//
-//        for (Document document : aggregateIterable) {
-//            System.out.println(document.toJson());
-//
-//
-//
-////            String nickname = document.getObjectId("_id").toString();
-////            long amount = document.getLong("total");
-////            results.put(nickname, amount);
-//        }
 
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("report_money_game");
 
+        // Cài đặt các tham số phân trang
+        int skipRecords = (pageNumber - 1) * pageSize;
+
         // Tạo pipeline cho aggregation
         AggregateIterable<Document> result = collection.aggregate(Arrays.asList(
-                new Document("$match", new Document("report_date", "2024-09-15")
-                        .append("action_name", new Document("$in", Arrays.asList("XocDia", "TaiXiuMd5"))
+                new Document("$match", new Document("report_date", reportDate)
+                        .append("action_name", new Document("$in", Consts.GAMES)
                                 .append("$ne", "HamCaMap"))
                 ),
                 new Document("$project", new Document("nick_name", 1)
@@ -126,12 +84,16 @@ public class ReportMoneyServiceImpl implements ReportMoneyService {
                 new Document("$group", new Document("_id", "$nick_name")
                         .append("total", new Document("$sum", "$total"))
                 ),
-                new Document("$sort", new Document("total", 1))
+                new Document("$sort", new Document("total", 1)), // Sắp xếp tăng dần theo total
+                new Document("$skip", skipRecords), // Bỏ qua số lượng bản ghi
+                new Document("$limit", pageSize) // Lấy số lượng bản ghi tương ứng với kích thước trang
         ));
 
         // In kết quả
         for (Document doc : result) {
-            System.out.println(doc.toJson());
+            String nickname = doc.getObjectId("_id").toString();
+            long amount = doc.getLong("total");
+            results.put(nickname, amount);
         }
 
 
@@ -139,49 +101,43 @@ public class ReportMoneyServiceImpl implements ReportMoneyService {
     }
 
 
-    public Map<String, Long> getGameWinner(String reportDate) {
-
-        String games = new Gson().toJson(Consts.GAMES);
-
-        String query =
-                "  {\n" +
-                        "    $match: {\n" +
-                        "      report_date: \"" + reportDate + "\",\n" +
-                        "      action_name: { $in: " + games + ", $ne: \"HamCaMap\" }\n" +
-                        "    }\n" +
-                        "  },\n" +
-                        "  {\n" +
-                        "    $project: {\n" +
-                        "      nick_name: 1,\n" +
-                        "      total: { $add: [\"$total_in\", \"$total_out\", \"$total_refund\"] }\n" +
-                        "    }\n" +
-                        "  },\n" +
-                        "  {\n" +
-                        "    $match: {\n" +
-                        "      total: { $gt: 0 }\n" +
-                        "    }\n" +
-                        "  },\n" +
-                        "  {\n" +
-                        "    $group: {\n" +
-                        "      _id: \"$nick_name\",\n" +
-                        "      total: { $sum: \"$total\" }\n" +
-                        "    }\n" +
-                        "  },\n" +
-                        "  {\n" +
-                        "    $sort: { total: -1 } \n" +
-                        "  }";
-
-        MongoDatabase db = MongoDBConnectionFactory.getDB();
-        MongoCollection<Document> collection = db.getCollection("report_money_game");
-        AggregateIterable<Document> aggregateIterable = collection.aggregate(Arrays.asList(Document.parse(query)));
+    public Map<String, Long> getGameWinner(String reportDate, int pageNumber, int pageSize) {
 
 
         Map<String, Long> results = new HashMap<>();
-        for (Document document : aggregateIterable) {
-            String nickname = document.getObjectId("_id").toString();
-            long amount = document.getLong("total");
+
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("report_money_game");
+
+        // Cài đặt các tham số phân trang
+        int skipRecords = (pageNumber - 1) * pageSize;
+
+        // Tạo pipeline cho aggregation
+        AggregateIterable<Document> result = collection.aggregate(Arrays.asList(
+                new Document("$match", new Document("report_date", reportDate)
+                        .append("action_name", new Document("$in", Consts.GAMES)
+                                .append("$ne", "HamCaMap"))
+                ),
+                new Document("$project", new Document("nick_name", 1)
+                        .append("total", new Document("$add", Arrays.asList("$total_in", "$total_out", "$total_refund")))
+                ),
+                new Document("$match", new Document("total", new Document("$gt", 0))),
+                new Document("$group", new Document("_id", "$nick_name")
+                        .append("total", new Document("$sum", "$total"))
+                ),
+                new Document("$sort", new Document("total", -1)), // Sắp xếp tăng dần theo total
+                new Document("$skip", skipRecords), // Bỏ qua số lượng bản ghi
+                new Document("$limit", pageSize) // Lấy số lượng bản ghi tương ứng với kích thước trang
+        ));
+
+        // In kết quả
+        for (Document doc : result) {
+            String nickname = doc.getObjectId("_id").toString();
+            long amount = doc.getLong("total");
             results.put(nickname, amount);
         }
+
+
         return results;
     }
 

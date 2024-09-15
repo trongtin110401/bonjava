@@ -50,7 +50,7 @@ public class GetListUserWinByDayProcessor implements BaseProcessor<HttpServletRe
 
             // Get user logs and aggregate their money exchanges
             ReportMoneyServiceImpl reportMoneyService = new ReportMoneyServiceImpl();
-            Map<String, Long> userMoneyMap = reportMoneyService.getGameLoser(timeStart);
+            Map<String, Long> userMoneyMap = reportMoneyService.getGameLoser(timeStart, pageIndex, pageSize);
 
             // Merge fish profits with user logs
 //            mapUserFishProfits.forEach((nickname, profit) -> {
