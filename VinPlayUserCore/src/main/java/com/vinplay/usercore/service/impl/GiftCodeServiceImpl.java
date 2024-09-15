@@ -475,13 +475,14 @@ public class GiftCodeServiceImpl
             int totalUsed = doc.getInteger("total_used");
             int totalUnused = doc.getInteger("total_unused");
 
+
             campaigns.get(Long.valueOf(type)).setTotal(totalCode);
             campaigns.get(Long.valueOf(type)).setQuantityActiveCode(totalActive);
             campaigns.get(Long.valueOf(type)).setUsed(totalUsed);
             campaigns.get(Long.valueOf(type)).setUsed(totalUnused);
         }
 
-        new Gson().toJson(campaigns.values());
+        System.out.println(new Gson().toJson(campaigns.values()));
 
         return new ArrayList<>(campaigns.values());
     }

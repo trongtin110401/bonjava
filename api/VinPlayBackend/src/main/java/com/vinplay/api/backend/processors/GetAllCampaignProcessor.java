@@ -13,8 +13,6 @@ public class GetAllCampaignProcessor implements BaseProcessor<HttpServletRequest
         try {
             CampaignNameResponse response = new CampaignNameResponse(true, "0");
 
-            System.out.println("==============> 1");
-
             GiftCodeServiceImpl service = new GiftCodeServiceImpl();
             response.setCampaigns(service.getAllCampaign());
             return response.toJson();
