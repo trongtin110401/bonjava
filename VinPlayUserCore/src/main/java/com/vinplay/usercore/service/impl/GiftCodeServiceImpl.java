@@ -441,7 +441,7 @@ public class GiftCodeServiceImpl
     }
 
     public List<CampaignName> getAllCampaign() {
-        Map<Long, CampaignName> campaigns = new HashMap<>();
+        Map<String, CampaignName> campaigns = new HashMap<>();
 
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("campaign_gift_code");
@@ -452,13 +452,13 @@ public class GiftCodeServiceImpl
                 CampaignName campaign = new CampaignName();
                 campaign.setId(document.getLong("_id"));
                 campaign.setCampaignName(document.getString("name"));
-                campaigns.put(campaign.getId(), campaign);
+                campaigns.put(String.valueOf(campaign.getId()), campaign);
             }
         }
 
         // Thống kê GIFTCODE theo danh sách campain được truyền vào
-//        List<String> types = campaigns.keySet().stream().map(String::valueOf).collect(Collectors.toList());
-
+        List<String> types = campaigns.keySet().stream().map(String::valueOf).collect(Collectors.toList());
+        String strType = new Gson().toJson(types);
 //        System.out.println(new Gson().toJson(types));
 
         // Xây dựng pipeline để thực hiện truy vấn
@@ -470,27 +470,32 @@ public class GiftCodeServiceImpl
         MongoCollection<Document> col = db.getCollection("gift_code");
         AggregateIterable<Document> result = col.aggregate(Arrays.asList(
                 Document.parse("[\n" +
+                                "{\n" +
+                                "    $match: {\n" +
+                                "      type: { $in: " + strType + " } // Điều kiện lọc theo danh sách type\n" +
+                                "    }\n" +
+                                "  },"
                         "  {\n" +
-                        "    $group: {\n" +
-                        "      _id: \"$type\",\n" +
-                        "      total_records: { $sum: 1 }, \n" +
-                        "      total_active: {\n" +
-                        "        $sum: {\n" +
-                        "          $cond: [{ $eq: [\"$active\", true] }, 1, 0]\n" +
-                        "        }\n" +
-                        "      },\n" +
-                        "      total_used: {\n" +
-                        "        $sum: {\n" +
-                        "          $cond: [\n" +
-                        "            { $gt: [\"$used_time\", \"2024\"] },\n" +
-                        "            1,\n" +
-                        "            0\n" +
-                        "          ]\n" +
-                        "        }\n" +
-                        "      }\n" +
-                        "    }\n" +
-                        "  }\n" +
-                        "]")
+                                "    $group: {\n" +
+                                "      _id: \"$type\",\n" +
+                                "      total_records: { $sum: 1 }, \n" +
+                                "      total_active: {\n" +
+                                "        $sum: {\n" +
+                                "          $cond: [{ $eq: [\"$active\", true] }, 1, 0]\n" +
+                                "        }\n" +
+                                "      },\n" +
+                                "      total_used: {\n" +
+                                "        $sum: {\n" +
+                                "          $cond: [\n" +
+                                "            { $gt: [\"$used_time\", \"2024\"] },\n" +
+                                "            1,\n" +
+                                "            0\n" +
+                                "          ]\n" +
+                                "        }\n" +
+                                "      }\n" +
+                                "    }\n" +
+                                "  }\n" +
+                                "]")
         ));
 
         // Gán lại kết quả thống kê cho campaign
@@ -509,7 +514,7 @@ public class GiftCodeServiceImpl
             System.out.println("Total Unused: " + totalUnused);
             System.out.println("-----------------------------");
 
-            campaigns.get(Long.valueOf(type)).setTotal(totalCode);
+            campaigns.get(type).setTotal(totalCode);
             campaigns.get(Long.valueOf(type)).setQuantityActiveCode(totalActive);
             campaigns.get(Long.valueOf(type)).setUsed(totalUsed);
             campaigns.get(Long.valueOf(type)).setUnused(totalUnused);
