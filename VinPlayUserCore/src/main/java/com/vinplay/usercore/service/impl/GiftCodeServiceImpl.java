@@ -470,7 +470,7 @@ public class GiftCodeServiceImpl
         MongoCollection<Document> col = db.getCollection("gift_code");
         AggregateIterable<Document> result = col.aggregate(Arrays.asList(
                 Document.parse(
-                        "[\n" +
+                        "\n" +
                                 "  {\n" +
                                 "    $group: {\n" +
                                 "      _id: \"$type\",\n" +
@@ -491,7 +491,7 @@ public class GiftCodeServiceImpl
                                 "      }\n" +
                                 "    }\n" +
                                 "  }\n" +
-                                "]")
+                                "")
         ));
 
         // Gán lại kết quả thống kê cho campaign
