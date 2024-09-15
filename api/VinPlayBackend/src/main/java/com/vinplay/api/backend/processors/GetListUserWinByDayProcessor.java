@@ -12,6 +12,7 @@
 package com.vinplay.api.backend.processors;
 
 import com.vinplay.dal.dao.impl.LogMoneyUserDaoImpl;
+import com.vinplay.dal.service.impl.ReportMoneyServiceImpl;
 import com.vinplay.usercore.service.OtherService;
 import com.vinplay.usercore.service.impl.OtherServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
@@ -39,28 +40,24 @@ public class GetListUserWinByDayProcessor implements BaseProcessor<HttpServletRe
             int pageSize = getParameter(request, "pageSize", 50);
 
             // Get fish profits
-            OtherService otherService = new OtherServiceImpl();
-            Map<String, Long> mapUserFishProfits = otherService.getTotalShootFish(timeStart, timeEnd, null)
-                    .stream()
-                    .collect(Collectors.toMap(
-                            MoneyShootFishResponse::getNickname,
-                            MoneyShootFishResponse::getTotalProfit,
-                            Long::sum));
+//            OtherService otherService = new OtherServiceImpl();
+//            Map<String, Long> mapUserFishProfits = otherService.getTotalShootFish(timeStart, timeEnd, null)
+//                    .stream()
+//                    .collect(Collectors.toMap(
+//                            MoneyShootFishResponse::getNickname,
+//                            MoneyShootFishResponse::getTotalProfit,
+//                            Long::sum));
 
             // Get user logs and aggregate their money exchanges
-            LogMoneyUserDaoImpl dao = new LogMoneyUserDaoImpl();
-            Map<String, Long> userMoneyMap = dao.getLogMoneyUser(timeStart, timeEnd).stream()
-                    .filter(log -> !Consts.NO_GAME.contains(log.getActionName()) && !"Exchange".equals(log.getActionName()))
-                    .collect(Collectors.groupingBy(
-                            LogUserMoneyResponse::getNickName,
-                            Collectors.summingLong(LogUserMoneyResponse::getMoneyExchange)));
+            ReportMoneyServiceImpl reportMoneyService = new ReportMoneyServiceImpl();
+            Map<String, Long> userMoneyMap = reportMoneyService.getGameLoser(timeStart);
 
             // Merge fish profits with user logs
-            mapUserFishProfits.forEach((nickname, profit) -> {
-                if (profit != 0) {
-                    userMoneyMap.merge(nickname, profit, Long::sum); // Use merge to add profits
-                }
-            });
+//            mapUserFishProfits.forEach((nickname, profit) -> {
+//                if (profit != 0) {
+//                    userMoneyMap.merge(nickname, profit, Long::sum); // Use merge to add profits
+//                }
+//            });
 
             // Convert map entries to UserLoseByDay and sort by money
             List<UserLoseByDay> userLoseByDays = userMoneyMap.entrySet().stream()
