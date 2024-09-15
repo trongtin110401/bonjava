@@ -342,6 +342,7 @@ public class MailBoxDaoImpl
             pipeline.add(Aggregates.match(Filters.eq("nick_name", nickname)));
         }
 
+
         // Group by mail_id to ensure distinct mail_id records
         pipeline.add(Aggregates.group("$mail_id",
                 Accumulators.first("mail_id", "$mail_id"),
@@ -382,14 +383,18 @@ public class MailBoxDaoImpl
         });
         long totalRecords = db.getCollection("mail_box")
                 .aggregate(Arrays.asList(
-                        Aggregates.match(nickname != null ? Filters.eq("nick_name", nickname) : Filters.exists("mail_id")),
+                        Aggregates.match(!nickname.isEmpty() ? Filters.eq("nick_name", nickname) : Filters.exists("mail_id")),
                         Aggregates.group("$mail_id")
                 ))
                 .into(new ArrayList<>()).size();
+
         // Set results and total distinct records in response
         response.setTransactions(results);
         response.setTotalRecords((int) totalRecords);
-
+        response.setPageIndex(pageIndex);
+        response.setPageSize(pageSize);
+        int totalPages = (int) Math.ceil((double) totalRecords / (double) pageSize);
+        response.setTotalPages(totalPages);
         return response;
     }
 
