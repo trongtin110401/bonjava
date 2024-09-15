@@ -470,6 +470,11 @@ public class GiftCodeServiceImpl
         MongoCollection<Document> col = db.getCollection("gift_code");
         AggregateIterable<Document> result = col.aggregate(Arrays.asList(
                 Document.parse("[\n" +
+                        "{\n" +
+                                "    $match: {\n" +
+                                "      type: { $in: [\"1725976072252\", \"1726189822450\", \"type3\"] } // Điều kiện lọc theo danh sách type\n" +
+                                "    }\n" +
+                                "  }," +
                         "  {\n" +
                         "    $group: {\n" +
                         "      _id: \"$type\",\n" +
