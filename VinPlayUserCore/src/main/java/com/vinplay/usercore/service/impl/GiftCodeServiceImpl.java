@@ -26,6 +26,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.Block;
 import com.mongodb.client.*;
 import com.mongodb.client.model.*;
+import com.vinplay.dal.entities.report.ReportMoneyModelNew;
 import com.vinplay.dal.entities.report.ReportMoneySystemModel;
 import com.vinplay.usercore.dao.impl.GiftCodeDAOImpl;
 import com.vinplay.usercore.service.GiftCodeService;
@@ -43,12 +44,19 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.python.parser.ast.Str;
+import scala.Int;
 
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.mongodb.client.model.Accumulators.first;
+import static com.mongodb.client.model.Accumulators.sum;
+import static com.mongodb.client.model.Aggregates.group;
+import static com.mongodb.client.model.Aggregates.match;
+import static com.mongodb.client.model.Filters.and;
 
 public class GiftCodeServiceImpl
         implements GiftCodeService {
@@ -507,15 +515,15 @@ public class GiftCodeServiceImpl
         // gán lại kết quả thống kê cho campaign
         for (Document doc : result) {
             String type = doc.getString("type");
-            int totalCode = doc.getInteger("total_code");
-            int totalActive = doc.getInteger("total_active");
-            int totalUsed = doc.getInteger("total_used");
-            int totalUnused = doc.getInteger("total_unused");
+            Integer totalCode = doc.getInteger("total_code");
+            Integer totalActive = doc.getInteger("total_active");
+            Integer totalUsed = doc.getInteger("total_used");
+            Integer totalUnused = doc.getInteger("total_unused");
 
-            campaigns.get(Long.valueOf(type)).setTotal(Integer.valueOf(totalCode).longValue());
-            campaigns.get(Long.valueOf(type)).setQuantityActiveCode(Integer.valueOf(totalActive).longValue());
-            campaigns.get(Long.valueOf(type)).setUsed(Integer.valueOf(totalUsed).longValue());
-            campaigns.get(Long.valueOf(type)).setUsed(Integer.valueOf(totalUnused).longValue());
+            campaigns.get(Long.valueOf(type)).setTotal(totalCode.longValue());
+            campaigns.get(Long.valueOf(type)).setQuantityActiveCode(totalCode.longValue());
+            campaigns.get(Long.valueOf(type)).setUsed(totalUsed.longValue());
+            campaigns.get(Long.valueOf(type)).setUsed(totalUnused.longValue());
         }
 
         System.out.println(new Gson().toJson(campaigns.values()));
@@ -523,6 +531,27 @@ public class GiftCodeServiceImpl
         return new ArrayList<>(campaigns.values());
     }
 
+
+    public List<CampaignName> getAllCampaignNew() {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document>  collection =  db.getCollection("campaign_gift_code");
+
+        AggregateIterable<Document> aggregateResult =  collection.aggregate(Arrays.asList(
+                //match(and(filters)),
+                group("$type"
+                        ,sum("total_code", "$total_code")
+                        ,sum("total_refund", "$total_refund")
+                        ,sum("total_in", "$total_in")
+                        ,sum("fee", "$fee")
+//                        ,sum("revenue", "$revenue"),
+                        ,first("action_name", "$action_name")
+                )  // GROUP BY và SUM
+
+        ));
+
+        List<CampaignName> results = new ArrayList<>();
+        return results;
+    }
     public List<CampaignName> getAllCampaignWithoutGiftCodeInfo() {
         List<CampaignName> campaignNames = new ArrayList<>();
         MongoDatabase db = MongoDBConnectionFactory.getDB();
