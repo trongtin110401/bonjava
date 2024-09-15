@@ -459,6 +459,13 @@ public class GiftCodeServiceImpl
         // Thống kê GIFTCODE theo danh sách campain được truyền vào
 //        List<String> types = campaigns.keySet().stream().map(String::valueOf).collect(Collectors.toList());
 
+//        System.out.println(new Gson().toJson(types));
+
+        // Xây dựng pipeline để thực hiện truy vấn
+
+        // Danh sách type được truyền vào
+//        List<String> types = Arrays.asList("1725850870622", "someOtherType");
+
         // Tạo pipeline của aggregation
         MongoCollection<Document> col = db.getCollection("gift_code");
         AggregateIterable<Document> result = col.aggregate(Arrays.asList(
@@ -502,7 +509,7 @@ public class GiftCodeServiceImpl
             System.out.println("Total Unused: " + totalUnused);
             System.out.println("-----------------------------");
 
-            if (campaigns.get(type) != null) {
+            if(campaigns.get(type) != null) {
                 campaigns.get(type).setTotal(totalCode);
                 campaigns.get(Long.valueOf(type)).setQuantityActiveCode(totalActive);
                 campaigns.get(Long.valueOf(type)).setUsed(totalUsed);
