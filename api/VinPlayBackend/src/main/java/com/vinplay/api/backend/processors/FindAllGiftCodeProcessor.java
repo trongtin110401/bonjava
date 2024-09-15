@@ -49,6 +49,7 @@ public class FindAllGiftCodeProcessor implements BaseProcessor<HttpServletReques
 
         } catch (Exception e) {
             logger.debug((Object) e);
+            e.printStackTrace();
         }
 
         return response.toJson();
