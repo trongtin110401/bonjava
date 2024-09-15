@@ -547,6 +547,8 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                 chenhLech = totalRealBetXiu - totalRealBetTai;
             }
 
+            System.out.println("-----MD5 chênh lệch : " + chenhLech);
+            System.out.println("-----MD5 Fund : " + getFunValue());
             if (chenhLech > 0) {
                 // nếu mà HŨ âm => can thiệp kế quả
                 if (getFunValue() - chenhLech < 0) {
