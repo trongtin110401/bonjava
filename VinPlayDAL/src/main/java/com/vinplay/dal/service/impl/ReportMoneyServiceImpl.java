@@ -107,4 +107,51 @@ public class ReportMoneyServiceImpl implements ReportMoneyService {
         return results;
     }
 
+
+    public Map<String, Long> getGameWinner(String reportDate) {
+
+        String games = new Gson().toJson(Consts.GAMES);
+
+        String query =
+                "  {\n" +
+                        "    $match: {\n" +
+                        "      report_date: \"" + reportDate + "\",\n" +
+                        "      action_name: { $in: " + games + ", $ne: \"HamCaMap\" }\n" +
+                        "    }\n" +
+                        "  },\n" +
+                        "  {\n" +
+                        "    $project: {\n" +
+                        "      nick_name: 1,\n" +
+                        "      total: { $add: [\"$total_in\", \"$total_out\", \"$total_refund\"] }\n" +
+                        "    }\n" +
+                        "  },\n" +
+                        "  {\n" +
+                        "    $match: {\n" +
+                        "      total: { $gt: 0 }\n" +
+                        "    }\n" +
+                        "  },\n" +
+                        "  {\n" +
+                        "    $group: {\n" +
+                        "      _id: \"$nick_name\",\n" +
+                        "      total: { $sum: \"$total\" }\n" +
+                        "    }\n" +
+                        "  },\n" +
+                        "  {\n" +
+                        "    $sort: { total: -1 } \n" +
+                        "  }";
+
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("report_money_game");
+        AggregateIterable<Document> aggregateIterable = collection.aggregate(Arrays.asList(Document.parse(query)));
+
+
+        Map<String, Long> results = new HashMap<>();
+        for (Document document : aggregateIterable) {
+            String nickname = document.getString("_id");
+            long amount = document.getLong("total");
+            results.put(nickname, amount);
+        }
+        return results;
+    }
+
 }
