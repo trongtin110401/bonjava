@@ -8,7 +8,8 @@ public class UserBackCodeMessage extends BaseMessage {
     private static final long serialVersionUID = 1L;
 
     public String nickname;
-    public long amount;
+    public long giftValue;
+    public long money;
 
     // 1: win, 0: lose
     public int backType;
@@ -16,7 +17,6 @@ public class UserBackCodeMessage extends BaseMessage {
 
     public UserBackCodeMessage() {
     }
-
 
 
     public String getNickname() {
@@ -27,12 +27,20 @@ public class UserBackCodeMessage extends BaseMessage {
         this.nickname = nickname;
     }
 
-    public long getAmount() {
-        return amount;
+    public long getGiftValue() {
+        return giftValue;
     }
 
-    public void setAmount(long amount) {
-        this.amount = amount;
+    public void setGiftValue(long giftValue) {
+        this.giftValue = giftValue;
+    }
+
+    public long getMoney() {
+        return money;
+    }
+
+    public void setMoney(long money) {
+        this.money = money;
     }
 
     public int getBackType() {

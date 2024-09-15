@@ -12,7 +12,6 @@
 package com.vinplay.api.backend.processors;
 
 import com.vinplay.dal.dao.impl.LogMoneyUserDaoImpl;
-import com.vinplay.dal.service.ReportMoneyService;
 import com.vinplay.dal.service.impl.ReportMoneyServiceImpl;
 import com.vinplay.usercore.service.OtherService;
 import com.vinplay.usercore.service.impl.GiftCodeServiceImpl;
@@ -22,17 +21,14 @@ import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.dto.GiftCodeDto;
 import com.vinplay.vbee.common.messages.UserBackCodeMessage;
-import com.vinplay.vbee.common.models.minigame.TopWin;
 import com.vinplay.vbee.common.response.*;
 import com.vinplay.vbee.common.rmq.RMQApi;
-import com.vinplay.vbee.common.statics.Consts;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
 import okhttp3.*;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.bson.Document;
 
 import javax.servlet.http.HttpServletRequest;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -128,7 +124,8 @@ public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServle
                     UserBackCodeMessage userBackCodeMessage = new UserBackCodeMessage();
                     userBackCodeMessage.backType = 0;
                     userBackCodeMessage.nickname = userLoseByDay.getNickname();
-                    userBackCodeMessage.amount = giftCodeValue;
+                    userBackCodeMessage.giftValue = giftCodeValue;
+                    userBackCodeMessage.money = userBackCodeMessage.getMoney();
                     RMQApi.publishMessage("queue_backcode", userBackCodeMessage, 1502);
 
 

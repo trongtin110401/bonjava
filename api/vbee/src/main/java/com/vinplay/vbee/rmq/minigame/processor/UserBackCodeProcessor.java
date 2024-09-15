@@ -16,14 +16,9 @@ import com.vinplay.usercore.service.impl.OtherServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.dto.GiftCodeDto;
-import com.vinplay.vbee.common.enums.Games;
-import com.vinplay.vbee.common.messages.TransactionXocDiaMessage;
 import com.vinplay.vbee.common.messages.UserBackCodeMessage;
 import com.vinplay.vbee.common.response.UserTele;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
-import com.vinplay.vbee.dao.impl.XocDiaDaoImpl;
-import com.vinplay.vbee.dto.TopVinhDanhDto;
-import com.vinplay.vbee.rmq.report.processor.TopVinhDanhProcessor;
 import okhttp3.*;
 import org.apache.log4j.Logger;
 import org.bson.Document;
@@ -46,7 +41,7 @@ public class UserBackCodeProcessor implements BaseProcessor<byte[], Boolean> {
             UserBackCodeMessage message = (UserBackCodeMessage) UserBackCodeMessage.fromBytes(body);
 
             String giftCode = VinPlayUtils.genGiftCode(10);
-            String content = message + " : " + genCode(Long.valueOf(message.getAmount()).intValue(), giftCode);
+            String content = message + " : " + genCode(Long.valueOf(message.getGiftValue()).intValue(), giftCode);
 
             // send mail
             mailService.sendMailGiftCode(message.getNickname(), giftCode, "Hoàn Trả Tiền Cược", content);
@@ -56,7 +51,7 @@ public class UserBackCodeProcessor implements BaseProcessor<byte[], Boolean> {
             if (userTele != null) {
                 sendMessage(userTele.getChatID(), content);
             }
-            saveUserTeleCashBack(userLoseByDay.getNickname(), giftCode, giftCodeValue, userLoseByDay.getMoney());
+            saveUserTeleCashBack(message.getNickname(), giftCode, Long.valueOf(message.getGiftValue()).intValue(), message.getMoney());
 
 
         } catch (Exception e) {
