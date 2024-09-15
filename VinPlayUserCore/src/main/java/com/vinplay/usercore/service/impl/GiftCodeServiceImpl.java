@@ -37,6 +37,7 @@ import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.response.*;
 import com.vinplay.vbee.common.response.giftcode.GiftcodeStatisticObj;
 import com.vinplay.vbee.common.statics.Consts;
+import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
@@ -241,7 +242,7 @@ public class GiftCodeServiceImpl
         return results;
     }
 
-    public FindAllGiftCodeDto findAllGiftCode(String nickName, String code, int price, Boolean active,
+    public FindAllGiftCodeDto findAllGiftCode(String nickName, String code, String price, Boolean active,
                                               String type, String startTime, String endTime, int pageIndex, int pageSize) {
         FindAllGiftCodeDto results = new FindAllGiftCodeDto(false, "1001");
         MongoDatabase db = MongoDBConnectionFactory.getDB();
@@ -255,7 +256,7 @@ public class GiftCodeServiceImpl
         if (code != null && !code.isEmpty()) {
             query.append("code", code);
         }
-        if (price > 0) {
+        if (StringUtils.isNotEmpty(price)) {
             query.append("price", price);
         }
 

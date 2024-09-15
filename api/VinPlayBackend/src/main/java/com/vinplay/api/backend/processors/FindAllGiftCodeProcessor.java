@@ -19,8 +19,7 @@ import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class FindAllGiftCodeProcessor
-        implements BaseProcessor<HttpServletRequest, String> {
+public class FindAllGiftCodeProcessor implements BaseProcessor<HttpServletRequest, String> {
     private static final Logger logger = Logger.getLogger("backend");
 
     public String execute(Param<HttpServletRequest> param) {
@@ -33,17 +32,10 @@ public class FindAllGiftCodeProcessor
         try {
             String nickName = request.getParameter("nickName");
             String code = request.getParameter("code");
-            int price = 0;
-            if ((request.getParameter("price") != null)) {
-                try {
-                    price = Integer.parseInt(request.getParameter("price"));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+            String price = request.getParameter("price");
             Boolean active = null;
             if (request.getParameter("active") != null && !request.getParameter("active").isEmpty()) {
-                 active = Boolean.parseBoolean(request.getParameter("active"));
+                active = Boolean.parseBoolean(request.getParameter("active"));
             }
             String type = request.getParameter("type");
             String startTime = request.getParameter("startTime");
