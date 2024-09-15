@@ -466,36 +466,28 @@ public class GiftCodeServiceImpl
         // Danh sách type được truyền vào
 //        List<String> types = Arrays.asList("1725850870622", "someOtherType");
 
-        // Xây dựng pipeline
-        List<Document> pipeline = Arrays.asList(
-                new Document("$match", new Document("type", new Document("$in", Arrays.asList("1725850870622", "someOtherType")))),
+        // Tạo pipeline của aggregation
+        AggregateIterable<Document> result = collection.aggregate(Arrays.asList(
                 new Document("$group", new Document("_id", "$type")
-                        .append("total_code", new Document("$sum", 1))
-                        .append("total_active", new Document("$sum", new Document("$cond", new Document("if", new Document("$eq", Arrays.asList("$active", true)))
-                                .append("then", 1)
-                                .append("else", 0))))
-                        .append("total_used", new Document("$sum", new Document("$cond", new Document("if", new Document("$ne", Arrays.asList("$used_time", null)))
-                                .append("then", 1)
-                                .append("else", 0))))
-                        .append("total_unused", new Document("$sum", new Document("$cond", new Document("if", new Document("$eq", Arrays.asList("$used_time", null)))
-                                .append("then", 1)
-                                .append("else", 0))))
-                ),
-                new Document("$project", new Document("_id", 0)
-                        .append("type", "$_id")
-                        .append("total_code", 1)
-                        .append("total_active", 1)
-                        .append("total_used", 1)
-                        .append("total_unused", 1))
-        );
+                        .append("total_records", new Document("$sum", 1))
+                        .append("total_active", new Document("$sum",
+                                new Document("$cond", Arrays.asList(
+                                        new Document("$eq", Arrays.asList("$active", true)), 1, 0))
+                        ))
+                        .append("total_used", new Document("$sum",
+                                new Document("$cond", Arrays.asList(
+                                        new Document("$gt", Arrays.asList("$used_time", "2024")), 1, 0))
+                        ))
+                )
+        ));
 
         // Gán lại kết quả thống kê cho campaign
-        for (Document doc : pipeline) {
-            String type = doc.getString("type");
-            int totalCode = doc.getInteger("total_code", 0);
+        for (Document doc : result) {
+            String type = doc.getString("_id");
+            int totalCode = doc.getInteger("total_records", 0);
             int totalActive = doc.getInteger("total_active", 0);
             int totalUsed = doc.getInteger("total_used", 0);
-            int totalUnused = doc.getInteger("total_unused", 0);
+            int totalUnused = totalCode - totalUsed;
 
             // Hiển thị các giá trị để kiểm tra
             System.out.println("Type: " + type);
