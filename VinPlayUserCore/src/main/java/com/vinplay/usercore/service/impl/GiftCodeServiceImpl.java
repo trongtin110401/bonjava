@@ -467,7 +467,8 @@ public class GiftCodeServiceImpl
 //        List<String> types = Arrays.asList("1725850870622", "someOtherType");
 
         // Tạo pipeline của aggregation
-        AggregateIterable<Document> result = collection.aggregate(Arrays.asList(
+        MongoCollection<Document> col = db.getCollection("gift_code");
+        AggregateIterable<Document> result = col.aggregate(Arrays.asList(
                 new Document("$group", new Document("_id", "$type")
                         .append("total_records", new Document("$sum", 1))
                         .append("total_active", new Document("$sum",
