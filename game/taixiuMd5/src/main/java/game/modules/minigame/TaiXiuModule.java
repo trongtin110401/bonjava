@@ -552,10 +552,13 @@ public class TaiXiuModule extends BaseClientRequestHandler {
             if (chenhLech > 0) {
                 // nếu mà HŨ âm => can thiệp kế quả
                 if (getFunValue() - chenhLech < 0) {
+                    System.out.println("-----MD5 Can Thiệp : ");
                     if (totalRealBetTai > totalRealBetXiu) {
                         this.forceBetSide = 0;
+                        System.out.println("-----MD5 Can Thiệp Xỉu : ");
                     } else {
                         this.forceBetSide = 1;
+                        System.out.println("-----MD5 Can Thiệp Tài : ");
                     }
                 }
                 dices = this.generationTX.generateResult(this.forceBetSide);
