@@ -8,6 +8,7 @@ import com.vinplay.dal.service.ReportMoneyService;
 import com.vinplay.dal.entities.report.ReportMoneyModelNew;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.statics.Consts;
+import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
@@ -61,22 +62,29 @@ public class ReportMoneyServiceImpl implements ReportMoneyService {
     }
 
 
-    public Map<String, Long> getGameLoser(String reportDate, int pageNumber, int pageSize) {
+    public Map<String, Long> getGameLoser(String reportDate, String nickName, int pageNumber, int pageSize) {
 
         Map<String, Long> results = new HashMap<>();
 
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("report_money_game");
 
+        // Tạo đối tượng $match ban đầu
+        Document matchDocument = new Document("report_date", reportDate)
+                .append("action_name", new Document("$in", Consts.GAMES).append("$ne", "HamCaMap"));
+
+        // Kiểm tra điều kiện nick_name và chỉ thêm nếu cần thiết
+        if (StringUtils.isNotEmpty(nickName)) {
+            matchDocument.append("nick_name", nickName);
+        }
+
+
         // Cài đặt các tham số phân trang
         int skipRecords = (pageNumber - 1) * pageSize;
 
         // Tạo pipeline cho aggregation
         AggregateIterable<Document> result = collection.aggregate(Arrays.asList(
-                new Document("$match", new Document("report_date", reportDate)
-                        .append("action_name", new Document("$in", Consts.GAMES)
-                                .append("$ne", "HamCaMap"))
-                ),
+                matchDocument,
                 new Document("$project", new Document("nick_name", 1)
                         .append("total", new Document("$add", Arrays.asList("$total_in", "$total_out", "$total_refund")))
                 ),
@@ -101,7 +109,7 @@ public class ReportMoneyServiceImpl implements ReportMoneyService {
     }
 
 
-    public Map<String, Long> getGameWinner(String reportDate, int pageNumber, int pageSize) {
+    public Map<String, Long> getGameWinner(String reportDate, String nickName, int pageNumber, int pageSize) {
 
 
         Map<String, Long> results = new HashMap<>();
@@ -111,6 +119,15 @@ public class ReportMoneyServiceImpl implements ReportMoneyService {
 
         // Cài đặt các tham số phân trang
         int skipRecords = (pageNumber - 1) * pageSize;
+
+        // Tạo đối tượng $match ban đầu
+        Document matchDocument = new Document("report_date", reportDate)
+                .append("action_name", new Document("$in", Consts.GAMES).append("$ne", "HamCaMap"));
+
+        // Kiểm tra điều kiện nick_name và chỉ thêm nếu cần thiết
+        if (StringUtils.isNotEmpty(nickName)) {
+            matchDocument.append("nick_name", nickName);
+        }
 
         // Tạo pipeline cho aggregation
         AggregateIterable<Document> result = collection.aggregate(Arrays.asList(

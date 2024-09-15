@@ -7,6 +7,7 @@ public class UserBackCodeMessage extends BaseMessage {
 
     private static final long serialVersionUID = 1L;
 
+    public String message;
     public String nickname;
     public long giftValue;
     public long money;
@@ -18,6 +19,13 @@ public class UserBackCodeMessage extends BaseMessage {
     public UserBackCodeMessage() {
     }
 
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
     public String getNickname() {
         return nickname;

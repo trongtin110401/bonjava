@@ -41,7 +41,7 @@ public class UserBackCodeProcessor implements BaseProcessor<byte[], Boolean> {
             UserBackCodeMessage message = (UserBackCodeMessage) UserBackCodeMessage.fromBytes(body);
 
             String giftCode = VinPlayUtils.genGiftCode(10);
-            String content = message + " : " + genCode(Long.valueOf(message.getGiftValue()).intValue(), giftCode);
+            String content = message.message + " : " + genCode(Long.valueOf(message.getGiftValue()).intValue(), giftCode);
 
             // send mail
             mailService.sendMailGiftCode(message.getNickname(), giftCode, "Hoàn Trả Tiền Cược", content);
@@ -52,8 +52,6 @@ public class UserBackCodeProcessor implements BaseProcessor<byte[], Boolean> {
                 sendMessage(userTele.getChatID(), content);
             }
             saveUserTeleCashBack(message.getNickname(), giftCode, Long.valueOf(message.getGiftValue()).intValue(), message.getMoney());
-
-
         } catch (Exception e) {
             logger.error("Handle save transaction error ", (Throwable) e);
         }

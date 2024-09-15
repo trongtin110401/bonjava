@@ -82,7 +82,7 @@ public class ReportDao2Impl {
         }
 
 
-        System.out.println("Action: " + actions + ", Display Number: " + pageSize + ", Start Time: " + start + ", End Time: " + end);
+//        System.out.println("Action: " + actions + ", Display Number: " + pageSize + ", Start Time: " + start + ", End Time: " + end);
 
         // Xây dựng pipeline để thực hiện truy vấn với phân trang và lọc
         AggregateIterable<Document> result = collection.aggregate(Arrays.asList(

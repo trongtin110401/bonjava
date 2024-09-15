@@ -12,6 +12,7 @@
 package com.vinplay.api.backend.processors;
 
 import com.vinplay.dal.dao.impl.LogMoneyUserDaoImpl;
+import com.vinplay.dal.service.impl.ReportMoneyServiceImpl;
 import com.vinplay.usercore.service.OtherService;
 import com.vinplay.usercore.service.impl.GiftCodeServiceImpl;
 import com.vinplay.usercore.service.impl.MailBoxServiceImpl;
@@ -19,7 +20,9 @@ import com.vinplay.usercore.service.impl.OtherServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.dto.GiftCodeDto;
+import com.vinplay.vbee.common.messages.UserBackCodeMessage;
 import com.vinplay.vbee.common.response.*;
+import com.vinplay.vbee.common.rmq.RMQApi;
 import com.vinplay.vbee.common.statics.Consts;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
 import okhttp3.*;
@@ -68,6 +71,7 @@ public class SendGiftCodeToUserWinProcessor implements BaseProcessor<HttpServlet
             throw new RuntimeException(ex);
         }
     }
+
     public static int roundToNearestThousand(int amount) {
         return (amount / 1000) * 1000;
     }
@@ -76,65 +80,88 @@ public class SendGiftCodeToUserWinProcessor implements BaseProcessor<HttpServlet
         try {
             // get Fish profit
             OtherService otherService = new OtherServiceImpl();
-            List<MoneyShootFishResponse> userFishProfits = otherService.getTotalShootFish(timeStart, timeEnd, nickname);
-            Map<String, Long> mapUserFishProfits = new HashMap<>();
-            userFishProfits.forEach(moneyShootFishResponse -> mapUserFishProfits.put(moneyShootFishResponse.getNickname(), moneyShootFishResponse.getTotalProfit()));
+//            List<MoneyShootFishResponse> userFishProfits = otherService.getTotalShootFish(timeStart, timeEnd, nickname);
+//            Map<String, Long> mapUserFishProfits = new HashMap<>();
+//            userFishProfits.forEach(moneyShootFishResponse -> mapUserFishProfits.put(moneyShootFishResponse.getNickname(), moneyShootFishResponse.getTotalProfit()));
 
-            LogMoneyUserDaoImpl dao = new LogMoneyUserDaoImpl();
-            List<LogUserMoneyResponse> list = dao.getLogMoneyUser(timeStart, timeEnd);
+            // map nickname => money
+            Map<String, Long> topWins = new ReportMoneyServiceImpl().getGameWinner(timeStart, nickname, 1, 1);
+            List<UserLoseByDay> userLoseByDays = topWins.entrySet().stream().map(entry -> {
+                UserLoseByDay userLoseByDay = new UserLoseByDay();
+                userLoseByDay.setNickname(entry.getKey());
+                userLoseByDay.setMoney(entry.getValue());
+                return userLoseByDay;
+            }).collect(Collectors.toList());
 
-            List<UserLoseByDay> userLoseByDays = list.stream()
-//                .filter(log -> !"Admin".equals(log.getActionName())
-//                        && !"Gift Code".equals(log.getActionName())
-//                        && !"Gift Code".equals(log.getServiceName())
-//                        && !"RechargeByBank".equals(log.getActionName())
-//                        && !"RechargeByMomo".equals(log.getActionName())
-//                        && !"ChargeSMS".equals(log.getActionName())
-//                        && !"CashOutByBank".equals(log.getActionName())
-//                        && !"RefundRechargeError".equals(log.getActionName())
-//                        && !"CashOutByMomo".equals(log.getActionName())
-//                        && !"RechargeByCard".equals(log.getActionName())
-//                        && !"RechargeBySMS".equals(log.getActionName())
-//                        && !"Exchange".equals(log.getActionName()))
-                    .filter(log -> !Consts.NO_GAME.contains(log.getActionName()) && !"Exchange".equals(log.getActionName()))
-                    .collect(Collectors.groupingBy(LogUserMoneyResponse::getNickName,
-                            Collectors.summingLong(LogUserMoneyResponse::getMoneyExchange)))
-                    .entrySet().stream()
-                    .filter(entry -> entry.getValue() >= 100000)
-                    .map(entry -> {
-                        UserLoseByDay userLoseByDay = new UserLoseByDay();
-                        userLoseByDay.setNickname(entry.getKey());
-                        userLoseByDay.setMoney(entry.getValue());
-                        return userLoseByDay;
-                    })
-                    .collect(Collectors.toList());
+//            LogMoneyUserDaoImpl dao = new LogMoneyUserDaoImpl();
+//            List<LogUserMoneyResponse> list = dao.getLogMoneyUser(timeStart, timeEnd);
+
+
+            OtherService service = new OtherServiceImpl();
+            service.updateStatusSendBackCodeByDay("WIN", "", timeStart, timeEnd);
+
+//            List<UserLoseByDay> userLoseByDays = list.stream()
+////                .filter(log -> !"Admin".equals(log.getActionName())
+////                        && !"Gift Code".equals(log.getActionName())
+////                        && !"Gift Code".equals(log.getServiceName())
+////                        && !"RechargeByBank".equals(log.getActionName())
+////                        && !"RechargeByMomo".equals(log.getActionName())
+////                        && !"ChargeSMS".equals(log.getActionName())
+////                        && !"CashOutByBank".equals(log.getActionName())
+////                        && !"RefundRechargeError".equals(log.getActionName())
+////                        && !"CashOutByMomo".equals(log.getActionName())
+////                        && !"RechargeByCard".equals(log.getActionName())
+////                        && !"RechargeBySMS".equals(log.getActionName())
+////                        && !"Exchange".equals(log.getActionName()))
+//                    .filter(log -> !Consts.NO_GAME.contains(log.getActionName()) && !"Exchange".equals(log.getActionName()))
+//                    .collect(Collectors.groupingBy(LogUserMoneyResponse::getNickName,
+//                            Collectors.summingLong(LogUserMoneyResponse::getMoneyExchange)))
+//                    .entrySet().stream()
+//                    .filter(entry -> entry.getValue() >= 100000)
+//                    .map(entry -> {
+//                        UserLoseByDay userLoseByDay = new UserLoseByDay();
+//                        userLoseByDay.setNickname(entry.getKey());
+//                        userLoseByDay.setMoney(entry.getValue());
+//                        return userLoseByDay;
+//                    })
+//                    .collect(Collectors.toList());
+
+//            userLoseByDays.forEach(userLoseByDay -> {
+//                if (mapUserFishProfits.containsKey(userLoseByDay.getNickname())) {
+//                    userLoseByDay.setMoney(userLoseByDay.getMoney() + (mapUserFishProfits.get(userLoseByDay.getNickname()) * -1));
+//                }
+//            });
 
             userLoseByDays.forEach(userLoseByDay -> {
-                if (mapUserFishProfits.containsKey(userLoseByDay.getNickname())) {
-                    userLoseByDay.setMoney(userLoseByDay.getMoney() + (mapUserFishProfits.get(userLoseByDay.getNickname()) * -1));
-                }
-            });
-
-            userLoseByDays.forEach(userLoseByDay -> {
-                String giftCode = VinPlayUtils.genGiftCode(10);
-                String content = message + " : " + genCode(price, giftCode);
                 try {
-                    mailService.sendMailGiftCode(userLoseByDay.getNickname(), giftCode, "Hoàn Trả Tiền Cược", content);
-                } catch (SQLException e) {
+                    String giftCode = VinPlayUtils.genGiftCode(10);
+                    String content = message + " : " + genCode(price, giftCode);
+
+                    // push to rabbitmq
+                    UserBackCodeMessage userBackCodeMessage = new UserBackCodeMessage();
+                    userBackCodeMessage.backType = 1;
+                    userBackCodeMessage.nickname = userLoseByDay.getNickname();
+                    userBackCodeMessage.giftValue = price;
+                    userBackCodeMessage.money = userLoseByDay.getMoney();
+                    userBackCodeMessage.message = message;
+                    RMQApi.publishMessage("queue_backcode", userBackCodeMessage, 1502);
+
+//                    mailService.sendMailGiftCode(userLoseByDay.getNickname(), giftCode, "Hoàn Trả Tiền Cược", content);
+                } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
-
-                UserTele userTele = otherService.getUserTeleInfoByNickname(userLoseByDay.getNickname());
-                if (userTele != null && userTele.getChatID() != null) {
-                    try {
-                        sendMessage(userTele.getChatID(), content);
-                        saveUserTeleCashBack(userTele, giftCode, price, userLoseByDay.getMoney());
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-                OtherService service = new OtherServiceImpl();
-                service.updateStatusSendBackCodeByDay("WIN", nickname, timeStart, timeEnd);
+//
+//                UserTele userTele = otherService.getUserTeleInfoByNickname(userLoseByDay.getNickname());
+//                if (userTele != null && userTele.getChatID() != null) {
+//                    try {
+//                        sendMessage(userTele.getChatID(), content);
+//                        saveUserTeleCashBack(userTele, giftCode, price, userLoseByDay.getMoney());
+//                    } catch (Exception e) {
+//                        throw new RuntimeException(e);
+//                    }
+//                }
+//                OtherService service = new OtherServiceImpl();
+//                service.updateStatusSendBackCodeByDay("WIN", nickname, timeStart, timeEnd);
             });
 
             UserCodeReponse userCodeResponse = new UserCodeReponse(true, "200");

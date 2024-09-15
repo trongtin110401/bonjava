@@ -57,7 +57,7 @@ public class ReportTopGameProcessor2 implements BaseProcessor<HttpServletRequest
             String startTime = request.getParameter("ts");
             String endTime = request.getParameter("te");
 
-            System.out.println("Action: " + action + ", Display Number: " + displayNumber + ", Start Time: " + startTime + ", End Time: " + endTime);
+//            System.out.println("Action: " + action + ", Display Number: " + displayNumber + ", Start Time: " + startTime + ", End Time: " + endTime);
 
 
             List<String> actions;

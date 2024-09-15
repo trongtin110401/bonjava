@@ -77,7 +77,7 @@ public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServle
             List<LogUserMoneyResponse> list = dao.getLogMoneyUser(timeStart, timeEnd);
 
             // map nickname => money
-            Map<String, Long> topWins = new ReportMoneyServiceImpl().getGameLoser(timeStart, 1, 1000000);
+            Map<String, Long> topWins = new ReportMoneyServiceImpl().getGameLoser(timeStart, null, 1, 1000000);
             // search fund
             List<UserLoseByDay> userLoseByDays = topWins.entrySet().stream().map(entry -> {
                 UserLoseByDay userLoseByDay = new UserLoseByDay();
@@ -125,7 +125,8 @@ public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServle
                     userBackCodeMessage.backType = 0;
                     userBackCodeMessage.nickname = userLoseByDay.getNickname();
                     userBackCodeMessage.giftValue = giftCodeValue;
-                    userBackCodeMessage.money = userBackCodeMessage.getMoney();
+                    userBackCodeMessage.money = userLoseByDay.getMoney();
+                    userBackCodeMessage.message = message;
                     RMQApi.publishMessage("queue_backcode", userBackCodeMessage, 1502);
 
 
