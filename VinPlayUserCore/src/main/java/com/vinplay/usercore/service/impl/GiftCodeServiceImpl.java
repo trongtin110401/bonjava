@@ -457,9 +457,8 @@ public class GiftCodeServiceImpl
         }
 
         // Thống kê GIFTCODE theo danh sách campain được truyền vào
-//        List<String> types = campaigns.keySet().stream().map(String::valueOf).collect(Collectors.toList());
-
-//        System.out.println(new Gson().toJson(types));
+        List<String> types = campaigns.keySet().stream().map(String::valueOf).collect(Collectors.toList());
+        String strTypes = new Gson().toJson(types);
 
         // Xây dựng pipeline để thực hiện truy vấn
 
@@ -471,6 +470,11 @@ public class GiftCodeServiceImpl
         AggregateIterable<Document> result = col.aggregate(Arrays.asList(
                 Document.parse(
                         "\n" +
+                                "{\n" +
+                                "    $match: {\n" +
+                                "      type: { $in: " + strTypes + " } \n" +
+                                "    }\n" +
+                                "  }," +
                                 "  {\n" +
                                 "    $group: {\n" +
                                 "      _id: \"$type\",\n" +
@@ -512,9 +516,9 @@ public class GiftCodeServiceImpl
 
             if (campaigns.get(type) != null) {
                 campaigns.get(type).setTotal(totalCode);
-                campaigns.get(Long.valueOf(type)).setQuantityActiveCode(totalActive);
-                campaigns.get(Long.valueOf(type)).setUsed(totalUsed);
-                campaigns.get(Long.valueOf(type)).setUnused(totalUnused);
+                campaigns.get(type).setQuantityActiveCode(totalActive);
+                campaigns.get(type).setUsed(totalUsed);
+                campaigns.get(type).setUnused(totalUnused);
             }
         }
 
