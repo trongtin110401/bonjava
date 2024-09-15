@@ -808,5 +808,17 @@
                 </command>
             </commands>
         </queue>
+
+        <queue>
+            <name>queue_backcode</name>
+            <threads>1</threads>
+            <commands>
+                <command>
+                    <id>1502</id>
+                    <name></name>
+                    <path>com.vinplay.vbee.rmq.minigame.processor.UserBackCodeProcessor</path>
+                </command>
+            </commands>
+        </queue>
     </queues>
 </rabbitmq>

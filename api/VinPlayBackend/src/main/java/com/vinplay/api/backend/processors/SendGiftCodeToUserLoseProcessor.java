@@ -12,6 +12,7 @@
 package com.vinplay.api.backend.processors;
 
 import com.vinplay.dal.dao.impl.LogMoneyUserDaoImpl;
+import com.vinplay.dal.service.impl.ReportMoneyServiceImpl;
 import com.vinplay.usercore.service.OtherService;
 import com.vinplay.usercore.service.impl.GiftCodeServiceImpl;
 import com.vinplay.usercore.service.impl.MailBoxServiceImpl;
@@ -19,15 +20,15 @@ import com.vinplay.usercore.service.impl.OtherServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.dto.GiftCodeDto;
+import com.vinplay.vbee.common.messages.UserBackCodeMessage;
 import com.vinplay.vbee.common.response.*;
-import com.vinplay.vbee.common.statics.Consts;
+import com.vinplay.vbee.common.rmq.RMQApi;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
 import okhttp3.*;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.bson.Document;
 
 import javax.servlet.http.HttpServletRequest;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -68,55 +69,77 @@ public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServle
         try {
             // get Fish profit
             OtherService otherService = new OtherServiceImpl();
-            List<MoneyShootFishResponse> userFishProfits = otherService.getTotalShootFish(timeStart, timeEnd, null);
-            Map<String, Long> mapUserFishProfits = new HashMap<>();
-            userFishProfits.forEach(moneyShootFishResponse -> mapUserFishProfits.put(moneyShootFishResponse.getNickname(), moneyShootFishResponse.getTotalProfit()));
+//            List<MoneyShootFishResponse> userFishProfits = otherService.getTotalShootFish(timeStart, timeEnd, null);
+//            Map<String, Long> mapUserFishProfits = new HashMap<>();
+//            userFishProfits.forEach(moneyShootFishResponse -> mapUserFishProfits.put(moneyShootFishResponse.getNickname(), moneyShootFishResponse.getTotalProfit()));
 
             LogMoneyUserDaoImpl dao = new LogMoneyUserDaoImpl();
             List<LogUserMoneyResponse> list = dao.getLogMoneyUser(timeStart, timeEnd);
+
+            // map nickname => money
+            Map<String, Long> topWins = new ReportMoneyServiceImpl().getGameLoser(timeStart, 1, 1000000);
             // search fund
+            List<UserLoseByDay> userLoseByDays = topWins.entrySet().stream().map(entry -> {
+                UserLoseByDay userLoseByDay = new UserLoseByDay();
+                userLoseByDay.setNickname(entry.getKey());
+                userLoseByDay.setMoney(entry.getValue());
+                return userLoseByDay;
+            }).collect(Collectors.toList());
 
 
-            List<UserLoseByDay> userLoseByDays = list.stream()
-                    .filter(log -> !Consts.NO_GAME.contains(log.getActionName()) && !"Exchange".equals(log.getActionName()))
-                    .collect(Collectors.groupingBy(LogUserMoneyResponse::getNickName,
-                            Collectors.summingLong(LogUserMoneyResponse::getMoneyExchange)))
-                    .entrySet().stream()
-                    .map(entry -> {
-                        UserLoseByDay userLoseByDay = new UserLoseByDay();
-                        userLoseByDay.setNickname(entry.getKey());
-                        userLoseByDay.setMoney(entry.getValue());
-                        return userLoseByDay;
-                    })
-                    .collect(Collectors.toList());
+//            List<UserLoseByDay> userLoseByDays = list.stream()
+//                    .filter(log -> !Consts.NO_GAME.contains(log.getActionName()) && !"Exchange".equals(log.getActionName()))
+//                    .collect(Collectors.groupingBy(LogUserMoneyResponse::getNickName,
+//                            Collectors.summingLong(LogUserMoneyResponse::getMoneyExchange)))
+//                    .entrySet().stream()
+//                    .map(entry -> {
+//                        UserLoseByDay userLoseByDay = new UserLoseByDay();
+//                        userLoseByDay.setNickname(entry.getKey());
+//                        userLoseByDay.setMoney(entry.getValue());
+//                        return userLoseByDay;
+//                    })
+//                    .collect(Collectors.toList());
 
-            userLoseByDays.forEach(userLoseByDay -> {
-                if (mapUserFishProfits.containsKey(userLoseByDay.getNickname())) {
-                    userLoseByDay.setMoney(userLoseByDay.getMoney() + (mapUserFishProfits.get(userLoseByDay.getNickname()) * -1));
-                }
-            });
+//            userLoseByDays.forEach(userLoseByDay -> {
+//                if (mapUserFishProfits.containsKey(userLoseByDay.getNickname())) {
+//                    userLoseByDay.setMoney(userLoseByDay.getMoney() + (mapUserFishProfits.get(userLoseByDay.getNickname()) * -1));
+//                }
+//            });
+
+            // update status
+            OtherService service = new OtherServiceImpl();
+            service.updateStatusSendBackCodeByDay("LOSE", "", timeStart, timeEnd);
 
             userLoseByDays = userLoseByDays.stream()
                     .filter(user -> user.getMoney() <= -100000)
                     .collect(Collectors.toList());
 
             userLoseByDays.forEach(userLoseByDay -> {
-                int price = (int) (userLoseByDay.getMoney() * percent / 100 * -1);
-                if (price < 0) {
-                    price = price * -1;
+                int giftCodeValue = (int) (userLoseByDay.getMoney() * percent / 100 * -1);
+                if (giftCodeValue < 0) {
+                    giftCodeValue = giftCodeValue * -1;
                 }
-                String giftCode = VinPlayUtils.genGiftCode(10);
-                String content = message + " : " + genCode(price, giftCode);
                 try {
-                    mailService.sendMailGiftCode(userLoseByDay.getNickname(), giftCode, "Hoàn Trả Tiền Cược", content);
-                    UserTele userTele = otherService.getUserTeleInfoByNickname(userLoseByDay.getNickname());
-                    if (userTele != null) {
-                        sendMessage(userTele.getChatID(), content);
-                    }
-                    saveUserTeleCashBack(userLoseByDay.getNickname(), giftCode, price, userLoseByDay.getMoney());
-                    OtherService service = new OtherServiceImpl();
-                    service.updateStatusSendBackCodeByDay("LOSE", "", timeStart, timeEnd);
-                } catch (SQLException e) {
+                    // push to rabbitmq
+                    UserBackCodeMessage userBackCodeMessage = new UserBackCodeMessage();
+                    userBackCodeMessage.backType = 0;
+                    userBackCodeMessage.nickname = userLoseByDay.getNickname();
+                    userBackCodeMessage.giftValue = giftCodeValue;
+                    userBackCodeMessage.money = userBackCodeMessage.getMoney();
+                    RMQApi.publishMessage("queue_backcode", userBackCodeMessage, 1502);
+
+
+//                    String giftCode = VinPlayUtils.genGiftCode(10);
+//                    String content = message + " : " + genCode(giftCodeValue, giftCode);
+//
+//                    mailService.sendMailGiftCode(userLoseByDay.getNickname(), giftCode, "Hoàn Trả Tiền Cược", content);
+//                    UserTele userTele = otherService.getUserTeleInfoByNickname(userLoseByDay.getNickname());
+//                    if (userTele != null) {
+//                        sendMessage(userTele.getChatID(), content);
+//                    }
+//                    saveUserTeleCashBack(userLoseByDay.getNickname(), giftCode, giftCodeValue, userLoseByDay.getMoney());
+
+                } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
             });
@@ -169,11 +192,10 @@ public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServle
                     .post(requestBody)
                     .build();
             OkHttpClient client = new OkHttpClient();
-             response = client.newCall(request).execute();
+            response = client.newCall(request).execute();
         } catch (Exception e) {
             e.printStackTrace();
-        }
-        finally {
+        } finally {
             response.close();
         }
     }

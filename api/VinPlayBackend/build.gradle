@@ -15,11 +15,12 @@ dependencies {
     compile project(':VinPlayUserCore')
     compile project(':VinPlayDAL')
     compile project(':BitzeroAll')
+    compile project(':BitzeroAll')
     compile fileTree(include: ['*.jar'], dir: '../../libs')
 }
 task copyJar(type: Copy) {
     from configurations.compile {
-        include 'VinPlayUserCore*.jar', 'BitzeroAll*.jar', "VinPlayDAL*.jar"
+        include 'VinPlayUserCore*.jar', 'BitzeroAll*.jar', "VinPlayDAL*.jar", "VbeeCommon*.jar"
     }
     into 'libs/'
 }
