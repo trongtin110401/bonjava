@@ -84,7 +84,7 @@ public class ReportMoneyServiceImpl implements ReportMoneyService {
 
         // Tạo pipeline cho aggregation
         AggregateIterable<Document> result = collection.aggregate(Arrays.asList(
-                matchDocument,
+                new Document("$match", matchDocument),
                 new Document("$project", new Document("nick_name", 1)
                         .append("total", new Document("$add", Arrays.asList("$total_in", "$total_out", "$total_refund")))
                 ),
@@ -131,10 +131,7 @@ public class ReportMoneyServiceImpl implements ReportMoneyService {
 
         // Tạo pipeline cho aggregation
         AggregateIterable<Document> result = collection.aggregate(Arrays.asList(
-                new Document("$match", new Document("report_date", reportDate)
-                        .append("action_name", new Document("$in", Consts.GAMES)
-                                .append("$ne", "HamCaMap"))
-                ),
+                new Document("$match", matchDocument),
                 new Document("$project", new Document("nick_name", 1)
                         .append("total", new Document("$add", Arrays.asList("$total_in", "$total_out", "$total_refund")))
                 ),
