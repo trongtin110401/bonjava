@@ -464,12 +464,10 @@ public class GiftCodeServiceImpl
         // Xây dựng pipeline để thực hiện truy vấn
 
         // Danh sách type được truyền vào
-        List<String> types = Arrays.asList("1725850870622", "someOtherType");
+//        List<String> types = Arrays.asList("1725850870622", "someOtherType");
 
         // Xây dựng pipeline để thực hiện truy vấn
         AggregateIterable<Document> result = collection.aggregate(Arrays.asList(
-                // Thêm điều kiện lọc theo danh sách type
-                new Document("$match", new Document("type", new Document("$in", types))),
                 new Document("$group", new Document("_id", "$type")
                         .append("total_code", new Document("$sum", 1))
                         .append("total_active", new Document("$sum", new Document("$cond", Arrays.asList(new Document("$eq", Arrays.asList("$active", true)), 1, 0))))
