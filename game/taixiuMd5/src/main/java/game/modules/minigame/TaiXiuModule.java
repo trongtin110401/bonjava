@@ -561,9 +561,13 @@ public class TaiXiuModule extends BaseClientRequestHandler {
             }
             // Ngau nhien khong can thiep
             else {
+                System.out.println("Lay ket qua trong cache");
                 dices[0] = (short) roomTXVin.resultTX.dice1;
+                System.out.println("xx 1 : " + dices[0]);
                 dices[1] = (short) roomTXVin.resultTX.dice2;
+                System.out.println("xx 2 : " + dices[1]);
                 dices[2] = (short) roomTXVin.resultTX.dice3;
+                System.out.println("xx 3 : " + dices[2]);
             }
 
             String result = generationTX.buildPlainTextResult(dices);
