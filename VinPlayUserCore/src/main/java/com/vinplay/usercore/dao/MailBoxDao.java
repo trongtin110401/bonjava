@@ -40,6 +40,6 @@ public interface MailBoxDao {
 
     public boolean sendMailCardMobile(String var1, String var2, String var3, String var4, String var5);
 
-    ListMailBoxResponse getAllMail(String nickname, int pageIndex, int pageSize);
+    ListMailBoxResponse getAllMail(String nickname, int pageIndex, int pageSize, boolean type);
 }
 

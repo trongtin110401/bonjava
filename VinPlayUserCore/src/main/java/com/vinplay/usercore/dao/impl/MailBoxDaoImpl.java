@@ -91,6 +91,7 @@ public class MailBoxDaoImpl
         doc.append("create_time", VinPlayUtils.getCurrentDateTime());
         doc.append("author", "Hệ thống");
         doc.append("status", 0);
+        doc.append("all", true);
         col.insertOne(doc);
         return true;
     }
@@ -255,8 +256,9 @@ public class MailBoxDaoImpl
         doc.append("title", (Object) title);
         doc.append("content", (Object) content);
         doc.append("create_time", (Object) VinPlayUtils.getCurrentDateTime());
-        doc.append("author", (Object) "H\u1ec7 th\u1ed1ng");
+        doc.append("author", (Object) "Hệ thống");
         doc.append("status", (Object) 0);
+        doc.append("type", (Object) "GiftCode");
         col.insertOne((Object) doc);
         return true;
     }
@@ -329,21 +331,42 @@ public class MailBoxDaoImpl
     }
 
     @Override
-    public ListMailBoxResponse getAllMail(String nickname, int pageIndex, int pageSize) {
+    public ListMailBoxResponse getAllMail(String nickname, int pageIndex, int pageSize, boolean sendAll) {
         ListMailBoxResponse response = new ListMailBoxResponse(false, "1001");
         List<MailBoxResponse> results = new ArrayList<>();
         int skipCount = (pageIndex - 1) * pageSize;
 
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         List<Bson> pipeline = new ArrayList<>();
+        List<Bson> countPipeline = new ArrayList<>(); // Dùng cho tính totalRecords
 
-        // Add nickname condition if it's not null
+        // Điều kiện tìm kiếm theo nickname
         if (nickname != null && !nickname.isEmpty()) {
-            pipeline.add(Aggregates.match(Filters.eq("nick_name", nickname)));
+            Bson nicknameMatch = Aggregates.match(Filters.eq("nick_name", nickname));
+            pipeline.add(nicknameMatch);
+            countPipeline.add(nicknameMatch); // Thêm vào pipeline đếm
         }
 
+        // Điều kiện tìm kiếm theo sendAll
+        if (!sendAll) {
+            Bson sendAllMatch = Aggregates.match(Filters.or(
+                    Filters.eq("all", false),
+                    Filters.not(Filters.exists("all"))
+            ));
+            pipeline.add(sendAllMatch);
+            countPipeline.add(sendAllMatch); // Thêm vào pipeline đếm
+        } else {
+            Bson sendAllMatch = Aggregates.match(Filters.eq("all", sendAll));
+            pipeline.add(sendAllMatch);
+            countPipeline.add(sendAllMatch); // Thêm vào pipeline đếm
+        }
 
-        // Group by mail_id to ensure distinct mail_id records
+        // Điều kiện loại trừ type = "GiftCode"
+        Bson typeMatch = Aggregates.match(Filters.ne("type", "GiftCode"));
+        pipeline.add(typeMatch);
+        countPipeline.add(typeMatch); // Thêm vào pipeline đếm
+
+        // Group by mail_id để đảm bảo không trùng lặp
         pipeline.add(Aggregates.group("$mail_id",
                 Accumulators.first("mail_id", "$mail_id"),
                 Accumulators.first("nick_name", "$nick_name"),
@@ -354,17 +377,14 @@ public class MailBoxDaoImpl
                 Accumulators.first("status", "$status"),
                 Accumulators.first("mail_gift_code", "$mail_gift_code")
         ));
-
-        // Sort by _id in descending order
         pipeline.add(Aggregates.sort(Sorts.descending("_id")));
 
-        // Apply pagination (skip and limit)
+        // Pagination
         pipeline.add(Aggregates.skip(skipCount));
         pipeline.add(Aggregates.limit(pageSize));
 
-        // Perform aggregation query
+        // Query dữ liệu dựa trên pipeline
         AggregateIterable<Document> iterable = db.getCollection("mail_box").aggregate(pipeline);
-
         iterable.forEach((Block<Document>) document -> {
             MailBoxResponse mail = new MailBoxResponse();
             mail.sysMail = "*".equals(document.getString("nick_name")) ? 1 : 0;
@@ -381,22 +401,24 @@ public class MailBoxDaoImpl
             }
             results.add(mail);
         });
+
+        // Tính toán totalRecords dựa trên các điều kiện tìm kiếm
+        countPipeline.add(Aggregates.group("$mail_id")); // Đảm bảo chỉ tính group theo mail_id
         long totalRecords = db.getCollection("mail_box")
-                .aggregate(Arrays.asList(
-                        Aggregates.match(!nickname.isEmpty() ? Filters.eq("nick_name", nickname) : Filters.exists("mail_id")),
-                        Aggregates.group("$mail_id")
-                ))
+                .aggregate(countPipeline)
                 .into(new ArrayList<>()).size();
 
-        // Set results and total distinct records in response
+        // Thiết lập thông tin phản hồi
         response.setTransactions(results);
         response.setTotalRecords((int) totalRecords);
         response.setPageIndex(pageIndex);
         response.setPageSize(pageSize);
         int totalPages = (int) Math.ceil((double) totalRecords / (double) pageSize);
         response.setTotalPages(totalPages);
+
         return response;
     }
+
 
 
 }

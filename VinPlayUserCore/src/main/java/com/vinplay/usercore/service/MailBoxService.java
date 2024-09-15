@@ -22,7 +22,7 @@ public interface MailBoxService {
 
     public List<MailBoxResponse> listMailBox(String var1, int var2);
 
-    ListMailBoxResponse getAllMail(String nickname, int pageIndex, int pageSize);
+    ListMailBoxResponse getAllMail(String nickname, int pageIndex, int pageSize, boolean type);
 
     public int updateStatusMailBox(String var1);
 
