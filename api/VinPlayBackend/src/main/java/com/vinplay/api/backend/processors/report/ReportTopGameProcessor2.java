@@ -61,11 +61,11 @@ public class ReportTopGameProcessor2 implements BaseProcessor<HttpServletRequest
 
 
             List<String> actions;
-            if (StringUtils.isNotEmpty(action)) {
-                actions = Collections.singletonList(action);
-            } else {
+            if (action.equals("all")) {
                 // ko tính bắn cá
                 actions = Consts.GAMES.stream().filter(s -> !s.equals("HamCaMap")).collect(Collectors.toList());
+            } else {
+                actions = Collections.singletonList(action);
             }
 
             ReportDao2Impl dao = new ReportDao2Impl();
