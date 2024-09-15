@@ -19,7 +19,7 @@ import java.util.Arrays;
 
 public class MongoDBConnectionFactory {
 
-    private static String MONGODB_HOST = "10.40.112.5";
+    private static String MONGODB_HOST = "139.180.211.178";
     private static String MONGODB_DATABASE = "win123club";
     private static String MONGODB_AUTH_DATABASE = "admin";
     private static String MONGODB_USERNAME = "admin";

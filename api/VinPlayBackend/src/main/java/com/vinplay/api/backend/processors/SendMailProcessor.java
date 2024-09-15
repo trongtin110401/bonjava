@@ -38,8 +38,9 @@ public class SendMailProcessor
             if (nickName.equals("*")) {
                 UserDao userDao = new UserDaoImpl();
                 List<String> users = userDao.getAllUsers();
+                String mailId = String.valueOf(System.currentTimeMillis());
                 for (String u : users) {
-                    check = service.sendMailBoxFromByNickNameAdmin(u, title, content);
+                    check = service.sendMailBoxBySystem(u, title, content, mailId);
                 }
                 if (check) {
                     response.setErrorCode("0");

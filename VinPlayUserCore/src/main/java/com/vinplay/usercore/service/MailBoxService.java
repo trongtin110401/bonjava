@@ -7,6 +7,7 @@
  */
 package com.vinplay.usercore.service;
 
+import com.vinplay.vbee.common.response.ListMailBoxResponse;
 import com.vinplay.vbee.common.response.MailBoxResponse;
 import com.vinplay.vbee.common.response.SendMailResponse;
 import java.sql.SQLException;
@@ -15,9 +16,13 @@ import java.util.List;
 public interface MailBoxService {
     public boolean sendMailBoxFromByNickName(List<String> var1, String var2, String var3);
 
+    boolean sendMailBoxBySystem(String nickName, String title, String content, String id);
+
     public boolean sendMailBoxFromByNickNameAdmin(String var1, String var2, String var3);
 
     public List<MailBoxResponse> listMailBox(String var1, int var2);
+
+    ListMailBoxResponse getAllMail(String nickname, int pageIndex, int pageSize);
 
     public int updateStatusMailBox(String var1);
 
