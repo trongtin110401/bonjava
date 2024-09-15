@@ -91,7 +91,7 @@ public class ReportMoneyServiceImpl implements ReportMoneyService {
 
         // In kết quả
         for (Document doc : result) {
-            String nickname = doc.getObjectId("_id").toString();
+            String nickname = doc.getString("_id");
             long amount = doc.getLong("total");
             results.put(nickname, amount);
         }
@@ -132,7 +132,7 @@ public class ReportMoneyServiceImpl implements ReportMoneyService {
 
         // In kết quả
         for (Document doc : result) {
-            String nickname = doc.getObjectId("_id").toString();
+            String nickname = doc.getString("_id");
             long amount = doc.getLong("total");
             results.put(nickname, amount);
         }
