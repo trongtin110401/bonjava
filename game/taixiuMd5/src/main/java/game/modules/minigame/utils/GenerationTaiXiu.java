@@ -41,7 +41,6 @@ public class GenerationTaiXiu {
             result = this.cauTX.getResultTX();
         }
         if (result == -1) {
-            System.out.println("-----MD5 result - 1 (1) : ");
             this.cauTX = null;
             int n = rd.nextInt(ConfigGame.getIntValueBaseMin("tx_num_rd", 1));
             if (n == 0 && this.listCau.size() > 0) {
@@ -59,7 +58,6 @@ public class GenerationTaiXiu {
             }
         }
         if (result == -1) {
-            System.out.println("-----MD5 result - 1 (2) : ");
             dices = this.generateDices();
             if ((dices[0] + dices[1] + dices[2]) == 18 || (dices[0] + dices[1] + dices[2]) == 3)
                 return this.generateResult(forceBetSide);

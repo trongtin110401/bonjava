@@ -547,21 +547,17 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                 chenhLech = totalRealBetXiu - totalRealBetTai;
             }
 
-            System.out.println("-----MD5 chênh lệch : " + chenhLech);
-            System.out.println("-----MD5 Fund : " + getFunValue());
             if (chenhLech > 0) {
                 // nếu mà HŨ âm => can thiệp kế quả
                 if (getFunValue() - chenhLech < 0) {
-                    System.out.println("-----MD5 Can Thiệp : ");
                     if (totalRealBetTai > totalRealBetXiu) {
                         this.forceBetSide = 0;
-                        System.out.println("-----MD5 Can Thiệp Xỉu : ");
+                        dices = this.generationTX.generateResult(this.forceBetSide);
                     } else {
                         this.forceBetSide = 1;
-                        System.out.println("-----MD5 Can Thiệp Tài : ");
+                        dices = this.generationTX.generateResult(this.forceBetSide);
                     }
                 }
-                dices = this.generationTX.generateResult(this.forceBetSide);
             }
             // Ngau nhien khong can thiep
             else {
