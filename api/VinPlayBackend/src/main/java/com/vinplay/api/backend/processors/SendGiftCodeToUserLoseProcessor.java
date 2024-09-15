@@ -129,15 +129,15 @@ public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServle
                     RMQApi.publishMessage("queue_backcode", userBackCodeMessage, 1502);
 
 
-                    String giftCode = VinPlayUtils.genGiftCode(10);
-                    String content = message + " : " + genCode(giftCodeValue, giftCode);
-
-                    mailService.sendMailGiftCode(userLoseByDay.getNickname(), giftCode, "Hoàn Trả Tiền Cược", content);
-                    UserTele userTele = otherService.getUserTeleInfoByNickname(userLoseByDay.getNickname());
-                    if (userTele != null) {
-                        sendMessage(userTele.getChatID(), content);
-                    }
-                    saveUserTeleCashBack(userLoseByDay.getNickname(), giftCode, giftCodeValue, userLoseByDay.getMoney());
+//                    String giftCode = VinPlayUtils.genGiftCode(10);
+//                    String content = message + " : " + genCode(giftCodeValue, giftCode);
+//
+//                    mailService.sendMailGiftCode(userLoseByDay.getNickname(), giftCode, "Hoàn Trả Tiền Cược", content);
+//                    UserTele userTele = otherService.getUserTeleInfoByNickname(userLoseByDay.getNickname());
+//                    if (userTele != null) {
+//                        sendMessage(userTele.getChatID(), content);
+//                    }
+//                    saveUserTeleCashBack(userLoseByDay.getNickname(), giftCode, giftCodeValue, userLoseByDay.getMoney());
 
                 } catch (Exception e) {
                     throw new RuntimeException(e);
