@@ -491,7 +491,7 @@ public class GiftCodeServiceImpl
                                 "      }\n" +
                                 "    }\n" +
                                 "  }\n" +
-                                "]" )
+                                "]")
         ));
 
         // Gán lại kết quả thống kê cho campaign
@@ -510,7 +510,7 @@ public class GiftCodeServiceImpl
             System.out.println("Total Unused: " + totalUnused);
             System.out.println("-----------------------------");
 
-            if(campaigns.get(type) != null) {
+            if (campaigns.get(type) != null) {
                 campaigns.get(type).setTotal(totalCode);
                 campaigns.get(Long.valueOf(type)).setQuantityActiveCode(totalActive);
                 campaigns.get(Long.valueOf(type)).setUsed(totalUsed);
