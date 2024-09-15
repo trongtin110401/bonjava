@@ -115,7 +115,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
     private int amountBotXiuFake = 0;
 
     protected MiniGameService miniGameService = new MiniGameServiceImpl();
-    ResultTaiXiuMd5 resultTaiXiuMd5 = new ResultTaiXiuMd5();
+
     ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(8);
 
     public void init() {
@@ -479,7 +479,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         dices = this.generationTX.generateDices();
         String result = generationTX.buildPlainTextResult(dices);
         String md5 = GenerationTaiXiu.hashMD5(result);
-
+        ResultTaiXiuMd5 resultTaiXiuMd5 = new ResultTaiXiuMd5();
         resultTaiXiuMd5.dice1 = dices[0];
         resultTaiXiuMd5.dice2 = dices[1];
         resultTaiXiuMd5.dice3 = dices[2];
@@ -558,9 +558,9 @@ public class TaiXiuModule extends BaseClientRequestHandler {
             }
             // Ngau nhien khong can thiep
             else {
-                dices[0] = (short) resultTaiXiuMd5.dice1;
-                dices[1] = (short) resultTaiXiuMd5.dice2;
-                dices[2] = (short) resultTaiXiuMd5.dice3;
+                dices[0] = (short) roomTXVin.resultTX.dice1;
+                dices[1] = (short) roomTXVin.resultTX.dice2;
+                dices[2] = (short) roomTXVin.resultTX.dice3;
             }
 
             String result = generationTX.buildPlainTextResult(dices);
