@@ -487,9 +487,9 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         resultTaiXiuMd5.setPlantTextResult(result);
         roomTXVin.resultTX = resultTaiXiuMd5;
 
-        if (dices[0] + dices[1] + dices[2] > 10){
+        if (dices[0] + dices[1] + dices[2] > 10) {
             this.result = 1;
-        } else{
+        } else {
             this.result = 0;
         }
         Debug.trace("GENERATE KẾT QUẢ MD5 TRƯỚC: " + dices[0] + " - " + dices[1] + " - " + dices[2] + "   " + this.result);
@@ -547,16 +547,13 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                 chenhLech = totalRealBetXiu - totalRealBetTai;
             }
 
-            if (chenhLech > 0) {
-                // nếu mà HŨ âm => can thiệp kế quả
-                if (getFunValue() - chenhLech < 0) {
-                    if (totalRealBetTai > totalRealBetXiu) {
-                        this.forceBetSide = 0;
-                        dices = this.generationTX.generateResult(this.forceBetSide);
-                    } else {
-                        this.forceBetSide = 1;
-                        dices = this.generationTX.generateResult(this.forceBetSide);
-                    }
+            if (chenhLech > 0 && getFunValue() - chenhLech < 0) {
+                if (totalRealBetTai > totalRealBetXiu) {
+                    this.forceBetSide = 0;
+                    dices = this.generationTX.generateResult(this.forceBetSide);
+                } else {
+                    this.forceBetSide = 1;
+                    dices = this.generationTX.generateResult(this.forceBetSide);
                 }
             }
             // Ngau nhien khong can thiep
