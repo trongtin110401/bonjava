@@ -64,6 +64,7 @@ public class ReportMoneyServiceImpl implements ReportMoneyService {
     public Map<String, Long> getGameLoser(String reportDate) {
 
         String games = new Gson().toJson(Consts.GAMES);
+        Map<String, Long> results = new HashMap<>();
 
         String query =
                 "  {\n" +
@@ -93,21 +94,47 @@ public class ReportMoneyServiceImpl implements ReportMoneyService {
                         "    $sort: { total: 1 } \n" +
                         "  }";
 
+//        MongoDatabase db = MongoDBConnectionFactory.getDB();
+//        MongoCollection<Document> collection = db.getCollection("report_money_game");
+//        AggregateIterable<Document> aggregateIterable = collection.aggregate(Arrays.asList(Document.parse(query)));
+//
+//
+//
+//        for (Document document : aggregateIterable) {
+//            System.out.println(document.toJson());
+//
+//
+//
+////            String nickname = document.getObjectId("_id").toString();
+////            long amount = document.getLong("total");
+////            results.put(nickname, amount);
+//        }
+
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("report_money_game");
-        AggregateIterable<Document> aggregateIterable = collection.aggregate(Arrays.asList(Document.parse(query)));
 
+        // Tạo pipeline cho aggregation
+        AggregateIterable<Document> result = collection.aggregate(Arrays.asList(
+                new Document("$match", new Document("report_date", "2024-09-15")
+                        .append("action_name", new Document("$in", Arrays.asList("XocDia", "TaiXiuMd5"))
+                                .append("$ne", "HamCaMap"))
+                ),
+                new Document("$project", new Document("nick_name", 1)
+                        .append("total", new Document("$add", Arrays.asList("$total_in", "$total_out", "$total_refund")))
+                ),
+                new Document("$match", new Document("total", new Document("$lt", 0))),
+                new Document("$group", new Document("_id", "$nick_name")
+                        .append("total", new Document("$sum", "$total"))
+                ),
+                new Document("$sort", new Document("total", 1))
+        ));
 
-        Map<String, Long> results = new HashMap<>();
-        for (Document document : aggregateIterable) {
-            System.out.println(document.toJson());
-
-
-
-//            String nickname = document.getObjectId("_id").toString();
-//            long amount = document.getLong("total");
-//            results.put(nickname, amount);
+        // In kết quả
+        for (Document doc : result) {
+            System.out.println(doc.toJson());
         }
+
+
         return results;
     }
 
