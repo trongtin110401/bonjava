@@ -45,9 +45,9 @@ implements MailBoxService {
     }
 
     @Override
-    public ListMailBoxResponse getAllMail(String nickname, int pageIndex, int pageSize) {
+    public ListMailBoxResponse getAllMail(String nickname, int pageIndex, int pageSize, boolean type) {
         MailBoxDaoImpl dao = new MailBoxDaoImpl();
-        return dao.getAllMail(nickname, pageIndex, pageSize);
+        return dao.getAllMail(nickname, pageIndex, pageSize, type);
     }
 
     @Override

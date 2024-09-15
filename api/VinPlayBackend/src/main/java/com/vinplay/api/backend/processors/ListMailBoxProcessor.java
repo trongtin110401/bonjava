@@ -31,12 +31,18 @@ public class ListMailBoxProcessor
         String nickName = request.getParameter("nn");
         int pageIndex = Integer.parseInt(request.getParameter("p"));
         int pageSize = Integer.parseInt(request.getParameter("pageSize"));
+        boolean all = false;
+        try {
+            all = Boolean.parseBoolean(request.getParameter("all"));
+        } catch (Exception e) {
+            all = false;
+        }
         if (pageIndex < 0) {
             return response.toJson();
         }
         MailBoxServiceImpl service = new MailBoxServiceImpl();
         try {
-            response = service.getAllMail(nickName, pageIndex, pageSize);
+            response = service.getAllMail(nickName, pageIndex, pageSize, all);
             response.setSuccess(true);
             response.setErrorCode("0");
         } catch (Exception e) {
