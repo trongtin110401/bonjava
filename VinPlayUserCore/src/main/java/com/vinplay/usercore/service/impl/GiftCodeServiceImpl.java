@@ -461,7 +461,6 @@ public class GiftCodeServiceImpl
         AggregateIterable<Document> result = col.aggregate(Arrays.asList(
                 Document.parse(
                         "\n" +
-
                                 "  {\n" +
                                 "    $group: {\n" +
                                 "      _id: \"$type\",\n" +
@@ -493,13 +492,13 @@ public class GiftCodeServiceImpl
             int totalUsed = doc.getInteger("total_used", 0);
             int totalUnused = totalCode - totalUsed;
 
-            // Hiển thị các giá trị để kiểm tra
-            System.out.println("Type: " + type);
-            System.out.println("Total Code: " + totalCode);
-            System.out.println("Total Active: " + totalActive);
-            System.out.println("Total Used: " + totalUsed);
-            System.out.println("Total Unused: " + totalUnused);
-            System.out.println("-----------------------------");
+//            // Hiển thị các giá trị để kiểm tra
+//            System.out.println("Type: " + type);
+//            System.out.println("Total Code: " + totalCode);
+//            System.out.println("Total Active: " + totalActive);
+//            System.out.println("Total Used: " + totalUsed);
+//            System.out.println("Total Unused: " + totalUnused);
+//            System.out.println("-----------------------------");
 
             if (campaigns.get(type) != null) {
                 campaigns.get(type).setTotal(totalCode);

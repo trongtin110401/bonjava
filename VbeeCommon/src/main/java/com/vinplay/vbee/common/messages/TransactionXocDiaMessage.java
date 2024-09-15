@@ -3,7 +3,7 @@
  */
 package com.vinplay.vbee.common.messages;
 
-public class TransactionXocDiaMessage extends BaseMessage{
+public class TransactionXocDiaMessage extends BaseMessage {
 
     private static final long serialVersionUID = 1L;
 
