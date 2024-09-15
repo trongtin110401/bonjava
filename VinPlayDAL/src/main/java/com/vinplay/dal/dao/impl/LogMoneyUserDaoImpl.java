@@ -74,8 +74,7 @@ import com.vinplay.vbee.common.utils.VinPlayUtils;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
-public class LogMoneyUserDaoImpl
-        implements LogMoneyUserDao {
+public class LogMoneyUserDaoImpl implements LogMoneyUserDao {
     @Override
     public List<LogUserMoneyResponse> searchLogMoneyUser(String nickName, String userName, String moneyType, String serviceName, String actionName, String timeStart, String timeEnd, int page, int like, int totalRecord) {
         final ArrayList<LogUserMoneyResponse> results = new ArrayList<LogUserMoneyResponse>();
@@ -106,11 +105,8 @@ public class LogMoneyUserDaoImpl
             objsort.put("trans_id", -1);
             iterable = db.getCollection("log_money_user_vin").find((Bson) new Document(conditions)).sort(objsort).skip(numStart).limit(totalRecord);
 
-        } else if (moneyType.equals("xu")) {
-            BasicDBObject objsort = new BasicDBObject();
-            objsort.put("trans_time", -1);
-            iterable = db.getCollection("log_money_user_xu").find((Bson) new Document(conditions)).sort(objsort).skip(numStart).limit(totalRecord);
         }
+
         iterable.forEach((Block) new Block<Document>() {
 
             public void apply(Document document) {

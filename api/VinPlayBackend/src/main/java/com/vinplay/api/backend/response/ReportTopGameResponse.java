@@ -12,8 +12,7 @@ import com.vinplay.vbee.common.response.BaseResponseModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReportTopGameResponse
-extends BaseResponseModel {
+public class ReportTopGameResponse extends BaseResponseModel {
     public List<TopCaoThu> topUserWin = new ArrayList<TopCaoThu>();
     public List<TopCaoThu> topUserLost = new ArrayList<TopCaoThu>();
     public List<TopCaoThu> topBotWin = new ArrayList<TopCaoThu>();

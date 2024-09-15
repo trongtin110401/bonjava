@@ -75,33 +75,33 @@ implements BaseProcessor<HttpServletRequest, String> {
             }
 
 //           CÁCH TÌM KIẾM ÁP DỤNG ELK
-            if(typeSearch.equals("elk")) {
-                APIelkUserVin apielkUserVin = new APIelkUserVin();
-                ArrayList<UserVinEntity> transByELK;
-                int numStart = (page - 1) * totalrecord;
-                int totalPages = 0;
-                if (serviceName != null && !serviceName.equals("") && nickName != null && !nickName.equals("")) {
-                    totalPages = apielkUserVin.TongUserVinByServiceNameNickname(nickName, serviceName, timestart, timeend);
-                    transByELK = apielkUserVin.GetUserVinByServiceNameNickname(nickName, serviceName, timestart, timeend,  numStart, totalrecord);
-                } else if (serviceName != null && !serviceName.equals("")) {
-                    totalPages = apielkUserVin.TongUserVinByServiceName(serviceName, timestart, timeend);
-                    transByELK = apielkUserVin.GetUserVinByServiceName(serviceName, timestart, timeend,  numStart, totalrecord);
-
-                } else if (nickName != null && !nickName.equals("")) {
-                    totalPages = apielkUserVin.TongUserVinByNickName(nickName, timestart, timeend);
-                    transByELK = apielkUserVin.GetUserVinByNickName(nickName, timestart, timeend,  numStart, totalrecord);
-                } else {
-                    totalPages = apielkUserVin.GetTongUserVin(timestart, timeend);
-                    transByELK = apielkUserVin.GetUserVin(timestart, timeend, numStart, totalrecord);
-                }
-                Collections.sort(transByELK,(o1, o2)
-                        -> o2.getTransactionTime().compareTo(
-                        o1.getTransactionTime()));
-                response.setTotalPages(totalPages);
-                response.setTransactionsbyelk(transByELK);
-                response.setSuccess(true);
-                response.setErrorCode("0");
-            }
+//            if(typeSearch.equals("elk")) {
+//                APIelkUserVin apielkUserVin = new APIelkUserVin();
+//                ArrayList<UserVinEntity> transByELK;
+//                int numStart = (page - 1) * totalrecord;
+//                int totalPages = 0;
+//                if (serviceName != null && !serviceName.equals("") && nickName != null && !nickName.equals("")) {
+//                    totalPages = apielkUserVin.TongUserVinByServiceNameNickname(nickName, serviceName, timestart, timeend);
+//                    transByELK = apielkUserVin.GetUserVinByServiceNameNickname(nickName, serviceName, timestart, timeend,  numStart, totalrecord);
+//                } else if (serviceName != null && !serviceName.equals("")) {
+//                    totalPages = apielkUserVin.TongUserVinByServiceName(serviceName, timestart, timeend);
+//                    transByELK = apielkUserVin.GetUserVinByServiceName(serviceName, timestart, timeend,  numStart, totalrecord);
+//
+//                } else if (nickName != null && !nickName.equals("")) {
+//                    totalPages = apielkUserVin.TongUserVinByNickName(nickName, timestart, timeend);
+//                    transByELK = apielkUserVin.GetUserVinByNickName(nickName, timestart, timeend,  numStart, totalrecord);
+//                } else {
+//                    totalPages = apielkUserVin.GetTongUserVin(timestart, timeend);
+//                    transByELK = apielkUserVin.GetUserVin(timestart, timeend, numStart, totalrecord);
+//                }
+//                Collections.sort(transByELK,(o1, o2)
+//                        -> o2.getTransactionTime().compareTo(
+//                        o1.getTransactionTime()));
+//                response.setTotalPages(totalPages);
+//                response.setTransactionsbyelk(transByELK);
+//                response.setSuccess(true);
+//                response.setErrorCode("0");
+//            }
         }
         catch (Exception e) {
             e.printStackTrace();
