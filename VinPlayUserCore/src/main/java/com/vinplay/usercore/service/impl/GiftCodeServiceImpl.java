@@ -450,6 +450,9 @@ public class GiftCodeServiceImpl
 
         // Thống kê GIFTCODE theo danh sách campain được truyền vào
         List<String> types = campaigns.keySet().stream().map(String::valueOf).collect(Collectors.toList());
+
+        System.out.println(new Gson().toJson(types));
+
         // Xây dựng pipeline để thực hiện truy vấn
         AggregateIterable<Document> result = collection.aggregate(Arrays.asList(
                 new Document("$match", new Document("type", new Document("$in", types))),
