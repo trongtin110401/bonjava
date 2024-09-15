@@ -461,6 +461,23 @@ public class GiftCodeServiceImpl
         return campaignNames;
     }
 
+    public List<CampaignName> getAllCampaignWithoutGiftCodeInfo() {
+        List<CampaignName> campaignNames = new ArrayList<>();
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("campaign_gift_code");
+        Document sortCriteria = new Document("_id", 1);
+        try (MongoCursor<Document> cursor = collection.find().sort(sortCriteria).iterator()) {
+            while (cursor.hasNext()) {
+                Document document = cursor.next();
+                CampaignName campaignName = new CampaignName();
+                campaignName.setId(document.getLong("_id"));
+                campaignName.setCampaignName(document.getString("name"));
+                campaignNames.add(campaignName);
+            }
+        }
+        return campaignNames;
+    }
+
     public void recallGiftCode(String type, String code) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("gift_code");
