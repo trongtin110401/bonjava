@@ -511,28 +511,6 @@ public class GiftCodeServiceImpl
         return new ArrayList<>(campaigns.values());
     }
 
-
-    public List<CampaignName> getAllCampaignNew() {
-        MongoDatabase db = MongoDBConnectionFactory.getDB();
-        MongoCollection<Document> collection = db.getCollection("campaign_gift_code");
-
-        AggregateIterable<Document> aggregateResult = collection.aggregate(Arrays.asList(
-                //match(and(filters)),
-                group("$type"
-                        , sum("total_code", "$total_code")
-                        , sum("total_refund", "$active")
-                        , sum("total_used", "$used_time")
-                        , sum("total_unused", "$used_time")
-//                        ,sum("revenue", "$revenue"),
-                        //,first("action_name", "$action_name")
-                )  // GROUP BY và SUM
-
-        ));
-
-        List<CampaignName> results = new ArrayList<>();
-        return results;
-    }
-
     public List<CampaignName> getAllCampaignWithoutGiftCodeInfo() {
         List<CampaignName> campaignNames = new ArrayList<>();
         MongoDatabase db = MongoDBConnectionFactory.getDB();
