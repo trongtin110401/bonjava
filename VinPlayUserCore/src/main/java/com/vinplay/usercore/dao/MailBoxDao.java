@@ -26,6 +26,8 @@ public interface MailBoxDao {
 
     public int deleteMailBox(String var1);
 
+    int deleteMailBoxByIdAndNickname(String id, String nickname);
+
     public boolean sendmailGiftCode(String var1, String var2, String var3, String var4, String var5) throws SQLException;
 
     public int countMailBoxInActive(String var1) throws SQLException;

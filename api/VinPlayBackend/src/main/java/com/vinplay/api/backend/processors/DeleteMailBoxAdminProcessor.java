@@ -22,6 +22,7 @@ implements BaseProcessor<HttpServletRequest, String> {
         HttpServletRequest request = (HttpServletRequest)param.get();
         BaseResponseModel response = new BaseResponseModel(false, "1001");
         String mailId = request.getParameter("mid");
+        String nickname = request.getParameter("nickname");
         if (!mailId.isEmpty()) {
             MailBoxServiceImpl service = new MailBoxServiceImpl();
             int del = service.deleteMailBoxAdmin(mailId);
