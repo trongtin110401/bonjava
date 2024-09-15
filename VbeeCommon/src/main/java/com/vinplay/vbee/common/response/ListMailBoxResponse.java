@@ -15,6 +15,7 @@ extends BaseResponseModel {
     private int pageIndex;
     private int pageSize;
     private int totalRecords;
+
     private List<MailBoxResponse> transactions = new ArrayList<MailBoxResponse>();
 
     public int getMailNotRead() {
