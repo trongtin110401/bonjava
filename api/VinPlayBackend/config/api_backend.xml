@@ -60,6 +60,11 @@
             <name>send sms giftcode</name>
             <path>com.vinplay.api.backend.processors.brandname.SendSMSGiftCodeProcessor</path>
         </command>
+<!--        <command>-->
+<!--            <id>12</id>-->
+<!--            <name>get report top game</name>-->
+<!--            <path>com.vinplay.api.backend.processors.report.ReportTopGameProcessor</path>-->
+<!--        </command>-->
         <command>
             <id>12</id>
             <name>get report top game</name>

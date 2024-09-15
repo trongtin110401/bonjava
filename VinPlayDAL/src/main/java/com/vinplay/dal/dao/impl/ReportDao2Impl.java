@@ -82,6 +82,8 @@ public class ReportDao2Impl {
         }
 
 
+        System.out.println("Action: " + actions + ", Display Number: " + pageSize + ", Start Time: " + start + ", End Time: " + end);
+
         // Xây dựng pipeline để thực hiện truy vấn với phân trang và lọc
         AggregateIterable<Document> result = collection.aggregate(Arrays.asList(
                 new Document("$match", new Document("report_date", new Document("$gte", startDate).append("$lte", endDate))
