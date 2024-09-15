@@ -470,32 +470,32 @@ public class GiftCodeServiceImpl
         MongoCollection<Document> col = db.getCollection("gift_code");
         AggregateIterable<Document> result = col.aggregate(Arrays.asList(
                 Document.parse("[\n" +
-                                "{\n" +
-                                "    $match: {\n" +
-                                "      type: { $in: " + strType + " } // Điều kiện lọc theo danh sách type\n" +
-                                "    }\n" +
-                                "  },"
+                        "{\n" +
+                        "    $match: {\n" +
+                        "      type: { $in: " + strType + " } // Điều kiện lọc theo danh sách type\n" +
+                        "    }\n" +
+                        "  }," +
                         "  {\n" +
-                                "    $group: {\n" +
-                                "      _id: \"$type\",\n" +
-                                "      total_records: { $sum: 1 }, \n" +
-                                "      total_active: {\n" +
-                                "        $sum: {\n" +
-                                "          $cond: [{ $eq: [\"$active\", true] }, 1, 0]\n" +
-                                "        }\n" +
-                                "      },\n" +
-                                "      total_used: {\n" +
-                                "        $sum: {\n" +
-                                "          $cond: [\n" +
-                                "            { $gt: [\"$used_time\", \"2024\"] },\n" +
-                                "            1,\n" +
-                                "            0\n" +
-                                "          ]\n" +
-                                "        }\n" +
-                                "      }\n" +
-                                "    }\n" +
-                                "  }\n" +
-                                "]")
+                        "    $group: {\n" +
+                        "      _id: \"$type\",\n" +
+                        "      total_records: { $sum: 1 }, \n" +
+                        "      total_active: {\n" +
+                        "        $sum: {\n" +
+                        "          $cond: [{ $eq: [\"$active\", true] }, 1, 0]\n" +
+                        "        }\n" +
+                        "      },\n" +
+                        "      total_used: {\n" +
+                        "        $sum: {\n" +
+                        "          $cond: [\n" +
+                        "            { $gt: [\"$used_time\", \"2024\"] },\n" +
+                        "            1,\n" +
+                        "            0\n" +
+                        "          ]\n" +
+                        "        }\n" +
+                        "      }\n" +
+                        "    }\n" +
+                        "  }\n" +
+                        "]")
         ));
 
         // Gán lại kết quả thống kê cho campaign
