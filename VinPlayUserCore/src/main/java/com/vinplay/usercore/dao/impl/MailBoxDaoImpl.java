@@ -389,7 +389,10 @@ public class MailBoxDaoImpl
         // Set results and total distinct records in response
         response.setTransactions(results);
         response.setTotalRecords((int) totalRecords);
-
+        response.setPageIndex(pageIndex);
+        response.setPageSize(pageSize);
+        int totalPages = (int) Math.ceil((double) totalRecords / (double) pageSize);
+        response.setTotalPages(totalPages);
         return response;
     }
 
