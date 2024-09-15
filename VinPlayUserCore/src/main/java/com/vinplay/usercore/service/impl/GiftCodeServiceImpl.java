@@ -507,15 +507,15 @@ public class GiftCodeServiceImpl
         // gán lại kết quả thống kê cho campaign
         for (Document doc : result) {
             String type = doc.getString("type");
-            long totalCode = doc.getLong("total_code");
-            long totalActive = doc.getLong("total_active");
-            long totalUsed = doc.getLong("total_used");
-            long totalUnused = doc.getLong("total_unused");
+            int totalCode = doc.getInteger("total_code");
+            int totalActive = doc.getInteger("total_active");
+            int totalUsed = doc.getInteger("total_used");
+            int totalUnused = doc.getInteger("total_unused");
 
-            campaigns.get(Long.valueOf(type)).setTotal(totalCode);
-            campaigns.get(Long.valueOf(type)).setQuantityActiveCode(totalActive);
-            campaigns.get(Long.valueOf(type)).setUsed(totalUsed);
-            campaigns.get(Long.valueOf(type)).setUsed(totalUnused);
+            campaigns.get(Long.valueOf(type)).setTotal(Integer.valueOf(totalCode).longValue());
+            campaigns.get(Long.valueOf(type)).setQuantityActiveCode(Integer.valueOf(totalActive).longValue());
+            campaigns.get(Long.valueOf(type)).setUsed(Integer.valueOf(totalUsed).longValue());
+            campaigns.get(Long.valueOf(type)).setUsed(Integer.valueOf(totalUnused).longValue());
         }
 
         System.out.println(new Gson().toJson(campaigns.values()));
