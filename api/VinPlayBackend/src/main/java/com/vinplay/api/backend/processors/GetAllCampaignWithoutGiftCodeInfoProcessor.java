@@ -7,12 +7,13 @@ import com.vinplay.vbee.common.response.CampaignNameResponse;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class GetAllCampaignProcessor implements BaseProcessor<HttpServletRequest, String> {
+public class GetAllCampaignWithoutGiftCodeInfoProcessor
+        implements BaseProcessor<HttpServletRequest, String> {
 
     public String execute(Param<HttpServletRequest> param) {
         CampaignNameResponse response = new CampaignNameResponse(true, "0");
         GiftCodeServiceImpl service = new GiftCodeServiceImpl();
-        response.setCampaigns(service.getAllCampaign());
+        response.setCampaigns(service.getAllCampaignWithoutGiftCodeInfo());
         return response.toJson();
     }
 }
