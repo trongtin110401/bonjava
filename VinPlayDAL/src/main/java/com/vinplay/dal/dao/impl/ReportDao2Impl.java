@@ -97,6 +97,8 @@ public class ReportDao2Impl {
                         .append("total", 1))
         ));
 
+        System.out.println(result.toString());
+
         List<TopCaoThu> topCaoThuList = new ArrayList<>();
         for (Document doc : result) {
             String nickname = doc.getString("nick_name");
