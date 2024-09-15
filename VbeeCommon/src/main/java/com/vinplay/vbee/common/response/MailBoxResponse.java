@@ -12,5 +12,6 @@ public class MailBoxResponse {
     public int status;
     public int sysMail;
     public String giftCode;
+    public String nickname;
 }
 

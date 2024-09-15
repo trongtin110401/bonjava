@@ -620,12 +620,10 @@ public class GiftCodeServiceImpl
     public boolean deleteCampaign(long id) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection<Document> giftCode = db.getCollection("gift_code");
-
         Bson query = Filters.and(
-                Filters.eq("type", String.valueOf(id)),
-                Filters.eq("active", true)
+                Filters.eq("type", String.valueOf(id))
         );
-        giftCode.updateMany(query, Updates.set("active", false));
+        giftCode.deleteMany(query);
         MongoCollection<Document> campaign = db.getCollection("campaign_gift_code");
         campaign.deleteOne(Filters.eq("_id", id));
         return true;

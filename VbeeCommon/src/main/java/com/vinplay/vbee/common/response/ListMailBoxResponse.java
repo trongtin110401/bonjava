@@ -12,6 +12,9 @@ public class ListMailBoxResponse
 extends BaseResponseModel {
     private long totalPages;
     private int mailNotRead;
+    private int pageIndex;
+    private int pageSize;
+    private int totalRecords;
     private List<MailBoxResponse> transactions = new ArrayList<MailBoxResponse>();
 
     public int getMailNotRead() {
@@ -40,6 +43,30 @@ extends BaseResponseModel {
 
     public void setTotalPages(long totalPages) {
         this.totalPages = totalPages;
+    }
+
+    public int getPageIndex() {
+        return pageIndex;
+    }
+
+    public void setPageIndex(int pageIndex) {
+        this.pageIndex = pageIndex;
+    }
+
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public int getTotalRecords() {
+        return totalRecords;
+    }
+
+    public void setTotalRecords(int totalRecords) {
+        this.totalRecords = totalRecords;
     }
 }
 

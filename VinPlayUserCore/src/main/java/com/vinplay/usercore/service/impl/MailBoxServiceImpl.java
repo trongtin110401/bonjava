@@ -12,6 +12,7 @@ import com.vinplay.usercore.dao.impl.MailBoxDaoImpl;
 import com.vinplay.usercore.service.MailBoxService;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.vbee.common.models.UserModel;
+import com.vinplay.vbee.common.response.ListMailBoxResponse;
 import com.vinplay.vbee.common.response.MailBoxResponse;
 import com.vinplay.vbee.common.response.SendMailResponse;
 import java.sql.SQLException;
@@ -26,6 +27,12 @@ implements MailBoxService {
     }
 
     @Override
+    public boolean sendMailBoxBySystem(String nickName, String title, String content, String id) {
+        MailBoxDaoImpl dao = new MailBoxDaoImpl();
+        return dao.sendMailBoxBySystem(nickName, title, content, id);
+    }
+
+    @Override
     public boolean sendMailBoxFromByNickNameAdmin(String nickName, String title, String content) {
         MailBoxDaoImpl dao = new MailBoxDaoImpl();
         return dao.sendMailBoxFromByNickNameAdmin(nickName, title, content);
@@ -35,6 +42,12 @@ implements MailBoxService {
     public List<MailBoxResponse> listMailBox(String nickName, int page) {
         MailBoxDaoImpl dao = new MailBoxDaoImpl();
         return dao.listMailBox(nickName, page);
+    }
+
+    @Override
+    public ListMailBoxResponse getAllMail(String nickname, int pageIndex, int pageSize) {
+        MailBoxDaoImpl dao = new MailBoxDaoImpl();
+        return dao.getAllMail(nickname, pageIndex, pageSize);
     }
 
     @Override

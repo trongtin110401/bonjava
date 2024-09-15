@@ -13,6 +13,7 @@
  */
 package com.vinplay.api.backend.processors;
 
+import com.vinplay.usercore.dao.impl.GiftCodeDAOImpl;
 import com.vinplay.usercore.service.impl.GiftCodeServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
@@ -24,6 +25,8 @@ import org.apache.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GiftCodeAdminProcessor
         implements BaseProcessor<HttpServletRequest, String> {
@@ -57,10 +60,10 @@ public class GiftCodeAdminProcessor
         String createdDate = currentDate.format(formatter);
 
         try {
-            GiftCodeServiceImpl service = new GiftCodeServiceImpl();
             String giftCode;
-            GiftCodeDto giftCodeDto = new GiftCodeDto();
+            List<GiftCodeDto> giftCodeDtos = new ArrayList<>();
             for (int i = 0; i < quantity; ++i) {
+                GiftCodeDto giftCodeDto = new GiftCodeDto();
                 giftCode = VinPlayUtils.genGiftCode(length);
                 giftCodeDto.setType(type);
                 giftCodeDto.setPrice(price);
@@ -71,10 +74,18 @@ public class GiftCodeAdminProcessor
                 giftCodeDto.setCode(giftCode);
                 giftCodeDto.setActive(true);
                 giftCodeDto.setExpirationDate(expirationDate);
-                service.saveGiftCode(giftCodeDto);
+                giftCodeDtos.add(giftCodeDto);
             }
-            response.setErrorCode("0");
-            response.setSuccess(true);
+            GiftCodeDAOImpl dao = new GiftCodeDAOImpl();
+            boolean success = dao.saveListGiftCode(giftCodeDtos);
+            if (success) {
+                response.setErrorCode("0");
+                response.setSuccess(true);
+            } else {
+                response.setErrorCode("1001");
+                response.setSuccess(false);
+            }
+
         } catch (Exception e) {
             logger.debug(e.getMessage());
             response.setErrorCode("1001");

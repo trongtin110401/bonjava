@@ -581,7 +581,6 @@ public class GiftCodeDAOImpl
     }
 
 
-
     @Override
     public synchronized boolean InsertSpecialGiftcode(SpecialGiftCode giftCode) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
@@ -2186,6 +2185,41 @@ public class GiftCodeDAOImpl
         });
         return giftCodeDto;
     }
+
+    @Override
+    public boolean saveListGiftCode(List<GiftCodeDto> giftCodeDtos) {
+        final int BATCH_SIZE = 200;
+        try {
+            MongoDatabase db = MongoDBConnectionFactory.getDB();
+            MongoCollection<Document> col = db.getCollection("gift_code");
+            List<Document> batch = new ArrayList<>();
+            for (GiftCodeDto giftCodeDto : giftCodeDtos) {
+                Document doc = new Document()
+                        .append("code", giftCodeDto.getCode())
+                        .append("price", giftCodeDto.getPrice())
+                        .append("quantity", giftCodeDto.getQuantity())
+                        .append("active", giftCodeDto.isActive())
+                        .append("type", giftCodeDto.getType())
+                        .append("length", giftCodeDto.getLength())
+                        .append("created_time", giftCodeDto.getCreatedDate())
+                        .append("expiration_date", giftCodeDto.getExpirationDate())
+                        .append("expiration_time", giftCodeDto.getExpirationTime());
+                batch.add(doc);
+                if (batch.size() == BATCH_SIZE) {
+                    col.insertMany(batch);
+                    batch.clear();
+                }
+            }
+            if (!batch.isEmpty()) {
+                col.insertMany(batch);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
 
 }
 

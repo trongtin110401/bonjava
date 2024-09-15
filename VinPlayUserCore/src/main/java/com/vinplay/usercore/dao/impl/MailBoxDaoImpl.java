@@ -19,21 +19,24 @@ package com.vinplay.usercore.dao.impl;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.Block;
+import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Accumulators;
+import com.mongodb.client.model.Aggregates;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Sorts;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 import com.vinplay.usercore.dao.MailBoxDao;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
+import com.vinplay.vbee.common.response.ListMailBoxResponse;
 import com.vinplay.vbee.common.response.MailBoxResponse;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -70,9 +73,25 @@ public class MailBoxDaoImpl
         doc.append("title", (Object) title);
         doc.append("content", (Object) content);
         doc.append("create_time", (Object) VinPlayUtils.getCurrentDateTime());
-        doc.append("author", (Object) "H\u1ec7 th\u1ed1ng");
+        doc.append("author", (Object) "Hệ thống");
         doc.append("status", (Object) 0);
         col.insertOne((Object) doc);
+        return true;
+    }
+
+    @Override
+    public boolean sendMailBoxBySystem(String nickName, String title, String content, String id) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection col = db.getCollection("mail_box");
+        Document doc = new Document();
+        doc.append("mail_id", id);
+        doc.append("nick_name", nickName);
+        doc.append("title", title);
+        doc.append("content", content);
+        doc.append("create_time", VinPlayUtils.getCurrentDateTime());
+        doc.append("author", "Hệ thống");
+        doc.append("status", 0);
+        col.insertOne(doc);
         return true;
     }
 
@@ -97,7 +116,6 @@ public class MailBoxDaoImpl
         objsort.put("_id", -1);
         FindIterable iterable = db.getCollection("mail_box").find(query)
                 .skip(num_start).limit(num_end).sort(objsort);
-
         iterable.forEach((Block) new Block<Document>() {
 
             public void apply(Document document) {
@@ -155,7 +173,6 @@ public class MailBoxDaoImpl
         int record = 0;
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         HashMap<String, Object> conditions = new HashMap<String, Object>();
-//        HashMap<String, String> conditions = new HashMap<String, String>();
         conditions.put("nick_name", nickName);
         record = (int) db.getCollection("mail_box").count((Bson) new Document(conditions));
         return record;
@@ -285,6 +302,75 @@ public class MailBoxDaoImpl
         col.insertOne((Object) doc);
         return true;
     }
+
+    @Override
+    public ListMailBoxResponse getAllMail(String nickname, int pageIndex, int pageSize) {
+        ListMailBoxResponse response = new ListMailBoxResponse(false, "1001");
+        List<MailBoxResponse> results = new ArrayList<>();
+        int skipCount = (pageIndex - 1) * pageSize;
+
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        List<Bson> pipeline = new ArrayList<>();
+
+        // Add nickname condition if it's not null
+        if (nickname != null) {
+            pipeline.add(Aggregates.match(Filters.eq("nick_name", nickname)));
+        }
+
+        // Group by mail_id to ensure distinct mail_id records
+        pipeline.add(Aggregates.group("$mail_id",
+                Accumulators.first("mail_id", "$mail_id"),
+                Accumulators.first("nick_name", "$nick_name"),
+                Accumulators.first("title", "$title"),
+                Accumulators.first("create_time", "$create_time"),
+                Accumulators.first("author", "$author"),
+                Accumulators.first("content", "$content"),
+                Accumulators.first("status", "$status"),
+                Accumulators.first("mail_gift_code", "$mail_gift_code")
+        ));
+
+        // Sort by _id in descending order
+        pipeline.add(Aggregates.sort(Sorts.descending("_id")));
+
+        // Apply pagination (skip and limit)
+        pipeline.add(Aggregates.skip(skipCount));
+        pipeline.add(Aggregates.limit(pageSize));
+
+        // Perform aggregation query
+        AggregateIterable<Document> iterable = db.getCollection("mail_box").aggregate(pipeline);
+
+        iterable.forEach((Block<Document>) document -> {
+            MailBoxResponse mail = new MailBoxResponse();
+            mail.sysMail = "*".equals(document.getString("nick_name")) ? 1 : 0;
+            mail.title = document.getString("title");
+            mail.createTime = document.getString("create_time");
+            mail.author = document.getString("author");
+            mail.content = document.getString("content");
+            mail.status = document.getInteger("status");
+            mail.mail_id = document.getString("mail_id");
+            mail.nickname = document.getString("nick_name");
+            String giftCode = document.getString("mail_gift_code");
+            if (giftCode != null && !giftCode.isEmpty()) {
+                mail.giftCode = giftCode;
+            }
+            results.add(mail);
+        });
+        long totalRecords = db.getCollection("mail_box")
+                .aggregate(Arrays.asList(
+                        Aggregates.match(nickname != null ? Filters.eq("nick_name", nickname) : Filters.exists("mail_id")),
+                        Aggregates.group("$mail_id")
+                ))
+                .into(new ArrayList<>()).size();
+        // Set results and total distinct records in response
+        response.setTransactions(results);
+        response.setTotalRecords((int) totalRecords);
+
+        return response;
+    }
+
+
+
+
 
 }
 
