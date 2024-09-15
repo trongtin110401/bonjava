@@ -484,6 +484,7 @@ public class GiftCodeServiceImpl
             int totalUsed = doc.getInteger("total_used");
             int totalUnused = doc.getInteger("total_unused");
 
+            System.out.println(totalCode + " " + totalActive + " " + totalUsed + " " + totalUnused);
 
             campaigns.get(Long.valueOf(type)).setTotal(totalCode);
             campaigns.get(Long.valueOf(type)).setQuantityActiveCode(totalActive);
