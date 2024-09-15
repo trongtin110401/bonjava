@@ -100,7 +100,7 @@ public class ReportMoneyServiceImpl implements ReportMoneyService {
 
         Map<String, Long> results = new HashMap<>();
         for (Document document : aggregateIterable) {
-            String nickname = document.getString("_id");
+            String nickname = document.getObjectId("id").toString();
             long amount = document.getLong("total");
             results.put(nickname, amount);
         }
@@ -147,7 +147,7 @@ public class ReportMoneyServiceImpl implements ReportMoneyService {
 
         Map<String, Long> results = new HashMap<>();
         for (Document document : aggregateIterable) {
-            String nickname = document.getString("_id");
+            String nickname = document.getObjectId("id").toString();
             long amount = document.getLong("total");
             results.put(nickname, amount);
         }
