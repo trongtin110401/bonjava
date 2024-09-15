@@ -450,14 +450,20 @@ public class GiftCodeServiceImpl
 
         // Thống kê GIFTCODE theo danh sách campain được truyền vào
         List<String> types = campaigns.keySet().stream().map(String::valueOf).collect(Collectors.toList());
-        AggregateIterable<Document> result = db.getCollection("gift_code").aggregate(Arrays.asList(
-                // Thêm điều kiện lọc theo danh sách type
+        // Xây dựng pipeline để thực hiện truy vấn
+        AggregateIterable<Document> result = collection.aggregate(Arrays.asList(
                 new Document("$match", new Document("type", new Document("$in", types))),
                 new Document("$group", new Document("_id", "$type")
                         .append("total_code", new Document("$sum", 1))
-                        .append("total_active", new Document("$sum", new Document("$cond", Arrays.asList(new Document("$eq", Arrays.asList("$active", true)), 1, 0))))
-                        .append("total_used", new Document("$sum", new Document("$cond", Arrays.asList(new Document("$ne", Arrays.asList("$used_time", null)), 1, 0))))
-                        .append("total_unused", new Document("$sum", new Document("$cond", Arrays.asList(new Document("$eq", Arrays.asList("$used_time", null)), 1, 0))))
+                        .append("total_active", new Document("$sum", new Document("$cond", Arrays.asList(
+                                new Document("$eq", Arrays.asList("$active", true)), 1, 0
+                        ))))
+                        .append("total_used", new Document("$sum", new Document("$cond", Arrays.asList(
+                                new Document("$ne", Arrays.asList("$used_time", null)), 1, 0
+                        ))))
+                        .append("total_unused", new Document("$sum", new Document("$cond", Arrays.asList(
+                                new Document("$eq", Arrays.asList("$used_time", null)), 1, 0
+                        ))))
                 ),
                 new Document("$project", new Document("_id", 0)
                         .append("type", "$_id")
