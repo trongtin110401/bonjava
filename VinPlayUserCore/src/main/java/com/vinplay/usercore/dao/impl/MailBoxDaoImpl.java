@@ -394,6 +394,7 @@ public class MailBoxDaoImpl
             mail.content = document.getString("content");
             mail.status = document.getInteger("status");
             mail.mail_id = document.getString("mail_id");
+
             if (nickname == null || nickname.isEmpty()) {
                 mail.nickname = null;
             } else {
