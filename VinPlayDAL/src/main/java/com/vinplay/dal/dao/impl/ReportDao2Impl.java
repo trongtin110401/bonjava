@@ -75,7 +75,10 @@ public class ReportDao2Impl {
         if (StringUtils.isEmpty(nickname)) {
             filter = new Document("$match", new Document("report_date", new Document("$gte", startDate).append("$lte", endDate)).append("action_name", new Document("$in", actionNames)));
         } else {
-            filter = new Document("$match", new Document("report_date", new Document("$gte", startDate).append("$lte", endDate)).append("action_name", new Document("$in", actionNames)).append("$eq", nickname));
+            filter = new Document("$match", new Document("report_date", new Document("$gte", startDate).append("$lte", endDate))
+                    .append("action_name", new Document("$in", actionNames))
+                    .append("nick_name", new Document("$eq", nickname))
+            );
         }
 
 
