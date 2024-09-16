@@ -206,10 +206,7 @@ public class XuLyAcc {
         try {
             int randonIndex = new Random().nextInt(listProxy().size());
 
-            OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
-                    .connectTimeout(3, TimeUnit.SECONDS)  // 3 seconds for connecting to the server
-                    .readTimeout(3, TimeUnit.SECONDS)     // 3 seconds for reading the response
-                    .build();
+            OkHttpClient client = listProxy().get(randonIndex);
             Request request = new Request.Builder()
                     .url("https://api.swinhh.io/id?command=getCaptcha&sessionId=")
                     .method("GET", null)
