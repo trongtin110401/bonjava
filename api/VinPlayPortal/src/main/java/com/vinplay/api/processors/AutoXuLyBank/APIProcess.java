@@ -7,13 +7,17 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 public class APIProcess {
 
     public static String responseGetAPI(String url, RequestBody body) {
         OkHttpClient httpClient = new OkHttpClient();
         OkHttpClient client = httpClient.newBuilder()
+                .connectTimeout(3, TimeUnit.SECONDS)  // Set connect timeout to 3 seconds
+                .readTimeout(3, TimeUnit.SECONDS)     // Set read timeout to 3 seconds
                 .build();
+
 
         Request request = new Request.Builder()
                 .url(url)
