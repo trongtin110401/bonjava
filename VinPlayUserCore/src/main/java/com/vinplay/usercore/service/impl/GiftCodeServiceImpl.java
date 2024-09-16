@@ -393,7 +393,7 @@ public class GiftCodeServiceImpl
         String createdTime = firstDocument.getString("created_time");
         long price = firstDocument.getInteger("price").longValue();
         long totalBetValue = getTotalMoneyUser(createdTime, nickName);
-        return totalBetValue >= (price * 0.5);
+        return totalBetValue >= price;
     }
 
 
