@@ -139,7 +139,6 @@ public class MailBoxDaoImpl
 
     @Override
     public int updateStatusMailBox(String mailId, String nickname) {
-
         if (mailId == null || mailId.isEmpty() || nickname == null || nickname.isEmpty()) {
             return 1;
         }
