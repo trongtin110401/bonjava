@@ -394,7 +394,11 @@ public class MailBoxDaoImpl
             mail.content = document.getString("content");
             mail.status = document.getInteger("status");
             mail.mail_id = document.getString("mail_id");
-            mail.nickname = document.getString("nick_name");
+            if (nickname == null || nickname.isEmpty()) {
+                mail.nickname = null;
+            } else {
+                mail.nickname = document.getString("nick_name");
+            }
             String giftCode = document.getString("mail_gift_code");
             if (giftCode != null && !giftCode.isEmpty()) {
                 mail.giftCode = giftCode;
@@ -418,7 +422,6 @@ public class MailBoxDaoImpl
 
         return response;
     }
-
 
 
 }
