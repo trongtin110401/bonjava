@@ -149,8 +149,8 @@ public class TaiXiuModule
         Debug.trace("SERVER READY TASK RUNNING...");
         this.getParentExtension().addEventListener((IBZEventType) BZEventType.USER_DISCONNECT, (IBZEventListener) this);
         scheduler.scheduleAtFixedRate(adminChatRunnable, 2000, 500, TimeUnit.MILLISECONDS);
-//        scheduler.scheduleAtFixedRate(updateCacheTopDay, 2000, 3600, TimeUnit.SECONDS);
-//        scheduler.scheduleAtFixedRate(updateCacheTopMonth, 2000, 86400, TimeUnit.SECONDS);
+        scheduler.scheduleAtFixedRate(updateCacheTopDay, 2000, 3600, TimeUnit.SECONDS);
+        scheduler.scheduleAtFixedRate(updateCacheTopMonth, 2000, 86400, TimeUnit.SECONDS);
         try {
             int remainTimeTraThuongThanhDu = MiniGameUtils.calculateTimeRewardOnNextDay("");
             //  BitZeroServer.getInstance().getTaskScheduler().schedule(this.rewardThanhDuDailyTask, remainTimeTraThuongThanhDu, TimeUnit.SECONDS);

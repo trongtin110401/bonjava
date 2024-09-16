@@ -139,8 +139,8 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         Debug.trace("SERVER READY TASK RUNNING...");
         this.getParentExtension().addEventListener((IBZEventType) BZEventType.USER_DISCONNECT, (IBZEventListener) this);
 
-//        scheduler.scheduleAtFixedRate(updateCacheTopDay, 2000, 3600, TimeUnit.SECONDS);
-//        scheduler.scheduleAtFixedRate(updateCacheTopMonth, 2000, 86400, TimeUnit.SECONDS);
+        scheduler.scheduleAtFixedRate(updateCacheTopDay, 2000, 3600, TimeUnit.SECONDS);
+        scheduler.scheduleAtFixedRate(updateCacheTopMonth, 2000, 86400, TimeUnit.SECONDS);
     }
 
     public void handleServerEvent(IBZEvent ibzevent) throws BZException {
