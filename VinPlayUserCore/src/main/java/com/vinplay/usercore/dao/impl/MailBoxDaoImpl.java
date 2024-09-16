@@ -141,13 +141,12 @@ public class MailBoxDaoImpl
     public int updateStatusMailBox(String mailId, String nickname) {
 
         if (mailId == null || mailId.isEmpty() || nickname == null || nickname.isEmpty()) {
-            return 1; // Return early if mailId or nickname is empty
+            return 1;
         }
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection colmail = db.getCollection("mail_box");
-        // Create a query that matches both mail_id and nickname
         Document query = new Document("mail_id", mailId)
-                .append("nickname", nickname);
+                .append("nick_name", nickname);
         Document update = new Document("$set", new Document("status", 1));
         colmail.updateOne(query, update);
         return 0;
