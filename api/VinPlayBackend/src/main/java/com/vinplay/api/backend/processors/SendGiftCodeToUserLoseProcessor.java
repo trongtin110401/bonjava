@@ -73,7 +73,7 @@ public class SendGiftCodeToUserLoseProcessor implements BaseProcessor<HttpServle
             // Get user logs and aggregate their money exchanges
             List<String> actions = Consts.GAMES.stream().filter(s -> !s.equals(Games.HAM_CA_MAP.getName())).collect(Collectors.toList());
             ReportDao2Impl reportDao2 = new ReportDao2Impl();
-            List<TopCaoThu> topCaoThuList = reportDao2.topPlayer(null, timeStart, timeEnd, actions, 2, 1, 10000000);
+            List<TopCaoThu> topCaoThuList = reportDao2.topPlayer(null, timeStart, timeStart, actions, 2, 1, 10000000);
             Map<String, Long> topWins = topCaoThuList.stream().collect(Collectors.toMap(TopCaoThu::getNickname, TopCaoThu::getMoneyWin));
 
             // search fund
