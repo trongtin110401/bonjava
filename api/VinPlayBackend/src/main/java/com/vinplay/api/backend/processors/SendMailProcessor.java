@@ -17,7 +17,9 @@ import com.vinplay.usercore.service.impl.MailBoxServiceImpl;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
+import com.vinplay.vbee.common.messages.SendMailMessage;
 import com.vinplay.vbee.common.response.SendMailResponse;
+import com.vinplay.vbee.common.rmq.RMQApi;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -40,14 +42,21 @@ public class SendMailProcessor
                 List<String> users = userDao.getAllUsers();
                 String mailId = String.valueOf(System.currentTimeMillis());
                 for (String u : users) {
-                    check = service.sendMailBoxBySystem(u, title, content, mailId);
+                    SendMailMessage sendMailMessage = new SendMailMessage();
+                    sendMailMessage.setContent(content);
+                    sendMailMessage.setId(mailId);
+                    sendMailMessage.setTitle(title);
+                    sendMailMessage.setNickName(u);
+                    try {
+                        RMQApi.publishMessage("queue_send_mail", sendMailMessage, 1503);
+                        response.setErrorCode("0");
+                        response.setSuccess(true);
+                    } catch (Exception e) {
+                        response.setErrorCode("10001");
+                        e.printStackTrace();
+                    }
                 }
-                if (check) {
-                    response.setErrorCode("0");
-                    response.setSuccess(true);
-                } else {
-                    response.setErrorCode("10001");
-                }
+
             } else {
                 String[] parts;
                 for (String name : parts = nickName.split(",")) {
