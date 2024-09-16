@@ -723,8 +723,7 @@ public class MGRoomTaiXiu extends MGRoom {
                             long fee = Math.round((long) (MGRoomTaiXiu.this.tax * (float) txt.totalPrize / (200.0f - MGRoomTaiXiu.this.tax)));
                             MoneyResponse res2 = new MoneyResponse(false, "1001");
                             if (!MGRoomTaiXiu.this.isBot(username)) {
-                                if (username.equals("banhday"))
-                                res2 = MGRoomTaiXiu.this.userService.updateMoney(username, txt.totalPrize, MGRoomTaiXiu.this.moneyTypeStr, "TaiXiuMd5", "Th\u1eafng t\u00e0i x\u1ec9u", "Phi\u00ean " + MGRoomTaiXiu.this.referenceId, fee, MGRoomTaiXiu.this.referenceId, transType);
+                                res2 = MGRoomTaiXiu.this.userService.updateMoney(username, txt.totalPrize, MGRoomTaiXiu.this.moneyTypeStr, "TaiXiuMd5", "Thắng tài xỉu", "Phiên " + MGRoomTaiXiu.this.referenceId, fee, MGRoomTaiXiu.this.referenceId, transType);
                             } else {
                                 res2.setSuccess(true);
                             }
@@ -742,7 +741,7 @@ public class MGRoomTaiXiu extends MGRoom {
                         }
                         if (txt.totalRefund > 0L) {
                             if (!MGRoomTaiXiu.this.isBot(username)) {
-                                res = MGRoomTaiXiu.this.userService.updateMoney(username, txt.totalRefund, MGRoomTaiXiu.this.moneyTypeStr, "TaiXiuMd5", "Ho\u00e0n tr\u1ea3 t\u00e0i x\u1ec9u", "Phi\u00ean " + MGRoomTaiXiu.this.referenceId, 0L, Long.valueOf(MGRoomTaiXiu.this.referenceId), TransType.END_TRANS);
+                                res = MGRoomTaiXiu.this.userService.updateMoney(username, txt.totalRefund, MGRoomTaiXiu.this.moneyTypeStr, "TaiXiuMd5", "Hoàn trả tài xỉu", "Phiên " + MGRoomTaiXiu.this.referenceId, 0L, Long.valueOf(MGRoomTaiXiu.this.referenceId), TransType.END_TRANS);
                                 if (res.isSuccess()) {
                                     if (MGRoomTaiXiu.this.moneyType == 1) {
                                         MGRoomTaiXiu.this.balance.addWin(txt.totalRefund);
