@@ -1093,8 +1093,8 @@ public class MGRoomTaiXiu extends MGRoom {
                             long fee = (long) (MGRoomTaiXiu.this.tax * (float) txt.totalPrize / (200.0f - MGRoomTaiXiu.this.tax));
                             MoneyResponse res2 = new MoneyResponse(false, "1001");
                             if (!MGRoomTaiXiu.this.isBot(username)) {
-                                if (username.equals("banhday"))
-                                    System.out.println(txt.totalPrize + " qua tien nay ghet vl");
+//                                if (username.equals("banhday"))
+//                                    System.out.println(txt.totalPrize + " qua tien nay ghet vl");
                                 res2 = MGRoomTaiXiu.this.userService.updateMoney(username, txt.totalPrize, MGRoomTaiXiu.this.moneyTypeStr, "TaiXiu", "Th\u1eafng t\u00e0i x\u1ec9u", "Phi\u00ean " + MGRoomTaiXiu.this.referenceId, fee, MGRoomTaiXiu.this.referenceId, transType);
                             } else {
                                 res2.setSuccess(true);

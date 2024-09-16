@@ -115,7 +115,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
     private int amountBotXiuFake = 0;
 
     protected MiniGameService miniGameService = new MiniGameServiceImpl();
-    ResultTaiXiuMd5 resultTaiXiuMd5 = new ResultTaiXiuMd5();
+
     ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(8);
 
     public void init() {
@@ -139,8 +139,8 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         Debug.trace("SERVER READY TASK RUNNING...");
         this.getParentExtension().addEventListener((IBZEventType) BZEventType.USER_DISCONNECT, (IBZEventListener) this);
 
-        scheduler.scheduleAtFixedRate(updateCacheTopDay, 2000, 3600, TimeUnit.SECONDS);
-        scheduler.scheduleAtFixedRate(updateCacheTopMonth, 2000, 86400, TimeUnit.SECONDS);
+//        scheduler.scheduleAtFixedRate(updateCacheTopDay, 2000, 3600, TimeUnit.SECONDS);
+//        scheduler.scheduleAtFixedRate(updateCacheTopMonth, 2000, 86400, TimeUnit.SECONDS);
     }
 
     public void handleServerEvent(IBZEvent ibzevent) throws BZException {
@@ -480,6 +480,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         String result = generationTX.buildPlainTextResult(dices);
         String md5 = GenerationTaiXiu.hashMD5(result);
 
+        ResultTaiXiuMd5 resultTaiXiuMd5 = new ResultTaiXiuMd5();
         resultTaiXiuMd5.dice1 = dices[0];
         resultTaiXiuMd5.dice2 = dices[1];
         resultTaiXiuMd5.dice3 = dices[2];
@@ -492,7 +493,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         } else {
             this.result = 0;
         }
-        Debug.trace("GENERATE KẾT QUẢ MD5 TRƯỚC: " + dices[0] + " - " + dices[1] + " - " + dices[2] + "   " + this.result);
     }
 
 
@@ -547,20 +547,22 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                 chenhLech = totalRealBetXiu - totalRealBetTai;
             }
 
-            if (chenhLech > 0 && getFunValue() - chenhLech < 0) {
-                if (totalRealBetTai > totalRealBetXiu) {
-                    this.forceBetSide = 0;
-                    dices = this.generationTX.generateResult(this.forceBetSide);
-                } else {
-                    this.forceBetSide = 1;
+            if (chenhLech > 0) {
+                // nếu mà HŨ âm => can thiệp kế quả
+                if (getFunValue() - chenhLech < 0) {
+                    if (totalRealBetTai > totalRealBetXiu) {
+                        this.forceBetSide = 0;
+                    } else {
+                        this.forceBetSide = 1;
+                    }
                     dices = this.generationTX.generateResult(this.forceBetSide);
                 }
             }
             // Ngau nhien khong can thiep
             else {
-                dices[0] = (short) resultTaiXiuMd5.dice1;
-                dices[1] = (short) resultTaiXiuMd5.dice2;
-                dices[2] = (short) resultTaiXiuMd5.dice3;
+                dices[0] = (short) roomTXVin.resultTX.dice1;
+                dices[1] = (short) roomTXVin.resultTX.dice2;
+                dices[2] = (short) roomTXVin.resultTX.dice3;
             }
 
             String result = generationTX.buildPlainTextResult(dices);
