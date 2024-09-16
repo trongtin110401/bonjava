@@ -141,7 +141,7 @@ public class MailBoxDaoImpl
     public int updateStatusMailBox(String mailId, String nickname) {
 
         if (mailId == null || mailId.isEmpty() || nickname == null || nickname.isEmpty()) {
-            return 0; // Return early if mailId or nickname is empty
+            return 1; // Return early if mailId or nickname is empty
         }
 
         MongoDatabase db = MongoDBConnectionFactory.getDB();
@@ -157,7 +157,7 @@ public class MailBoxDaoImpl
         // Perform the update operation
         colmail.updateOne(query, update);
 
-        return 1; // Return 1 to indicate success
+        return 0; // Return 1 to indicate success
     }
 
 
