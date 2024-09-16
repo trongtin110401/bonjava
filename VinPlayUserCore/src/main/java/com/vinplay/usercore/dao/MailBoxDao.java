@@ -22,7 +22,7 @@ public interface MailBoxDao {
 
     public int countMailBox(String var1);
 
-    public int updateStatusMailBox(String var1);
+    public int updateStatusMailBox(String var1, String nickname);
 
     public int deleteMailBox(String var1);
 

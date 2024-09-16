@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  com.vinplay.vbee.common.models.UserModel
  *  com.vinplay.vbee.common.response.MailBoxResponse
@@ -15,11 +15,12 @@ import com.vinplay.vbee.common.models.UserModel;
 import com.vinplay.vbee.common.response.ListMailBoxResponse;
 import com.vinplay.vbee.common.response.MailBoxResponse;
 import com.vinplay.vbee.common.response.SendMailResponse;
+
 import java.sql.SQLException;
 import java.util.List;
 
 public class MailBoxServiceImpl
-implements MailBoxService {
+        implements MailBoxService {
     @Override
     public boolean sendMailBoxFromByNickName(List<String> nickName, String title, String content) {
         MailBoxDaoImpl dao = new MailBoxDaoImpl();
@@ -51,9 +52,9 @@ implements MailBoxService {
     }
 
     @Override
-    public int updateStatusMailBox(String mailId) {
+    public int updateStatusMailBox(String mailId, String nickname) {
         MailBoxDaoImpl dao = new MailBoxDaoImpl();
-        return dao.updateStatusMailBox(mailId);
+        return dao.updateStatusMailBox(mailId, nickname);
     }
 
     @Override

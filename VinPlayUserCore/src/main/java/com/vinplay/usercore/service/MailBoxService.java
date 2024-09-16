@@ -24,7 +24,7 @@ public interface MailBoxService {
 
     ListMailBoxResponse getAllMail(String nickname, int pageIndex, int pageSize, boolean type);
 
-    public int updateStatusMailBox(String var1);
+    public int updateStatusMailBox(String var1, String nickname);
 
     public int deleteMailBox(String var1);
 
