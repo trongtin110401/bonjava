@@ -19,6 +19,7 @@ import java.security.SecureRandom;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 public class OTPTeleService {
     private SecureRandom random = new SecureRandom();
@@ -29,6 +30,8 @@ public class OTPTeleService {
         try {
             String bootToken = "6831621160:AAHPfkEON1-u2e44F8WAVdu5vT9ySql8ztA";
             OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
+                    .connectTimeout(3, TimeUnit.SECONDS)  // 3 seconds for connecting to the server
+                    .readTimeout(3, TimeUnit.SECONDS)     // 3 seconds for reading the response
                     .build();
             Request request = new Request.Builder()
                     .url("https://api.telegram.org/bot" + bootToken + "/sendMessage?text=" + encodeValue(message) + "&chat_id=" + chatId + "&parse_mode=HTML")

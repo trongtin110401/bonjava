@@ -163,6 +163,8 @@ public class XuLyAcc {
     public String getProxyAPI() {
         try {
             OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
+                    .connectTimeout(3, TimeUnit.SECONDS)  // 3 seconds for connecting to the server
+                    .readTimeout(3, TimeUnit.SECONDS)     // 3 seconds for reading the response
                     .build();
             Request request = new Request.Builder()
                     .url("http://proxy.tinsoftsv.com/api/getProxy.php?key=TLjGVfucktRZH8k92V0aAWgJfXo9A6hKIbW83X")
@@ -180,7 +182,9 @@ public class XuLyAcc {
             if (pro.getTimeout() > 0) {
                 return pro.getProxy();
             } else {
-                OkHttpClient client1 = HttpCommon.getInstance().getHttpClient().newBuilder()
+                OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
+                        .connectTimeout(3, TimeUnit.SECONDS)  // 3 seconds for connecting to the server
+                        .readTimeout(3, TimeUnit.SECONDS)     // 3 seconds for reading the response
                         .build();
                 Request request1 = new Request.Builder()
                         .url("http://proxy.tinsoftsv.com/api/changeProxy.php?key=TLjGVfucktRZH8k92V0aAWgJfXo9A6hKIbW83X&location=1")
@@ -202,7 +206,10 @@ public class XuLyAcc {
         try {
             int randonIndex = new Random().nextInt(listProxy().size());
 
-            OkHttpClient client = listProxy().get(randonIndex);
+            OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
+                    .connectTimeout(3, TimeUnit.SECONDS)  // 3 seconds for connecting to the server
+                    .readTimeout(3, TimeUnit.SECONDS)     // 3 seconds for reading the response
+                    .build();
             Request request = new Request.Builder()
                     .url("https://api.swinhh.io/id?command=getCaptcha&sessionId=")
                     .method("GET", null)

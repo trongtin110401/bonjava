@@ -21,6 +21,7 @@ import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 public class GetTopVinhDanhByGameNameProcessor
         implements BaseProcessor<HttpServletRequest, String> {
@@ -43,10 +44,10 @@ public class GetTopVinhDanhByGameNameProcessor
             logger.error("type is not valid");
             return rp.toJson();
         }
-
-
         try {
             OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
+                    .connectTimeout(3, TimeUnit.SECONDS)  // 3 seconds for connecting to the server
+                    .readTimeout(3, TimeUnit.SECONDS)     // 3 seconds for reading the response
                     .build();
             String typeDate = getDate(type);
             String host = GameCommon.getValueStr("url_leaderboard");
