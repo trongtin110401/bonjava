@@ -70,8 +70,8 @@ public class ReportTopGameProcessor2 implements BaseProcessor<HttpServletRequest
             }
 
             ReportDao2Impl dao = new ReportDao2Impl();
-            List<TopCaoThu> topWin = dao.topPlayer(startTime, endTime, actions, 1, 1, displayNumber);
-            List<TopCaoThu> topLose = dao.topPlayer(startTime, endTime, actions, 0, 1, displayNumber);
+            List<TopCaoThu> topWin = dao.topPlayer(null, startTime, endTime, actions, 1, 1, displayNumber);
+            List<TopCaoThu> topLose = dao.topPlayer(null, startTime, endTime, actions, 0, 1, displayNumber);
 
             res.topUserWin = topWin;
             res.topUserLost = topLose;

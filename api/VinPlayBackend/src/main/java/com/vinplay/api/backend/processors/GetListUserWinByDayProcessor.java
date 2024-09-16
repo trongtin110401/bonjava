@@ -12,11 +12,14 @@
 package com.vinplay.api.backend.processors;
 
 import com.vinplay.dal.dao.impl.LogMoneyUserDaoImpl;
+import com.vinplay.dal.dao.impl.ReportDao2Impl;
 import com.vinplay.dal.service.impl.ReportMoneyServiceImpl;
 import com.vinplay.usercore.service.OtherService;
 import com.vinplay.usercore.service.impl.OtherServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
+import com.vinplay.vbee.common.enums.Games;
+import com.vinplay.vbee.common.models.TopCaoThu;
 import com.vinplay.vbee.common.response.LogUserMoneyResponse;
 import com.vinplay.vbee.common.response.MoneyShootFishResponse;
 import com.vinplay.vbee.common.response.UserLoseByDay;
@@ -49,8 +52,13 @@ public class GetListUserWinByDayProcessor implements BaseProcessor<HttpServletRe
 //                            Long::sum));
 
             // Get user logs and aggregate their money exchanges
-            ReportMoneyServiceImpl reportMoneyService = new ReportMoneyServiceImpl();
-            Map<String, Long> userMoneyMap = reportMoneyService.getGameWinner(timeStart, null, pageIndex, pageSize);
+            List<String> actions = Consts.GAMES.stream().filter(s -> !s.equals(Games.HAM_CA_MAP.getName())).collect(Collectors.toList());
+            ReportDao2Impl reportDao2 = new ReportDao2Impl();
+            List<TopCaoThu> topCaoThuList = reportDao2.topPlayer(null, timeStart, timeEnd, actions, 1, pageIndex, pageSize);
+
+
+//            ReportMoneyServiceImpl reportMoneyService = new ReportMoneyServiceImpl();
+            Map<String, Long> userMoneyMap = topCaoThuList.stream().collect(Collectors.toMap(TopCaoThu::getNickname, TopCaoThu::getMoneyWin));
 
             // Merge fish profits with user logs
 //            mapUserFishProfits.forEach((nickname, profit) -> {

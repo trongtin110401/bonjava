@@ -72,7 +72,9 @@ public class ReportMoneyServiceImpl implements ReportMoneyService {
         MongoCollection<Document> collection = db.getCollection("report_money_game");
 
         // Tạo đối tượng $match ban đầu
-        List<String> actions = Consts.GAMES.stream().filter(s -> !s.equals(Games.HAM_CA_MAP.getName())).collect(Collectors.toList());
+        List<String> actions = Consts.GAMES.stream()
+                .filter(s -> !s.equals(Games.HAM_CA_MAP.getName()))
+                .collect(Collectors.toList());
         Document matchDocument = new Document("report_date", reportDate)
                 .append("action_name", new Document("$in", actions));
 

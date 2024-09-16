@@ -12,9 +12,12 @@
 package com.vinplay.api.backend.processors;
 
 import com.vinplay.dal.dao.impl.LogMoneyUserDaoImpl;
+import com.vinplay.dal.dao.impl.ReportDao2Impl;
 import com.vinplay.dal.service.impl.ReportMoneyServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
+import com.vinplay.vbee.common.enums.Games;
+import com.vinplay.vbee.common.models.TopCaoThu;
 import com.vinplay.vbee.common.response.LogUserMoneyResponse;
 import com.vinplay.vbee.common.response.UserLoseByDay;
 import com.vinplay.vbee.common.response.UserLoseByDayResponse;
@@ -34,7 +37,7 @@ public class GetListUserLoseByDayProcessor implements BaseProcessor<HttpServletR
             HttpServletRequest request = param.get();
 
             String timeStart = request.getParameter("timeStart");
-//            String timeEnd = request.getParameter("timeEnd");
+            String timeEnd = request.getParameter("timeEnd");
             int pageIndex = getParameter(request, "pageIndex", 1);
             int pageSize = getParameter(request, "pageSize", 50);
 
@@ -48,9 +51,16 @@ public class GetListUserLoseByDayProcessor implements BaseProcessor<HttpServletR
 //                            Long::sum)); // Merge profits in case of duplicate nicknames
 
             // Get user logs and aggregate their money exchanges
-//            LogMoneyUserDaoImpl dao = new LogMoneyUserDaoImpl();
-            ReportMoneyServiceImpl reportMoneyService = new ReportMoneyServiceImpl();
-            Map<String, Long> userMoneyMap = reportMoneyService.getGameLoser(timeStart, null, pageIndex, pageSize);
+            List<String> actions = Consts.GAMES.stream().filter(s -> !s.equals(Games.HAM_CA_MAP.getName())).collect(Collectors.toList());
+            ReportDao2Impl reportDao2 = new ReportDao2Impl();
+            List<TopCaoThu> topCaoThuList = reportDao2.topPlayer(null, timeStart, timeEnd, actions, 2, pageIndex, pageSize);
+
+//            ReportMoneyServiceImpl reportMoneyService = new ReportMoneyServiceImpl();
+            Map<String, Long> userMoneyMap = topCaoThuList.stream().collect(Collectors.toMap(TopCaoThu::getNickname, TopCaoThu::getMoneyWin));
+
+
+//            ReportMoneyServiceImpl reportMoneyService = new ReportMoneyServiceImpl();
+//            Map<String, Long> userMoneyMap = topCaoThuList.stream().collect(Collectors.toMap(TopCaoThu::getNickname, TopCaoThu::getMoneyWin));
 
             // Adjust user money with fish profits using `Map.merge()`
 //            mapUserFishProfits.forEach((nickname, profit) -> {

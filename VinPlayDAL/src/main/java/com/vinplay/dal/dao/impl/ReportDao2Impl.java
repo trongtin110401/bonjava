@@ -33,6 +33,7 @@ import com.vinplay.vbee.common.models.cache.ReportModel;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.pools.ConnectionPool;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
@@ -52,7 +53,7 @@ public class ReportDao2Impl {
      * @param pageSize
      * @return
      */
-    public List<TopCaoThu> topPlayer(String start, String end, List<String> actions, int sort, int pageNumber, int pageSize) {
+    public List<TopCaoThu> topPlayer(String nickname, String start, String end, List<String> actions, int sort, int pageNumber, int pageSize) {
 
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("report_money_game");
@@ -70,6 +71,13 @@ public class ReportDao2Impl {
         // Tạo Document cho điều kiện lọc và sắp xếp dựa trên cờ
         Document matchCondition;
         Document sortCondition;
+        Document filter;
+        if (StringUtils.isEmpty(nickname)) {
+            filter = new Document("$match", new Document("report_date", new Document("$gte", startDate).append("$lte", endDate)).append("action_name", new Document("$in", actionNames)));
+        } else {
+            filter = new Document("$match", new Document("report_date", new Document("$gte", startDate).append("$lte", endDate)).append("action_name", new Document("$in", actionNames)).append("$eq", nickname));
+        }
+
 
         if (sort == 1) {
             // Nếu cờ là true, lọc với điều kiện lớn hơn 0 và sắp xếp giảm dần
@@ -81,13 +89,9 @@ public class ReportDao2Impl {
             sortCondition = new Document("$sort", new Document("total", 1)); // Sắp xếp tăng dần
         }
 
-
-//        System.out.println("Action: " + actions + ", Display Number: " + pageSize + ", Start Time: " + start + ", End Time: " + end);
-
         // Xây dựng pipeline để thực hiện truy vấn với phân trang và lọc
         AggregateIterable<Document> result = collection.aggregate(Arrays.asList(
-                new Document("$match", new Document("report_date", new Document("$gte", startDate).append("$lte", endDate))
-                        .append("action_name", new Document("$in", actionNames))), // Lọc theo danh sách action_name và khoảng thời gian
+                filter, // Lọc theo danh sách action_name và khoảng thời gian
                 new Document("$group", new Document("_id", "$nick_name")
                         .append("total", new Document("$sum", new Document("$add", Arrays.asList("$total_in", "$total_out", "$total_refund"))))),
                 matchCondition, // Áp dụng điều kiện lọc dựa trên cờ
@@ -99,17 +103,14 @@ public class ReportDao2Impl {
                         .append("total", 1))
         ));
 
-        System.out.println(result.toString());
-
         List<TopCaoThu> topCaoThuList = new ArrayList<>();
         for (Document doc : result) {
-            String nickname = doc.getString("nick_name");
+            String nick_name = doc.getString("nick_name");
             long moneyWin = doc.getLong("total");
-            TopCaoThu topCaoThu = new TopCaoThu(nickname, moneyWin);
+            TopCaoThu topCaoThu = new TopCaoThu(nick_name, moneyWin);
             topCaoThuList.add(topCaoThu);
         }
         return topCaoThuList;
     }
-
 }
 
