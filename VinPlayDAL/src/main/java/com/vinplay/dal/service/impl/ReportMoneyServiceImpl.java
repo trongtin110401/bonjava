@@ -6,6 +6,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.vinplay.dal.service.ReportMoneyService;
 import com.vinplay.dal.entities.report.ReportMoneyModelNew;
+import com.vinplay.vbee.common.enums.Games;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.statics.Consts;
 import org.apache.commons.lang3.StringUtils;
@@ -17,6 +18,7 @@ import static com.mongodb.client.model.Filters.*;
 import static com.mongodb.client.model.Accumulators.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ReportMoneyServiceImpl implements ReportMoneyService {
     public List<ReportMoneyModelNew> search(String nickName, String actionName, String timeStart, String timeEnd, int page, int totalRecord) {
@@ -70,8 +72,9 @@ public class ReportMoneyServiceImpl implements ReportMoneyService {
         MongoCollection<Document> collection = db.getCollection("report_money_game");
 
         // Tạo đối tượng $match ban đầu
+        List<String> actions = Consts.GAMES.stream().filter(s -> !s.equals(Games.HAM_CA_MAP.getName())).collect(Collectors.toList());
         Document matchDocument = new Document("report_date", reportDate)
-                .append("action_name", new Document("$in", Consts.GAMES).append("$ne", "HamCaMap"));
+                .append("action_name", new Document("$in", actions));
 
         // Kiểm tra điều kiện nick_name và chỉ thêm nếu cần thiết
         if (StringUtils.isNotEmpty(nickName)) {
@@ -121,8 +124,9 @@ public class ReportMoneyServiceImpl implements ReportMoneyService {
         int skipRecords = (pageNumber - 1) * pageSize;
 
         // Tạo đối tượng $match ban đầu
+        List<String> actions = Consts.GAMES.stream().filter(s -> !s.equals(Games.HAM_CA_MAP.getName())).collect(Collectors.toList());
         Document matchDocument = new Document("report_date", reportDate)
-                .append("action_name", new Document("$in", Consts.GAMES).append("$ne", "HamCaMap"));
+                .append("action_name", new Document("$in", actions));
 
         // Kiểm tra điều kiện nick_name và chỉ thêm nếu cần thiết
         if (StringUtils.isNotEmpty(nickName)) {

@@ -34,6 +34,7 @@ import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.usercore.utils.PartnerConfig;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
+import com.vinplay.vbee.common.enums.Games;
 import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
 import com.vinplay.vbee.common.models.UserModel;
 import com.vinplay.vbee.common.models.cache.UserCacheModel;
@@ -594,7 +595,7 @@ implements BaseProcessor<HttpServletRequest, String> {
                 //if (taixiu_bet_win < 0)
                 //    taixiu_bet_win = 0 - taixiu_bet_win;
                 // Ban Ca                
-                long total_bet_banca_money = 0 - logService.getTotalBetWin(nick_name, "BET","HamCaMap");
+                long total_bet_banca_money = 0 - logService.getTotalBetWin(nick_name, "BET", Games.HAM_CA_MAP.getName());
                 long total_bet_slot_money = 0 - logService.getTotalBetWin(nick_name, "BET","SLOT");
                 long finalQuota = total_bet_money - (total_bet_banca_money * 9) / 10 - (total_bet_slot_money * 9) / 10;                
                 logger.debug("Final quota :" + finalQuota);                

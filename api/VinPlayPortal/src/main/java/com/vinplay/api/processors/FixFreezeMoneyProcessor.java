@@ -16,6 +16,7 @@ import com.vinplay.usercore.dao.impl.UserDaoImpl;
 import com.vinplay.usercore.service.impl.MoneyInGameServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
+import com.vinplay.vbee.common.enums.Games;
 import com.vinplay.vbee.common.models.cache.UserCacheModel;
 import com.vinplay.vbee.common.response.AgentResponse;
 import com.vinplay.vbee.common.response.ResultAgentRespone;
@@ -45,7 +46,7 @@ implements BaseProcessor<HttpServletRequest, String> {
                     {
                         // unfreeze money
                         MoneyInGameServiceImpl migsi = new MoneyInGameServiceImpl();                                                
-                        migsi.restoreFreeze(user.getNickname(), "HamCaMap", "*", "*");                        
+                        migsi.restoreFreeze(user.getNickname(), Games.HAM_CA_MAP.getName(), "*", "*");
                     }
                 }
             }            

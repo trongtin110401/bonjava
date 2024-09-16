@@ -21,6 +21,7 @@ import com.vinplay.usercore.utils.GameCommon;
 import com.vinplay.usercore.utils.PartnerConfig;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
+import com.vinplay.vbee.common.enums.Games;
 import com.vinplay.vbee.common.models.UserModel;
 import com.vinplay.vbee.common.response.BaseResponseModel;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
@@ -58,7 +59,7 @@ public class UpdateMoneyUserBanCaProcessor
             logger.debug((Object) ("Request UpdateMoneyUser: nickname: " + nickname + ", money: " + money));              
             if (nickname != null && money != 0L) {
                 UserServiceImpl service = new UserServiceImpl();
-                response = service.updateMoneyFromAdmin(nickname, money, "vin", "Exchange", "HamCaMap", "Doi tien Ham Ca Map");
+                response = service.updateMoneyFromAdmin(nickname, money, "vin", "Exchange", Games.HAM_CA_MAP.getName(), "Doi tien Ham Ca Map");
                 if(!response.isSuccess())
                     return response.toJson();
                 boolean resultUpdateFish = service.UpdateFishMoney(nickname, money);

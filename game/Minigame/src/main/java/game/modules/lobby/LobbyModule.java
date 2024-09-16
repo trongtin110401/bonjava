@@ -1898,7 +1898,7 @@ public class LobbyModule extends BaseClientRequestHandler {
                 //if (taixiu_bet_win < 0)
                 //    taixiu_bet_win = 0 - taixiu_bet_win;
                 // Ban Ca                
-                long total_bet_banca_money = 0 - logService.getTotalBetWin(nick_name, "BET", "HamCaMap");
+                long total_bet_banca_money = 0 - logService.getTotalBetWin(nick_name, "BET", Games.HAM_CA_MAP.getName());
                 long total_bet_slot_money = 0 - logService.getTotalBetWin(nick_name, "BET", "SLOT");
                 long finalQuota = total_bet_money - (total_bet_banca_money * 9) / 10 - (total_bet_slot_money * 9) / 10;
                 long manual_quota = userModel.getManual_quota();

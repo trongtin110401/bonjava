@@ -27,6 +27,7 @@ import com.vinplay.usercore.service.OtherService;
 import com.vinplay.usercore.service.impl.OtherServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
+import com.vinplay.vbee.common.enums.Games;
 import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
 import com.vinplay.vbee.common.models.TopCaoThu;
 import com.vinplay.vbee.common.models.UserModel;
@@ -63,7 +64,7 @@ public class ReportTopGameProcessor2 implements BaseProcessor<HttpServletRequest
             List<String> actions;
             if (action.equals("all")) {
                 // ko tính bắn cá
-                actions = Consts.GAMES.stream().filter(s -> !s.equals("HamCaMap")).collect(Collectors.toList());
+                actions = Consts.GAMES.stream().filter(s -> !s.equals(Games.HAM_CA_MAP.getName())).collect(Collectors.toList());
             } else {
                 actions = Collections.singletonList(action);
             }

@@ -26,6 +26,7 @@ import com.vinplay.dal.service.impl.LogMoneyUserServiceImpl;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
+import com.vinplay.vbee.common.enums.Games;
 import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
 import com.vinplay.vbee.common.models.UserModel;
 import com.vinplay.vbee.common.models.cache.UserCacheModel;
@@ -283,7 +284,7 @@ implements BaseProcessor<HttpServletRequest, String> {
                             //taixiu_bet_win = 0 - taixiu_bet_win;
                         //}
                         // Ban Ca                
-                        long total_bet_banca_money = 0 - logService.getTotalBetWin(nickName, "BET", "HamCaMap");
+                        long total_bet_banca_money = 0 - logService.getTotalBetWin(nickName, "BET", Games.HAM_CA_MAP.getName());
                         long total_bet_slot_money = 0 - logService.getTotalBetWin(nickName, "BET", "SLOT");
                         long finalQuota = total_bet_money - (total_bet_banca_money * 9) / 10 - (total_bet_slot_money * 9) / 10;
                         //long total_win_banca_money = logService.getTotalBetWin(nick_name, "WIN","HamCaMap");
