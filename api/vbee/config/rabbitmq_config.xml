@@ -827,7 +827,7 @@
                 <command>
                     <id>1503</id>
                     <name></name>
-                    <path>com.vinplay.vbee.rmq.minigame.processor.UserBackCodeProcessor</path>
+                    <path>com.vinplay.vbee.rmq.minigame.processor.SendMailQueueProcessor</path>
                 </command>
             </commands>
         </queue>
