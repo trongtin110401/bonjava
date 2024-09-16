@@ -536,7 +536,6 @@ public class MGRoomTaiXiu extends MGRoom {
     }
 
     private void updateSumTran(Map<String, TransactionTaiXiu> map, TransactionTaiXiuDetail tranDetail) {
-        if (tranDetail.username.equals("banhday"))
         if (map.containsKey(tranDetail.username)) {
             TransactionTaiXiu txt = map.get(tranDetail.username);
             if (txt.betSide == tranDetail.betSide) {
