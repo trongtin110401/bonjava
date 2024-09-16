@@ -24,18 +24,19 @@ import java.security.SecureRandom;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.Logger;
 
 @Service
 public class TeleAuthentication extends TelegramLongPollingBot {
 
     private SecureRandom random = new SecureRandom();
-
     @Override
     public void onUpdateReceived(Update update) {
         if (update.hasMessage() && update.getMessage().hasText()) {
             Message message = update.getMessage();
             String chatId = message.getChatId().toString();
             UserTele u = getInfoByChatID(chatId);
+
             String text = message.getText();
             String textMessage = "";
             if (text.contains("/start")) {
@@ -43,10 +44,12 @@ public class TeleAuthentication extends TelegramLongPollingBot {
                 if (parts.length > 1) {
                     String nickname = parts[1];
                     String phone = getPhoneByNickname(nickname);
-                    if (u != null && !Objects.equals(u.getNickname(), nickname) && u.isActive()) {
-                        textMessage = "Tele đã liên kết với 1 tài khoản khác, hãy thử bằng 1 tele khác";
-                        sendPhoneAndOTPRequest(chatId, textMessage);
-                        return;
+                    if (u != null) {
+                        if (Objects.equals(u.getNickname(), nickname) && u.isActive()) {
+                            textMessage = "Tele đã liên kết với 1 tài khoản khác, hãy thử bằng 1 tele khác";
+                            sendPhoneAndOTPRequest(chatId, textMessage);
+                            return;
+                        }
                     }
                     if (phone.isEmpty()) {
                         textMessage = "Vui lòng xác thực số điện thoại để sử dụng dịch vụ";
@@ -55,16 +58,14 @@ public class TeleAuthentication extends TelegramLongPollingBot {
                         if (u != null) {
                             textMessage = "Xin chào " + u.getNickname();
                         } else {
-                            textMessage = "Chào mừng " + message.getFrom().getFirstName() + " đến với hệ thống OTP miễn phí." + "\n"
-                                    + "Để nhận OTP miễn phí vui lòng ấn nút 'Chia sẻ số điện thoại' bên dưới để xác thực tài khoản";
+                            textMessage = "Chào mừng " + message.getFrom().getFirstName() + " đến với hệ thống OTP miễn phí." + "\n" + "Để nhận OTP miễn phí vui lòng ấn nút 'Chia sẻ số điện thoại' bên dưới để xác thực tài khoản";
                         }
                         sendPhoneAndOTPRequest(chatId, textMessage);
                         UserTele userTele = getInfoByChatID(chatId);
                         if (userTele == null) {
                             saveUserInfo(nickname, chatId);
                         } else if (userTele.getPhoneNumber().isEmpty() || !userTele.isActive()) {
-                            textMessage = "Chào mừng " + userTele.getNickname() + " đến với hệ thống OTP miễn phí." + "\n"
-                                    + "Để nhận OTP miễn phí vui lòng ấn nút 'Chia sẻ số điện thoại' bên dưới để xác thực tài khoản";
+                            textMessage = "Chào mừng " + userTele.getNickname() + " đến với hệ thống OTP miễn phí." + "\n" + "Để nhận OTP miễn phí vui lòng ấn nút 'Chia sẻ số điện thoại' bên dưới để xác thực tài khoản";
                             sendPhoneAndOTPRequest(chatId, textMessage);
                         } else {
                             String otp = generateOTP();
@@ -244,8 +245,13 @@ public class TeleAuthentication extends TelegramLongPollingBot {
         document.put("otp", "");
         document.put("timeToExpired", 0);
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        Date date = new Date();
-        document.put("createdDate", dateFormat.format(date));
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+            String formattedDate = formatter.format(new Date());
+            document.put("createdDate", dateFormat.format(formattedDate));
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
         collection.insertOne(document);
     }
 
@@ -310,22 +316,19 @@ public class TeleAuthentication extends TelegramLongPollingBot {
         Document filter = new Document("nickname", nickname);
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Date date = new Date();
-        Document updateDocument = new Document("$set", new Document("otp", otp)
-                .append("timeToExpired", 300000).append("createdDate", dateFormat.format(date)).append("phone", phone));
+        Document updateDocument = new Document("$set", new Document("otp", otp).append("timeToExpired", 300000).append("createdDate", dateFormat.format(date)).append("phone", phone));
 
         UpdateResult result = collection.updateOne(filter, updateDocument);
         if (result.getMatchedCount() == 0) {
-            Document newDocument = new Document("nickname", nickname)
-                    .append("isActive", false)
-                    .append("otp", otp)
-                    .append("phone", phone)
-                    .append("timeToExpired", 300000)
-                    .append("createdDate", dateFormat.format(date));
+            Document newDocument = new Document("nickname", nickname).append("isActive", false).append("otp", otp).append("phone", phone).append("timeToExpired", 300000).append("createdDate", dateFormat.format(date));
             collection.insertOne(newDocument);
         }
     }
 
     private static String normalizePhoneNumber(String phoneNumber) {
+        if (phoneNumber == null) {
+            return "";
+        }
         phoneNumber = phoneNumber.trim().replaceAll("\\s+", " ");
         // Loại bỏ dấu "+" nếu có
         if (phoneNumber.startsWith("+")) {
@@ -350,11 +353,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
     private void sendOTPActivePhone(String chatId, String otp) {
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
-        message.setText("Cảm ơn bạn đã chia sẻ số điện thoại" + "\n" +
-                "Mã OTP của bạn là : " + otp + " và có hiệu lực trong vòng 5 phút." + "\n" +
-                "Vui lòng hoàn tất đăng ký và kết nối lại để chơi game." + "\n" +
-                "Xin cảm ơn."
-        );
+        message.setText("Cảm ơn bạn đã chia sẻ số điện thoại" + "\n" + "Mã OTP của bạn là : " + otp + " và có hiệu lực trong vòng 5 phút." + "\n" + "Vui lòng hoàn tất đăng ký và kết nối lại để chơi game." + "\n" + "Xin cảm ơn.");
         try {
             execute(message);
         } catch (TelegramApiException e) {
