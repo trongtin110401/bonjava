@@ -49,8 +49,8 @@ public class HistoryTransDaoImpl implements HistoryTransDao {
     public HistoryTransModel getFirstTrans(String nickname, String startTime) {
         // Tạo truy vấn MongoDB bằng cách sử dụng put
         Document query = new Document();
-        query.put("createAt", new Document("$gte", startTime));
         query.put("nickName", nickname);
+        query.put("createAt", new Document("$gte", startTime));
         query.put("hinhthuc", "Nạp tiền");
 //        query.put("sotien", new Document("$gt", "0"));
         query.put("trangthai", "Thành công");
