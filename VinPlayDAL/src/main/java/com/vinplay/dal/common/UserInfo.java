@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0_116.
- * 
+ *
  * Could not load the following classes:
  *  org.slf4j.Logger
  *  org.slf4j.LoggerFactory
@@ -22,6 +22,7 @@ public class UserInfo implements Serializable {
     private long totalDepositBank;
     private long totalDepositMoMo;
     private long totalDepositCard;
+    private long totalDepositGiftcode;
     private long totalCashoutBank;
     private long totalCashoutMoMo;
 
@@ -79,6 +80,14 @@ public class UserInfo implements Serializable {
 
     public void setTotalCashoutMoMo(long totalCashoutMoMo) {
         this.totalCashoutMoMo = totalCashoutMoMo;
+    }
+
+    public long getTotalDepositGiftcode() {
+        return totalDepositGiftcode;
+    }
+
+    public void setTotalDepositGiftcode(long totalDepositGiftcode) {
+        this.totalDepositGiftcode = totalDepositGiftcode;
     }
 
     public String toJson() {

@@ -2,6 +2,7 @@ package com.vinplay.api.processors;
 
 import com.vinplay.api.dao.ManageGiftCodeDAO;
 import com.vinplay.api.entities.UserOTP;
+import com.vinplay.dal.dao.impl.StatMoneyInOutDaoImpl;
 import com.vinplay.lognaprut.HistoryTransDao;
 import com.vinplay.lognaprut.entities.HistoryTransModel;
 import com.vinplay.lognaprut.impl.HistoryTransDaoImpl;
@@ -84,6 +85,8 @@ public class UserNapGiftCodeProcessor
             historyTransDao.insertTransaction(new HistoryTransModel("Nạp Giftcode", "Hệ Thống",
                     "recharge", String.valueOf(giftCodeDto.getPrice()), "Thành công", code, nickName, "GIFT_CODE", UUID.randomUUID().toString()));
             userService.updateMoney(nickName, giftCodeDto.getPrice(), "vin", "Gift Code", "Gift Code", "Mã: " + code, 0L, null, TransType.NO_VIPPOINT);
+            StatMoneyInOutDaoImpl moneyInOut= StatMoneyInOutDaoImpl.getInstance();
+            moneyInOut.upsertStatisticMoneyInOut(nickName, 0L, 0L, 0L, 0L, 0L, giftCodeDto.getPrice());
             TelegramAlert.SendMessageDepositGiftCode(userGiftCode);
             otherService.updateCodeCallBack(code);
         } catch (Exception ex) {

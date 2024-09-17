@@ -36,7 +36,7 @@ public class LoginSuccessHandler
 
     private void onLoginSuccess(User user) {
 
-        StatMoneyInOutDaoImpl statMoneyInOutDao = new StatMoneyInOutDaoImpl();
+        StatMoneyInOutDaoImpl moneyInOut= StatMoneyInOutDaoImpl.getInstance();
 
         // th�m v�o th�ng tin user online
         ExtensionUtility.instance().sendLoginOK(user);
@@ -50,7 +50,7 @@ public class LoginSuccessHandler
         }
 
         //  stats money inout
-        StatMoneyInOut statMoneyInOut = statMoneyInOutDao.find(user.getName());
+        StatMoneyInOut statMoneyInOut = moneyInOut.find(user.getName());
         if (statMoneyInOut != null) {
             info.setTotalDepositBank(statMoneyInOut.depositBank);
             info.setTotalDepositMoMo(statMoneyInOut.withdrawMomo);
