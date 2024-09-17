@@ -54,6 +54,7 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
                 return baseResponseModel.toJson();
             }
 
+            // Kiem tra dieu kien rut
             StatMoneyInOutDaoImpl moneyInOutDao = StatMoneyInOutDaoImpl.getInstance();
             StatMoneyInOut moneyInOut = moneyInOutDao.find(nickname);
             long totalBetValue = moneyInOut.totalBetValue;
@@ -68,6 +69,7 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
                 return baseResponseModel.toJson();
             }
 
+            // dieu kien rut thoa man. gui lenh rut
             String type = request.getParameter("type");
             bankacc = bankacc.replaceAll("_", " ");
             CheckNap checknap = new CheckNap();
@@ -76,12 +78,12 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
             int yeu_cau_rut_1 = Integer.parseInt(amount);
             String id = String.valueOf(Instant.now().toEpochMilli());
             if (tiennap >= 0) {
-                if ("momo".equalsIgnoreCase(type)) {
+                if ("momo" .equalsIgnoreCase(type)) {
                     UserWithdrawMomo userWithdrawMomo = new UserWithdrawMomo(nickname, yeu_cau_rut_1, banknum);
                     userWithdrawMomo.setAccountName(bankacc);
                     userWithdrawMomo.Id = id;
                     baseResponseModel = this.userService.UpdateMoneyWhenWithdrawMomo(userWithdrawMomo);
-                } else if ("bank".equalsIgnoreCase(type)) {
+                } else if ("bank" .equalsIgnoreCase(type)) {
                     UserWithdraw userWithdraw = new UserWithdraw(nickname, yeu_cau_rut_1, banknum, bankacc, bankname);
                     userWithdraw.Id = id;
                     baseResponseModel = this.userService.UpdateMoneyWhenWithdrawBank(userWithdraw);
@@ -101,6 +103,7 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
         NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(localeVN);
         return currencyFormatter.format(amount);
     }
+
     private long calculateMoneyNeededForWithdrawal(long firstRechargeValue, long totalDepositGiftcode, long totalBetValue) {
         return (long) ((firstRechargeValue * 0.5) + totalDepositGiftcode * 2 - totalBetValue);
     }
@@ -122,7 +125,6 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
     }
 
 
-
     private long getFirstRechargeValue(String nickname) {
         // Define the format you want for the date-time strings
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -139,17 +141,20 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
         String endTime = endOfDay.format(formatter);
 
         HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
-        HistoryTransResponse res = historyTransDao.getListTransByDay(nickname, startTime, endTime);
-        if (CollectionUtils.isNotEmpty(res.getListTrans())) {
-            Collections.reverse(res.getListTrans());
-            Optional<HistoryTransModel> optional = res.getListTrans().stream().filter(historyTransModel ->
-                            (Integer.parseInt(historyTransModel.getSotien()) > 0 && (historyTransModel.hinhthucTrans.equals(HistoryTransConst.MOMO)
-                                    || historyTransModel.hinhthucTrans.equals(HistoryTransConst.BANK)
-                                    || historyTransModel.hinhthucTrans.equals(HistoryTransConst.CARD))))
-                    .findFirst();
-            if (optional.isPresent()) {
-                return Long.parseLong(optional.get().sotien);
-            }
+        HistoryTransModel res = historyTransDao.getFirstTrans(nickname, startTime);
+//        if (CollectionUtils.isNotEmpty(res.getListTrans())) {
+//            Collections.reverse(res.getListTrans());
+//            Optional<HistoryTransModel> optional = res.getListTrans().stream().filter(historyTransModel ->
+//                            (Integer.parseInt(historyTransModel.getSotien()) > 0 && (historyTransModel.hinhthucTrans.equals(HistoryTransConst.MOMO)
+//                                    || historyTransModel.hinhthucTrans.equals(HistoryTransConst.BANK)
+//                                    || historyTransModel.hinhthucTrans.equals(HistoryTransConst.CARD))))
+//                    .findFirst();
+//            if (optional.isPresent()) {
+//                return Long.parseLong(optional.get().sotien);
+//            }
+//        }
+        if (res != null) {
+            return Long.parseLong(res.getSotien());
         }
         return 0;
     }

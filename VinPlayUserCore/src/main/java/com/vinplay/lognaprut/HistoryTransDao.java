@@ -22,4 +22,5 @@ public interface HistoryTransDao {
     HistoryTransResponse getListTransRutBankByName(String nickName, int page, int maxItem);
 
     ReportAdminTransferMoneyResponse getTotalAdminTransferByDay(String startTime, String endTime);
+    HistoryTransModel getFirstTrans(String nickname, String startTime);
 }
