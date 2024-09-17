@@ -35,7 +35,7 @@ public class StatMoneyInOutDaoImpl {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection<Document> col = db.getCollection("stat_money_in_out");
         Document document = col.find(new Document("nick_name", nickName)).first();
-        StatMoneyInOut model;
+        StatMoneyInOut model = new StatMoneyInOut();
         if (document != null) {
             model = new StatMoneyInOut();
             model.nickName = document.getString("nick_name");
@@ -48,7 +48,7 @@ public class StatMoneyInOutDaoImpl {
             model.totalBetValue = document.containsKey("total_bet_value") ? document.getLong("total_bet_value") : 0L;
             return model;
         }
-        return null;
+        return model;
     }
 
     public void upsertStatisticMoneyInOut(String nickName, long depositMomo, long depositBank, long withdrawBank, long withdrawMomo, long depositCard, long depositGiftCode, long totalBetValue) {

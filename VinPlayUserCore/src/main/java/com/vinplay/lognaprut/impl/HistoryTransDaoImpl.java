@@ -52,7 +52,7 @@ public class HistoryTransDaoImpl implements HistoryTransDao {
         query.put("createAt", new Document("$gte", startTime));
         query.put("nickName", nickname);
         query.put("hinhthuc", "Nạp tiền");
-        query.put("sotien", new Document("$gt", "0"));
+//        query.put("sotien", new Document("$gt", "0"));
         query.put("trangthai", "Thành công");
 
         // Thực thi truy vấn và lấy tài liệu đầu tiên
