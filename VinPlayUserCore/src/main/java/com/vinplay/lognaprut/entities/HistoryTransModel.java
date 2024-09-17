@@ -80,6 +80,9 @@ public class HistoryTransModel {
         this.ghiChu = ghiChu;
     }
 
+    public HistoryTransModel() {
+    }
+
     public HistoryTransModel(String giaodich, String congGiaoDich, String hinhthuc, String sotien, String trangthai, String ghiChu, String nickName, String hinhthucTrans, String transId) {
         this.giaodich = giaodich;
         this.congGiaoDich = congGiaoDich;

@@ -46,6 +46,41 @@ public class HistoryTransDaoImpl implements HistoryTransDao {
     }
 
     @Override
+    public HistoryTransModel getFirstTrans(String nickname, String startTime) {
+        // Tạo truy vấn MongoDB bằng cách sử dụng put
+        Document query = new Document();
+        query.put("createAt", new Document("$gte", startTime));
+        query.put("nickName", nickname);
+        query.put("hinhthuc", "Nạp tiền");
+        query.put("sotien", new Document("$gt", "0"));
+        query.put("trangthai", "Thành công");
+
+        // Thực thi truy vấn và lấy tài liệu đầu tiên
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        Document doc = db.getCollection("History_User_transaction").find(query).sort(new Document("createAt", 1)).first();
+
+        // Kiểm tra nếu có kết quả
+        if (doc != null) {
+            // Ánh xạ kết quả vào HistoryTransModel
+            HistoryTransModel model = new HistoryTransModel();
+            model.giaodich = doc.getString("giaodich");
+            model.congGiaoDich = doc.getString("congGiaoDich");
+            model.hinhthuc = doc.getString("hinhthuc");
+            model.sotien = doc.getString("sotien");
+            model.trangthai = doc.getString("trangthai");
+            model.ghiChu = doc.getString("ghiChu");
+            model.nickName = doc.getString("nickName");
+            model.hinhthucTrans = doc.getString("hinhthucTrans");
+            model.transId = doc.getString("transId");
+            model.id = doc.getObjectId("_id").toHexString(); // Chuyển ObjectId sang chuỗi
+            model.createAt = doc.getString("createAt");
+
+            return model;
+        }
+        return null;
+    }
+
+    @Override
     public HistoryTransModel findTransaction(String transId, String nickName, String hinhthucTrans) {
         try {
             MongoDatabase db = MongoDBConnectionFactory.getDB();
