@@ -82,7 +82,6 @@ public class TaiXiuMd5ServiceImpl
         msg.prize = prize;
         msg.refund = refund;
         //msg.totalExchange = totalExchange;
-        System.out.println("Save transaction TX MD5 phiên : " + referenceId + " value : " + msg.toJson());
         RMQApi.publishMessage((String) "queue_taixiu_md5", (BaseMessage) msg, (int) 100);
         return true;
     }
@@ -321,10 +320,11 @@ public class TaiXiuMd5ServiceImpl
     @Override
     public boolean saveTransactionTaiXiu(List<TransactionTaiXiu> trans) throws IOException, TimeoutException, InterruptedException {
         boolean returnValue = false;
-        for (TransactionTaiXiu tran : trans) {
-
-            returnValue = this.saveTransactionTaiXiu(tran.referenceId, tran.userId, tran.username, tran.moneyType, tran.betValue, (short) tran.betSide, tran.totalPrize, tran.totalRefund, tran.totalExchange);
-
+        if (!trans.isEmpty()) {
+            System.out.println("Save transaction TX MD5 phiên : " + trans.get(0).referenceId);
+            for (TransactionTaiXiu tran : trans) {
+                returnValue = this.saveTransactionTaiXiu(tran.referenceId, tran.userId, tran.username, tran.moneyType, tran.betValue, (short) tran.betSide, tran.totalPrize, tran.totalRefund, tran.totalExchange);
+            }
         }
         return returnValue;
     }
@@ -333,8 +333,7 @@ public class TaiXiuMd5ServiceImpl
     public boolean saveNoHuTaiXiu(List<NohuTXDetail> trans) throws IOException, TimeoutException, InterruptedException {
         boolean returnValue = false;
         for (NohuTXDetail tran : trans) {
-            returnValue = this.saveNoHuTaiXiu(tran.phien, tran.result, tran.money,
-                    tran.username, tran.userMoneyHu, tran.totalUser);
+            returnValue = this.saveNoHuTaiXiu(tran.phien, tran.result, tran.money, tran.username, tran.userMoneyHu, tran.totalUser);
         }
         return returnValue;
     }
