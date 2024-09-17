@@ -61,7 +61,7 @@ public class LogMoneyUserProcessor implements BaseProcessor<byte[], Boolean> {
                 e.printStackTrace();
             }
 
-            if (message.getMoneyExchange() > 0 && Consts.GAMES_WITH_OUT_BAN_CA.get(message.getActionName())){
+            if (message.getMoneyExchange() < 0 && Consts.GAMES_WITH_OUT_BAN_CA.get(message.getActionName())){
                 StatMoneyInOutDaoImpl statMoneyInOutDao =  StatMoneyInOutDaoImpl.getInstance();
                 statMoneyInOutDao.upsertStatisticMoneyInOut(message.getNickname(), 0L, 0L,0L,0L,0L,0L,message.getMoneyExchange());
             }
