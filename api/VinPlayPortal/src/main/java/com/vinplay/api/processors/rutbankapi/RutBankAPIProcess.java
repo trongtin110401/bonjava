@@ -54,11 +54,11 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
 
             StatMoneyInOutDaoImpl moneyInOutDao = StatMoneyInOutDaoImpl.getInstance();
             StatMoneyInOut moneyInOut = moneyInOutDao.find(nickname);
-            long totalBetToday = moneyInOut.totalBetValue;
+            long totalBetValue = moneyInOut.totalBetValue;
             long totalDepositGiftcode = moneyInOut.depositGiftcode;
-            long fistRechargeValueToday = getFirstRechargeToday(nickname);
+            long fistRechargeValue = getFirstRechargeToday(nickname);
 
-            if (totalBetToday < (fistRechargeValueToday * 0.5 + totalDepositGiftcode)) {
+            if (totalBetValue < (fistRechargeValue * 0.5 + totalDepositGiftcode)) {
                 baseResponseModel = new BaseResponseModel(false, "Bạn chưa cược đủ 100% giá trị nạp Giftcode. Vui lòng cược thêm.");
                 return baseResponseModel.toJson();
             }
