@@ -46,6 +46,7 @@ public class StatMoneyInOutDaoImpl {
             model.withdrawBank = document.containsKey("withdraw_bank") ? document.getLong("withdraw_bank") : 0L;
             model.depositGiftcode = document.containsKey("deposit_giftcode") ? document.getLong("deposit_giftcode") : 0L;
             model.totalBetValue = document.containsKey("total_bet_value") ? document.getLong("total_bet_value") : 0L;
+            return model;
         }
         return null;
     }
