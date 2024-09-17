@@ -82,6 +82,7 @@ public class TaiXiuMd5ServiceImpl
         msg.prize = prize;
         msg.refund = refund;
         //msg.totalExchange = totalExchange;
+        System.out.println("Save transaction TX MD5 phiên : " + referenceId + " value : " + msg.toJson());
         RMQApi.publishMessage((String) "queue_taixiu_md5", (BaseMessage) msg, (int) 100);
         return true;
     }

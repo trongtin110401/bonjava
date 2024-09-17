@@ -34,8 +34,9 @@ public class SaveTransactionTaiXiuMd5Processor
             if (message.moneyType == 1) {
                 addTopVinhDanh(message);
             }
-
+            System.out.println("Before save transaction TX MD5 referenceId" + message.referenceId);
             dao.saveTransactionTaiXiu(message);
+            System.out.println("After save transaction TX MD5 referenceId" + message.referenceId);
 //            saveToElk(message);
             logger.debug((Object) ("Handle message : " + message.referenceId));
         } catch (Exception e) {
