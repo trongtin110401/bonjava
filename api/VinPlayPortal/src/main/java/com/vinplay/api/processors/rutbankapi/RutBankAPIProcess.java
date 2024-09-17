@@ -1,9 +1,10 @@
 package com.vinplay.api.processors.rutbankapi;
 
 import com.vinplay.dal.common.BroadCastUserMoney;
-import com.vinplay.dal.dao.ReportDAO;
 import com.vinplay.dal.dao.impl.ReportDaoImpl;
+import com.vinplay.dal.dao.impl.StatMoneyInOutDaoImpl;
 import com.vinplay.dal.entities.report.ReportMoneySystemModel;
+import com.vinplay.dal.entities.report.StatMoneyInOut;
 import com.vinplay.lognaprut.HistoryTransConst;
 import com.vinplay.lognaprut.HistoryTransDao;
 import com.vinplay.lognaprut.entities.HistoryTransModel;
@@ -11,10 +12,8 @@ import com.vinplay.lognaprut.entities.HistoryTransResponse;
 import com.vinplay.lognaprut.impl.HistoryTransDaoImpl;
 import com.vinplay.payment.entities.UserWithdraw;
 import com.vinplay.payment.entities.UserWithdrawMomo;
-import com.vinplay.usercore.service.GiftCodeService;
 import com.vinplay.usercore.service.UserExtraService;
 import com.vinplay.usercore.service.UserService;
-import com.vinplay.usercore.service.impl.GiftCodeServiceImpl;
 import com.vinplay.usercore.service.impl.OtpServiceImpl;
 import com.vinplay.usercore.service.impl.UserExtraServiceImpl;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
@@ -29,7 +28,9 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
 
 public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, String> {
     private UserService userService = new UserServiceImpl();
@@ -51,20 +52,16 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
                 return baseResponseModel.toJson();
             }
 
+            StatMoneyInOutDaoImpl moneyInOutDao = StatMoneyInOutDaoImpl.getInstance();
+            StatMoneyInOut moneyInOut = moneyInOutDao.find(nickname);
+            long totalBetToday = moneyInOut.totalBetValue;
+            long totalDepositGiftcode = moneyInOut.depositGiftcode;
+            long fistRechargeValueToday = getFirstRechargeToday(nickname);
 
-            GiftCodeService giftCodeService = new GiftCodeServiceImpl();
-            if (!giftCodeService.checkUserTransactionAfterUseGiftCode(nickname)) {
+            if (totalBetToday < (fistRechargeValueToday * 0.5 + totalDepositGiftcode)) {
                 baseResponseModel = new BaseResponseModel(false, "Bạn chưa cược đủ 100% giá trị nạp Giftcode. Vui lòng cược thêm.");
                 return baseResponseModel.toJson();
             }
-
-//            long totalBetToday = getTotalBetToday(nickname);
-//            long fistRechargeValueToday = getFirstRechargeToday(nickname);
-//            System.out.println(" totalBetToday = " + totalBetToday + " - firstCharge = " + fistRechargeValueToday);
-//            if (totalBetToday <= 0 || fistRechargeValueToday <= 0 || totalBetToday < fistRechargeValueToday / 2) {
-//                baseResponseModel = new BaseResponseModel(false, "Bạn chưa cược đủ 50% giá trị mã nạp đầu tiên. Vui lòng cược thêm.");
-//                return baseResponseModel.toJson();
-//            }
 
             String type = request.getParameter("type");
             bankacc = bankacc.replaceAll("_", " ");
