@@ -54,6 +54,7 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
                 return baseResponseModel.toJson();
             }
 
+            // Kiem tra dieu kien rut
             StatMoneyInOutDaoImpl moneyInOutDao = StatMoneyInOutDaoImpl.getInstance();
             StatMoneyInOut moneyInOut = moneyInOutDao.find(nickname);
             long totalBetValue = moneyInOut.totalBetValue;
@@ -68,6 +69,7 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
                 return baseResponseModel.toJson();
             }
 
+            // dieu kien rut thoa man. gui lenh rut
             String type = request.getParameter("type");
             bankacc = bankacc.replaceAll("_", " ");
             CheckNap checknap = new CheckNap();
