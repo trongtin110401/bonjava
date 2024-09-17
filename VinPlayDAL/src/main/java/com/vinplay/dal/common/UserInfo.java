@@ -25,6 +25,7 @@ public class UserInfo implements Serializable {
     private long totalDepositGiftcode;
     private long totalCashoutBank;
     private long totalCashoutMoMo;
+    private long totalBetValue;
 
     public String getGameName() {
         return gameName;
@@ -88,6 +89,14 @@ public class UserInfo implements Serializable {
 
     public void setTotalDepositGiftcode(long totalDepositGiftcode) {
         this.totalDepositGiftcode = totalDepositGiftcode;
+    }
+
+    public long getTotalBetValue() {
+        return totalBetValue;
+    }
+
+    public void setTotalBetValue(long totalBetValue) {
+        this.totalBetValue = totalBetValue;
     }
 
     public String toJson() {

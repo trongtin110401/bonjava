@@ -95,7 +95,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
 
             //20240914
             try {
-                moneyInOut.upsertStatisticMoneyInOut(userWithdraw.Nickname, 0L, 0L, 0L, userWithdraw.Amount, 0L,0L);
+                moneyInOut.upsertStatisticMoneyInOut(userWithdraw.Nickname, 0L, 0L, 0L, userWithdraw.Amount, 0L,0L,0L);
             } catch (Exception ex) {
             }
 
@@ -140,7 +140,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
             cashoutDao.UpdateCashoutBank(callBackModel.getRequestId(), CashoutUtil.STATUS_SUCCESS, "Auto_Bank");
             try {
                 //20240914
-                moneyInOut.upsertStatisticMoneyInOut(userWithdraw.Username, 0L, 0L, userWithdraw.Amount, 0L, 0L,0L);
+                moneyInOut.upsertStatisticMoneyInOut(userWithdraw.Username, 0L, 0L, userWithdraw.Amount, 0L, 0L,0L, 0L);
             } catch (Exception ex) {
             }
         } else {
@@ -224,7 +224,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
                 //20240914
                 if (callBackModel.getStatus().equals("success")) {
                     try {
-                        moneyInOut.upsertStatisticMoneyInOut(trans.Nickname, Long.parseLong(callBackModel.getRegAmount()), 0L, 0L, 0L, 0L,0L);
+                        moneyInOut.upsertStatisticMoneyInOut(trans.Nickname, Long.parseLong(callBackModel.getRegAmount()), 0L, 0L, 0L, 0L,0L, 0L);
                     } catch (Exception ex) {
                     }
                 }
@@ -335,7 +335,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
             //20240914
             if (callBackModel.getStatus().equals("success")) {
                 try {
-                    moneyInOut.upsertStatisticMoneyInOut(trans.nickName, 0L, 0L, 0L, 0L, Long.parseLong(callBackModel.getRegAmount()),0L);
+                    moneyInOut.upsertStatisticMoneyInOut(trans.nickName, 0L, 0L, 0L, 0L, Long.parseLong(callBackModel.getRegAmount()),0L,0L);
                 } catch (Exception ex) {
                 }
             }
@@ -425,7 +425,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
                 //20240914
                 if (callBackModel.getStatus().equals("success")) {
                     try {
-                        moneyInOut.upsertStatisticMoneyInOut(trans.Nickname, 0L, Long.parseLong(callBackModel.getRegAmount()), 0L, 0L, 0L,0L);
+                        moneyInOut.upsertStatisticMoneyInOut(trans.Nickname, 0L, Long.parseLong(callBackModel.getRegAmount()), 0L, 0L, 0L,0L, 0L);
                     } catch (Exception ex) {
                     }
                 }

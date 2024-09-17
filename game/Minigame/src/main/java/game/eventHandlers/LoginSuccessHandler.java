@@ -22,11 +22,19 @@ import bitzero.server.extensions.BaseServerEventHandler;
 import bitzero.util.ExtensionUtility;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
+import com.vinplay.dal.dao.impl.ReportDaoImpl;
 import com.vinplay.dal.dao.impl.StatMoneyInOutDaoImpl;
+import com.vinplay.dal.entities.report.ReportMoneySystemModel;
 import com.vinplay.dal.entities.report.StatMoneyInOut;
+import com.vinplay.vbee.common.enums.Games;
 import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
+import com.vinplay.vbee.common.statics.Consts;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
 public class LoginSuccessHandler
         extends BaseServerEventHandler {
@@ -57,10 +65,11 @@ public class LoginSuccessHandler
             info.setTotalDepositCard(statMoneyInOut.depositCard);
             info.setTotalCashoutBank(statMoneyInOut.withdrawBank);
             info.setTotalCashoutMoMo(statMoneyInOut.withdrawMomo);
+            info.setTotalDepositGiftcode(statMoneyInOut.depositGiftcode);
+            info.setTotalBetValue(statMoneyInOut.totalBetValue);
         }
 
         userOnline.set(user.getName(), info.toJson());
     }
-
 }
 

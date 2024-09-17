@@ -86,7 +86,7 @@ public class UserNapGiftCodeProcessor
                     "recharge", String.valueOf(giftCodeDto.getPrice()), "Thành công", code, nickName, "GIFT_CODE", UUID.randomUUID().toString()));
             userService.updateMoney(nickName, giftCodeDto.getPrice(), "vin", "Gift Code", "Gift Code", "Mã: " + code, 0L, null, TransType.NO_VIPPOINT);
             StatMoneyInOutDaoImpl moneyInOut= StatMoneyInOutDaoImpl.getInstance();
-            moneyInOut.upsertStatisticMoneyInOut(nickName, 0L, 0L, 0L, 0L, 0L, giftCodeDto.getPrice());
+            moneyInOut.upsertStatisticMoneyInOut(nickName, 0L, 0L, 0L, 0L, 0L, giftCodeDto.getPrice(), 0L);
             TelegramAlert.SendMessageDepositGiftCode(userGiftCode);
             otherService.updateCodeCallBack(code);
         } catch (Exception ex) {

@@ -14,6 +14,7 @@ package com.vinplay.vbee.rmq.log.processor;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.UpdateOptions;
+import com.vinplay.dal.dao.impl.StatMoneyInOutDaoImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.enums.Games;
@@ -60,6 +61,10 @@ public class LogMoneyUserProcessor implements BaseProcessor<byte[], Boolean> {
                 e.printStackTrace();
             }
 
+            if (message.getMoneyExchange() > 0 && Consts.GAMES_WITH_OUT_BAN_CA.contains(message.getActionName())){
+                StatMoneyInOutDaoImpl statMoneyInOutDao =  StatMoneyInOutDaoImpl.getInstance();
+                statMoneyInOutDao.upsertStatisticMoneyInOut(message.getNickname(), 0L, 0L,0L,0L,0L,0L,message.getMoneyExchange());
+            }
 
             //===================
             if (message.getMoneyType().equalsIgnoreCase("vin")) {

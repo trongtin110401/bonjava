@@ -9,5 +9,6 @@ public class StatMoneyInOut {
     public long depositGiftcode;
     public long withdrawMomo;
     public long withdrawBank;
+    public long totalBetValue;
 
 }

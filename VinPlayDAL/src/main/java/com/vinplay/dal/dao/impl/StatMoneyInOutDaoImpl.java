@@ -1,7 +1,6 @@
 package com.vinplay.dal.dao.impl;
 
 import com.hazelcast.core.IMap;
-import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.UpdateOptions;
@@ -11,9 +10,7 @@ import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import org.bson.Document;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class StatMoneyInOutDaoImpl {
@@ -42,17 +39,18 @@ public class StatMoneyInOutDaoImpl {
         if (document != null) {
             model = new StatMoneyInOut();
             model.nickName = document.getString("nick_name");
-            model.depositMomo = document.getLong("deposit_momo");
-            model.depositBank = document.getLong("deposit_bank");
-            model.depositCard = document.getLong("deposit_card");
-            model.withdrawMomo = document.getLong("withdraw_momo");
-            model.withdrawBank = document.getLong("withdraw_bank");
-            model.depositGiftcode =document.getLong("deposit_giftcode");
+            model.depositMomo = document.containsKey("deposit_momo") ? document.getLong("deposit_momo") : 0L;
+            model.depositBank = document.containsKey("deposit_bank") ? document.getLong("deposit_bank") : 0L;
+            model.depositCard = document.containsKey("deposit_card") ? document.getLong("deposit_card") : 0L;
+            model.withdrawMomo = document.containsKey("withdraw_momo") ? document.getLong("withdraw_momo") : 0L;
+            model.withdrawBank = document.containsKey("withdraw_bank") ? document.getLong("withdraw_bank") : 0L;
+            model.depositGiftcode = document.containsKey("deposit_giftcode") ? document.getLong("deposit_giftcode") : 0L;
+            model.totalBetValue = document.containsKey("total_bet_value") ? document.getLong("total_bet_value") : 0L;
         }
         return null;
     }
 
-    public void upsertStatisticMoneyInOut(String nickName, long depositMomo, long depositBank, long withdrawBank, long withdrawMomo, long depositCard, long depositGiftCode) {
+    public void upsertStatisticMoneyInOut(String nickName, long depositMomo, long depositBank, long withdrawBank, long withdrawMomo, long depositCard, long depositGiftCode, long totalBetValue) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection<Document> col = db.getCollection("stat_money_in_out");
         Map<String, Object> map = new HashMap<>();
@@ -69,6 +67,7 @@ public class StatMoneyInOutDaoImpl {
         updateOperations.append("withdraw_bank", withdrawBank);
         updateOperations.append("deposit_card", depositCard);
         updateOperations.append("deposit_giftcode", depositGiftCode);
+        updateOperations.append("total_bet_value", totalBetValue);
         Document update = new Document("$inc", updateOperations);
 
         // Define the options (upsert: true)
