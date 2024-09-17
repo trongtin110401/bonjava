@@ -24,11 +24,13 @@ import com.vinplay.vbee.common.statics.Consts;
 import org.apache.commons.collections.CollectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.NumberFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -56,10 +58,13 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
             StatMoneyInOut moneyInOut = moneyInOutDao.find(nickname);
             long totalBetValue = moneyInOut.totalBetValue;
             long totalDepositGiftcode = moneyInOut.depositGiftcode;
-            long fistRechargeValue = getFirstRechargeToday(nickname);
+            long firstRechargeValue = getFirstRechargeValue(nickname);
 
-            if (totalBetValue < (fistRechargeValue * 0.5 + totalDepositGiftcode)) {
-                baseResponseModel = new BaseResponseModel(false, "Bạn chưa cược đủ 100% giá trị nạp Giftcode. Vui lòng cược thêm.");
+            long moneyNeededForWithdrawal = calculateMoneyNeededForWithdrawal(firstRechargeValue, totalDepositGiftcode, totalBetValue);
+
+            if (moneyNeededForWithdrawal > 0) {
+                String message = buildWithdrawalMessage(firstRechargeValue, totalDepositGiftcode, totalBetValue, moneyNeededForWithdrawal);
+                baseResponseModel = new BaseResponseModel(false, message);
                 return baseResponseModel.toJson();
             }
 
@@ -91,42 +96,34 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
         }
     }
 
+    private String formatCurrencyVND(long amount) {
+        Locale localeVN = new Locale("vi", "VN");
+        NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(localeVN);
+        return currencyFormatter.format(amount);
+    }
+    private long calculateMoneyNeededForWithdrawal(long firstRechargeValue, long totalDepositGiftcode, long totalBetValue) {
+        return (long) ((firstRechargeValue * 0.5) + totalDepositGiftcode - totalBetValue);
+    }
+
+    private String buildWithdrawalMessage(long firstRechargeValue, long totalDepositGiftcode, long totalBetValue, long moneyNeeded) {
+        String formattedFirstRechargeValue = formatCurrencyVND(firstRechargeValue);
+        String formattedTotalDepositGiftcode = formatCurrencyVND(totalDepositGiftcode);
+        String formattedTotalBetValue = formatCurrencyVND(totalBetValue);
+        String formattedMoneyNeeded = formatCurrencyVND(moneyNeeded);
+        return String.format(
+                "Mã nạp đầu : %s.\nNạp Giftcode : %s.\nTổng cược : %s.\nBạn cần cược thêm : %s để rút.",
+                formattedFirstRechargeValue, formattedTotalDepositGiftcode, formattedTotalBetValue, formattedMoneyNeeded
+        );
+    }
+
     private String getUserNameByAccessToken(String accessToken) {
         UserExtraService userExtraService = new UserExtraServiceImpl();
         return userExtraService.getModelFromToken(accessToken).getNickname();
     }
 
-    private long getTotalBetToday(String nickname) {
 
-        // Define the format you want for the date-time strings
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-        // Get the current date
-        LocalDate fromDate = LocalDate.parse("2024-01-01", DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-
-        // Get the start of the day (00:00:00)
-        LocalDateTime startOfDay = fromDate.atStartOfDay();
-        String startTime = startOfDay.format(formatter);
-
-        // Get the end of the day (23:59:59)
-        LocalDateTime endOfDay = LocalDate.now().atTime(23, 59, 59);
-        String endTime = endOfDay.format(formatter);
-
-        ReportDaoImpl reportDao = new ReportDaoImpl();
-        Map<String, ReportMoneySystemModel> actions = reportDao.getReportMoneyUser2(startTime, endTime, nickname, false);
-
-        long totalBetToday = 0l;
-        for (Map.Entry<String, ReportMoneySystemModel> entry : actions.entrySet()) {
-            if (Consts.NO_GAME.contains(entry.getKey())) {
-                continue;
-            }
-
-            totalBetToday += (entry.getValue().moneyLost * -1);
-        }
-        return totalBetToday;
-    }
-
-    private long getFirstRechargeToday(String nickname) {
+    private long getFirstRechargeValue(String nickname) {
         // Define the format you want for the date-time strings
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -143,9 +140,7 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
 
         HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
         HistoryTransResponse res = historyTransDao.getListTransByDay(nickname, startTime, endTime);
-//        System.out.println(nickname + " - " + startTime + " -> " + endTime + " - History trans count = " + res.getListTrans().size());
         if (CollectionUtils.isNotEmpty(res.getListTrans())) {
-            // ??o ng??c list ?? l?y th?i gian t? th?p t?i cao
             Collections.reverse(res.getListTrans());
             Optional<HistoryTransModel> optional = res.getListTrans().stream().filter(historyTransModel ->
                             (Integer.parseInt(historyTransModel.getSotien()) > 0 && (historyTransModel.hinhthucTrans.equals(HistoryTransConst.MOMO)
