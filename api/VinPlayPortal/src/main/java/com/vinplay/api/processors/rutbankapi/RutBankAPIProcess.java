@@ -102,7 +102,7 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
         return currencyFormatter.format(amount);
     }
     private long calculateMoneyNeededForWithdrawal(long firstRechargeValue, long totalDepositGiftcode, long totalBetValue) {
-        return (long) ((firstRechargeValue * 0.5) + totalDepositGiftcode - totalBetValue);
+        return (long) ((firstRechargeValue * 0.5) + totalDepositGiftcode * 2 - totalBetValue);
     }
 
     private String buildWithdrawalMessage(long firstRechargeValue, long totalDepositGiftcode, long totalBetValue, long moneyNeeded) {
