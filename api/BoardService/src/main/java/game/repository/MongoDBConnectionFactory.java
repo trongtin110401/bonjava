@@ -37,7 +37,7 @@ public class MongoDBConnectionFactory {
                 .socketKeepAlive(true)
                 .build();
         MongoCredential credential = MongoCredential.createCredential(MONGODB_USERNAME, MONGODB_AUTH_DATABASE, MONGODB_PASSWORD.toCharArray());
-        mongoClient = new MongoClient(new ServerAddress(MONGODB_HOST, MONGODB_PORT), Arrays.asList(credential));
+        mongoClient = new MongoClient(new ServerAddress(MONGODB_HOST, MONGODB_PORT), Arrays.asList(credential), options);
     }
 
     public static MongoDatabase getDB() {
