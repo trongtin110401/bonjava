@@ -45,6 +45,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
             for (int i = 0; i < RATE_LIMIT; i++) {
                 blockingQueue.offer(i);
             }
+            System.out.println("RATE LIMIT SIZE: " + blockingQueue.size());
         }, 0, 1, TimeUnit.SECONDS);
     }
 
@@ -131,8 +132,17 @@ public class TeleAuthentication extends TelegramLongPollingBot {
         msg.setChatId(chatId);
         msg.setText(textMessage);
         try {
-            execute(msg);
-        } catch (TelegramApiException e) {
+            try {
+                if (blockingQueue.poll(10, TimeUnit.SECONDS) != null) {
+                    execute(msg);
+                }
+            } catch (TelegramApiException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -176,9 +186,14 @@ public class TeleAuthentication extends TelegramLongPollingBot {
         message.setReplyMarkup(keyboardMarkup);
 
         try {
-            execute(message);
+            if (blockingQueue.poll(10, TimeUnit.SECONDS) != null) {
+                execute(message);
+            }
         } catch (TelegramApiException e) {
             e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
@@ -309,8 +324,16 @@ public class TeleAuthentication extends TelegramLongPollingBot {
             if (userTele != null) {
                 phone = getPhoneByNickname(userTele.getNickname());
             } else {
-                message.setText("Vui lòng xác thực tele để sử dụng dịch vụ.");
-                execute(message);
+                try {
+                    if (blockingQueue.poll(10, TimeUnit.SECONDS) != null) {
+                        execute(message);
+                    }
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    throw new RuntimeException(e);
+                }
                 return;
             }
             if (normalizePhoneNumber(phone).equals(normalizePhoneNumber(phoneNumber))) {
@@ -321,9 +344,18 @@ public class TeleAuthentication extends TelegramLongPollingBot {
                 sendOTPActivePhone(chatId, otp);
             } else {
                 message.setText("Số điện thoại không khớp, vui lòng thử lại.");
-                execute(message);
+                try {
+                    if (blockingQueue.poll(10, TimeUnit.SECONDS) != null) {
+                        execute(message);
+                    }
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    throw new RuntimeException(e);
+                }
             }
-        } catch (TelegramApiException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
