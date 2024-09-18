@@ -89,5 +89,7 @@ public interface OtherService {
     UserActivePhoneResponse getAllUserActivePhoneByDay(String timeStart, String timeEnd);
 
     UserActiveTeleResponse getAllUserActiveTeleByDay(String timeStart, String timeEnd);
+
+    void saveUserCashOutTransaction(Document document);
 }
 

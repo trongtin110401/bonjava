@@ -23,11 +23,11 @@ import com.google.gson.Gson;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.mongodb.BasicDBObject;
-import com.mongodb.Block;
 import com.mongodb.client.*;
-import com.mongodb.client.model.*;
-import com.vinplay.dal.entities.report.ReportMoneyModelNew;
-import com.vinplay.dal.entities.report.ReportMoneySystemModel;
+import com.mongodb.client.model.Accumulators;
+import com.mongodb.client.model.Aggregates;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Sorts;
 import com.vinplay.usercore.dao.impl.GiftCodeDAOImpl;
 import com.vinplay.usercore.service.GiftCodeService;
 import com.vinplay.vbee.common.dto.*;
@@ -42,21 +42,14 @@ import com.vinplay.vbee.common.statics.Consts;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.bson.types.ObjectId;
-import org.python.parser.ast.Str;
-import scala.Int;
 
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
-
-import static com.mongodb.client.model.Accumulators.first;
-import static com.mongodb.client.model.Accumulators.sum;
-import static com.mongodb.client.model.Aggregates.group;
-import static com.mongodb.client.model.Aggregates.match;
-import static com.mongodb.client.model.Filters.and;
 
 public class GiftCodeServiceImpl
         implements GiftCodeService {
@@ -374,6 +367,20 @@ public class GiftCodeServiceImpl
         conditions.put("nick_name", nickName);
         conditions.put("type", type);
         FindIterable iterable = db.getCollection("user_gift_code").find(new Document(conditions));
+        return iterable.iterator().hasNext();
+    }
+
+    public boolean checkUserUseGiftCodeToday(String nickName) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime startOfDay = LocalDateTime.now().toLocalDate().atStartOfDay();
+        LocalDateTime endOfDay = startOfDay.plusDays(1).minusNanos(1);
+        String startDateStr = startOfDay.format(formatter);
+        String endDateStr = endOfDay.format(formatter);
+        HashMap<String, Object> conditions = new HashMap<>();
+        conditions.put("nick_name", nickName);
+        conditions.put("created_time", new Document("$gte", startDateStr).append("$lte", endDateStr));
+        FindIterable<Document> iterable = db.getCollection("user_gift_code").find(new Document(conditions));
         return iterable.iterator().hasNext();
     }
 

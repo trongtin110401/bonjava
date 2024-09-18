@@ -65,7 +65,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
             UserTele u = getInfoByChatID(chatId);
 
             String text = message.getText();
-            String textMessage = "";
+            String textMessage;
             if (text.contains("/start")) {
                 String[] parts = text.split("\\s+");
                 if (parts.length > 1) {
@@ -346,6 +346,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
                     System.out.println("Waiting TPS..." + traceId);
                     if (blockingQueue.poll(10, TimeUnit.SECONDS) != null) {
                         System.out.println("Send message " + traceId);
+                        message.setText("Vui lòng xác thực tele để sử dụng dịch vụ.");
                         execute(message);
                     }else {
                         System.out.println("Send message timeout" + traceId);
