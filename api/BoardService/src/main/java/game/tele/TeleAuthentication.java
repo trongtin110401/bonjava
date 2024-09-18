@@ -45,7 +45,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
             for (int i = 0; i < RATE_LIMIT; i++) {
                 blockingQueue.offer(i);
             }
-            System.out.println("RATE LIMIT SIZE: " + blockingQueue.size());
+//            System.out.println("RATE LIMIT SIZE: " + blockingQueue.size());
         }, 0, 1, TimeUnit.SECONDS);
     }
 
