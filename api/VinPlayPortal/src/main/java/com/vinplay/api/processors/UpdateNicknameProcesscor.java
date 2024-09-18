@@ -105,7 +105,7 @@ public class UpdateNicknameProcesscor
                                         if (errorCode == "0") {
                                             SocialUtils.socialSuccess((IMap<String, SocialModel>) socialMap, socialId, accessToken);
                                             userModel.setNickname(nickname);
-                                            userService.updateNickNameUser(userModel.getId(), nickname);
+//                                            userService.updateNickNameUser(userModel.getId(), nickname);
 //                                            ELKAutoBankNew elk = new ELKAutoBankNew();
 //                                            GenCommentBank gen = new GenCommentBank();
 //                                            gen.GenContent2(nickname);
