@@ -11,12 +11,20 @@
  */
 package com.vinplay.api.backend.processors;
 
+import com.google.gson.Gson;
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.IMap;
+import com.vinplay.usercore.dao.impl.GameConfigDaoImpl;
 import com.vinplay.usercore.service.impl.GameConfigServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
+import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
 import com.vinplay.vbee.common.response.BaseResponseModel;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class UpdateGameConfigProcessor
 implements BaseProcessor<HttpServletRequest, String> {
@@ -34,6 +42,11 @@ implements BaseProcessor<HttpServletRequest, String> {
                 GameConfigServiceImpl service = new GameConfigServiceImpl();
                 boolean result = service.updateGameConfig(id, value, version, platform);
                 if (result) {
+                    GameConfigDaoImpl dao = new GameConfigDaoImpl();
+                    HazelcastInstance instance = HazelcastClientFactory.getInstance();
+                    String billing = dao.getGameCommon("billing");
+                    IMap map = instance.getMap("cacheConfig");
+                    map.put("BILLING", billing);
                     response.setErrorCode("0");
                     response.setSuccess(true);
                 } else {
