@@ -139,11 +139,13 @@ public class TeleAuthentication extends TelegramLongPollingBot {
 
     public void processUser(UserTele u, String chatId) {
         if (u == null) {
-            sendMessage(chatId, "Vui lòng xác thực số điện thoại để sử dụng dịch vụ");
+            String textMessage = "Vui lòng xác thực số điện thoại để sử dụng dịch vụ";
+            sendPhoneAndOTPRequest(chatId, textMessage);
         } else if (!u.isActive()) {
             sendMessage(chatId, "Vui lòng xác thực tele để sử dụng dịch vụ");
         } else if (u.getPhoneNumber().isEmpty()) {
-            sendMessage(chatId, "Vui lòng xác thực số điện thoại để sử dụng dịch vụ");
+            String textMessage = "Vui lòng xác thực số điện thoại để sử dụng dịch vụ";
+            sendPhoneAndOTPRequest(chatId, textMessage);
         } else {
             String otp = generateOTP();
             saveOTP(chatId, otp);
