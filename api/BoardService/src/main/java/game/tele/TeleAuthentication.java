@@ -244,16 +244,13 @@ public class TeleAuthentication extends TelegramLongPollingBot {
         document.put("isActive", false);
         document.put("otp", "");
         document.put("timeToExpired", 0);
+
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        try {
-            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-            String formattedDate = formatter.format(new Date());
-            document.put("createdDate", dateFormat.format(formattedDate));
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        }
+        String formattedDate = dateFormat.format(new Date());
+        document.put("createdDate", formattedDate);
         collection.insertOne(document);
     }
+
 
     private void saveOTP(String chatId, String otp) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
