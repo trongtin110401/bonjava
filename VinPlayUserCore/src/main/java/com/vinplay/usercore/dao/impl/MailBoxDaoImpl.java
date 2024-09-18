@@ -165,7 +165,7 @@ public class MailBoxDaoImpl
         iterable.forEach((Block) new Block<Document>() {
 
             public void apply(Document document) {
-                if (!document.getString((Object) "nick_name").equals("*")) {
+                if(!"*".equals(document.getString("nick_name"))){
                     db.getCollection("mail_box").deleteOne((Bson) obj);
                     MailBoxDaoImpl.this.flag = 0;
                 } else {
