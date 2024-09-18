@@ -1,27 +1,24 @@
 package com.vinplay.api.processors.rutbankapi;
 
 import com.vinplay.dal.common.BroadCastUserMoney;
-import com.vinplay.dal.dao.impl.ReportDaoImpl;
 import com.vinplay.dal.dao.impl.StatMoneyInOutDaoImpl;
-import com.vinplay.dal.entities.report.ReportMoneySystemModel;
 import com.vinplay.dal.entities.report.StatMoneyInOut;
-import com.vinplay.lognaprut.HistoryTransConst;
 import com.vinplay.lognaprut.HistoryTransDao;
 import com.vinplay.lognaprut.entities.HistoryTransModel;
-import com.vinplay.lognaprut.entities.HistoryTransResponse;
 import com.vinplay.lognaprut.impl.HistoryTransDaoImpl;
 import com.vinplay.payment.entities.UserWithdraw;
 import com.vinplay.payment.entities.UserWithdrawMomo;
+import com.vinplay.usercore.service.OtherService;
 import com.vinplay.usercore.service.UserExtraService;
 import com.vinplay.usercore.service.UserService;
+import com.vinplay.usercore.service.impl.OtherServiceImpl;
 import com.vinplay.usercore.service.impl.OtpServiceImpl;
 import com.vinplay.usercore.service.impl.UserExtraServiceImpl;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.response.BaseResponseModel;
-import com.vinplay.vbee.common.statics.Consts;
-import org.apache.commons.collections.CollectionUtils;
+import org.bson.Document;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.NumberFormat;
@@ -29,15 +26,13 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
 
 public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, String> {
     private UserService userService = new UserServiceImpl();
 
     public synchronized String execute(Param<HttpServletRequest> param) {
+        Document document = new Document();
         try {
             System.out.println("==========> Rut Tien B01");
             BaseResponseModel baseResponseModel;
@@ -50,11 +45,15 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
             String bankacc = request.getParameter("bankacc");
             String otp = request.getParameter("otp");
             OtpServiceImpl service = new OtpServiceImpl();
+            document.put("nick_name", nickname);
             baseResponseModel = service.checkOTP(nickname, otp);
             if (!baseResponseModel.isSuccess()) {
+                document.put("OTP", false);
                 return baseResponseModel.toJson();
             }
-
+            document.put("bank_name", bankname);
+            document.put("amount", amount);
+            document.put("OTP", true);
             // Kiem tra dieu kien rut
             System.out.println("==========> Rut Tien B01");
             StatMoneyInOutDaoImpl moneyInOutDao = StatMoneyInOutDaoImpl.getInstance();
@@ -69,6 +68,7 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
             if (moneyNeededForWithdrawal > 0) {
                 String message = buildWithdrawalMessage(firstRechargeValue, totalDepositGiftcode, totalBetValue, moneyNeededForWithdrawal);
                 baseResponseModel = new BaseResponseModel(false, message);
+                document.put("money_need_for_withdrawal", moneyNeededForWithdrawal);
                 return baseResponseModel.toJson();
             }
 
@@ -83,22 +83,29 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
             String id = String.valueOf(Instant.now().toEpochMilli());
             if (tiennap >= 0) {
                 if ("momo" .equalsIgnoreCase(type)) {
+                    document.put("type", "momo");
                     UserWithdrawMomo userWithdrawMomo = new UserWithdrawMomo(nickname, yeu_cau_rut_1, banknum);
                     userWithdrawMomo.setAccountName(bankacc);
                     userWithdrawMomo.Id = id;
                     baseResponseModel = this.userService.UpdateMoneyWhenWithdrawMomo(userWithdrawMomo);
                 } else if ("bank" .equalsIgnoreCase(type)) {
+                    document.put("type", "bank");
                     UserWithdraw userWithdraw = new UserWithdraw(nickname, yeu_cau_rut_1, banknum, bankacc, bankname);
                     userWithdraw.Id = id;
                     baseResponseModel = this.userService.UpdateMoneyWhenWithdrawBank(userWithdraw);
                 }
                 BroadCastUserMoney.pushBroadCast(nickname);
+                document.put("status", baseResponseModel.isSuccess());
                 return baseResponseModel.toJson();
             }
             return baseResponseModel.toJson();
         } catch (Exception e) {
             e.printStackTrace();
             return e.getMessage();
+        }
+        finally {
+            OtherService otherService = new OtherServiceImpl();
+            otherService.saveUserCashOutTransaction(document);
         }
     }
 

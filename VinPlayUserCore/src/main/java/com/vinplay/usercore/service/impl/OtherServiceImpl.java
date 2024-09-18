@@ -738,6 +738,13 @@ public class OtherServiceImpl implements OtherService {
     }
 
     @Override
+    public void saveUserCashOutTransaction(Document document) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("user_cashout_transaction");
+        collection.insertOne(document);
+    }
+
+    @Override
     public List<MoneyShootFishResponse> getTotalShootFish(String startTime, String endTime, String nickname) throws Exception {
         List<MoneyShootFishResponse> responses = new ArrayList<>();
 
