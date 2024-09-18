@@ -7,6 +7,7 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.result.UpdateResult;
 import game.dto.data.UserTele;
 import game.repository.MongoDBConnectionFactory;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.bson.Document;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -45,7 +46,6 @@ public class TeleAuthentication extends TelegramLongPollingBot {
             for (int i = 0; i < RATE_LIMIT; i++) {
                 blockingQueue.offer(i);
             }
-//            System.out.println("RATE LIMIT SIZE: " + blockingQueue.size());
         }, 0, 1, TimeUnit.SECONDS);
     }
 
@@ -133,7 +133,10 @@ public class TeleAuthentication extends TelegramLongPollingBot {
         msg.setText(textMessage);
         try {
             try {
+                String traceId = RandomStringUtils.random(10);
+                System.out.println("Waiting TPS..." + traceId);
                 if (blockingQueue.poll(10, TimeUnit.SECONDS) != null) {
+                    System.out.println("Send message " + traceId);
                     execute(msg);
                 }
             } catch (TelegramApiException e) {
@@ -186,7 +189,10 @@ public class TeleAuthentication extends TelegramLongPollingBot {
         message.setReplyMarkup(keyboardMarkup);
 
         try {
+            String traceId = RandomStringUtils.random(10);
+            System.out.println("Waiting TPS..." + traceId);
             if (blockingQueue.poll(10, TimeUnit.SECONDS) != null) {
+                System.out.println("Send message " + traceId);
                 execute(message);
             }
         } catch (TelegramApiException e) {
@@ -325,7 +331,10 @@ public class TeleAuthentication extends TelegramLongPollingBot {
                 phone = getPhoneByNickname(userTele.getNickname());
             } else {
                 try {
+                    String traceId = RandomStringUtils.random(10);
+                    System.out.println("Waiting TPS..." + traceId);
                     if (blockingQueue.poll(10, TimeUnit.SECONDS) != null) {
+                        System.out.println("Send message " + traceId);
                         execute(message);
                     }
                 } catch (TelegramApiException e) {
@@ -345,7 +354,10 @@ public class TeleAuthentication extends TelegramLongPollingBot {
             } else {
                 message.setText("Số điện thoại không khớp, vui lòng thử lại.");
                 try {
+                    String traceId = RandomStringUtils.random(10);
+                    System.out.println("Waiting TPS..." + traceId);
                     if (blockingQueue.poll(10, TimeUnit.SECONDS) != null) {
+                        System.out.println("Send message " + traceId);
                         execute(message);
                     }
                 } catch (TelegramApiException e) {
@@ -405,7 +417,10 @@ public class TeleAuthentication extends TelegramLongPollingBot {
         message.setChatId(chatId);
         message.setText("Cảm ơn bạn đã chia sẻ số điện thoại" + "\n" + "Mã OTP của bạn là : " + otp + " và có hiệu lực trong vòng 5 phút." + "\n" + "Vui lòng hoàn tất đăng ký và kết nối lại để chơi game." + "\n" + "Xin cảm ơn.");
         try {
+            String traceId = RandomStringUtils.random(10);
+            System.out.println("Waiting TPS..." + traceId);
             if (blockingQueue.poll(10, TimeUnit.SECONDS) != null) {
+                System.out.println("Send message " + traceId);
                 execute(message);
             }
         } catch (TelegramApiException e) {
@@ -421,7 +436,10 @@ public class TeleAuthentication extends TelegramLongPollingBot {
         message.setChatId(chatId);
         message.setText("Mã OTP của bạn là : " + otp + " và có hiệu lực trong vòng 5 phút.");
         try {
+            String traceId = RandomStringUtils.random(10);
+            System.out.println("Waiting TPS..." + traceId);
             if (blockingQueue.poll(10, TimeUnit.SECONDS) != null) {
+                System.out.println("Send message " + traceId);
                 execute(message);
             }
         } catch (TelegramApiException e) {
