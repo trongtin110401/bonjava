@@ -38,11 +38,11 @@ public class UserNapGiftCodeProcessor
 
         try {
             OtherService otherService = new OtherServiceImpl();
-//            if (otherService.getPhoneActiveByNickname(nickName).isEmpty()) {
-//                response.setSuccess(false);
-//                response.setErrorCode("Tài khoản chưa liên kêt số điện thoại");
-//                return response.toJson();
-//            }
+            if (otherService.getPhoneActiveByNickname(nickName).isEmpty()) {
+                response.setSuccess(false);
+                response.setErrorCode("Tài khoản chưa liên kêt số điện thoại");
+                return response.toJson();
+            }
 
             GiftCodeDto giftCodeDto = service.findActiveByCode(code);
             if (giftCodeDto.getCode() == null) {
