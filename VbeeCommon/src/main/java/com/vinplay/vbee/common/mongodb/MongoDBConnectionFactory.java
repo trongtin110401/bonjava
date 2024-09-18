@@ -51,7 +51,7 @@ public class MongoDBConnectionFactory {
 
         MongoClientOptions options = MongoClientOptions.builder()
                 .connectionsPerHost(100)  // Default is 100
-                .minConnectionsPerHost(20)  // Default is 20
+                .minConnectionsPerHost(30)  // Default is 20
                 .maxConnectionIdleTime(60000) // Optional idle time in milliseconds
                 .socketKeepAlive(true)
                 .build();

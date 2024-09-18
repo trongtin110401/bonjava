@@ -380,8 +380,8 @@ public class GiftCodeServiceImpl
         HashMap<String, Object> conditions = new HashMap<>();
         conditions.put("nick_name", nickName);
         conditions.put("created_time", new Document("$gte", startDateStr).append("$lte", endDateStr));
-        FindIterable<Document> iterable = db.getCollection("user_gift_code").find(new Document(conditions));
-        return iterable.iterator().hasNext();
+        Document document = db.getCollection("user_gift_code").find(new Document(conditions)).first();
+        return document != null;
     }
 
     @Override

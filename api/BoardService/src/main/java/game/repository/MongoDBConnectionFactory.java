@@ -10,6 +10,7 @@
 package game.repository;
 
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoDatabase;
@@ -29,8 +30,14 @@ public class MongoDBConnectionFactory {
 
 
     public static void newConnection() {
+        MongoClientOptions options = MongoClientOptions.builder()
+                .connectionsPerHost(100)  // Default is 100
+                .minConnectionsPerHost(30)  // Default is 20
+                .maxConnectionIdleTime(60000) // Optional idle time in milliseconds
+                .socketKeepAlive(true)
+                .build();
         MongoCredential credential = MongoCredential.createCredential(MONGODB_USERNAME, MONGODB_AUTH_DATABASE, MONGODB_PASSWORD.toCharArray());
-        mongoClient = new MongoClient(new ServerAddress(MONGODB_HOST, MONGODB_PORT), Arrays.asList(new MongoCredential[]{credential}));
+        mongoClient = new MongoClient(new ServerAddress(MONGODB_HOST, MONGODB_PORT), Arrays.asList(credential));
     }
 
     public static MongoDatabase getDB() {
