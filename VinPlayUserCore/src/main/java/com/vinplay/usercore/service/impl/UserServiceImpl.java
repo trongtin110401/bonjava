@@ -2610,10 +2610,10 @@ public class UserServiceImpl implements UserService {
         doc.append("nickName", nickname);
         col.updateOne((Bson) new Document("userId", userId), (Bson) new Document("$set", (Object) doc));
 
-        UserMapDLEntity us = elk.getUserMapDLbyUserid(userId);
-        if (us != null) {
-            elk.InsertUserMapDailyByIDelk(us.getUserID(), us.getUser_name(), nickname, us.getId_daily(), us.getTime_log(), us.getId_elk());
-        }
+//        UserMapDLEntity us = elk.getUserMapDLbyUserid(userId);
+//        if (us != null) {
+//            elk.InsertUserMapDailyByIDelk(us.getUserID(), us.getUser_name(), nickname, us.getId_daily(), us.getTime_log(), us.getId_elk());
+//        }
         return true;
     }
 
