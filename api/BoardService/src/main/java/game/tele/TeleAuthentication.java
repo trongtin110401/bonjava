@@ -42,9 +42,11 @@ public class TeleAuthentication extends TelegramLongPollingBot {
     @PostConstruct
     public void init() {
         scheduler.scheduleAtFixedRate(() -> {
-            blockingQueue.clear();
             for (int i = 0; i < RATE_LIMIT; i++) {
-                blockingQueue.offer(i);
+                if(blockingQueue.size() == 0) {
+                    break;
+                }
+                blockingQueue.add(i);
             }
             System.out.println("Queue size " + blockingQueue.size());
         }, 0, 1, TimeUnit.SECONDS);
