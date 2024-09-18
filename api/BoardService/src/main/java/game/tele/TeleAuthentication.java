@@ -138,7 +138,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
             try {
                 String traceId = RandomStringUtils.randomNumeric(10);
                 System.out.println("Waiting TPS..." + traceId);
-                if (blockingQueue.poll(10, TimeUnit.SECONDS) != null) {
+                if (blockingQueue.poll(10000, TimeUnit.MILLISECONDS) != null) {
                     System.out.println("Send message " + traceId);
                     execute(msg);
                 } else {
