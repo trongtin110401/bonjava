@@ -32,9 +32,9 @@ import java.util.logging.Logger;
 @Service
 public class TeleAuthentication extends TelegramLongPollingBot {
 
-    int RATE_LIMIT = 30;
+    static final int RATE_LIMIT = 30;
 
-    LinkedBlockingQueue<Integer> blockingQueue = new LinkedBlockingQueue<>(RATE_LIMIT);
+    static final LinkedBlockingQueue<Integer> blockingQueue = new LinkedBlockingQueue<>(RATE_LIMIT);
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
     private SecureRandom random = new SecureRandom();
