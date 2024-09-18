@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  com.mongodb.MongoClient
  *  com.mongodb.MongoCredential
@@ -10,6 +10,7 @@
 package com.vinplay.vbee.common.mongodb;
 
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoDatabase;
@@ -44,9 +45,18 @@ public class MongoDBConnectionFactory {
         MongoDBConnectionFactory.newConnection();
     }
 
+
     public static void newConnection() {
-        MongoCredential credential = MongoCredential.createCredential((String)MONGODB_USERNAME, (String)MONGODB_AUTH_DATABASE, (char[])MONGODB_PASSWORD.toCharArray());
-        mongoClient = new MongoClient(new ServerAddress(MONGODB_HOST, MONGODB_PORT), Arrays.asList(new MongoCredential[]{credential}));
+        MongoCredential credential = MongoCredential.createCredential((String) MONGODB_USERNAME, (String) MONGODB_AUTH_DATABASE, (char[]) MONGODB_PASSWORD.toCharArray());
+
+        MongoClientOptions options = MongoClientOptions.builder()
+                .connectionsPerHost(100)  // Default is 100
+                .minConnectionsPerHost(20)  // Default is 20
+                .maxConnectionIdleTime(60000) // Optional idle time in milliseconds
+                .socketKeepAlive(true)
+                .build();
+
+        mongoClient = new MongoClient(new ServerAddress(MONGODB_HOST, MONGODB_PORT), Arrays.asList(new MongoCredential[]{credential}), options);
     }
 
     public static MongoDatabase getDB() {
