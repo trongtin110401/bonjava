@@ -194,7 +194,7 @@ main() {
   runMiniGame
 
   runTaiXiuMini
-  runTaiXiuMd5
+  #runTaiXiuMd5
   runBauCuaTo2
   runXocDia
   runSlot
