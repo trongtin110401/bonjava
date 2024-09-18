@@ -49,7 +49,6 @@ public class TeleAuthentication extends TelegramLongPollingBot {
                 System.out.println("add new item to queue");
                 blockingQueue.add(i);
             }
-            System.out.println("Queue size " + blockingQueue.size());
         }, 0, 1, TimeUnit.SECONDS);
     }
 
