@@ -199,24 +199,24 @@ runAllApi() {
 }
 
 main() {
-  killProcess
-
-  runAllApi
-
-  runMiniGame
-
-  runTaiXiuMini
-  #runTaiXiuMd5
-  runBauCuaTo2
-  runXocDia
-  runSlot
-
-  runTienLen
-  runBacay
-  runBaiCao
-  runSam
-  runBinh
-  runPoker
+#  killProcess
+#
+#  runAllApi
+#
+#  runMiniGame
+#
+#  runTaiXiuMini
+#  #runTaiXiuMd5
+#  runBauCuaTo2
+#  runXocDia
+#  runSlot
+#
+#  runTienLen
+#  runBacay
+#  runBaiCao
+#  runSam
+#  runBinh
+#  runPoker
 }
 
 main
