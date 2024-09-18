@@ -34,7 +34,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
 
     int RATE_LIMIT = 30;
 
-    LinkedBlockingQueue<Integer> blockingQueue = new LinkedBlockingQueue<>(30);
+    LinkedBlockingQueue<Integer> blockingQueue = new LinkedBlockingQueue<>(RATE_LIMIT);
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
     private SecureRandom random = new SecureRandom();
@@ -136,11 +136,13 @@ public class TeleAuthentication extends TelegramLongPollingBot {
         msg.setText(textMessage);
         try {
             try {
-                String traceId = RandomStringUtils.random(10);
+                String traceId = RandomStringUtils.randomNumeric(10);
                 System.out.println("Waiting TPS..." + traceId);
                 if (blockingQueue.poll(10, TimeUnit.SECONDS) != null) {
                     System.out.println("Send message " + traceId);
                     execute(msg);
+                } else {
+                    System.out.println("Send message timeout" + traceId);
                 }
             } catch (TelegramApiException e) {
                 e.printStackTrace();
