@@ -10,6 +10,7 @@ import game.repository.MongoDBConnectionFactory;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.bson.Document;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
@@ -39,14 +40,17 @@ public class TeleAuthentication extends TelegramLongPollingBot {
 
     private SecureRandom random = new SecureRandom();
 
+    public TeleAuthentication() {
+        super();
+    }
+
     @PostConstruct
     public void init() {
         scheduler.scheduleAtFixedRate(() -> {
             for (int i = 0; i < RATE_LIMIT; i++) {
-                if(blockingQueue.size() == 30) {
+                if(blockingQueue.size() == RATE_LIMIT) {
                     break;
                 }
-                System.out.println("add new item to queue");
                 blockingQueue.add(i);
             }
         }, 0, 1, TimeUnit.SECONDS);
