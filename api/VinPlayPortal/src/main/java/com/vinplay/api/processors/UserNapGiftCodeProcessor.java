@@ -40,20 +40,24 @@ public class UserNapGiftCodeProcessor
             OtherService otherService = new OtherServiceImpl();
             if (otherService.getPhoneActiveByNickname(nickName).isEmpty()) {
                 response.setSuccess(false);
-                response.setErrorCode("Tài khoản chưa liên kêt số điện thoại");
+                response.setErrorCode("Tài khoản chưa liên kêt số điện thoại.");
                 return response.toJson();
             }
 
             GiftCodeDto giftCodeDto = service.findActiveByCode(code);
             if (giftCodeDto.getCode() == null) {
                 response.setSuccess(false);
-                response.setErrorCode("Gift code không hợp lệ");
+                response.setErrorCode("Gift code không hợp lệ.");
                 return response.toJson();
             }
-
+            if (service.checkUserUseGiftCodeToday(nickName)) {
+                response.setSuccess(false);
+                response.setErrorCode("Bạn đã sử dụng giftcode ngày hôm nay.");
+                return response.toJson();
+            }
             if (service.checkUserUseGiftCode(nickName, giftCodeDto.getType())) {
                 response.setSuccess(false);
-                response.setErrorCode("Đã nhập loại giftcode");
+                response.setErrorCode("Đã nhập loại giftcode.");
                 return response.toJson();
             }
 
@@ -85,7 +89,7 @@ public class UserNapGiftCodeProcessor
             historyTransDao.insertTransaction(new HistoryTransModel("Nạp Giftcode", "Hệ Thống",
                     "recharge", String.valueOf(giftCodeDto.getPrice()), "Thành công", code, nickName, "GIFT_CODE", UUID.randomUUID().toString()));
             userService.updateMoney(nickName, giftCodeDto.getPrice(), "vin", "Gift Code", "Gift Code", "Mã: " + code, 0L, null, TransType.NO_VIPPOINT);
-            StatMoneyInOutDaoImpl moneyInOut= StatMoneyInOutDaoImpl.getInstance();
+            StatMoneyInOutDaoImpl moneyInOut = StatMoneyInOutDaoImpl.getInstance();
             moneyInOut.upsertStatisticMoneyInOut(nickName, 0L, 0L, 0L, 0L, 0L, giftCodeDto.getPrice(), 0L);
             TelegramAlert.SendMessageDepositGiftCode(userGiftCode);
             otherService.updateCodeCallBack(code);
