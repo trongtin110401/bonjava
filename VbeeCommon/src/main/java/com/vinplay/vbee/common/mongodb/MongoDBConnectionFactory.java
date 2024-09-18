@@ -29,6 +29,8 @@ public class MongoDBConnectionFactory {
     private static String MONGODB_AUTH_DATABASE = "admin";
     private static String MONGODB_USERNAME = "vinplay";
     private static String MONGODB_PASSWORD = "vinplay@123";
+    private static int MIN_CONNECTION = 20;
+    private static int MAX_CONNECTION = 100;
     private static int MONGODB_PORT = 27017;
     private static MongoClient mongoClient;
 
@@ -42,6 +44,8 @@ public class MongoDBConnectionFactory {
         MONGODB_PORT = Integer.parseInt(prop.getProperty("port"));
         MONGODB_USERNAME = prop.getProperty("username");
         MONGODB_PASSWORD = prop.getProperty("password");
+        MIN_CONNECTION = Integer.parseInt(prop.getProperty("min_connection", "10"));
+        MAX_CONNECTION = Integer.parseInt(prop.getProperty("max_conneciton", "30"));
         MongoDBConnectionFactory.newConnection();
     }
 
