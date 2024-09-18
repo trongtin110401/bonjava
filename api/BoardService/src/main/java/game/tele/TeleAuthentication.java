@@ -20,16 +20,35 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import javax.annotation.PostConstruct;
 import java.security.SecureRandom;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.logging.Logger;
 
 @Service
 public class TeleAuthentication extends TelegramLongPollingBot {
 
+    int RATE_LIMIT = 30;
+
+    LinkedBlockingQueue<Integer> blockingQueue = new LinkedBlockingQueue<>(30);
+    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+
     private SecureRandom random = new SecureRandom();
+
+    @PostConstruct
+    public void init() {
+        scheduler.scheduleAtFixedRate(() -> {
+            blockingQueue.clear();
+            for (int i = 0; i < RATE_LIMIT; i++) {
+                blockingQueue.offer(i);
+            }
+        }, 0, 1, TimeUnit.SECONDS);
+    }
+
+
     @Override
     public void onUpdateReceived(Update update) {
         if (update.hasMessage() && update.getMessage().hasText()) {
@@ -93,7 +112,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
             CallbackQuery callbackQuery = update.getCallbackQuery();
             String callbackData = callbackQuery.getData();
             String chatId = callbackQuery.getMessage().getChatId().toString();
-            if ("get_otp".equals(callbackData)) {
+            if ("get_otp" .equals(callbackData)) {
                 String otp = generateOTP();
                 saveOTP(chatId, otp);
                 saveOTPPhone(chatId, otp);
@@ -352,9 +371,14 @@ public class TeleAuthentication extends TelegramLongPollingBot {
         message.setChatId(chatId);
         message.setText("Cảm ơn bạn đã chia sẻ số điện thoại" + "\n" + "Mã OTP của bạn là : " + otp + " và có hiệu lực trong vòng 5 phút." + "\n" + "Vui lòng hoàn tất đăng ký và kết nối lại để chơi game." + "\n" + "Xin cảm ơn.");
         try {
-            execute(message);
+            if (blockingQueue.poll(10, TimeUnit.SECONDS) != null) {
+                execute(message);
+            }
         } catch (TelegramApiException e) {
             e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
@@ -363,9 +387,14 @@ public class TeleAuthentication extends TelegramLongPollingBot {
         message.setChatId(chatId);
         message.setText("Mã OTP của bạn là : " + otp + " và có hiệu lực trong vòng 5 phút.");
         try {
-            execute(message);
+            if (blockingQueue.poll(10, TimeUnit.SECONDS) != null) {
+                execute(message);
+            }
         } catch (TelegramApiException e) {
             e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
