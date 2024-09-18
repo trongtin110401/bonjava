@@ -195,7 +195,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
         message.setReplyMarkup(keyboardMarkup);
 
         try {
-            String traceId = RandomStringUtils.random(10);
+            String traceId = RandomStringUtils.randomNumeric(20);
             System.out.println("Waiting TPS..." + traceId);
             if (blockingQueue.poll(10, TimeUnit.SECONDS) != null) {
                 System.out.println("Send message " + traceId);
@@ -339,7 +339,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
                 phone = getPhoneByNickname(userTele.getNickname());
             } else {
                 try {
-                    String traceId = RandomStringUtils.random(10);
+                    String traceId = RandomStringUtils.randomNumeric(10);
                     System.out.println("Waiting TPS..." + traceId);
                     if (blockingQueue.poll(10, TimeUnit.SECONDS) != null) {
                         System.out.println("Send message " + traceId);
@@ -364,7 +364,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
             } else {
                 message.setText("Số điện thoại không khớp, vui lòng thử lại.");
                 try {
-                    String traceId = RandomStringUtils.random(10);
+                    String traceId = RandomStringUtils.randomNumeric(10);
                     System.out.println("Waiting TPS..." + traceId);
                     if (blockingQueue.poll(10, TimeUnit.SECONDS) != null) {
                         System.out.println("Send message " + traceId);
@@ -429,7 +429,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
         message.setChatId(chatId);
         message.setText("Cảm ơn bạn đã chia sẻ số điện thoại" + "\n" + "Mã OTP của bạn là : " + otp + " và có hiệu lực trong vòng 5 phút." + "\n" + "Vui lòng hoàn tất đăng ký và kết nối lại để chơi game." + "\n" + "Xin cảm ơn.");
         try {
-            String traceId = RandomStringUtils.random(10);
+            String traceId = RandomStringUtils.randomNumeric(10);
             System.out.println("Waiting TPS..." + traceId);
             if (blockingQueue.poll(10, TimeUnit.SECONDS) != null) {
                 System.out.println("Send message " + traceId);
@@ -450,7 +450,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
         message.setChatId(chatId);
         message.setText("Mã OTP của bạn là : " + otp + " và có hiệu lực trong vòng 5 phút.");
         try {
-            String traceId = RandomStringUtils.random(10);
+            String traceId = RandomStringUtils.randomNumeric(10);
             System.out.println("Waiting TPS..." + traceId);
             if (blockingQueue.poll(10, TimeUnit.SECONDS) != null) {
                 System.out.println("Send message " + traceId);
