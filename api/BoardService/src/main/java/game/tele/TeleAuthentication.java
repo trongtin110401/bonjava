@@ -200,6 +200,8 @@ public class TeleAuthentication extends TelegramLongPollingBot {
             if (blockingQueue.poll(10, TimeUnit.SECONDS) != null) {
                 System.out.println("Send message " + traceId);
                 execute(message);
+            }else {
+                System.out.println("Send message timeout" + traceId);
             }
         } catch (TelegramApiException e) {
             e.printStackTrace();
@@ -342,6 +344,8 @@ public class TeleAuthentication extends TelegramLongPollingBot {
                     if (blockingQueue.poll(10, TimeUnit.SECONDS) != null) {
                         System.out.println("Send message " + traceId);
                         execute(message);
+                    }else {
+                        System.out.println("Send message timeout" + traceId);
                     }
                 } catch (TelegramApiException e) {
                     e.printStackTrace();
@@ -365,6 +369,8 @@ public class TeleAuthentication extends TelegramLongPollingBot {
                     if (blockingQueue.poll(10, TimeUnit.SECONDS) != null) {
                         System.out.println("Send message " + traceId);
                         execute(message);
+                    }else {
+                        System.out.println("Send message timeout" + traceId);
                     }
                 } catch (TelegramApiException e) {
                     e.printStackTrace();
@@ -428,6 +434,8 @@ public class TeleAuthentication extends TelegramLongPollingBot {
             if (blockingQueue.poll(10, TimeUnit.SECONDS) != null) {
                 System.out.println("Send message " + traceId);
                 execute(message);
+            }else {
+                System.out.println("Send message timeout" + traceId);
             }
         } catch (TelegramApiException e) {
             e.printStackTrace();
@@ -447,6 +455,8 @@ public class TeleAuthentication extends TelegramLongPollingBot {
             if (blockingQueue.poll(10, TimeUnit.SECONDS) != null) {
                 System.out.println("Send message " + traceId);
                 execute(message);
+            }else {
+                System.out.println("Send message timeout" + traceId);
             }
         } catch (TelegramApiException e) {
             e.printStackTrace();
