@@ -26,6 +26,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.Locale;
 
 public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, String> {
@@ -33,6 +34,7 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
 
     public synchronized String execute(Param<HttpServletRequest> param) {
         Document document = new Document();
+        document.put("created_time", LocalDateTime.now());
         try {
             System.out.println("==========> Rut Tien B01");
             BaseResponseModel baseResponseModel;
@@ -40,8 +42,8 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
             String accessToken = request.getParameter("at");
             String nickname = this.getUserNameByAccessToken(accessToken);
             document.put("nick_name", nickname);
-            if (nickname.isEmpty()){
-                baseResponseModel =new BaseResponseModel(false, "accessToken invalid");
+            if (nickname.isEmpty()) {
+                baseResponseModel = new BaseResponseModel(false, "accessToken invalid");
                 return baseResponseModel.toJson();
             }
             String amount = request.getParameter("amount");
@@ -86,13 +88,13 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
             int yeu_cau_rut_1 = Integer.parseInt(amount);
             String id = String.valueOf(Instant.now().toEpochMilli());
             if (tiennap >= 0) {
-                if ("momo" .equalsIgnoreCase(type)) {
+                if ("momo".equalsIgnoreCase(type)) {
                     document.put("type", "momo");
                     UserWithdrawMomo userWithdrawMomo = new UserWithdrawMomo(nickname, yeu_cau_rut_1, banknum);
                     userWithdrawMomo.setAccountName(bankacc);
                     userWithdrawMomo.Id = id;
                     baseResponseModel = this.userService.UpdateMoneyWhenWithdrawMomo(userWithdrawMomo);
-                } else if ("bank" .equalsIgnoreCase(type)) {
+                } else if ("bank".equalsIgnoreCase(type)) {
                     document.put("type", "bank");
                     UserWithdraw userWithdraw = new UserWithdraw(nickname, yeu_cau_rut_1, banknum, bankacc, bankname);
                     userWithdraw.Id = id;
@@ -105,9 +107,9 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
             return baseResponseModel.toJson();
         } catch (Exception e) {
             e.printStackTrace();
+            document.put("error", e.getMessage());
             return e.getMessage();
-        }
-            finally {
+        } finally {
             OtherService otherService = new OtherServiceImpl();
             otherService.saveUserCashOutTransaction(document);
         }
