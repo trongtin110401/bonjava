@@ -33,8 +33,6 @@ import java.util.Iterator;
 import java.util.Objects;
 
 public class ActivePhoneProcessor implements BaseProcessor<HttpServletRequest, String> {
-    private SecureRandom random = new SecureRandom();
-
     public String execute(Param<HttpServletRequest> param) {
 
         ActivePhoneResponse response = new ActivePhoneResponse(false, "1001");
@@ -45,7 +43,13 @@ public class ActivePhoneProcessor implements BaseProcessor<HttpServletRequest, S
             if (phoneNumber.startsWith("+")) {
                 phoneNumber = phoneNumber.replace("+", "").trim();
             }
+            if (phoneNumber.length() < 9 || phoneNumber.length() > 12) {
+                response.setSuccess(false);
+                response.setErrorCode("số điện thoại không hợp lệ");
+                return response.toJson();
+            }
         }
+
         String accessToken = request.getParameter("at");
         UserExtraService userExtraService = new UserExtraServiceImpl();
         UserExtraInfoModel model = userExtraService.getModelFromToken(accessToken);
@@ -57,6 +61,7 @@ public class ActivePhoneProcessor implements BaseProcessor<HttpServletRequest, S
         String nickName = model.getNickname();
         OtherService otherService = new OtherServiceImpl();
         UserPhone userPhone = otherService.getUserPhoneInfoByPhoneNumber(phoneNumber);
+        UserPhone user = otherService.getUserPhoneInfoByNickname(nickName);
         if (userPhone != null) {
             if (userPhone.isActive()) {
                 response.setSuccess(false);
@@ -68,11 +73,13 @@ public class ActivePhoneProcessor implements BaseProcessor<HttpServletRequest, S
                 response.setErrorCode("Số điện thoại đã kích hoạt cho tài khoản khác.");
                 return response.toJson();
             }
-            if (!userPhone.isActive() && !userPhone.getPhoneNumber().equals(phoneNumber)) {
+        }
+        if (user == null) {
+            saveUserPhone(nickName, "", phoneNumber);
+        } else {
+            if (!user.getPhoneNumber().equals(phoneNumber)) {
                 updateUserPhone(nickName, phoneNumber);
             }
-        } else {
-            saveUserPhone(nickName, "", phoneNumber);
         }
         response.setActive(false);
         response.setNickname(nickName);
@@ -80,51 +87,6 @@ public class ActivePhoneProcessor implements BaseProcessor<HttpServletRequest, S
         response.setErrorCode("200");
         response.setSuccess(true);
         return response.toJson();
-    }
-
-    private String generateOTP() {
-        StringBuilder otp = new StringBuilder();
-        for (int i = 0; i < 6; i++) {
-            otp.append(random.nextInt(10));
-        }
-        return otp.toString();
-    }
-
-    private boolean sendOTP(String phoneNumber, String otp) {
-        try {
-            String url = "https://api.z-rb.com?action=send&key=cdd1d42e82d95c9fb63a&to=" + phoneNumber + "&code=" + otp + "&type=sms";
-            String result = APIProcess.responseGetAPI(url, null);
-            JSONObject jsonObject = new JSONObject(result);
-            int codeValue = jsonObject.getInt("Code");
-            if (codeValue == 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    private void saveOTP(String nickname, String otp, String phone) {
-        MongoDatabase db = MongoDBConnectionFactory.getDB();
-        MongoCollection<Document> collection = db.getCollection("user_phone");
-        Document filter = new Document("nickname", nickname);
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        Date date = new Date();
-        Document updateDocument = new Document("$set", new Document("otp", otp)
-                .append("timeToExpired", 300000).append("createdDate", dateFormat.format(date)).append("phone", phone));
-
-        UpdateResult result = collection.updateOne(filter, updateDocument);
-        if (result.getMatchedCount() == 0) {
-            Document newDocument = new Document("nickname", nickname)
-                    .append("isActive", false)
-                    .append("otp", otp)
-                    .append("phone", phone)
-                    .append("timeToExpired", 300000)
-                    .append("createdDate", dateFormat.format(date));
-            collection.insertOne(newDocument);
-        }
     }
 
     private void saveUserPhone(String nickname, String otp, String phone) {
@@ -161,16 +123,6 @@ public class ActivePhoneProcessor implements BaseProcessor<HttpServletRequest, S
         if (result.getMatchedCount() == 0) {
             throw new IllegalArgumentException("No user found with the given nickname");
         }
-    }
-
-
-    public boolean checkUserPhone(String nickname) {
-        MongoDatabase db = MongoDBConnectionFactory.getDB();
-        MongoCollection<Document> collection = db.getCollection("user_phone");
-        Document filter = new Document("nickname", nickname);
-        FindIterable<Document> result = collection.find(filter);
-        Iterator<Document> iterator = result.iterator();
-        return iterator.hasNext();
     }
 
 }

@@ -58,7 +58,9 @@ public interface OtherService {
 
     String getPhoneByNickname(String nickname);
 
-    UserPhone getUserPhoneInfoByPhoneNumber(String nickname);
+    UserPhone getUserPhoneInfoByPhoneNumber(String phone);
+
+    UserPhone getUserPhoneInfoByNickname(String nickname);
 
     UserActivePhoneResponse getAllUserActivePhone(String nickname, String phone, int pageIndex, int pageSize);
 

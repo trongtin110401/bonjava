@@ -928,6 +928,38 @@ public class OtherServiceImpl implements OtherService {
     }
 
     @Override
+    public UserPhone getUserPhoneInfoByNickname( String nickname) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("user_phone");
+        Document filter = new Document("nickname", nickname);
+        MongoCursor<Document> cursor = collection.find(filter).iterator();
+
+        try {
+            if (cursor.hasNext()) {
+                Document doc = cursor.next();
+                UserPhone user = new UserPhone();
+                String id = doc.getObjectId("_id").toString();
+                boolean isActive = doc.getBoolean("isActive");
+                String otp = doc.getString("otp");
+                long timeToExpired = doc.getInteger("timeToExpired");
+                String createdDate = doc.getString("createdDate");
+                user.setId(id);
+                user.setNickname(doc.getString("nickname"));
+                user.setPhoneNumber(doc.getString("phone"));
+                user.setActive(isActive);
+                user.setOtp(otp);
+                user.setTimeToExpired(timeToExpired);
+                user.setCreatedDate(createdDate);
+                return user;
+            } else {
+                return null;
+            }
+        } finally {
+            cursor.close();
+        }
+    }
+
+    @Override
     public UserActivePhoneResponse getAllUserActivePhone(String nickname, String phone, int pageIndex, int pageSize) {
         UserActivePhoneResponse userActivePhoneResponse = new UserActivePhoneResponse(true, "0");
         MongoDatabase db = MongoDBConnectionFactory.getDB();
