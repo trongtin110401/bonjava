@@ -189,7 +189,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
             String traceId = RandomStringUtils.randomNumeric(10);
             System.out.println("Waiting TPS..." + traceId);
             if (blockingQueue.poll(10, TimeUnit.SECONDS) != null) {
-                System.out.println("Send sms..." + traceId);
+                System.out.println("Send message..." + traceId);
                 response = client.newCall(request).execute();
             } else {
                 System.out.println("Send message timeout" + traceId);
@@ -356,7 +356,6 @@ public class TeleAuthentication extends TelegramLongPollingBot {
                     } else {
                         System.out.println("Send message timeout" + traceId);
                     }
-                    System.out.println("Send message " + traceId);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -422,7 +421,6 @@ public class TeleAuthentication extends TelegramLongPollingBot {
             } else {
                 System.out.println("Send message timeout" + traceId);
             }
-            System.out.println("Send message " + traceId);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -441,7 +439,6 @@ public class TeleAuthentication extends TelegramLongPollingBot {
             } else {
                 System.out.println("Send message timeout" + traceId);
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
