@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.TimeUnit;
 
 public class TelegramUtil {
 
@@ -155,8 +156,12 @@ public class TelegramUtil {
 //            String chatId = GameCommon.getValueStr("Telegram_rut_chat_id");
             String chatId = "-1002087063529";
             String bootToken = GameCommon.getValueStr("Telegram_boot_token");
+
             OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
+                    .connectTimeout(3, TimeUnit.SECONDS)
+                    .readTimeout(3, TimeUnit.SECONDS)
                     .build();
+
             Request request = new Request.Builder()
                     .url("https://api.telegram.org/bot" + bootToken + "/sendMessage?text=" + encodeValue(message) + "&chat_id=" + chatId + "&parse_mode=HTML")
                     .method("GET", null)
