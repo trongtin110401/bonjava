@@ -283,8 +283,7 @@ public class OtherServiceImpl implements OtherService {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("user_tele");
         Document filter = new Document("nickname", nickname);
-        Document update = new Document("$set", new Document("isActive", false));
-        collection.updateOne(filter, update);
+        collection.deleteOne(filter);
     }
 
     @Override
@@ -292,8 +291,7 @@ public class OtherServiceImpl implements OtherService {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("user_phone");
         Document filter = new Document("nickname", nickname);
-        Document update = new Document("$set", new Document("isActive", false));
-        collection.updateOne(filter, update);
+        collection.deleteOne(filter);
     }
 
 

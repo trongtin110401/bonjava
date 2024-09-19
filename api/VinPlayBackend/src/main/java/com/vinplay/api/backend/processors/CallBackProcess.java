@@ -192,9 +192,11 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
             if (trans == null) {
                 return response.toJson();
             }
-            if (trans.Status != DvtConst.STATUS_PENDING) {
-                return response.toJson();
-            }
+
+            // check nếu giao dịch đã bị hủy hoặc không hợp lệ thì không xử lý
+//            if (trans.Status != DvtConst.STATUS_PENDING) {
+//                return response.toJson();
+//            }
             EventResponse eventResponse = checkEventNapTien(trans.Nickname);
             if (eventResponse.isSuccess()) {
                 long eventAmount = tien * eventResponse.getRate() / 100;

@@ -222,7 +222,7 @@ public class LobbyModule extends BaseClientRequestHandler {
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.cardTransactionTask, 30, 30, TimeUnit.SECONDS);
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.checkMoneyUser, 10, 1, TimeUnit.SECONDS);
-        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.checkOnePayStatusTask, 1, 10, TimeUnit.MINUTES);
+        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.checkOnePayStatusTask, 1, 15, TimeUnit.MINUTES);
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.checkCodePayStatusTask, 1, 1, TimeUnit.SECONDS);
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.checkOutGameTask, 1, 500, TimeUnit.MILLISECONDS);
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.checkCodePayHuyStatusTask, 1, 1, TimeUnit.SECONDS);
@@ -574,9 +574,7 @@ public class LobbyModule extends BaseClientRequestHandler {
         HistoryTransService historyTransService = new HistoryTransServiceImpl();
         for (DepositMomoModel model : listDepositPendingMomo) {
             this.rechargeMomoService.UpdateDepositMomoManualStatus(model.Id, DvtConst.STATUS_REJECT, "bị hủy vì không chyển khoản", "Tự động kiểm tra Momo");
-
             historyTransService.update(model.Id, model.Nickname, HistoryTransConst.MOMO, "Từ chối", "Chúng tôi chưa nhận được số tiền của quý khách vui lòng kiêm tra lại");
-
         }
     }
 
