@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  com.vinplay.usercore.service.impl.SecurityServiceImpl
  *  com.vinplay.vbee.common.cp.BaseProcessor
@@ -14,13 +14,14 @@ import com.vinplay.usercore.service.impl.SecurityServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.response.BaseResponseModel;
+
 import javax.servlet.http.HttpServletRequest;
 
 public class UpdateStatusUserProcessor
-implements BaseProcessor<HttpServletRequest, String> {
+        implements BaseProcessor<HttpServletRequest, String> {
     public String execute(Param<HttpServletRequest> param) {
         BaseResponseModel response = new BaseResponseModel(false, "10001");
-        HttpServletRequest request = (HttpServletRequest)param.get();
+        HttpServletRequest request = (HttpServletRequest) param.get();
         String nickName = request.getParameter("nn");
         String action = request.getParameter("ac");
         String type = request.getParameter("type");
@@ -28,7 +29,13 @@ implements BaseProcessor<HttpServletRequest, String> {
         String[] item_action = action.split(",");
         boolean result = false;
         for (String item : item_action) {
-            result = service.updateStatusUser(nickName, Integer.parseInt(item), type);
+            int actionInt = 9;
+            try {
+                actionInt = Integer.parseInt(item);
+            } catch (NumberFormatException ignored) {
+
+            }
+            result = service.updateStatusUser(nickName, actionInt, type);
             if (result) {
                 response.setSuccess(true);
                 response.setErrorCode("0");

@@ -767,6 +767,9 @@ public class SecurityServiceImpl
                 userMap.lock(nickname);
                 UserCacheModel user = (UserCacheModel) userMap.get((Object) nickname);
                 int statusNew = StatusUser.changeStatus((int) user.getStatus(), (int) action, (String) type);
+                if (action == 9) {
+                    statusNew = 0;
+                }
                 if (!dao.updateUserInfo(user.getId(), String.valueOf(statusNew), 7)) return res;
                 user.setStatus(statusNew);
                 boolean ban = false;
@@ -776,9 +779,7 @@ public class SecurityServiceImpl
                 switch (action) {
                     case 0: {
                         user.setBanLogin(ban);
-
                         kickSession(user);
-
                         break;
                     }
                     case 1: {
@@ -807,6 +808,9 @@ public class SecurityServiceImpl
                 UserModel user2 = dao.getStatus(nickname);
                 if (user2 == null) return res;
                 int statusNew = StatusUser.changeStatus((int) user2.getStatus(), (int) action, (String) type);
+                if (action == 9) {
+                    statusNew = 0;
+                }
                 if (!dao.updateUserInfo(user2.getId(), String.valueOf(statusNew), 7)) return res;
                 return true;
             } catch (Exception e) {
