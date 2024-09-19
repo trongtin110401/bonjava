@@ -51,7 +51,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
 //        init();
     }
 
-//    @PostConstruct
+    @PostConstruct
     public void init() {
         scheduler.scheduleAtFixedRate(() -> {
             for (int i = 0; i < RATE_LIMIT; i++) {
