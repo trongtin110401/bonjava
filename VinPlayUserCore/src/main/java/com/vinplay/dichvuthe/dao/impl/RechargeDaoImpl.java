@@ -1207,6 +1207,7 @@ public class RechargeDaoImpl implements RechargeDao {
             doc.append("QRCode", depositBankModel.getQRCode());
             doc.append("PaymentURL", depositBankModel.getPaymentURL());
             doc.append("BankCode", depositBankModel.getSubType());
+            doc.append("ExpiredDate",depositBankModel.getExpiredDate());
             col.insertOne(doc);
             return true;
 
