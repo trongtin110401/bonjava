@@ -109,7 +109,9 @@ public class TelegramUtil {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            response.close();
+            if (response != null){
+                response.close();
+            }
         }
     }
 
@@ -128,7 +130,9 @@ public class TelegramUtil {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            response.close();
+            if (response != null){
+                response.close();
+            }
         }
     }
 
@@ -150,7 +154,9 @@ public class TelegramUtil {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            response.close();
+            if (response != null){
+                response.close();
+            }
         }
     }
 
@@ -174,7 +180,9 @@ public class TelegramUtil {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            response.close();
+            if (response != null){
+                response.close();
+            }
         }
     }
 
@@ -196,7 +204,9 @@ public class TelegramUtil {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            response.close();
+            if (response != null){
+                response.close();
+            }
         }
     }
 
