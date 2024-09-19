@@ -317,12 +317,6 @@ public class TeleAuthentication extends TelegramLongPollingBot {
 
 
     private void savePhone(String chatId, String phone) {
-        if (phone != null) {
-            phone = phone.trim();
-            if (phone.startsWith("+")) {
-                phone = phone.replace("+", "").trim();
-            }
-        }
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("user_tele");
         Document filter = new Document("chatID", chatId);
@@ -339,12 +333,6 @@ public class TeleAuthentication extends TelegramLongPollingBot {
     }
 
     private void handlePhoneNumber(String chatId, String phoneNumber) {
-        if (phoneNumber != null) {
-            phoneNumber = phoneNumber.trim();
-            if (phoneNumber.startsWith("+")) {
-                phoneNumber = phoneNumber.replace("+", "").trim();
-            }
-        }
         try {
             SendMessage message = new SendMessage();
             message.setChatId(chatId);
@@ -420,9 +408,11 @@ public class TeleAuthentication extends TelegramLongPollingBot {
             return "";
         }
         phoneNumber = phoneNumber.trim().replaceAll("\\s+", " ");
+        // Loại bỏ dấu "+" nếu có
         if (phoneNumber.startsWith("+")) {
             phoneNumber = phoneNumber.substring(1);
         }
+        // Nếu bắt đầu bằng '84' (mã quốc gia Việt Nam), chuyển thành '0'
         if (phoneNumber.startsWith("84")) {
             phoneNumber = "0" + phoneNumber.substring(2);
         }
