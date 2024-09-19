@@ -48,7 +48,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
     public void init() {
         scheduler.scheduleAtFixedRate(() -> {
             for (int i = 0; i < RATE_LIMIT; i++) {
-                if(blockingQueue.size() == RATE_LIMIT) {
+                if (blockingQueue.size() == RATE_LIMIT) {
                     break;
                 }
                 blockingQueue.add(i);
@@ -120,7 +120,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
             CallbackQuery callbackQuery = update.getCallbackQuery();
             String callbackData = callbackQuery.getData();
             String chatId = callbackQuery.getMessage().getChatId().toString();
-            if ("get_otp" .equals(callbackData)) {
+            if ("get_otp".equals(callbackData)) {
                 String otp = generateOTP();
                 saveOTP(chatId, otp);
                 saveOTPPhone(chatId, otp);
@@ -203,7 +203,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
             if (blockingQueue.poll(10, TimeUnit.SECONDS) != null) {
                 System.out.println("Send message " + traceId);
                 execute(message);
-            }else {
+            } else {
                 System.out.println("Send message timeout" + traceId);
             }
         } catch (TelegramApiException e) {
@@ -342,7 +342,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
         if (phoneNumber != null) {
             phoneNumber = phoneNumber.trim();
             if (phoneNumber.startsWith("+")) {
-                phoneNumber = phoneNumber.replace("+", "").trim();
+                phoneNumber = phoneNumber.replace("+", "");
             }
         }
         try {
@@ -360,7 +360,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
                         System.out.println("Send message " + traceId);
                         message.setText("Vui lòng xác thực tele để sử dụng dịch vụ.");
                         execute(message);
-                    }else {
+                    } else {
                         System.out.println("Send message timeout" + traceId);
                     }
                 } catch (TelegramApiException e) {
@@ -385,7 +385,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
                     if (blockingQueue.poll(10, TimeUnit.SECONDS) != null) {
                         System.out.println("Send message " + traceId);
                         execute(message);
-                    }else {
+                    } else {
                         System.out.println("Send message timeout" + traceId);
                     }
                 } catch (TelegramApiException e) {
@@ -401,6 +401,12 @@ public class TeleAuthentication extends TelegramLongPollingBot {
     }
 
     private void saveOTPPhone(String nickname, String otp, String phone) {
+        if (phone != null) {
+            phone = phone.trim();
+            if (phone.startsWith("+")) {
+                phone = phone.replace("+", "").trim();
+            }
+        }
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("user_phone");
         Document filter = new Document("nickname", nickname);
@@ -448,7 +454,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
             if (blockingQueue.poll(10, TimeUnit.SECONDS) != null) {
                 System.out.println("Send message " + traceId);
                 execute(message);
-            }else {
+            } else {
                 System.out.println("Send message timeout" + traceId);
             }
         } catch (TelegramApiException e) {
@@ -469,7 +475,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
             if (blockingQueue.poll(10, TimeUnit.SECONDS) != null) {
                 System.out.println("Send message " + traceId);
                 execute(message);
-            }else {
+            } else {
                 System.out.println("Send message timeout" + traceId);
             }
         } catch (TelegramApiException e) {
