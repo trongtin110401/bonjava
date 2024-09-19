@@ -40,9 +40,9 @@ public class TeleAuthentication extends TelegramLongPollingBot {
 
     private SecureRandom random = new SecureRandom();
 
-    public TeleAuthentication() {
-        super();
-    }
+//    public TeleAuthentication() {
+//        super();
+//    }
 
     @PostConstruct
     public void init() {
