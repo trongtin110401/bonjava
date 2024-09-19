@@ -44,7 +44,7 @@ public class GetMomoSunProcress implements BaseProcessor<HttpServletRequest, Str
                 Date currentDate = new Date();
                 Date dateCreate = sim.parse(depositBankModel.getCreatedAt());
                 Long time_con = (currentDate.getTime() - dateCreate.getTime()) / 1000;
-                if (time_con > 720) {
+                if (time_con > 900) {
                     //qua thoi gian
                     rechargeService.cancelMomoById(depositBankModel.getId());
                 } else {
