@@ -2,7 +2,7 @@ package com.vinplay.dichvuthe.entities;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.python.parser.ast.Str;
+import java.util.Date;
 
 public class DepositBankModel {
     public String Id;
@@ -23,6 +23,7 @@ public class DepositBankModel {
 
     private int timeToExpired;
     private String subType;
+    private Date expiredDate;
 
 
 
@@ -221,5 +222,13 @@ public class DepositBankModel {
 
     public void setTimeToExpired(int timeToExpired) {
         this.timeToExpired = timeToExpired;
+    }
+
+    public Date getExpiredDate() {
+        return expiredDate;
+    }
+
+    public void setExpiredDate(Date expiredDate) {
+        this.expiredDate = expiredDate;
     }
 }

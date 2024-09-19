@@ -989,6 +989,12 @@ public class RechargeServiceImpl
             doc.append("PaymentURL", paymentUrl);
             doc.append("TimeToExpired", timeToExpired);
             doc.append("TransactionId",transactionId);
+            Date currentDate = new Date();
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(currentDate);
+            calendar.add(Calendar.DAY_OF_YEAR, 10);
+            Date expiredDate = calendar.getTime();
+            doc.append("ExpiredDate",expiredDate);
             col.insertOne(doc);
 
         } catch (Exception e) {

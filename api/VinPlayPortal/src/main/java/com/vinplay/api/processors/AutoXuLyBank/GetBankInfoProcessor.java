@@ -16,6 +16,7 @@ import org.json.simple.parser.ParseException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
@@ -98,6 +99,12 @@ public class GetBankInfoProcessor implements BaseProcessor<HttpServletRequest, S
             depositBankModel.setTimeToExpired(timeToExpired);
             depositBankModel.setNickname(nickName);
             depositBankModel.setTransactionID(String.valueOf(VinPlayUtils.generateTransId()));
+            Date currentDate = new Date();
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(currentDate);
+            calendar.add(Calendar.DAY_OF_YEAR, 10);
+            Date expiredDate = calendar.getTime();
+            depositBankModel.setExpiredDate(expiredDate);
 
         } catch (ParseException e) {
             e.printStackTrace();
