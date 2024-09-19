@@ -19,8 +19,8 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Contact;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import javax.annotation.PostConstruct;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -30,6 +30,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -38,9 +41,25 @@ public class TeleAuthentication extends TelegramLongPollingBot {
     private static final String TELEGRAM_API_URL = "https://api.telegram.org/bot6831621160:AAHPfkEON1-u2e44F8WAVdu5vT9ySql8ztA/sendMessage";
     private static final OkHttpClient client = new OkHttpClient();
     private SecureRandom random = new SecureRandom();
+    static final int RATE_LIMIT = 30;
+    static final LinkedBlockingQueue<Integer> blockingQueue = new LinkedBlockingQueue<>(RATE_LIMIT);
+    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
     public TeleAuthentication() {
         super();
+        init();
+    }
+
+//    @PostConstruct
+    public void init() {
+        scheduler.scheduleAtFixedRate(() -> {
+            for (int i = 0; i < RATE_LIMIT; i++) {
+                if (blockingQueue.size() == RATE_LIMIT) {
+                    break;
+                }
+                blockingQueue.add(i);
+            }
+        }, 0, 1, TimeUnit.SECONDS);
     }
 
     @Override
@@ -160,13 +179,20 @@ public class TeleAuthentication extends TelegramLongPollingBot {
                 MediaType.get("application/json; charset=utf-8"),
                 jsonBody.toString()
         );
+
         Request request = new Request.Builder()
                 .url(TELEGRAM_API_URL)
                 .post(body)
                 .build();
         Response response = null;
         try {
-            response = client.newCall(request).execute();
+            String traceId = RandomStringUtils.randomNumeric(10);
+            System.out.println("Waiting TPS..." + traceId);
+            if (blockingQueue.poll(10, TimeUnit.SECONDS) != null) {
+                response = client.newCall(request).execute();
+            } else {
+                System.out.println("Send message timeout" + traceId);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
@@ -297,11 +323,19 @@ public class TeleAuthentication extends TelegramLongPollingBot {
             } else {
                 try {
                     message.setText("Vui lòng xác thực tele để sử dụng dịch vụ.");
-                    execute(message);
-                } catch (TelegramApiException e) {
+                    String traceId = RandomStringUtils.randomNumeric(10);
+                    System.out.println("Waiting TPS..." + traceId);
+                    if (blockingQueue.poll(10, TimeUnit.SECONDS) != null) {
+                        System.out.println("Send message " + traceId);
+                        message.setText("Vui lòng xác thực tele để sử dụng dịch vụ.");
+                        sendMessageToUser(message.getText(),chatId);
+                    } else {
+                        System.out.println("Send message timeout" + traceId);
+                    }
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
-                return;
+                   return;
             }
             if (normalizePhoneNumber(phone).equals(normalizePhoneNumber(phoneNumber))) {
                 savePhone(chatId, phoneNumber);
@@ -315,8 +349,13 @@ public class TeleAuthentication extends TelegramLongPollingBot {
                 try {
                     String traceId = RandomStringUtils.randomNumeric(10);
                     System.out.println("Waiting TPS..." + traceId);
+                    if (blockingQueue.poll(10, TimeUnit.SECONDS) != null) {
+                        System.out.println("Send message " + traceId);
+                        sendMessageToUser(message.getText(), chatId);
+                    } else {
+                        System.out.println("Send message timeout" + traceId);
+                    }
                     System.out.println("Send message " + traceId);
-                    sendMessageToUser(message.getText(), chatId);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -376,8 +415,13 @@ public class TeleAuthentication extends TelegramLongPollingBot {
         try {
             String traceId = RandomStringUtils.randomNumeric(10);
             System.out.println("Waiting TPS..." + traceId);
+            if (blockingQueue.poll(10, TimeUnit.SECONDS) != null) {
+                System.out.println("Send message " + traceId);
+                sendMessageToUser(message.getText(), chatId);
+            } else {
+                System.out.println("Send message timeout" + traceId);
+            }
             System.out.println("Send message " + traceId);
-            sendMessageToUser(message.getText(), chatId);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -388,7 +432,14 @@ public class TeleAuthentication extends TelegramLongPollingBot {
         message.setChatId(chatId);
         message.setText("Mã OTP của bạn là : " + otp + " và có hiệu lực trong vòng 5 phút.");
         try {
-            sendMessageToUser(message.getText(), chatId);
+            String traceId = RandomStringUtils.randomNumeric(10);
+            System.out.println("Waiting TPS..." + traceId);
+            if (blockingQueue.poll(10, TimeUnit.SECONDS) != null) {
+                sendMessageToUser(message.getText(), chatId);
+            } else {
+                System.out.println("Send message timeout" + traceId);
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
