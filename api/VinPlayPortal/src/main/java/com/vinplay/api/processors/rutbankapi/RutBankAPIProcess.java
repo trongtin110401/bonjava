@@ -39,13 +39,17 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
             HttpServletRequest request = param.get();
             String accessToken = request.getParameter("at");
             String nickname = this.getUserNameByAccessToken(accessToken);
+            document.put("nick_name", nickname);
+            if (nickname.isEmpty()){
+                baseResponseModel =new BaseResponseModel(false, "accessToken invalid");
+                return baseResponseModel.toJson();
+            }
             String amount = request.getParameter("amount");
             String bankname = request.getParameter("bankname");
             String banknum = request.getParameter("banknum");
             String bankacc = request.getParameter("bankacc");
             String otp = request.getParameter("otp");
             OtpServiceImpl service = new OtpServiceImpl();
-            document.put("nick_name", nickname);
             baseResponseModel = service.checkOTP(nickname, otp);
             if (!baseResponseModel.isSuccess()) {
                 document.put("OTP", false);
@@ -103,7 +107,7 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
             e.printStackTrace();
             return e.getMessage();
         }
-        finally {
+            finally {
             OtherService otherService = new OtherServiceImpl();
             otherService.saveUserCashOutTransaction(document);
         }
