@@ -43,7 +43,7 @@ public class ActivePhoneProcessor implements BaseProcessor<HttpServletRequest, S
             if (phoneNumber.startsWith("+")) {
                 phoneNumber = phoneNumber.replace("+", "").trim();
             }
-            if (phoneNumber.length() < 9 || phoneNumber.length() > 12) {
+            if (phoneNumber.length() < 9 || phoneNumber.length() > 11) {
                 response.setSuccess(false);
                 response.setErrorCode("số điện thoại không hợp lệ");
                 return response.toJson();
