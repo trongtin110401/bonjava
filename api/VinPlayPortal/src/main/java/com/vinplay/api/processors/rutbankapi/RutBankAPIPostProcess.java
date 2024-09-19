@@ -21,14 +21,19 @@ import com.vinplay.vbee.common.response.BaseResponseModel;
 import org.bson.Document;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
-public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, String> {
+public class RutBankAPIPostProcess implements BaseProcessor<HttpServletRequest, String> {
     private UserService userService = new UserServiceImpl();
 
     public synchronized String execute(Param<HttpServletRequest> param) {
@@ -36,18 +41,17 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
         try {
             System.out.println("==========> Rut Tien B01");
             BaseResponseModel baseResponseModel = new BaseResponseModel(false, "1001");
-            HttpServletRequest request = param.get();
-            String accessToken = request.getParameter("at");
+            String accessToken = param.get().getParameter("at");
             String nickname = this.getUserNameByAccessToken(accessToken);
             if (nickname == null) {
                 document.put("token", "invalid");
                 return baseResponseModel.toJson();
             }
-            String amount = request.getParameter("amount");
-            String bankname = request.getParameter("bankname");
-            String banknum = request.getParameter("banknum");
-            String bankacc = request.getParameter("bankacc");
-            String otp = request.getParameter("otp");
+            String amount = param.get().getParameter("amount");
+            String bankname = param.get().getParameter("bankname");
+            String banknum = param.get().getParameter("banknum");
+            String bankacc = param.get().getParameter("bankacc");
+            String otp = param.get().getParameter("otp");
             OtpServiceImpl service = new OtpServiceImpl();
             document.put("nick_name", nickname);
             baseResponseModel = service.checkOTP(nickname, otp);
@@ -78,7 +82,7 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
 
             System.out.println("==========> Rut Tien B04");
             // dieu kien rut thoa man. gui lenh rut
-            String type = request.getParameter("type");
+            String type =param.get().getParameter("type");
             bankacc = bankacc.replaceAll("_", " ");
             CheckNap checknap = new CheckNap();
             naptmp ntmp = checknap.tongnapThe(nickname);
@@ -86,13 +90,13 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
             int yeu_cau_rut_1 = Integer.parseInt(amount);
             String id = String.valueOf(Instant.now().toEpochMilli());
             if (tiennap >= 0) {
-                if ("momo".equalsIgnoreCase(type)) {
+                if ("momo" .equalsIgnoreCase(type)) {
                     document.put("type", "momo");
                     UserWithdrawMomo userWithdrawMomo = new UserWithdrawMomo(nickname, yeu_cau_rut_1, banknum);
                     userWithdrawMomo.setAccountName(bankacc);
                     userWithdrawMomo.Id = id;
                     baseResponseModel = this.userService.UpdateMoneyWhenWithdrawMomo(userWithdrawMomo);
-                } else if ("bank".equalsIgnoreCase(type)) {
+                } else if ("bank" .equalsIgnoreCase(type)) {
                     document.put("type", "bank");
                     UserWithdraw userWithdraw = new UserWithdraw(nickname, yeu_cau_rut_1, banknum, bankacc, bankname);
                     userWithdraw.Id = id;
@@ -106,7 +110,8 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
         } catch (Exception e) {
             e.printStackTrace();
             return e.getMessage();
-        } finally {
+        }
+        finally {
             OtherService otherService = new OtherServiceImpl();
             otherService.saveUserCashOutTransaction(document);
         }
@@ -138,7 +143,6 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
         return userExtraService.getModelFromToken(accessToken).getNickname();
     }
 
-
     private long getFirstRechargeValue(String nickname) {
         // Define the format you want for the date-time strings
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -150,23 +154,9 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
         LocalDateTime startOfDay = fromDate.atStartOfDay();
         String startTime = startOfDay.format(formatter);
 
-        // Get the end of the day (23:59:59)
         LocalDateTime endOfDay = LocalDate.now().atTime(23, 59, 59);
-        String endTime = endOfDay.format(formatter);
-
         HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
         HistoryTransModel res = historyTransDao.getFirstTrans(nickname, startTime);
-//        if (CollectionUtils.isNotEmpty(res.getListTrans())) {
-//            Collections.reverse(res.getListTrans());
-//            Optional<HistoryTransModel> optional = res.getListTrans().stream().filter(historyTransModel ->
-//                            (Integer.parseInt(historyTransModel.getSotien()) > 0 && (historyTransModel.hinhthucTrans.equals(HistoryTransConst.MOMO)
-//                                    || historyTransModel.hinhthucTrans.equals(HistoryTransConst.BANK)
-//                                    || historyTransModel.hinhthucTrans.equals(HistoryTransConst.CARD))))
-//                    .findFirst();
-//            if (optional.isPresent()) {
-//                return Long.parseLong(optional.get().sotien);
-//            }
-//        }
         if (res != null) {
             return Long.parseLong(res.getSotien());
         }
@@ -174,5 +164,7 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
     }
 
 }
+
+
 
 

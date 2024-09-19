@@ -641,6 +641,11 @@
             <path>com.vinplay.api.processors.rutbankapi.RutBankAPIProcess</path>
         </command>
         <command>
+            <id>44052</id>
+            <name>Auto Rut Tien Bank</name>
+            <path>com.vinplay.api.processors.rutbankapi.RutBankAPIPostProcess</path>
+        </command>
+        <command>
             <id>4053</id>
             <name>get key seo</name>
             <path>com.vinplay.api.processors.SEOGame.GetListKeyProcess</path>

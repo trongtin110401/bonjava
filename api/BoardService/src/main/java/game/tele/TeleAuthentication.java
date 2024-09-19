@@ -48,7 +48,6 @@ public class TeleAuthentication extends TelegramLongPollingBot {
 
     public TeleAuthentication() {
         super();
-//        init();
     }
 
     @PostConstruct
@@ -60,7 +59,6 @@ public class TeleAuthentication extends TelegramLongPollingBot {
                 }
                 blockingQueue.add(i);
             }
-            System.out.println("=====> Queue size: " + blockingQueue.size());
         }, 0, 1, TimeUnit.SECONDS);
     }
 
