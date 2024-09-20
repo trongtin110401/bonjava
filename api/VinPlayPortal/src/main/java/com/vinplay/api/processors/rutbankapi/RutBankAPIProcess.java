@@ -21,11 +21,14 @@ import com.vinplay.vbee.common.response.BaseResponseModel;
 import org.bson.Document;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.DateFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.Locale;
 
 public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, String> {
@@ -33,6 +36,9 @@ public class RutBankAPIProcess implements BaseProcessor<HttpServletRequest, Stri
 
     public synchronized String execute(Param<HttpServletRequest> param) {
         Document document = new Document();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Date date = new Date();
+        document.put("created_date", dateFormat.format(date));
         try {
             System.out.println("==========> Rut Tien B01");
             BaseResponseModel baseResponseModel = new BaseResponseModel(false, "1001");

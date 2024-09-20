@@ -24,11 +24,14 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -38,6 +41,9 @@ public class RutBankAPIPostProcess implements BaseProcessor<HttpServletRequest, 
 
     public synchronized String execute(Param<HttpServletRequest> param) {
         Document document = new Document();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Date date = new Date();
+        document.put("created_date", dateFormat.format(date));
         try {
             System.out.println("==========> Rut Tien B01");
             BaseResponseModel baseResponseModel = new BaseResponseModel(false, "1001");
