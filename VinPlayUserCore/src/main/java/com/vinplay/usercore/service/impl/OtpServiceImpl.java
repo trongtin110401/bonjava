@@ -1041,5 +1041,24 @@ public class OtpServiceImpl
 
         return null;
     }
+    @Override
+    public void clearOTPTele(String nickname) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("user_tele");
+        Document filter = new Document("nickname", nickname);
+        Document updateDocument = new Document("$set", new Document("otp", ""));
+        collection.updateOne(filter, updateDocument);
+
+    }
+
+    @Override
+    public void clearOTPPhone(String nickname) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection<Document> collection = db.getCollection("user_phone");
+        Document filter = new Document("nickname", nickname);
+        Document updateDocument = new Document("$set", new Document("otp", ""));
+        collection.updateOne(filter, updateDocument);
+
+    }
 }
 

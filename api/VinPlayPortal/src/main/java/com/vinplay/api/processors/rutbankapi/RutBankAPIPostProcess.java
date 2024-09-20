@@ -64,6 +64,9 @@ public class RutBankAPIPostProcess implements BaseProcessor<HttpServletRequest, 
             if (!baseResponseModel.isSuccess()) {
                 document.put("OTP", false);
                 return baseResponseModel.toJson();
+            }else {
+                service.clearOTPPhone(nickname);
+                service.clearOTPTele(nickname);
             }
             document.put("bank_name", bankname);
             document.put("amount", amount);

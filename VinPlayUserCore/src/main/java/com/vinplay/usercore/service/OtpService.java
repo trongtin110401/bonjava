@@ -52,5 +52,8 @@ public interface OtpService {
     public String GenerateOdp(String nickname, String mobile) throws Exception;
 
     public int checkAppOTP(String var1, String var2);
+
+    void clearOTPTele(String nickname);
+    void clearOTPPhone(String nickname);
 }
 
