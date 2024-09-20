@@ -65,6 +65,7 @@ public class LoginPostProcessor
     public String execute(Param<HttpServletRequest> param) {
         HttpServletRequest request = param.get();
         String username = param.get().getParameter("un");
+        System.out.println("process login with username(method POST) : " + username);
         String password = param.get().getParameter("pw");
         String realpass = "";
         if (password.length() != 32) {

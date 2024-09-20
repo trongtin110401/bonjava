@@ -65,6 +65,7 @@ public class LoginProcessor
     public String execute(Param<HttpServletRequest> param) {
         HttpServletRequest request = (HttpServletRequest) param.get();
         String username = request.getParameter("un");
+        System.out.println("process login with username(method GET) : " + username);
         String password = request.getParameter("pw");
         String platform = request.getParameter("pf");
         String realpass = "";
