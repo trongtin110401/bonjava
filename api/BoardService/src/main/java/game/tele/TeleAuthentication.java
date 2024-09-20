@@ -69,7 +69,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
         // init message queue
         for (int i = 0; i < THREAD_POOL_SIZE; i++) {
             messageScheduler.execute(() -> {
-                TeleMessageProcess messageProcess = null;
+                TeleMessageProcess messageProcess;
                 while (true) {
                     messageProcess = messageQueue.poll();
                     if (messageProcess != null) {
@@ -180,54 +180,51 @@ public class TeleAuthentication extends TelegramLongPollingBot {
     }
 
     private void sendPhoneAndOTPRequest(String chatId, String text) {
-        TeleMessageProcess messageProcess = new TeleMessageProcess() {
-            @Override
-            public void execute() {
-                JSONArray keyboard = new JSONArray();
-                JSONObject phoneButton = new JSONObject();
-                phoneButton.put("text", "Chia sẻ số điện thoại");
-                phoneButton.put("request_contact", true);
-                JSONArray phoneRow = new JSONArray();
-                phoneRow.put(phoneButton);
-                JSONObject otpButton = new JSONObject();
-                otpButton.put("text", "Lấy lại mã kích hoạt");
-                JSONArray otpRow = new JSONArray();
-                otpRow.put(otpButton);
-                keyboard.put(phoneRow);
-                keyboard.put(otpRow);
-                JSONObject replyMarkup = new JSONObject();
-                replyMarkup.put("keyboard", keyboard);
-                replyMarkup.put("resize_keyboard", true);
-                JSONObject jsonBody = new JSONObject();
-                jsonBody.put("chat_id", chatId);
-                jsonBody.put("text", text);
-                jsonBody.put("reply_markup", replyMarkup);
-                RequestBody body = RequestBody.create(
-                        MediaType.get("application/json; charset=utf-8"),
-                        jsonBody.toString()
-                );
+        TeleMessageProcess messageProcess = () -> {
+            JSONArray keyboard = new JSONArray();
+            JSONObject phoneButton = new JSONObject();
+            phoneButton.put("text", "Chia sẻ số điện thoại");
+            phoneButton.put("request_contact", true);
+            JSONArray phoneRow = new JSONArray();
+            phoneRow.put(phoneButton);
+            JSONObject otpButton = new JSONObject();
+            otpButton.put("text", "Lấy lại mã kích hoạt");
+            JSONArray otpRow = new JSONArray();
+            otpRow.put(otpButton);
+            keyboard.put(phoneRow);
+            keyboard.put(otpRow);
+            JSONObject replyMarkup = new JSONObject();
+            replyMarkup.put("keyboard", keyboard);
+            replyMarkup.put("resize_keyboard", true);
+            JSONObject jsonBody = new JSONObject();
+            jsonBody.put("chat_id", chatId);
+            jsonBody.put("text", text);
+            jsonBody.put("reply_markup", replyMarkup);
+            RequestBody body = RequestBody.create(
+                    MediaType.get("application/json; charset=utf-8"),
+                    jsonBody.toString()
+            );
 
-                Request request = new Request.Builder()
-                        .url(TELEGRAM_API_URL)
-                        .post(body)
-                        .build();
-                Response response = null;
-                try {
-                    String traceId = RandomStringUtils.randomNumeric(10);
-                    System.out.println("Waiting TPS..." + traceId);
-                    if (blockingQueue.poll(10, TimeUnit.SECONDS) != null) {
-                        System.out.println("Send message..." + traceId);
-                        response = client.newCall(request).execute();
-                    } else {
-                        System.out.println("Send message timeout" + traceId);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    throw new RuntimeException(e);
-                } finally {
-                    if (response != null) {
-                        response.close();
-                    }
+            Request request = new Request.Builder()
+                    .url(TELEGRAM_API_URL)
+                    .post(body)
+                    .build();
+            Response response = null;
+            try {
+                String traceId = RandomStringUtils.randomNumeric(10);
+                System.out.println("Waiting TPS..." + traceId);
+                if (blockingQueue.poll(10, TimeUnit.SECONDS) != null) {
+                    System.out.println("Send message..." + traceId);
+                    response = client.newCall(request).execute();
+                } else {
+                    System.out.println("Send message timeout" + traceId);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            } finally {
+                if (response != null) {
+                    response.close();
                 }
             }
         };
@@ -458,24 +455,21 @@ public class TeleAuthentication extends TelegramLongPollingBot {
 
     private void sendOTP(String chatId, String otp) {
 
-        TeleMessageProcess messageProcess = new TeleMessageProcess() {
-            @Override
-            public void execute() {
-                SendMessage message = new SendMessage();
-                message.setChatId(chatId);
-                message.setText("Mã OTP của bạn là : " + otp + " và có hiệu lực trong vòng 5 phút.");
-                try {
-                    String traceId = RandomStringUtils.randomNumeric(10);
-                    System.out.println("Waiting TPS..." + traceId);
-                    if (blockingQueue.poll(10, TimeUnit.SECONDS) != null) {
-                        System.out.println("Send message..." + traceId);
-                        sendMessageToUser(message.getText(), chatId);
-                    } else {
-                        System.out.println("Send message timeout" + traceId);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
+        TeleMessageProcess messageProcess = () -> {
+            SendMessage message = new SendMessage();
+            message.setChatId(chatId);
+            message.setText("Mã OTP của bạn là : " + otp + " và có hiệu lực trong vòng 5 phút.");
+            try {
+                String traceId = RandomStringUtils.randomNumeric(10);
+                System.out.println("Waiting TPS..." + traceId);
+                if (blockingQueue.poll(10, TimeUnit.SECONDS) != null) {
+                    System.out.println("Send message..." + traceId);
+                    sendMessageToUser(message.getText(), chatId);
+                } else {
+                    System.out.println("Send message timeout" + traceId);
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         };
 
@@ -484,31 +478,30 @@ public class TeleAuthentication extends TelegramLongPollingBot {
 
     public void sendMessageToUser(String message, String chatId) {
 
-        TeleMessageProcess messageProcess = new TeleMessageProcess() {
-            @Override
-            public void execute() {
-                Response response = null;
-                try {
-                    OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
-                            .connectTimeout(3, TimeUnit.SECONDS)
-                            .readTimeout(3, TimeUnit.SECONDS)
-                            .build();
-                    Request request = new Request.Builder()
-                            .url("https://api.telegram.org/bot" + getBotToken() + "/sendMessage?text=" + encodeValue(message) +
-                                    "&chat_id=" + chatId + "&parse_mode=HTML")
-                            .method("GET", null)
-                            .build();
-                    response = client.newCall(request).execute();
+        TeleMessageProcess messageProcess = () -> {
+            Response response = null;
+            try {
+                OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
+                        .connectTimeout(3, TimeUnit.SECONDS)
+                        .readTimeout(3, TimeUnit.SECONDS)
+                        .build();
+                Request request = new Request.Builder()
+                        .url("https://api.telegram.org/bot" + getBotToken() + "/sendMessage?text=" + encodeValue(message) +
+                                "&chat_id=" + chatId + "&parse_mode=HTML")
+                        .method("GET", null)
+                        .build();
+                response = client.newCall(request).execute();
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    if (response != null) {
-                        response.close();
-                    }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (response != null) {
+                    response.close();
                 }
             }
         };
+
+        messageQueue.add(messageProcess);
     }
 
     private static String encodeValue(String value) throws UnsupportedEncodingException {
