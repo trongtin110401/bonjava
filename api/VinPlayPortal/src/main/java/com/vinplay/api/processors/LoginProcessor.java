@@ -201,7 +201,7 @@ public class LoginProcessor
                                 res.setErrorCode("1007");
                             }
                         } else {
-                            res.setErrorCode("1109");
+                            res.setErrorCode("Tài khoản đã bị khóa.");
                         }
                     } else {
                         res.setErrorCode("1007");
