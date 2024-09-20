@@ -55,6 +55,7 @@ implements BaseProcessor<HttpServletRequest, String> {
             String password = request.getParameter("pw");
          //   String captcha = request.getParameter("cp");
          //   String captchaId = request.getParameter("cid");
+            String nickname = request.getParameter("nn");
             String campaign = request.getParameter("utm_campaign");
             String medium = request.getParameter("utm_medium");
             String source = request.getParameter("utm_source");
@@ -62,7 +63,8 @@ implements BaseProcessor<HttpServletRequest, String> {
             String codeDaiLy = request.getParameter("code_daily");
             logger.debug((Object)("Request quickRegister: username: " + username + ", password: " + password));
             res = new BaseResponseModel(false, "1001");
-            if(username == null || username.length() > 20 || username.length() < 6) {
+            if(username == null || username.length() > 20 || username.length() < 6 || nickname == null || nickname.isEmpty()) {
+                res.setErrorCode("tên đăng nhập hoặc tên hiển thị không được để trống.");
                 return res.toJson();
             }
             String ip = this.getIpAddress(request);
