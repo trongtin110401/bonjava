@@ -19,6 +19,11 @@
             <path>com.vinplay.api.processors.LoginProcessor</path>
         </command>
         <command>
+            <id>9993</id>
+            <name>login</name>
+            <path>com.vinplay.api.processors.LoginPostProcessor</path>
+        </command>
+        <command>
             <id>4</id>
             <name>login with otp</name>
             <path>com.vinplay.api.processors.LoginWithOTPProcessor</path>
