@@ -64,6 +64,12 @@ public class GetBankInfoProcessor implements BaseProcessor<HttpServletRequest, S
                 + "?apiKey=" + autoBank.getApiKey() + "&chargeType=" + chargeType + "&amount=" + amount + "&subType=" + subType + "&requestId=" + UUID.randomUUID();
         depositBankModel = processResponse(APIProcess.responseGetAPI(url, null), nickName);
         depositBankModel.setSubType(subType);
+        Date currentDate = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(currentDate);
+        calendar.add(Calendar.DAY_OF_YEAR, 10);
+        Date expiredDate = calendar.getTime();
+        depositBankModel.setExpiredDate(expiredDate);
         rechargeDao.InsertDepositBankManual(depositBankModel);
 
         NotificationAdminObj obj = new NotificationAdminObj();
