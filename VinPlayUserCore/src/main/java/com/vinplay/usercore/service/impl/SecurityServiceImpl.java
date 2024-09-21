@@ -762,10 +762,12 @@ public class SecurityServiceImpl
         if (!type.equals("0")) {
             if (!type.equals("1")) return res;
         }
+        System.out.println("=====================> " + nickname + " - " + action + " - " + type);
+
         if ((userMap = (client = HazelcastClientFactory.getInstance()).getMap("users")).containsKey((Object) nickname)) {
             try {
 
-                System.out.println("=====================> " + nickname + " - " + action + " - " + type);
+                System.out.println("=====================>1 " + nickname + " - " + action + " - " + type);
 
                 userMap.lock(nickname);
                 UserCacheModel user = (UserCacheModel) userMap.get((Object) nickname);
@@ -807,6 +809,7 @@ public class SecurityServiceImpl
                 userMap.unlock(nickname);
             }
         } else {
+            System.out.println("=====================> 2" + nickname + " - " + action + " - " + type);
             try {
                 UserModel user2 = dao.getStatus(nickname);
                 if (user2 == null) return res;
