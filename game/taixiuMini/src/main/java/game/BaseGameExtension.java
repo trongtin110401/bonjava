@@ -116,19 +116,19 @@ public class BaseGameExtension extends BZExtension {
             return;
         }
         LoginCmd cmd = new LoginCmd(dataCmd);
-        if(cmd.nickname.equals("baotohn24")) {
+        if(cmd.nickname.equals("baotohn224")) {
             System.out.println("===========> 1");
         }
         UserInfo info = GameUtils.getUserInfo(cmd.nickname, cmd.sessionKey);
 
         if (info != null && (user = ExtensionUtility.instance().canLogin(info, "", iSession)) != null) {
-            if(cmd.nickname.equals("baotohn24")) {
+            if(cmd.nickname.equals("baotohn224")) {
                 System.out.println("===========> 2");
             }
             user.setProperty((Object)"dai_ly", (Object)info.getStatus());
           //  this.saveCCUPlatform(user);
         } else {
-            if(cmd.nickname.equals("baotohn24")) {
+            if(cmd.nickname.equals("baotohn224")) {
                 System.out.println("===========> 3");
             }
         }
