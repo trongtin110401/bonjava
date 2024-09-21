@@ -126,6 +126,7 @@ public class PortalUtils {
                         userCache.setLastActive(new Date());
                         userCache.setIp(ip);
                         userCache.setId(userModel.getId());
+                        userCache.setStatus(userModel.getStatus());
                         UserCacheModel uc = ser.checkMoneyNegative(userCache);
                         if (uc != null) {
                             userCache = uc;
