@@ -127,6 +127,7 @@ public class PortalUtils {
                         userCache.setIp(ip);
                         userCache.setId(userModel.getId());
                         userCache.setStatus(userModel.getStatus());
+                        userCache.setBanLogin(false);
                         UserCacheModel uc = ser.checkMoneyNegative(userCache);
                         if (uc != null) {
                             userCache = uc;
@@ -168,6 +169,7 @@ public class PortalUtils {
                         success = false;
                     }
                     userCache.setStatus(userModel.getStatus());
+                    userCache.setBanLogin(false);
                     tokenMap.put((Object) accessToken, (Object) userModel.getNickname(), 180L, TimeUnit.MINUTES);
                     userMap.put((Object) userCache.getNickname(), (Object) userCache);
                 }
