@@ -34,11 +34,11 @@ public class CheckRegister implements BaseProcessor<HttpServletRequest, String> 
         String type = request.getParameter("tp");
         String data = request.getParameter("data");
         try {
-            loadChatUsers();
-            if (listChatUsers.contains(data)) {
-                LoginResponse res = new LoginResponse(false, "1010");
-                return res.toJson();
-            }
+//            loadChatUsers();
+//            if (listChatUsers.contains(data)) {
+//                LoginResponse res = new LoginResponse(false, "1010");
+//                return res.toJson();
+//            }
             if (!UserValidaton.validateNickname((String) data) && !UserValidaton.validateNicknameSpecial((String) data)) {
                 LoginResponse res = new LoginResponse(false, "1010");
                 return res.toJson();
@@ -72,6 +72,7 @@ public class CheckRegister implements BaseProcessor<HttpServletRequest, String> 
         return res.toJson();
     }
     public static List<String> listChatUsers = new ArrayList<String>();
+
     public void loadChatUsers() {  // load chat user
         if(listChatUsers.isEmpty() || listChatUsers.size() == 0) {
             try {
