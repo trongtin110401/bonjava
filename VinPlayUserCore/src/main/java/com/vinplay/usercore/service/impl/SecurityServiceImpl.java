@@ -809,7 +809,9 @@ public class SecurityServiceImpl
                 userMap.unlock(nickname);
             }
         } else {
+
             System.out.println("=====================> 2" + nickname + " - " + action + " - " + type);
+
             try {
                 UserModel user2 = dao.getStatus(nickname);
                 if (user2 == null) return res;
