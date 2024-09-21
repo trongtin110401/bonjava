@@ -62,11 +62,11 @@ public class UpdateNicknameProcesscor
         String social = request.getParameter("s");
         String accessToken = request.getParameter("at");
         logger.debug((Object) ("Request updateNickname: username: " + username + ", password: " + password + ", social: " + social + ", accessToken: " + accessToken + ", nickname: " + nickname));
-        loadChatUsers();
-        if (listChatUsers.contains(nickname)) {
-            LoginResponse res = new LoginResponse(false, "1010");
-            return res.toJson();
-        }
+//        loadChatUsers();
+//        if (listChatUsers.contains(nickname)) {
+//            LoginResponse res = new LoginResponse(false, "1010");
+//            return res.toJson();
+//        }
         if ((username != null && password != null || social != null && (social.equals("fb") || social.equals("gg")) && accessToken != null) && nickname != null) {
             LoginResponse res = new LoginResponse(false, "1001");
             try {
