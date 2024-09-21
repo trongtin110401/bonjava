@@ -754,7 +754,7 @@ public class SecurityServiceImpl
      */
     @Override
     public boolean updateStatusUser(String nickname, int action, String type) {
-        IMap userMap;
+
         HazelcastInstance client;
         boolean res = false;
         SecurityDaoImpl dao = new SecurityDaoImpl();
@@ -764,7 +764,8 @@ public class SecurityServiceImpl
         }
         System.out.println("=====================> " + nickname + " - " + action + " - " + type);
 
-        if ((userMap = (client = HazelcastClientFactory.getInstance()).getMap("users")).containsKey((Object) nickname)) {
+        IMap userMap = (client = HazelcastClientFactory.getInstance()).getMap("users");
+        if (userMap.containsKey((Object) nickname)) {
             try {
 
                 System.out.println("=====================>1 " + nickname + " - " + action + " - " + type);
@@ -776,9 +777,13 @@ public class SecurityServiceImpl
                     statusNew = 0;
                 }
 
-                if (!dao.updateUserInfo(user.getId(), String.valueOf(statusNew), 7)) return res;
 
-                user.setStatus(statusNew);
+                if (!dao.updateUserInfo(user.getId(), String.valueOf(statusNew), 7)) {
+                    user.setStatus(statusNew);
+                    userMap.put(nickname, user);
+                    return res;
+                }
+
                 boolean ban = false;
                 if (type.equals("1")) {
                     ban = true;
