@@ -28,6 +28,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 public class UserBackCodeProcessor implements BaseProcessor<byte[], Boolean> {
     private static final Logger logger = Logger.getLogger((String) "vbee");
@@ -110,7 +111,6 @@ public class UserBackCodeProcessor implements BaseProcessor<byte[], Boolean> {
     public static void sendMessage(String chatId, String message) {
         Response response = null;
         try {
-//            String bootToken = GameCommon.getValueStr("Telegram_boot_bon_token");
             String bot = "6831621160:AAHPfkEON1-u2e44F8WAVdu5vT9ySql8ztA";
             RequestBody requestBody = new FormBody.Builder()
                     .add("chat_id", chatId)
@@ -120,7 +120,11 @@ public class UserBackCodeProcessor implements BaseProcessor<byte[], Boolean> {
                     .url("https://api.telegram.org/bot" + bot + "/sendMessage")
                     .post(requestBody)
                     .build();
-            OkHttpClient client = new OkHttpClient();
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .connectTimeout(3000, TimeUnit.SECONDS)
+                    .writeTimeout(3000, TimeUnit.SECONDS)
+                    .readTimeout(3000, TimeUnit.SECONDS)
+                    .build();
             response = client.newCall(request).execute();
         } catch (Exception e) {
             e.printStackTrace();
