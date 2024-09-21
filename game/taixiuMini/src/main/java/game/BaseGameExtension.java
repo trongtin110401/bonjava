@@ -71,8 +71,7 @@ import game.utils.GameUtils;
 
 import java.util.concurrent.TimeUnit;
 
-public class BaseGameExtension
-extends BZExtension {
+public class BaseGameExtension extends BZExtension {
     private int countReloadConfig = 0;
     private int countLogCCU = 0;
    // private final Runnable gameLoopTask = new GameLoopTask();
@@ -117,10 +116,21 @@ extends BZExtension {
             return;
         }
         LoginCmd cmd = new LoginCmd(dataCmd);
+        if(cmd.nickname.equals("baotohn24")) {
+            System.out.println("===========> 1");
+        }
         UserInfo info = GameUtils.getUserInfo(cmd.nickname, cmd.sessionKey);
+
         if (info != null && (user = ExtensionUtility.instance().canLogin(info, "", iSession)) != null) {
+            if(cmd.nickname.equals("baotohn24")) {
+                System.out.println("===========> 2");
+            }
             user.setProperty((Object)"dai_ly", (Object)info.getStatus());
           //  this.saveCCUPlatform(user);
+        } else {
+            if(cmd.nickname.equals("baotohn24")) {
+                System.out.println("===========> 3");
+            }
         }
     }
 
