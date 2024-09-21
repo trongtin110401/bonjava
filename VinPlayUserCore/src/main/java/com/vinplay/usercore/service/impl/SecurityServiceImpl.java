@@ -775,7 +775,9 @@ public class SecurityServiceImpl
                 if (action == 9) {
                     statusNew = 0;
                 }
+
                 if (!dao.updateUserInfo(user.getId(), String.valueOf(statusNew), 7)) return res;
+
                 user.setStatus(statusNew);
                 boolean ban = false;
                 if (type.equals("1")) {

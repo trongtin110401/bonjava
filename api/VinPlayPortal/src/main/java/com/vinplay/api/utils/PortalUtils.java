@@ -167,6 +167,7 @@ public class PortalUtils {
                         userCache = uc2;
                         success = false;
                     }
+                    userCache.setStatus(userModel.getStatus());
                     tokenMap.put((Object) accessToken, (Object) userModel.getNickname(), 180L, TimeUnit.MINUTES);
                     userMap.put((Object) userCache.getNickname(), (Object) userCache);
                 }
