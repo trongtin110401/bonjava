@@ -45,13 +45,16 @@ public class UserBackCodeProcessor implements BaseProcessor<byte[], Boolean> {
 
             // send mail
             mailService.sendMailGiftCode(message.getNickname(), giftCode, "Hoàn Trả Tiền Cược", content);
-
-            OtherService otherService = new OtherServiceImpl();
-            UserTele userTele = otherService.getUserTeleInfoByNickname(message.getNickname());
-            if (userTele != null) {
-                sendMessage(userTele.getChatID(), content);
-            }
             saveUserTeleCashBack(message.getNickname(), giftCode, Long.valueOf(message.getGiftValue()).intValue(), message.getMoney());
+
+            try {
+                OtherService otherService = new OtherServiceImpl();
+                UserTele userTele = otherService.getUserTeleInfoByNickname(message.getNickname());
+                if (userTele != null) {
+                    sendMessage(userTele.getChatID(), content);
+                }
+            } catch (Exception ignored) {
+            }
         } catch (Exception e) {
             logger.error("Handle save transaction error ", (Throwable) e);
         }
