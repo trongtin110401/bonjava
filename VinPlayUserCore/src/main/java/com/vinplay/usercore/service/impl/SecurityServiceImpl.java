@@ -764,6 +764,9 @@ public class SecurityServiceImpl
         }
         if ((userMap = (client = HazelcastClientFactory.getInstance()).getMap("users")).containsKey((Object) nickname)) {
             try {
+
+                System.out.println("=====================> " + nickname + " - " + action + " - " + type);
+
                 userMap.lock(nickname);
                 UserCacheModel user = (UserCacheModel) userMap.get((Object) nickname);
                 int statusNew = StatusUser.changeStatus((int) user.getStatus(), (int) action, (String) type);
@@ -963,7 +966,6 @@ public class SecurityServiceImpl
 
         IQueue queue = instance.getQueue("LOGIN_OTHER_DEVICE_QUEUE");
         if (queue != null) {
-//            queue.offer(nickname);
             queue.offer(new KickUserSignal(nickname, KickUserSignal.BLOCK_USER));
         }
 

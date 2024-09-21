@@ -222,7 +222,6 @@ public class PortalUtils {
 
         IQueue queue = instance.getQueue("LOGIN_OTHER_DEVICE_QUEUE");
         if (queue != null) {
-//            queue.offer(nickname);
             queue.offer(new KickUserSignal(nickname, KickUserSignal.DUPLICATE_LOGIN));
         }
 
