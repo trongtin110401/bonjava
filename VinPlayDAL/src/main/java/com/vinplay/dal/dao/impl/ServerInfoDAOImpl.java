@@ -60,7 +60,7 @@ public class ServerInfoDAOImpl implements ServerInfoDAO {
                 entry.ot = document.getInteger("ot", 0);
                 entry.ts = document.getString("time_log");
 
-                if (entry.ccu > 0)
+                if (entry.ccu > 1)
                     results.add(entry);
             }
         });
