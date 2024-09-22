@@ -31,8 +31,8 @@ import java.util.Map;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
-public class ServerInfoDAOImpl
-        implements ServerInfoDAO {
+public class ServerInfoDAOImpl implements ServerInfoDAO {
+
     @Override
     public List<LogCCUModel> getLogCCU(String startTime, String endTime) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();

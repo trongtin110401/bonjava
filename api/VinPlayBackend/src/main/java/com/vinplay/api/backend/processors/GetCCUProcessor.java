@@ -13,22 +13,31 @@ package com.vinplay.api.backend.processors;
 import com.vinplay.dal.service.impl.ServerInfoServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
+import com.vinplay.vbee.common.models.LogCCUModel;
 import com.vinplay.vbee.common.response.CCUResponse;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-public class GetCCUProcessor
-        implements BaseProcessor<HttpServletRequest, String> {
+public class GetCCUProcessor implements BaseProcessor<HttpServletRequest, String> {
+
     public String execute(Param<HttpServletRequest> param) {
-        HttpServletRequest request = (HttpServletRequest)param.get();
+        HttpServletRequest request = param.get();
         CCUResponse response = new CCUResponse(false, "1001");
         String startDate = request.getParameter("ts");
         String endDate = request.getParameter("te");
-        List trans = null;
+        List<LogCCUModel> trans;
         if (!startDate.isEmpty() && !endDate.isEmpty()) {
             ServerInfoServiceImpl service = new ServerInfoServiceImpl();
             trans = service.getLogCCU(startDate, endDate);
+
+            if (!trans.isEmpty()) {
+                LogCCUModel ccuModel = trans.get(trans.size() - 1);
+                if (!ccuModel.ts.equals("endDate")) {
+                    trans.add(ccuModel);
+                }
+            }
+
             response.setTransactions(trans);
             response.setErrorCode("0");
             response.setSuccess(true);
