@@ -30,14 +30,6 @@ public class GetCCUProcessor implements BaseProcessor<HttpServletRequest, String
         if (!startDate.isEmpty() && !endDate.isEmpty()) {
             ServerInfoServiceImpl service = new ServerInfoServiceImpl();
             trans = service.getLogCCU(startDate, endDate);
-
-            if (!trans.isEmpty()) {
-                LogCCUModel ccuModel = trans.get(trans.size() - 1);
-                if (!ccuModel.ts.equals("endDate")) {
-                    trans.add(ccuModel);
-                }
-            }
-
             response.setTransactions(trans);
             response.setErrorCode("0");
             response.setSuccess(true);
