@@ -243,7 +243,7 @@ namespace BanCa.Libs
             public volatile float HealthRate = 1.03f; //3%
             public volatile float HealthScale = 0.4f; //+-40%
 
-            public FishPhysicalInfo(float Width, float Height, float Health, float HealthRate = 1.03f, float HealthScale = 0.4f)
+            public FishPhysicalInfo(float Width, float Height, float Health, float HealthRate = 1.03f, float HealthScale = 1.5f)
             {
                 this.Width = Width;
                 this.Height = Height;
