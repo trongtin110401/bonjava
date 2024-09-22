@@ -8,8 +8,7 @@ import com.vinplay.vbee.common.response.BaseResponseModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CCUResponse
-extends BaseResponseModel {
+public class CCUResponse extends BaseResponseModel {
     private List<LogCCUModel> transactions = new ArrayList<LogCCUModel>();
 
     public CCUResponse(boolean success, String errorCode) {

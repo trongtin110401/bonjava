@@ -59,7 +59,9 @@ public class ServerInfoDAOImpl implements ServerInfoDAO {
                 entry.dt = document.getInteger("dt", 0);
                 entry.ot = document.getInteger("ot", 0);
                 entry.ts = document.getString("time_log");
-                results.add(entry);
+
+                if (entry.ccu > 0)
+                    results.add(entry);
             }
         });
         return results;
