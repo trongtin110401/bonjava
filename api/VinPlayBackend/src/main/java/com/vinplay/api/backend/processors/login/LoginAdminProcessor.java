@@ -72,6 +72,7 @@ public class LoginAdminProcessor
                         System.out.println("=================== Login 2");
                         if (!userModel.isBanLogin()) {
                             System.out.println("=================== Login 3");
+                            System.out.println("rpw: " + password + " - upw: " + userModel.getPassword());
                             if (userModel.getPassword().equals(password)) {
                                 System.out.println("=================== Login 4");
                                 if (userModel.getNickname() != null && !userModel.getNickname().trim().isEmpty()) {
