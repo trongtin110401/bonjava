@@ -320,6 +320,7 @@ public class UserDaoImpl implements UserDao {
         try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
              PreparedStatement stm = conn.prepareStatement(sql)) {
 
+            
             stm.setString(1, fbId);
 
             try (ResultSet rs = stm.executeQuery()) {
