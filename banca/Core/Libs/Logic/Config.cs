@@ -294,13 +294,13 @@ namespace BanCa.Libs
             {FishType.MermaidBig, new FishPhysicalInfo(53,280,10000) }, //
             {FishType.MermaidSmall, new FishPhysicalInfo(80,200,7000) }, //
             {FishType.BombFish, new FishPhysicalInfo(100,420,6000000) }, //
-            {FishType.Fish19, new FishPhysicalInfo(100,420,0) }, //
-            {FishType.Fish20, new FishPhysicalInfo(100,420,0) }, //
-            {FishType.Fish21, new FishPhysicalInfo(100,420,0) }, //
-            {FishType.Fish22, new FishPhysicalInfo(100,420,0) }, //
-            {FishType.Fish23, new FishPhysicalInfo(100,420,0) }, //
-            {FishType.Fish24, new FishPhysicalInfo(100,420,0) }, //
-            {FishType.Fish25, new FishPhysicalInfo(100,420,0) }, //
+            {FishType.Fish19, new FishPhysicalInfo(100,420,20000) }, //
+            {FishType.Fish20, new FishPhysicalInfo(100,420,40000) }, //
+            {FishType.Fish21, new FishPhysicalInfo(100,420,60000) }, //
+            {FishType.Fish22, new FishPhysicalInfo(100,420,80000) }, //
+            {FishType.Fish23, new FishPhysicalInfo(100,420,100000) }, //
+            {FishType.Fish24, new FishPhysicalInfo(100,420,120000) }, //
+            {FishType.Fish25, new FishPhysicalInfo(100,420,150000) }, //
         };
         public static volatile float MinScale = 1f;
         public static volatile float MaxScale = 1.05f;
