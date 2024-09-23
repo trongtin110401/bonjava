@@ -69,22 +69,22 @@ public class TeleAuthentication extends TelegramLongPollingBot {
         // init message queue
         for (int i = 0; i < THREAD_POOL_SIZE; i++) {
             messageScheduler.execute(() -> {
-                try {
-                    TeleMessageProcess messageProcess;
-                    while (true) {
-                        messageProcess = messageQueue.poll();
-                        if (messageProcess != null) {
+                TeleMessageProcess messageProcess;
+                while (true) {
+                    messageProcess = messageQueue.poll();
+                    if (messageProcess != null) {
+                        try {
                             messageProcess.execute();
-                        } else {
-                            try {
-                                Thread.sleep(100);
-                            } catch (InterruptedException e) {
-                                throw new RuntimeException(e);
-                            }
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    } else {
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
                         }
                     }
-                } catch (Exception ex) {
-                    ex.printStackTrace();
                 }
             });
         }
