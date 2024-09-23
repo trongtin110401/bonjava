@@ -11,9 +11,6 @@ services:
       - '3306:3306'
     volumes:
       - /home/data/mysql:/var/lib/mysql
-#      - ./config/mysql/conf.d:/etc/mysql/conf.d:ro
-#      - ./config/mysql/db1:/docker-entrypoint-initdb.d/:ro
-
   mongo:
     image: mongo:4.0.16-xenial
     restart: always
@@ -24,7 +21,6 @@ services:
       MONGO_INITDB_DATABASE: win123club
     ports:
       - '27017-27019:27017-27019'
-#    entrypoint: [ "mongod", "--replSet", "rsyou88", "--bind_ip_all",  "--keyFile", "/data/replica.key" ]
     command:
       - '--auth'
       - '-f'
