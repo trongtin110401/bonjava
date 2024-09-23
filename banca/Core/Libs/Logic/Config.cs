@@ -321,32 +321,32 @@ namespace BanCa.Libs
 
         public static volatile Dictionary<BulletType, int> TypeToPower = new Dictionary<BulletType, int> {
             {BulletType.Basic, 1 },
-            {BulletType.Bullet1, 100 },
-            {BulletType.Bullet2, 100 },
-            {BulletType.Bullet3, 100 },
-            {BulletType.Bullet4, 100 },
-            {BulletType.Bullet5, 100 },
-            {BulletType.Bullet6, 100 }
+            {BulletType.Bullet1, 5 },
+            {BulletType.Bullet2, 10 },
+            {BulletType.Bullet3, 15 },
+            {BulletType.Bullet4, 20 },
+            {BulletType.Bullet5, 25 },
+            {BulletType.Bullet6, 30 }
         };
 
         public static volatile Dictionary<BulletType, int> TypeToValue = new Dictionary<BulletType, int> {
             {BulletType.Basic, 0 },
-            {BulletType.Bullet1, 10 },
-            {BulletType.Bullet2, 20 },
-            {BulletType.Bullet3, 50 },
-            {BulletType.Bullet4, 100 },
-            {BulletType.Bullet5, 200 },
-            {BulletType.Bullet6, 500 }
+            {BulletType.Bullet1, 5 },
+            {BulletType.Bullet2, 10 },
+            {BulletType.Bullet3, 15 },
+            {BulletType.Bullet4, 20 },
+            {BulletType.Bullet5, 0 },
+            {BulletType.Bullet6, 0 }
         };
 
         public static volatile Dictionary<BulletType, int> TypeToJpCheckCount = new Dictionary<BulletType, int> {
             {BulletType.Basic, 0 },
-            {BulletType.Bullet1, 1 },
-            {BulletType.Bullet2, 2 },
-            {BulletType.Bullet3, 5 },
-            {BulletType.Bullet4, 10 },
-            {BulletType.Bullet5, 20 },
-            {BulletType.Bullet6, 50 }
+            {BulletType.Bullet1, 0 },
+            {BulletType.Bullet2, 0 },
+            {BulletType.Bullet3, 0 },
+            {BulletType.Bullet4, 0 },
+            {BulletType.Bullet5, 0 },
+            {BulletType.Bullet6, 0 }
         };
 
         public static volatile int MAX_BOUND_TIME = 4;

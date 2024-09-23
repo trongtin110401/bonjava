@@ -748,7 +748,7 @@ namespace BanCa.Libs
                         for (int j = 0, m = allObjects.Count; j < m; j++)
                         {
                             var o = allObjects[j];
-                            if (o.Health > 0 && b.TestHit(o))
+                            if (o.Health > 0 && b.TestHit(o)) // máu của cá còn và viên đạn bán con cá
                             {
                                 var p = getPlayer(b.PlayerId);
                                 var v = (long) (o.MaxHealth * b.Value / b.Power); // value if die
@@ -1970,8 +1970,7 @@ namespace BanCa.Libs
             return null;
         }
 
-        public void Shoot(Player p, float rad, Config.BulletType type, int targetId = -1, bool rapidFire = false,
-            bool isAuto = false)
+        public void Shoot(Player p, float rad, Config.BulletType type, int targetId = -1, bool rapidFire = false, bool isAuto = false)
         {
             if (p != null && !Config.IsMaintain)
             {
