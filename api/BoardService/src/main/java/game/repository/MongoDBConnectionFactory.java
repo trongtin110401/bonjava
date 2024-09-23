@@ -31,9 +31,9 @@ public class MongoDBConnectionFactory {
 
     public static void newConnection() {
         MongoClientOptions options = MongoClientOptions.builder()
-                .connectionsPerHost(100)  // Default is 100
-                .minConnectionsPerHost(30)  // Default is 20
-                .maxConnectionIdleTime(60000) // Optional idle time in milliseconds
+                .connectionsPerHost(30)  // Default is 100
+                .minConnectionsPerHost(5)  // Default is 20
+                .maxConnectionIdleTime(360000) // Optional idle time in milliseconds
                 .socketKeepAlive(true)
                 .build();
         MongoCredential credential = MongoCredential.createCredential(MONGODB_USERNAME, MONGODB_AUTH_DATABASE, MONGODB_PASSWORD.toCharArray());
