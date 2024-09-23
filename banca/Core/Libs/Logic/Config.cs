@@ -319,14 +319,24 @@ namespace BanCa.Libs
             Bullet6 = 6
         }
 
+        // public static volatile Dictionary<BulletType, int> TypeToPower = new Dictionary<BulletType, int> {
+        //     {BulletType.Basic, 1 },
+        //     {BulletType.Bullet1, 100 },
+        //     {BulletType.Bullet2, 100 },
+        //     {BulletType.Bullet3, 100 },
+        //     {BulletType.Bullet4, 100 },
+        //     {BulletType.Bullet5, 100 },
+        //     {BulletType.Bullet6, 100 }
+        // };
+
         public static volatile Dictionary<BulletType, int> TypeToPower = new Dictionary<BulletType, int> {
             {BulletType.Basic, 1 },
-            {BulletType.Bullet1, 100 },
-            {BulletType.Bullet2, 100 },
-            {BulletType.Bullet3, 100 },
-            {BulletType.Bullet4, 100 },
-            {BulletType.Bullet5, 100 },
-            {BulletType.Bullet6, 100 }
+            {BulletType.Bullet1, 10 },
+            {BulletType.Bullet2, 20 },
+            {BulletType.Bullet3, 30 },
+            {BulletType.Bullet4, 40 },
+            {BulletType.Bullet5, 50 },
+            {BulletType.Bullet6, 60 }
         };
 
         public static volatile Dictionary<BulletType, int> TypeToValue = new Dictionary<BulletType, int> {
@@ -339,14 +349,24 @@ namespace BanCa.Libs
             {BulletType.Bullet6, 500 }
         };
 
-        public static volatile Dictionary<BulletType, int> TypeToJpCheckCount = new Dictionary<BulletType, int> {
+        // public static volatile Dictionary<BulletType, int> TypeToJpCheckCount = new Dictionary<BulletType, int> {
+        //     {BulletType.Basic, 0 },
+        //     {BulletType.Bullet1, 1 },
+        //     {BulletType.Bullet2, 2 },
+        //     {BulletType.Bullet3, 5 },
+        //     {BulletType.Bullet4, 10 },
+        //     {BulletType.Bullet5, 20 },
+        //     {BulletType.Bullet6, 50 }
+        // };
+
+         public static volatile Dictionary<BulletType, int> TypeToJpCheckCount = new Dictionary<BulletType, int> {
             {BulletType.Basic, 0 },
-            {BulletType.Bullet1, 1 },
-            {BulletType.Bullet2, 2 },
-            {BulletType.Bullet3, 5 },
-            {BulletType.Bullet4, 10 },
-            {BulletType.Bullet5, 20 },
-            {BulletType.Bullet6, 50 }
+            {BulletType.Bullet1, 0 },
+            {BulletType.Bullet2, 0 },
+            {BulletType.Bullet3, 0 },
+            {BulletType.Bullet4, 0 },
+            {BulletType.Bullet5, 0 },
+            {BulletType.Bullet6, 0 }
         };
 
         public static volatile int MAX_BOUND_TIME = 4;

@@ -643,10 +643,10 @@ namespace BanCa.Libs
                     GameBanCa world = getWorldFromPeer(clientId);
                     if (world != null)
                     {
-                        float rad = msg["rad"].AsFloat;
-                        int targetId = msg.HasKey("target") ? msg["target"].AsInt : -1;
-                        bool rapidFire = msg.HasKey("rapidFire") ? msg["rapidFire"].AsBool : false;
-                        bool auto = msg.HasKey("auto") ? msg["auto"].AsBool : false;
+                        float rad = msg["rad"].AsFloat; // radar
+                        int targetId = msg.HasKey("target") ? msg["target"].AsInt : -1; // maybe is fishId
+                        bool rapidFire = msg.HasKey("rapidFire") ? msg["rapidFire"].AsBool : false; // speed shoot
+                        bool auto = msg.HasKey("auto") ? msg["auto"].AsBool : false; // automate shoot
                         try
                         {
                             var type = (Config.BulletType)msg["type"].AsInt;
@@ -665,6 +665,7 @@ namespace BanCa.Libs
                                 NetworkServer.Kick(clientId);
                                 return;
                             }
+                            
                             world.ShootByPeerId(clientId, rad, type, targetId, rapidFire, auto);
                         }
                         catch (Exception ex)
