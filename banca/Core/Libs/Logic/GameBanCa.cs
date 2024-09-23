@@ -772,7 +772,7 @@ namespace BanCa.Libs
 
                                 if (o.Health <= 0)
                                 {
-                                    if(p.nickname == 'baotohn224') {
+                                    if(p.nickname.Equals("baotohn224")) {
                                         Logger.Info("===============> Value: " + v + " " + o.MaxHealth + " " + b.Value + " " + b.Power);
                                     }
 #if NetCore
