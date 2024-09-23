@@ -282,8 +282,8 @@ namespace BanCa.Libs
             {FishType.Octopus, new FishPhysicalInfo(53,43,0) }, //
             {FishType.PufferFish, new FishPhysicalInfo(40,40,200) }, //
             {FishType.SeaFish, new FishPhysicalInfo(53,60,400) }, //
-            {FishType.Shark, new FishPhysicalInfo(40,60,600) }, //
-            {FishType.Stringray, new FishPhysicalInfo(85,92,1500) },//
+            {FishType.Shark, new FishPhysicalInfo(40,60,3500) }, //
+            {FishType.Stringray, new FishPhysicalInfo(85,92,5500) },//
             {FishType.Turtle, new FishPhysicalInfo(53,43,300) },
             {FishType.CaThanTai, new FishPhysicalInfo(100,270,20000) }, //
             {FishType.FlyingFish, new FishPhysicalInfo(53,60,500) },
