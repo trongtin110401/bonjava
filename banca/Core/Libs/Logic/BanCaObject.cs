@@ -648,6 +648,9 @@ namespace BanCa.Libs
         {
             Health -= bullet.Power;
             Value += bullet.Value;
+            if(Value >= 250) {
+                Value = 250;
+            }
             whoShoots.Add(bullet.PlayerId);
             UpdateBound();
         }
