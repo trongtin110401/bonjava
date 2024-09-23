@@ -282,8 +282,8 @@ namespace BanCa.Libs
             {FishType.Octopus, new FishPhysicalInfo(53,43,0) }, //
             {FishType.PufferFish, new FishPhysicalInfo(40,40,200) }, //
             {FishType.SeaFish, new FishPhysicalInfo(53,60,400) }, //
-            {FishType.Shark, new FishPhysicalInfo(40,60,3500) }, //
-            {FishType.Stringray, new FishPhysicalInfo(85,92,5500) },//
+            {FishType.Shark, new FishPhysicalInfo(40,60,600) }, //
+            {FishType.Stringray, new FishPhysicalInfo(85,92,1500) },//
             {FishType.Turtle, new FishPhysicalInfo(53,43,300) },
             {FishType.CaThanTai, new FishPhysicalInfo(100,270,20000) }, //
             {FishType.FlyingFish, new FishPhysicalInfo(53,60,500) },
@@ -294,13 +294,13 @@ namespace BanCa.Libs
             {FishType.MermaidBig, new FishPhysicalInfo(53,280,10000) }, //
             {FishType.MermaidSmall, new FishPhysicalInfo(80,200,7000) }, //
             {FishType.BombFish, new FishPhysicalInfo(100,420,6000000) }, //
-            {FishType.Fish19, new FishPhysicalInfo(100,420,20000) }, //
-            {FishType.Fish20, new FishPhysicalInfo(100,420,40000) }, //
-            {FishType.Fish21, new FishPhysicalInfo(100,420,60000) }, //
-            {FishType.Fish22, new FishPhysicalInfo(100,420,80000) }, //
-            {FishType.Fish23, new FishPhysicalInfo(100,420,100000) }, //
-            {FishType.Fish24, new FishPhysicalInfo(100,420,120000) }, //
-            {FishType.Fish25, new FishPhysicalInfo(100,420,150000) }, //
+            {FishType.Fish19, new FishPhysicalInfo(100,420,1000) }, //
+            {FishType.Fish20, new FishPhysicalInfo(100,420,1500) }, //
+            {FishType.Fish21, new FishPhysicalInfo(100,420,2000) }, //
+            {FishType.Fish22, new FishPhysicalInfo(100,420,3000) }, //
+            {FishType.Fish23, new FishPhysicalInfo(100,420,3500) }, //
+            {FishType.Fish24, new FishPhysicalInfo(100,420,4000) }, //
+            {FishType.Fish25, new FishPhysicalInfo(100,420,4500) }, //
         };
         public static volatile float MinScale = 1f;
         public static volatile float MaxScale = 1.05f;
@@ -336,7 +336,7 @@ namespace BanCa.Libs
             {BulletType.Bullet3, 30 },
             {BulletType.Bullet4, 40 },
             {BulletType.Bullet5, 50 },
-            {BulletType.Bullet6, 60 }
+            {BulletType.Bullet6, 100 }
         };
 
         public static volatile Dictionary<BulletType, int> TypeToValue = new Dictionary<BulletType, int> {

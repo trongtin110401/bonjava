@@ -68,7 +68,7 @@ namespace BanCa.Libs
         {
             this.world = world;
 
-            MaxHealth = Health = 1000;
+            MaxHealth = Health = 6600;
             Value = 0;
             MoveCount = 30 + world.Random.Next() % 30;
             TurnAngleRadian = Config.TURN_ANGLE_RAD;
