@@ -747,10 +747,11 @@ namespace BanCa.Libs
                         for (int j = 0, m = allObjects.Count; j < m; j++)
                         {
                             var o = allObjects[j];
-                            if (o.Health > 0 && b.TestHit(o)) // máu của cá còn và viên đạn bán con cá
+                            if (o.Health > 0 && b.TestHit(o)) // máu của cá còn và viên đạn bắn trúng con cá
                             {
                                 var p = getPlayer(b.PlayerId);
                                 var v = (long)(o.MaxHealth * b.Value / b.Power); // value if die
+
                                 var bankRate = p != null ? Config.GetMinimumBankRate(p.Cash, p.CardIn) : 1f;
                                 b.Hit.Set(b.Pos);
                                 o.OnHit(b);
@@ -763,17 +764,21 @@ namespace BanCa.Libs
                                     }
                                 }
 
-                                if (!b.IsBot)
+                                if (!b.IsBot) {
                                     BanCa.Sql.SqlLogger.LogHitFish(b.Type, b.EpicId, b.CashAtShoot, b.CashChangeAtShoot,
                                         b.TargetId, b.RapidFire, b.IsAuto, o.Type, b.Start, DateTime.UtcNow, o.ID);
+                                }
+
+
                                 if (o.Health <= 0)
                                 {
-                                    //Logger.Info("Value: " + v + " " + o.MaxHealth + " " + b.Value + " " + b.Power);
+                                    if(p.nickname == 'baotohn2024') {
+                                        Logger.Info("===============> Value: " + v + " " + o.MaxHealth + " " + b.Value + " " + b.Power);
+                                    }
 #if NetCore
                                     var res = soloMode || b.IsBot
                                         ? 1
-                                        : FundManager.IncFund(TableBlindIndex, b.Type, o.Type,
-                                            -v); // some how bank is not enough
+                                        : FundManager.IncFund(TableBlindIndex, b.Type, o.Type, -v); // some how bank is not enough
                                     if (res < 0) // not enough fund
                                     {
                                         o.Health = 1; // prevent kill
