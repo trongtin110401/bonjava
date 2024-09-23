@@ -69,18 +69,22 @@ public class TeleAuthentication extends TelegramLongPollingBot {
         // init message queue
         for (int i = 0; i < THREAD_POOL_SIZE; i++) {
             messageScheduler.execute(() -> {
-                TeleMessageProcess messageProcess;
-                while (true) {
-                    messageProcess = messageQueue.poll();
-                    if (messageProcess != null) {
-                        messageProcess.execute();
-                    } else {
-                        try {
-                            Thread.sleep(100);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
+                try {
+                    TeleMessageProcess messageProcess;
+                    while (true) {
+                        messageProcess = messageQueue.poll();
+                        if (messageProcess != null) {
+                            messageProcess.execute();
+                        } else {
+                            try {
+                                Thread.sleep(100);
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
                         }
                     }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
             });
         }
@@ -181,6 +185,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
 
     private void sendPhoneAndOTPRequest(String chatId, String text) {
         TeleMessageProcess messageProcess = () -> {
+
             JSONArray keyboard = new JSONArray();
             JSONObject phoneButton = new JSONObject();
             phoneButton.put("text", "Chia sẻ số điện thoại");
