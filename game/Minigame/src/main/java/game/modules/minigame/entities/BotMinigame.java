@@ -409,7 +409,7 @@ public class BotMinigame {
     private static int randomBettingTime(int minTime, int maxTime, int phanTramVaoSom) {
         Random rd = new Random();
         int n = rd.nextInt(100);
-        if (n > phanTramVaoSom) {
+        if (n < phanTramVaoSom) {
             int minTime5s = maxTime - 5;
             return rd.nextInt(maxTime - minTime5s) + minTime5s;
         }
