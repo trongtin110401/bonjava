@@ -411,9 +411,9 @@ public class BotMinigame {
         int n = rd.nextInt(100);
         if (n > phanTramVaoSom) {
             int minTime5s = maxTime - 5;
-            return rd.nextInt(maxTime - minTime5s) + minTime5s;
+            return rd.nextInt(maxTime - 2 - minTime5s) + minTime5s;
         }
-        return rd.nextInt(maxTime - 2 - minTime) + minTime;
+        return rd.nextInt(maxTime - 5 - minTime) + minTime;
     }
 
 
