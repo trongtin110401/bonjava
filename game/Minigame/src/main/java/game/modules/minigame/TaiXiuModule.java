@@ -379,11 +379,6 @@ public class TaiXiuModule
             this.botsVin.clear();
             this.botsVin = BotMinigame.getBotTaiXiu("vin");
             Debug.trace((Object) ("BOTS VIN: " + this.botsVin.size()));
-//      List<BotTaiXiu> botsVip = BotMinigame.getVipBotTaiXiu();
-//      this.botsVin.addAll(botsVip);
-//      Debug.trace((Object) ("TX BOTS VIP: " + botsVip.size()));
-            //this.botsXu = BotMinigame.getBotTaiXiu("xu");
-//            Debug.trace((Object) ("BOTS XU: " + this.botsXu.size()));
         } catch (Exception e) {
             sendLogToTele(e.getMessage());
             GameUtils.sendAlert("Bot tai xiu start error: " + e.getMessage() + ", time= " + DateTimeUtils.getCurrentTime());
@@ -400,11 +395,6 @@ public class TaiXiuModule
                 roomVin.betTaiXiu(b.getNickname(), 0, b.getBetValue(), b.getTimeBetting(), (short) 1, b.getBetSide(), true);
             }
         }
-
-//    for (BotTaiXiu b : this.botsXu) {
-//      if (b.getTimeBetting() != 60 - count) continue;
-//      roomXu.betTaiXiu(b.getNickname(), 0, b.getBetValue(), b.getTimeBetting(), (short) 0, b.getBetSide(), true);
-//    }
     }
 
     // todo : user đặt cược tiền

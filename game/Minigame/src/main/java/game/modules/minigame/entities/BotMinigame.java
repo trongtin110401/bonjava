@@ -270,7 +270,7 @@ public class BotMinigame {
     public static List<BotTaiXiu> getBotTaiXiu(String moneyType) {
         Random rd = new Random();
         int phanTramVaoSom = 80;
-        int[] arr = new int[]{60, 70, 65, 55, 75};
+        int[] arr = new int[]{10, 20, 30, 40, 50};
         int index = rd.nextInt(arr.length);
         phanTramVaoSom = arr[index];
         ArrayList<BotTaiXiu> results = new ArrayList<BotTaiXiu>();
