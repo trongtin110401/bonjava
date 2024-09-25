@@ -884,7 +884,7 @@ namespace BanCa.Libs
                                     o.Health = o.MaxHealth; // special fish is immortal
                                     BanCa.Sql.SqlLogger.LogHitFish(b.Type, b.EpicId, b.CashAtShoot, b.CashChangeAtShoot,
                                         b.TargetId, b.RapidFire, b.IsAuto, o.Type, b.Start, DateTime.UtcNow, o.ID);
-                                    if (o.Type == Config.FishType.GoldenFrog) // handle GoldenFrog
+                                    //if (o.Type == Config.FishType.GoldenFrog) // handle GoldenFrog
                                     {
                                         var p = getPlayer(b.PlayerId);
                                         if (p != null)
@@ -932,7 +932,7 @@ namespace BanCa.Libs
                                             }
                                         }
                                     }
-                                    else if (o.Type == Config.FishType.BombFish) // also handle BombFish
+                                    //else if (o.Type == Config.FishType.BombFish) // also handle BombFish
                                     {
                                         var p = getPlayer(b.PlayerId);
                                         if (p != null)
