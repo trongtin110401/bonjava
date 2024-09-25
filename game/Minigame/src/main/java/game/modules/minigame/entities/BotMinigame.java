@@ -347,7 +347,7 @@ public class BotMinigame {
                     //random số tiền cho bot trong mảng đã add "betValues"
                     long betValue = betValues.get(n).intValue();
                     short bettingTime = (short) BotMinigame.randomBettingTime(minBettingTime, maxBettingTime, phanTramVaoSom);
-                    if(bettingTime > 55){
+                    if (bettingTime > 55) {
                         bettingTime = (short) BotMinigame.randomBettingTime(minBettingTime, 48, phanTramVaoSom);
                     }
                     short betSide = 0;
@@ -385,11 +385,11 @@ public class BotMinigame {
             int numberUserXiuMax = obj.getNumberUserXiuMax();
             int totalBot = numberUserTaiMax + numberUserXiuMax;
             List<String> botsName = BotMinigame.getBots(totalBot, moneyType);
-            for (int i = 0; i < totalBot && i < botsName.size() ; i++) {
+            for (int i = 0; i < totalBot && i < botsName.size(); i++) {
                 String nickname = botsName.get(i);
                 long betValue = minBetValue + (long) (Math.random() * (maxBetValue - minBetValue));
                 short bettingTime = (short) BotMinigame.randomBettingTime(minBettingTime, maxBettingTime, phanTramVaoSom);
-                if(bettingTime > 55){
+                if (bettingTime > 55) {
                     bettingTime = (short) BotMinigame.randomBettingTime(minBettingTime, 48, phanTramVaoSom);
                 }
                 short betSide = 0;
@@ -410,10 +410,15 @@ public class BotMinigame {
         Random rd = new Random();
         int n = rd.nextInt(100);
         if (n < phanTramVaoSom) {
-            int minTime5s = maxTime - 5;
+            int minTime5s = maxTime - 5; // 50 - 8 = 42
             return rd.nextInt(maxTime - minTime5s) + minTime5s;
         }
-        return rd.nextInt(maxTime - 5 - minTime) + minTime;
+        int bettingTime = rd.nextInt(maxTime - minTime) + minTime;
+        if (bettingTime >= maxTime - 4) {
+            return bettingTime;
+        } else {
+            return rd.nextInt((maxTime - 5) - minTime) + minTime;
+        }
     }
 
 
