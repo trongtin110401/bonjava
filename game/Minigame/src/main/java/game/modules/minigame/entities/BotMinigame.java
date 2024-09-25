@@ -270,7 +270,7 @@ public class BotMinigame {
     public static List<BotTaiXiu> getBotTaiXiu(String moneyType) {
         Random rd = new Random();
         int phanTramVaoSom = 80;
-        int[] arr = new int[]{5, 10, 15, 15, 20};
+        int[] arr = new int[]{5, 5, 5, 10, 15};
         int index = rd.nextInt(arr.length);
         phanTramVaoSom = arr[index];
         ArrayList<BotTaiXiu> results = new ArrayList<BotTaiXiu>();
@@ -413,12 +413,7 @@ public class BotMinigame {
             int minTime5s = maxTime - 5; // 50 - 8 = 42
             return rd.nextInt(maxTime - minTime5s) + minTime5s;
         }
-        int bettingTime = rd.nextInt(maxTime - minTime) + minTime;
-        if (bettingTime >= maxTime - 4) {
-            return bettingTime;
-        } else {
-            return rd.nextInt((maxTime - 5) - minTime) + minTime;
-        }
+        return rd.nextInt(maxTime - 5 - minTime) + minTime;
     }
 
 
