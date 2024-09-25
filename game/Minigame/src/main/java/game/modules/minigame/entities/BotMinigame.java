@@ -392,6 +392,11 @@ public class BotMinigame {
                 if (bettingTime > 55) {
                     bettingTime = (short) BotMinigame.randomBettingTime(minBettingTime, 48, phanTramVaoSom);
                 }
+
+                if (bettingTime >= maxBettingTime - 3) {
+                    betValue = new Random().nextInt((int) (maxBetValue / 5 - minBetValue / 5)) + minBetValue / 5;
+                }
+
                 short betSide = 0;
                 if (i < numberUserTaiMax) {
                     betSide = 1;
