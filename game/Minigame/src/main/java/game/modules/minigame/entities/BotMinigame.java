@@ -394,7 +394,7 @@ public class BotMinigame {
                 }
 
                 if (bettingTime >= maxBettingTime - 3) {
-                    betValue = new Random().nextInt((int) (maxBetValue / 5 - minBetValue / 5)) + minBetValue / 5;
+                    betValue = new Random().nextInt((int) (maxBetValue / 10)) + minBetValue;
                 }
 
                 short betSide = 0;
