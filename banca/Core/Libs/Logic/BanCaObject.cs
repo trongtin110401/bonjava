@@ -68,7 +68,7 @@ namespace BanCa.Libs
         {
             this.world = world;
 
-            MaxHealth = Health = 6600;
+            MaxHealth = Health = 1000;
             Value = 0;
             MoveCount = 30 + world.Random.Next() % 30;
             TurnAngleRadian = Config.TURN_ANGLE_RAD;
@@ -648,9 +648,6 @@ namespace BanCa.Libs
         {
             Health -= bullet.Power;
             Value += bullet.Value;
-            if(Value >= 250) {
-                Value = 250;
-            }
             whoShoots.Add(bullet.PlayerId);
             UpdateBound();
         }
