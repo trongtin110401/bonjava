@@ -4,7 +4,7 @@
   "mysql-connection": "server=10.40.112.5;database={0};SslMode=none;uid=root;pwd=0Db20H9CP6T4jRNBB70bVTrf5o7IG9;CharSet=utf8mb4;",
   "mysql-defaul-db": "cgame",
 
-  "redis-address": "10.40.112.5",
+  "redis-address": "localhost",
   "redis-password": "hiBONwin",
 
   "usd-price": 23000,
