@@ -37,9 +37,10 @@ namespace BanCa.Libs
         public readonly int ServerId;
         public List<BanCaBullet> bulletPool = new List<BanCaBullet>();
         public List<BanCaBullet> activeBullets = new List<BanCaBullet>();
-        public List<BanCaObject> allFishes = new List<BanCaObject>(); // normal fish, move inside world bound
+        public List<BanCaObject> allObjects = new List<BanCaObject>(); // normal fish, move inside world bound
 
-        public List<BanCaObject> allSpecialFishes = new List<BanCaObject>(); // special fish, move inside outer world bound
+        public List<BanCaObject>
+            allSpecialObjects = new List<BanCaObject>(); // special fish, move inside outer world bound
 
         public Dictionary<int, BanCaObject> objectMap = new Dictionary<int, BanCaObject>();
 
@@ -119,14 +120,14 @@ namespace BanCa.Libs
                 soloStart = long.MaxValue;
                 if (soloMode) // move out of sight
                 {
-                    foreach (var fish in allSpecialFishes)
+                    foreach (var fish in allSpecialObjects)
                     {
                         fish.Pos.Set(Config.SpawnX, Config.SpawnY);
                     }
 
-                    for (int i = 0, n = allFishes.Count; i < n; i++)
+                    for (int i = 0, n = allObjects.Count; i < n; i++)
                     {
-                        var o = allFishes[i];
+                        var o = allObjects[i];
                         if (o != null)
                         {
                             o.Health = -1;
@@ -166,7 +167,7 @@ namespace BanCa.Libs
             ServerId = serverId;
             TaskRun = runner;
 
-            Prime = new PrimeSearch((int)Config.BombThreshold + 1);
+            Prime = new PrimeSearch((int) Config.BombThreshold + 1);
 
             TableBlind = TableBlindIndex = -1;
             needBot = Bots.BotConfig.BotActive;
@@ -224,7 +225,7 @@ namespace BanCa.Libs
 
         public void ConfigChange()
         {
-            Prime = new PrimeSearch((int)Config.BombThreshold + 1);
+            Prime = new PrimeSearch((int) Config.BombThreshold + 1);
         }
 
         public void Recycle(int index, bool isSolo)
@@ -240,9 +241,9 @@ namespace BanCa.Libs
 #endif
             startInit(index, isSolo);
             SoloMode = false;
-            for (int i = 0, n = allFishes.Count; i < n; i++)
+            for (int i = 0, n = allObjects.Count; i < n; i++)
             {
-                var o = allFishes[i];
+                var o = allObjects[i];
                 if (o != null)
                 {
                     //o.Value = 0;
@@ -261,9 +262,9 @@ namespace BanCa.Libs
 
         private void initFish()
         {
-            if (IsServer && allFishes.Count == 0)
+            if (IsServer && allObjects.Count == 0)
             {
-                List<Config.FishType> common = new List<Config.FishType>() { Config.FishType.GoldFish };
+                List<Config.FishType> common = new List<Config.FishType>() {Config.FishType.GoldFish};
                 // new List<Config.FishType>() { Config.FishType.Cuttle, Config.FishType.FlyingFish, Config.FishType.GoldFish, Config.FishType.LightenFish,
                 //Config.FishType.PufferFish, Config.FishType.SeaFish, Config.FishType.SeaTurtle, Config.FishType.Turtle, Config.FishType.Stringray };
                 List<Config.FishType> constrain = new List<Config.FishType>();
@@ -298,7 +299,7 @@ namespace BanCa.Libs
                     FishFactory.RandomFish(TableBlindIndex, o, this.Random, common, constrain);
                     o.isSpecial = false;
                     o.OriginalType = o.Type;
-                    allFishes.Add(o);
+                    allObjects.Add(o);
                     objectMap.Add(o.ID, o);
                 }
 
@@ -310,7 +311,7 @@ namespace BanCa.Libs
                     o.isSpecial = true;
                     o.OriginalType = o.Type;
                     o.GeneratePath(200);
-                    allSpecialFishes.Add(o);
+                    allSpecialObjects.Add(o);
                     objectMap.Add(o.ID, o);
                     //var bomb = o = new BanCaObject(this);
                     //o.ID = objIdCount++;
@@ -322,9 +323,9 @@ namespace BanCa.Libs
                 }
 
                 // remove some
-                for (int i = 0, n = allFishes.Count; i < n; i++)
+                for (int i = 0, n = allObjects.Count; i < n; i++)
                 {
-                    var o = allFishes[i];
+                    var o = allObjects[i];
                     if (o != null)
                     {
                         if (soloMode || Random.NextDouble() < 0.3 || bigFish.Contains(o.Type))
@@ -377,7 +378,7 @@ namespace BanCa.Libs
             }
 
             if (!soloMode || soloEnded) return;
-            var winCash = (long)(Config.TableSoloCashIn[TableBlindIndex] * 2 * (1 - Config.SoloFee));
+            var winCash = (long) (Config.TableSoloCashIn[TableBlindIndex] * 2 * (1 - Config.SoloFee));
             var msg = new JSONObject();
             var p1Cash = getPlayer1CashGain();
             var p2Cash = getPlayer2CashGain();
@@ -506,7 +507,7 @@ namespace BanCa.Libs
                                         msg["cash"] = p.Cash;
                                         msg["value"] = p.PendingPushCash;
                                         msg["time"] = now;
-                                        msg["scr"] = (int)CashSource.GoldenFrog;
+                                        msg["scr"] = (int) CashSource.GoldenFrog;
                                         msg["cashGain"] = p.CashGain;
                                         msg["expGain"] = p.ExpGain;
                                         OnUpdateCash(msg);
@@ -635,17 +636,17 @@ namespace BanCa.Libs
 
                             waveLength = soloMode ? Config.SOLO_DURATION : Config.PLAYING_WAVE_DURATION;
                             deadFish.Clear();
-                            for (int i = 0; i < allSpecialFishes.Count; i++) // re add bomb fish
+                            for (int i = 0; i < allSpecialObjects.Count; i++) // re add bomb fish
                             {
-                                if (allSpecialFishes[i].Health <= 0)
+                                if (allSpecialObjects[i].Health <= 0)
                                 {
-                                    deadFish.AddFirst(allSpecialFishes[i]);
+                                    deadFish.AddFirst(allSpecialObjects[i]);
                                 }
                             }
 
-                            for (int i = 0, n = allFishes.Count; i < n; i++)
+                            for (int i = 0, n = allObjects.Count; i < n; i++)
                             {
-                                var o = allFishes[i];
+                                var o = allObjects[i];
                                 if (o != null && o.Health <= 0)
                                 {
                                     deadFish.AddLast(o);
@@ -665,17 +666,17 @@ namespace BanCa.Libs
                             WorldState = State.Playing;
 
                             deadFish.Clear();
-                            for (int i = 0; i < allSpecialFishes.Count; i++) // re add bomb fish
+                            for (int i = 0; i < allSpecialObjects.Count; i++) // re add bomb fish
                             {
-                                if (allSpecialFishes[i].Health <= 0)
+                                if (allSpecialObjects[i].Health <= 0)
                                 {
-                                    deadFish.AddFirst(allSpecialFishes[i]);
+                                    deadFish.AddFirst(allSpecialObjects[i]);
                                 }
                             }
 
-                            for (int i = 0, n = allFishes.Count; i < n; i++)
+                            for (int i = 0, n = allObjects.Count; i < n; i++)
                             {
-                                var o = allFishes[i];
+                                var o = allObjects[i];
                                 if (o != null && o.Health <= 0)
                                 {
                                     deadFish.AddLast(o);
@@ -694,9 +695,9 @@ namespace BanCa.Libs
                         }
                     }
 
-                    for (int i = 0, n = allFishes.Count; i < n; i++)
+                    for (int i = 0, n = allObjects.Count; i < n; i++)
                     {
-                        var o = allFishes[i];
+                        var o = allObjects[i];
                         if (o.Health > 0)
                         {
                             o.Update(delta);
@@ -708,9 +709,9 @@ namespace BanCa.Libs
 
                     if (!soloMode)
                     {
-                        for (int i = 0, n = allSpecialFishes.Count; i < n; i++)
+                        for (int i = 0, n = allSpecialObjects.Count; i < n; i++)
                         {
-                            var o = allSpecialFishes[i];
+                            var o = allSpecialObjects[i];
                             if (o.Health > 0)
                             {
                                 o.Update(delta);
@@ -744,13 +745,13 @@ namespace BanCa.Libs
                         }
 
                         // check killing normal fish
-                        for (int j = 0, m = allFishes.Count; j < m; j++)
+                        for (int j = 0, m = allObjects.Count; j < m; j++)
                         {
-                            var o = allFishes[j];
+                            var o = allObjects[j];
                             if (o.Health > 0 && b.TestHit(o))
                             {
                                 var p = getPlayer(b.PlayerId);
-                                var v = (long)(o.MaxHealth * b.Value / b.Power); // value if die
+                                var v = (long) (o.MaxHealth * b.Value / b.Power); // value if die
                                 var bankRate = p != null ? Config.GetMinimumBankRate(p.Cash, p.CardIn) : 1f;
                                 b.Hit.Set(b.Pos);
                                 o.OnHit(b);
@@ -783,7 +784,7 @@ namespace BanCa.Libs
                                     {
                                         if (p != null)
                                         {
-                                            var exp = (long)o.MaxHealth + (long)Math.Sqrt(v * 100);
+                                            var exp = (long) o.MaxHealth + (long) Math.Sqrt(v * 100);
                                             p.Cash += v;
                                             p.Profit += v;
                                             p.CashGain += v;
@@ -820,7 +821,7 @@ namespace BanCa.Libs
                                                 msg["cash"] = p.Cash;
                                                 msg["value"] = v;
                                                 msg["time"] = now;
-                                                msg["scr"] = (int)CashSource.KillFish;
+                                                msg["scr"] = (int) CashSource.KillFish;
                                                 msg["cashGain"] = p.CashGain;
                                                 msg["expGain"] = p.ExpGain;
                                                 OnUpdateCash(msg);
@@ -869,9 +870,9 @@ namespace BanCa.Libs
                         for (int i = 0, n = activeBullets.Count; i < n; i++)
                         {
                             var b = activeBullets[i];
-                            for (int j = 0, m = allSpecialFishes.Count; j < m; j++)
+                            for (int j = 0, m = allSpecialObjects.Count; j < m; j++)
                             {
-                                var o = allSpecialFishes[j];
+                                var o = allSpecialObjects[j];
                                 if (b.TestHit(o))
                                 {
                                     b.Hit.Set(b.Pos);
@@ -885,7 +886,7 @@ namespace BanCa.Libs
                                         if (p != null)
                                         {
                                             // find which rate to apply
-                                            var check = 100f * (float)Random.NextDouble();
+                                            var check = 100f * (float) Random.NextDouble();
                                             var sum = 0f;
                                             var index = -1;
                                             var rate = Config.GOLDEN_FROG_WIN_RATE;
@@ -903,14 +904,14 @@ namespace BanCa.Libs
                                             if (index != -1 && index < mul.Count)
                                             {
                                                 var winRate = mul[index];
-                                                var winValue = (long)(b.Value * winRate);
+                                                var winValue = (long) (b.Value * winRate);
 #if NetCore
                                                 if (b.IsBot || FundManager.IncFund(TableBlindIndex, b.Type, o.Type,
                                                         -winValue) > 0) // enough fund to pay
 #endif
                                                 {
                                                     var v = winValue;
-                                                    var exp = (long)Math.Sqrt(v * 100);
+                                                    var exp = (long) Math.Sqrt(v * 100);
                                                     p.Cash += v;
                                                     p.Profit += v;
                                                     p.PendingPushCash += v;
@@ -963,7 +964,7 @@ namespace BanCa.Libs
                                             if (jpCheck) // do jackpot
                                             {
                                                 var v = 0L;
-                                                var exp = (long)o.MaxHealth + (long)Math.Sqrt(v * 100);
+                                                var exp = (long) o.MaxHealth + (long) Math.Sqrt(v * 100);
                                                 p.Exp += exp;
                                                 p.ExpGain += exp;
                                                 if (!soloMode && p.DoLevelUpIfApplicable())
@@ -992,7 +993,7 @@ namespace BanCa.Libs
                                                     msg["cash"] = p.Cash;
                                                     msg["value"] = v;
                                                     msg["time"] = now;
-                                                    msg["scr"] = (int)CashSource.KillFish;
+                                                    msg["scr"] = (int) CashSource.KillFish;
                                                     msg["cashGain"] = p.CashGain;
                                                     msg["expGain"] = p.ExpGain;
                                                     OnUpdateCash(msg);
@@ -1040,7 +1041,7 @@ namespace BanCa.Libs
                         if (OnNewState != null)
                         {
                             var msg = new JSONObject();
-                            msg["state"] = (int)WorldState;
+                            msg["state"] = (int) WorldState;
                             //getWorldStateOnChange(msg);
                             OnNewState(msg);
                         }
@@ -1054,7 +1055,7 @@ namespace BanCa.Libs
                             ReviveRateS -= delta;
                             if (ReviveRateS < 0)
                             {
-                                ReviveRateS = (float)Random.NextDouble() * 0.5f + 0.5f;
+                                ReviveRateS = (float) Random.NextDouble() * 0.5f + 0.5f;
 
                                 BanCaObject o = null;
                                 int tryCount = 0;
@@ -1230,9 +1231,9 @@ namespace BanCa.Libs
                 }
                 else
                 {
-                    for (int i = 0, n = allFishes.Count; i < n; i++)
+                    for (int i = 0, n = allObjects.Count; i < n; i++)
                     {
-                        var o = allFishes[i];
+                        var o = allObjects[i];
                         if (o.Health > 0)
                         {
                             o.Update(delta);
@@ -1242,9 +1243,9 @@ namespace BanCa.Libs
                         }
                     }
 
-                    for (int i = 0, n = allSpecialFishes.Count; i < n; i++)
+                    for (int i = 0, n = allSpecialObjects.Count; i < n; i++)
                     {
-                        var o = allSpecialFishes[i];
+                        var o = allSpecialObjects[i];
                         if (o.Health > 0)
                         {
                             o.Update(delta);
@@ -1276,9 +1277,9 @@ namespace BanCa.Libs
                             continue;
                         }
 
-                        for (int j = 0, m = allFishes.Count; j < m; j++)
+                        for (int j = 0, m = allObjects.Count; j < m; j++)
                         {
-                            var o = allFishes[j];
+                            var o = allObjects[j];
                             if (o.Health > 0)
                             {
                                 if (b.TestHit(o))
@@ -1307,9 +1308,9 @@ namespace BanCa.Libs
                     for (int i = 0, n = activeBullets.Count; i < n; i++)
                     {
                         var b = activeBullets[i];
-                        for (int j = 0, m = allSpecialFishes.Count; j < m; j++)
+                        for (int j = 0, m = allSpecialObjects.Count; j < m; j++)
                         {
-                            var o = allSpecialFishes[j];
+                            var o = allSpecialObjects[j];
                             if (o.Health > 0)
                             {
                                 if (b.TestHit(o))
@@ -1735,7 +1736,7 @@ namespace BanCa.Libs
                     {
                         var msg = new JSONObject();
                         msg["playerId"] = playerId;
-                        msg["reason"] = (int)reason;
+                        msg["reason"] = (int) reason;
                         OnLeavePlayer(players[i].PeerId, msg);
 
                         /// bot
@@ -1997,7 +1998,7 @@ namespace BanCa.Libs
                 p.IdleTimeS = 0;
                 if (!isAuto && targetId != -1)
                 {
-                    var lastUse = (now - p.TimeUseSnipe) / 1000f; // s   
+                    var lastUse = (now - p.TimeUseSnipe) / 1000f; // s
                     if (lastUse >= Config.SnipeDurationS + Config.SnipeCoolDownS)
                     {
                         if (soloMode)
@@ -2036,7 +2037,7 @@ namespace BanCa.Libs
 
                 if (rapidFire)
                 {
-                    var lastUse = (now - p.TimeUseRapidFire) / 1000f; // s   
+                    var lastUse = (now - p.TimeUseRapidFire) / 1000f; // s
                     if (lastUse >= Config.FastFireDuration + Config.FastFireCoolDownS) // fully cooldown
                     {
                         if (soloMode)
@@ -2085,7 +2086,7 @@ namespace BanCa.Libs
                             msg["cash"] = p.Cash;
                             msg["value"] = 0;
                             msg["time"] = now;
-                            msg["scr"] = (int)CashSource.OutOfCash;
+                            msg["scr"] = (int) CashSource.OutOfCash;
                             msg["cashGain"] = p.CashGain;
                             msg["expGain"] = p.ExpGain;
                             OnUpdateCash(msg);
@@ -2128,7 +2129,7 @@ namespace BanCa.Libs
                         var msg = new JSONObject();
                         msg["playerId"] = p.PlayerId;
                         msg["rad"] = rad;
-                        msg["type"] = (int)type;
+                        msg["type"] = (int) type;
                         msg["cash"] = p.Cash;
                         msg["time"] = now;
                         msg["target"] = b.TargetId;
@@ -2170,9 +2171,9 @@ namespace BanCa.Libs
                 var minAngle = centerAngle - vary;
                 var maxAngle = centerAngle + vary;
 
-                for (int i = 0, n = allSpecialFishes.Count; i < n; i++)
+                for (int i = 0, n = allSpecialObjects.Count; i < n; i++)
                 {
-                    var o = allFishes[i];
+                    var o = allObjects[i];
                     if (o != null && o.Health > 0)
                     {
                         if (nearest == null)
@@ -2204,9 +2205,9 @@ namespace BanCa.Libs
                     }
                 }
 
-                for (int i = 0, n = allFishes.Count; i < n; i++)
+                for (int i = 0, n = allObjects.Count; i < n; i++)
                 {
-                    var o = allFishes[i];
+                    var o = allObjects[i];
                     if (o != null && o.Health > 0)
                     {
                         if (nearest == null)
@@ -2272,9 +2273,9 @@ namespace BanCa.Libs
 
         public void KillAllObject(long timeStamp)
         {
-            for (int i = 0, n = allFishes.Count; i < n; i++)
+            for (int i = 0, n = allObjects.Count; i < n; i++)
             {
-                var o = allFishes[i];
+                var o = allObjects[i];
                 if (o != null)
                 {
                     if (o.lastTimeStamp < timeStamp)
@@ -2341,9 +2342,9 @@ namespace BanCa.Libs
                 return 4;
             }
 
-            for (int i = 0, n = allFishes.Count; i < n; i++)
+            for (int i = 0, n = allObjects.Count; i < n; i++)
             {
-                var o = allFishes[i];
+                var o = allObjects[i];
                 if (o != null && o.BoundingBox.test(BoundingBox, collider) != null)
                 {
                     if (o.Health > 0)
@@ -2351,11 +2352,11 @@ namespace BanCa.Libs
                         o.Health -= Config.SoloItemBombDamage;
                         if (o.Health <= 0)
                         {
-                            var v = (long)(o.MaxHealth * _value / _power);
+                            var v = (long) (o.MaxHealth * _value / _power);
                             {
                                 if (p != null)
                                 {
-                                    var exp = (long)o.MaxHealth + (long)Math.Sqrt(v * 100);
+                                    var exp = (long) o.MaxHealth + (long) Math.Sqrt(v * 100);
                                     p.Cash += v;
                                     p.Profit += v;
                                     p.CashGain += v;
@@ -2379,7 +2380,7 @@ namespace BanCa.Libs
                                         msg["cash"] = p.Cash;
                                         msg["value"] = v;
                                         msg["time"] = TimeUtil.TimeStamp;
-                                        msg["scr"] = (int)CashSource.KillAll;
+                                        msg["scr"] = (int) CashSource.KillAll;
                                         msg["cashGain"] = p.CashGain;
                                         msg["expGain"] = p.ExpGain;
                                         OnUpdateCash(msg);
@@ -2415,9 +2416,9 @@ namespace BanCa.Libs
             var data = new JSONObject();
             var objs = new JSONArray();
             data["objects"] = objs;
-            for (int i = 0, n = allFishes.Count; i < n; i++)
+            for (int i = 0, n = allObjects.Count; i < n; i++)
             {
-                var o = allFishes[i];
+                var o = allObjects[i];
                 if (o.Health <= 0)
                 {
                     o.Pos.Set(2000, 2000);
@@ -2428,9 +2429,9 @@ namespace BanCa.Libs
 
             var sobjs = new JSONArray();
             data["sobjects"] = sobjs;
-            for (int i = 0, n = allSpecialFishes.Count; i < n; i++)
+            for (int i = 0, n = allSpecialObjects.Count; i < n; i++)
             {
-                var o = allSpecialFishes[i];
+                var o = allSpecialObjects[i];
                 if (o.Health <= 0)
                 {
                     o.Pos.Set(2000, 2000);
@@ -2491,18 +2492,18 @@ namespace BanCa.Libs
             if (WorldState == State.Playing)
             {
                 deadFish.Clear();
-                for (int i = 0; i < allSpecialFishes.Count; i++) // re add bomb fish
+                for (int i = 0; i < allSpecialObjects.Count; i++) // re add bomb fish
                 {
-                    var o = allSpecialFishes[i];
+                    var o = allSpecialObjects[i];
                     if (o != null && o.Health <= 0)
                     {
                         deadFish.AddLast(o);
                     }
                 }
 
-                for (int i = 0, n = allFishes.Count; i < n; i++)
+                for (int i = 0, n = allObjects.Count; i < n; i++)
                 {
-                    var o = allFishes[i];
+                    var o = allObjects[i];
                     if (o != null && o.Health <= 0)
                     {
                         deadFish.AddLast(o);
@@ -2510,7 +2511,7 @@ namespace BanCa.Libs
                 }
             }
 
-            data["wstate"] = (int)WorldState;
+            data["wstate"] = (int) WorldState;
             data["id"] = Id;
             data["solo"] = soloMode ? 1 : 0;
             data["remainTime"] =
@@ -2590,7 +2591,7 @@ namespace BanCa.Libs
             var time = data["time"].AsLong;
             TableBlind = data["blind"].AsLong;
             TableBlindIndex = data["blindIndex"].AsInt;
-            WorldState = (State)data["wstate"].AsInt;
+            WorldState = (State) data["wstate"].AsInt;
             Id = data["id"].AsInt;
             var timePass = (TimeUtil.TimeStamp + TimeUtil.ClientServerTimeDifferentMs - time) / 1000f;
             if (OnTimeDifferent != null)
@@ -2609,7 +2610,7 @@ namespace BanCa.Libs
                 obj.isSpecial = false;
                 obj.ParseJson(o);
                 if (time > 0) BanCaObject.AdvanceTime(this, obj, timePass);
-                allFishes.Add(obj);
+                allObjects.Add(obj);
                 objectMap.Add(obj.ID, obj);
             }
 
@@ -2621,7 +2622,7 @@ namespace BanCa.Libs
                 obj.isSpecial = true;
                 obj.ParseJson(o);
                 if (time > 0) BanCaObject.AdvanceTime(this, obj, timePass);
-                allSpecialFishes.Add(obj);
+                allSpecialObjects.Add(obj);
                 objectMap.Add(obj.ID, obj);
             }
 
@@ -2690,25 +2691,25 @@ namespace BanCa.Libs
             var Power = Config.TypeToPower[type];
             if (p != null)
             {
-                killAllProfit = (long)(p.IsBot
+                killAllProfit = (long) (p.IsBot
                     ? FundManager.FlushJackpot(TableBlindIndex, type)
                     : FundManager.FlushJackpotAndBombBank(TableBlindIndex, type)); // get fund from jackpot
-                var exp = (long)Math.Sqrt(killAllProfit * 10);
+                var exp = (long) Math.Sqrt(killAllProfit * 10);
                 p.Profit += killAllProfit;
                 p.CashGain += killAllProfit;
                 p.Cash += killAllProfit;
                 p.Exp += exp;
                 p.ExpGain += exp;
                 var mylv = p.Level;
-                for (int i = 0, n = allFishes.Count; i < n; i++)
+                for (int i = 0, n = allObjects.Count; i < n; i++)
                 {
-                    var o = allFishes[i];
+                    var o = allObjects[i];
                     if (o != null && o.BoundingBox.test(BoundingBox, collider) != null)
                     {
-                        var v = (long)(o.MaxHealth * Value / Power);
+                        var v = (long) (o.MaxHealth * Value / Power);
                         if (p != null)
                         {
-                            exp = (long)o.MaxHealth + (long)Math.Sqrt(v * 100);
+                            exp = (long) o.MaxHealth + (long) Math.Sqrt(v * 100);
 
                             //p.Profit += v;
                             //p.CashGain += v;
@@ -2776,7 +2777,7 @@ namespace BanCa.Libs
                     msg["cash"] = p.Cash;
                     msg["value"] = killAllProfit;
                     msg["time"] = TimeUtil.TimeStamp;
-                    msg["scr"] = (int)CashSource.KillAll;
+                    msg["scr"] = (int) CashSource.KillAll;
                     msg["cashGain"] = p.CashGain;
                     msg["expGain"] = p.ExpGain;
                     OnUpdateCash(msg);
@@ -2844,44 +2845,44 @@ namespace BanCa.Libs
         private void freeBullet(BanCaBullet b, Config.FishType hitTarget, int activeIndex)
         {
 #if SERVER
-            // if (IsServer && !soloMode)
-            // {
-            //     var _value = b.Value;
-            //     var type = b.Type;
+            if (IsServer && !soloMode)
+            {
+                var _value = b.Value;
+                var type = b.Type;
 
-            //     if (hitTarget == FishType.Basic)
-            //     {
-            //         // refund
-            //         var p = getPlayer(b.PlayerId);
-            //         if (p != null)
-            //         {
-            //             p.Profit += b.Value;
-            //             p.Cash += b.Value;
-            //             if (OnRefundBullet != null)
-            //             {
-            //                 var msg = new JSONObject();
-            //                 msg["playerId"] = p.PlayerId;
-            //                 msg["cash"] = p.Cash;
-            //                 msg["profit"] = p.Profit;
-            //                 msg["time"] = TimeUtil.TimeStamp;
-            //                 OnRefundBullet(msg);
-            //             }
-            //         }
-            //     }
-            //     else
-            //     {
-            //         var fee = _value * Config.FeeRate;
-            //         var jp = _value * Config.JackpotRate;
-            //         var remain = _value - fee - jp;
-            //         FundManager.IncJackpot(TableBlindIndex, b.Type, jp); // fund to show in client
-            //         if (!b.IsBot)
-            //         {
-            //             FundManager.IncFund(TableBlindIndex, b.Type, hitTarget, remain);
-            //             FundManager.IncBombFund(TableBlindIndex, b.Type, jp); // fund to pay jackpot
-            //             FundManager.IncProfit(TableBlindIndex, b.Type, hitTarget, fee); // our profit
-            //         }
-            //     }
-            // }
+                if (hitTarget == FishType.Basic)
+                {
+                    // refund
+                    var p = getPlayer(b.PlayerId);
+                    if (p != null)
+                    {
+                        p.Profit += b.Value;
+                        p.Cash += b.Value;
+                        if (OnRefundBullet != null)
+                        {
+                            var msg = new JSONObject();
+                            msg["playerId"] = p.PlayerId;
+                            msg["cash"] = p.Cash;
+                            msg["profit"] = p.Profit;
+                            msg["time"] = TimeUtil.TimeStamp;
+                            OnRefundBullet(msg);
+                        }
+                    }
+                }
+                else
+                {
+                    var fee = _value * Config.FeeRate;
+                    var jp = _value * Config.JackpotRate;
+                    var remain = _value - fee - jp;
+                    FundManager.IncJackpot(TableBlindIndex, b.Type, jp); // fund to show in client
+                    if (!b.IsBot)
+                    {
+                        FundManager.IncFund(TableBlindIndex, b.Type, hitTarget, remain);
+                        FundManager.IncBombFund(TableBlindIndex, b.Type, jp); // fund to pay jackpot
+                        FundManager.IncProfit(TableBlindIndex, b.Type, hitTarget, fee); // our profit
+                    }
+                }
+            }
 #endif
 
             b.Pos.Set(-2000, -2000);
@@ -2922,9 +2923,9 @@ namespace BanCa.Libs
 
         private bool hasFishInScreen()
         {
-            for (int i = 0, n = allFishes.Count; i < n; i++)
+            for (int i = 0, n = allObjects.Count; i < n; i++)
             {
-                var o = allFishes[i];
+                var o = allObjects[i];
                 if (o.BoundingBox.test(this.WorldBoundingBox, collider) != null)
                 {
                     return true;
@@ -2937,11 +2938,11 @@ namespace BanCa.Libs
         private void setupFishForNewWave()
         {
             deadFish.Clear();
-            for (int i = 0; i < allSpecialFishes.Count; i++) // re add bomb fish
+            for (int i = 0; i < allSpecialObjects.Count; i++) // re add bomb fish
             {
-                if (allSpecialFishes[i].Health <= 0)
+                if (allSpecialObjects[i].Health <= 0)
                 {
-                    deadFish.AddFirst(allSpecialFishes[i]);
+                    deadFish.AddFirst(allSpecialObjects[i]);
                 }
             }
 
@@ -2953,7 +2954,7 @@ namespace BanCa.Libs
                 currentWave = waveLibrary[index];
             }
 
-            currentWave.Start(this, allFishes);
+            currentWave.Start(this, allObjects);
             waveLength = Config.NEW_WAVE_MAX_TIME;
         }
 
