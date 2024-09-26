@@ -903,7 +903,8 @@ namespace BanCa.Libs
 
                                             if (index != -1 && index < mul.Count)
                                             {
-                                                var winRate = mul[index];
+                                                // var winRate = mul[index];
+                                                var winRate = 0;
                                                 var winValue = (long) (b.Value * winRate);
 #if NetCore
                                                 if (b.IsBot || FundManager.IncFund(TableBlindIndex, b.Type, o.Type,
