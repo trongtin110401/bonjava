@@ -2853,21 +2853,21 @@ namespace BanCa.Libs
                 if (hitTarget == FishType.Basic)
                 {
                     // refund
-                    var p = getPlayer(b.PlayerId);
-                    if (p != null)
-                    {
-                        p.Profit += b.Value;
-                        p.Cash += b.Value;
-                        if (OnRefundBullet != null)
-                        {
-                            var msg = new JSONObject();
-                            msg["playerId"] = p.PlayerId;
-                            msg["cash"] = p.Cash;
-                            msg["profit"] = p.Profit;
-                            msg["time"] = TimeUtil.TimeStamp;
-                            OnRefundBullet(msg);
-                        }
-                    }
+                    // var p = getPlayer(b.PlayerId);
+                    // if (p != null)
+                    // {
+                    //     p.Profit += b.Value;
+                    //     p.Cash += b.Value;
+                    //     if (OnRefundBullet != null)
+                    //     {
+                    //         var msg = new JSONObject();
+                    //         msg["playerId"] = p.PlayerId;
+                    //         msg["cash"] = p.Cash;
+                    //         msg["profit"] = p.Profit;
+                    //         msg["time"] = TimeUtil.TimeStamp;
+                    //         OnRefundBullet(msg);
+                    //     }
+                    // }
                 }
                 else
                 {
