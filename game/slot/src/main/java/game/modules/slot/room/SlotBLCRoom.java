@@ -96,7 +96,7 @@ public class SlotBLCRoom extends Slot25ExtendRoom {
                     // trừ tiền cược
                     // chỉ trừ tiền người chơi thật
                     if (!u.isBot()) {
-                        long changeMoney = totalBetValue;
+                        long changeMoney = isSpinningFree ? 0 : totalBetValue;
                         String desc = "Đặt cược " + gameName;
                         moneyRes = this.userService.updateMoney(username, -changeMoney, this.moneyTypeStr, this.gameName, "Quay " + gameName, desc, fee, referenceId, TransType.START_TRANS);
                     } else {
