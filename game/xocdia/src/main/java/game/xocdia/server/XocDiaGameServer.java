@@ -653,8 +653,11 @@ public class XocDiaGameServer extends GameServer {
             List<Integer> notEnoughMoneyBotIndexes = new ArrayList<>();
             for (int i = 0; i < this.botBettingList.size(); ++i) {
                 BotBettingModel model;
-                if (!NumberUtils.isDoWithRatio(XocDiaConfig.ratioBotBettingInGame) || (model = this.botBettingList.get(i)) == null || this.countTime < model.betStartTime)
+                if (!NumberUtils.isDoWithRatio(XocDiaConfig.ratioBotBettingInGame)
+                        || (model = this.botBettingList.get(i)) == null
+                        || this.countTime < model.betStartTime) {
                     continue;
+                }
                 if (model.money < (long) this.moneyBet) {
                     notEnoughMoneyBotIndexes.add(i);
                     continue;
@@ -671,13 +674,17 @@ public class XocDiaGameServer extends GameServer {
                 if (!this.uBet(model.user, model.potId, money)) {
                     remove = true;
                 }
-                if (!remove) continue;
-                notEnoughMoneyBotIndexes.add(i);
+                if (remove) {
+                    notEnoughMoneyBotIndexes.add(i);
+                }
             }
 
             // remove the bot that is not enough money
             for (int notEnoughMoneyBotIndex : notEnoughMoneyBotIndexes) {
-                botBettingList.remove(notEnoughMoneyBotIndex);
+                try {
+                    botBettingList.remove(notEnoughMoneyBotIndex);
+                } catch (Exception ex) {
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
