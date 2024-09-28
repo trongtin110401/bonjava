@@ -76,7 +76,7 @@ namespace BanCa.Libs
 
         private Polygon BoundingBox;
         private Polygon WorldBoundingBox;
-        private int objIdCount = 0;
+        private long objIdCount = 0;
 
         private float powerUpTimeCount = Config.PowerUpIntervalS;
         private LinkedList<BanCaObject> deadFish = new LinkedList<BanCaObject>();

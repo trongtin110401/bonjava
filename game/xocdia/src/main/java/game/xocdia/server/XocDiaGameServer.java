@@ -680,9 +680,7 @@ public class XocDiaGameServer extends GameServer {
                 botBettingList.remove(notEnoughMoneyBotIndex);
             }
         } catch (Exception e) {
-            String content = "Xoc Dia exception: " + e.getMessage() + ", function: botBetting() " + this.roomId + " " + this.gameId;
-            MsgUtils.alertServer(content, false, false);
-            Debug.trace(e);
+            e.printStackTrace();
         }
     }
 
