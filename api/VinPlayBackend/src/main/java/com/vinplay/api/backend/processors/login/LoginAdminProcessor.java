@@ -54,7 +54,6 @@ public class LoginAdminProcessor
     private static final Logger logger = Logger.getLogger((String) "backend");
 
     public String execute(Param<HttpServletRequest> param) {
-        System.out.println("=================== Login 1");
         LoginResponse res;
         block17:
         {
@@ -69,14 +68,10 @@ public class LoginAdminProcessor
                     UserServiceImpl userService = new UserServiceImpl();
                     UserModel userModel = userService.getUserByUserName(username);
                     if (userModel != null) {
-                        System.out.println("=================== Login 2");
                         if (!userModel.isBanLogin()) {
-                            System.out.println("=================== Login 3");
                             System.out.println("rpw: " + password + " - upw: " + userModel.getPassword());
                             if (userModel.getPassword().equals(password)) {
-                                System.out.println("=================== Login 4");
                                 if (userModel.getNickname() != null && !userModel.getNickname().trim().isEmpty()) {
-                                    System.out.println("=================== Login 5");
                                     UserCacheModel userCache;
                                     String accessToken;
                                     block18:
@@ -88,7 +83,6 @@ public class LoginAdminProcessor
 //                                        if (userModel.getDaily() == 1 && (statusGame == StatusGames.MAINTAIN.getId() || statusGame == StatusGames.SANDBOX.getId() && !userModel.isCanLoginSandbox())) {
                                             res.setErrorCode("1114");
                                             logger.debug((Object) ("Response login: " + res.toJson()));
-                                            System.out.println("=================== Login 6");
                                             return res.toJson();
                                         }
                                         String ip = this.getIpAddress(request);
@@ -101,7 +95,6 @@ public class LoginAdminProcessor
                                         //validate user otp
 
                                         if (userModel.isHasAppSecurity() && otp != null && !otp.equals("")) {
-                                            System.out.println("=================== Login 7");
                                             OtpServiceImpl otpService = new OtpServiceImpl();
                                             int resultCheckOtp = otpService.checkAppOTP(userModel.getNickname(), otp);
                                             if (resultCheckOtp != 0) {
@@ -110,12 +103,10 @@ public class LoginAdminProcessor
                                             }
                                         }
                                         if (userModel.isHasAppSecurity() && (otp == null || otp.equals(""))) {
-                                            System.out.println("=================== Login 8");
                                             res.setErrorCode("10640");
                                             return res.toJson();
                                         }
                                         if (userMap.containsKey((Object) userModel.getNickname())) {
-                                            System.out.println("=================== Login 9");
                                             try {
                                                 userMap.lock((Object) userModel.getNickname());
                                                 userCache = (UserCacheModel) userMap.get((Object) userModel.getNickname());
@@ -138,7 +129,6 @@ public class LoginAdminProcessor
                                             } catch (Exception e) {
                                             }
                                         } else {
-                                            System.out.println("=================== Login 10");
                                             CashoutDaoImpl csDao = new CashoutDaoImpl();
                                             CashoutUserDailyResponse cs = csDao.getCashoutUserToday(userModel.getNickname());
                                             VippointDaoImpl vpDao = new VippointDaoImpl();
@@ -154,7 +144,6 @@ public class LoginAdminProcessor
                                             userMap.put((Object) userCache.getNickname(), (Object) userCache);
                                         }
                                     }
-                                    System.out.println("=================== Login 11");
                                     int mobileSecure = userCache.isHasMobileSecurity() ? 1 : 0;
                                     int appSecure = userCache.isHasAppSecurity() ? 1 : 0;
 
@@ -162,7 +151,6 @@ public class LoginAdminProcessor
                                     if (userCache.getBirthday() != null && !userCache.getBirthday().isEmpty()) {
                                         birthday = userCache.getBirthday();
                                     }
-                                    System.out.println("=================== Login 12");
                                     UserClientInfo userInfo = new UserClientInfo(userCache.getNickname(), userCache.getAvatar(), userCache.getVinTotal(), userCache.getXuTotal(), userCache.getVippoint(), userCache.getVippointSave(), VinPlayUtils.parseDateToString((Date) userCache.getCreateTime()), "", false, 0, userCache.getDaily(), mobileSecure, birthday, appSecure);
                                     String sessionKey = VinPlayUtils.genSessionKey((UserClientInfo) userInfo);
                                     res = new LoginResponse(true, "0", sessionKey, accessToken);
