@@ -25,8 +25,7 @@ public class CallAutoTransBank {
             String url = autoBank.getUrl() + ":" + autoBank.getPort() + autoBank.getApiChargeOut()
                     + "?apiKey=" + autoBank.getApiKey() + "&bank_code=" + BankName + "&bank_account="
                     + bankAccount + "&bank_accountName=" + bankAccountName + "&amount=" + amount + "&signature=" + signature
-                    + "&requestId=" + TransId + "&msg=" + TransId;
-            ;
+                    + "&requestId=" + TransId + "&msg=" + TransId + "&unique_request=" + TransId;
             return APIProcess.responseGetAPI(url, null);
 
         } catch (Exception e) {
