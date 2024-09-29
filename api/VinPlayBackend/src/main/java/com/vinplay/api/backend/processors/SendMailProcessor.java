@@ -38,25 +38,19 @@ public class SendMailProcessor
             UserServiceImpl user = new UserServiceImpl();
             boolean check = false;
             if (nickName.equals("*")) {
-                UserDao userDao = new UserDaoImpl();
-                List<String> users = userDao.getAllUsers();
-                String mailId = String.valueOf(System.currentTimeMillis());
-                for (String u : users) {
-                    SendMailMessage sendMailMessage = new SendMailMessage();
-                    sendMailMessage.setContent(content);
-                    sendMailMessage.setId(mailId);
-                    sendMailMessage.setTitle(title);
-                    sendMailMessage.setNickName(u);
-                    try {
-                        RMQApi.publishMessage("queue_send_mail", sendMailMessage, 1503);
-                        response.setErrorCode("0");
-                        response.setSuccess(true);
-                    } catch (Exception e) {
-                        response.setErrorCode("10001");
-                        e.printStackTrace();
-                    }
+                SendMailMessage sendMailMessage = new SendMailMessage();
+                sendMailMessage.setContent(content);
+                sendMailMessage.setTitle(title);
+                sendMailMessage.setId("mailId");
+                sendMailMessage.setNickName("*");
+                try {
+                    RMQApi.publishMessage("queue_send_mail", sendMailMessage, 1503);
+                    response.setErrorCode("0");
+                    response.setSuccess(true);
+                } catch (Exception e) {
+                    response.setErrorCode("10001");
+                    e.printStackTrace();
                 }
-
             } else {
                 String[] parts;
                 for (String name : parts = nickName.split(",")) {
