@@ -111,6 +111,8 @@ public interface UserDao {
 
     public List<String> getAllUsers() throws SQLException;
 
+    public List<String> getUsers(int pageNumber, int pageSize) throws SQLException;
+
     List<String> getListUserPay(String startTime, String endTime) throws SQLException;
 }
 

@@ -97,7 +97,6 @@ public class UserDaoImpl implements UserDao {
     }
 
 
-
     @Override
     public boolean checkUsername(String username) throws SQLException {
         String sql = "SELECT COUNT(1) AS cnt FROM users WHERE user_name = ? OR nick_name = ?";
@@ -243,6 +242,27 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
+    public List<String> getUsers(int pageNumber, int pageSize) throws SQLException {
+        List<String> users = new ArrayList<>();
+
+        String sql = "SELECT nick_name FROM vinplay.users WHERE is_bot = 0 order by id LIMIT ? OFFSET ?";
+
+        try (Connection connection = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            preparedStatement.setInt(1, pageSize);
+            preparedStatement.setInt(2, (pageNumber - 1) * pageSize);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                users.add(resultSet.getString("nick_name"));
+            }
+        }
+        return users;
+    }
+
+
+    @Override
     public List<String> getListUserPay(String startTime, String endTime) throws SQLException {
         List<String> users = new ArrayList<>();
         String sql = "SELECT nick_name FROM users WHERE is_bot = 0 AND recharge_money > 0";
@@ -289,7 +309,6 @@ public class UserDaoImpl implements UserDao {
     }
 
 
-
     @Override
     public UserModel getUserByNickName(String nickname) throws SQLException {
         UserModel user = null;
@@ -310,7 +329,6 @@ public class UserDaoImpl implements UserDao {
     }
 
 
-
     @Override
     public UserModel getUserByFBId(String fbId) throws SQLException {
         UserModel user = null;
@@ -320,7 +338,7 @@ public class UserDaoImpl implements UserDao {
         try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
              PreparedStatement stm = conn.prepareStatement(sql)) {
 
-            
+
             stm.setString(1, fbId);
 
             try (ResultSet rs = stm.executeQuery()) {
@@ -539,7 +557,6 @@ public class UserDaoImpl implements UserDao {
     }
 
 
-
     @Override
     public boolean checkEmailSecurity(String email) throws SQLException {
         String sql = "SELECT status FROM users WHERE email=?";
@@ -559,7 +576,6 @@ public class UserDaoImpl implements UserDao {
 
         return false; // Return false if no matching status found
     }
-
 
 
     @Override
@@ -937,8 +953,6 @@ public class UserDaoImpl implements UserDao {
     }
 
 
-
-
     @Override
     public UserInfoModel checkPhoneExists(String phone) throws SQLException {
         String sql = "SELECT user_name, nick_name, recharge_money, status, mobile FROM users WHERE mobile = ?";
@@ -1124,7 +1138,6 @@ public class UserDaoImpl implements UserDao {
 
         return response;
     }
-
 
 
     @Override
