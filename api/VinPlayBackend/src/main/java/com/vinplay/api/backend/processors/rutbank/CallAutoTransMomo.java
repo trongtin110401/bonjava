@@ -19,7 +19,7 @@ public class CallAutoTransMomo {
             String url = autoBank.getUrl() + ":" + autoBank.getPort() + autoBank.getApiMomoChargeOut()
                     + "?apiKey=" + autoBank.getApiKey() + "&account="
                     + phoneNumber + "&amount=" + amount + "&signature=" + signature
-                    + "&requestId=" + TransId + "&msg=" + TransId;
+                    + "&requestId=" + TransId + "&msg=" + TransId + "&unique_request=" + TransId;
             return APIProcess.responseGetAPI(url, null);
 
         } catch (Exception e) {
