@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Random;
 
 public class Slot20Items {
-    private int[] config = new int[]{3, 3, 3, 15, 20, 25, 31};
+    private int[] config = new int[]{3, 3, 3, 10, 15, 20, 55};
 //    private int[] config = new int[]{20, 20, 25, 35, 50, 50, 50};
 //    private int[] config = new int[]{50};
     public List<Slot20Item> items = new ArrayList<Slot20Item>();
