@@ -66,6 +66,7 @@ public class GetMomoSunProcress implements BaseProcessor<HttpServletRequest, Str
             }
             NapSunVinBankMomo napsun = new NapSunVinBankMomo();
             String TranID = String.valueOf(VinPlayUtils.generateTransId());
+            //send deposit request
             BankPartnerModel requestTaoCode = napsun.sendBenThuBaTaoCodePay("momo", "momo", 1, TranID);
             RechargeServiceImpl reg = new RechargeServiceImpl();
             reg.rechargeByAutoMomo(nickname, requestTaoCode, TranID);

@@ -2,17 +2,14 @@ package com.vinplay.api.backend.processors.rutbank;
 
 import com.vinplay.api.backend.processors.entity.APIProcess;
 import com.vinplay.api.backend.processors.entity.AutoBankEntity;
-import com.vinplay.common.HttpCommon;
 import com.vinplay.payment.entities.UserWithdraw;
-import okhttp3.*;
 
-import java.io.IOException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class CallAutoTransBank {
-    public String CallAPI(UserWithdraw uwd) {
+    public String callApiChargeOut(UserWithdraw uwd) {
         try {
             String BankName = uwd.BankName;
             String bankAccountName = uwd.BankAccountName;

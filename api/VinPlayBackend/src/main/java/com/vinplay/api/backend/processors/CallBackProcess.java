@@ -217,21 +217,19 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
             int status = type == 0 ? DvtConst.STATUS_APPROVE : DvtConst.STATUS_REJECT;
             boolean resultUpdateTrans = dao.UpdateDepositMomoManualStatusCallBack(transId, status, "", userApprove, String.valueOf(tien));
             historyTransService.update(transId, trans.Nickname, HistoryTransConst.MOMO, this.getTrangthai(status), this.getTrangthaiDes(status));
-            if (resultUpdateTrans) {
-                EventactionAdminObj model = new EventactionAdminObj();
-                model.setId(transId);
-                model.setStatus(status);
-                model.setType("DEPOSIT_MOMO");
-
-                //20240914
-                if (callBackModel.getStatus().equals("success")) {
-                    try {
-                        moneyInOut.upsertStatisticMoneyInOut(trans.Nickname, Long.parseLong(callBackModel.getRegAmount()), 0L, 0L, 0L, 0L,0L, 0L);
-                    } catch (Exception ex) {
-                    }
+            //20240914
+            if (callBackModel.getStatus().equals("success")) {
+                try {
+                    moneyInOut.upsertStatisticMoneyInOut(trans.Nickname, Long.parseLong(callBackModel.getRegAmount()), 0L, 0L, 0L, 0L,0L, 0L);
+                } catch (Exception ex) {
                 }
-
             }
+//            if (resultUpdateTrans) {
+//                EventactionAdminObj model = new EventactionAdminObj();
+//                model.setId(transId);
+//                model.setStatus(status);
+//                model.setType("DEPOSIT_MOMO");
+//            }
             if (!resultUpdateTrans) {
                 return response.toJson();
             }
@@ -429,6 +427,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
                     try {
                         moneyInOut.upsertStatisticMoneyInOut(trans.Nickname, 0L, Long.parseLong(callBackModel.getRegAmount()), 0L, 0L, 0L,0L, 0L);
                     } catch (Exception ex) {
+
                     }
                 }
 

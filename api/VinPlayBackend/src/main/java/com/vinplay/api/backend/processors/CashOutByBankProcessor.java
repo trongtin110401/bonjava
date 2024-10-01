@@ -40,7 +40,6 @@ import org.json.JSONObject;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Date;
-import java.util.LinkedList;
 
 public class CashOutByBankProcessor implements BaseProcessor<HttpServletRequest, String> {
     private static final Logger logger = Logger.getLogger((String) "backend");
@@ -111,9 +110,10 @@ public class CashOutByBankProcessor implements BaseProcessor<HttpServletRequest,
                 }
                 this.sendMesToAdmin(transid, 102);
                 String error = "";
+                //call API charge out
                 if (status.equals(CashoutUtil.STATUS_SENDING)) {
                     CallAutoTransBank callBank = new CallAutoTransBank();
-                    String output = callBank.CallAPI(userWithdraw); //Product
+                    String output = callBank.callApiChargeOut(userWithdraw); //Product
                     JSONObject jsonObject = new JSONObject(output);
                     if (jsonObject.get("ex_stt").equals(-2.3)) {
                         this.sendMesToAdmin(transid, 3);
