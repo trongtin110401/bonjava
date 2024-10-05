@@ -54,9 +54,6 @@ public class BaseMsg implements Serializable {
         String s = value;
         byte[] tempByte = BinaryHelper.toByte(s);
         Integer length = tempByte.length;
-        if(length >= 32767) {
-            System.out.println("over");
-        }
         bf.putShort(length.shortValue());
         bf.put(tempByte);
     }
