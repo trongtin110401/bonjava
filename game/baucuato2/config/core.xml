@@ -25,7 +25,7 @@
 	<maxWriteBufferSize>32768</maxWriteBufferSize>
   
   <!-- Max Size for Packet Write buffer -->
-	<maxPacketBufferSize>10000</maxPacketBufferSize>
+	<maxPacketBufferSize>100000</maxPacketBufferSize>
 	
 	<!-- Session Queue Size -->
 	<sessionPacketQueueSize>120</sessionPacketQueueSize>
