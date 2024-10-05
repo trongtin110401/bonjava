@@ -35,10 +35,10 @@ public class LichSuNoHuMsg extends BaseMsgEx {
 
             bf.putInt(huBauCuaWinTransaction.getUserWinHuBauCuaList().size());
             for (UserWinHuBauCua userWinHuBauCua : huBauCuaWinTransaction.getUserWinHuBauCuaList()) {
-
-                this.putStr(bf, userWinHuBauCua.getUserName());
-                bf.putLong(userWinHuBauCua.getMoneyWin());
-
+                if(userWinHuBauCua.getUserName() != null) {
+                    this.putStr(bf, userWinHuBauCua.getUserName());
+                    bf.putLong(userWinHuBauCua.getMoneyWin());
+                }
             }
         }
         return this.packBuffer(bf);
