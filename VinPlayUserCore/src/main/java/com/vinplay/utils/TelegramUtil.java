@@ -3,7 +3,6 @@ package com.vinplay.utils;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.vinplay.usercore.utils.GameCommon;
-import com.vinplay.vbee.common.exceptions.KeyNotFoundException;
 import org.apache.log4j.Logger;
 import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.request.SendMessage;
@@ -93,101 +92,79 @@ public class TelegramUtil {
     }
 
     public void sendMessageNap(String message) {
+        Response response = null;
         try {
-            sendMessage(GameCommon.getValueStr("Telegram_chat_id"), message);
-        } catch (KeyNotFoundException e) {
-            throw new RuntimeException(e);
+            String chatId = GameCommon.getValueStr("Telegram_chat_id");
+            String bootToken = GameCommon.getValueStr("Telegram_boot_token");
+            OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
+                    .connectTimeout(3, TimeUnit.SECONDS)
+                    .readTimeout(3, TimeUnit.SECONDS)
+                    .build();
+            Request request = new Request.Builder()
+                    .url("https://api.telegram.org/bot" + bootToken + "/sendMessage?text=" + encodeValue(message) + "&chat_id=" + chatId + "&parse_mode=HTML")
+                    .method("GET", null)
+                    .build();
+            response = client.newCall(request).execute();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (response != null){
+                response.close();
+            }
         }
-//        Response response = null;
-//        try {
-//            String chatId = GameCommon.getValueStr("Telegram_chat_id");
-//            String bootToken = GameCommon.getValueStr("Telegram_boot_token");
-//            OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
-//                    .connectTimeout(3, TimeUnit.SECONDS)
-//                    .readTimeout(3, TimeUnit.SECONDS)
-//                    .build();
-//            Request request = new Request.Builder()
-//                    .url("https://api.telegram.org/bot" + bootToken + "/sendMessage?text=" + encodeValue(message) + "&chat_id=" + chatId + "&parse_mode=HTML")
-//                    .method("GET", null)
-//                    .build();
-//            response = client.newCall(request).execute();
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        } finally {
-//            if (response != null){
-//                response.close();
-//            }
-//        }
     }
 
     public void sendMessageNapGiftCode(String message) {
+        Response response = null;
         try {
-            sendMessage(GameCommon.getValueStr("Telegram_giftcode_id"), message);
-        } catch (KeyNotFoundException e) {
-            throw new RuntimeException(e);
+            String chatId = GameCommon.getValueStr("Telegram_giftcode_id");
+            String bootToken = GameCommon.getValueStr("Telegram_boot_token");
+            OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
+                    .build();
+            Request request = new Request.Builder()
+                    .url("https://api.telegram.org/bot" + bootToken + "/sendMessage?text=" + encodeValue(message) + "&chat_id=" + chatId + "&parse_mode=HTML")
+                    .method("GET", null)
+                    .build();
+            response = client.newCall(request).execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (response != null){
+                response.close();
+            }
         }
-//        Response response = null;
-//        try {
-//            String chatId = GameCommon.getValueStr("Telegram_giftcode_id");
-//            String bootToken = GameCommon.getValueStr("Telegram_boot_token");
-//            OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
-//                    .build();
-//            Request request = new Request.Builder()
-//                    .url("https://api.telegram.org/bot" + bootToken + "/sendMessage?text=" + encodeValue(message) + "&chat_id=" + chatId + "&parse_mode=HTML")
-//                    .method("GET", null)
-//                    .build();
-//            response = client.newCall(request).execute();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        } finally {
-//            if (response != null){
-//                response.close();
-//            }
-//        }
     }
 
     public void sendMessageRut(String message) {
-        sendMessage("4138070971", message);
-//        Response response = null;
-//        try {
-////            String chatId = GameCommon.getValueStr("Telegram_rut_chat_id");
-//            String chatId = "-4138070971";
-//            String bootToken = GameCommon.getValueStr("Telegram_boot_token");
-//            OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
-//                    .connectTimeout(3, TimeUnit.SECONDS)
-//                    .readTimeout(3, TimeUnit.SECONDS)
-//                    .build();
-//            Request request = new Request.Builder()
-//                    .url("https://api.telegram.org/bot" + bootToken + "/sendMessage?text=" + encodeValue(message) + "&chat_id=" + chatId + "&parse_mode=HTML")
-//                    .method("GET", null)
-//                    .build();
-//            response = client.newCall(request).execute();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        } finally {
-//            if (response != null){
-//                response.close();
-//            }
-//        }
-    }
-
-    public void sendMessageBetTX(String message) {
-//            String chatId = GameCommon.getValueStr("Telegram_rut_chat_id");
-        sendMessage("-1002087063529", message);
-    }
-
-    private String getChatId(String key) {
+        Response response = null;
         try {
-            return GameCommon.getValueStr(key);
-        } catch (KeyNotFoundException e) {
-            throw new RuntimeException(e);
+//            String chatId = GameCommon.getValueStr("Telegram_rut_chat_id");
+            String chatId = "-4138070971";
+            String bootToken = GameCommon.getValueStr("Telegram_boot_token");
+            OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
+                    .connectTimeout(3, TimeUnit.SECONDS)
+                    .readTimeout(3, TimeUnit.SECONDS)
+                    .build();
+            Request request = new Request.Builder()
+                    .url("https://api.telegram.org/bot" + bootToken + "/sendMessage?text=" + encodeValue(message) + "&chat_id=" + chatId + "&parse_mode=HTML")
+                    .method("GET", null)
+                    .build();
+            response = client.newCall(request).execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (response != null){
+                response.close();
+            }
         }
     }
 
-    private void sendMessage(String chatId, String message) {
+    public void sendMessageBetTX(String message) {
         Response response = null;
         try {
+//            String chatId = GameCommon.getValueStr("Telegram_rut_chat_id");
+            String chatId = "-1002087063529";
             String bootToken = GameCommon.getValueStr("Telegram_boot_token");
 
             OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
@@ -210,28 +187,27 @@ public class TelegramUtil {
     }
 
     public void sendMessageBetTXMD5(String message) {
-        sendMessage("-1002101792441", message);
-//        Response response = null;
-//        try {
-//            //            String chatId = GameCommon.getValueStr("Telegram_rut_chat_id");
-//            String chatId = "-1002101792441";
-//            String bootToken = GameCommon.getValueStr("Telegram_boot_token");
-//            OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
-//                    .connectTimeout(3, TimeUnit.SECONDS)
-//                    .readTimeout(3, TimeUnit.SECONDS)
-//                    .build();
-//            Request request = new Request.Builder()
-//                    .url("https://api.telegram.org/bot" + bootToken + "/sendMessage?text=" + encodeValue(message) + "&chat_id=" + chatId + "&parse_mode=HTML")
-//                    .method("GET", null)
-//                    .build();
-//            response = client.newCall(request).execute();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        } finally {
-//            if (response != null){
-//                response.close();
-//            }
-//        }
+        Response response = null;
+        try {
+            //            String chatId = GameCommon.getValueStr("Telegram_rut_chat_id");
+            String chatId = "-1002101792441";
+            String bootToken = GameCommon.getValueStr("Telegram_boot_token");
+            OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
+                    .connectTimeout(3, TimeUnit.SECONDS)
+                    .readTimeout(3, TimeUnit.SECONDS)
+                    .build();
+            Request request = new Request.Builder()
+                    .url("https://api.telegram.org/bot" + bootToken + "/sendMessage?text=" + encodeValue(message) + "&chat_id=" + chatId + "&parse_mode=HTML")
+                    .method("GET", null)
+                    .build();
+            response = client.newCall(request).execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (response != null){
+                response.close();
+            }
+        }
     }
 
 }
