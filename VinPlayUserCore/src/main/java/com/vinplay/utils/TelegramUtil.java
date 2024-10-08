@@ -140,6 +140,7 @@ public class TelegramUtil {
         Response response = null;
         try {
 //            String chatId = GameCommon.getValueStr("Telegram_rut_chat_id");
+            System.out.println("=====> Rut: " + message);
             String chatId = "-4138070971";
             String bootToken = GameCommon.getValueStr("Telegram_boot_token");
             OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
@@ -151,6 +152,7 @@ public class TelegramUtil {
                     .method("GET", null)
                     .build();
             response = client.newCall(request).execute();
+            System.out.println("=====> Rut: done");
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
