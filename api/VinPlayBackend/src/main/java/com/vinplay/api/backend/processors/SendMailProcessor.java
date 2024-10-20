@@ -13,16 +13,21 @@ package com.vinplay.api.backend.processors;
 
 import com.vinplay.usercore.dao.UserDao;
 import com.vinplay.usercore.dao.impl.UserDaoImpl;
+import com.vinplay.usercore.service.OtherService;
 import com.vinplay.usercore.service.impl.MailBoxServiceImpl;
+import com.vinplay.usercore.service.impl.OtherServiceImpl;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.messages.SendMailMessage;
 import com.vinplay.vbee.common.response.SendMailResponse;
+import com.vinplay.vbee.common.response.UserTele;
 import com.vinplay.vbee.common.rmq.RMQApi;
+import okhttp3.*;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import javax.servlet.http.HttpServletRequest;
 
 public class SendMailProcessor
@@ -66,6 +71,17 @@ public class SendMailProcessor
                 }
                 for (String name : parts) {
                     check = service.sendMailBoxFromByNickNameAdmin(name, title, content);
+
+                    // send telegram
+                    try {
+                        OtherService otherService = new OtherServiceImpl();
+                        UserTele userTele = otherService.getUserTeleInfoByNickname(name);
+                        if (userTele != null) {
+                            sendMessage(userTele.getChatID(), content);
+                        }
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
                 }
                 if (check) {
                     response.setErrorCode("0");
@@ -77,6 +93,31 @@ public class SendMailProcessor
             return response.toJson();
         }
         return "MISSING PARAMETTER";
+    }
+
+    public static void sendMessage(String chatId, String message) {
+        Response response = null;
+        try {
+            String bot = "6831621160:AAHPfkEON1-u2e44F8WAVdu5vT9ySql8ztA";
+            RequestBody requestBody = new FormBody.Builder()
+                    .add("chat_id", chatId)
+                    .add("text", message)
+                    .build();
+            Request request = new Request.Builder()
+                    .url("https://api.telegram.org/bot" + bot + "/sendMessage?parse_mode=HTML")
+                    .post(requestBody)
+                    .build();
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .connectTimeout(3000, TimeUnit.SECONDS)
+                    .writeTimeout(3000, TimeUnit.SECONDS)
+                    .readTimeout(3000, TimeUnit.SECONDS)
+                    .build();
+            response = client.newCall(request).execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            response.close();
+        }
     }
 }
 
