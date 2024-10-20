@@ -11,12 +11,14 @@ package com.vinplay.vbee.rmq.minigame.processor;
 
 import com.vinplay.usercore.dao.UserDao;
 import com.vinplay.usercore.dao.impl.UserDaoImpl;
+import com.vinplay.usercore.service.OtherService;
 import com.vinplay.usercore.service.impl.MailBoxServiceImpl;
-import com.vinplay.usercore.service.impl.UserServiceImpl;
+import com.vinplay.usercore.service.impl.OtherServiceImpl;
+import com.vinplay.utils.TelegramUtil;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.messages.SendMailMessage;
-import com.vinplay.vbee.common.rmq.RMQApi;
+import com.vinplay.vbee.common.response.UserTele;
 import org.apache.log4j.Logger;
 
 import java.sql.SQLException;
@@ -51,14 +53,17 @@ public class SendMailQueueProcessor implements BaseProcessor<byte[], Boolean> {
     }
 
     private void sendEmailToAllUsers(SendMailMessage message) throws SQLException {
+        OtherService otherService = new OtherServiceImpl();
         UserDao userDao = new UserDaoImpl();
         int currentPage = 1;
         while (true) {
-            List<String> users = userDao.getUsers(currentPage, PAGE_SIZE);
-            if (users.isEmpty()) {
+            List<String> nicknames = userDao.getUsers(currentPage, PAGE_SIZE);
+            if (nicknames.isEmpty()) {
                 break;
             }
-            for (String nickname : users) {
+
+            nicknames.parallelStream().forEach(nickname -> {
+                // send mail
                 String mailId = String.valueOf(System.currentTimeMillis());
                 SendMailMessage mail = new SendMailMessage();
                 mail.setContent(message.getContent());
@@ -66,7 +71,16 @@ public class SendMailQueueProcessor implements BaseProcessor<byte[], Boolean> {
                 mail.setTitle(message.getTitle());
                 mail.setNickName(nickname);
                 sendEmailToUser(mail);
-            }
+                // send telegram
+                try {
+                    UserTele userTele = otherService.getUserTeleInfoByNickname(nickname);
+                    if (userTele != null) {
+                        UserBackCodeProcessor.sendMessage(userTele.getChatID(), message.getContent());
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            });
             currentPage++;
         }
     }

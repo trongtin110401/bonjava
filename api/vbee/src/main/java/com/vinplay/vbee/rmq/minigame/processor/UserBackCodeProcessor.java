@@ -117,7 +117,7 @@ public class UserBackCodeProcessor implements BaseProcessor<byte[], Boolean> {
                     .add("text", message)
                     .build();
             Request request = new Request.Builder()
-                    .url("https://api.telegram.org/bot" + bot + "/sendMessage")
+                    .url("https://api.telegram.org/bot" + bot + "/sendMessage?parse_mode=HTML")
                     .post(requestBody)
                     .build();
             OkHttpClient client = new OkHttpClient.Builder()
