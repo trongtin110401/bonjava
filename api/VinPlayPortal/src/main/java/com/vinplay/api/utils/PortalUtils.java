@@ -128,6 +128,7 @@ public class PortalUtils {
                         userCache.setId(userModel.getId());
                         userCache.setStatus(userModel.getStatus());
                         userCache.setBanLogin(false);
+                        userCache.setEmail(userModel.getEmail());
                         UserCacheModel uc = ser.checkMoneyNegative(userCache);
                         if (uc != null) {
                             userCache = uc;
