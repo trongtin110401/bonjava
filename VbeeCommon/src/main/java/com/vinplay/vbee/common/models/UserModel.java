@@ -110,6 +110,10 @@ public class UserModel
         }
     }
 
+    public boolean banTransfer() {
+        return StringUtils.isEmpty(email);
+    }
+
     public boolean isBot() {
         return this.bot;
     }

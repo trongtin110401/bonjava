@@ -1282,7 +1282,7 @@ public class UserServiceImpl implements UserService {
                                 res.setMoneyUse(moneyUser);
                                 res.setCurrentMoney(currentMoney);
                                 System.out.println(new Gson().toJson(userSend));
-                                if (!userSend.isBanTransferMoney()) {
+                                if (!userSend.banTransfer()) {
                                     if (moneyUser >= vin) {
                                         if (check) {
                                             res.setCode((byte) 0);
