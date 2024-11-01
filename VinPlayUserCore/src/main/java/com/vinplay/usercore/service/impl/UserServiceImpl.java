@@ -1264,7 +1264,7 @@ public class UserServiceImpl implements UserService {
                     nicknameReceive = userReceive.getNickname();
                     res.setNicknameReceive(nicknameReceive);
 //                    if (vin >= (long) GameCommon.getValueInt("TRANSFER_MONEY_MIN")) {
-                    if (vin >= 20000000000L) {
+                    if (vin >= 1000L) {
                         HazelcastInstance client = HazelcastClientFactory.getInstance();
                         if (client == null) {
                             MoneyLogger.log(nicknameSend, "TransferMoney", vin, 0L, "vin", "chuyen khoan", "1030", "can not connect hazelcast");
