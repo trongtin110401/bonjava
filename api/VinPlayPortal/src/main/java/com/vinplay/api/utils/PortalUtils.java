@@ -191,7 +191,7 @@ public class PortalUtils {
             if (userCache.getBirthday() != null && !userCache.getBirthday().isEmpty()) {
                 birthday = userCache.getBirthday();
             }
-            UserClientInfo userInfo = new UserClientInfo(userCache.getNickname(), userCache.getAvatar(), userCache.getVin(), userCache.getXu(), userCache.getVippoint(), userCache.getVippointSave(), VinPlayUtils.parseDateToString((Date) userCache.getCreateTime()), ip, false, luckyRotate, userCache.getDaily(), mobileSecure, birthday, appSecure);
+            UserClientInfo userInfo = new UserClientInfo(userCache.getNickname(), userCache.getAvatar(), userCache.getVin(), userCache.getXu(), userCache.getVippoint(), userCache.getVippointSave(), VinPlayUtils.parseDateToString((Date) userCache.getCreateTime()), ip, false, luckyRotate, userCache.getDaily(), mobileSecure, birthday, appSecure, userModel.isBanTransferMoney());
             userInfo.setId(userModel.getId());
             sessionKey = VinPlayUtils.genSessionKey((UserClientInfo) userInfo);
             try {

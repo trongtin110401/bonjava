@@ -3,11 +3,13 @@
  */
 package com.vinplay.vbee.common.models;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.Serializable;
 import java.util.Date;
 
 public class UserModel
-implements Serializable {
+        implements Serializable {
     private static final long serialVersionUID = 1L;
     private int id;
     private String username;
@@ -89,7 +91,9 @@ implements Serializable {
         if ((status & 4) != 0) {
             this.setCanLoginSandbox(true);
         }
-        if ((status & 8) == 0) {
+        // email chẳng để làm gì
+        // lấy tạm để làm cờ check khóa chuyển khoản cho mấy thằng Marketing
+        if (StringUtils.isEmpty(email)) {
             this.setBanTransferMoney(true);
         }
         if ((status & 16) != 0) {

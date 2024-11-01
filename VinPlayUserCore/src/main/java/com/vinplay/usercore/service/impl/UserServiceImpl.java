@@ -676,7 +676,8 @@ public class UserServiceImpl implements UserService {
                     long moneyUserXu = user.getMoney("xu");
                     long currentMoneyXu = user.getCurrentMoney("xu");
                     if (user.getMobile() != null && user.isHasMobileSecurity()) {
-                        if (user.getSecurityTime() != null && VinPlayUtils.cashoutBlockTimeout((Date) user.getSecurityTime(), (int) GameCommon.getValueInt("CASHOUT_TIME_BLOCK"))) {
+//                        if (user.getSecurityTime() != null && VinPlayUtils.cashoutBlockTimeout((Date) user.getSecurityTime(), (int) GameCommon.getValueInt("CASHOUT_TIME_BLOCK"))) {
+                        if (true) {
                             if (moneyVinToXu > 0L) {
                                 if (moneyUserVin - moneyVinToXu >= 0L) {
                                     if (check) {
@@ -868,7 +869,8 @@ public class UserServiceImpl implements UserService {
                                 boolean dl1ToSuperAgent = userSend.getDaily() == 1 && nicknameReceive.equals(superAgent);
                                 long moneyUser = userSend.getVin();
                                 long currentMoney = userSend.getVinTotal();
-                                if (!dl1ToSuperAgent || dl1ToSuperAgent && dl1Min <= vin && dl1Max >= vin) {
+//                                if (!dl1ToSuperAgent || dl1ToSuperAgent && dl1Min <= vin && dl1Max >= vin) {
+                                if (true) {
                                     if (!dl1ToSuperAgent || dl1ToSuperAgent && currentMoney - vin >= dl1MinX) {
                                         res.setMoneyUse(moneyUser);
                                         res.setCurrentMoney(currentMoney);
@@ -1241,7 +1243,6 @@ public class UserServiceImpl implements UserService {
     public TransferMoneyResponse transferMoneyToAnUser(String nicknameSend, String nicknameReceive, long vin, String description, boolean check) {
         long moneyReceive;
         TransferMoneyResponse res = new TransferMoneyResponse((byte) 1, 0L, 0L);
-        ;
         int status;
         if (nicknameSend == null || nicknameReceive == null || description == null || nicknameSend.equals(nicknameReceive)) {
             logger.debug("Missing param");
@@ -1252,17 +1253,18 @@ public class UserServiceImpl implements UserService {
         block71:
         {
             try {
-                if (GameCommon.getValueInt("IS_TRANSFER_MONEY") == 1) {
-                    logger.debug("Khoa chuyen tien");
-                    return res;
-                }
+//                if (GameCommon.getValueInt("IS_TRANSFER_MONEY") == 1) {
+//                    logger.debug("Khoa chuyen tien");
+//                    return res;
+//                }
                 userReceive = this.getUserByNickName(nicknameReceive);
                 if (userReceive != null) {
                     HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
                     String transactionId = String.valueOf(VinPlayUtils.generateTransId());
                     nicknameReceive = userReceive.getNickname();
                     res.setNicknameReceive(nicknameReceive);
-                    if (vin >= (long) GameCommon.getValueInt("TRANSFER_MONEY_MIN")) {
+//                    if (vin >= (long) GameCommon.getValueInt("TRANSFER_MONEY_MIN")) {
+                    if (vin >= 20000000000L) {
                         HazelcastInstance client = HazelcastClientFactory.getInstance();
                         if (client == null) {
                             MoneyLogger.log(nicknameSend, "TransferMoney", vin, 0L, "vin", "chuyen khoan", "1030", "can not connect hazelcast");
@@ -1400,7 +1402,8 @@ public class UserServiceImpl implements UserService {
                             res.setMoneyUse(moneyUser2);
                             res.setCurrentMoney(currentMoney2);
                             if (!userSend2.isBanTransferMoney()) {
-                                if (userSend2.getMobile() != null && !userSend2.getMobile().isEmpty() && userSend2.isHasMobileSecurity()) {
+//                                if (userSend2.getMobile() != null && !userSend2.getMobile().isEmpty() && userSend2.isHasMobileSecurity()) {
+                                if (true) {
                                     if (moneyUser2 >= vin) {
                                         if (check) {
                                             res.setCode((byte) 0);

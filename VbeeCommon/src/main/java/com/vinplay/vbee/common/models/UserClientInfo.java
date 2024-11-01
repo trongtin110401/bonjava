@@ -19,11 +19,12 @@ public class UserClientInfo {
     private String birthday;
     private int appSecure;
     private int id;
+    private boolean banTransfer;
 
     public UserClientInfo() {
     }
 
-    public UserClientInfo(String nickname, String avatar, long vinTotal, long xuTotal, int vippoint, int vippointSave, String createTime, String ipAddress, boolean certificate, int luckyRotate, int daiLy, int mobileSecure, String birthday, int appSecure) {
+    public UserClientInfo(String nickname, String avatar, long vinTotal, long xuTotal, int vippoint, int vippointSave, String createTime, String ipAddress, boolean certificate, int luckyRotate, int daiLy, int mobileSecure, String birthday, int appSecure, boolean banTransfer) {
         this.nickname = nickname;
         this.avatar = avatar;
         this.vinTotal = vinTotal;
@@ -38,6 +39,7 @@ public class UserClientInfo {
         this.mobileSecure = mobileSecure;
         this.birthday = birthday;
         this.appSecure = appSecure;
+        this.banTransfer = banTransfer;
     }
 
     public String getBirthday() {
@@ -158,6 +160,14 @@ public class UserClientInfo {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public boolean isBanTransfer() {
+        return banTransfer;
+    }
+
+    public void setBanTransfer(boolean banTransfer) {
+        this.banTransfer = banTransfer;
     }
 }
 

@@ -151,7 +151,7 @@ public class LoginAdminProcessor
                                     if (userCache.getBirthday() != null && !userCache.getBirthday().isEmpty()) {
                                         birthday = userCache.getBirthday();
                                     }
-                                    UserClientInfo userInfo = new UserClientInfo(userCache.getNickname(), userCache.getAvatar(), userCache.getVinTotal(), userCache.getXuTotal(), userCache.getVippoint(), userCache.getVippointSave(), VinPlayUtils.parseDateToString((Date) userCache.getCreateTime()), "", false, 0, userCache.getDaily(), mobileSecure, birthday, appSecure);
+                                    UserClientInfo userInfo = new UserClientInfo(userCache.getNickname(), userCache.getAvatar(), userCache.getVinTotal(), userCache.getXuTotal(), userCache.getVippoint(), userCache.getVippointSave(), VinPlayUtils.parseDateToString((Date) userCache.getCreateTime()), "", false, 0, userCache.getDaily(), mobileSecure, birthday, appSecure, userModel.isBanTransferMoney());
                                     String sessionKey = VinPlayUtils.genSessionKey((UserClientInfo) userInfo);
                                     res = new LoginResponse(true, "0", sessionKey, accessToken);
                                     break block17;
