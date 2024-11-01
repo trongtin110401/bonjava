@@ -35,6 +35,7 @@
  */
 package com.vinplay.usercore.service.impl;
 
+import com.google.gson.Gson;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.hazelcast.transaction.TransactionContext;
@@ -1250,6 +1251,7 @@ public class UserServiceImpl implements UserService {
         }
         // end check
         UserModel userReceive = new UserModel();
+        UserModel userSend = null;
         block71:
         {
             try {
@@ -1274,7 +1276,7 @@ public class UserServiceImpl implements UserService {
                         if (userMap.containsKey(nicknameSend)) {
                             try {
                                 userMap.lock(nicknameSend);
-                                UserCacheModel userSend = (UserCacheModel) userMap.get((Object) nicknameSend);
+                                userSend = (UserCacheModel) userMap.get((Object) nicknameSend);
                                 long moneyUser = userSend.getVin();
                                 long currentMoney = userSend.getVinTotal();
                                 res.setMoneyUse(moneyUser);
@@ -1527,10 +1529,11 @@ public class UserServiceImpl implements UserService {
             }
         }
 
-        if (res.getCode() == 24 && userReceive != null && (userReceive.getDaily() == 1 || userReceive.getDaily() == 2)) {
-            new TelegramUtil().senMessToDaily(nicknameReceive, "Nhận tiền từ : " + nicknameSend, vin, description);
-        }
-        logger.debug((Object) ("Response transferMoney: " + res.getCode()));
+//        if (res.getCode() == 24 && userReceive != null && (userReceive.getDaily() == 1 || userReceive.getDaily() == 2)) {
+//            new TelegramUtil().senMessToDaily(nicknameReceive, "Nhận tiền từ : " + nicknameSend, vin, description);
+//        }
+        System.out.println(new Gson().toJson(userSend));
+        System.out.println("Response transferMoney: " + res.getCode());
         return res;
     }
 
