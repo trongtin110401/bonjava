@@ -1281,6 +1281,7 @@ public class UserServiceImpl implements UserService {
                                 long currentMoney = userSend.getVinTotal();
                                 res.setMoneyUse(moneyUser);
                                 res.setCurrentMoney(currentMoney);
+                                System.out.println(new Gson().toJson(userSend));
                                 if (!userSend.isBanTransferMoney()) {
                                     if (moneyUser >= vin) {
                                         if (check) {
