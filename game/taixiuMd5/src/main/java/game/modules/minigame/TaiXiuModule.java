@@ -89,9 +89,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
     private final Runnable gameLoopTask = new GameLoopTask();  // thread game loop
     private final Runnable serverReadyTask = new ServerReadyTask(); // thread
     private final Runnable calculatingTXVinTask = new CalculatingTaiXiuPrize((short) 1);  // thread tính tài xỉu vin
-    private final Runnable updateCacheTopDay = new UpdateCacheTopDay();  // thread tính tài xỉu top theo ngay
-    private final Runnable updateCacheTopMonth = new UpdateCacheTopMonth();  // thread tính tài xỉu theo thang
-    private final Runnable calculatingTXXuTask = new CalculatingTaiXiuPrize((short) 0);  // thread tính tài xỉu xu
     private final CacheService cacheService = new CacheServiceImpl(); // caching hazelcast service
     public int count = 0;
     private boolean serverReady = false;
@@ -114,9 +111,9 @@ public class TaiXiuModule extends BaseClientRequestHandler {
     private int amountBotTaiFake = 0;
     private int amountBotXiuFake = 0;
 
-    protected MiniGameService miniGameService = new MiniGameServiceImpl();
+    public static final int FINISH_TIME = 50;
 
-    ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(8);
+    protected MiniGameService miniGameService = new MiniGameServiceImpl();
 
     public void init() {
         try {
@@ -138,9 +135,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         BitZeroServer.getInstance().getTaskScheduler().schedule(this.serverReadyTask, 10, TimeUnit.SECONDS);
         Debug.trace("SERVER READY TASK RUNNING...");
         this.getParentExtension().addEventListener((IBZEventType) BZEventType.USER_DISCONNECT, (IBZEventListener) this);
-
-//        scheduler.scheduleAtFixedRate(updateCacheTopDay, 2000, 3600, TimeUnit.SECONDS);
-//        scheduler.scheduleAtFixedRate(updateCacheTopMonth, 2000, 86400, TimeUnit.SECONDS);
     }
 
     public void handleServerEvent(IBZEvent ibzevent) throws BZException {
@@ -427,7 +421,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
 
                     break;
                 }
-                case 50: {
+                case FINISH_TIME: {
                     roomTXVin.finish();
                     this.generateResultAfter(roomTXVin);
                     break;

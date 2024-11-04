@@ -290,7 +290,7 @@ public class MGRoomTaiXiu extends MGRoom {
         msg.numBetXiu = (this.potXiu.getNumBet() + amountBotXiuFake);
         msg.moneyHu = TaiXiuModule.moneyHu;
         msg.md5TextResult = resultTX.getMd5TextResult();
-        if (secondGamePlay >= 26) {
+        if (secondGamePlay >= 50 && !bettingRound) {
             msg.plaintTextResult = resultTX.getPlantTextResult();
         }
         cacheService.setValue("Md5_Lobby_tx_tai_" + this.moneyType, String.valueOf(this.getPotTai()));
@@ -585,7 +585,9 @@ public class MGRoomTaiXiu extends MGRoom {
         msg.myBetTai = this.getTotalBettingTaiByUsername(user.getName());
         msg.myBetXiu = this.getTotalBettingXiuByUsername(user.getName());
         msg.moneyHu = TaiXiuModule.moneyHu;
-        if (this.resultTX != null) {
+        if (this.resultTX != null
+                && !bettingRound
+                && module.count >= TaiXiuModule.FINISH_TIME) {
             msg.dice1 = (short) this.resultTX.dice1;
             msg.dice2 = (short) this.resultTX.dice2;
             msg.dice3 = (short) this.resultTX.dice3;
