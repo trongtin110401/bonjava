@@ -91,14 +91,14 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
             userWithdraw.Amount = Integer.parseInt(callBackModel.getRegAmount());
             cashoutDao.UpdateCashoutMomo(callBackModel.getRequestId(), CashoutUtil.STATUS_SUCCESS, "Auto_Bank");
             userWithdraw.Status = CashoutUtil.STATUS_SUCCESS;
-            TelegramAlert.SendMessageCashoutMomo(userWithdraw);
 
             //20240914
             try {
                 moneyInOut.upsertStatisticMoneyInOut(userWithdraw.Nickname, 0L, 0L, 0L, userWithdraw.Amount, 0L,0L,0L);
             } catch (Exception ex) {
             }
-
+            // send tele
+            TelegramAlert.SendMessageCashoutMomo(userWithdraw);
         } else {
             UserServiceImpl userService = new UserServiceImpl();
             long fee = userWithdraw.AmountReal - userWithdraw.Amount;
