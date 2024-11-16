@@ -136,13 +136,13 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
             historyTransModel.setGhiChu("Thành công");
             userWithdraw.Amount = Integer.parseInt(callBackModel.getRegAmount());
             userWithdraw.Status = "success";
-            TelegramAlert.SendMessageCashout(userWithdraw);
             cashoutDao.UpdateCashoutBank(callBackModel.getRequestId(), CashoutUtil.STATUS_SUCCESS, "Auto_Bank");
             try {
                 //20240914
                 moneyInOut.upsertStatisticMoneyInOut(userWithdraw.Username, 0L, 0L, userWithdraw.Amount, 0L, 0L,0L, 0L);
             } catch (Exception ex) {
             }
+            TelegramAlert.SendMessageCashout(userWithdraw);
         } else {
             UserServiceImpl userService = new UserServiceImpl();
             long fee = userWithdraw.AmountReal - userWithdraw.Amount;
