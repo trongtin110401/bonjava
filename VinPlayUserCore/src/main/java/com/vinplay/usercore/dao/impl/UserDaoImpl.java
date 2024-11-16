@@ -222,6 +222,22 @@ public class UserDaoImpl implements UserDao {
         return res;
     }
 
+    @Override
+    public boolean updateAgentAccount(String nickname, String type) throws SQLException {
+        boolean res = false;
+        String email = type.equalsIgnoreCase("ON") ? "1" : "";
+        String sql = "UPDATE users SET email =  ? WHERE nick_name = ?";
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+            stm.setString(1, email);
+            stm.setString(2, nickname);
+            if (stm.executeUpdate() == 1) {
+                res = true;
+            }
+        }
+        return res;
+    }
+
 
     @Override
     public List<String> getAllUsers() throws SQLException {

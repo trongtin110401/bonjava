@@ -1027,5 +1027,10 @@
             <name>Get All Events</name>
             <path>com.vinplay.api.processors.GetAllEventProcessor</path>
         </command>
+        <command>
+            <id>4127</id>
+            <name>Cap nhat tai khoan livestream</name>
+            <path>com.vinplay.api.processors.UpdateAgentAccountProcessor</path>
+        </command>
     </commands>
 </portal>

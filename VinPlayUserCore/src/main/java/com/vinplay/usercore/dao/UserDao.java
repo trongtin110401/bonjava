@@ -26,6 +26,7 @@ import java.util.List;
 
 public interface UserDao {
 
+    public boolean updateAgentAccount(String nickname, String type) throws SQLException;
     public boolean updateMoney(MoneyMessageInMinigame var1, int var2) throws SQLException;
 
     public boolean checkUsername(String var1) throws SQLException;
