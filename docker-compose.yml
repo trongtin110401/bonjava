@@ -29,7 +29,7 @@ services:
 
   gameplatform_vbee_api:
     image: 'bancodegame/gameplatform_vbee_api:v1.1'
-    build:
+    builda
       context: .
       dockerfile: api/vbee/Dockerfile
     restart: always

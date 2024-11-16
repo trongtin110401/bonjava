@@ -1,10 +1,10 @@
 FROM openjdk:8
 WORKDIR /app
-COPY ./game/taixiuMd5/build/libs .
-COPY ./game/taixiuMd5/config config/
-COPY ./game/taixiuMd5/conf conf/
+COPY ./game/taixiuKubet/build/libs .
+COPY ./game/taixiuKubet/config config/
+COPY ./game/taixiuKubet/conf conf/
 ADD ./libs libs/
-ADD ./game/taixiuMd5/libs libs/
+ADD ./game/taixiuKubet/libs libs/
 EXPOSE 12043
 EXPOSE 12044
 EXPOSE 12045

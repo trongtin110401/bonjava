@@ -15,21 +15,29 @@ import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoDatabase;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 
+@Service
 public class MongoDBConnectionFactory {
 
-    private static String MONGODB_HOST = "10.40.112.5";
-    private static String MONGODB_DATABASE = "win123club";
-    private static String MONGODB_AUTH_DATABASE = "admin";
-    private static String MONGODB_USERNAME = "admin";
-    private static String MONGODB_PASSWORD = "MgqzAtRymcxyNoFnkwX7sGUlmj0YQI";
-    private static int MONGODB_PORT = 27017;
+    @Value("${spring.data.mongodb.host}")
+    private String MONGODB_HOST;
+    @Value("${spring.data.mongodb.database}")
+    private static String MONGODB_DATABASE;
+    @Value("${spring.data.mongodb.auth_database}")
+    private static String MONGODB_AUTH_DATABASE;
+    @Value("${spring.data.mongodb.username}")
+    private static String MONGODB_USERNAME;
+    @Value("${spring.data.mongodb.password}")
+    private static String MONGODB_PASSWORD;
+    @Value("${spring.data.mongodb.port}")
+    private static int MONGODB_PORT;
     private static MongoClient mongoClient;
 
 
-    public static void newConnection() {
+    public void newConnection() {
         MongoClientOptions options = MongoClientOptions.builder()
                 .connectionsPerHost(30)  // Default is 100
                 .minConnectionsPerHost(5)  // Default is 20
@@ -40,9 +48,9 @@ public class MongoDBConnectionFactory {
         mongoClient = new MongoClient(new ServerAddress(MONGODB_HOST, MONGODB_PORT), Arrays.asList(credential), options);
     }
 
-    public static MongoDatabase getDB() {
+    public  MongoDatabase getDB() {
         if (mongoClient == null) {
-            MongoDBConnectionFactory.newConnection();
+            newConnection();
         }
         return mongoClient.getDatabase(MONGODB_DATABASE);
     }

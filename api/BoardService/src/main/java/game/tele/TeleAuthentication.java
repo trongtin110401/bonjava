@@ -12,6 +12,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.bson.Document;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -35,6 +36,9 @@ import java.util.concurrent.*;
 
 @Service
 public class TeleAuthentication extends TelegramLongPollingBot {
+
+    @Autowired
+    MongoDBConnectionFactory mongoDBConnectionFactory;
 
     private static final String TELEGRAM_API_URL = "https://api.telegram.org/bot6831621160:AAHPfkEON1-u2e44F8WAVdu5vT9ySql8ztA/sendMessage";
     private final OkHttpClient client = new OkHttpClient.Builder()
@@ -238,7 +242,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
 
 
     public String getPhoneByNickname(String nickname) {
-        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoDatabase db = mongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("user_phone");
         Document filter = new Document("nickname", nickname);
         FindIterable<Document> result = collection.find(filter);
@@ -252,7 +256,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
     }
 
     private UserTele getInfoByChatID(String chatID) {
-        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoDatabase db = mongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("user_tele");
         Document filter = new Document("chatID", chatID);
         MongoCursor<Document> cursor = collection.find(filter).iterator();
@@ -291,7 +295,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
 
 
     private void saveUserInfo(String nickname, String chatId) {
-        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoDatabase db = mongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("user_tele");
         Document document = new Document();
         document.put("nickname", nickname);
@@ -307,7 +311,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
     }
 
     private void saveOTP(String chatId, String otp) {
-        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoDatabase db = mongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("user_tele");
         Document filter = new Document("chatID", chatId);
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -324,7 +328,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
                 phone = phone.replace("+", "").trim();
             }
         }
-        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoDatabase db = mongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("user_tele");
         Document filter = new Document("chatID", chatId);
         Document updateDocument = new Document("$set", new Document("phoneNumber", phone));
@@ -332,7 +336,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
     }
 
     private void saveOTPPhone(String chatId, String otp) {
-        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoDatabase db = mongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("user_tele");
         Document filter = new Document("chatID", chatId);
         Document updateDocument = new Document("$set", new Document("otp", otp));
@@ -404,7 +408,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
                 phone = phone.replace("+", "").trim();
             }
         }
-        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoDatabase db = mongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("user_phone");
         Document filter = new Document("nickname", nickname);
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
