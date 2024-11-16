@@ -1,6 +1,20 @@
 version: '3.0'
 
 services:
+
+  gameplatform_leaderboard:
+    image: 'bancodegame/gameplatform_leaderboard:v1.1'
+    build:
+      context: .
+      dockerfile: api/BoardService/Dockerfile
+    ports:
+      - '8089:8089'
+    restart: always
+    environment:
+      - ELASTICSEARCH_URL=http://10.40.112.5:9200
+    volumes:
+      - ./game-logs/portal_api:/app/logs
+
   gameplatform_portal_api:
     image: 'bancodegame/gameplatform_portal_api:v1.1'
     build:
@@ -29,7 +43,7 @@ services:
 
   gameplatform_vbee_api:
     image: 'bancodegame/gameplatform_vbee_api:v1.1'
-    builda
+    build:
       context: .
       dockerfile: api/vbee/Dockerfile
     restart: always
