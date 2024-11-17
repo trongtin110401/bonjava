@@ -26,22 +26,19 @@ public class ManageGiftCodeDAO {
     }
 
     public CodeTT getCodeTT(String code) throws Exception {
-        Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
-
         CodeTT codeTT = new CodeTT();
         String sql = "SELECT * FROM vinplay.giftcodett where code = ? and stop = 0 order by timelog desc LIMIT 1";
-        PreparedStatement stm = conn.prepareStatement(sql);
-        stm.setString(1, code);
-        ResultSet rs = stm.executeQuery();
-        while (rs.next()) {
-            codeTT = new CodeTT(rs.getString("code"), rs.getInt("money"), rs.getString("timelog"), rs.getInt("stop"));
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql);) {
+            stm.setString(1, code);
+            try (ResultSet rs = stm.executeQuery();) {
+                while (rs.next()) {
+                    codeTT = new CodeTT(rs.getString("code"), rs.getInt("money"), rs.getString("timelog"), rs.getInt("stop"));
+                }
+                return codeTT;
+            }
         }
-        rs.close();
-        stm.close();
-        if (conn != null) {
-            conn.close();
-        }
-        return codeTT;
     }
 
     public UserOTP getUserActiveOTP(String nickname) throws Exception {
@@ -80,13 +77,13 @@ public class ManageGiftCodeDAO {
         return check;
     }
 
-    public void insertCodeTanThu(UseCode usercode) throws Exception{
+    public void insertCodeTanThu(UseCode usercode) throws Exception {
         Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
         try {
             String sql = "INSERT INTO vinplay.codetanthu (`nickname`,`CODE`, `use`, `timelog`, `username`, `phone`, `active`) VALUES(?,?,?,?,?,?,?)";
             PreparedStatement stm = conn.prepareStatement(sql);
             stm.setString(1, usercode.getNickname());
-            stm.setString(2,usercode.getCode());
+            stm.setString(2, usercode.getCode());
             stm.setInt(3, usercode.getUse());
             stm.setString(4, usercode.getTimelog());
             stm.setString(5, usercode.getUsername());
@@ -98,7 +95,7 @@ public class ManageGiftCodeDAO {
             if (conn != null) {
                 conn.close();
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             throw e;
         }
     }

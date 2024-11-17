@@ -738,17 +738,15 @@ public class TaiXiuMd5ServiceImpl
     }
 
     public String getHashMd5(String plainText) throws SQLException {
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");) {
-            String sql = "SELECT * FROM result_tai_xiu_md5 WHERE plainText=? order by timestamp desc limit 1";
-            PreparedStatement stm = conn.prepareStatement(sql);
+        String sql = "SELECT * FROM result_tai_xiu_md5 WHERE plainText=? order by timestamp desc limit 1";
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");
+             PreparedStatement stm = conn.prepareStatement(sql);) {
             stm.setString(1, plainText);
             ResultSet rs = stm.executeQuery();
             String md5Hash = null;
             while (rs.next()) {
                 md5Hash = rs.getString("md5");
             }
-            rs.close();
-            stm.close();
             return md5Hash;
         }
     }

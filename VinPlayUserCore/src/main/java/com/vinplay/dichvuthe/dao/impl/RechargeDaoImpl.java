@@ -1074,12 +1074,16 @@ public class RechargeDaoImpl implements RechargeDao {
             while (rs.next()) {
                 result = true;
             }
-            rs.close();
-            stmt.close();
         } catch (SQLException e) {
             e.printStackTrace();
             throw e;
         } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (stmt != null) {
+                stmt.close();
+            }
             if (conn != null) {
                 conn.close();
             }
@@ -1207,7 +1211,7 @@ public class RechargeDaoImpl implements RechargeDao {
             doc.append("QRCode", depositBankModel.getQRCode());
             doc.append("PaymentURL", depositBankModel.getPaymentURL());
             doc.append("BankCode", depositBankModel.getSubType());
-            doc.append("ExpiredDate",depositBankModel.getExpiredDate());
+            doc.append("ExpiredDate", depositBankModel.getExpiredDate());
             col.insertOne(doc);
             return true;
 

@@ -102,13 +102,14 @@ public class TaiXiuMd5DAOImpl
         ArrayList<TransactionTaiXiu> results = new ArrayList<TransactionTaiXiu>();
         Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");
         CallableStatement call = null;
+        ResultSet rs = null;
         try {
             call = conn.prepareCall("CALL tx_get_lich_su_giao_dich_md5(?,?,?)");
             int param = 1;
             call.setString(param++, nickname);
             call.setInt(param++, number);
             call.setByte(param++, (byte) moneyType);
-            ResultSet rs = call.executeQuery();
+            rs = call.executeQuery();
             while (rs.next()) {
                 TransactionTaiXiu entry = new TransactionTaiXiu();
                 entry.referenceId = rs.getLong("reference_id");
@@ -128,10 +129,12 @@ public class TaiXiuMd5DAOImpl
                 entry.resultPhien = String.valueOf(total);
                 results.add(entry);
             }
-            rs.close();
         } catch (SQLException e) {
             throw e;
         } finally {
+            if (rs != null) {
+                rs.close();
+            }
             if (call != null) {
                 call.close();
             }
@@ -147,21 +150,24 @@ public class TaiXiuMd5DAOImpl
         ArrayList<TopWin> result = new ArrayList<TopWin>();
         Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");
         CallableStatement call = null;
+        ResultSet rs = null;
         try {
             call = conn.prepareCall("CALL tx_get_top_win_md5(?)");
             int param = 1;
             call.setByte(param++, (byte) moneyType);
-            ResultSet rs = call.executeQuery();
+            rs = call.executeQuery();
             while (rs.next()) {
                 TopWin entry = new TopWin();
                 entry.setUsername(rs.getString("user_name"));
                 entry.setMoney(rs.getLong("money"));
                 result.add(entry);
             }
-            rs.close();
         } catch (SQLException e) {
             throw e;
         } finally {
+            if (rs != null) {
+                rs.close();
+            }
             if (call != null) {
                 call.close();
             }
@@ -177,6 +183,7 @@ public class TaiXiuMd5DAOImpl
         ArrayList<TopWin> result = new ArrayList<>();
         Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");
         CallableStatement call = null;
+        ResultSet rs = null;
         try {
             call = conn.prepareCall("CALL tx_get_top_vinh_danh(?, ?, ?, ?)");
             int param = 1;
@@ -184,17 +191,19 @@ public class TaiXiuMd5DAOImpl
             call.setTimestamp(param++, beginTime);
             call.setTimestamp(param++, endTime);
             call.setInt(param++, number);
-            ResultSet rs = call.executeQuery();
+            rs = call.executeQuery();
             while (rs.next()) {
                 TopWin entry = new TopWin();
                 entry.setUsername(rs.getString("user_name"));
                 entry.setMoney(rs.getLong("money"));
                 result.add(entry);
             }
-            rs.close();
         } catch (SQLException e) {
             throw e;
         } finally {
+            if (rs != null) {
+                rs.close();
+            }
             if (call != null) {
                 call.close();
             }
@@ -210,6 +219,7 @@ public class TaiXiuMd5DAOImpl
     public Long getMoneyStakesTXByMonth(String nickname, Timestamp beginTime, Timestamp endTime) throws SQLException {
         Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");
         CallableStatement call = null;
+        ResultSet rs = null;
         long money = 0;
         try {
             call = conn.prepareCall("CALL tx_get_money_user_stakes_by_moth(?, ?, ?)");
@@ -217,15 +227,17 @@ public class TaiXiuMd5DAOImpl
             call.setString(param++, nickname);
             call.setTimestamp(param++, beginTime);
             call.setTimestamp(param++, endTime);
-            ResultSet rs = call.executeQuery();
+            rs = call.executeQuery();
             while (rs.next()) {
                 money = rs.getLong("totalMoney");
             }
-            rs.close();
         } catch (SQLException e) {
             logger.info("getMoneyStakesTX error " + e.getMessage());
             throw e;
         } finally {
+            if (rs != null) {
+                rs.close();
+            }
             if (call != null) {
                 call.close();
             }
@@ -267,12 +279,13 @@ public class TaiXiuMd5DAOImpl
         ArrayList<TransactionTaiXiuDetail> results = new ArrayList<TransactionTaiXiuDetail>();
         Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");
         CallableStatement call = null;
+        ResultSet rs = null;
         try {
             call = conn.prepareCall("CALL tx_get_chi_tiet_phien_md5(?,?)");
             int param = 1;
             call.setLong(param++, referenceId);
             call.setByte(param++, (byte) moneyType);
-            ResultSet rs = call.executeQuery();
+            rs = call.executeQuery();
             while (rs.next()) {
                 TransactionTaiXiuDetail entry = new TransactionTaiXiuDetail();
                 entry.referenceId = rs.getLong("reference_id");
@@ -287,10 +300,12 @@ public class TaiXiuMd5DAOImpl
                 entry.timestamp = rs.getDate("timestamp");
                 results.add(entry);
             }
-            rs.close();
         } catch (SQLException e) {
             throw e;
         } finally {
+            if (rs != null) {
+                rs.close();
+            }
             if (call != null) {
                 call.close();
             }
@@ -306,11 +321,12 @@ public class TaiXiuMd5DAOImpl
         ArrayList<NohuTXDetail> results = new ArrayList<>();
         Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");
         CallableStatement call = null;
+        ResultSet rs = null;
         try {
             call = conn.prepareCall("CALL tx_get_history_no_hu_md5(?)");
             int param = 1;
             call.setInt(param++, page);
-            ResultSet rs = call.executeQuery();
+            rs = call.executeQuery();
             while (rs.next()) {
                 NohuTXDetail entry = new NohuTXDetail();
                 entry.phien = rs.getLong("reference_id");
@@ -322,10 +338,12 @@ public class TaiXiuMd5DAOImpl
                 entry.time = CommonUtils.convertTimestampToString(rs.getTimestamp("time"));
                 results.add(entry);
             }
-            rs.close();
         } catch (SQLException e) {
             throw e;
         } finally {
+            if (rs != null) {
+                rs.close();
+            }
             if (call != null) {
                 call.close();
             }
@@ -384,13 +402,14 @@ public class TaiXiuMd5DAOImpl
         ArrayList<ThanhDuTXModel> results = new ArrayList<ThanhDuTXModel>();
         Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");
         CallableStatement call = null;
+        ResultSet rs = null;
         try {
             call = conn.prepareCall("CALL tx_get_top_thanh_du(?, ?, ?)");
             int param = 1;
             call.setString(param++, startTime);
             call.setString(param++, endTime);
             call.setByte(param++, (byte) type);
-            ResultSet rs = call.executeQuery();
+            rs = call.executeQuery();
             while (rs.next()) {
                 String username = rs.getString("user_name");
                 ThanhDuTXModel entry = new ThanhDuTXModel(username);
@@ -400,10 +419,12 @@ public class TaiXiuMd5DAOImpl
                 entry.parseReferences(rs.getString("references"));
                 results.add(entry);
             }
-            rs.close();
         } catch (SQLException e) {
             throw e;
         } finally {
+            if (rs != null) {
+                rs.close();
+            }
             if (call != null) {
                 call.close();
             }
@@ -419,20 +440,23 @@ public class TaiXiuMd5DAOImpl
     public Long getMoneyStakesTX(String nickname) throws SQLException {
         Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");
         CallableStatement call = null;
+        ResultSet rs = null;
         long money = 0;
         try {
             call = conn.prepareCall("CALL tx_get_money_stakes_an_user(?)");
             int param = 1;
             call.setString(param++, nickname);
-            ResultSet rs = call.executeQuery();
+            rs = call.executeQuery();
             while (rs.next()) {
                 money = rs.getLong("totalMoney");
             }
-            rs.close();
         } catch (SQLException e) {
             logger.info("getMoneyStakesTX error " + e.getMessage());
             throw e;
         } finally {
+            if (rs != null) {
+                rs.close();
+            }
             if (call != null) {
                 call.close();
             }
@@ -446,32 +470,24 @@ public class TaiXiuMd5DAOImpl
 
     @Override
     public int getMaxThanhDu(String username, short type) throws SQLException {
+        String sql = "SELECT `number` FROM thanh_du WHERE user_name='" + username + "' AND `type`=" + type + " AND DATE(`last_update`)=CURDATE()";
         int max = 0;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");) {
-            String sql = "SELECT `number` FROM thanh_du WHERE user_name='" + username + "' AND `type`=" + type + " AND DATE(`last_update`)=CURDATE()";
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            ResultSet rs = stmt.executeQuery();
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame"); PreparedStatement stmt = conn.prepareStatement(sql); ResultSet rs = stmt.executeQuery();) {
             if (rs.next()) {
                 max = rs.getInt("number");
             }
-            rs.close();
-            stmt.close();
         }
         return max;
     }
 
     @Override
     public int getSoLanRutLoc(String username) throws SQLException {
+        String sql = "SELECT so_lan_rut FROM user_rut_loc_md5 WHERE user_name='" + username + "'";
         int soLanRut = 0;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");) {
-            String sql = "SELECT so_lan_rut FROM user_rut_loc_md5 WHERE user_name='" + username + "'";
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            ResultSet rs = stmt.executeQuery();
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame"); PreparedStatement stmt = conn.prepareStatement(sql); ResultSet rs = stmt.executeQuery();) {
             if (rs.next()) {
                 soLanRut = rs.getInt("so_lan_rut");
             }
-            rs.close();
-            stmt.close();
         }
         return soLanRut;
     }
@@ -562,7 +578,8 @@ public class TaiXiuMd5DAOImpl
         HazelcastInstance client = HazelcastClientFactory.getInstance();
         IMap<String, ReportModel> reportMap = client.getMap("cacheReports");
         for (Map.Entry<String, ReportModel> entry : reportMap.entrySet()) {
-            if (!((String) entry.getKey()).contains(today) || !((String) entry.getKey()).contains("TaiXiuMd5")) continue;
+            if (!((String) entry.getKey()).contains(today) || !((String) entry.getKey()).contains("TaiXiuMd5"))
+                continue;
             ReportModel model = (ReportModel) entry.getValue();
             if (model.isBot) continue;
             ReportMoneySystemModel reportMoneySystemModel = res;
@@ -586,12 +603,12 @@ public class TaiXiuMd5DAOImpl
      */
     @Override
     public ReportMoneySystemModel getReportTX(String startDate, String endDate) {
+        String sql = "SELECT SUM(money_win) as total_win, SUM(money_lost) as total_lost, SUM(money_other) as total_other, SUM(fee) as total_fee FROM vinplay.report_money_daily WHERE `date` >= '" + startDate + "?' and `date` <= '" + endDate + "' and action_name = 'TaiXiu'";
         ReportMoneySystemModel res = new ReportMoneySystemModel();
-        Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");
-        try {
-            String sql = "SELECT SUM(money_win) as total_win, SUM(money_lost) as total_lost, SUM(money_other) as total_other, SUM(fee) as total_fee FROM vinplay.report_money_daily WHERE `date` >= '" + startDate + "?' and `date` <= '" + endDate + "' and action_name = 'TaiXiu'";
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            ResultSet rs = stmt.executeQuery();
+
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery();) {
             while (rs.next()) {
                 res.moneyWin = rs.getLong("total_win");
                 res.moneyLost = rs.getLong("total_lost");
@@ -600,25 +617,8 @@ public class TaiXiuMd5DAOImpl
             }
             res.revenuePlayGame = res.moneyWin + res.moneyLost;
             res.revenue = res.moneyWin + res.moneyLost + res.moneyOther;
-            rs.close();
-            stmt.close();
         } catch (SQLException e) {
             e.printStackTrace();
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException e3) {
-                    e3.printStackTrace();
-                }
-            }
-        } finally {
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException e2) {
-                    e2.printStackTrace();
-                }
-            }
         }
         return res;
     }

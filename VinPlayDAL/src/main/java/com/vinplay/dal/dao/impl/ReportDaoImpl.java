@@ -32,40 +32,41 @@ import com.vinplay.vbee.common.models.cache.ReportModel;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.pools.ConnectionPool;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
-
-import java.io.PrintStream;
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.bson.Document;
 import org.bson.conversions.Bson;
+
+import java.sql.Date;
+import java.sql.*;
+import java.text.ParseException;
+import java.util.*;
 
 public class ReportDaoImpl
         implements ReportDAO {
     @Override
     public List<String> getAllBot() throws SQLException {
+        String sql = "SELECT nick_name FROM users WHERE is_bot=1";
         ArrayList<String> res = new ArrayList<String>();
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            String sql = "SELECT nick_name FROM users WHERE is_bot=1";
-            PreparedStatement stm = conn.prepareStatement("SELECT nick_name FROM users WHERE is_bot=1");
-            ResultSet rs = stm.executeQuery();
+
+        PreparedStatement stm = null;
+        ResultSet rs = null;
+        Connection conn = null;
+        try {
+            conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+            stm = conn.prepareStatement(sql);
+            rs = stm.executeQuery();
             while (rs.next()) {
                 res.add(rs.getString("nick_name"));
             }
-            rs.close();
-            stm.close();
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (stm != null) {
+                stm.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
         }
         return res;
     }
@@ -207,28 +208,44 @@ public class ReportDaoImpl
 
     @Override
     public ReportTotalMoneyModel getTotalMoney(String superAgent) throws SQLException {
+        String sqlBot = "SELECT (SUM(vin_total) + SUM(safe)) as sum FROM users WHERE is_bot=1";
+        String sqlUser = "SELECT (SUM(vin_total) + SUM(safe)) as sum FROM users WHERE is_bot=0 AND dai_ly <> 1 AND dai_ly <> 2";
+        String sqlAgent1 = "SELECT (SUM(vin_total) + SUM(safe)) as sum FROM users WHERE is_bot=0 AND dai_ly = 1";
+        String sqlAgent2 = "SELECT (SUM(vin_total) + SUM(safe)) as sum FROM users WHERE is_bot=0 AND dai_ly = 2";
+        String sqlSuperAgent = "SELECT (SUM(vin_total) + SUM(safe)) as sum FROM users WHERE nick_name = '" + superAgent + "'";
+
         Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
         long moneyBot = 0L;
         long moneyUser = 0L;
         long moneyAgent1 = 0L;
         long moneyAgent2 = 0L;
         long moneySuperAgent = 0L;
+
+        PreparedStatement stmBot = null;
+        PreparedStatement stmUser = null;
+        PreparedStatement stmAgent1 = null;
+        PreparedStatement stmAgent2 = null;
+        PreparedStatement stmSuperAgent = null;
+
+        ResultSet rsBot = null;
+        ResultSet rsUser = null;
+        ResultSet rsAgent1 = null;
+        ResultSet rsAgent2 = null;
+        ResultSet rsSuperAgent = null;
+
         try {
-            String sqlBot = "SELECT (SUM(vin_total) + SUM(safe)) as sum FROM users WHERE is_bot=1";
-            String sqlUser = "SELECT (SUM(vin_total) + SUM(safe)) as sum FROM users WHERE is_bot=0 AND dai_ly <> 1 AND dai_ly <> 2";
-            String sqlAgent1 = "SELECT (SUM(vin_total) + SUM(safe)) as sum FROM users WHERE is_bot=0 AND dai_ly = 1";
-            String sqlAgent2 = "SELECT (SUM(vin_total) + SUM(safe)) as sum FROM users WHERE is_bot=0 AND dai_ly = 2";
-            String sqlSuperAgent = "SELECT (SUM(vin_total) + SUM(safe)) as sum FROM users WHERE nick_name = '" + superAgent + "'";
-            PreparedStatement stmBot = conn.prepareStatement("SELECT (SUM(vin_total) + SUM(safe)) as sum FROM users WHERE is_bot=1");
-            PreparedStatement stmUser = conn.prepareStatement("SELECT (SUM(vin_total) + SUM(safe)) as sum FROM users WHERE is_bot=0 AND dai_ly <> 1 AND dai_ly <> 2");
-            PreparedStatement stmAgent1 = conn.prepareStatement("SELECT (SUM(vin_total) + SUM(safe)) as sum FROM users WHERE is_bot=0 AND dai_ly = 1");
-            PreparedStatement stmAgent2 = conn.prepareStatement("SELECT (SUM(vin_total) + SUM(safe)) as sum FROM users WHERE is_bot=0 AND dai_ly = 2");
-            PreparedStatement stmSuperAgent = conn.prepareStatement(sqlSuperAgent);
-            ResultSet rsBot = stmBot.executeQuery();
-            ResultSet rsUser = stmUser.executeQuery();
-            ResultSet rsAgent1 = stmAgent1.executeQuery();
-            ResultSet rsAgent2 = stmAgent2.executeQuery();
-            ResultSet rsSuperAgent = stmSuperAgent.executeQuery();
+            stmBot = conn.prepareStatement(sqlBot);
+            stmUser = conn.prepareStatement(sqlUser);
+            stmAgent1 = conn.prepareStatement(sqlAgent1);
+            stmAgent2 = conn.prepareStatement(sqlAgent2);
+            stmSuperAgent = conn.prepareStatement(sqlSuperAgent);
+
+
+            rsBot = stmBot.executeQuery();
+            rsUser = stmUser.executeQuery();
+            rsAgent1 = stmAgent1.executeQuery();
+            rsAgent2 = stmAgent2.executeQuery();
+            rsSuperAgent = stmSuperAgent.executeQuery();
             if (rsBot.next()) {
                 moneyBot = rsBot.getLong("sum");
             }
@@ -244,19 +261,39 @@ public class ReportDaoImpl
             if (rsSuperAgent.next()) {
                 moneySuperAgent = rsSuperAgent.getLong("sum");
             }
-            rsBot.close();
-            rsUser.close();
-            rsAgent1.close();
-            rsAgent2.close();
-            rsSuperAgent.close();
-            stmBot.close();
-            stmUser.close();
-            stmAgent1.close();
-            stmAgent2.close();
-            stmSuperAgent.close();
         } catch (SQLException e) {
             throw e;
         } finally {
+            if (rsBot != null) {
+                rsBot.close();
+            }
+            if (rsUser != null) {
+                rsUser.close();
+            }
+            if (rsAgent1 != null) {
+                rsAgent1.close();
+            }
+            if (rsAgent2 != null) {
+                rsAgent2.close();
+            }
+            if (rsSuperAgent != null) {
+                rsSuperAgent.close();
+            }
+            if (stmBot != null) {
+                stmBot.close();
+            }
+            if (stmUser != null) {
+                stmUser.close();
+            }
+            if (stmAgent1 != null) {
+                stmAgent1.close();
+            }
+            if (stmAgent2 != null) {
+                stmAgent2.close();
+            }
+            if (stmSuperAgent != null) {
+                stmSuperAgent.close();
+            }
             if (conn != null) {
                 conn.close();
             }
@@ -268,83 +305,143 @@ public class ReportDaoImpl
 
     @Override
     public long getCurrentMoney(String nickname) throws SQLException {
+        String sql = "SELECT vin_total FROM users WHERE nick_name=?";
         long res = 0L;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            String sql = "SELECT vin_total FROM users WHERE nick_name=?";
-            PreparedStatement stm = conn.prepareStatement("SELECT vin_total FROM users WHERE nick_name=?");
+        PreparedStatement stm = null;
+        ResultSet rs = null;
+        Connection conn = null;
+        try {
+            conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+            stm = conn.prepareStatement(sql);
             stm.setString(1, nickname);
-            ResultSet rs = stm.executeQuery();
+            rs = stm.executeQuery();
             if (rs.next()) {
                 res = rs.getLong("vin_total");
             }
-            rs.close();
-            stm.close();
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (stm != null) {
+                stm.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
         }
         return res;
     }
 
     public long getCurrentMoneyAllUsersByDaily(String nickname) throws SQLException {
+        String sql = "SELECT sum(vin_total) as vin_total FROM users WHERE user_daily = ?";
         long res = 0L;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            String sql = "SELECT sum(vin_total) as vin_total FROM users WHERE user_daily = ?";
-            PreparedStatement stm = conn.prepareStatement(sql);
+        PreparedStatement stm = null;
+        ResultSet rs = null;
+        Connection conn = null;
+        try {
+            conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+            stm = conn.prepareStatement(sql);
             stm.setString(1, nickname);
-            ResultSet rs = stm.executeQuery();
+            rs = stm.executeQuery();
             if (rs.next()) {
                 res = rs.getLong("vin_total");
             }
-            rs.close();
-            stm.close();
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (stm != null) {
+                stm.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
         }
         return res;
     }
 
     @Override
     public long getSafeMoney(String nickname) throws SQLException {
+        String sql = "SELECT safe FROM users WHERE nick_name=?";
         long res = 0L;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            String sql = "SELECT safe FROM users WHERE nick_name=?";
-            PreparedStatement stm = conn.prepareStatement("SELECT safe FROM users WHERE nick_name=?");
+        PreparedStatement stm = null;
+        ResultSet rs = null;
+        Connection conn = null;
+        try {
+            conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+            stm = conn.prepareStatement(sql);
             stm.setString(1, nickname);
-            ResultSet rs = stm.executeQuery();
+            rs = stm.executeQuery();
             if (rs.next()) {
                 res = rs.getLong("safe");
             }
-            rs.close();
-            stm.close();
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (stm != null) {
+                stm.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
         }
         return res;
     }
 
     public long getSafeMoneyAllUsersByDaily(String nickname) throws SQLException {
+        String sql = "SELECT sum(safe) as safe FROM users WHERE  user_daily =?";
         long res = 0L;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            String sql = "SELECT sum(safe) as safe FROM users WHERE  user_daily =?";
-            PreparedStatement stm = conn.prepareStatement(sql);
+        PreparedStatement stm = null;
+        ResultSet rs = null;
+        Connection conn = null;
+        try {
+            conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+            stm = conn.prepareStatement(sql);
             stm.setString(1, nickname);
-            ResultSet rs = stm.executeQuery();
+            rs = stm.executeQuery();
             if (rs.next()) {
                 res = rs.getLong("safe");
             }
-            rs.close();
-            stm.close();
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (stm != null) {
+                stm.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
         }
         return res;
     }
 
     @Override
     public boolean checkBot(String nickname) throws SQLException {
+        String sql = "SELECT is_bot FROM users WHERE nick_name=?";
         boolean res = false;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            String sql = "SELECT is_bot FROM users WHERE nick_name=?";
-            PreparedStatement stm = conn.prepareStatement("SELECT is_bot FROM users WHERE nick_name=?");
+        PreparedStatement stm = null;
+        ResultSet rs = null;
+        Connection conn = null;
+        try {
+            conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+            stm = conn.prepareStatement(sql);
             stm.setString(1, nickname);
-            ResultSet rs = stm.executeQuery();
+            rs = stm.executeQuery();
             if (rs.next() && rs.getInt("is_bot") == 1) {
                 res = true;
             }
-            rs.close();
-            stm.close();
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (stm != null) {
+                stm.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
         }
         return res;
     }
@@ -528,16 +625,14 @@ public class ReportDaoImpl
     @Override
     public void saveReportMoneyVin(Map<String, ReportModel> input, String date) {
         Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+        PreparedStatement stmt = null;
         try {
-            PreparedStatement stmt = conn.prepareStatement("INSERT INTO report_money_daily(action_name, money_win, money_lost, money_other, fee, date) VALUES(?, ?, ?, ?, ?, ?) " +
+            stmt = conn.prepareStatement("INSERT INTO report_money_daily(action_name, money_win, money_lost, money_other, fee, date) VALUES(?, ?, ?, ?, ?, ?) " +
                     " ON DUPLICATE KEY UPDATE " +
                     "       money_win = ?, " +
                     "       money_lost = ?," +
                     "       money_other =  ?, " +
                     "       fee =  ?");
-//            Calendar cal = Calendar.getInstance();
-//            cal.add(5, -1);
-//            Date yesterday = new Date(cal.getTimeInMillis());
             for (Map.Entry<String, ReportModel> entry : input.entrySet()) {
                 if (entry.getValue().isBot) continue;
                 stmt.setString(1, entry.getKey());
@@ -552,18 +647,17 @@ public class ReportDaoImpl
                 stmt.setLong(10, entry.getValue().fee);
                 stmt.execute();
             }
-            stmt.close();
         } catch (SQLException e) {
             e.printStackTrace();
             System.out.println(e);
-            if (conn != null) {
+        } finally {
+            if (stmt != null) {
                 try {
-                    conn.close();
+                    stmt.close();
                 } catch (SQLException e2) {
                     e2.printStackTrace();
                 }
             }
-        } finally {
             if (conn != null) {
                 try {
                     conn.close();

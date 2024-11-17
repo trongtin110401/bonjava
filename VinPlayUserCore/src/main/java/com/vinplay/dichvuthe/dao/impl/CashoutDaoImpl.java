@@ -23,14 +23,14 @@ import com.mongodb.Block;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.UpdateOptions;
-import com.mongodb.client.result.UpdateResult;
 import com.vinplay.dichvuthe.dao.CashoutDao;
-import com.vinplay.dichvuthe.entities.*;
+import com.vinplay.dichvuthe.entities.BankAccountInfo;
+import com.vinplay.dichvuthe.entities.CashoutBankResponse;
+import com.vinplay.dichvuthe.entities.CashoutCardResponse;
+import com.vinplay.dichvuthe.entities.CashoutMomoResponse;
 import com.vinplay.dichvuthe.response.CashoutTransResponse;
 import com.vinplay.dichvuthe.response.CashoutUserDailyResponse;
 import com.vinplay.dichvuthe.utils.CashoutUtil;
-import com.vinplay.dichvuthe.utils.DvtConst;
 import com.vinplay.payment.entities.UserWithDrawCard;
 import com.vinplay.payment.entities.UserWithdraw;
 import com.vinplay.payment.entities.UserWithdrawMomo;
@@ -40,6 +40,8 @@ import com.vinplay.vbee.common.messages.dvt.CashoutByCardMessage;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.pools.ConnectionPool;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
+import org.bson.Document;
+import org.bson.conversions.Bson;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -49,10 +51,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import org.bson.Document;
-import org.bson.conversions.Bson;
 
 public class CashoutDaoImpl
         implements CashoutDao {
@@ -661,7 +659,6 @@ public class CashoutDaoImpl
     }
 
 
-
     @Override
     public boolean UpdateCashoutCard(String Id, String status, String userApprove, String Seri, String Pin) {
         try {
@@ -833,7 +830,7 @@ public class CashoutDaoImpl
                     records.add(model);
                 }
             });
-            CashoutBankResponse res = new CashoutBankResponse(0,0,0, records);
+            CashoutBankResponse res = new CashoutBankResponse(0, 0, 0, records);
             return res;
         } catch (Exception e) {
             return null;
@@ -868,7 +865,7 @@ public class CashoutDaoImpl
                     records.add(model);
                 }
             });
-            CashoutMomoResponse res = new CashoutMomoResponse(0,0,0, records);
+            CashoutMomoResponse res = new CashoutMomoResponse(0, 0, 0, records);
             return res;
 
 

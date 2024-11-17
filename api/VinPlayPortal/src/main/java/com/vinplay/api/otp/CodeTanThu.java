@@ -12,6 +12,7 @@ public class CodeTanThu {
 
     public boolean checkUse(String nickname) throws SQLException {
         String sql = "SELECT * FROM codetanthu WHERE nickname=?";
+
         try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
              PreparedStatement stm = conn.prepareStatement(sql)) {
 

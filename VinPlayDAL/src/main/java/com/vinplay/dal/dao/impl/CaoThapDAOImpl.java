@@ -17,7 +17,6 @@ package com.vinplay.dal.dao.impl;
 import com.mongodb.BasicDBObject;
 import com.mongodb.Block;
 import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.vinplay.dal.dao.CaoThapDAO;
 import com.vinplay.dal.entities.caothap.LSGDCaoThap;
@@ -25,6 +24,8 @@ import com.vinplay.dal.entities.caothap.TopCaoThap;
 import com.vinplay.dal.entities.caothap.VinhDanhCaoThap;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.pools.ConnectionPool;
+import org.bson.Document;
+import org.bson.conversions.Bson;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -33,25 +34,32 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import org.bson.Document;
-import org.bson.conversions.Bson;
 
 public class CaoThapDAOImpl
         implements CaoThapDAO {
     @Override
     public long[] getPotCaoThap(String potName) throws SQLException {
         ArrayList<Long> result = new ArrayList<Long>();
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");) {
+        ResultSet rs = null;
+        PreparedStatement stmt = null;
+        Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");
+        try {
             String sql = "SELECT value FROM minigame_pots WHERE minigame_pots.pot_name like '" + potName + "%'";
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            ResultSet rs = stmt.executeQuery();
+            stmt = conn.prepareStatement(sql);
+            rs = stmt.executeQuery();
             while (rs.next()) {
                 result.add(rs.getLong("value"));
             }
-            rs.close();
-            stmt.close();
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
         }
         long[] arr = new long[result.size()];
         for (int i = 0; i < result.size(); ++i) {
@@ -63,15 +71,26 @@ public class CaoThapDAOImpl
     @Override
     public long[] getFundCaoThap(String fundName) throws SQLException {
         ArrayList<Long> result = new ArrayList<Long>();
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");) {
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");
+        try {
             String sql = "SELECT value FROM minigame_funds WHERE minigame_funds.fund_name like '" + fundName + "%'";
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            ResultSet rs = stmt.executeQuery();
+            stmt = conn.prepareStatement(sql);
+            rs = stmt.executeQuery();
             while (rs.next()) {
                 result.add(rs.getLong("value"));
             }
-            rs.close();
-            stmt.close();
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
         }
         long[] arr = new long[result.size()];
         for (int i = 0; i < result.size(); ++i) {

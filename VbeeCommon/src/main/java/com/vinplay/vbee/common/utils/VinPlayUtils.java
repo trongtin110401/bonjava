@@ -276,37 +276,54 @@ public class VinPlayUtils {
     }
 
     public static boolean removeUserSecret(String nickname) {
-        Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+        PreparedStatement stm = null;
+        Connection conn = null;
         try {
+            conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
             String sql = "DELETE FROM vinplay.user_appotp where nick_name = ?";
-            PreparedStatement stm = conn.prepareStatement(sql);
+            stm = conn.prepareStatement(sql);
             stm.setString(1, nickname);
 
             stm.executeUpdate();
-            stm.close();
-            if (conn != null) {
-                conn.close();
-            }
         } catch (SQLException e) {
             return false;
+        } finally {
+            try {
+                if (stm != null) {
+                    stm.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
         }
         return true;
     }
 
     public static boolean setUserSecretKey(String nickname, String secret) throws Exception {
+        PreparedStatement stm = null;
         Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
         try {
             String sql = "INSERT INTO vinplay.user_appotp (nick_name,secret) VALUES(?,?)";
-            PreparedStatement stm = conn.prepareStatement("INSERT INTO vinplay.user_appotp (nick_name,secret) VALUES(?,?)");
+            stm = conn.prepareStatement("INSERT INTO vinplay.user_appotp (nick_name,secret) VALUES(?,?)");
             stm.setString(1, nickname);
             stm.setString(2, secret);
             int rs = stm.executeUpdate();
-            stm.close();
-            if (conn != null) {
-                conn.close();
-            }
         } catch (SQLException e) {
             throw e;
+        } finally {
+            try {
+                if (stm != null) {
+                    stm.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
         }
         return true;
     }
@@ -314,21 +331,32 @@ public class VinPlayUtils {
     public static String getUserSecretKey(String nickname) {
         String secret = "";
         Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+        ResultSet rs = null;
+        PreparedStatement stm = null;
         try {
             String sql = "SELECT * FROM user_appotp WHERE nick_name=?";
-            PreparedStatement stm = conn.prepareStatement("SELECT * FROM user_appotp WHERE nick_name=?");
+            stm = conn.prepareStatement("SELECT * FROM user_appotp WHERE nick_name=?");
             stm.setString(1, nickname);
-            ResultSet rs = stm.executeQuery();
+            rs = stm.executeQuery();
             if (rs.next()) {
                 secret = rs.getString("secret");
             }
-            rs.close();
-            stm.close();
-            if (conn != null) {
-                conn.close();
-            }
         } catch (SQLException sql) {
             // empty catch block
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (stm != null) {
+                    stm.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
         }
         return secret;
     }

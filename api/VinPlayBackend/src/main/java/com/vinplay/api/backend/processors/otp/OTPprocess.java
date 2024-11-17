@@ -13,8 +13,8 @@ public class OTPprocess {
         boolean check_null = false;
         boolean check = false;
         UserOTP uotp = null;
-        Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
         String sql = "SELECT * FROM active WHERE nickname=?";
+        Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
         PreparedStatement stm = conn.prepareStatement(sql);
         stm.setString(1, nickname);
         ResultSet rs = stm.executeQuery();
@@ -114,19 +114,16 @@ public class OTPprocess {
     }
 
     public UserOTP getUserOtpFind(String nickname) throws Exception {
-        Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
-        UserOTP uotp = null;
         String sql = "SELECT * FROM vinplay.active WHERE nickname=? limit 1";
-        PreparedStatement stm = conn.prepareStatement(sql);
-        stm.setString(1, nickname);
-        ResultSet rs = stm.executeQuery();
-        if (rs.next()) {
-            uotp = new UserOTP(rs.getString("nickname"), rs.getString("username"), rs.getString("phone"), rs.getString("otp"), rs.getInt("active"), rs.getLong("create_time"), rs.getLong("active_time"), rs.getInt("turn"), rs.getString("timelog"));
-        }
-        rs.close();
-        stm.close();
-        if (conn != null) {
-            conn.close();
+        UserOTP uotp = null;
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+            stm.setString(1, nickname);
+            try (ResultSet rs = stm.executeQuery();) {
+                if (rs.next()) {
+                    uotp = new UserOTP(rs.getString("nickname"), rs.getString("username"), rs.getString("phone"), rs.getString("otp"), rs.getInt("active"), rs.getLong("create_time"), rs.getLong("active_time"), rs.getInt("turn"), rs.getString("timelog"));
+                }
+            }
         }
         return uotp;
     }
@@ -204,21 +201,18 @@ public class OTPprocess {
 
 
     public ArrayList<UserOTP> GetListOTPByTime(long start, long end) throws Exception {
-        Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
         ArrayList<UserOTP> list_otp = new ArrayList<>();
         String sql = "SELECT * FROM vinplay.active where create_time >= ? and create_time <=?";
-        PreparedStatement stm = conn.prepareStatement(sql);
-        stm.setLong(1, start);
-        stm.setLong(2, end);
-        ResultSet rs = stm.executeQuery();
-        while (rs.next()) {
-            UserOTP uotp = new UserOTP(rs.getString("nickname"), rs.getString("username"), rs.getString("phone"), rs.getString("otp"), rs.getInt("active"), rs.getLong("create_time"), rs.getLong("active_time"), rs.getInt("turn"), rs.getString("timelog"));
-            list_otp.add(uotp);
-        }
-        rs.close();
-        stm.close();
-        if (conn != null) {
-            conn.close();
+        try(Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+        PreparedStatement stm = conn.prepareStatement(sql);) {
+            stm.setLong(1, start);
+            stm.setLong(2, end);
+            try(ResultSet rs = stm.executeQuery();) {
+                while (rs.next()) {
+                    UserOTP uotp = new UserOTP(rs.getString("nickname"), rs.getString("username"), rs.getString("phone"), rs.getString("otp"), rs.getInt("active"), rs.getLong("create_time"), rs.getLong("active_time"), rs.getInt("turn"), rs.getString("timelog"));
+                    list_otp.add(uotp);
+                }
+            }
         }
         return list_otp;
     }

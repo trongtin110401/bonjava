@@ -159,17 +159,15 @@ public class SlotMachineDAOImpl
 
     @Override
     public boolean updateSlotFreeDaily(String gameName, String nickname, int room, int newValue) throws SQLException {
+        String sql = "UPDATE rotate_slot_free SET rotate_free = ? WHERE nick_name=? AND game_name = '" + gameName + "' AND room = ?";
         boolean res = false;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");) {
-            String sql = "UPDATE rotate_slot_free SET rotate_free = ? WHERE nick_name=? AND game_name = '" + gameName + "' AND room = ?";
-            PreparedStatement stm = conn.prepareStatement(sql);
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame"); PreparedStatement stm = conn.prepareStatement(sql);) {
             stm.setInt(1, newValue);
             stm.setString(2, nickname);
             stm.setInt(3, room);
             if (stm.executeUpdate() == 1) {
                 res = true;
             }
-            stm.close();
         }
         return res;
     }

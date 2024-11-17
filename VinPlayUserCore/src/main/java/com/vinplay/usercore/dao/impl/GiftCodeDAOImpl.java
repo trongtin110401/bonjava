@@ -45,10 +45,7 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.result.DeleteResult;
-import com.mongodb.client.result.UpdateResult;
 import com.vinplay.usercore.dao.GiftCodeDAO;
-import com.vinplay.usercore.dao.impl.UserDaoImpl;
-import com.vinplay.usercore.service.UserService;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.vbee.common.dto.GiftCodeDto;
 import com.vinplay.vbee.common.messages.BaseMessage;
@@ -58,19 +55,17 @@ import com.vinplay.vbee.common.models.UserModel;
 import com.vinplay.vbee.common.models.cache.UserCacheModel;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.pools.ConnectionPool;
-import com.vinplay.vbee.common.response.BaseResponseModel;
-import com.vinplay.vbee.common.response.GiftCodeByNickNameResponse;
-import com.vinplay.vbee.common.response.GiftCodeCountResponse;
-import com.vinplay.vbee.common.response.GiftCodeDeleteResponse;
-import com.vinplay.vbee.common.response.GiftCodeResponse;
-import com.vinplay.vbee.common.response.GiftCodeUpdateResponse;
-import com.vinplay.vbee.common.response.MoneyResponse;
-import com.vinplay.vbee.common.response.ReportGiftCodeResponse;
+import com.vinplay.vbee.common.response.*;
 import com.vinplay.vbee.common.response.giftcode.GiftcodeFollowFaceValue;
 import com.vinplay.vbee.common.response.giftcode.GiftcodeStatisticObj;
 import com.vinplay.vbee.common.rmq.RMQApi;
 import com.vinplay.vbee.common.statics.TransType;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
+import org.apache.log4j.Logger;
+import org.bson.Document;
+import org.bson.conversions.Bson;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -78,20 +73,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.logging.Level;
-
-import org.apache.log4j.Logger;
-import org.bson.Document;
-import org.bson.conversions.Bson;
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.util.*;
 
 public class GiftCodeDAOImpl
         implements GiftCodeDAO {
@@ -1800,17 +1782,16 @@ public class GiftCodeDAOImpl
 
     @Override
     public List<String> ListAllPrice(int moneyType) throws SQLException {
+        String sql = "SELECT price FROM price_giftcode where money_type = ?";
         ArrayList<String> lstprice = new ArrayList<String>();
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_admin");) {
-            String sql = "SELECT price FROM price_giftcode where money_type = ?";
-            PreparedStatement stmt = conn.prepareStatement("SELECT price FROM price_giftcode where money_type = ?");
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_admin");
+             PreparedStatement stmt = conn.prepareStatement(sql);) {
             stmt.setInt(1, moneyType);
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                lstprice.add(rs.getString("price"));
+            try (ResultSet rs = stmt.executeQuery();) {
+                while (rs.next()) {
+                    lstprice.add(rs.getString("price"));
+                }
             }
-            rs.close();
-            stmt.close();
         }
         return lstprice;
     }

@@ -86,7 +86,7 @@ public class UserInfoDaoImpl
                 userinfo.type = document.getInteger((Object) "type");
                 userinfo.time_log = document.getString((Object) "time_log");
                 try {
-                    if (!nickName.isEmpty()){
+                    if (!nickName.isEmpty()) {
                         UserModel model = service.getUserByNickName(nn);
                         userinfo.security = model.isHasMobileSecurity();
                     }
@@ -142,12 +142,16 @@ public class UserInfoDaoImpl
 
     @Override
     public GetUserInfoResponse listGetNickName(String nickName) throws SQLException {
+        String sql = "SELECT * FROM users WHERE nick_name=?";
         GetUserInfoResponse userinfo = new GetUserInfoResponse();
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            String sql = "SELECT * FROM users WHERE nick_name=?";
-            PreparedStatement stm = conn.prepareStatement("SELECT * FROM users WHERE nick_name=?");
+        PreparedStatement stm = null;
+        ResultSet rs = null;
+        Connection conn = null;
+        try {
+            conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+            stm = conn.prepareStatement(sql);
             stm.setString(1, nickName);
-            ResultSet rs = stm.executeQuery();
+            rs = stm.executeQuery();
             if (rs.next()) {
                 userinfo.nick_name = rs.getString("nick_name");
                 userinfo.user_name = rs.getString("user_name");
@@ -157,21 +161,33 @@ public class UserInfoDaoImpl
             } else {
                 userinfo.nick_name = nickName;
             }
-            rs.close();
-            stm.close();
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (stm != null) {
+                stm.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
         }
         return userinfo;
     }
 
     @Override
     public List<ExportUser> GetExportUser(String startDate, String endDate) throws SQLException {
+        String sql = "SELECT nick_name,mobile,recharge_money FROM vinplay.users where create_time >= ? and create_time <= ? and is_bot = 0 and dai_ly = 0 and mobile is not null and recharge_money > 0";
         List<ExportUser> users = new ArrayList<>();
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            String sql = "SELECT nick_name,mobile,recharge_money FROM vinplay.users where create_time >= ? and create_time <= ? and is_bot = 0 and dai_ly = 0 and mobile is not null and recharge_money > 0";
-            PreparedStatement stm = conn.prepareStatement(sql);
+        PreparedStatement stm = null;
+        ResultSet rs = null;
+        Connection conn = null;
+        try {
+            conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+            stm = conn.prepareStatement(sql);
             stm.setString(1, startDate);
             stm.setString(2, endDate);
-            ResultSet rs = stm.executeQuery();
+            rs = stm.executeQuery();
             while (rs.next()) {
                 ExportUser user = new ExportUser();
                 user.setNick_name(rs.getString("nick_name"));
@@ -179,8 +195,16 @@ public class UserInfoDaoImpl
                 user.setRecharge_money(rs.getLong("recharge_money"));
                 users.add(user);
             }
-            rs.close();
-            stm.close();
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (stm != null) {
+                stm.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
         }
         return users;
     }

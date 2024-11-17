@@ -35,14 +35,11 @@ import com.vinplay.vbee.common.pools.ConnectionPool;
 import com.vinplay.vbee.common.utils.DateTimeUtils;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
 import com.vinplay.vbee.dao.LogMoneyUserDao;
-
-import java.sql.*;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.bson.Document;
 import org.bson.conversions.Bson;
+
+import java.sql.*;
+import java.util.HashMap;
 
 public class LogMoneyUserDaoImpl implements LogMoneyUserDao {
 

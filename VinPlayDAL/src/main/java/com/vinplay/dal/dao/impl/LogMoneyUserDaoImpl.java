@@ -29,19 +29,10 @@ package com.vinplay.dal.dao.impl;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
-import com.mongodb.AggregationOutput;
 import com.mongodb.BasicDBObject;
 import com.mongodb.Block;
-import com.mongodb.DBCollection;
 import com.mongodb.client.*;
-import com.mongodb.client.model.Aggregates;
-
-import static com.mongodb.client.model.Filters.and;
-import static com.mongodb.client.model.Filters.eq;
-
-import com.mongodb.client.result.UpdateResult;
 import com.vinplay.dal.dao.LogMoneyUserDao;
-import com.vinplay.dal.dao.impl.UserDaoImpl;
 import com.vinplay.dal.entities.gamebai.TopGameBaiModel;
 import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
 import com.vinplay.vbee.common.messages.gamebai.LogNoHuGameBaiMessage;
@@ -54,6 +45,9 @@ import com.vinplay.vbee.common.response.LogUserMoneyResponse;
 import com.vinplay.vbee.common.statics.Consts;
 import com.vinplay.vbee.common.utils.DateTimeUtils;
 import com.vinplay.vbee.common.utils.UserUtil;
+import com.vinplay.vbee.common.utils.VinPlayUtils;
+import org.bson.Document;
+import org.bson.conversions.Bson;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -61,18 +55,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.AbstractList;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.vinplay.vbee.common.utils.VinPlayUtils;
-import org.bson.Document;
-import org.bson.conversions.Bson;
+import java.util.*;
 
 public class LogMoneyUserDaoImpl implements LogMoneyUserDao {
     @Override
@@ -237,7 +220,6 @@ public class LogMoneyUserDaoImpl implements LogMoneyUserDao {
 
         return results;
     }
-
 
 
     public List<LogUserMoneyResponse> getLogMoneyUser(String timeStart, String timeEnd) {
@@ -891,28 +873,39 @@ public class LogMoneyUserDaoImpl implements LogMoneyUserDao {
     public UserModel getUserByNickName(String nickname) throws SQLException {
         UserModel user = null;
         String sql = "SELECT * FROM users WHERE nick_name = ?";
-
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
-             PreparedStatement stm = conn.prepareStatement(sql)) {
-
+        PreparedStatement stm = null;
+        Connection conn = null;
+        ResultSet rs = null;
+        try {
+            conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+            stm = conn.prepareStatement(sql);
             stm.setString(1, nickname);
 
-            try (ResultSet rs = stm.executeQuery()) {
-                if (rs.next()) {
-                    user = UserUtil.parseResultSetToUserModel(rs);
-                }
+            rs = stm.executeQuery();
+            if (rs.next()) {
+                user = UserUtil.parseResultSetToUserModel(rs);
             }
         } catch (SQLException e) {
             e.printStackTrace(); // Consider logging the exception or handling it appropriately
             throw e;
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (stm != null) {
+                stm.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
+            return user;
         }
-
-        return user;
     }
 
 
     @Override
-    public List<LogUserMoneyResponse> searchLogMoneyTranferUser(String nickName, String timeStart, String timeEnd, String type, int page) {
+    public List<LogUserMoneyResponse> searchLogMoneyTranferUser(String nickName, String timeStart, String
+            timeEnd, String type, int page) {
         final ArrayList<LogUserMoneyResponse> results = new ArrayList<LogUserMoneyResponse>();
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         HashMap<String, Object> conditions = new HashMap<String, Object>();
@@ -978,7 +971,8 @@ public class LogMoneyUserDaoImpl implements LogMoneyUserDao {
     }
 
     @Override
-    public boolean UpdateProcessLogChuyenTienDaiLy(String nickNameSend, String nickNameReceive, String timeLog, String Status) {
+    public boolean UpdateProcessLogChuyenTienDaiLy(String nickNameSend, String nickNameReceive, String
+            timeLog, String Status) {
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection col = db.getCollection("log_chuyen_tien_dai_ly");
         HashMap<String, Object> conditions = new HashMap<String, Object>();
@@ -990,11 +984,14 @@ public class LogMoneyUserDaoImpl implements LogMoneyUserDao {
     }
 
     @Override
-    public boolean UpdateProcessLogChuyenTienDaiLyMySQL(String nickNameSend, String nickNameReceive, String timeLog, String status) throws SQLException {
+    public boolean UpdateProcessLogChuyenTienDaiLyMySQL(String nickNameSend, String nickNameReceive, String
+            timeLog, String status) throws SQLException {
         String sql = "UPDATE vinplay.log_tranfer_agent SET process = ?, update_time = ? WHERE trans_time = ? AND nick_name_send = ? AND nick_name_receive = ?";
-
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        PreparedStatement stmt = null;
+        Connection conn = null;
+        try {
+            conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+            stmt = conn.prepareStatement(sql);
 
             stmt.setInt(1, Integer.parseInt(status)); // Convert status to int
             stmt.setString(2, DateTimeUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")); // Use current time in the specified format
@@ -1013,11 +1010,19 @@ public class LogMoneyUserDaoImpl implements LogMoneyUserDao {
         } catch (SQLException e) {
             e.printStackTrace();
             throw e;
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
         }
     }
 
 
-    public List<LogUserMoneyResponse> getMoneyCashInAndCashOutByNickname(String nickName, List<String> actionNames) {
+    public List<LogUserMoneyResponse> getMoneyCashInAndCashOutByNickname(String
+                                                                                 nickName, List<String> actionNames) {
         final ArrayList<LogUserMoneyResponse> results = new ArrayList<>();
         MongoDatabase db = MongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("log_money_user_vin");

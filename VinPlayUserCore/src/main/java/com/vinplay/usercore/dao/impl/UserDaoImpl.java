@@ -55,7 +55,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bson.Document;
-import org.bson.conversions.Bson;
 
 public class UserDaoImpl implements UserDao {
 
@@ -269,9 +268,10 @@ public class UserDaoImpl implements UserDao {
             preparedStatement.setInt(1, pageSize);
             preparedStatement.setInt(2, (pageNumber - 1) * pageSize);
 
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                users.add(resultSet.getString("nick_name"));
+            try (ResultSet resultSet = preparedStatement.executeQuery();) {
+                while (resultSet.next()) {
+                    users.add(resultSet.getString("nick_name"));
+                }
             }
         }
         return users;
@@ -671,7 +671,11 @@ public class UserDaoImpl implements UserDao {
     @Override
     public List<UserAdminInfo> searchUserAdmin(String userName, String nickName, String phone, String field, String sort, String daily, String timeStart, String timeEnd, int page, int totalrecord, String bot, String like, String emailAddress) throws SQLException {
         ArrayList<UserAdminInfo> result = new ArrayList<UserAdminInfo>();
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
+        Connection conn = null;
+        PreparedStatement stm = null;
+        ResultSet rs = null;
+        try {
+            conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
             String sql = "select * from users where 1=1";
             int num_start = (page - 1) * totalrecord;
             int index = 1;
@@ -726,7 +730,7 @@ public class UserDaoImpl implements UserDao {
             } else {
                 sql = sql + " order by id DESC" + limit;
             }
-            PreparedStatement stm = conn.prepareStatement(sql);
+            stm = conn.prepareStatement(sql);
             if (userName != null && !userName.equals("")) {
                 if (like.equals("1")) {
                     stm.setString(index, '%' + userName + '%');
@@ -763,12 +767,7 @@ public class UserDaoImpl implements UserDao {
                 stm.setInt(index, Integer.parseInt(bot));
                 ++index;
             }
-            /*if (timeStart != null && !timeStart.equals("") && timeEnd != null && !timeEnd.equals("")) {
-                stm.setString(index, timeStart);
-                stm.setString(index + 1, timeEnd);
-                ++index;
-            }*/
-            ResultSet rs = stm.executeQuery();
+            rs = stm.executeQuery();
             while (rs.next()) {
                 String username = rs.getString("user_name");
                 String nickname = rs.getString("nick_name");
@@ -792,8 +791,16 @@ public class UserDaoImpl implements UserDao {
                 UserAdminInfo user = new UserAdminInfo(username, nickname, email, mobile, identification, vinTotal, xuTotal, safe, rechargeMoney, vippoint, vippointSave, loginOtp, bots, sCreateTime, sSecurityTime, status, googleId, facebookId, birthday);
                 result.add(user);
             }
-            rs.close();
-            stm.close();
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (stm != null) {
+                stm.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
         }
         return result;
     }
@@ -920,17 +927,15 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public int checkBotByNickname(String nickname) throws SQLException {
+        String sql = "SELECT is_bot FROM users WHERE nick_name=?";
         int res = 0;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            String sql = "SELECT is_bot FROM users WHERE nick_name=?";
-            PreparedStatement stm = conn.prepareStatement("SELECT is_bot FROM users WHERE nick_name=?");
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname"); PreparedStatement stm = conn.prepareStatement(sql);) {
             stm.setString(1, nickname);
-            ResultSet rs = stm.executeQuery();
-            if (rs.next()) {
-                res = rs.getInt("is_bot");
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    res = rs.getInt("is_bot");
+                }
             }
-            rs.close();
-            stm.close();
         }
         return res;
     }
@@ -1115,20 +1120,19 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public UserCacheModel getUserByNickNameCache(String nickName) throws SQLException {
+        String sql = "SELECT id, vin, vin_total, safe FROM vinplay.users WHERE nick_name = ?";
         UserCacheModel response = new UserCacheModel();
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            String sql = "SELECT id, vin, vin_total, safe FROM vinplay.users WHERE nick_name = ?";
-            PreparedStatement stm = conn.prepareStatement("SELECT id, vin, vin_total, safe FROM vinplay.users WHERE nick_name = ?");
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");
+             PreparedStatement stm = conn.prepareStatement(sql);) {
             stm.setString(1, nickName);
-            ResultSet rs = stm.executeQuery();
-            while (rs.next()) {
-                response.setId(rs.getInt("id"));
-                response.setVin(rs.getLong("vin"));
-                response.setVinTotal(rs.getLong("vin_total"));
-                response.setSafe(rs.getLong("safe"));
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    response.setId(rs.getInt("id"));
+                    response.setVin(rs.getLong("vin"));
+                    response.setVinTotal(rs.getLong("vin_total"));
+                    response.setSafe(rs.getLong("safe"));
+                }
             }
-            rs.close();
-            stm.close();
         }
         return response;
     }
@@ -1348,32 +1352,29 @@ public class UserDaoImpl implements UserDao {
         endTime += " 23:59:59";
         int cnt = 0;
         String sql = "";
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            String condition = "";
+        String condition = "";
 
-            if (startTime != null && !startTime.equals("") && endTime != null && !endTime.equals("")) {
-                condition = condition + " AND create_time BETWEEN '" + startTime + "' AND '" + endTime + "'";
+        if (startTime != null && !startTime.equals("") && endTime != null && !endTime.equals("")) {
+            condition = condition + " AND create_time BETWEEN '" + startTime + "' AND '" + endTime + "'";
+        }
+        sql = "select count(*) as cnt from users where 1=1" + condition + " AND is_bot = 0 AND security_time is not null AND recharge_money > 0";
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname"); PreparedStatement stm = conn.prepareStatement(sql)) {
+
+            try (ResultSet rs = stm.executeQuery();) {
+                if (rs.next()) {
+                    cnt = rs.getInt("cnt");
+                }
             }
-            sql = "select count(*) as cnt from users where 1=1" + condition + " AND is_bot = 0 AND security_time is not null AND recharge_money > 0";
-            PreparedStatement stm = conn.prepareStatement(sql);
-            ResultSet rs = stm.executeQuery();
-            if (rs.next()) {
-                cnt = rs.getInt("cnt");
-            }
-            rs.close();
-            stm.close();
         }
         return cnt;
     }
 
     public void updateDailyToUser(int userId, String nickname) throws SQLException {
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname");) {
-            String sql = "update vinplay.users set user_daily = ? where id = ?";
-            PreparedStatement stm = conn.prepareStatement(sql);
+        String sql = "update vinplay.users set user_daily = ? where id = ?";
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpoolname"); PreparedStatement stm = conn.prepareStatement(sql);) {
             stm.setInt(2, userId);
             stm.setString(1, nickname);
             int rs = stm.executeUpdate();
-            stm.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

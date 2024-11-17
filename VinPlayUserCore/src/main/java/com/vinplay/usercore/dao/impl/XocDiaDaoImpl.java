@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  com.vinplay.vbee.common.models.FreezeModel
  *  com.vinplay.vbee.common.pools.ConnectionPool
@@ -23,6 +23,7 @@ import com.vinplay.usercore.service.impl.MoneyInGameServiceImpl;
 import com.vinplay.vbee.common.models.FreezeModel;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.pools.ConnectionPool;
+
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -38,7 +39,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class XocDiaDaoImpl
-implements XocDiaDao {
+        implements XocDiaDao {
     @Override
     public boolean saveRoomBoss(XocDiaBoss boss) throws SQLException {
         boolean res = false;
@@ -54,11 +55,9 @@ implements XocDiaDao {
             call.setLong(param++, boss.getFundInitial());
             call.executeUpdate();
             res = true;
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             throw e;
-        }
-        finally {
+        } finally {
             if (call != null) {
                 call.close();
             }
@@ -85,11 +84,9 @@ implements XocDiaDao {
             call.setInt(param++, type);
             call.executeUpdate();
             res = true;
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             throw e;
-        }
-        finally {
+        } finally {
             if (call != null) {
                 call.close();
             }
@@ -102,12 +99,16 @@ implements XocDiaDao {
 
     @Override
     public XocDiaBoss getRoomBoss(String nickname, int roomId) throws SQLException {
+        String sql = "SELECT * FROM xoc_dia_boss WHERE `nick_name`=? AND room_id = ? AND `status` = 1";
         XocDiaBoss boss = null;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_gamebai");){
-            String sql = "SELECT * FROM xoc_dia_boss WHERE `nick_name`=? AND room_id = ? AND `status` = 1";
-            PreparedStatement stm = conn.prepareStatement("SELECT * FROM xoc_dia_boss WHERE `nick_name`=? AND room_id = ? AND `status` = 1");
+        PreparedStatement stm = null;
+        ResultSet rs = null;
+        Connection conn = null;
+        try {
+            conn = ConnectionPool.getInstance().getConnection("mysqlpool_gamebai");
+            stm = conn.prepareStatement(sql);
             stm.setString(1, nickname);
-            ResultSet rs = stm.executeQuery();
+            rs = stm.executeQuery();
             if (rs.next()) {
                 String sessionId = rs.getString("session_id");
                 String roomSetting = rs.getString("room_setting");
@@ -117,19 +118,25 @@ implements XocDiaDao {
                 String createTime = rs.getString("create_time");
                 boss = new XocDiaBoss(sessionId, nickname, roomId, roomSetting, fundInitial, 1, fee, revenue, createTime);
             }
-            rs.close();
-            stm.close();
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (stm != null) {
+                stm.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
         }
         return boss;
     }
 
     @Override
     public Map<Integer, XocDiaBoss> getListRoomBossActive() throws SQLException {
+        String sql = "SELECT * FROM xoc_dia_boss WHERE `status` = 1";
         HashMap<Integer, XocDiaBoss> bossList = new HashMap<Integer, XocDiaBoss>();
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_gamebai");){
-            String sql = "SELECT * FROM xoc_dia_boss WHERE `status` = 1";
-            PreparedStatement stm = conn.prepareStatement("SELECT * FROM xoc_dia_boss WHERE `status` = 1");
-            ResultSet rs = stm.executeQuery();
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_gamebai"); PreparedStatement stm = conn.prepareStatement(sql); ResultSet rs = stm.executeQuery()) {
             while (rs.next()) {
                 String sessionId = rs.getString("session_id");
                 String nickname = rs.getString("nick_name");
@@ -142,62 +149,57 @@ implements XocDiaDao {
                 XocDiaBoss boss = new XocDiaBoss(sessionId, nickname, roomId, roomSetting, fundInitial, 1, fee, revenue, createTime);
                 bossList.put(roomId, boss);
             }
-            rs.close();
-            stm.close();
         }
         return bossList;
     }
 
     @Override
     public List<String> getListBossActive() throws SQLException {
+        String sql = "SELECT * FROM xoc_dia_boss WHERE `status` = 1";
         ArrayList<String> bossList = new ArrayList<String>();
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_gamebai");){
-            String sql = "SELECT * FROM xoc_dia_boss WHERE `status` = 1";
-            PreparedStatement stm = conn.prepareStatement("SELECT * FROM xoc_dia_boss WHERE `status` = 1");
-            ResultSet rs = stm.executeQuery();
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_gamebai"); PreparedStatement stm = conn.prepareStatement(sql); ResultSet rs = stm.executeQuery()) {
             while (rs.next()) {
                 String nickname = rs.getString("nick_name");
                 bossList.add(nickname);
             }
-            rs.close();
-            stm.close();
         }
         return bossList;
     }
 
     @Override
     public List<String> getListSessionActive() throws SQLException {
+        String sql = "SELECT * FROM xoc_dia_boss WHERE `status` = 1";
         ArrayList<String> sessionList = new ArrayList<String>();
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_gamebai");){
-            String sql = "SELECT * FROM xoc_dia_boss WHERE `status` = 1";
-            PreparedStatement stm = conn.prepareStatement("SELECT * FROM xoc_dia_boss WHERE `status` = 1");
-            ResultSet rs = stm.executeQuery();
+        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_gamebai"); PreparedStatement stm = conn.prepareStatement(sql); ResultSet rs = stm.executeQuery()) {
             while (rs.next()) {
                 String sessionId = rs.getString("session_id");
                 sessionList.add(sessionId);
             }
-            rs.close();
-            stm.close();
         }
         return sessionList;
     }
 
     @Override
     public List<BossXocDiaModel> getListRoomBoss(String nickname, int roomId, int status, int moneyBet) throws SQLException, JSONException {
+        String sql = "SELECT * FROM xoc_dia_boss WHERE 1 = 1";
+        if (nickname != null && !nickname.isEmpty()) {
+            sql = sql + " AND nick_name = ?";
+        }
+        if (roomId >= 0) {
+            sql = sql + " AND room_id = ?";
+        }
+        if (status >= 0) {
+            sql = sql + " AND status = ?";
+        }
+        sql = sql + " ORDER BY create_time DESC";
+
         ArrayList<BossXocDiaModel> bossList = new ArrayList<BossXocDiaModel>();
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_gamebai");){
-            String sql = "SELECT * FROM xoc_dia_boss WHERE 1 = 1";
-            if (nickname != null && !nickname.isEmpty()) {
-                sql = sql + " AND nick_name = ?";
-            }
-            if (roomId >= 0) {
-                sql = sql + " AND room_id = ?";
-            }
-            if (status >= 0) {
-                sql = sql + " AND status = ?";
-            }
-            sql = sql + " ORDER BY create_time DESC";
-            PreparedStatement stm = conn.prepareStatement(sql);
+        PreparedStatement stm = null;
+        ResultSet rs = null;
+        Connection conn = null;
+        try {
+            conn = ConnectionPool.getInstance().getConnection("mysqlpool_gamebai");
+            stm = conn.prepareStatement(sql);
             int param = 1;
             if (nickname != null && !nickname.isEmpty()) {
                 stm.setString(param++, nickname);
@@ -208,7 +210,7 @@ implements XocDiaDao {
             if (status >= 0) {
                 stm.setInt(param++, status);
             }
-            ResultSet rs = stm.executeQuery();
+            rs = stm.executeQuery();
             MoneyInGameServiceImpl mnSer = new MoneyInGameServiceImpl();
             while (rs.next()) {
                 JSONObject roomSetting = new JSONObject(rs.getString("room_setting"));
@@ -232,8 +234,17 @@ implements XocDiaDao {
                 BossXocDiaModel boss = new BossXocDiaModel(sessionId, nn, rId, mnB, password, roomName, fundInitial, fund, st, fee, revenue, createTime);
                 bossList.add(boss);
             }
-            rs.close();
-            stm.close();
+
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (stm != null) {
+                stm.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
         }
         return bossList;
     }
@@ -280,7 +291,7 @@ implements XocDiaDao {
         MongoCollection<Document> collection = db.getCollection("xoc_dia_transaction");
         Document conditions = new Document();
         conditions.put("user_name", username);
-       return (int) collection.count(conditions);
+        return (int) collection.count(conditions);
     }
 }
 
