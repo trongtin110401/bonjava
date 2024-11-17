@@ -235,8 +235,8 @@ public class Slot20Room extends SlotRoom {
                                             MiniGameSlotResponse response = this.generateBonusData();
                                             moneyOnLine = response.getTotalPrize();
                                             haiSao = response.getPrizes();
-                                            if (result != 3) {
-                                                result = 5;
+                                            if (result != ResultSlot.JACKPOT) {
+                                                result = ResultSlot.BONUS_GAME;
                                             }
                                         }
                                         AwardsOnLine aol = new AwardsOnLine(award, moneyOnLine, line.getName());
@@ -249,6 +249,11 @@ public class Slot20Room extends SlotRoom {
                                 }
                                 // Không cho phép đồng thời cả BONUS và FREE SPIN
                                 if (hasFreeSpinAward && hasBonusAward) {
+                                    continue;
+                                }
+
+                                // không cho phép trúng bonus khi số line đặt nhỏ hơn 3/4 tổng số line
+                                if (hasBonusAward && selectedLines.length < (lines.list().size() / 4) * 3) {
                                     continue;
                                 }
 

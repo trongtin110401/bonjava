@@ -207,6 +207,11 @@ public class SlotBLCRoom extends Slot25ExtendRoom {
                                     continue;
                                 }
 
+                                // không cho phép trúng bonus khi số line đặt nhỏ hơn 3/4 tổng số line
+                                if (countBonus >= 3 && selectedLines.length < (lines.list().size() / 4) * 3) {
+                                    continue;
+                                }
+
                                 // Tính toán phần thưởng cho BONUS GAME
                                 if (countBonus >= 3) {
                                     bonusGameResponse = Slot25ExtendUtil.buildBonusGameData(this.betValue, countBonus);
