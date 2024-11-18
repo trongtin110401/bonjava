@@ -13,16 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class PotTaiXiu
-        extends Pot {
+public class PotTaiXiu extends Pot {
     private long totalBotBet = 0L;
-    private int numBot = 0;
-    private int BETSIDE_TAI = 1;
     // list all transaction
-    public List<TransactionTaiXiuDetail> contributors = new ArrayList<TransactionTaiXiuDetail>();
+    public List<TransactionTaiXiuDetail> contributors = new ArrayList<>();
     public List<TaiXiuAdmin> contributorNotBot = new ArrayList<>();
-    public List<String> users = new ArrayList<String>();
-    public List<String> userNotBots = new ArrayList<String>();
+    public List<String> users = new ArrayList<>();
+    public List<String> userNotBots = new ArrayList<>();
 
     public int getNumberUserNotBot() {
         return userNotBots.size();
@@ -70,7 +67,6 @@ public class PotTaiXiu
         this.totalValue += trans.betValue;
         if (isBot) {
             this.totalBotBet += trans.betValue;
-            ++this.numBot;
         }
     }
 
@@ -82,7 +78,6 @@ public class PotTaiXiu
         this.users.clear();
         this.userNotBots.clear();
         this.totalBotBet = 0L;
-        this.numBot = 0;
     }
 
     public long getTotalBetByUsername(String username) {
@@ -105,10 +100,6 @@ public class PotTaiXiu
 
     public long getTotalBotBet() {
         return this.totalBotBet;
-    }
-
-    public int getNumBotBet() {
-        return this.numBot;
     }
 
     public List<TaiXiuAdmin> getContributorNotBot() {

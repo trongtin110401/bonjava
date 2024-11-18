@@ -5,8 +5,7 @@ package com.vinplay.dal.entities.taixiu;
 
 import java.io.Serializable;
 
-public class ResultTaiXiuMd5 extends ResultTaiXiu
-        implements Serializable {
+public class ResultTaiXiuMd5 extends ResultTaiXiu implements Serializable {
     private static final long serialVersionUID = 1L;
     private String plantTextResult;
     private String md5TextResult;

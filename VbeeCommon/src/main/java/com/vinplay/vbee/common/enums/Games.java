@@ -13,6 +13,7 @@ Games {
     MINI_POKER(1, "MiniPoker", "Mini poker"),
     TAI_XIU(2, "TaiXiu", "T�i x?u"),
     TAI_XIU_MD5(2000, "TaiXiuMd5", "T�i x?u Md5"),
+    TAI_XIU_KUBET(2001, "TaiXiuKubet", "Tài Xỉu Kubet"),
     BAU_CUA(3, "BauCua", "B?u cua"),
     CAO_THAP(4, "cao_thap", "Cao th?p"),
     POKE_GO(5, "PokeGo", "Pokego"),

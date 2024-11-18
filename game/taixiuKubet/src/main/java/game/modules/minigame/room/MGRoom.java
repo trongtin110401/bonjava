@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  bitzero.server.api.IBZApi
  *  bitzero.server.entities.User
@@ -28,7 +28,7 @@ public abstract class MGRoom {
     public static final String CACHE_JACK_POT_VALUE_MINIGAME = "pot_value_jackpot";
     protected String name;
     protected String gameName;
-    protected List<User> users = new ArrayList<User>();
+    protected final List<User> users = new ArrayList<User>();
 
     public MGRoom(String name) {
         this.name = name;
@@ -38,11 +38,8 @@ public abstract class MGRoom {
      * WARNING - Removed try catching itself - possible behaviour change.
      */
     public boolean joinRoom(User user) {
-        List<User> list;
-
-        List<User> list2 = list = this.users;
-        synchronized (list2) {
-            if (!this.users.contains((Object)user)) {
+        synchronized (this.users) {
+            if (!this.users.contains(user)) {
                 this.users.add(user);
                 return true;
             }
@@ -57,11 +54,10 @@ public abstract class MGRoom {
     // todo : xóa user khỏi
     //  list user ở trong room
     public boolean quitRoom(User user) {
-        List<User> list;
-        List<User> list2 = list = this.users;
+        List<User> list2 = this.users;
         synchronized (list2) {
-            if (this.users.contains((Object)user)) {
-                this.users.remove((Object)user);
+            if (this.users.contains(user)) {
+                this.users.remove(user);
                 return true;
             }
         }

@@ -11,28 +11,28 @@ public class ForceResultTaiXiuMd5 implements BaseProcessor<HttpServletRequest, S
     @Override
     public String execute(Param<HttpServletRequest> param) {
         String res = "0";
-        HttpServletRequest request = (HttpServletRequest)param.get();
+        HttpServletRequest request = (HttpServletRequest) param.get();
         String rs = request.getParameter("result");
-        if(rs == null){
+        if (rs == null) {
             return res;
         }
         int result = Integer.parseInt(rs);
         //String referenceId = request.getParameter("referenceId");
-        if(result != 0 && result != 1){
+        if (result != 0 && result != 1) {
             return res;
         }
         CacheService cacheService = new CacheServiceImpl();
         String currentReference = "";
 
-        try{
+        try {
             currentReference = cacheService.getValueStr("Tai_xiu_current_reference_md5");
-            int allowBetting = cacheService.getValueInt("md5_allow_betting_"+currentReference);
-            if(allowBetting == 0){
+            int allowBetting = cacheService.getValueInt("md5_allow_betting_" + currentReference);
+            if (allowBetting == 0) {
                 return "-1";
             }
-            cacheService.setValue("md5_force_result_"+currentReference, result);
+            cacheService.setValue("md5_force_result_" + currentReference, result);
             return "1";
-        }catch (Exception e){
+        } catch (Exception e) {
             return res;
         }
 

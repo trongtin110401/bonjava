@@ -1,35 +1,11 @@
-/*
- * Decompiled with CFR 0.144.
- *
- * Could not load the following classes:
- *  bitzero.server.entities.User
- *  bitzero.server.extensions.data.BaseMsg
- *  bitzero.util.common.business.Debug
- *  com.vinplay.dal.entities.report.ReportMoneySystemModel
- *  com.vinplay.dal.entities.taixiu.ResultTaiXiu
- *  com.vinplay.dal.entities.taixiu.TransactionTaiXiu
- *  com.vinplay.dal.entities.taixiu.TransactionTaiXiuDetail
- *  com.vinplay.dal.service.BroadcastMessageService
- *  com.vinplay.dal.service.TaiXiuService
- *  com.vinplay.dal.service.impl.BroadcastMessageServiceImpl
- *  com.vinplay.dal.service.impl.TaiXiuServiceImpl
- *  com.vinplay.usercore.service.UserService
- *  com.vinplay.usercore.service.impl.UserServiceImpl
- *  com.vinplay.vbee.common.enums.Games
- *  com.vinplay.vbee.common.models.cache.UserCacheModel
- *  com.vinplay.vbee.common.response.MoneyResponse
- *  com.vinplay.vbee.common.statics.TransType
- */
+
 package game.modules.minigame.room;
 
 import bitzero.server.entities.User;
-import bitzero.server.extensions.data.BaseMsg;
 import bitzero.util.common.business.Debug;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
-import com.vinplay.dal.entities.report.ReportMoneySystemModel;
 import com.vinplay.dal.entities.taixiu.ResultTaiXiu;
-import com.vinplay.dal.entities.taixiu.ResultTaiXiuMd5;
 import com.vinplay.dal.entities.taixiu.TransactionTaiXiu;
 import com.vinplay.dal.entities.taixiu.TransactionTaiXiuDetail;
 import com.vinplay.dal.service.BroadcastMessageService;
@@ -37,7 +13,7 @@ import com.vinplay.dal.service.CacheService;
 import com.vinplay.dal.service.TaiXiuService;
 import com.vinplay.dal.service.impl.BroadcastMessageServiceImpl;
 import com.vinplay.dal.service.impl.CacheServiceImpl;
-import com.vinplay.dal.service.impl.TaiXiuMd5ServiceImpl;
+import com.vinplay.dal.service.impl.TaiXiuKubetServiceImpl;
 import com.vinplay.usercore.service.UserService;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.vbee.common.enums.Games;
@@ -51,7 +27,6 @@ import com.vinplay.vbee.common.statics.TransType;
 import game.modules.minigame.TaiXiuModule;
 import game.modules.minigame.cmd.rev.BetTaiXiuCmd;
 import game.modules.minigame.cmd.send.*;
-import game.modules.minigame.entities.BalanceMoneyTX;
 import game.modules.minigame.entities.MinigameConstant;
 import game.modules.minigame.entities.PotTaiXiu;
 import game.modules.minigame.utils.TaiXiuUtils;
@@ -65,33 +40,36 @@ import java.util.stream.Stream;
 
 // todo : con của MGRoom
 public class MGRoomTaiXiu extends MGRoom {
-    private static final double PHAN_TRAM_TIEN_HU = 0.005;
+    // mã phiên
     public long referenceId;
-    private short moneyType;
+    // kiểu tiền xu/vin
+    private final short moneyType;
+    // kiểu tiền dạng chữ
     private String moneyTypeStr;
-    private PotTaiXiu potTai;
-    private PotTaiXiu potXiu;
-    private long startTime = 0L;
+    // đối tượng thống kê cửa tài
+    private final PotTaiXiu potTai;
+    // đối tượng thống  kê cửa xỉu
+    private final PotTaiXiu potXiu;
+    // kết quả: 1-Tài, 2-Xỉu
     private short result = (short) -1;
+    // trạng thái có được đặt cược hay ko
     public boolean bettingRound = false;
+    // trạng thái có được đặt cược hay ko
     public boolean enableBetting = false;
-    public ResultTaiXiuMd5 resultTX;
-    private TaiXiuService taiXiuService = new TaiXiuMd5ServiceImpl(); // tài xỉu service lấy cả trong rabbitmq và cả trong cache server
-    private UserService userService = new UserServiceImpl();   // user service
-    private CacheService cacheService = new CacheServiceImpl(); // cache service
-    private BroadcastMessageService broadcastMsgService = new BroadcastMessageServiceImpl();
-    private float tax = MinigameConstant.MINIGAME_TAX_VIN;
-    private BalanceMoneyTX balance = new BalanceMoneyTX();  //
-    private long blackListBetTai = 0L;
-    private long blackListBetXiu = 0L;
-    private long whiteListBetTai = 0L;
-    private long whiteListBetXiu = 0L;
-    public static long soTienNguoiChoiDatTai = 0L;
-    public static long soTienNguoiChoiDatXiu = 0L;
+    // đối tượng đại diện cho kết quả của phiên hiện tại
+    public ResultTaiXiu resultTX;
+    // dịch vụ giao tiếp với DB
+    private final TaiXiuService taiXiuService = new TaiXiuKubetServiceImpl(); // tài xỉu service lấy cả trong rabbitmq và cả trong cache server
+    private final UserService userService = new UserServiceImpl();   // user service
+    private final CacheService cacheService = new CacheServiceImpl(); // cache service
+    private final BroadcastMessageService broadcastMsgService = new BroadcastMessageServiceImpl();
+    private final float tax;
+//    public static long soTienNguoiChoiDatTai = 0L;
+//    public static long soTienNguoiChoiDatXiu = 0L;
 
-    private static final org.apache.log4j.Logger logger = Logger.getLogger((String) "recharge");
+    private static final org.apache.log4j.Logger logger = Logger.getLogger("recharge");
 
-    TaiXiuModule module;
+    private final TaiXiuModule module;
 
     public MGRoomTaiXiu(String name, long referenceId, short moneyType, TaiXiuModule module) {
         super(name);
@@ -101,11 +79,6 @@ public class MGRoomTaiXiu extends MGRoom {
         if (moneyType == 1) {
             this.moneyTypeStr = "vin";
             this.tax = MinigameConstant.MINIGAME_TAX_VIN;
-            ReportMoneySystemModel model = this.taiXiuService.getReportTX(ConfigGame.getIntValue("interval_reset_balance", 10));
-            if (model != null) {
-                this.balance = new BalanceMoneyTX(model.moneyWin, model.moneyLost, model.fee, model.dateReset);
-                Debug.trace((Object) ("TAI XIU VIN, win=" + model.moneyWin + ", loss=" + model.moneyLost + ", fee= " + model.fee + ", date reset= " + model.dateReset));
-            }
         } else {
             this.tax = MinigameConstant.MINIGAME_TAX_XU;
         }
@@ -119,26 +92,20 @@ public class MGRoomTaiXiu extends MGRoom {
         this.referenceId = newReferenceId;
         this.bettingRound = true;
         this.enableBetting = true;
-        this.blackListBetTai = 0L;
-        this.blackListBetXiu = 0L;
-        this.whiteListBetTai = 0L;
-        this.whiteListBetXiu = 0L;
-        soTienNguoiChoiDatTai = 0L;
-        soTienNguoiChoiDatXiu = 0L;
+//        soTienNguoiChoiDatTai = 0L;
+//        soTienNguoiChoiDatXiu = 0L;
         this.potTai.renew();
         this.potXiu.renew();
-        this.startTime = System.currentTimeMillis();
-        Debug.trace((Object) ("START NEW ROUND " + this.referenceId));
+        Debug.trace("START NEW ROUND " + this.referenceId);
     }
 
     // todo :kết thúc 1 game
     public void finish() {
-        this.startTime = System.currentTimeMillis();
         this.bettingRound = false;
         try {
-            this.cacheService.removeKey("md5_allow_betting_" + this.referenceId); // xóa key cho phép đặt tài xỉu
-            this.cacheService.removeKey("md5_force_result_" + this.referenceId); // xóa key kết quả bắt buộc
-        } catch (Exception e) {
+            this.cacheService.removeKey("kubet_allow_betting_" + this.referenceId); // xóa key cho phép đặt tài xỉu
+            this.cacheService.removeKey("kubet_force_result_" + this.referenceId); // xóa key kết quả bắt buộc
+        } catch (Exception ignored) {
 
         }
 
@@ -147,7 +114,7 @@ public class MGRoomTaiXiu extends MGRoom {
     // todo : không cho phép đặt cược
     public void disableBetting() {
         this.enableBetting = false;
-        this.cacheService.setValue("md5_allow_betting_" + this.referenceId, 0); // không cho phép đặt cược nữa
+        this.cacheService.setValue("kubet_allow_betting_" + this.referenceId, 0); // không cho phép đặt cược nữa
     }
 
     public void updateResultDices(short[] dices, short result) {
@@ -177,7 +144,7 @@ public class MGRoomTaiXiu extends MGRoom {
     // todo : bet tài xỉu
     public void betTaiXiu(User user, BetTaiXiuCmd cmd) {
         BetTaiXiuMsg msg = this.betTaiXiu(user.getName(), user.getId(), cmd.betValue, cmd.inputTime, cmd.moneyType, cmd.betSide, false, referenceId);
-        this.sendMessageToUser((BaseMsg) msg, user); // todo : gửi message về client
+        this.sendMessageToUser(msg, user); // todo : gửi message về client
     }
 
     // todo : đặt tài xỉu
@@ -186,29 +153,21 @@ public class MGRoomTaiXiu extends MGRoom {
         int result = 2;
         if (this.enableBetting) {
             if (betValue >= 100L) {
-
-                if (!isBot && moneyType == 1) {
-                    if (betSide == 1) {
-                        soTienNguoiChoiDatTai += betValue; // người chơi đặt tài
-                    } else {
-                        soTienNguoiChoiDatXiu += betValue; // người đặt xỉu
-                    }
-                }
                 inputTime = this.getRemainTime(); // lấy thời gian còn lại
                 currentMoney = this.userService.getMoneyUserCache(nickname, this.moneyTypeStr);  // lấy số tiền hiện tại của user dựa trên nick name
 
                 if (betValue > currentMoney) {
                     result = 3;
                 } else {
-                    TransactionTaiXiuDetail transTX = new TransactionTaiXiuDetail(this.referenceId, userId, nickname, betValue, (int) betSide, (int) inputTime, (int) moneyType);
+                    TransactionTaiXiuDetail transTX = new TransactionTaiXiuDetail(this.referenceId, userId, nickname, betValue, betSide, inputTime, moneyType);
                     if (betSide == 1 && this.potXiu.getTotalBetByUsername(nickname) > 0L || betSide == 0 && this.potTai.getTotalBetByUsername(nickname) > 0L) {
                         result = 5;
                     } else {
-                        String betSideStr = betSide == 0 ? "X\u1ec9u" : "T\u00e0i";
+                        String betSideStr = betSide == 0 ? "Xỉu" : "Tài";
 
                         MoneyResponse res = new MoneyResponse(false, "1001");
                         if (!isBot) { // trừ tiền đặt cược
-                            res = this.userService.updateMoney(nickname, -betValue, this.moneyTypeStr, Games.TAI_XIU_MD5.getName(), "T.Xỉu MD5: Đặt cược", "Phiên " + this.referenceId + ": đặt " + betSideStr + " (" + inputTime + ")", 0L, Long.valueOf(this.referenceId), TransType.START_TRANS);
+                            res = this.userService.updateMoney(nickname, -betValue, this.moneyTypeStr, Games.TAI_XIU_KUBET.getName(), "T.Xỉu KUBET: Đặt cược", "Phiên " + this.referenceId + ": đặt " + betSideStr + " (" + inputTime + ")", 0L, this.referenceId, TransType.START_TRANS);
                             try {
                                 BetTXMD5Message message = new BetTXMD5Message();
                                 message.setBetSide(betSide);
@@ -227,28 +186,18 @@ public class MGRoomTaiXiu extends MGRoom {
                             if (!this.enableBetting) { // kiểm tra xem có phải đang trong quá trình đặt cược hay ko , nếu ko
                                 result = 1;
                                 if (!isBot) { // hoàn trả tiền cược
-                                    this.userService.updateMoney(nickname, betValue, this.moneyTypeStr, Games.TAI_XIU_MD5.getName(), "Tài xỉu: Trả cược", "Hoàn trả đặt cược phiên " + this.referenceId, 0L, Long.valueOf(this.referenceId), TransType.END_TRANS);
+                                    this.userService.updateMoney(nickname, betValue, this.moneyTypeStr, Games.TAI_XIU_KUBET.getName(), "Tài xỉu: Trả cược", "Hoàn trả đặt cược phiên " + this.referenceId, 0L, this.referenceId, TransType.END_TRANS);
 
                                 }
                             } else { // nếu đang trong quá trình đặt cược
                                 isBot = this.isBot(nickname);
                                 if (moneyType == 1 && !isBot) {
-                                    this.balance.addBet(betValue);
+//                                    this.balance.addBet(betValue);
                                     if (betValue >= (long) ConfigGame.getIntValue("tx_min_money_black_list", 2000000) && ConfigGame.inBlackList(nickname) && new Random().nextInt(100) <= ConfigGame.getIntValue("tx_black_list_percent", 50)) {
-                                        Debug.trace((Object) ("Black list " + nickname + " money= " + betValue + ", bet side= " + betSide));
-                                        if (betSide == 1) {
-                                            this.blackListBetTai += betValue;
-                                        } else {
-                                            this.blackListBetXiu += betValue;
-                                        }
+                                        Debug.trace("Black list " + nickname + " money= " + betValue + ", bet side= " + betSide);
                                     }
                                     if (betValue >= (long) ConfigGame.getIntValue("tx_min_money_white_list", 2000000) && ConfigGame.inWhiteList(nickname) && new Random().nextInt(100) <= ConfigGame.getIntValue("tx_white_list_percent", 50)) {
-                                        Debug.trace((Object) ("White list " + nickname + " money= " + betValue + ", bet side= " + betSide));
-                                        if (betSide == 1) {
-                                            this.whiteListBetTai += betValue;
-                                        } else {
-                                            this.whiteListBetXiu += betValue;
-                                        }
+                                        Debug.trace("White list " + nickname + " money= " + betValue + ", bet side= " + betSide);
                                     }
                                 }
                                 if (betSide == 1) {
@@ -289,24 +238,22 @@ public class MGRoomTaiXiu extends MGRoom {
         msg.numBetTai = (this.potTai.getNumBet() + amountBotTaiFake);
         msg.numBetXiu = (this.potXiu.getNumBet() + amountBotXiuFake);
         msg.moneyHu = TaiXiuModule.moneyHu;
-        msg.md5TextResult = resultTX.getMd5TextResult();
-        if (secondGamePlay >= 50 && !bettingRound) {
-            msg.plaintTextResult = resultTX.getPlantTextResult();
-        }
-        cacheService.setValue("Md5_Lobby_tx_tai_" + this.moneyType, String.valueOf(this.getPotTai()));
-        cacheService.setValue("Md5_Lobby_tx_xiu_" + this.moneyType, String.valueOf(this.getPotXiu()));
+//        msg.md5TextResult = resultTX.getMd5TextResult();
+//        if (secondGamePlay >= 50 && !bettingRound) {
+//            msg.plaintTextResult = resultTX.getPlantTextResult();
+//        }
+        cacheService.setValue("kubet_Lobby_tx_tai_" + this.moneyType, String.valueOf(this.getPotTai()));
+        cacheService.setValue("kubet_Lobby_tx_xiu_" + this.moneyType, String.valueOf(this.getPotXiu()));
         this.sendMessageToRoom(msg);
-
-//        System.out.println("Second: " + secondGamePlay + " | md5: " + resultTX.getMd5TextResult() + " | plain: " + resultTX.getPlantTextResult());
     }
 
     // todo : tính toán kết quả
     public void calculatePrize(long referenceId) {
         PotTaiXiu potX = this.potXiu;
         PotTaiXiu potT = this.potTai;
-        HashMap<String, TransactionTaiXiu> sumTXTMap = new HashMap<String, TransactionTaiXiu>();
-        HashMap<String, TransactionTaiXiu> sumTai = new HashMap<String, TransactionTaiXiu>();
-        HashMap<String, TransactionTaiXiu> sumXiu = new HashMap<String, TransactionTaiXiu>();
+        HashMap<String, TransactionTaiXiu> sumTXTMap = new HashMap<>();
+        HashMap<String, TransactionTaiXiu> sumTai = new HashMap<>();
+        HashMap<String, TransactionTaiXiu> sumXiu = new HashMap<>();
 
         long totalCashIn = 0L;
         long totalCashOut = 0L;
@@ -316,8 +263,6 @@ public class MGRoomTaiXiu extends MGRoom {
 
         // Tính toán tiền thắng thua trong game
         // tổng tiền hợp lệ cửa tài
-        long tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon = 0;
-        long tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon = 0;
         switch (this.result) {
             case 0: {
                 if (potX != null && potX.contributors != null) {
@@ -330,9 +275,6 @@ public class MGRoomTaiXiu extends MGRoom {
 
                             // giải thưởng, hay nói cách khác là số tiền thắng
                             tran.prize = Math.round((long) ((float) tran.betValue * (100.0f - this.tax) / 100.0f) + tran.betValue);
-                            if (tran.userId != 0) {
-                                tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon += tran.betValue;
-                            }
 
                             // Cộng dồn để tính tổng số tiền trả lại
                             rs.totalPrize += tran.prize;
@@ -349,7 +291,7 @@ public class MGRoomTaiXiu extends MGRoom {
                             // Update giao dịch
                             this.saveTransactionDetailTX(tran);
                         } catch (Exception e) {
-                            Debug.trace((Object) ("Error calculate prize user " + tran.username + " error: " + e.getMessage()));
+                            Debug.trace("Error calculate prize user " + tran.username + " error: " + e.getMessage());
                         }
                     }
                 }
@@ -362,10 +304,6 @@ public class MGRoomTaiXiu extends MGRoom {
                             totalCashIn += tran.betValue;
                         }
 
-                        if (tran.userId != 0) {
-                            tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon += tran.betValue;
-                        }
-
                         // Tổng tiền lỗ lãi
                         this.updateSumTran(sumTXTMap, tran);
                         this.updateSumTran(sumTai, tran);
@@ -373,7 +311,7 @@ public class MGRoomTaiXiu extends MGRoom {
                         // Update giao dịch
                         this.saveTransactionDetailTX(tran);
                     } catch (Exception e) {
-                        Debug.trace((Object) ("Error calculate prize user " + tran.username + " error: " + e.getMessage()));
+                        Debug.trace("Error calculate prize user " + tran.username + " error: " + e.getMessage());
                     }
                 }
                 break;
@@ -389,10 +327,6 @@ public class MGRoomTaiXiu extends MGRoom {
 
                             tran.prize = Math.round((long) ((float) tran.betValue * (100.0f - this.tax) / 100.0f) + tran.betValue);
 
-                            if (tran.userId != 0) {
-                                tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon += tran.betValue;
-                            }
-
                             rs.totalPrize += tran.prize;
                             if (tran.userId != 0) {
                                 totalCashOut += tran.prize;
@@ -405,7 +339,7 @@ public class MGRoomTaiXiu extends MGRoom {
                             // Update giao dịch
                             this.saveTransactionDetailTX(tran);
                         } catch (Exception e) {
-                            Debug.trace((Object) ("Error calculate prize user " + tran.username + " error: " + e.getMessage()));
+                            Debug.trace("Error calculate prize user " + tran.username + " error: " + e.getMessage());
                         }
                     }
                 }
@@ -416,10 +350,6 @@ public class MGRoomTaiXiu extends MGRoom {
                             totalCashIn += tran.betValue;
                         }
 
-                        if (tran.userId != 0) {
-                            tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon += tran.betValue;
-                        }
-
                         // Tổng tiền lỗ lãi
                         this.updateSumTran(sumTXTMap, tran);
                         this.updateSumTran(sumXiu, tran);
@@ -427,17 +357,17 @@ public class MGRoomTaiXiu extends MGRoom {
                         // Update giao dịch
                         this.saveTransactionDetailTX(tran);
                     } catch (Exception e) {
-                        Debug.trace((Object) ("Error calculate prize user " + tran.username + " error: " + e.getMessage()));
+                        Debug.trace("Error calculate prize user " + tran.username + " error: " + e.getMessage());
                     }
                 }
                 break;
             }
             default: {
-                Debug.trace((Object) ("Fuck error TX, room=" + this.moneyTypeStr + ", reference= " + referenceId + ", result= " + this.result));
+                Debug.trace("Fuck error TX, room=" + this.moneyTypeStr + ", reference= " + referenceId + ", result= " + this.result);
             }
         }
 
-        ArrayList<TransactionTaiXiu> trans = new ArrayList<TransactionTaiXiu>(sumTXTMap.values());
+        ArrayList<TransactionTaiXiu> trans = new ArrayList<>(sumTXTMap.values());
         if (this.moneyType == 1) {
             logger.trace("TX phien= " + referenceId + ", tinh toan xong ket qua");
 
@@ -448,11 +378,11 @@ public class MGRoomTaiXiu extends MGRoom {
 
             try {
                 HazelcastInstance client = HazelcastClientFactory.getInstance();
-                IMap bankMap = client.getMap("txBank_md5");  // Đây có thể là quỹ thưởng được sử dụng để tính toán cân bằng lỗ lãi của nhà cái khi ra kết quả
+                IMap<String, Long> bankMap = client.getMap("txBank_kubet");  // Đây có thể là quỹ thưởng được sử dụng để tính toán cân bằng lỗ lãi của nhà cái khi ra kết quả
                 String key = "txBank:" + this.moneyType;
                 long bank = 0L;
                 if (bankMap.containsKey(key)) {
-                    bank = (long) bankMap.get(key);
+                    bank = bankMap.get(key);
                 }
                 logger.error("calculatePrize key:" + key + " bank:" + bank);
 
@@ -465,12 +395,14 @@ public class MGRoomTaiXiu extends MGRoom {
                 bankMap.put("totalCashOut", totalCashOut);
             } catch (Exception ex) {
                 logger.error("calculatePrize ex:" + ex.getMessage());
-                Debug.trace((Object) (" error resultTX: " + ex.getMessage()));
+                Debug.trace(" error resultTX: " + ex.getMessage());
             }
         }
 
+        assert potT != null;
         rs.totalTai = potT.getTotalValue();
         rs.numBetTai = potT.getNumBet();
+        assert potX != null;
         rs.totalXiu = potX.getTotalValue();
         rs.numBetXiu = potX.getNumBet();
         rs.moneyHu = TaiXiuModule.moneyHu;
@@ -479,17 +411,17 @@ public class MGRoomTaiXiu extends MGRoom {
         // Tính tiền và trả lại cho khách
         new UpdateMoneyTXTask(sumTai).start();
         if (this.moneyType == 1) {
-            Debug.trace((Object) ("TX phien= " + referenceId + ", cap nhat xong ben tai"));
+            Debug.trace("TX phien= " + referenceId + ", cap nhat xong ben tai");
         }
 
         new UpdateMoneyTXTask(sumXiu).start();
         if (this.moneyType == 1) {
-            Debug.trace((Object) ("TX phien= " + referenceId + ", cap nhat xong ben xiu"));
+            Debug.trace("TX phien= " + referenceId + ", cap nhat xong ben xiu");
         }
 
         try {
             // lưu kết quả tài xỉu
-            Debug.trace((Object) ("Ket qua của phiên sẽ lưu "));
+            Debug.trace("Ket qua của phiên sẽ lưu ");
             this.taiXiuService.saveResultTaiXiu(rs);
         } catch (Exception e) {
             ExceptionUtils.printRootCauseStackTrace(e);
@@ -505,36 +437,35 @@ public class MGRoomTaiXiu extends MGRoom {
         }
 
         // tính toán qũy
-        calculateFund(tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon, tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon);
+//        calculateFund(tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon, tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon);
     }
 
     /**
      * Tính toán quỹ
-     *
-     * @param tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon tổng tiền trả thưởng của tài cửa user thật không bao gồm vốn
-     * @param tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon tổng tiền trả thưởng của xỉu cửa user thật không bao gồm vốn
+     * <p>
+     * //     * @param tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon tổng tiền trả thưởng của tài cửa user thật không bao gồm vốn
+     * //     * @param tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon tổng tiền trả thưởng của xỉu cửa user thật không bao gồm vốn
      */
-    private void calculateFund(long tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon, long tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon) {
-        try {
-            if (this.result == 1) { // cửa tài
-                if (tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon > tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon) {
-                    module.updateFunValue(-(tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon - tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon));
-                } else {
-                    module.updateFunValue((tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon - tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon));
-                }
-            } else { // cửa xỉu
-                if (tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon > tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon) {
-                    module.updateFunValue(-(tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon - tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon));
-                } else {
-                    module.updateFunValue((tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon - tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon));
-                }
-            }
-            this.module.saveFund();
-        } catch (Exception e) {
-            Debug.info(ExceptionUtils.getStackTrace(e));
-        }
-    }
-
+//    private void calculateFund(long tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon, long tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon) {
+//        try {
+//            if (this.result == 1) { // cửa tài
+//                if (tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon > tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon) {
+//                    module.updateFunValue(-(tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon - tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon));
+//                } else {
+//                    module.updateFunValue((tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon - tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon));
+//                }
+//            } else { // cửa xỉu
+//                if (tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon > tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon) {
+//                    module.updateFunValue(-(tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon - tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon));
+//                } else {
+//                    module.updateFunValue((tongTienTraThuongCuaTaiCuaUserThatKhongBaoGomVon - tongTienTraThuongCuaXiuCuaUserThatKhongBaoGomVon));
+//                }
+//            }
+//            this.module.saveFund();
+//        } catch (Exception e) {
+//            Debug.info(ExceptionUtils.getStackTrace(e));
+//        }
+//    }
     private void updateSumTran(Map<String, TransactionTaiXiu> map, TransactionTaiXiuDetail tranDetail) {
         if (map.containsKey(tranDetail.username)) {
             TransactionTaiXiu txt = map.get(tranDetail.username);
@@ -563,13 +494,13 @@ public class MGRoomTaiXiu extends MGRoom {
     /**
      * Lưu transaction một người dùng mỗi phiên
      *
-     * @param tran
+     * @param tran TransactionTaiXiuDetail
      */
     private void saveTransactionDetailTX(TransactionTaiXiuDetail tran) {
         try {
             this.taiXiuService.saveTransactionTaiXiuDetail(tran);
         } catch (Exception e) {
-            Debug.trace((Object) ("Update transaction detail tai xiu error: " + e.getMessage()));
+            Debug.trace("Update transaction detail tai xiu error: " + e.getMessage());
         }
     }
 
@@ -593,7 +524,7 @@ public class MGRoomTaiXiu extends MGRoom {
             msg.dice3 = (short) this.resultTX.dice3;
         }
         msg.remainTimeRutLoc = remainTimeRutLoc;
-        this.sendMessageToUser((BaseMsg) msg, user);
+        this.sendMessageToUser(msg, user);
     }
 
     public boolean isBetting() {
@@ -602,10 +533,6 @@ public class MGRoomTaiXiu extends MGRoom {
 
     public long getPotTai() {
         return this.potTai.getTotalValue();
-    }
-
-    public long getBotBetTai() {
-        return this.potTai.getTotalBotBet();
     }
 
     public long getUserBetTai() {
@@ -646,10 +573,6 @@ public class MGRoomTaiXiu extends MGRoom {
         return this.potXiu.getTotalValue();
     }
 
-    public long getBotBetXiu() {
-        return this.potXiu.getTotalBotBet();
-    }
-
     public long getUserBetXiu() {
         return this.potXiu.getTotalValue() - this.potXiu.getTotalBotBet();
     }
@@ -672,14 +595,14 @@ public class MGRoomTaiXiu extends MGRoom {
     }
 
     public static String getKeyRoom(short moneyType) {
-        return "" + moneyType + "_" + 2;
+        return moneyType + "_" + 2;
     }
 
     @Override
     public boolean joinRoom(User user) {
         boolean result = super.joinRoom(user);
         if (result) {
-            user.setProperty((Object) "MGROOM_TAI_XIU_INFO", (Object) this);
+            user.setProperty("MGROOM_TAI_XIU_INFO", this);
         }
         return result;
     }
@@ -688,7 +611,7 @@ public class MGRoomTaiXiu extends MGRoom {
     public boolean quitRoom(User user) {
         boolean result = super.quitRoom(user);
         if (result) {
-            user.removeProperty((Object) "MGROOM_TAI_XIU_INFO");
+            user.removeProperty("MGROOM_TAI_XIU_INFO");
         }
         return result;
     }
@@ -699,7 +622,7 @@ public class MGRoomTaiXiu extends MGRoom {
     }
 
     private final class UpdateMoneyTXTask extends Thread {
-        private Map<String, TransactionTaiXiu> trans = new HashMap<String, TransactionTaiXiu>();
+        private final Map<String, TransactionTaiXiu> trans;
 
         private UpdateMoneyTXTask(Map<String, TransactionTaiXiu> trans) {
             this.trans = trans;
@@ -713,7 +636,7 @@ public class MGRoomTaiXiu extends MGRoom {
                     TransactionTaiXiu txt = entry.getValue();
                     long currentMoney = MGRoomTaiXiu.this.userService.getCurrentMoneyUserCache(username, MGRoomTaiXiu.this.moneyTypeStr);
                     if (txt.totalPrize == 0L && txt.totalRefund == 0L) {
-                        MGRoomTaiXiu.this.userService.updateMoney(username, 0L, MGRoomTaiXiu.this.moneyTypeStr, "TaiXiuMd5", "", "", 0L, MGRoomTaiXiu.this.referenceId, TransType.END_TRANS);
+                        MGRoomTaiXiu.this.userService.updateMoney(username, 0L, MGRoomTaiXiu.this.moneyTypeStr, Games.TAI_XIU_KUBET.getName(), "", "", 0L, MGRoomTaiXiu.this.referenceId, TransType.END_TRANS);
                     } else {
                         MoneyResponse res;
                         if (txt.totalPrize > 0L) {
@@ -724,29 +647,29 @@ public class MGRoomTaiXiu extends MGRoom {
                             long fee = Math.round((long) (MGRoomTaiXiu.this.tax * (float) txt.totalPrize / (200.0f - MGRoomTaiXiu.this.tax)));
                             MoneyResponse res2 = new MoneyResponse(false, "1001");
                             if (!MGRoomTaiXiu.this.isBot(username)) {
-                                res2 = MGRoomTaiXiu.this.userService.updateMoney(username, txt.totalPrize, MGRoomTaiXiu.this.moneyTypeStr, "TaiXiuMd5", "Thắng tài xỉu", "Phiên " + MGRoomTaiXiu.this.referenceId, fee, MGRoomTaiXiu.this.referenceId, transType);
+                                res2 = MGRoomTaiXiu.this.userService.updateMoney(username, txt.totalPrize, MGRoomTaiXiu.this.moneyTypeStr, Games.TAI_XIU_KUBET.getName(), "Thắng tài xỉu", "Phiên " + MGRoomTaiXiu.this.referenceId, fee, MGRoomTaiXiu.this.referenceId, transType);
                             } else {
                                 res2.setSuccess(true);
                             }
                             if (res2.isSuccess()) {
-                                if (MGRoomTaiXiu.this.moneyType == 1 && !MGRoomTaiXiu.this.isBot(username)) {
-                                    MGRoomTaiXiu.this.balance.addWin(txt.totalPrize);
-                                    MGRoomTaiXiu.this.balance.addFee(fee);
-                                }
+//                                if (MGRoomTaiXiu.this.moneyType == 1 && !MGRoomTaiXiu.this.isBot(username)) {
+//                                    MGRoomTaiXiu.this.balance.addWin(txt.totalPrize);
+//                                    MGRoomTaiXiu.this.balance.addFee(fee);
+//                                }
                                 currentMoney = res2.getCurrentMoney();
                                 long totalExchange = Math.round((long) ((float) txt.totalPrize * (100.0f - MGRoomTaiXiu.this.tax) / (200.0f - MGRoomTaiXiu.this.tax)));
                                 if (MGRoomTaiXiu.this.moneyType == 1 && totalExchange >= (long) BroadcastMessageServiceImpl.MIN_MONEY) {
-                                    MGRoomTaiXiu.this.broadcastMsgService.putMessage(Games.TAI_XIU_MD5.getId(), username, totalExchange);
+                                    MGRoomTaiXiu.this.broadcastMsgService.putMessage(Games.TAI_XIU_KUBET.getId(), username, totalExchange);
                                 }
                             }
                         }
                         if (txt.totalRefund > 0L) {
                             if (!MGRoomTaiXiu.this.isBot(username)) {
-                                res = MGRoomTaiXiu.this.userService.updateMoney(username, txt.totalRefund, MGRoomTaiXiu.this.moneyTypeStr, "TaiXiuMd5", "Hoàn trả tài xỉu", "Phiên " + MGRoomTaiXiu.this.referenceId, 0L, Long.valueOf(MGRoomTaiXiu.this.referenceId), TransType.END_TRANS);
+                                res = MGRoomTaiXiu.this.userService.updateMoney(username, txt.totalRefund, MGRoomTaiXiu.this.moneyTypeStr, Games.TAI_XIU_KUBET.getName(), "Hoàn trả tài xỉu", "Phiên " + MGRoomTaiXiu.this.referenceId, 0L, MGRoomTaiXiu.this.referenceId, TransType.END_TRANS);
                                 if (res.isSuccess()) {
-                                    if (MGRoomTaiXiu.this.moneyType == 1) {
-                                        MGRoomTaiXiu.this.balance.addWin(txt.totalRefund);
-                                    }
+//                                    if (MGRoomTaiXiu.this.moneyType == 1) {
+//                                        MGRoomTaiXiu.this.balance.addWin(txt.totalRefund);
+//                                    }
                                     currentMoney = res.getCurrentMoney();
                                 }
                             }
@@ -757,9 +680,9 @@ public class MGRoomTaiXiu extends MGRoom {
                     msg.totalMoney = txt.totalPrize + txt.totalRefund;
                     msg.currentMoney = currentMoney;
                     msg.moneyHu = TaiXiuModule.moneyHu;
-                    MGRoomTaiXiu.this.sendMessageToUser((BaseMsg) msg, username);
+                    MGRoomTaiXiu.this.sendMessageToUser(msg, username);
                 } catch (Exception e) {
-                    Debug.trace((Object) ("Update tai xiu money phien " + MGRoomTaiXiu.this.referenceId + " error: " + e.getMessage()));
+                    Debug.trace("Update tai xiu money phien " + MGRoomTaiXiu.this.referenceId + " error: " + e.getMessage());
                 }
             }
         }

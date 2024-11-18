@@ -603,7 +603,7 @@ public class TaiXiuMd5DAOImpl
      */
     @Override
     public ReportMoneySystemModel getReportTX(String startDate, String endDate) {
-        String sql = "SELECT SUM(money_win) as total_win, SUM(money_lost) as total_lost, SUM(money_other) as total_other, SUM(fee) as total_fee FROM vinplay.report_money_daily WHERE `date` >= '" + startDate + "?' and `date` <= '" + endDate + "' and action_name = 'TaiXiu'";
+        String sql = "SELECT SUM(money_win) as total_win, SUM(money_lost) as total_lost, SUM(money_other) as total_other, SUM(fee) as total_fee FROM vinplay.report_money_daily WHERE `date` >= '" + startDate + "?' and `date` <= '" + endDate + "' and action_name = 'TaiXiuMd5'";
         ReportMoneySystemModel res = new ReportMoneySystemModel();
 
         try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");

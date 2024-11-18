@@ -9,8 +9,7 @@ import org.apache.commons.lang.StringUtils;
 
 import java.nio.ByteBuffer;
 
-public class UpdateTaiXiuPerSecondMsg
-        extends BaseMsgEx {
+public class UpdateTaiXiuPerSecondMsg extends BaseMsgEx {
     public short remainTime;
     public boolean bettingState;
     public long potTai;

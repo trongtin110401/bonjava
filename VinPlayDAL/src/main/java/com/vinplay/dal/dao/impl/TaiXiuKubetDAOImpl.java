@@ -31,9 +31,11 @@ import com.mongodb.Block;
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoDatabase;
+import com.pengrad.telegrambot.model.Game;
 import com.vinplay.dal.dao.TaiXiuDAO;
 import com.vinplay.dal.entities.report.ReportMoneySystemModel;
 import com.vinplay.dal.entities.taixiu.*;
+import com.vinplay.vbee.common.enums.Games;
 import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
 import com.vinplay.vbee.common.models.cache.ReportModel;
 import com.vinplay.vbee.common.models.cache.ThanhDuTXModel;
@@ -50,7 +52,7 @@ import org.bson.conversions.Bson;
 import java.sql.*;
 import java.util.*;
 
-public class TaiXiuMd5DAOImpl
+public class TaiXiuKubetDAOImpl
         implements TaiXiuDAO {
 
     private static final Logger logger = Logger.getLogger((String) "api");
@@ -58,7 +60,7 @@ public class TaiXiuMd5DAOImpl
     @Override
     public List<ResultTaiXiu> getLichSuPhien(int number, int moneyType) throws SQLException {
         List<ResultTaiXiu> results = new ArrayList<>();
-        String sql = "SELECT * FROM result_tai_xiu_md5 WHERE money_type = ? ORDER BY `timestamp` DESC LIMIT ?";
+        String sql = "SELECT * FROM result_tai_xiu_kubet WHERE money_type = ? ORDER BY `timestamp` DESC LIMIT ?";
 
         try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -104,7 +106,7 @@ public class TaiXiuMd5DAOImpl
         CallableStatement call = null;
         ResultSet rs = null;
         try {
-            call = conn.prepareCall("CALL tx_get_lich_su_giao_dich_md5(?,?,?)");
+            call = conn.prepareCall("CALL tx_get_lich_su_giao_dich_kubet(?,?,?)");
             int param = 1;
             call.setString(param++, nickname);
             call.setInt(param++, number);
@@ -152,7 +154,7 @@ public class TaiXiuMd5DAOImpl
         CallableStatement call = null;
         ResultSet rs = null;
         try {
-            call = conn.prepareCall("CALL tx_get_top_win_md5(?)");
+            call = conn.prepareCall("CALL tx_get_top_win_kubet(?)");
             int param = 1;
             call.setByte(param++, (byte) moneyType);
             rs = call.executeQuery();
@@ -254,7 +256,7 @@ public class TaiXiuMd5DAOImpl
         Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");
         CallableStatement call = null;
         try {
-            call = conn.prepareCall("CALL tx_count_lich_su_giao_dich_md5(?, ?, ?)");
+            call = conn.prepareCall("CALL tx_count_lich_su_giao_dich_kubet(?, ?, ?)");
             int param = 1;
             call.setString(param++, nickname);
             call.setByte(param++, (byte) moneyType);
@@ -281,7 +283,7 @@ public class TaiXiuMd5DAOImpl
         CallableStatement call = null;
         ResultSet rs = null;
         try {
-            call = conn.prepareCall("CALL tx_get_chi_tiet_phien_md5(?,?)");
+            call = conn.prepareCall("CALL tx_get_chi_tiet_phien_kubet(?,?)");
             int param = 1;
             call.setLong(param++, referenceId);
             call.setByte(param++, (byte) moneyType);
@@ -323,7 +325,7 @@ public class TaiXiuMd5DAOImpl
         CallableStatement call = null;
         ResultSet rs = null;
         try {
-            call = conn.prepareCall("CALL tx_get_history_no_hu_md5(?)");
+            call = conn.prepareCall("CALL tx_get_history_no_hu_kubet(?)");
             int param = 1;
             call.setInt(param++, page);
             rs = call.executeQuery();
@@ -357,7 +359,7 @@ public class TaiXiuMd5DAOImpl
     @Override
     public ResultTaiXiu getKetQuaPhien(long referenceId, int moneyType) throws SQLException {
         ResultTaiXiuMd5 entry = null;
-        String sql = "SELECT * FROM result_tai_xiu_md5 WHERE reference_id = ? AND money_type = ?";
+        String sql = "SELECT * FROM result_tai_xiu_kubet WHERE reference_id = ? AND money_type = ?";
 
         try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -543,17 +545,17 @@ public class TaiXiuMd5DAOImpl
 
     @Override
     public List<XepHangRLTLModel> getXepHangTanLoc() {
-        return this.getBangXepHangTLRL("tan_loc_md5");
+        return this.getBangXepHangTLRL("tan_loc_kubet");
     }
 
     @Override
     public List<VinhDanhRLTLModel> getVinhDanhTanLoc() {
-        return this.getVinhDanhTLRL("tan_loc_md5");
+        return this.getVinhDanhTLRL("tan_loc_kubet");
     }
 
     @Override
     public long getTongTienTanLoc(String username) {
-        return this.getTienTLRL(username, "tan_loc_md5");
+        return this.getTienTLRL(username, "tan_loc_kubet");
     }
 
     @Override
@@ -563,12 +565,12 @@ public class TaiXiuMd5DAOImpl
 
     @Override
     public List<VinhDanhRLTLModel> getVinhDanhRutLoc() {
-        return this.getVinhDanhTLRL("rut_loc_md5");
+        return this.getVinhDanhTLRL("rut_loc_kubet");
     }
 
     @Override
     public long getTongTienRutLoc(String username) {
-        return this.getTienTLRL(username, "rut_loc_md5");
+        return this.getTienTLRL(username, "rut_loc_kubet");
     }
 
     @Override
@@ -578,7 +580,7 @@ public class TaiXiuMd5DAOImpl
         HazelcastInstance client = HazelcastClientFactory.getInstance();
         IMap<String, ReportModel> reportMap = client.getMap("cacheReports");
         for (Map.Entry<String, ReportModel> entry : reportMap.entrySet()) {
-            if (!((String) entry.getKey()).contains(today) || !((String) entry.getKey()).contains("TaiXiuMd5"))
+            if (!((String) entry.getKey()).contains(today) || !((String) entry.getKey()).contains(Games.TAI_XIU_KUBET.getName()))
                 continue;
             ReportModel model = (ReportModel) entry.getValue();
             if (model.isBot) continue;
@@ -603,7 +605,7 @@ public class TaiXiuMd5DAOImpl
      */
     @Override
     public ReportMoneySystemModel getReportTX(String startDate, String endDate) {
-        String sql = "SELECT SUM(money_win) as total_win, SUM(money_lost) as total_lost, SUM(money_other) as total_other, SUM(fee) as total_fee FROM vinplay.report_money_daily WHERE `date` >= '" + startDate + "?' and `date` <= '" + endDate + "' and action_name = 'TaiXiu'";
+        String sql = "SELECT SUM(money_win) as total_win, SUM(money_lost) as total_lost, SUM(money_other) as total_other, SUM(fee) as total_fee FROM vinplay.report_money_daily WHERE `date` >= '" + startDate + "?' and `date` <= '" + endDate + "' and action_name = 'TaiXiuKubet'";
         ReportMoneySystemModel res = new ReportMoneySystemModel();
 
         try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");
