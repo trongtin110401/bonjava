@@ -1032,5 +1032,10 @@
             <name>Cap nhat tai khoan livestream</name>
             <path>com.vinplay.api.processors.UpdateAgentAccountProcessor</path>
         </command>
+        <command>
+            <id>4128</id>
+            <name>danh sach link kubet livestream</name>
+            <path>com.vinplay.api.processors.KubetStreamUrlProcessor</path>
+        </command>
     </commands>
 </portal>
