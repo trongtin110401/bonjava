@@ -19,6 +19,7 @@ public class GameApplication {
 
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(GameApplication.class, args);
+        ContextHolder.applicationContext = context;
         try {
             TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
             botsApi.registerBot(new TeleAuthentication());

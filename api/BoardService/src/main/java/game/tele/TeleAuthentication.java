@@ -5,6 +5,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.result.UpdateResult;
+import game.ContextHolder;
 import game.dto.data.UserTele;
 import game.repository.MongoDBConnectionFactory;
 import okhttp3.*;
@@ -37,7 +38,7 @@ import java.util.concurrent.*;
 @Service
 public class TeleAuthentication extends TelegramLongPollingBot {
 
-    @Autowired
+//    @Autowired
     MongoDBConnectionFactory mongoDBConnectionFactory;
 
     private static final String TELEGRAM_API_URL = "https://api.telegram.org/bot6831621160:AAHPfkEON1-u2e44F8WAVdu5vT9ySql8ztA/sendMessage";
@@ -56,6 +57,8 @@ public class TeleAuthentication extends TelegramLongPollingBot {
 
     public TeleAuthentication() {
         super();
+
+        mongoDBConnectionFactory = ContextHolder.applicationContext.getBean(MongoDBConnectionFactory.class);
     }
 
     @PostConstruct
