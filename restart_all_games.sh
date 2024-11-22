@@ -168,6 +168,14 @@ runTaiXiuMd5() {
   nohup java -cp "libs/*:build/libs/taixiuMd5.jar" game.TaiXiuMiniGameMain >/home/server/logs/taixiuMd5.log 2>&1 &
 }
 
+runTaiXiuKubet() {
+  cd ${SCRIPT_PATH}
+  currentDir="game/taixiuKubet"
+  cd $currentDir
+  echo "Starting TaiXiu Kubet..."
+  nohup java -cp "libs/*:build/libs/taixiuKubet.jar" game.TaiXiuMiniGameMain >/home/server/logs/taixiuKubet.log 2>&1 &
+}
+
 
 ### run xoc dia ###
 runXocDia() {
@@ -207,6 +215,7 @@ main() {
 
   runTaiXiuMini
   #runTaiXiuMd5
+  runTaiXiuKubet
   runBauCuaTo2
   runXocDia
   runSlot

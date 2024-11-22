@@ -2569,7 +2569,6 @@ public class LobbyModule extends BaseClientRequestHandler {
 
     public void txJackpot() {
         try {
-            //CacheService cacheService = new CacheServiceImpl();
             long txHu;
             long txTai;
             long txXiu;
@@ -2617,6 +2616,34 @@ public class LobbyModule extends BaseClientRequestHandler {
             cacheService.setValue("Md5_Lobby_tx_tai_1", 0);
             cacheService.setValue("Md5_Lobby_tx_xiu_1", 0);
             cacheService.setValue("Hu_TX_1", 0);
+            Debug.info("Hu TX lỗi " + e.getMessage());
+        }
+    }
+
+    public void txKubetJackpot() {
+        try {
+            long txHu;
+            long txTai;
+            long txXiu;
+            txTai = Long.parseLong(cacheService.getValueStr("kubet_Lobby_tx_tai_1"));
+            txXiu = Long.parseLong(cacheService.getValueStr("kubet_Lobby_tx_xiu_1"));
+            try {
+                txHu = Long.parseLong(cacheService.getValueStr("kubet_Hu_TX_1"));
+            } catch (Exception ex) {
+                txHu = 0;
+            }
+            UpdateTX5JackpotMsg msg = new UpdateTX5JackpotMsg();
+            msg.moneyHu = txHu;
+            msg.moneyTai = txTai;
+            msg.moneyXiu = txXiu;
+            for (User user : this.usersSubJackpot) {
+                if (user == null) continue;
+                this.send(msg, user);
+            }
+        } catch (Exception e) {
+            cacheService.setValue("kubet_Lobby_tx_tai_1", 0);
+            cacheService.setValue("kubet_Lobby_tx_xiu_1", 0);
+            cacheService.setValue("kubet_Hu_TX_1", 0);
             Debug.info("Hu TX lỗi " + e.getMessage());
         }
     }
@@ -2733,6 +2760,7 @@ public class LobbyModule extends BaseClientRequestHandler {
             this.updateJackpot();
             this.txJackpot();
             this.txMd5Jackpot();
+            this.txKubetJackpot();
             this.countUpdateJackpot = 0L;
         }
 
@@ -3304,7 +3332,7 @@ public class LobbyModule extends BaseClientRequestHandler {
                     LoginOtherDeviceMsg msg = new LoginOtherDeviceMsg();
                     switch (kickUserSignal.getKickType()) {
                         case KickUserSignal.DUPLICATE_LOGIN:
-                            msg.s = "Tài khoản của bạn vừa được đăng nhập bởi thiết bị khác!" ;
+                            msg.s = "Tài khoản của bạn vừa được đăng nhập bởi thiết bị khác!";
                             break;
                         case KickUserSignal.BLOCK_USER:
                             msg.s = "Tài khoản của bạn đã bị KHÓA!";
@@ -3405,136 +3433,6 @@ public class LobbyModule extends BaseClientRequestHandler {
             }
 
         }
-
-
-//        Debug.trace((Object) ("update status onepay: Size" + lstActionAdmin.keySet()));
-//        Debug.trace((Object) ("update status onepay: Size" + listuserCr.keySet()));
-//        for( String userName : lstActionAdmin.keySet()){
-//            int status = this.rechargeService.isDoneTranstionOnePay(userName,lstActionAdmin.get(userName));
-//            Debug.trace((Object) ("update status onepay: of " + userName+" =====>" + status));
-//            if( status==99){ // status = 99 trạng thái cần otp
-//                ReqOnePayOTP msg = new ReqOnePayOTP();
-//                msg.transId = lstActionAdmin.get(userName);
-//                DepositOnePayModel depositOnePayModel = this.rechargeService.FindDepositOnePayById(lstActionAdmin.get(userName));
-//                if(depositOnePayModel.Description!=null||!depositOnePayModel.Description.isEmpty()){
-//                    msg.techcombankTranS = depositOnePayModel.Description;
-//
-//                } else {
-//                    msg.techcombankTranS="11";
-//                }
-//                this.send(msg,listuserCr.get(userName));
-//
-//                rechargeService.UpdateDepositStatusOnepay(lstActionAdmin.get(userName),102,0); // todo :update trạng thái đã gửi
-//            }else if(status==105){ // done
-//
-//                RequestOnePayAction msg = new RequestOnePayAction();
-//                DepositOnePayModel depositOnePayModel = this.rechargeService.FindDepositOnePayById(lstActionAdmin.get(userName));
-//                if(depositOnePayModel.Description!=null||!depositOnePayModel.Description.isEmpty()){
-//                    msg.techcombankTrans = depositOnePayModel.Description;
-//
-//                } else {
-//                    msg.techcombankTrans="11";
-//                }
-//                msg.stepCode =0;
-//                msg.currentMoney =userService.getCurrentMoneyUserCache(userName, "vin");
-//                this.send(msg,listuserCr.get(userName));
-//                mapUserOnePay.get(userName).setListTrans(removeIteminList( mapUserOnePay.get(userName).getListTrans(),lstActionAdmin.get(userName))); // đã xử lý
-//            }else  if ( status ==0){
-//
-//                RequestOnePayAction msg = new RequestOnePayAction();
-//                DepositOnePayModel depositOnePayModel = this.rechargeService.FindDepositOnePayById(lstActionAdmin.get(userName));
-//                if(depositOnePayModel.Description!=null||!depositOnePayModel.Description.isEmpty()){
-//                    msg.techcombankTrans = depositOnePayModel.Description;
-//
-//                } else {
-//                    msg.techcombankTrans="11";
-//                }
-//                msg.stepCode =2;
-//                msg.currentMoney =userService.getCurrentMoneyUserCache(userName, "vin");
-//                this.send(msg,listuserCr.get(userName));
-//               // lstActionAdmin.remove(userName);
-//                mapUserOnePay.get(userName).setListTrans(removeIteminList( mapUserOnePay.get(userName).getListTrans(),lstActionAdmin.get(userName)));
-//            }else  if ( status ==2){
-//
-//                RequestOnePayAction msg = new RequestOnePayAction();
-//                DepositOnePayModel depositOnePayModel = this.rechargeService.FindDepositOnePayById(lstActionAdmin.get(userName));
-//                if(depositOnePayModel.Description!=null||!depositOnePayModel.Description.isEmpty()){
-//                    msg.techcombankTrans = depositOnePayModel.Description;
-//
-//                } else {
-//                    msg.techcombankTrans="11";
-//                }
-//                msg.stepCode =3;
-//                msg.currentMoney =userService.getCurrentMoneyUserCache(userName, "vin");
-//                this.send(msg,listuserCr.get(userName));
-//                mapUserOnePay.get(userName).setListTrans(removeIteminList( mapUserOnePay.get(userName).getListTrans(),lstActionAdmin.get(userName)));
-//            }else  if ( status ==3){
-//
-//                RequestOnePayAction msg = new RequestOnePayAction();
-//                DepositOnePayModel depositOnePayModel = this.rechargeService.FindDepositOnePayById(lstActionAdmin.get(userName));
-//                if(depositOnePayModel.Description!=null||!depositOnePayModel.Description.isEmpty()){
-//                    msg.techcombankTrans = depositOnePayModel.Description;
-//
-//                } else {
-//                    msg.techcombankTrans="11";
-//                }
-//                msg.stepCode =4;
-//                msg.currentMoney =userService.getCurrentMoneyUserCache(userName, "vin");
-//                this.send(msg,listuserCr.get(userName));
-//                mapUserOnePay.get(userName).setListTrans(removeIteminList( mapUserOnePay.get(userName).getListTrans(),lstActionAdmin.get(userName)));
-//            }
-//            lstActionAdmin.remove(userName);
-//        }
-
-    }
-
-
-    public int getEsmsOTP(String nickname, String mobile, String type) throws Exception {
-        int code = 1;
-        HazelcastInstance client = HazelcastClientFactory.getInstance();
-        IMap<String, UserModel> userMap = client.getMap("users");
-        UserModel model = null;
-        if (userMap.containsKey((Object) nickname)) {
-            model = (UserModel) userMap.get((Object) nickname);
-            UserCacheModel userCacheModel = (UserCacheModel) model;
-        } else {
-            UserDaoImpl dao = new UserDaoImpl();
-            model = dao.getUserByNickName(nickname);
-        }
-        if (model != null) {
-            if (model.getMobile() != null && !model.getMobile().isEmpty() && model.isHasMobileSecurity()) {
-                OtpDaoImpl otpDao = new OtpDaoImpl();
-                String mobile2 = this.revertMobile(model.getMobile());
-                String otp = null;
-                try {
-                    otp = VinPlayUtils.genOtpSMS((String) model.getMobile(), (String) "");
-                    Debug.trace("Lobby OTP: " + model.getMobile());
-                } catch (Exception e) {
-                    Debug.trace("Mobile: " + model.getMobile() + "---");
-//                    logger.debug((Object)e);
-                }
-                otpDao.updateOtpSMS(model.getMobile(), otp, "OZZ OTP");
-                AlertServiceImpl service = new AlertServiceImpl();
-
-                String content = String.format(GameCommon.MESSAGE_OTP_SUCCESS, otp, VinPlayUtils.getCurrentDate());
-                if ("ESMS".equals(PartnerConfig.SMSPartner)) {
-                    boolean rs = service.SendSMSEsms(model.getMobile(), otp);
-                } else if ("ESMS_VOICE".equals(PartnerConfig.SMSPartner)) {
-                    boolean rs = service.SendVoiceOTPESMS(model.getMobile(), otp);
-                } else if ("RUTCUOC".equals(PartnerConfig.SMSPartner)) {
-                    boolean rs = service.SendSMSRutCuoc(model.getMobile(), otp);
-                } else {
-                    boolean rs = service.SendSMSAirpay(model.getMobile(), otp);
-                }
-                code = 0;
-            } else {
-                code = 4;
-            }
-        } else {
-            Debug.trace("Model is ");
-            code = 2;
-        }
-        return code;
     }
 
     public String revertMobile(String mobile) {

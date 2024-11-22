@@ -9,19 +9,17 @@
     - (OK) tạo bảng user_rut_loc_kubet
     - (OK) thêm referenceTaiXiuId (sessionId) vào bảng minigame.references
 2. Các key bị tác động
-    - taixiu_bot_fake_amount_md5 => taixiu_bot_fake_amount_kubet
-    - Tai_xiu_current_reference_md5 => Tai_xiu_current_reference_kubet
-    - admin_lst_msg_md5 => admin_lst_msg_kubet
-    - admin_msg_md5 => admin_msg_kubet
-    - md5_allow_betting_ => kubet_allow_betting_
-    - SC_TAI_XIU_MD5 => SC_TAI_XIU_KUBET
-    - tai_xiu_be_cang_md5 => tai_xiu_be_cang_kubet
-    - user_tai_xiu_md5 => user_tai_xiu_kubet
-    - Md5_Lobby_tx_tai_ => kubet_Lobby_tx_tai_
-    - Md5_Lobby_tx_xiu_ => kubet_Lobby_tx_xiu_
-    - txBank_md5 => txBank_kubet
-    - Thêm mới kubet_Lobby_tx_chan_ ở hàm MGRoomTaiXiu.updateTaiXiuPerSecond
-    - Thêm mới kubet_Lobby_tx_le_ ở hàm MGRoomTaiXiu.updateTaiXiuPerSecond
+    - (OK) taixiu_bot_fake_amount_md5 => taixiu_bot_fake_amount_kubet
+    - (OK - ignored) Tai_xiu_current_reference_md5 => Tai_xiu_current_reference_kubet
+    - (OK) admin_lst_msg_md5 => admin_lst_msg_kubet
+    - (OK - ignored) admin_msg_md5 => admin_msg_kubet
+    - (OK - ignored) md5_allow_betting_ => kubet_allow_betting_
+    - (OK) SC_TAI_XIU_MD5 => SC_TAI_XIU_KUBET
+    - (OK - ignored) tai_xiu_be_cang_md5 => tai_xiu_be_cang_kubet
+    - (OK) user_tai_xiu_md5 => user_tai_xiu_kubet
+    - (OK) Md5_Lobby_tx_tai_ => kubet_Lobby_tx_tai_
+    - (OK) Md5_Lobby_tx_xiu_ => kubet_Lobby_tx_xiu_
+    - (OK - ignored)txBank_md5 => txBank_kubet
     - Sửa hàm bot: hiện tại mới chỉ có 2 loại bot tài và bot xỉu. Có thể Sửa thêm cả API Processor và CMS cấu hình BOT
 
 3. Tính năng bị loại bỏ
@@ -30,9 +28,14 @@
     - TaiXiuAdminReportObj: thêm các trường thống kê mới trên form CMS can thiệp kết quả
     - TaiXiuSetAmountBotFake.java: thêm 2 trường mới numberBotChanFake và numberBotLeFake. phục vụ CMS can thiệp kết quả
     - UpdateTaiXiuPerSecondMsg
+            * (OK) Thêm mới kubet_Lobby_tx_chan_ ở hàm MGRoomTaiXiu.updateTaiXiuPerSecond
+            * (OK) Thêm mới kubet_Lobby_tx_le_ ở hàm MGRoomTaiXiu.updateTaiXiuPerSecond
 5. Tính năng thêm mới: thêm mới potChan, potLe, numBetChan, numBetLe
-    - queue_taixiu_md5 => queue_taixiu_kubet: thêm tính năng xử lý cho queue này
-
+    - (OK) queue_taixiu_md5 => queue_taixiu_kubet: thêm tính năng xử lý cho queue này
+    - API Backend:
+        * (OK) 554037 => SetBotFakeTaiXiuKubetProcessor
+        * (OK) 556670 => TaiXiuAdminKubetListChatProcessor
+    - (OK) Thêm mới websocket path cho trang Can Thiep Ket Qua MD5
 
 
 

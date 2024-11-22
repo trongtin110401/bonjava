@@ -49,7 +49,9 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
     private static final String USER_TAI_XIU = "user_tai_xiu";
     private static final String SC_TAI_XIU = "SC_TAI_XIU";
     private static final String SC_TAI_XIU_MD5 = "SC_TAI_XIU_MD5";
+    private static final String SC_TAI_XIU_KUBET = "SC_TAI_XIU_KUBET";
     private static final String USER_TAI_XIU_MD5 = "user_tai_xiu_md5";
+    private static final String USER_TAI_XIU_KUBET= "user_tai_xiu_kubet";
     private static final String CASHOUTBYBANK_ADMIN = "cashoutbybank_admin";
     private static final String CASHOUTBYCARDMANUAL_ADMIN = "cashoutbycardmanual_admin";
     private static final String RECHARGEBYBANK_ADMIN = "rechargebybank_admin";
@@ -240,7 +242,6 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             lstTaiXiuAdminReportObjs.add(response);
 
             // thông tin soi cầu
-            // thông tin soi cầu
             String sc = null;
             try {
                 sc = cacheService.getValueStr(SC_TAI_XIU_MD5);
@@ -251,6 +252,66 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             String json = MapperUtils.mapper.writeValueAsString(oResponse);
             this.sendMessTXMd5ToAdmin(json);
             cacheService.removeKey(USER_TAI_XIU_MD5);
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+    }
+
+    /**
+     * Send thông tin tài xỉu sang admin php
+     *
+     * @return
+     */
+    @Scheduled(fixedRate = 1000)
+    public void sendTXKUBETAdmin() {
+        try {
+            // thông tin phiên
+            ArrayList<TaiXiuAdminReportResponse> lstTaiXiuAdminReportObjs = new ArrayList<>();
+            TaiXiuAdminReportObj obj = MapperUtils.mapper.readValue(cacheService.getValueStr(USER_TAI_XIU_KUBET), TaiXiuAdminReportObj.class);
+            TaiXiuAdminReportResponse response = new TaiXiuAdminReportResponse();
+            response.setMoneyTai(obj.getMoneyTai());
+            response.setMoneyXiu(obj.getMoneyXiu());
+            response.setMoneyChan(obj.getMoneyChan());
+            response.setMoneyLe(obj.getMoneyLe());
+            response.setNguoiChoiBetTai(obj.getNumberUserRealTai());
+            response.setNguoiChoiBetXiu(obj.getNumberUserRealXiu());
+            response.setNguoiChoiBetChan(obj.getNumberUserRealChan());
+            response.setNguoiChoiBetLe(obj.getNumberUserRealLe());
+            response.setMoneyTaiFull(obj.getMoneyTaiFull());
+            response.setMoneyXiuFull(obj.getMoneyXiuFull());
+            response.setMoneyChanFull(obj.getMoneyChanFull());
+            response.setMoneyLeFull(obj.getMoneyLeFull());
+            response.setPhienId(obj.getPhienId());
+            response.setContributors(getUserTX(obj.getContributors(), "TaiXiuKubet"));
+            response.setNumberUserAndBotBetTai(obj.getNumberUserAndBotBetTai());
+            response.setNumberUserAndBotBetXiu(obj.getNumberUserAndBotBetXiu());
+            response.setNumberUserAndBotBetChan(obj.getNumberUserAndBotBetChan());
+            response.setNumberUserAndBotBetLe(obj.getNumberUserAndBotBetLe());
+            response.setRealTime(obj.getRealTime());
+            response.setBettingRound(obj.isBettingRound());
+            response.setTaiXiuMd5Hash(obj.getTaiXiuMd5Hash());
+            response.setTaiXiuPlainResult(obj.getTaiXiuPlainResult());
+            response.setDice1(obj.getDice1());
+            response.setDice2(obj.getDice2());
+            response.setDice3(obj.getDice3());
+            response.setSessionResult(obj.getSessionResult());
+            if (obj.getLstMsg().size() > 10)
+                obj.getLstMsg().subList(0, obj.getLstMsg().size() - 10).clear();
+            response.setLstMsg(obj.getLstMsg());
+            lstTaiXiuAdminReportObjs.add(response);
+
+            // thông tin soi cầu
+            String sc = null;
+            try {
+                sc = cacheService.getValueStr(SC_TAI_XIU_KUBET);
+            } catch (Exception ex) {
+            }
+            TaiXiuReportResponse oResponse = new TaiXiuReportResponse("2", lstTaiXiuAdminReportObjs, sc);
+
+            String json = MapperUtils.mapper.writeValueAsString(oResponse);
+            this.sendMessTXMd5ToAdmin(json);
+            cacheService.removeKey(SC_TAI_XIU_KUBET);
         } catch (Exception e) {
             e.printStackTrace();
 

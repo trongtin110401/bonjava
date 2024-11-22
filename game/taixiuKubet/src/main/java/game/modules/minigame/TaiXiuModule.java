@@ -74,7 +74,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
     private short forceBetSide = (short) -1;
     private final List<String> listChatUsers = new ArrayList<>();
     public static String CacheCurrentReference = "Tai_xiu_current_reference_kubet";
-    public static long moneyHu = 50000000; // được lấy từ trong database
+    public static long moneyHu = 50000000;
     private int amountBotTaiFake = 0;
     private int amountBotXiuFake = 0;
     private int amountBotChanFake = 0;
@@ -406,10 +406,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
             Debug.trace("Exception: " + e.getMessage(), e);
             ExceptionUtils.printRootCauseStackTrace(e);
         }
-    }
-
-    private void resetForceBalance() {
-        this.forceBetSide = (short) -1;
     }
 
     private void generateResultBefore(MGRoomTaiXiu roomTXVin) {

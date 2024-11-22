@@ -276,8 +276,6 @@ public class MGRoomTaiXiu extends MGRoom {
         HashMap<String, TransactionTaiXiu> sumChan = new HashMap<>();
         HashMap<String, TransactionTaiXiu> sumLe = new HashMap<>();
 
-        long totalCashIn = 0L;
-        long totalCashOut = 0L;
         long totalDice = this.resultTX.dice1 + this.resultTX.dice2 + this.resultTX.dice3;
         ResultTaiXiu rs = this.resultTX;
         Debug.trace("resultTX {}", this.resultTX);
@@ -290,7 +288,6 @@ public class MGRoomTaiXiu extends MGRoom {
                         try {
                             // Nếu không phải robot thì tính tổng tiền đầu vào của khách thật
                             if (tran.userId != 0) {
-                                totalCashIn += tran.betValue;
                             }
 
                             // giải thưởng, hay nói cách khác là số tiền thắng
@@ -301,7 +298,6 @@ public class MGRoomTaiXiu extends MGRoom {
 
                             // Nếu không phải robot thì tính tổng tiền đầu ra phải trả cho khách thật
                             if (tran.userId != 0) {
-                                totalCashOut += tran.prize;
                             }
 
                             // Tổng tiền lỗ lãi
@@ -322,7 +318,6 @@ public class MGRoomTaiXiu extends MGRoom {
                 for (TransactionTaiXiuDetail tran : potT.contributors) {
                     try {
                         if (tran.userId != 0) {
-                            totalCashIn += tran.betValue;
                         }
 
                         // Tổng tiền lỗ lãi
@@ -343,14 +338,12 @@ public class MGRoomTaiXiu extends MGRoom {
                         try {
                             // không tính toán với
                             if (tran.userId != 0) {
-                                totalCashIn += tran.betValue;
                             }
 
                             tran.prize = Math.round((long) ((float) tran.betValue * (100.0f - this.tax) / 100.0f) + tran.betValue);
 
                             rs.totalPrize += tran.prize;
                             if (tran.userId != 0) {
-                                totalCashOut += tran.prize;
                             }
 
                             // Tổng tiền lỗ lãi
@@ -368,7 +361,6 @@ public class MGRoomTaiXiu extends MGRoom {
                 for (TransactionTaiXiuDetail tran : potX.contributors) {
                     try {
                         if (tran.userId != 0) {
-                            totalCashIn += tran.betValue;
                         }
 
                         // Tổng tiền lỗ lãi
@@ -398,7 +390,6 @@ public class MGRoomTaiXiu extends MGRoom {
                         try {
                             // Nếu không phải robot thì tính tổng tiền đầu vào của khách thật
                             if (tran.userId != 0) {
-                                totalCashIn += tran.betValue;
                             }
 
                             // giải thưởng, hay nói cách khác là số tiền thắng
@@ -406,11 +397,6 @@ public class MGRoomTaiXiu extends MGRoom {
 
                             // Cộng dồn để tính tổng số tiền trả lại
                             rs.totalPrize += tran.prize;
-
-                            // Nếu không phải robot thì tính tổng tiền đầu ra phải trả cho khách thật
-                            if (tran.userId != 0) {
-                                totalCashOut += tran.prize;
-                            }
 
                             // Tổng tiền lỗ lãi
                             this.updateSumTran(sumTXTMap, tran);
@@ -429,10 +415,6 @@ public class MGRoomTaiXiu extends MGRoom {
                 }
                 for (TransactionTaiXiuDetail tran : potChan.contributors) {
                     try {
-                        if (tran.userId != 0) {
-                            totalCashIn += tran.betValue;
-                        }
-
                         // Tổng tiền lỗ lãi
                         this.updateSumTran(sumTXTMap, tran);
                         this.updateSumTran(sumChan, tran);
@@ -451,14 +433,12 @@ public class MGRoomTaiXiu extends MGRoom {
                         try {
                             // không tính toán với
                             if (tran.userId != 0) {
-                                totalCashIn += tran.betValue;
                             }
 
                             tran.prize = Math.round((long) ((float) tran.betValue * (100.0f - this.tax) / 100.0f) + tran.betValue);
 
                             rs.totalPrize += tran.prize;
                             if (tran.userId != 0) {
-                                totalCashOut += tran.prize;
                             }
 
                             // Tổng tiền lỗ lãi
@@ -476,7 +456,6 @@ public class MGRoomTaiXiu extends MGRoom {
                 for (TransactionTaiXiuDetail tran : potLe.contributors) {
                     try {
                         if (tran.userId != 0) {
-                            totalCashIn += tran.betValue;
                         }
 
                         // Tổng tiền lỗ lãi
@@ -504,28 +483,6 @@ public class MGRoomTaiXiu extends MGRoom {
             if (totalDice == 3 || totalDice == 18) {
                 rs.statusHu = 0;
             }
-
-//            try {
-//                HazelcastInstance client = HazelcastClientFactory.getInstance();
-//                IMap<String, Long> bankMap = client.getMap("txBank_kubet");  // Đây có thể là quỹ thưởng được sử dụng để tính toán cân bằng lỗ lãi của nhà cái khi ra kết quả
-//                String key = "txBank:" + this.moneyType;
-//                long bank = 0L;
-//                if (bankMap.containsKey(key)) {
-//                    bank = bankMap.get(key);
-//                }
-//                logger.error("calculatePrize key:" + key + " bank:" + bank);
-//
-//                bank += totalCashIn - totalCashOut;
-//                bankMap.put(key, bank);
-//                logger.error("calculatePrize 2 key:" + key + " bank:" + bank);
-//
-//                bankMap.put("referenceId", referenceId);
-//                bankMap.put("totalCashIn", totalCashIn);
-//                bankMap.put("totalCashOut", totalCashOut);
-//            } catch (Exception ex) {
-//                logger.error("calculatePrize ex:" + ex.getMessage());
-//                Debug.trace(" error resultTX: " + ex.getMessage());
-//            }
         }
 
         assert potT != null;

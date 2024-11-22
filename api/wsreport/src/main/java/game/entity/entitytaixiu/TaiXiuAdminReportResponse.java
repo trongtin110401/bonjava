@@ -10,13 +10,21 @@ import java.util.List;
 public class TaiXiuAdminReportResponse implements Serializable {
   long moneyTai;
   long moneyXiu;
+  long moneyChan;
+  long moneyLe;
   long nguoiChoiBetTai;
   long nguoiChoiBetXiu;
+  long nguoiChoiBetChan;
+  long nguoiChoiBetLe;
   long moneyTaiFull;
   long moneyXiuFull;
+  long moneyChanFull;
+  long moneyLeFull;
   long phienId;
   long numberUserAndBotBetTai;
   long numberUserAndBotBetXiu;
+  long numberUserAndBotBetChan;
+  long numberUserAndBotBetLe;
   long realTime;
   boolean bettingRound;
   List<TaiXiuAdmin> contributors;
@@ -41,18 +49,7 @@ public class TaiXiuAdminReportResponse implements Serializable {
     this.contributors = contributors;
   }
 
-
   public TaiXiuAdminReportResponse() {
-  }
-
-  public TaiXiuAdminReportResponse(boolean success, String errorCode, long moneyTai, long moneyXiu, long nguoiChoiBetTai, long nguoiChoiBetXiu, long moneyTaiFull, long moneyXiuFull, long phienId) {
-    this.moneyTai = moneyTai;
-    this.moneyXiu = moneyXiu;
-    this.nguoiChoiBetTai = nguoiChoiBetTai;
-    this.nguoiChoiBetXiu = nguoiChoiBetXiu;
-    this.moneyTaiFull = moneyTaiFull;
-    this.moneyXiuFull = moneyXiuFull;
-    this.phienId = phienId;
   }
 
   public long getMoneyTai() {
@@ -205,6 +202,70 @@ public class TaiXiuAdminReportResponse implements Serializable {
 
   public void setSessionResult(String sessionResult) {
     this.sessionResult = sessionResult;
+  }
+
+  public long getMoneyChan() {
+    return moneyChan;
+  }
+
+  public void setMoneyChan(long moneyChan) {
+    this.moneyChan = moneyChan;
+  }
+
+  public long getMoneyLe() {
+    return moneyLe;
+  }
+
+  public void setMoneyLe(long moneyLe) {
+    this.moneyLe = moneyLe;
+  }
+
+  public long getNguoiChoiBetChan() {
+    return nguoiChoiBetChan;
+  }
+
+  public void setNguoiChoiBetChan(long nguoiChoiBetChan) {
+    this.nguoiChoiBetChan = nguoiChoiBetChan;
+  }
+
+  public long getNguoiChoiBetLe() {
+    return nguoiChoiBetLe;
+  }
+
+  public void setNguoiChoiBetLe(long nguoiChoiBetLe) {
+    this.nguoiChoiBetLe = nguoiChoiBetLe;
+  }
+
+  public long getMoneyChanFull() {
+    return moneyChanFull;
+  }
+
+  public void setMoneyChanFull(long moneyChanFull) {
+    this.moneyChanFull = moneyChanFull;
+  }
+
+  public long getMoneyLeFull() {
+    return moneyLeFull;
+  }
+
+  public void setMoneyLeFull(long moneyLeFull) {
+    this.moneyLeFull = moneyLeFull;
+  }
+
+  public long getNumberUserAndBotBetChan() {
+    return numberUserAndBotBetChan;
+  }
+
+  public void setNumberUserAndBotBetChan(long numberUserAndBotBetChan) {
+    this.numberUserAndBotBetChan = numberUserAndBotBetChan;
+  }
+
+  public long getNumberUserAndBotBetLe() {
+    return numberUserAndBotBetLe;
+  }
+
+  public void setNumberUserAndBotBetLe(long numberUserAndBotBetLe) {
+    this.numberUserAndBotBetLe = numberUserAndBotBetLe;
   }
 
   @Override

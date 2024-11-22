@@ -220,6 +220,12 @@
         </command>
 
         <command>
+            <id>556670</id>
+            <name>Send message admin chat bot to user</name>
+            <path>com.vinplay.api.backend.processors.taixiu.TaiXiuAdminKubetListChatProcessor</path>
+        </command>
+
+        <command>
             <id>6696</id>
             <name>Send list message admin chat bot to user</name>
             <path>com.vinplay.api.backend.processors.taixiu.TaiXiuAdminListChatProcessor</path>
@@ -1355,6 +1361,11 @@
             <id>554036</id>
             <name>get log recharge momo sun</name>
             <path>com.vinplay.api.backend.processors.taixiu.SetBotFakeTaiXiuMd5Processor</path>
+        </command>
+        <command>
+            <id>554037</id>
+            <name>get log recharge momo sun</name>
+            <path>com.vinplay.api.backend.processors.taixiu.SetBotFakeTaiXiuKubetProcessor</path>
         </command>
         <command>
             <id>4036</id>
