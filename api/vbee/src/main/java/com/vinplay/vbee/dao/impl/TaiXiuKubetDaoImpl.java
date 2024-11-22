@@ -38,7 +38,7 @@ public class TaiXiuKubetDaoImpl
     public boolean saveResultTaiXiu(ResultTaiXiuMessage message) throws SQLException {
         boolean success = false;
         try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");
-             CallableStatement call = conn.prepareCall("CALL save_result_tai_xiu_kubet(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");) {
+             CallableStatement call = conn.prepareCall("CALL save_result_tai_xiu_kubet(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");) {
 
             int param = 1;
             call.setLong(param++, message.referenceId);
