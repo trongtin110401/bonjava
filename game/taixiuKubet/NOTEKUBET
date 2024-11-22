@@ -1,14 +1,15 @@
+
 1.Database
-    - tạo bảng result_tai_xiu_kubet
-    - tạo procedure tx_get_lich_su_giao_dich_kubet
-    - tạo procedure tx_get_top_win_kubet
-    - tao procedure tx_count_lich_su_giao_dich_kubet
-    - tạo procedure tx_get_chi_tiet_phien_kubet
-    - tạo procedure tx_get_history_no_hu_kubet
-    - tạo bảng user_rut_loc_kubet
-    - thêm referenceTaiXiuId (sessionId) vào bảng minigame.references
-    - taixiu_bot_fake_amount_md5 => taixiu_bot_fake_amount_kubet
+    - (OK) tạo bảng result_tai_xiu_kubet
+    - (OK) tạo procedure tx_get_lich_su_giao_dich_kubet
+    - (OK) tạo procedure tx_get_top_win_kubet
+    - (OK) tao procedure tx_count_lich_su_giao_dich_kubet
+    - (OK) tạo procedure tx_get_chi_tiet_phien_kubet
+    - (OK) tạo procedure tx_get_history_no_hu_kubet
+    - (OK) tạo bảng user_rut_loc_kubet
+    - (OK) thêm referenceTaiXiuId (sessionId) vào bảng minigame.references
 2. Các key bị tác động
+    - taixiu_bot_fake_amount_md5 => taixiu_bot_fake_amount_kubet
     - Tai_xiu_current_reference_md5 => Tai_xiu_current_reference_kubet
     - admin_lst_msg_md5 => admin_lst_msg_kubet
     - admin_msg_md5 => admin_msg_kubet
@@ -19,8 +20,23 @@
     - Md5_Lobby_tx_tai_ => kubet_Lobby_tx_tai_
     - Md5_Lobby_tx_xiu_ => kubet_Lobby_tx_xiu_
     - txBank_md5 => txBank_kubet
+    - Thêm mới kubet_Lobby_tx_chan_ ở hàm MGRoomTaiXiu.updateTaiXiuPerSecond
+    - Thêm mới kubet_Lobby_tx_le_ ở hàm MGRoomTaiXiu.updateTaiXiuPerSecond
+    - Sửa hàm bot: hiện tại mới chỉ có 2 loại bot tài và bot xỉu. Có thể Sửa thêm cả API Processor và CMS cấu hình BOT
 
 3. Tính năng bị loại bỏ
     - bỏ fund
+4. Message và Object thay đổi
+    - TaiXiuAdminReportObj: thêm các trường thống kê mới trên form CMS can thiệp kết quả
+    - TaiXiuSetAmountBotFake.java: thêm 2 trường mới numberBotChanFake và numberBotLeFake. phục vụ CMS can thiệp kết quả
+    - UpdateTaiXiuPerSecondMsg
+5. Tính năng thêm mới: thêm mới potChan, potLe, numBetChan, numBetLe
+    - queue_taixiu_md5 => queue_taixiu_kubet: thêm tính năng xử lý cho queue này
 
-4. Tính năng thêm mới
+
+
+
+
+
+
+curl 'https://ga88.ku6696.net/Api/Common/GetSKAll'   -H 'accept: application/json, text/plain, */*'   -H 'accept-language: en-US,en;q=0.9,vi;q=0.8'   -H 'content-type: application/json;charset=UTF-8'   -H 'cookie: _videogameCulture=vi-VN; PHPSESSID=napn3rnr8vg5q4ecjhi6rop1m4'   -H 'origin: https://ga88.ku6696.net'   -H 'priority: u=1, i'   -H 'referer: https://ga88.ku6696.net/Home/Game1'   -H 'sec-ch-ua: "Chromium";v="130", "Google Chrome";v="130", "Not?A_Brand";v="99"'   -H 'sec-ch-ua-mobile: ?0'   -H 'sec-ch-ua-platform: "Windows"'   -H 'sec-fetch-dest: empty'   -H 'sec-fetch-mode: cors'   -H 'sec-fetch-site: same-origin'   -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36'   --data-raw '{"SKey":"1","CKey":"71101","DType":1,"CType":1,"IsS":1,"PlayTool":4}'

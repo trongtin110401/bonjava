@@ -11,12 +11,20 @@ import java.util.List;
 public class TaiXiuAdminReportObj implements Serializable {
     long moneyTai;
     long moneyXiu;
+    long moneyChan;
+    long moneyLe;
     long numberUserRealTai;
     long numberUserAndBotBetTai;
+    long numberUserRealChan;
+    long numberUserAndBotBetChan;
     long numberUserRealXiu;
     long numberUserAndBotBetXiu;
+    long numberUserRealLe;
+    long numberUserAndBotBetLe;
     long moneyTaiFull;
     long moneyXiuFull;
+    long moneyChanFull;
+    long moneyLeFull;
     long phienId;
     long realTime;
     boolean bettingRound;
@@ -42,7 +50,13 @@ public class TaiXiuAdminReportObj implements Serializable {
         this.contributors = contributors;
     }
 
-    public TaiXiuAdminReportObj(long moneyTai, long moneyXiu, long numberUserRealTai, long numberUserRealXiu, long moneyTaiFull, long moneyXiuFull, long phienId) {
+    public TaiXiuAdminReportObj() {
+    }
+
+    public TaiXiuAdminReportObj(long moneyTai, long moneyXiu,
+                                long numberUserRealTai, long numberUserRealXiu,
+                                long moneyTaiFull, long moneyXiuFull,
+                                long phienId) {
         this.moneyTai = moneyTai;
         this.moneyXiu = moneyXiu;
         this.numberUserRealTai = numberUserRealTai;
@@ -52,7 +66,23 @@ public class TaiXiuAdminReportObj implements Serializable {
         this.phienId = phienId;
     }
 
-    public TaiXiuAdminReportObj() {
+    public TaiXiuAdminReportObj(long moneyTai, long moneyXiu, long moneyChan, long moneyLe,
+                                long numberUserRealTai, long numberUserRealXiu, long numberUserRealChan, long numberUserRealLe,
+                                long moneyTaiFull, long moneyXiuFull, long moneyChanFull, long moneyLeFull,
+                                long phienId) {
+        this.moneyChan = moneyChan;
+        this.moneyLe = moneyLe;
+        this.numberUserRealChan = numberUserRealChan;
+        this.numberUserRealLe = numberUserRealLe;
+        this.moneyChanFull = moneyChanFull;
+        this.moneyLeFull = moneyLeFull;
+        this.moneyTai = moneyTai;
+        this.moneyXiu = moneyXiu;
+        this.numberUserRealTai = numberUserRealTai;
+        this.numberUserRealXiu = numberUserRealXiu;
+        this.moneyTaiFull = moneyTaiFull;
+        this.moneyXiuFull = moneyXiuFull;
+        this.phienId = phienId;
     }
 
     public long getMoneyTai() {
@@ -205,6 +235,70 @@ public class TaiXiuAdminReportObj implements Serializable {
 
     public void setSessionResult(String sessionResult) {
         this.sessionResult = sessionResult;
+    }
+
+    public long getMoneyChan() {
+        return moneyChan;
+    }
+
+    public void setMoneyChan(long moneyChan) {
+        this.moneyChan = moneyChan;
+    }
+
+    public long getMoneyLe() {
+        return moneyLe;
+    }
+
+    public void setMoneyLe(long moneyLe) {
+        this.moneyLe = moneyLe;
+    }
+
+    public long getNumberUserRealChan() {
+        return numberUserRealChan;
+    }
+
+    public void setNumberUserRealChan(long numberUserRealChan) {
+        this.numberUserRealChan = numberUserRealChan;
+    }
+
+    public long getNumberUserAndBotBetChan() {
+        return numberUserAndBotBetChan;
+    }
+
+    public void setNumberUserAndBotBetChan(long numberUserAndBotBetChan) {
+        this.numberUserAndBotBetChan = numberUserAndBotBetChan;
+    }
+
+    public long getNumberUserRealLe() {
+        return numberUserRealLe;
+    }
+
+    public void setNumberUserRealLe(long numberUserRealLe) {
+        this.numberUserRealLe = numberUserRealLe;
+    }
+
+    public long getNumberUserAndBotBetLe() {
+        return numberUserAndBotBetLe;
+    }
+
+    public void setNumberUserAndBotBetLe(long numberUserAndBotBetLe) {
+        this.numberUserAndBotBetLe = numberUserAndBotBetLe;
+    }
+
+    public long getMoneyChanFull() {
+        return moneyChanFull;
+    }
+
+    public void setMoneyChanFull(long moneyChanFull) {
+        this.moneyChanFull = moneyChanFull;
+    }
+
+    public long getMoneyLeFull() {
+        return moneyLeFull;
+    }
+
+    public void setMoneyLeFull(long moneyLeFull) {
+        this.moneyLeFull = moneyLeFull;
     }
 
     @Override

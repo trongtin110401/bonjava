@@ -62,6 +62,8 @@ Games {
     TAI_XIU_VINH_DANH_BY_MONTH(182, "tx_vinh_danh_month", "TAI XIU VINH DANH THEO THANG"),
     TAI_XIU_MD5_VINH_DANH_BY_DAY(181, "tx_md5_vinh_danh_day", "TAI XIU MD5 VINH DANH THEO NGAY"),
     TAI_XIU_MD5_VINH_DANH_BY_MONTH(182, "tx_md5_vinh_danh_month", "TAI XIU MD5 VINH DANH THEO THANG"),
+    TAI_XIU_KUBET_VINH_DANH_BY_DAY(181, "tx_kubet_vinh_danh_day", "TAI XIU KUBET VINH DANH THEO NGAY"),
+    TAI_XIU_KUBET_VINH_DANH_BY_MONTH(182, "tx_kubet_vinh_danh_month", "TAI XIU KUBET VINH DANH THEO THANG"),
     ;
 
     private int id;

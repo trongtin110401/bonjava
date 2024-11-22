@@ -79,16 +79,7 @@ public abstract class MGRoom {
 
     }
 
-//    public void sendMessageToUser(BaseMsg msg, String username) {
-//        List<User> users = new ArrayList<>();
-//        users.add(ExtensionUtility.getExtension().getApi().getUserByName(username));
-//        if (users != null) {
-//            ExtensionUtility.getExtension().sendUsers(msg, users);
-//        }
-//    }
-
     public void sendMessageToUser(BaseMsg msg, String username) {
-//        List<User> users = new ArrayList<User>();
         List<User> users = ExtensionUtility.getExtension().getApi().getUserByName(username);
         if (users != null) {
             ExtensionUtility.getExtension().sendUsers(msg, users);

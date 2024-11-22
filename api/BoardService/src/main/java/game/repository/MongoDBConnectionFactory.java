@@ -25,16 +25,16 @@ public class MongoDBConnectionFactory {
     @Value("${spring.data.mongodb.host}")
     private String MONGODB_HOST;
     @Value("${spring.data.mongodb.database}")
-    private static String MONGODB_DATABASE;
+    private String MONGODB_DATABASE;
     @Value("${spring.data.mongodb.auth_database}")
-    private static String MONGODB_AUTH_DATABASE;
+    private String MONGODB_AUTH_DATABASE;
     @Value("${spring.data.mongodb.username}")
-    private static String MONGODB_USERNAME;
+    private String MONGODB_USERNAME;
     @Value("${spring.data.mongodb.password}")
-    private static String MONGODB_PASSWORD;
+    private String MONGODB_PASSWORD;
     @Value("${spring.data.mongodb.port}")
-    private static int MONGODB_PORT;
-    private static MongoClient mongoClient;
+    private int MONGODB_PORT;
+    private MongoClient mongoClient;
 
 
     public void newConnection() {
@@ -48,7 +48,7 @@ public class MongoDBConnectionFactory {
         mongoClient = new MongoClient(new ServerAddress(MONGODB_HOST, MONGODB_PORT), Arrays.asList(credential), options);
     }
 
-    public  MongoDatabase getDB() {
+    public MongoDatabase getDB() {
         if (mongoClient == null) {
             newConnection();
         }

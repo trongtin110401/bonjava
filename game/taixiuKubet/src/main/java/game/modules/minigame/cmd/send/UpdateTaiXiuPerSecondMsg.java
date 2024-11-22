@@ -14,17 +14,18 @@ public class UpdateTaiXiuPerSecondMsg extends BaseMsgEx {
     public boolean bettingState;
     public long potTai;
     public long potXiu;
+    public long potChan;
+    public long potLe;
     // số lượng người chơi mỗi phiên bên tài
     public long numBetTai;
     // số lượng người chơi mỗi phiên bên xỉu
     public long numBetXiu;
+    public long numBetChan;
+    // số lượng người chơi mỗi phiên bên xỉu
+    public long numBetLe;
     public long moneyHu;
 
     public boolean hasPlaintTextResult = false;
-
-    public String plaintTextResult;
-
-    public String md5TextResult;
 
     public UpdateTaiXiuPerSecondMsg() {
         super(2112);
@@ -33,22 +34,17 @@ public class UpdateTaiXiuPerSecondMsg extends BaseMsgEx {
     public byte[] createData() {
         ByteBuffer buffer = this.makeBuffer();
         buffer.putShort(this.remainTime);
-        this.putBoolean(buffer, Boolean.valueOf(this.bettingState));
+        this.putBoolean(buffer, this.bettingState);
         buffer.putLong(this.potTai);
         buffer.putLong(this.potXiu);
+        buffer.putLong(this.potChan);
+        buffer.putLong(this.potLe);
         buffer.putLong(this.numBetTai);
         buffer.putLong(this.numBetXiu);
+        buffer.putLong(this.numBetChan);
+        buffer.putLong(this.numBetLe);
         buffer.putLong(this.moneyHu);
-        if (!StringUtils.isEmpty(plaintTextResult)) {
-            hasPlaintTextResult = true;
-        }
-        super.putBoolean(buffer, hasPlaintTextResult);
-        super.putStr(buffer, this.md5TextResult);
-        if (hasPlaintTextResult)
-            super.putStr(buffer, this.plaintTextResult);
         return this.packBuffer(buffer);
     }
-
-
 }
 

@@ -7,12 +7,8 @@ import java.io.Serializable;
 public class TaiXiuSetAmountBotFake extends BaseResponseModel implements Serializable {
   int numberBotTaiFake;
   int numberBotXiuFake;
-
-  public TaiXiuSetAmountBotFake(boolean success, String errorCode, int numberBotTaiFake, int numberBotXiuFake) {
-    super(success, errorCode);
-    this.numberBotTaiFake = numberBotTaiFake;
-    this.numberBotXiuFake = numberBotXiuFake;
-  }
+  int numberBotChanFake;
+  int numberBotLeFake;
 
   public TaiXiuSetAmountBotFake(boolean success, String errorCode) {
     super(success, errorCode);
@@ -32,5 +28,21 @@ public class TaiXiuSetAmountBotFake extends BaseResponseModel implements Seriali
 
   public void setNumberBotXiuFake(int numberBotXiuFake) {
     this.numberBotXiuFake = numberBotXiuFake;
+  }
+
+  public int getNumberBotChanFake() {
+    return numberBotChanFake;
+  }
+
+  public void setNumberBotChanFake(int numberBotChanFake) {
+    this.numberBotChanFake = numberBotChanFake;
+  }
+
+  public int getNumberBotLeFake() {
+    return numberBotLeFake;
+  }
+
+  public void setNumberBotLeFake(int numberBotLeFake) {
+    this.numberBotLeFake = numberBotLeFake;
   }
 }

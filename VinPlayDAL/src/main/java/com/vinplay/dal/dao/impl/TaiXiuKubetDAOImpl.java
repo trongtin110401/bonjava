@@ -80,6 +80,10 @@ public class TaiXiuKubetDAOImpl
                     entry.totalXiu = rs.getLong("total_xiu");
                     entry.numBetTai = rs.getInt("num_bet_tai");
                     entry.numBetXiu = rs.getInt("num_bet_xiu");
+                    entry.totalChan = rs.getLong("total_chan");
+                    entry.totalLe = rs.getLong("total_le");
+                    entry.numBetChan = rs.getInt("num_bet_chan");
+                    entry.numBetLe = rs.getInt("num_bet_le");
                     entry.totalPrize = rs.getLong("total_prize");
                     entry.totalRefundTai = rs.getLong("total_refund_tai");
                     entry.totalRefundXiu = rs.getLong("total_refund_xiu");
@@ -379,6 +383,12 @@ public class TaiXiuKubetDAOImpl
                     entry.totalXiu = rs.getLong("total_xiu");
                     entry.numBetTai = rs.getInt("num_bet_tai");
                     entry.numBetXiu = rs.getInt("num_bet_xiu");
+
+                    entry.totalChan = rs.getLong("total_chan");
+                    entry.totalLe = rs.getLong("total_le");
+                    entry.numBetChan = rs.getInt("num_bet_chan");
+                    entry.numBetLe = rs.getInt("num_bet_le");
+
                     entry.totalPrize = rs.getLong("total_prize");
                     entry.totalRefundTai = rs.getLong("total_refund_tai");
                     entry.totalRefundXiu = rs.getLong("total_refund_xiu");

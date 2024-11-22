@@ -256,7 +256,68 @@
                 <command>
                     <id>69</id>
                     <name>update nổ hũ tài xỉu</name>
-                    <path>com.vinplay.vbee.rmq.minigame.processor.SaveResultTaiXiuMd5Processor
+                    <path>com.vinplay.vbee.rmq.minigame.processor.SaveHistoryHuTaiXiuProcessor
+                    </path>
+                </command>
+            </commands>
+        </queue>
+
+        <queue>
+            <name>queue_taixiu_kubet</name>
+            <threads>10</threads>
+            <commands>
+                <command>
+                    <id>100</id>
+                    <name>save transactions tai xiu</name>
+                    <path>com.vinplay.vbee.rmq.minigame.processor.SaveTransactionTaiXiuKubetProcessor
+                    </path>
+                </command>
+                <command>
+                    <id>101</id>
+                    <name>save result tai xiu</name>
+                    <path>com.vinplay.vbee.rmq.minigame.processor.SaveResultTaiXiuKubetProcessor
+                    </path>
+                </command>
+                <command>
+                    <id>102</id>
+                    <name>save transaction tai xiu detail</name>
+                    <path>com.vinplay.vbee.rmq.minigame.processor.SaveTransactionDetailTaiXiuKubetProcessor
+                    </path>
+                </command>
+                <command>
+                    <id>103</id>
+                    <name>update transaction tai xiu detail</name>
+                    <path>com.vinplay.vbee.rmq.minigame.processor.UpdateTransactionDetailTaiXiuKubetProcessor
+                    </path>
+                </command>
+                <command>
+                    <id>104</id>
+                    <name>update transaction tai xiu detail</name>
+                    <path>com.vinplay.vbee.rmq.minigame.processor.ThanhDuKubetProcessor
+                    </path>
+                </command>
+                <command>
+                    <id>107</id>
+                    <name>save tan loc</name>
+                    <path>com.vinplay.vbee.rmq.minigame.processor.LogTanLocMd5Processor
+                    </path>
+                </command>
+                <command>
+                    <id>108</id>
+                    <name>save rut loc</name>
+                    <path>com.vinplay.vbee.rmq.minigame.processor.LogTanLocMd5Processor
+                    </path>
+                </command>
+                <command>
+                    <id>109</id>
+                    <name>update so luot rut loc</name>
+                    <path>com.vinplay.vbee.rmq.minigame.processor.UpdateLuotRutLocMd5Processor
+                    </path>
+                </command>
+                <command>
+                    <id>69</id>
+                    <name>update nổ hũ tài xỉu</name>
+                    <path>com.vinplay.vbee.rmq.minigame.processor.SaveHistoryHuTaiXiuProcessor
                     </path>
                 </command>
             </commands>

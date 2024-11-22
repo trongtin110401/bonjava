@@ -30,9 +30,7 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.vinplay.dal.dao.TaiXiuDAO;
 import com.vinplay.dal.dao.impl.MiniGameDAOImpl;
-import com.vinplay.dal.dao.impl.ReportDaoImpl;
 import com.vinplay.dal.dao.impl.TaiXiuKubetDAOImpl;
-import com.vinplay.dal.dao.impl.TaiXiuMd5DAOImpl;
 import com.vinplay.dal.entities.report.ReportMoneySystemModel;
 import com.vinplay.dal.entities.taixiu.*;
 import com.vinplay.dal.service.TaiXiuService;
@@ -61,12 +59,10 @@ import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 // todo : xử lý tài xỉu bằng cách đẩy vào queue
-public class TaiXiuKubetServiceImpl
-        implements TaiXiuService {
-    private Logger logger = Logger.getLogger((String) "rmq");
-    private TaiXiuDAO dao = new TaiXiuKubetDAOImpl();  // lớp DAO , thực hiện đẩy dữ liệu vào database
-
-    private ReportDaoImpl reportDao = new ReportDaoImpl();
+public class TaiXiuKubetServiceImpl implements TaiXiuService {
+    private Logger logger = Logger.getLogger("rmq");
+    private TaiXiuKubetDAOImpl dao = new TaiXiuKubetDAOImpl();
+//    private ReportDaoImpl reportDao = new ReportDaoImpl();
 
 
     @Override
@@ -82,22 +78,21 @@ public class TaiXiuKubetServiceImpl
         msg.betSide = betSide;
         msg.prize = prize;
         msg.refund = refund;
-        //msg.totalExchange = totalExchange;
-        RMQApi.publishMessage((String) "queue_taixiu_md5", (BaseMessage) msg, (int) 100);
+        RMQApi.publishMessage((String) "queue_taixiu_kubet", (BaseMessage) msg, (int) 100);
         return true;
     }
 
     @Override
     public boolean saveNoHuTaiXiu(long phien, String result, long moneyHu, String username, String userMoneyHu, long totalUser) throws IOException, TimeoutException, InterruptedException {
-        NoHuTaiXiuMessage msg = new NoHuTaiXiuMessage();
-        msg.phien = phien;
-        msg.result = result;
-        msg.money = moneyHu;
-        msg.username = username;
-        msg.userMoneyHu = userMoneyHu;
-        msg.totalUser = totalUser;
-        RMQApi.publishMessage((String) "queue_taixiu_md5", (BaseMessage) msg, (int) 69);
-        logger.info("Tien Hu TX đẩy lên queue " + moneyHu);
+//        NoHuTaiXiuMessage msg = new NoHuTaiXiuMessage();
+//        msg.phien = phien;
+//        msg.result = result;
+//        msg.money = moneyHu;
+//        msg.username = username;
+//        msg.userMoneyHu = userMoneyHu;
+//        msg.totalUser = totalUser;
+//        RMQApi.publishMessage("queue_taixiu_kubet", (BaseMessage) msg, (int) 69);
+//        logger.info("Tien Hu TX đẩy lên queue " + moneyHu);
         return false;
     }
 
@@ -107,52 +102,6 @@ public class TaiXiuKubetServiceImpl
                                     long totalXiu, int numBetTai, int numBetXiu, long totalPrize,
                                     long totalRefundTai, long totalRefundXiu, long totalRevenue, int moneyType,
                                     long moneyHu, int statusHu) throws Exception {
-        ResultTaiXiuMessage msg = new ResultTaiXiuMessage();
-        msg.referenceId = referenceId;
-        msg.result = result;
-        msg.dice1 = dice1;
-        msg.dice2 = dice2;
-        msg.dice3 = dice3;
-        msg.totalTai = totalTai;
-        msg.totalXiu = totalXiu;
-        msg.numBetTai = numBetTai;
-        msg.numBetXiu = numBetXiu;
-        msg.totalPrize = totalPrize;
-        msg.totalRefundTai = totalRefundTai;
-        msg.totalRefundXiu = totalRefundXiu;
-        msg.totalRevenue = totalRevenue;
-        msg.moneyType = moneyType;
-        msg.moneyHu = moneyHu;
-        msg.statusHu = statusHu;
-        RMQApi.publishMessage((String) "queue_taixiu_md5", (BaseMessage) msg, (int) 101);  // ném vào trong queue tài xỉu
-        return true;
-    }
-
-
-    public boolean saveResultTaiXiu(long referenceId, int result, int dice1, int dice2, int dice3, long totalTai,
-                                    long totalXiu, int numBetTai, int numBetXiu, long totalPrize,
-                                    long totalRefundTai, long totalRefundXiu, long totalRevenue, int moneyType,
-                                    long moneyHu, int statusHu, String md5, String plaintText) throws Exception {
-        ResultTaiXiuMessage msg = new ResultTaiXiuMessage();
-        msg.referenceId = referenceId;
-        msg.result = result;
-        msg.dice1 = dice1;
-        msg.dice2 = dice2;
-        msg.dice3 = dice3;
-        msg.totalTai = totalTai;
-        msg.totalXiu = totalXiu;
-        msg.numBetTai = numBetTai;
-        msg.numBetXiu = numBetXiu;
-        msg.totalPrize = totalPrize;
-        msg.totalRefundTai = totalRefundTai;
-        msg.totalRefundXiu = totalRefundXiu;
-        msg.totalRevenue = totalRevenue;
-        msg.moneyType = moneyType;
-        msg.moneyHu = moneyHu;
-        msg.statusHu = statusHu;
-        msg.md5 = md5;
-        msg.plaintText = plaintText;
-        RMQApi.publishMessage((String) "queue_taixiu_md5", (BaseMessage) msg, (int) 101);  // ném vào trong queue tài xỉu
         return true;
     }
 
@@ -167,20 +116,12 @@ public class TaiXiuKubetServiceImpl
         TopWinCache topTXCache;
         HazelcastInstance client = HazelcastClientFactory.getInstance();
         IMap topMap = client.getMap("cacheTop");
-        if (topMap.containsKey((Object) (Games.TAI_XIU_MD5.getName() + "_" + moneyType)) && (topTXCache = (TopWinCache) topMap.get((Object) (Games.TAI_XIU_MD5.getName() + "_" + moneyType))) != null) {
+        if (topMap.containsKey((Object) (Games.TAI_XIU_KUBET.getName() + "_" + moneyType)) && (topTXCache = (TopWinCache) topMap.get((Object) (Games.TAI_XIU_KUBET.getName() + "_" + moneyType))) != null) {
             List<TopWin> lst = topTXCache.getResult();
             for (TopWin item : lst) {
-                //old mysql
-                //item.setTotalMoneyOnGame(dao.getMoneyStakesTX(item.getUsername()));
-                //new elk
                 ELKrmq elKrmq = new ELKrmq();
                 Long totalStakesTx = elKrmq.getTotalStakesTx(userCurrent, atStartOfDay(new Date()).getTime(), atEndOfDay(new Date()).getTime());
                 item.setTotalMoneyOnGame(totalStakesTx);
-                //end
-                //test log
-//                Long old =dao.getMoneyStakesTX(item.getUsername());
-//                sendLogToTele(totalStakesTx+" == == old" + old);
-                //end log
             }
             return lst;
         }
@@ -192,7 +133,7 @@ public class TaiXiuKubetServiceImpl
         TopWinCache topTXCache;
         HazelcastInstance client = HazelcastClientFactory.getInstance();
         IMap topMap = client.getMap("cacheTop");
-        if (topMap.containsKey((Games.TAI_XIU_MD5_VINH_DANH_BY_DAY.getName())) && (topTXCache = (TopWinCache) topMap.get((Games.TAI_XIU_MD5_VINH_DANH_BY_DAY.getName()))) != null) {
+        if (topMap.containsKey((Games.TAI_XIU_KUBET_VINH_DANH_BY_DAY.getName())) && (topTXCache = (TopWinCache) topMap.get((Games.TAI_XIU_KUBET_VINH_DANH_BY_DAY.getName()))) != null) {
             return topTXCache.getResult();
         }
         return new ArrayList<>();
@@ -203,7 +144,7 @@ public class TaiXiuKubetServiceImpl
         TopWinCache topTXCache;
         HazelcastInstance client = HazelcastClientFactory.getInstance();
         IMap topMap = client.getMap("cacheTop");
-        if (topMap.containsKey((Games.TAI_XIU_MD5_VINH_DANH_BY_MONTH.getName())) && (topTXCache = (TopWinCache) topMap.get((Games.TAI_XIU_MD5_VINH_DANH_BY_MONTH.getName()))) != null) {
+        if (topMap.containsKey((Games.TAI_XIU_KUBET_VINH_DANH_BY_MONTH.getName())) && (topTXCache = (TopWinCache) topMap.get((Games.TAI_XIU_KUBET_VINH_DANH_BY_MONTH.getName()))) != null) {
             return topTXCache.getResult();
         }
         return new ArrayList<>();
@@ -222,12 +163,12 @@ public class TaiXiuKubetServiceImpl
 
             HazelcastInstance client = HazelcastClientFactory.getInstance();
             IMap topMap = client.getMap("cacheTop");
-            TopWinCache cacheVin = (TopWinCache) topMap.get((Games.TAI_XIU_MD5.getName() + "_1"));
+            TopWinCache cacheVin = (TopWinCache) topMap.get((Games.TAI_XIU_KUBET.getName() + "_1"));
             if (cacheVin == null) {
                 cacheVin = new TopWinCache();
             }
             cacheVin.setResult(topWinVin);
-            topMap.put((Games.TAI_XIU_MD5.getName() + "_1"), cacheVin);
+            topMap.put((Games.TAI_XIU_KUBET.getName() + "_1"), cacheVin);
         } catch (SQLException e) {
             this.logger.error("UPDATE ALL TOP exception: ", (Throwable) e);
             e.printStackTrace();
@@ -247,12 +188,12 @@ public class TaiXiuKubetServiceImpl
             ZonedDateTime zdtStart = today.atStartOfDay(zoneId);
             ZonedDateTime zdtStop = today.plusDays(1).atStartOfDay(zoneId);
             List<TopWin> topWinVinhDanhByDay = this.dao.getTopTaiXiuVinhDanh(1, Timestamp.from(Instant.from(zdtStart)), Timestamp.from(Instant.from(zdtStop)), 10);
-            TopWinCache cacheVinTxVinhDanhByDay = (TopWinCache) topMap.get((Games.TAI_XIU_MD5_VINH_DANH_BY_DAY.getName()));
+            TopWinCache cacheVinTxVinhDanhByDay = (TopWinCache) topMap.get((Games.TAI_XIU_KUBET_VINH_DANH_BY_DAY.getName()));
             if (cacheVinTxVinhDanhByDay == null) {
                 cacheVinTxVinhDanhByDay = new TopWinCache();
             }
             cacheVinTxVinhDanhByDay.setResult(topWinVinhDanhByDay);
-            topMap.put((Games.TAI_XIU_MD5_VINH_DANH_BY_DAY.getName()), cacheVinTxVinhDanhByDay);
+            topMap.put((Games.TAI_XIU_KUBET_VINH_DANH_BY_DAY.getName()), cacheVinTxVinhDanhByDay);
         } catch (SQLException e) {
             this.logger.error("UPDATE ALL TOP DAY exception: ", e);
             e.printStackTrace();
@@ -270,12 +211,12 @@ public class TaiXiuKubetServiceImpl
             ZoneId zoneId = ZoneId.of("Asia/Ho_Chi_Minh");
             LocalDate getFirstDateOfMonth = LocalDate.now();
             List<TopWin> topWinVinhDanhByMonth = this.dao.getTopTaiXiuVinhDanh(1, Timestamp.from(Instant.from(getFirstDateOfMonth.withDayOfMonth(1).atStartOfDay(zoneId))), Timestamp.from(Instant.now()), 20);
-            TopWinCache cacheVinTxVinhDanhByMonth = (TopWinCache) topMap.get((Games.TAI_XIU_MD5_VINH_DANH_BY_MONTH.getName()));
+            TopWinCache cacheVinTxVinhDanhByMonth = (TopWinCache) topMap.get((Games.TAI_XIU_KUBET_VINH_DANH_BY_MONTH.getName()));
             if (cacheVinTxVinhDanhByMonth == null) {
                 cacheVinTxVinhDanhByMonth = new TopWinCache();
             }
             cacheVinTxVinhDanhByMonth.setResult(topWinVinhDanhByMonth);
-            topMap.put((Games.TAI_XIU_MD5_VINH_DANH_BY_MONTH.getName()), cacheVinTxVinhDanhByMonth);
+            topMap.put((Games.TAI_XIU_KUBET_VINH_DANH_BY_MONTH.getName()), cacheVinTxVinhDanhByMonth);
         } catch (SQLException e) {
             this.logger.error("UPDATE ALL TOP MONTH exception: ", (Throwable) e);
             e.printStackTrace();
@@ -310,19 +251,37 @@ public class TaiXiuKubetServiceImpl
     }
 
     @Override
-    public boolean saveResultTaiXiu(ResultTaiXiu rs1) throws Exception {
-        ResultTaiXiuMd5 rs = (ResultTaiXiuMd5) rs1;
-        //this.logger.debug((Object)"Save result tx");
-        return this.saveResultTaiXiu(rs.referenceId, rs.result, rs.dice1, rs.dice2, rs.dice3, rs.totalTai, rs.totalXiu, rs.numBetTai,
-                rs.numBetXiu, rs.totalPrize, rs.totalRefundTai, rs.totalRefundXiu,
-                rs.totalRevenue, rs.moneyType, rs.moneyHu, rs.statusHu, rs.getMd5TextResult(), rs.getPlantTextResult());
+    public boolean saveResultTaiXiu(ResultTaiXiu rs) throws Exception {
+        ResultTaiXiuMessage msg = new ResultTaiXiuMessage();
+        msg.referenceId = rs.referenceId;
+        msg.result = rs.result;
+        msg.dice1 = rs.dice1;
+        msg.dice2 = rs.dice2;
+        msg.dice3 = rs.dice3;
+        msg.totalTai = rs.totalTai;
+        msg.totalXiu = rs.totalXiu;
+        msg.numBetTai = rs.numBetTai;
+        msg.numBetXiu = rs.numBetXiu;
+        msg.totalPrize = rs.totalPrize;
+        msg.totalRefundTai = rs.totalRefundTai;
+        msg.totalRefundXiu = rs.totalRefundXiu;
+        msg.totalRevenue = rs.totalRevenue;
+        msg.moneyType = rs.moneyType;
+        msg.moneyHu = rs.moneyHu;
+        msg.statusHu = rs.statusHu;
+        msg.totalChan = rs.totalChan;
+        msg.totalLe = rs.totalChan;
+        msg.numBetChan = rs.numBetChan;
+        msg.numBetLe = rs.numBetLe;
+
+        RMQApi.publishMessage("queue_taixiu_kubet", msg, 101);
+        return true;
     }
 
     @Override
     public boolean saveTransactionTaiXiu(List<TransactionTaiXiu> trans) throws IOException, TimeoutException, InterruptedException {
         boolean returnValue = false;
         if (!trans.isEmpty()) {
-            System.out.println("Save transaction TX MD5 phiên : " + trans.get(0).referenceId);
             for (TransactionTaiXiu tran : trans) {
                 returnValue = this.saveTransactionTaiXiu(tran.referenceId, tran.userId, tran.username, tran.moneyType, tran.betValue, (short) tran.betSide, tran.totalPrize, tran.totalRefund, tran.totalExchange);
             }
@@ -332,11 +291,12 @@ public class TaiXiuKubetServiceImpl
 
     @Override
     public boolean saveNoHuTaiXiu(List<NohuTXDetail> trans) throws IOException, TimeoutException, InterruptedException {
-        boolean returnValue = false;
-        for (NohuTXDetail tran : trans) {
-            returnValue = this.saveNoHuTaiXiu(tran.phien, tran.result, tran.money, tran.username, tran.userMoneyHu, tran.totalUser);
-        }
-        return returnValue;
+//        boolean returnValue = false;
+//        for (NohuTXDetail tran : trans) {
+//            returnValue = this.saveNoHuTaiXiu(tran.phien, tran.result, tran.money, tran.username, tran.userMoneyHu, tran.totalUser);
+//        }
+//        return returnValue;
+        return false;
     }
 
     //todo :update chi tiết transaction tài xỉu
@@ -353,7 +313,7 @@ public class TaiXiuKubetServiceImpl
         msg.refund = tran.refund;
         msg.inputTime = tran.inputTime;
         msg.moneyType = tran.moneyType;
-        RMQApi.publishMessage((String) "queue_taixiu_md5", (BaseMessage) msg, (int) 102);
+        RMQApi.publishMessage((String) "queue_taixiu_kubet", (BaseMessage) msg, (int) 102);
         return true;
     }
 
@@ -394,7 +354,7 @@ public class TaiXiuKubetServiceImpl
         msg.refund = tran.refund;
         msg.inputTime = tran.inputTime;
         msg.moneyType = tran.moneyType;
-        RMQApi.publishMessage((String) "queue_taixiu_md5", (BaseMessage) msg, (int) 103);
+        RMQApi.publishMessage((String) "queue_taixiu_kubet", (BaseMessage) msg, (int) 103);
         return true;
     }
 
@@ -459,7 +419,7 @@ public class TaiXiuKubetServiceImpl
                 if (model.number <= model.maxNumber || !model.valid) break lbl42;
                 model.maxNumber = model.number;
                 ThanhDuMessage message = new ThanhDuMessage(model.username, model.number, model.totalValue, model.currentReferenceId, model.getReferences(), (short) type);
-                RMQApi.publishMessage((String) "queue_taixiu_md5", (BaseMessage) message, (int) 104);
+                RMQApi.publishMessage((String) "queue_taixiu_kubet", (BaseMessage) message, (int) 104);
             } catch (Exception e) {
             } finally {
 
@@ -482,7 +442,7 @@ public class TaiXiuKubetServiceImpl
             if (moneyExchange >= 10000L) {
                 model.valid = true;
                 ThanhDuMessage message2 = new ThanhDuMessage(model.username, model.number, model.totalValue, model.currentReferenceId, model.getReferences(), (short) type);
-                RMQApi.publishMessage((String) "queue_taixiu_md5", (BaseMessage) message2, (int) 104);
+                RMQApi.publishMessage((String) "queue_taixiu_kubet", (BaseMessage) message2, (int) 104);
             }
         }
 
@@ -532,7 +492,7 @@ public class TaiXiuKubetServiceImpl
         LogTanLocMessage message = new LogTanLocMessage();
         message.username = username;
         message.value = money;
-        RMQApi.publishMessage((String) "queue_taixiu_md5", (BaseMessage) message, (int) 107);
+        RMQApi.publishMessage((String) "queue_taixiu_kubet", (BaseMessage) message, (int) 107);
     }
 
     @Override
@@ -550,7 +510,7 @@ public class TaiXiuKubetServiceImpl
         message.prize = prize;
         message.timeRequest = timeRequest;
         message.currentFund = currentFund;
-        RMQApi.publishMessage((String) "queue_taixiu_md5", (BaseMessage) message, (int) 108);
+        RMQApi.publishMessage((String) "queue_taixiu_kubet", (BaseMessage) message, (int) 108);
     }
 
     /*
@@ -561,7 +521,7 @@ public class TaiXiuKubetServiceImpl
         UpdateLuotRutLocMessage message = new UpdateLuotRutLocMessage();
         message.username = username;
         message.soLuotThem = soLuotThem;
-        RMQApi.publishMessage((String) "queue_taixiu_md5", (BaseMessage) message, (int) 109);
+        RMQApi.publishMessage((String) "queue_taixiu_kubet", (BaseMessage) message, (int) 109);
         int soLuotRut = soLuotThem;
         HazelcastInstance client = HazelcastClientFactory.getInstance();
         IMap userMap = client.getMap("cacheRutLocTX");
@@ -736,36 +696,6 @@ public class TaiXiuKubetServiceImpl
         reportMoneySystemModel5.revenue += todayModel.revenue;
         result.dateReset = dateReset;
         return result;
-    }
-
-    public String getHashMd5(String plainText) throws SQLException {
-        String sql = "SELECT * FROM result_tai_xiu_md5 WHERE plainText=? order by timestamp desc limit 1";
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");
-             PreparedStatement stm = conn.prepareStatement(sql);) {
-            stm.setString(1, plainText);
-            ResultSet rs = stm.executeQuery();
-            String md5Hash = null;
-            while (rs.next()) {
-                md5Hash = rs.getString("md5");
-            }
-            return md5Hash;
-        }
-    }
-
-    private boolean isBot(String nickname) {
-        try {
-            HazelcastInstance client = HazelcastClientFactory.getInstance();
-            IMap<String, UserModel> userMap = client.getMap("users");
-            if (userMap.containsKey((Object) nickname)) {
-                UserCacheModel user = (UserCacheModel) userMap.get((Object) nickname);
-                return user.isBot();
-            }
-            return false;
-        } catch (Exception e) {
-            return false;
-        }
-
-
     }
 
     public static Date atStartOfDay(Date date) {

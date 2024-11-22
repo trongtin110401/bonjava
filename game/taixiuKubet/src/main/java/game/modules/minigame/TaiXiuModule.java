@@ -75,10 +75,10 @@ public class TaiXiuModule extends BaseClientRequestHandler {
     private final List<String> listChatUsers = new ArrayList<>();
     public static String CacheCurrentReference = "Tai_xiu_current_reference_kubet";
     public static long moneyHu = 50000000; // được lấy từ trong database
-
     private int amountBotTaiFake = 0;
     private int amountBotXiuFake = 0;
-
+    private int amountBotChanFake = 0;
+    private int amountBotLeFake = 0;
     public static final int FINISH_TIME = 50;
 
     public void init() {
@@ -126,14 +126,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         } catch (IOException e) {
             Debug.trace("Load cau tai xiu error ", e.getMessage());
         }
-        try {
-            this.fundRutLoc = this.txService.getPotTanLoc();
-            if (this.fundRutLoc < 100000L) {
-                this.countRutLoc = -1;
-            }
-        } catch (SQLException e) {
-            Debug.trace("Load fund tan loc error ", e.getMessage());
-        }
+        this.fundRutLoc = 0;
     }
 
     private void saveReferences() {
@@ -149,7 +142,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         switch (dataCmd.getId()) {
             case 2000: {
                 // mở game lên vào đây
-                this.subcribeMiniGame(user, dataCmd);
+                this.subscribeMiniGame(user, dataCmd);
                 break;
             }
             case 2001: {
@@ -178,7 +171,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         }
     }
 
-    private void subcribeMiniGame(User user, DataCmd dataCmd) {
+    private void subscribeMiniGame(User user, DataCmd dataCmd) {
         SubcribeMinigameCmd cmd = new SubcribeMinigameCmd(dataCmd);
         this.doSubscribeMiniGame(user, cmd.gameId, cmd.roomId);
         LichSuPhienMsg msgLSGD = new LichSuPhienMsg();
@@ -279,7 +272,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
 
     // todo : user đặt cược tiền
     public void betTaiXiu(User user, DataCmd dataCmd) {
-        // convert từ dataCmd sang BetTaixiu cmd
         BetTaiXiuCmd cmd = new BetTaiXiuCmd(dataCmd);
         MGRoomTaiXiu roomTX = this.getRoomTX(cmd.moneyType);
         if (roomTX != null) {
@@ -292,12 +284,17 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         short typeBet = 1;
         MGRoomTaiXiu roomVin = this.getRoomTX(typeBet);
         // lấy người chơi đặt tài
-        TaiXiuAdminReportObj taiXiuAdminReportObj = new TaiXiuAdminReportObj(roomVin.getUserBetTai(),
-                this.getRoomTX(typeBet).getUserBetXiu(), roomVin.getNumberUserRealTai(), this.getRoomTX(typeBet).getNumberUserRealXiu(),
-                this.getRoomTX(typeBet).getTotalMoneyTai(), roomVin.getTotalMoneyXiu(), this.referenceTaiXiuId);
-        taiXiuAdminReportObj.setNumberUserAndBotBetTai(roomVin.getNumberUerAndBotTai());
-        taiXiuAdminReportObj.setNumberUserAndBotBetXiu(roomVin.getNumberUerAndBotXiu());
-        taiXiuAdminReportObj.setContributors(roomVin.getListTransaction());
+        TaiXiuAdminReportObj taiXiuAdminReportObj = new TaiXiuAdminReportObj(
+                roomVin.getUserBetTai(), this.getRoomTX(typeBet).getUserBetXiu(), this.getRoomTX(typeBet).getUserBetChan(), this.getRoomTX(typeBet).getUserBetLe(),
+                roomVin.getNumberUserRealTai(), this.getRoomTX(typeBet).getNumberUserRealXiu(), this.getRoomTX(typeBet).getNumberUserRealChan(), this.getRoomTX(typeBet).getNumberUserRealLe(),
+                this.getRoomTX(typeBet).getTotalMoneyTai(), roomVin.getTotalMoneyXiu(), this.getRoomTX(typeBet).getTotalMoneyChan(), roomVin.getTotalMoneyLe(),
+                this.referenceTaiXiuId);
+        taiXiuAdminReportObj.setNumberUserAndBotBetTai(roomVin.getNumberUserAndBotTai());
+        taiXiuAdminReportObj.setNumberUserAndBotBetXiu(roomVin.getNumberUserAndBotXiu());
+        taiXiuAdminReportObj.setNumberUserAndBotBetChan(roomVin.getNumberUserAndBotChan());
+        taiXiuAdminReportObj.setNumberUserAndBotBetLe(roomVin.getNumberUserAndBotLe());
+
+        taiXiuAdminReportObj.setContributors(roomVin.getListRealTransaction());
         taiXiuAdminReportObj.setRealTime(roomVin.getRemainTime());
         taiXiuAdminReportObj.setBettingRound(roomVin.bettingRound);
         List<TaiXiuChatMsg> listChat;
@@ -316,19 +313,22 @@ public class TaiXiuModule extends BaseClientRequestHandler {
 
         taiXiuAdminReportObj.setLstMsg(listChat);
         taiXiuAdminReportObj.setGetListChatUsers(this.getListChatUsers());
-//        taiXiuAdminReportObj.setTaiXiuMd5Hash(roomVin.resultTX.getMd5TextResult());
-//        taiXiuAdminReportObj.setTaiXiuPlainResult(roomVin.resultTX.getPlantTextResult());
         cacheService.setValue("user_tai_xiu_kubet", taiXiuAdminReportObj.toJson());
         cacheService.setObject("lstTaiXiuAdminMsg", new ArrayList<>());
 
         // thông tin soi cầu
         String sc = lichSuPhienTX.stream()
                 .skip(Math.max(0, lichSuPhienTX.size() - 25))
-                .map(resultTaiXiu -> resultTaiXiu.dice1 + resultTaiXiu.dice2 + resultTaiXiu.dice3 > 10 ? "T" : "X")
+                .map(resultTaiXiu -> {
+                    String tx = resultTaiXiu.dice1 + resultTaiXiu.dice2 + resultTaiXiu.dice3 > 10 ? "T" : "X";
+                    String cl = (resultTaiXiu.dice1 + resultTaiXiu.dice2 + resultTaiXiu.dice3) % 2 == 0 ? "C" : "L";
+                    return tx + cl;
+                })
                 .collect(Collectors.joining(","));
         cacheService.setValue("SC_TAI_XIU_KUBET", sc);
     }
 
+    @SuppressWarnings("Unchecked")
     public List<String> getListChatUsers() {
         return listChatUsers;
     }
@@ -346,13 +346,17 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                 if (taiXiuSetAmountBotFake != null) {
                     amountBotTaiFake += (taiXiuSetAmountBotFake.getNumberBotTaiFake()) / 40;
                     amountBotXiuFake += (taiXiuSetAmountBotFake.getNumberBotXiuFake()) / 40;
+                    amountBotChanFake += (taiXiuSetAmountBotFake.getNumberBotChanFake()) / 40;
+                    amountBotLeFake += (taiXiuSetAmountBotFake.getNumberBotLeFake()) / 40;
                 }
             } catch (KeyNotFoundException ex) {
                 amountBotXiuFake = 0;
                 amountBotTaiFake = 0;
+                amountBotChanFake = 0;
+                amountBotLeFake = 0;
             }
 
-            roomTXVin.updateTaiXiuPerSecond(amountBotTaiFake, amountBotXiuFake, count);
+            roomTXVin.updateTaiXiuPerSecond(amountBotTaiFake, amountBotXiuFake, amountBotChanFake, amountBotLeFake, 0);
 
             // lưu toàn bộ trạng thái của game vào cache service
             // trạng thái này phục vụ cho APIs và module wsreport
@@ -433,34 +437,15 @@ public class TaiXiuModule extends BaseClientRequestHandler {
 
     private void generateResultAfter(MGRoomTaiXiu roomTXVin) {
 
-        String keyBeCang = "auto";
-        try {
-            keyBeCang = cacheService.getValueStr("tai_xiu_be_cang_kubet");
-
-        } catch (Exception r) {
-            Debug.info("Loi get key becang");
-        }
-        if ("tai".equals(keyBeCang)) {
-            this.forceBetSide = 1;
-        } else if ("xiu".equals(keyBeCang)) {
-            this.forceBetSide = 0;
-        } else {
-            this.forceBetSide = -1;
-        }
-        cacheService.setValue("tai_xiu_be_cang_kubet", "auto");
-
+        this.forceBetSide = -1;
         short[] dices = new short[3];
 
         // can thiep be cau
         if (forceBetSide != -1) {
             dices = this.generationTX.generateResult(this.forceBetSide);
-//            String result = generationTX.buildPlainTextResult(dices);
-//            roomTXVin.resultTX.setPlantTextResult(result);
         } else { // khong can thiep
-
-            short typeBet = 1;
             // tinh toan chenh lenh user that
-            List<TaiXiuAdmin> contributors = this.getRoomTX(typeBet).getListTransaction();
+            List<TaiXiuAdmin> contributors = this.getRoomTX((short) 1).getListRealTransaction();
             long totalRealBetTai = 0;
             long totalRealBetXiu = 0;
             for (TaiXiuAdmin taiXiuAdmin : contributors) {
@@ -496,12 +481,8 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                 dices[1] = (short) roomTXVin.resultTX.dice2;
                 dices[2] = (short) roomTXVin.resultTX.dice3;
             }
-
-//            String result = generationTX.buildPlainTextResult(dices);
-//            roomTXVin.resultTX.setPlantTextResult(result);
         }
 
-        this.resetForceBalance();
 
         short total = (short) (dices[0] + dices[1] + dices[2]);
         this.result = total > 10 ? (short) 1 : 0;
