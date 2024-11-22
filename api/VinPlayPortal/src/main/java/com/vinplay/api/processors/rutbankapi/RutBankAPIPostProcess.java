@@ -45,7 +45,6 @@ public class RutBankAPIPostProcess implements BaseProcessor<HttpServletRequest, 
         Date date = new Date();
         document.put("created_date", dateFormat.format(date));
         try {
-            System.out.println("==========> Rut Tien B01");
             BaseResponseModel baseResponseModel = new BaseResponseModel(false, "1001");
             String accessToken = param.get().getParameter("at");
             String nickname = this.getUserNameByAccessToken(accessToken);
@@ -72,7 +71,6 @@ public class RutBankAPIPostProcess implements BaseProcessor<HttpServletRequest, 
             document.put("amount", amount);
             document.put("OTP", true);
             // Kiem tra dieu kien rut
-            System.out.println("==========> Rut Tien B01");
             StatMoneyInOutDaoImpl moneyInOutDao = StatMoneyInOutDaoImpl.getInstance();
             StatMoneyInOut moneyInOut = moneyInOutDao.find(nickname);
             long totalBetValue = moneyInOut.totalBetValue;
@@ -80,7 +78,6 @@ public class RutBankAPIPostProcess implements BaseProcessor<HttpServletRequest, 
             long firstRechargeValue = getFirstRechargeValue(nickname);
 
             long moneyNeededForWithdrawal = calculateMoneyNeededForWithdrawal(firstRechargeValue, totalDepositGiftcode, totalBetValue);
-            System.out.println("==========> Rut Tien B03");
 
             if (moneyNeededForWithdrawal > 0) {
                 String message = buildWithdrawalMessage(firstRechargeValue, totalDepositGiftcode, totalBetValue, moneyNeededForWithdrawal);
@@ -89,7 +86,6 @@ public class RutBankAPIPostProcess implements BaseProcessor<HttpServletRequest, 
                 return baseResponseModel.toJson();
             }
 
-            System.out.println("==========> Rut Tien B04");
             // dieu kien rut thoa man. gui lenh rut
             String type =param.get().getParameter("type");
             bankacc = bankacc.replaceAll("_", " ");
