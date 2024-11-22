@@ -38,9 +38,6 @@ import java.util.concurrent.*;
 @Service
 public class TeleAuthentication extends TelegramLongPollingBot {
 
-//    @Autowired
-    MongoDBConnectionFactory mongoDBConnectionFactory;
-
     private static final String TELEGRAM_API_URL = "https://api.telegram.org/bot6831621160:AAHPfkEON1-u2e44F8WAVdu5vT9ySql8ztA/sendMessage";
     private final OkHttpClient client = new OkHttpClient.Builder()
             .connectTimeout(3, TimeUnit.SECONDS)
@@ -57,8 +54,6 @@ public class TeleAuthentication extends TelegramLongPollingBot {
 
     public TeleAuthentication() {
         super();
-
-        mongoDBConnectionFactory = ContextHolder.applicationContext.getBean(MongoDBConnectionFactory.class);
     }
 
     @PostConstruct
@@ -245,6 +240,7 @@ public class TeleAuthentication extends TelegramLongPollingBot {
 
 
     public String getPhoneByNickname(String nickname) {
+        MongoDBConnectionFactory mongoDBConnectionFactory = ContextHolder.applicationContext.getBean(MongoDBConnectionFactory.class);
         MongoDatabase db = mongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("user_phone");
         Document filter = new Document("nickname", nickname);
@@ -259,6 +255,8 @@ public class TeleAuthentication extends TelegramLongPollingBot {
     }
 
     private UserTele getInfoByChatID(String chatID) {
+        MongoDBConnectionFactory mongoDBConnectionFactory = ContextHolder.applicationContext.getBean(MongoDBConnectionFactory.class);
+
         MongoDatabase db = mongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("user_tele");
         Document filter = new Document("chatID", chatID);
@@ -298,6 +296,8 @@ public class TeleAuthentication extends TelegramLongPollingBot {
 
 
     private void saveUserInfo(String nickname, String chatId) {
+        MongoDBConnectionFactory mongoDBConnectionFactory = ContextHolder.applicationContext.getBean(MongoDBConnectionFactory.class);
+
         MongoDatabase db = mongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("user_tele");
         Document document = new Document();
@@ -314,6 +314,8 @@ public class TeleAuthentication extends TelegramLongPollingBot {
     }
 
     private void saveOTP(String chatId, String otp) {
+        MongoDBConnectionFactory mongoDBConnectionFactory = ContextHolder.applicationContext.getBean(MongoDBConnectionFactory.class);
+
         MongoDatabase db = mongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("user_tele");
         Document filter = new Document("chatID", chatId);
@@ -331,6 +333,8 @@ public class TeleAuthentication extends TelegramLongPollingBot {
                 phone = phone.replace("+", "").trim();
             }
         }
+        MongoDBConnectionFactory mongoDBConnectionFactory = ContextHolder.applicationContext.getBean(MongoDBConnectionFactory.class);
+
         MongoDatabase db = mongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("user_tele");
         Document filter = new Document("chatID", chatId);
@@ -339,6 +343,8 @@ public class TeleAuthentication extends TelegramLongPollingBot {
     }
 
     private void saveOTPPhone(String chatId, String otp) {
+        MongoDBConnectionFactory mongoDBConnectionFactory = ContextHolder.applicationContext.getBean(MongoDBConnectionFactory.class);
+
         MongoDatabase db = mongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("user_tele");
         Document filter = new Document("chatID", chatId);
@@ -411,6 +417,8 @@ public class TeleAuthentication extends TelegramLongPollingBot {
                 phone = phone.replace("+", "").trim();
             }
         }
+        MongoDBConnectionFactory mongoDBConnectionFactory = ContextHolder.applicationContext.getBean(MongoDBConnectionFactory.class);
+
         MongoDatabase db = mongoDBConnectionFactory.getDB();
         MongoCollection<Document> collection = db.getCollection("user_phone");
         Document filter = new Document("nickname", nickname);
