@@ -99,10 +99,10 @@ public class HttpClientExample {
             String wsUrl = "wss://dicelive.79club.biz/dicelive/signalr/connect?connectionToken=" + connectionToken;
 
             // Add custom headers
-            Map<String, String> headers = new HashMap<>();
-            headers.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36");
-            headers.put("Cookie", cookie);
-            headers.put("Host", "dicelive.79club.biz");
+//            Map<String, String> headers = new HashMap<>();
+//            headers.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36");
+//            headers.put("Cookie", cookie);
+//            headers.put("Host", "dicelive.79club.biz");
 
             WebSocketClient client = new WebSocketClient(new URI(wsUrl)) {
                 @Override

@@ -262,7 +262,8 @@ public class BotMinigame {
         ArrayList<Integer> betValues = new ArrayList<Integer>(betValueDefault);
         try {
             //Kiểm tra xem có thông tin setbot từ bên admin bắn sang không
-            TaiXiuBotSetUpObj obj = (TaiXiuBotSetUpObj) cacheService.getObject("tai_xiu_set_bot_md5");
+            Object object = cacheService.getObject("tai_xiu_set_bot_kubet");
+            TaiXiuBotSetUpObj obj = (TaiXiuBotSetUpObj) object;
             if (obj != null && obj.getMoneyMax() > 0) {
                 results = addMoneyBot(obj, moneyType, results, phanTramVaoMuon);
             } else {

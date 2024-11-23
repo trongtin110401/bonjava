@@ -25,6 +25,12 @@
 3. Tính năng bị loại bỏ
     - bỏ fund
 4. Message và Object thay đổi
+    - TaiXiuInfoMsg: Thêm trường mới, thông tin khi vào phòng
+        * public long potChan;
+        * public long potLe;
+        * public long myBetChan;
+        * public long myBetLe;
+
     - TaiXiuAdminReportObj: thêm các trường thống kê mới trên form CMS can thiệp kết quả
     - TaiXiuSetAmountBotFake.java: thêm 2 trường mới numberBotChanFake và numberBotLeFake. phục vụ CMS can thiệp kết quả
     - UpdateTaiXiuPerSecondMsg

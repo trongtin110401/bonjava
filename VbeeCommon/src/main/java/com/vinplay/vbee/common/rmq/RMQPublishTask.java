@@ -14,8 +14,7 @@ import com.vinplay.vbee.common.messages.BaseMessage;
 
 import java.io.IOException;
 
-public class RMQPublishTask
-extends RMQTask {
+public class RMQPublishTask extends RMQTask {
     private BaseMessage message;
     private int command;
 

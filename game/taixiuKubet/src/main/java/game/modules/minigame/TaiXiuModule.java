@@ -21,19 +21,20 @@ import com.vinplay.dal.service.impl.CacheServiceImpl;
 import com.vinplay.dal.service.impl.MiniGameServiceImpl;
 import com.vinplay.dal.service.impl.TaiXiuKubetServiceImpl;
 import com.vinplay.miniGame.TaiXiuAdminReportObj;
-import com.vinplay.miniGame.TaiXiuSetAmountBotFake;
 import com.vinplay.vbee.common.enums.Games;
 import com.vinplay.vbee.common.exceptions.KeyNotFoundException;
-import com.vinplay.vbee.common.response.minigame.TaiXiuAdmin;
 import com.vinplay.vbee.common.response.minigame.TaiXiuChatMsg;
 import com.vinplay.vbee.common.utils.DateTimeUtils;
 import game.modules.minigame.cmd.rev.BetTaiXiuCmd;
 import game.modules.minigame.cmd.rev.ChangeRoomMinigameCmd;
 import game.modules.minigame.cmd.rev.SubcribeMinigameCmd;
 import game.modules.minigame.cmd.rev.UnsubscribeMiniGameCmd;
-import game.modules.minigame.cmd.send.*;
+import game.modules.minigame.cmd.send.BroadcastTXTimeMsg;
+import game.modules.minigame.cmd.send.LichSuPhienMsg;
+import game.modules.minigame.cmd.send.StartNewGameTaiXiuMsg;
 import game.modules.minigame.entities.BotMinigame;
 import game.modules.minigame.entities.BotTaiXiu;
+import game.modules.minigame.game79.DynamicReconnectWebSocketClient;
 import game.modules.minigame.room.MGRoom;
 import game.modules.minigame.room.MGRoomTaiXiu;
 import game.modules.minigame.utils.GenerationTaiXiu;
@@ -43,6 +44,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.io.IOException;
+import java.net.URI;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,6 +61,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
     private final Runnable serverReadyTask = new ServerReadyTask(); // thread
     private final Runnable calculatingTXVinTask = new CalculatingTaiXiuPrize((short) 1);  // thread tính tài xỉu vin
     private final CacheService cacheService = new CacheServiceImpl(); // caching hazelcast service
+
     public int count = 0;
     private boolean serverReady = false;
     private final ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);  // thread pool 10 cái thread
@@ -79,7 +82,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
     private int amountBotXiuFake = 0;
     private int amountBotChanFake = 0;
     private int amountBotLeFake = 0;
-    public static final int FINISH_TIME = 50;
 
     public void init() {
         TaiXiuChatMsg taiXiuChatMsg = new TaiXiuChatMsg();
@@ -95,6 +97,11 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         BitZeroServer.getInstance().getTaskScheduler().schedule(this.serverReadyTask, 10, TimeUnit.SECONDS);
         Debug.trace("SERVER READY TASK RUNNING...");
         this.getParentExtension().addEventListener(BZEventType.USER_DISCONNECT, this);
+
+        // websocket ket qua kubet
+        URI uri = DynamicReconnectWebSocketClient.buildDynamicURI();
+        DynamicReconnectWebSocketClient.currentClient = new DynamicReconnectWebSocketClient(this, uri);
+        DynamicReconnectWebSocketClient.currentClient.connect();
     }
 
     public void handleServerEvent(IBZEvent ibzevent) {
@@ -177,16 +184,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         LichSuPhienMsg msgLSGD = new LichSuPhienMsg();
         msgLSGD.data = TaiXiuUtils.buildLichSuPhien(this.lichSuPhienTX, 100);
         this.send(msgLSGD, user);
-        UpdateRutLocMsg rutLocMsg = new UpdateRutLocMsg();
-        try {
-            rutLocMsg.soLuotRut = this.txService.getLuotRutLoc(user.getName());
-        } catch (Exception e) {
-            Debug.trace("Get so luot rut loc " + user.getName() + " error ", e.getMessage());
-        }
-        this.send(rutLocMsg, user);
-        UpdateFundTanLocMsg fundRLMsg = new UpdateFundTanLocMsg();
-        fundRLMsg.value = this.fundRutLoc;
-        this.send(fundRLMsg, user);
     }
 
     // vào room
@@ -263,7 +260,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         MGRoomTaiXiu roomVin = this.getRoomTX((short) 1);
         String[] strs = {"Jocelyn", "Kelsey", "Fallon", "Maynard", "Mildred", "Aubrey"};
         for (BotTaiXiu b : this.botsVin) {
-            if (b.getTimeBetting() != 50 - count) continue;
+            if (b.getTimeBetting() != TOTAL_BETTING_TIME - count) continue;
             if (!ArrayUtils.contains(strs, b.getNickname())) {
                 roomVin.betTaiXiu(b.getNickname(), 0, b.getBetValue(), b.getTimeBetting(), (short) 1, b.getBetSide(), true, 0);
             }
@@ -333,80 +330,131 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         return listChatUsers;
     }
 
-    private synchronized void gameLoop() {
+    public static final int TOTAL_BETTING_TIME = 21;
+
+    public synchronized void gameLoop() {
         try {
             MGRoomTaiXiu roomTXVin = this.getRoomTX((short) 1);
-            if (count == 0) {
-                this.generateResultBefore(roomTXVin);
-            }
-            ++this.count;
-            this.botBet(this.count);
-            try {
-                TaiXiuSetAmountBotFake taiXiuSetAmountBotFake = (TaiXiuSetAmountBotFake) cacheService.getObject("taixiu_bot_fake_amount_kubet");
-                if (taiXiuSetAmountBotFake != null) {
-                    amountBotTaiFake += (taiXiuSetAmountBotFake.getNumberBotTaiFake()) / 40;
-                    amountBotXiuFake += (taiXiuSetAmountBotFake.getNumberBotXiuFake()) / 40;
-                    amountBotChanFake += (taiXiuSetAmountBotFake.getNumberBotChanFake()) / 40;
-                    amountBotLeFake += (taiXiuSetAmountBotFake.getNumberBotLeFake()) / 40;
-                }
-            } catch (KeyNotFoundException ex) {
-                amountBotXiuFake = 0;
-                amountBotTaiFake = 0;
-                amountBotChanFake = 0;
-                amountBotLeFake = 0;
-            }
-
-            roomTXVin.updateTaiXiuPerSecond(amountBotTaiFake, amountBotXiuFake, amountBotChanFake, amountBotLeFake, 0);
+            this.botBet(count);
+            roomTXVin.updateTaiXiuPerSecond(amountBotTaiFake, amountBotXiuFake, amountBotChanFake, amountBotLeFake);
 
             // lưu toàn bộ trạng thái của game vào cache service
             // trạng thái này phục vụ cho APIs và module wsreport
             this.getUserPotTaiXiu();
             this.sendTXTime(roomTXVin.getRemainTime(), roomTXVin.isBetting()); // todo tinh thoi gian con lai
-            switch (this.count) {
-                case 45: {
-                    roomTXVin.disableBetting();
-                    break;
-                }
-                case 48: {
-
-                    break;
-                }
-                case FINISH_TIME: {
-                    roomTXVin.finish();
-                    this.generateResultAfter(roomTXVin);
-                    break;
-                }
-                case 51: {
-                    BitZeroServer.getInstance().getTaskScheduler().schedule(this.calculatingTXVinTask, 1, TimeUnit.SECONDS);
-                    amountBotTaiFake = 0;
-                    amountBotXiuFake = 0;
-                    break;
-                }
-                case 53: {
-                    ScheduleBotTask t = new ScheduleBotTask();
-                    this.executor.execute(t);
-                    break;
-                }
-                case 65: {
-                    try {
-                        this.startNewRoundTX();
-
-                        amountBotTaiFake = 0;
-                        amountBotXiuFake = 0;
-                        this.count = 0;
-                        roomTXVin.resultTX = null;
-                    } catch (Exception e) {
-                        Debug.trace("got bug", e.getCause());
-                        ExceptionUtils.printRootCauseStackTrace(e);
-                    }
-                }
-            }
-
         } catch (Exception e) {
             Debug.trace("Exception: " + e.getMessage(), e);
             ExceptionUtils.printRootCauseStackTrace(e);
         }
     }
+
+    public TxKubetState CURRENT_GAME_STATE = TxKubetState.INIT;
+
+    public synchronized void handleGameState(TxKubetState state, int count, int dice1, int dice2, int dice3) {
+        try {
+            if (CURRENT_GAME_STATE == TxKubetState.INIT && state != TxKubetState.GENERATE_RESULT) {
+                System.out.println("Waiting for old session to end to starting new session...." + count);
+                return;
+            }
+
+            this.count = count;
+            MGRoomTaiXiu roomTXVin = this.getRoomTX((short) 1);
+            switch (state) {
+                case GENERATE_RESULT:
+                    this.startNewRoundTX();
+                    amountBotTaiFake = 0;
+                    amountBotXiuFake = 0;
+                    roomTXVin.resultTX = null;
+                    break;
+                case BETTING:
+                    break;
+                case SHOW_RESULT:
+                    roomTXVin.disableBetting();
+                    roomTXVin.finish();
+                    this.generateResult(dice1, dice2, dice3);
+                    break;
+                case CONFIRM_RESULT:
+                    BitZeroServer.getInstance().getTaskScheduler().schedule(this.calculatingTXVinTask, 1, TimeUnit.SECONDS);
+                    amountBotTaiFake = 0;
+                    amountBotXiuFake = 0;
+                    break;
+            }
+        } catch (Exception e) {
+            Debug.trace("Exception: " + e.getMessage(), e);
+            ExceptionUtils.printRootCauseStackTrace(e);
+        }
+    }
+
+//    public synchronized void gameLoop2() {
+//        try {
+//            MGRoomTaiXiu roomTXVin = this.getRoomTX((short) 1);
+//            if (count == 0) {
+//                this.generateResultBefore(roomTXVin);
+//            }
+//            ++this.count;
+//            this.botBet(this.count);
+//            try {
+//                TaiXiuSetAmountBotFake taiXiuSetAmountBotFake = (TaiXiuSetAmountBotFake) cacheService.getObject("taixiu_bot_fake_amount_kubet");
+//                if (taiXiuSetAmountBotFake != null) {
+//                    amountBotTaiFake += (taiXiuSetAmountBotFake.getNumberBotTaiFake()) / 40;
+//                    amountBotXiuFake += (taiXiuSetAmountBotFake.getNumberBotXiuFake()) / 40;
+//                    amountBotChanFake += (taiXiuSetAmountBotFake.getNumberBotChanFake()) / 40;
+//                    amountBotLeFake += (taiXiuSetAmountBotFake.getNumberBotLeFake()) / 40;
+//                }
+//            } catch (KeyNotFoundException ex) {
+//                amountBotXiuFake = 0;
+//                amountBotTaiFake = 0;
+//                amountBotChanFake = 0;
+//                amountBotLeFake = 0;
+//            }
+//
+//            roomTXVin.updateTaiXiuPerSecond(amountBotTaiFake, amountBotXiuFake, amountBotChanFake, amountBotLeFake);
+//
+//            // lưu toàn bộ trạng thái của game vào cache service
+//            // trạng thái này phục vụ cho APIs và module wsreport
+//            this.getUserPotTaiXiu();
+//            this.sendTXTime(roomTXVin.getRemainTime(), roomTXVin.isBetting()); // todo tinh thoi gian con lai
+//            switch (this.count) {
+//                case 45: {
+//                    roomTXVin.disableBetting();
+//                    break;
+//                }
+//                case TOTAL_BETTING_TIME: {
+//                    roomTXVin.finish();
+//                    this.generateResult(roomTXVin);
+//                    break;
+//                }
+//                case 51: {
+//                    BitZeroServer.getInstance().getTaskScheduler().schedule(this.calculatingTXVinTask, 1, TimeUnit.SECONDS);
+//                    amountBotTaiFake = 0;
+//                    amountBotXiuFake = 0;
+//                    break;
+//                }
+//                case 53: {
+//                    // làm mới lại cấu hình BOT
+//                    ScheduleBotTask t = new ScheduleBotTask();
+//                    this.executor.execute(t);
+//                    break;
+//                }
+//                case 65: {
+//                    try {
+//                        this.startNewRoundTX();
+//                        amountBotTaiFake = 0;
+//                        amountBotXiuFake = 0;
+//                        this.count = 0;
+//                        roomTXVin.resultTX = null;
+//                    } catch (Exception e) {
+//                        Debug.trace("got bug", e.getCause());
+//                        ExceptionUtils.printRootCauseStackTrace(e);
+//                    }
+//                }
+//            }
+//
+//        } catch (Exception e) {
+//            Debug.trace("Exception: " + e.getMessage(), e);
+//            ExceptionUtils.printRootCauseStackTrace(e);
+//        }
+//    }
 
     private void generateResultBefore(MGRoomTaiXiu roomTXVin) {
         short[] dices;
@@ -431,59 +479,18 @@ public class TaiXiuModule extends BaseClientRequestHandler {
     }
 
 
-    private void generateResultAfter(MGRoomTaiXiu roomTXVin) {
+    public void generateResult(int dice1, int dice2, int dice3) {
 
-        this.forceBetSide = -1;
         short[] dices = new short[3];
-
-        // can thiep be cau
-        if (forceBetSide != -1) {
-            dices = this.generationTX.generateResult(this.forceBetSide);
-        } else { // khong can thiep
-            // tinh toan chenh lenh user that
-            List<TaiXiuAdmin> contributors = this.getRoomTX((short) 1).getListRealTransaction();
-            long totalRealBetTai = 0;
-            long totalRealBetXiu = 0;
-            for (TaiXiuAdmin taiXiuAdmin : contributors) {
-                if (taiXiuAdmin.getCuaDat() == 0) {
-                    //bet xiu
-                    totalRealBetXiu += taiXiuAdmin.getMoney();
-                } else if (taiXiuAdmin.getCuaDat() == 1) {
-                    // bet tai
-                    totalRealBetTai += taiXiuAdmin.getMoney();
-                }
-            }
-
-            // ve tai
-            long chenhLech;
-            if (this.result == 1) {
-                // ve tai
-                chenhLech = totalRealBetTai - totalRealBetXiu;
-            } else { // ve xiu
-                chenhLech = totalRealBetXiu - totalRealBetTai;
-            }
-
-            if (chenhLech > 0) {
-                if (totalRealBetTai > totalRealBetXiu) {
-                    this.forceBetSide = 0;
-                } else {
-                    this.forceBetSide = 1;
-                }
-                dices = this.generationTX.generateResult(this.forceBetSide);
-            }
-            // Ngau nhien khong can thiep
-            else {
-                dices[0] = (short) roomTXVin.resultTX.dice1;
-                dices[1] = (short) roomTXVin.resultTX.dice2;
-                dices[2] = (short) roomTXVin.resultTX.dice3;
-            }
-        }
-
+        dices[0] = (short) dice1;
+        dices[1] = (short) dice2;
+        dices[2] = (short) dice3;
 
         short total = (short) (dices[0] + dices[1] + dices[2]);
         this.result = total > 10 ? (short) 1 : 0;
 
         // Show ket qua ra man
+        MGRoomTaiXiu roomTXVin = getRoomTX((short) 1);
         roomTXVin.updateResultDices(dices, this.result);
         ResultTaiXiu resultTX = roomTXVin.resultTX;
         resultTX.referenceId = this.referenceTaiXiuId;

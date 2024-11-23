@@ -128,15 +128,16 @@ public class MGRoomTaiXiu extends MGRoom {
         this.resultTX.dice3 = msg.dice3;
         this.resultTX.result = msg.result;
         this.resultTX.moneyType = this.moneyType;
-        this.sendMessageToRoom(msg);
+//        this.sendMessageToRoom(msg);
     }
 
     // todo : lấy thời gian còn lại bằng cách lấy thời gian hiện tại trừ đi thời gian bắt đầu
     public short getRemainTime() {
-        if (this.bettingRound) {
-            return (short) (50 - this.module.count);
-        }
-        return (short) (65 - this.module.count);
+//        if (this.bettingRound) {
+//            return (short) (50 - this.module.count);
+//        }
+//        return (short) (65 - this.module.count);
+        return (short) this.module.count;
     }
 
     // todo : bet tài xỉu
@@ -243,7 +244,7 @@ public class MGRoomTaiXiu extends MGRoom {
         return msg;
     }
 
-    public void updateTaiXiuPerSecond(int amountBotTaiFake, int amountBotXiuFake, int amountBotChanFake, int amountBotLeFake, int secondGamePlay) {
+    public void updateTaiXiuPerSecond(int amountBotTaiFake, int amountBotXiuFake, int amountBotChanFake, int amountBotLeFake) {
         UpdateTaiXiuPerSecondMsg msg = new UpdateTaiXiuPerSecondMsg();
         msg.remainTime = this.getRemainTime();
         msg.bettingState = this.bettingRound;
@@ -286,9 +287,6 @@ public class MGRoomTaiXiu extends MGRoom {
                 if (potX != null && potX.contributors != null) { // tính toán tiền thắng cược bên xỉu
                     for (TransactionTaiXiuDetail tran : potX.contributors) {
                         try {
-                            // Nếu không phải robot thì tính tổng tiền đầu vào của khách thật
-                            if (tran.userId != 0) {
-                            }
 
                             // giải thưởng, hay nói cách khác là số tiền thắng
                             tran.prize = Math.round((long) ((float) tran.betValue * (100.0f - this.tax) / 100.0f) + tran.betValue);
@@ -296,9 +294,7 @@ public class MGRoomTaiXiu extends MGRoom {
                             // Cộng dồn để tính tổng số tiền trả lại
                             rs.totalPrize += tran.prize;
 
-                            // Nếu không phải robot thì tính tổng tiền đầu ra phải trả cho khách thật
-                            if (tran.userId != 0) {
-                            }
+
 
                             // Tổng tiền lỗ lãi
                             this.updateSumTran(sumTXTMap, tran);
@@ -317,8 +313,7 @@ public class MGRoomTaiXiu extends MGRoom {
                 }
                 for (TransactionTaiXiuDetail tran : potT.contributors) {
                     try {
-                        if (tran.userId != 0) {
-                        }
+
 
                         // Tổng tiền lỗ lãi
                         this.updateSumTran(sumTXTMap, tran);
@@ -336,15 +331,12 @@ public class MGRoomTaiXiu extends MGRoom {
                 if (potT != null && potT.contributors != null) {
                     for (TransactionTaiXiuDetail tran : potT.contributors) {
                         try {
-                            // không tính toán với
-                            if (tran.userId != 0) {
-                            }
+
 
                             tran.prize = Math.round((long) ((float) tran.betValue * (100.0f - this.tax) / 100.0f) + tran.betValue);
 
                             rs.totalPrize += tran.prize;
-                            if (tran.userId != 0) {
-                            }
+
 
                             // Tổng tiền lỗ lãi
                             this.updateSumTran(sumTXTMap, tran);
@@ -360,8 +352,7 @@ public class MGRoomTaiXiu extends MGRoom {
                 if (potX == null || potX.contributors == null) break;
                 for (TransactionTaiXiuDetail tran : potX.contributors) {
                     try {
-                        if (tran.userId != 0) {
-                        }
+
 
                         // Tổng tiền lỗ lãi
                         this.updateSumTran(sumTXTMap, tran);
@@ -388,9 +379,7 @@ public class MGRoomTaiXiu extends MGRoom {
                 if (potLe != null && potLe.contributors != null) { // tính toán tiền thắng cược bên lẻ
                     for (TransactionTaiXiuDetail tran : potLe.contributors) {
                         try {
-                            // Nếu không phải robot thì tính tổng tiền đầu vào của khách thật
-                            if (tran.userId != 0) {
-                            }
+
 
                             // giải thưởng, hay nói cách khác là số tiền thắng
                             tran.prize = Math.round((long) ((float) tran.betValue * (100.0f - this.tax) / 100.0f) + tran.betValue);
@@ -431,15 +420,12 @@ public class MGRoomTaiXiu extends MGRoom {
                 if (potChan != null && potChan.contributors != null) {
                     for (TransactionTaiXiuDetail tran : potChan.contributors) {
                         try {
-                            // không tính toán với
-                            if (tran.userId != 0) {
-                            }
+
 
                             tran.prize = Math.round((long) ((float) tran.betValue * (100.0f - this.tax) / 100.0f) + tran.betValue);
 
                             rs.totalPrize += tran.prize;
-                            if (tran.userId != 0) {
-                            }
+
 
                             // Tổng tiền lỗ lãi
                             this.updateSumTran(sumTXTMap, tran);
@@ -455,9 +441,6 @@ public class MGRoomTaiXiu extends MGRoom {
                 if (potLe == null || potLe.contributors == null) break;
                 for (TransactionTaiXiuDetail tran : potLe.contributors) {
                     try {
-                        if (tran.userId != 0) {
-                        }
-
                         // Tổng tiền lỗ lãi
                         this.updateSumTran(sumTXTMap, tran);
                         this.updateSumTran(sumLe, tran);
@@ -586,10 +569,14 @@ public class MGRoomTaiXiu extends MGRoom {
         msg.potXiu = this.getPotXiu();
         msg.myBetTai = this.getTotalBettingTaiByUsername(user.getName());
         msg.myBetXiu = this.getTotalBettingXiuByUsername(user.getName());
+        msg.potChan = this.getPotChan();
+        msg.potLe = this.getPotLe();
+        msg.myBetChan = this.getTotalBettingChanByUsername(user.getName());
+        msg.myBetLe = this.getTotalBettingLeByUsername(user.getName());
         msg.moneyHu = TaiXiuModule.moneyHu;
         if (this.resultTX != null
                 && !bettingRound
-                && module.count >= TaiXiuModule.FINISH_TIME) {
+                && module.count >= TaiXiuModule.TOTAL_BETTING_TIME) {
             msg.dice1 = (short) this.resultTX.dice1;
             msg.dice2 = (short) this.resultTX.dice2;
             msg.dice3 = (short) this.resultTX.dice3;

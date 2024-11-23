@@ -18,6 +18,10 @@ extends BaseMsgEx {
     public long potXiu;
     public long myBetTai;
     public long myBetXiu;
+    public long potChan;
+    public long potLe;
+    public long myBetChan;
+    public long myBetLe;
     public short dice1 = 0;
     public short dice2 = 0;
     public short dice3 = 0;
@@ -39,6 +43,10 @@ extends BaseMsgEx {
         buffer.putLong(this.potXiu);
         buffer.putLong(this.myBetTai);
         buffer.putLong(this.myBetXiu);
+        buffer.putLong(this.potChan);
+        buffer.putLong(this.potLe);
+        buffer.putLong(this.myBetChan);
+        buffer.putLong(this.myBetLe);
         buffer.putShort(this.dice1);
         buffer.putShort(this.dice2);
         buffer.putShort(this.dice3);
