@@ -338,7 +338,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
     }
 
     private void sendMessTXMd5ToAdmin(String mess) {
-        for (Session session : ServerTXMD5Game.sessions) {
+        for (Session session : ServerTXKUBETGame.sessions) {
             session.sendText(mess);
         }
     }
