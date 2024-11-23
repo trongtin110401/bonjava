@@ -122,6 +122,7 @@ public class MGRoomTaiXiu extends MGRoom {
         msg.dice1 = dices[0];
         msg.dice2 = dices[1];
         msg.dice3 = dices[2];
+        this.resultTX = new ResultTaiXiu();
         this.resultTX.referenceId = this.referenceId;
         this.resultTX.dice1 = msg.dice1;
         this.resultTX.dice2 = msg.dice2;
