@@ -263,7 +263,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
      *
      * @return
      */
-    @Scheduled(fixedRate = 1000)
+//    @Scheduled(fixedRate = 1000)
     public void sendTXKUBETAdmin() {
         try {
             // thông tin phiên
