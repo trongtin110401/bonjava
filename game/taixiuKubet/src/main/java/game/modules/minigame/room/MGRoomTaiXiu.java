@@ -128,6 +128,7 @@ public class MGRoomTaiXiu extends MGRoom {
         this.resultTX.dice3 = msg.dice3;
         this.resultTX.result = msg.result;
         this.resultTX.moneyType = this.moneyType;
+        this.resultTX.kubetSessionId = module.kubetSessionId;
 //        this.sendMessageToRoom(msg);
     }
 
@@ -293,7 +294,6 @@ public class MGRoomTaiXiu extends MGRoom {
 
                             // Cộng dồn để tính tổng số tiền trả lại
                             rs.totalPrize += tran.prize;
-
 
 
                             // Tổng tiền lỗ lãi

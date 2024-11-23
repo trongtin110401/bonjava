@@ -387,99 +387,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         }
     }
 
-//    public synchronized void gameLoop2() {
-//        try {
-//            MGRoomTaiXiu roomTXVin = this.getRoomTX((short) 1);
-//            if (count == 0) {
-//                this.generateResultBefore(roomTXVin);
-//            }
-//            ++this.count;
-//            this.botBet(this.count);
-//            try {
-//                TaiXiuSetAmountBotFake taiXiuSetAmountBotFake = (TaiXiuSetAmountBotFake) cacheService.getObject("taixiu_bot_fake_amount_kubet");
-//                if (taiXiuSetAmountBotFake != null) {
-//                    amountBotTaiFake += (taiXiuSetAmountBotFake.getNumberBotTaiFake()) / 40;
-//                    amountBotXiuFake += (taiXiuSetAmountBotFake.getNumberBotXiuFake()) / 40;
-//                    amountBotChanFake += (taiXiuSetAmountBotFake.getNumberBotChanFake()) / 40;
-//                    amountBotLeFake += (taiXiuSetAmountBotFake.getNumberBotLeFake()) / 40;
-//                }
-//            } catch (KeyNotFoundException ex) {
-//                amountBotXiuFake = 0;
-//                amountBotTaiFake = 0;
-//                amountBotChanFake = 0;
-//                amountBotLeFake = 0;
-//            }
-//
-//            roomTXVin.updateTaiXiuPerSecond(amountBotTaiFake, amountBotXiuFake, amountBotChanFake, amountBotLeFake);
-//
-//            // lưu toàn bộ trạng thái của game vào cache service
-//            // trạng thái này phục vụ cho APIs và module wsreport
-//            this.getUserPotTaiXiu();
-//            this.sendTXTime(roomTXVin.getRemainTime(), roomTXVin.isBetting()); // todo tinh thoi gian con lai
-//            switch (this.count) {
-//                case 45: {
-//                    roomTXVin.disableBetting();
-//                    break;
-//                }
-//                case TOTAL_BETTING_TIME: {
-//                    roomTXVin.finish();
-//                    this.generateResult(roomTXVin);
-//                    break;
-//                }
-//                case 51: {
-//                    BitZeroServer.getInstance().getTaskScheduler().schedule(this.calculatingTXVinTask, 1, TimeUnit.SECONDS);
-//                    amountBotTaiFake = 0;
-//                    amountBotXiuFake = 0;
-//                    break;
-//                }
-//                case 53: {
-//                    // làm mới lại cấu hình BOT
-//                    ScheduleBotTask t = new ScheduleBotTask();
-//                    this.executor.execute(t);
-//                    break;
-//                }
-//                case 65: {
-//                    try {
-//                        this.startNewRoundTX();
-//                        amountBotTaiFake = 0;
-//                        amountBotXiuFake = 0;
-//                        this.count = 0;
-//                        roomTXVin.resultTX = null;
-//                    } catch (Exception e) {
-//                        Debug.trace("got bug", e.getCause());
-//                        ExceptionUtils.printRootCauseStackTrace(e);
-//                    }
-//                }
-//            }
-//
-//        } catch (Exception e) {
-//            Debug.trace("Exception: " + e.getMessage(), e);
-//            ExceptionUtils.printRootCauseStackTrace(e);
-//        }
-//    }
-
-    private void generateResultBefore(MGRoomTaiXiu roomTXVin) {
-        short[] dices;
-
-        dices = this.generationTX.generateDices();
-        String result = generationTX.buildPlainTextResult(dices);
-        String md5 = GenerationTaiXiu.hashMD5(result);
-
-        ResultTaiXiuMd5 resultTaiXiuMd5 = new ResultTaiXiuMd5();
-        resultTaiXiuMd5.dice1 = dices[0];
-        resultTaiXiuMd5.dice2 = dices[1];
-        resultTaiXiuMd5.dice3 = dices[2];
-        resultTaiXiuMd5.setMd5TextResult(md5);
-        resultTaiXiuMd5.setPlantTextResult(result);
-        roomTXVin.resultTX = resultTaiXiuMd5;
-
-        if (dices[0] + dices[1] + dices[2] > 10) {
-            this.result = 1;
-        } else {
-            this.result = 0;
-        }
-    }
-
 
     public void generateResult(int dice1, int dice2, int dice3) {
 
@@ -496,6 +403,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         roomTXVin.updateResultDices(dices, this.result);
         ResultTaiXiu resultTX = roomTXVin.resultTX;
         resultTX.referenceId = this.referenceTaiXiuId;
+        resultTX.kubetSessionId = kubetSessionId;
         resultTX.result = this.result;
         resultTX.dice1 = dices[0];
         resultTX.dice2 = dices[1];
