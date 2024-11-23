@@ -385,6 +385,9 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                     BitZeroServer.getInstance().getTaskScheduler().schedule(this.calculatingTXVinTask, 1, TimeUnit.SECONDS);
                     amountBotTaiFake = 0;
                     amountBotXiuFake = 0;
+
+                    ScheduleBotTask t = new ScheduleBotTask();
+                    this.executor.execute(t);
                     break;
             }
         } catch (Exception e) {
