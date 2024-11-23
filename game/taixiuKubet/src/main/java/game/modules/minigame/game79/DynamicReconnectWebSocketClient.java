@@ -65,7 +65,7 @@ public class DynamicReconnectWebSocketClient extends WebSocketClient {
                 case "changeDealer":
                     break;
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
