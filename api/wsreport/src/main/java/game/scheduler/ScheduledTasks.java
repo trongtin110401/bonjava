@@ -310,7 +310,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             TaiXiuReportResponse oResponse = new TaiXiuReportResponse("2", lstTaiXiuAdminReportObjs, sc);
 
             String json = MapperUtils.mapper.writeValueAsString(oResponse);
-            this.sendMessTXMd5ToAdmin(json);
+            this.sendMessTXKubetToAdmin(json);
             cacheService.removeKey(SC_TAI_XIU_KUBET);
         } catch (Exception e) {
             e.printStackTrace();
@@ -338,7 +338,13 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
     }
 
     private void sendMessTXMd5ToAdmin(String mess) {
-        for (Session session : ServerTXKUBETGame.sessions) {
+        for (Session session : ServerTXMD5Game.sessions) {
+            session.sendText(mess);
+        }
+    }
+
+    private void sendMessTXKubetToAdmin(String mess) {
+        for (Session session : ServerTXMD5Game.sessions) {
             session.sendText(mess);
         }
     }
