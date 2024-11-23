@@ -18,19 +18,23 @@ extends BaseMessage {
     public long refund;
     public int inputTime;
     public int moneyType;
+    public long kubetSessionId;
 
     public TransactionTaiXiuDetailMessage() {
     }
 
-    public TransactionTaiXiuDetailMessage(long referenceId, int userId, String username, long betValue, int betSide, long prize, long refund, int moneyType) {
+    public TransactionTaiXiuDetailMessage(long referenceId, String transactionCode, int userId, String username, long betValue, int betSide, long prize, long refund, int inputTime, int moneyType, long kubetSessionId) {
         this.referenceId = referenceId;
+        this.transactionCode = transactionCode;
         this.userId = userId;
         this.username = username;
         this.betValue = betValue;
         this.betSide = betSide;
         this.prize = prize;
         this.refund = refund;
+        this.inputTime = inputTime;
         this.moneyType = moneyType;
+        this.kubetSessionId = kubetSessionId;
     }
 }
 

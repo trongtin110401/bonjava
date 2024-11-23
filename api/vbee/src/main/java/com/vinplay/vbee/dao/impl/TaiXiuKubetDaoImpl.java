@@ -32,13 +32,13 @@ import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class TaiXiuKubetDaoImpl
-        implements TaiXiuDao {
+public class TaiXiuKubetDaoImpl implements TaiXiuDao {
+
     @Override
     public boolean saveResultTaiXiu(ResultTaiXiuMessage message) throws SQLException {
         boolean success = false;
         try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");
-             CallableStatement call = conn.prepareCall("CALL save_result_tai_xiu_kubet(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");) {
+             CallableStatement call = conn.prepareCall("CALL save_result_tai_xiu_kubet(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");) {
 
             int param = 1;
             call.setLong(param++, message.referenceId);
@@ -59,6 +59,7 @@ public class TaiXiuKubetDaoImpl
             call.setByte(param++, (byte) message.totalLe);
             call.setByte(param++, (byte) message.numBetChan);
             call.setByte(param++, (byte) message.numBetLe);
+            call.setLong(param++, message.kubetSessionId);
             success = call.execute();
             return success;
         }
@@ -68,7 +69,7 @@ public class TaiXiuKubetDaoImpl
     public boolean saveTransactionTaiXiu(TransactionTaiXiuMessage message) throws SQLException {
         boolean success = false;
         try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");
-             CallableStatement call = conn.prepareCall("CALL save_transaction_tai_xiu_kubet(?, ?, ?, ?, ?, ?, ?, ?)")) {
+             CallableStatement call = conn.prepareCall("CALL save_transaction_tai_xiu_kubet(?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
             int param = 1;
             call.setLong(param++, message.referenceId);
             call.setInt(param++, message.userId);
@@ -78,6 +79,7 @@ public class TaiXiuKubetDaoImpl
             call.setLong(param++, message.prize);
             call.setLong(param++, message.refund);
             call.setByte(param++, (byte) message.moneyType);
+            call.setLong(param++, message.kubetSessionId);
             success = call.execute();
             return success;
         }
@@ -104,7 +106,7 @@ public class TaiXiuKubetDaoImpl
     public boolean saveTransactionTaiXiuDetail(TransactionTaiXiuDetailMessage message) throws SQLException {
         boolean success;
         try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");
-             CallableStatement call = conn.prepareCall("CALL save_transaction_detail_tai_xiu_kubet(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+             CallableStatement call = conn.prepareCall("CALL save_transaction_detail_tai_xiu_kubet(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
             int param = 1;
             call.setLong(param++, message.referenceId);
             call.setString(param++, message.transactionCode);
@@ -116,6 +118,7 @@ public class TaiXiuKubetDaoImpl
             call.setLong(param++, message.refund);
             call.setInt(param++, message.inputTime);
             call.setByte(param++, (byte) message.moneyType);
+            call.setLong(param++, message.kubetSessionId);
             success = call.execute();
             return success;
         }

@@ -71,7 +71,7 @@ public class TaiXiuServiceImpl
     @Override
     public boolean saveTransactionTaiXiu(long referenceId, int userId, String username,
                                          int moneyType, long betValue, short betSide,
-                                         long prize, long refund, long totalExchange) throws IOException, TimeoutException, InterruptedException {
+                                         long prize, long refund, long totalExchange, long kubetSessionId) throws IOException, TimeoutException, InterruptedException {
         TransactionTaiXiuMessage msg = new TransactionTaiXiuMessage();
         msg.referenceId = referenceId;
         msg.userId = userId;
@@ -293,7 +293,7 @@ public class TaiXiuServiceImpl
     public boolean saveTransactionTaiXiu(List<TransactionTaiXiu> trans) throws IOException, TimeoutException, InterruptedException {
         boolean returnValue = false;
         for (TransactionTaiXiu tran : trans) {
-            returnValue = this.saveTransactionTaiXiu(tran.referenceId, tran.userId, tran.username, tran.moneyType, tran.betValue, (short) tran.betSide, tran.totalPrize, tran.totalRefund, tran.totalExchange);
+            returnValue = this.saveTransactionTaiXiu(tran.referenceId, tran.userId, tran.username, tran.moneyType, tran.betValue, (short) tran.betSide, tran.totalPrize, tran.totalRefund, tran.totalExchange, 0);
         }
         return returnValue;
     }

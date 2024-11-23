@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 public interface TaiXiuService {
-    public boolean saveTransactionTaiXiu(long var1, int var3, String var4, int var5, long var6, short var8, long var9, long var11, long totalExchange) throws IOException, TimeoutException, InterruptedException;
+    public boolean saveTransactionTaiXiu(long var1, int var3, String var4, int var5, long var6, short var8, long var9, long var11, long totalExchange, long kubetSessionId) throws IOException, TimeoutException, InterruptedException;
 
     public boolean saveNoHuTaiXiu(long phien, String result, long money, String userName, String userMoneyHu, long totalUser) throws IOException, TimeoutException, InterruptedException;
 

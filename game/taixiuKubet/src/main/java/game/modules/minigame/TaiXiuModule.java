@@ -349,14 +349,16 @@ public class TaiXiuModule extends BaseClientRequestHandler {
     }
 
     public TxKubetState CURRENT_GAME_STATE = TxKubetState.INIT;
+    public long kubetSessionId = 0;
 
-    public synchronized void handleGameState(TxKubetState state, int count, int dice1, int dice2, int dice3) {
+    public synchronized void handleGameState(long kubetSessionId, TxKubetState state, int count, int dice1, int dice2, int dice3) {
         try {
             if (CURRENT_GAME_STATE == TxKubetState.INIT && state != TxKubetState.GENERATE_RESULT) {
                 System.out.println("Waiting for old session to end to starting new session...." + count);
                 return;
             }
 
+            this.kubetSessionId = kubetSessionId;
             this.count = count;
             MGRoomTaiXiu roomTXVin = this.getRoomTX((short) 1);
             switch (state) {

@@ -158,7 +158,7 @@ public class MGRoomTaiXiu extends MGRoom {
                 if (betValue > currentMoney) {
                     result = 3;
                 } else {
-                    TransactionTaiXiuDetail transTX = new TransactionTaiXiuDetail(this.referenceId, userId, nickname, betValue, betSide, inputTime, moneyType);
+                    TransactionTaiXiuDetail transTX = new TransactionTaiXiuDetail(this.referenceId, userId, nickname, betValue, betSide, inputTime, moneyType, module.kubetSessionId);
                     String betSideStr = betSide == 0 ? "Xỉu" : "Tài";
                     switch (betSide) {
                         case 0:
@@ -482,6 +482,7 @@ public class MGRoomTaiXiu extends MGRoom {
         rs.numBetLe = potLe.getNumBet();
         rs.moneyHu = TaiXiuModule.moneyHu;
         rs.moneyType = this.moneyType;
+        rs.kubetSessionId = module.kubetSessionId;
 
         // Tính tiền và trả lại cho khách
         new UpdateMoneyTXTask(sumTai).start();
@@ -541,6 +542,7 @@ public class MGRoomTaiXiu extends MGRoom {
             tran.betValue = tranDetail.betValue;
             tran.totalPrize = tranDetail.prize;
             tran.totalRefund = tranDetail.refund;
+            tran.kubetSessionId = tranDetail.kubetSessionId;
             map.put(tranDetail.username, tran);
         }
     }

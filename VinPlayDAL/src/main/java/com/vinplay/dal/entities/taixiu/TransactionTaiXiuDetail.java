@@ -19,20 +19,8 @@ public class TransactionTaiXiuDetail {
     public int moneyType;
     public long totalExchange = 0L;
     public Date timestamp;
+    public long kubetSessionId;
 
-    public TransactionTaiXiuDetail(long referenceId, int transactionId, int userId, String username, long betValue, int betSide, long prize, long refund, int inputTime, Date timestamp) {
-        this.referenceId = referenceId;
-        this.transactionId = transactionId;
-        this.userId = userId;
-        this.username = username;
-        this.betValue = betValue;
-        this.betSide = betSide;
-        this.prize = prize;
-        this.totalExchange = 0L;
-        this.refund = refund;
-        this.inputTime = inputTime;
-        this.timestamp = timestamp;
-    }
 
     public TransactionTaiXiuDetail(long referenceId, int userId, String username, long betValue, int betSide, int inputTime, int moneyType) {
         this.referenceId = referenceId;
@@ -45,6 +33,20 @@ public class TransactionTaiXiuDetail {
         this.refund = 0L;
         this.inputTime = inputTime;
         this.moneyType = moneyType;
+    }
+
+    public TransactionTaiXiuDetail(long referenceId, int userId, String username, long betValue, int betSide, int inputTime, int moneyType, long kubetSessionId) {
+        this.referenceId = referenceId;
+        this.userId = userId;
+        this.username = username;
+        this.betValue = betValue;
+        this.betSide = betSide;
+        this.prize = 0L;
+        this.totalExchange = 0L;
+        this.refund = 0L;
+        this.inputTime = inputTime;
+        this.moneyType = moneyType;
+        this.kubetSessionId = kubetSessionId;
     }
 
     public TransactionTaiXiuDetail() {

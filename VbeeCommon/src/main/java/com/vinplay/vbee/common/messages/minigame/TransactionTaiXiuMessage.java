@@ -5,8 +5,7 @@ package com.vinplay.vbee.common.messages.minigame;
 
 import com.vinplay.vbee.common.messages.BaseMessage;
 
-public class TransactionTaiXiuMessage
-extends BaseMessage {
+public class TransactionTaiXiuMessage extends BaseMessage {
     private static final long serialVersionUID = 1L;
     public int userId;
     public String username;
@@ -18,11 +17,12 @@ extends BaseMessage {
     public long prize;
     public long refund;
     //public long totalExchange;
+    public long kubetSessionId;
 
     public TransactionTaiXiuMessage() {
     }
 
-    public TransactionTaiXiuMessage(int userId, String username, int moneyType, long betValue, short betSide, int inputTime, long referenceId) {
+    public TransactionTaiXiuMessage(int userId, String username, int moneyType, long betValue, short betSide, int inputTime, long referenceId, long prize, long refund, long kubetSessionId) {
         this.userId = userId;
         this.username = username;
         this.moneyType = moneyType;
@@ -30,6 +30,9 @@ extends BaseMessage {
         this.betSide = betSide;
         this.inputTime = inputTime;
         this.referenceId = referenceId;
+        this.prize = prize;
+        this.refund = refund;
+        this.kubetSessionId = kubetSessionId;
     }
 }
 

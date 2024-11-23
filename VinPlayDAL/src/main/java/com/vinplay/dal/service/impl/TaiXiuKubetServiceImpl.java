@@ -68,7 +68,7 @@ public class TaiXiuKubetServiceImpl implements TaiXiuService {
     @Override
     public boolean saveTransactionTaiXiu(long referenceId, int userId, String username,
                                          int moneyType, long betValue, short betSide,
-                                         long prize, long refund, long totalExchange) throws IOException, TimeoutException, InterruptedException {
+                                         long prize, long refund, long totalExchange, long kubetSessionId) throws IOException, TimeoutException, InterruptedException {
         TransactionTaiXiuMessage msg = new TransactionTaiXiuMessage();
         msg.referenceId = referenceId;
         msg.userId = userId;
@@ -78,6 +78,7 @@ public class TaiXiuKubetServiceImpl implements TaiXiuService {
         msg.betSide = betSide;
         msg.prize = prize;
         msg.refund = refund;
+        msg.kubetSessionId = kubetSessionId;
         RMQApi.publishMessage((String) "queue_taixiu_kubet", (BaseMessage) msg, (int) 100);
         return true;
     }
@@ -283,7 +284,7 @@ public class TaiXiuKubetServiceImpl implements TaiXiuService {
         boolean returnValue = false;
         if (!trans.isEmpty()) {
             for (TransactionTaiXiu tran : trans) {
-                returnValue = this.saveTransactionTaiXiu(tran.referenceId, tran.userId, tran.username, tran.moneyType, tran.betValue, (short) tran.betSide, tran.totalPrize, tran.totalRefund, tran.totalExchange);
+                returnValue = this.saveTransactionTaiXiu(tran.referenceId, tran.userId, tran.username, tran.moneyType, tran.betValue, (short) tran.betSide, tran.totalPrize, tran.totalRefund, tran.totalExchange, tran.kubetSessionId);
             }
         }
         return returnValue;
@@ -291,11 +292,6 @@ public class TaiXiuKubetServiceImpl implements TaiXiuService {
 
     @Override
     public boolean saveNoHuTaiXiu(List<NohuTXDetail> trans) throws IOException, TimeoutException, InterruptedException {
-//        boolean returnValue = false;
-//        for (NohuTXDetail tran : trans) {
-//            returnValue = this.saveNoHuTaiXiu(tran.phien, tran.result, tran.money, tran.username, tran.userMoneyHu, tran.totalUser);
-//        }
-//        return returnValue;
         return false;
     }
 
@@ -313,6 +309,7 @@ public class TaiXiuKubetServiceImpl implements TaiXiuService {
         msg.refund = tran.refund;
         msg.inputTime = tran.inputTime;
         msg.moneyType = tran.moneyType;
+        msg.kubetSessionId = tran.kubetSessionId;
         RMQApi.publishMessage((String) "queue_taixiu_kubet", (BaseMessage) msg, (int) 102);
         return true;
     }
@@ -354,6 +351,7 @@ public class TaiXiuKubetServiceImpl implements TaiXiuService {
         msg.refund = tran.refund;
         msg.inputTime = tran.inputTime;
         msg.moneyType = tran.moneyType;
+        msg.kubetSessionId = tran.kubetSessionId;
         RMQApi.publishMessage((String) "queue_taixiu_kubet", (BaseMessage) msg, (int) 103);
         return true;
     }

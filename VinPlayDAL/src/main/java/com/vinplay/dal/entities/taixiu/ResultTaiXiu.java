@@ -28,33 +28,9 @@ public class ResultTaiXiu implements Serializable {
     public long moneyHu;
     public int statusHu = 0;
     public String timestamp;
+    public long kubetSessionId;
 
     public ResultTaiXiu() {
-    }
-
-
-    public ResultTaiXiu(long referenceId, int result, int dice1, int dice2, int dice3, long totalTai, long totalXiu, int numBetTai, int numBetXiu, long totalChan, long totalLe, int numBetChan, int numBetLe, long totalPrize, long totalRefundTai, long totalRefundXiu, long totalRevenue, int moneyType, long moneyHu, int statusHu, String timestamp) {
-        this.referenceId = referenceId;
-        this.result = result;
-        this.dice1 = dice1;
-        this.dice2 = dice2;
-        this.dice3 = dice3;
-        this.totalTai = totalTai;
-        this.totalXiu = totalXiu;
-        this.numBetTai = numBetTai;
-        this.numBetXiu = numBetXiu;
-        this.totalChan = totalChan;
-        this.totalLe = totalLe;
-        this.numBetChan = numBetChan;
-        this.numBetLe = numBetLe;
-        this.totalPrize = totalPrize;
-        this.totalRefundTai = totalRefundTai;
-        this.totalRefundXiu = totalRefundXiu;
-        this.totalRevenue = totalRevenue;
-        this.moneyType = moneyType;
-        this.moneyHu = moneyHu;
-        this.statusHu = statusHu;
-        this.timestamp = timestamp;
     }
 
     public boolean isChan() {

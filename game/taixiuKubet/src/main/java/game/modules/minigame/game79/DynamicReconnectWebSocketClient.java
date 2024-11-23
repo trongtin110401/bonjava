@@ -58,8 +58,7 @@ public class DynamicReconnectWebSocketClient extends WebSocketClient {
                     int dice1 = sessionInfo.getResult().getDice1();
                     int dice2 = sessionInfo.getResult().getDice2();
                     int dice3 = sessionInfo.getResult().getDice3();
-                    taiXiuModule.handleGameState(kubetState, countDownTime, dice1, dice2, dice3);
-
+                    taiXiuModule.handleGameState(sessionInfo.getGid(), kubetState, countDownTime, dice1, dice2, dice3);
                     break;
                 case "gameHistory":
                     break;

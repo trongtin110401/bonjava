@@ -28,11 +28,12 @@ public class SaveTransactionTaiXiuKubetProcessor
         try {
             TransactionTaiXiuMessage message = (TransactionTaiXiuMessage) TransactionTaiXiuMessage.fromBytes((byte[]) body);
             TaiXiuKubetDaoImpl dao = new TaiXiuKubetDaoImpl();
+            dao.saveTransactionTaiXiu(message);
 
             if (message.moneyType == 1) {
                 addTopVinhDanh(message);
             }
-            dao.saveTransactionTaiXiu(message);
+
             logger.debug((Object) ("Handle message : " + message.referenceId));
         } catch (Exception e) {
             logger.error((Object) "Handle save transaction error ", (Throwable) e);

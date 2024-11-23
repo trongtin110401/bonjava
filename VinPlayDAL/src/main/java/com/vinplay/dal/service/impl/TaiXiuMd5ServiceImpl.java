@@ -71,7 +71,7 @@ public class TaiXiuMd5ServiceImpl
     @Override
     public boolean saveTransactionTaiXiu(long referenceId, int userId, String username,
                                          int moneyType, long betValue, short betSide,
-                                         long prize, long refund, long totalExchange) throws IOException, TimeoutException, InterruptedException {
+                                         long prize, long refund, long totalExchange, long kubetSessionId) throws IOException, TimeoutException, InterruptedException {
         TransactionTaiXiuMessage msg = new TransactionTaiXiuMessage();
         msg.referenceId = referenceId;
         msg.userId = userId;
@@ -323,7 +323,7 @@ public class TaiXiuMd5ServiceImpl
         if (!trans.isEmpty()) {
             System.out.println("Save transaction TX MD5 phiên : " + trans.get(0).referenceId);
             for (TransactionTaiXiu tran : trans) {
-                returnValue = this.saveTransactionTaiXiu(tran.referenceId, tran.userId, tran.username, tran.moneyType, tran.betValue, (short) tran.betSide, tran.totalPrize, tran.totalRefund, tran.totalExchange);
+                returnValue = this.saveTransactionTaiXiu(tran.referenceId, tran.userId, tran.username, tran.moneyType, tran.betValue, (short) tran.betSide, tran.totalPrize, tran.totalRefund, tran.totalExchange, 0);
             }
         }
         return returnValue;
