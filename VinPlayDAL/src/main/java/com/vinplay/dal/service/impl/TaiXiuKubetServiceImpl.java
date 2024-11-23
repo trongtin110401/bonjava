@@ -274,7 +274,7 @@ public class TaiXiuKubetServiceImpl implements TaiXiuService {
         msg.totalLe = rs.totalChan;
         msg.numBetChan = rs.numBetChan;
         msg.numBetLe = rs.numBetLe;
-        msg.kubetSessionId = rs.kubetSessionId
+        msg.kubetSessionId = rs.kubetSessionId;
 
         RMQApi.publishMessage("queue_taixiu_kubet", msg, 101);
         return true;
