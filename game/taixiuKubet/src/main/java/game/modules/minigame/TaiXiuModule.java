@@ -358,24 +358,30 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                 return;
             }
 
+            CURRENT_GAME_STATE = state;
+
             this.kubetSessionId = kubetSessionId;
             this.count = count;
             MGRoomTaiXiu roomTXVin = this.getRoomTX((short) 1);
             switch (state) {
                 case GENERATE_RESULT:
+                    System.out.println("GENERATE_RESULT: " + this.count);
                     this.startNewRoundTX();
                     amountBotTaiFake = 0;
                     amountBotXiuFake = 0;
                     roomTXVin.resultTX = null;
                     break;
                 case BETTING:
+                    System.out.println("BETTING: " + this.count);
                     break;
                 case SHOW_RESULT:
+                    System.out.println("SHOW_RESULT: " + this.count);
                     roomTXVin.disableBetting();
                     roomTXVin.finish();
                     this.generateResult(dice1, dice2, dice3);
                     break;
                 case CONFIRM_RESULT:
+                    System.out.println("CONFIRM_RESULT: " + this.count);
                     BitZeroServer.getInstance().getTaskScheduler().schedule(this.calculatingTXVinTask, 1, TimeUnit.SECONDS);
                     amountBotTaiFake = 0;
                     amountBotXiuFake = 0;
