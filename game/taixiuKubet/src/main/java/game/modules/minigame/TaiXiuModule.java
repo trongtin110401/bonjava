@@ -378,10 +378,10 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                     System.out.println("SHOW_RESULT: " + this.count);
                     roomTXVin.disableBetting();
                     roomTXVin.finish();
-                    this.generateResult(dice1, dice2, dice3);
                     break;
                 case CONFIRM_RESULT:
                     System.out.println("CONFIRM_RESULT: " + this.count);
+                    this.generateResult(dice1, dice2, dice3);
                     BitZeroServer.getInstance().getTaskScheduler().schedule(this.calculatingTXVinTask, 1, TimeUnit.SECONDS);
                     amountBotTaiFake = 0;
                     amountBotXiuFake = 0;
