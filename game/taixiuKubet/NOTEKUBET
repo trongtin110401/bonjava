@@ -30,6 +30,7 @@
         * public long potLe;
         * public long myBetChan;
         * public long myBetLe;
+        * public String streamUrl
 
     - TaiXiuAdminReportObj: thêm các trường thống kê mới trên form CMS can thiệp kết quả
     - TaiXiuSetAmountBotFake.java: thêm 2 trường mới numberBotChanFake và numberBotLeFake. phục vụ CMS can thiệp kết quả
@@ -50,9 +51,9 @@
         </command>
 
         <command>
-            <id>100</id>
+            <id>56100</id>
             <name>lich su giao dich tai xiu</name>
-            <path>com.vinplay.api.processors.minigame.LichSuGiaoDichTXProcessor</path>
+            <path>com.vinplay.api.processors.minigame.LichSuGiaoDichTXKUBETProcessor</path>
         </command>
 
         // boardName = TaiXiuKubet

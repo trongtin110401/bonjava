@@ -63,6 +63,7 @@ import game.eventHandlers.UserDisconnectHandler;
 import game.modules.admin.AdminModule;
 import game.modules.chat.ChatMd5Module;
 import game.modules.chat.ChatModule;
+import game.modules.chat.ChatTXKubetModule;
 import game.modules.gameRoom.GameRoomModule;
 import game.modules.lobby.LobbyModule;
 import game.modules.minigame.*;
@@ -106,21 +107,15 @@ public class BaseGameExtension
         }
         this.addRequestHandler((short) 1000, PlayerModule.class);
         if (GameUtils.gameName.equalsIgnoreCase("Minigame")) { // todo :lấy từ config cluster file conf
-            //this.addRequestHandler((short)2000, TaiXiuModule.class);
             this.addRequestHandler((short) 4000, MiniPokerModule.class);
-            // comment baucua
-//            this.addRequestHandler((short)5000, BauCuaModule.class);
             this.addRequestHandler((short) 6000, CaoThapModule.class);
             this.addRequestHandler((short) 7000, CandyModule.class);
             this.addRequestHandler((short) 18000, ChatModule.class);
             this.addRequestHandler((short) 17000, ChatMd5Module.class);
-            //   this.addRequestHandler((short)19000, AdminModule.class);
+            this.addRequestHandler((short) 19000, ChatTXKubetModule.class);
             this.addRequestHandler((short) 20000, LobbyModule.class);
-            //   this.addRequestHandler((short)21000, MissionModule.class);
-            //this.addRequestHandler((short)8000, Slot3x3ExtendModule.class);
-        } else {
-            //  this.addRequestHandler((short)3000, GameRoomModule.class);
         }
+
         this.addEventHandler((IBZEventType) BZEventType.USER_LOGIN, LoginSuccessHandler.class);
         this.addEventHandler((IBZEventType) BZEventType.USER_DISCONNECT, UserDisconnectHandler.class);
         BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);

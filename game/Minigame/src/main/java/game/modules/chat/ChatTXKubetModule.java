@@ -29,7 +29,6 @@ import bitzero.server.BitZeroServer;
 import bitzero.server.core.BZEventParam;
 import bitzero.server.core.BZEventType;
 import bitzero.server.core.IBZEvent;
-import bitzero.server.core.IBZEventParam;
 import bitzero.server.entities.User;
 import bitzero.server.exceptions.BZException;
 import bitzero.server.extensions.BaseClientRequestHandler;
@@ -51,7 +50,8 @@ import com.vinplay.vbee.common.response.minigame.TaiXiuChatMsg;
 import com.vinplay.vbee.common.utils.DateTimeUtils;
 import game.modules.chat.cmd.rev.ChatCmd;
 import game.modules.chat.cmd.send.ChatInfoMd5Msg;
-import game.modules.chat.cmd.send.ChatMd5Msg;
+//import game.modules.chat.cmd.send.ChatMd5Msg;
+import game.modules.chat.cmd.send.ChatTxKubetMsg;
 import game.modules.chat.entities.ChatEntry;
 import game.utils.ConfigGame;
 import game.utils.ServerUtil;
@@ -62,9 +62,11 @@ import java.io.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-public class ChatMd5Module
-        extends BaseClientRequestHandler {
-    private static final int MAX_LOG_CHAT = 10;
+public class ChatTXKubetModule extends BaseClientRequestHandler {
+
+    public short TYPE_CHAT = 0;
+    public short TYPE_TIP = 1;
+
     private ChatLobbyService chatService = new ChatLobbyServiceImpl();
     private List<ChatEntry> entries = new ArrayList<ChatEntry>();
     private Set<User> users = new HashSet<User>();
@@ -73,9 +75,9 @@ public class ChatMd5Module
     private Logger logger = Logger.getLogger((String) "BlockChat");
     public static List<TaiXiuChatMsg> lstTaiXiuAdminMsg = new ArrayList<>();
     private CacheService cacheService = new CacheServiceImpl();
-    private final Runnable botChatTask = new ChatMd5Module.ScheduleBotChatTask();
+    private final Runnable botChatTask = new ChatTXKubetModule.ScheduleBotChatTask();
     private List<String> listChatUsers = new ArrayList<String>();
-    private List<String> listChatBot = new ArrayList<String>();
+    private List<String> listChatBot = new ArrayList<>();
     private final Runnable adminChatRunnable = new AdminChat();
 
     public void init() {
@@ -100,7 +102,6 @@ public class ChatMd5Module
             br2.close();
         } catch (FileNotFoundException entry) {
         } catch (IOException entry) {
-            // empty catch block
         }
     }
 
@@ -114,7 +115,6 @@ public class ChatMd5Module
             br2.close();
             Debug.trace("BOT CHAT :" + listChatBot.size());
         } catch (IOException entry) {
-            //sendLogToTele(entry.getMessage());
             entry.printStackTrace();
         }
     }
@@ -135,7 +135,7 @@ public class ChatMd5Module
 
     public void handleServerEvent(IBZEvent ibzevent) throws BZException {
         if (ibzevent.getType() == BZEventType.USER_DISCONNECT) {
-            User user = (User) ibzevent.getParameter((IBZEventParam) BZEventParam.USER);
+            User user = (User) ibzevent.getParameter(BZEventParam.USER);
             this.userDis(user);
         }
     }
@@ -146,15 +146,15 @@ public class ChatMd5Module
 
     public void handleClientRequest(User user, DataCmd dataCmd) {
         switch (dataCmd.getId()) {
-            case 17001: {
+            case 19001: {
                 this.subscribe(user);
                 break;
             }
-            case 17002: {
+            case 19002: {
                 this.unsubscribe(user);
                 break;
             }
-            case 17000: {
+            case 19000: {
                 this.chat(user, dataCmd);
             }
         }
@@ -192,7 +192,7 @@ public class ChatMd5Module
         public void run() {
             try {
                 Debug.trace("Schedule bot chat running ...");
-                ChatMd5Module.this.scheduleBotChat();
+                ChatTXKubetModule.this.scheduleBotChat();
                 Debug.trace("Schedule bot chat finished ...");
             } catch (Exception ex) {
                 // sendLogToTele(ex.getMessage());
@@ -211,7 +211,7 @@ public class ChatMd5Module
 
                 String randMessage = listChatBot.get(rand.nextInt(listChatBot.size()));
 
-                this.chat(user, randMessage);
+                this.chat(user, randMessage, TYPE_CHAT, 0);
             } else {
                 int sleep = rand.nextInt(5000);
                 Thread.sleep(sleep * 1000);
@@ -226,12 +226,12 @@ public class ChatMd5Module
         int daiLy = this.getStatusDaiLy(user);
         ChatCmd cmd = new ChatCmd(dataCmd);
         String username = user.getName();
-        ChatMd5Msg msg = new ChatMd5Msg();
+        ChatTxKubetMsg msg = new ChatTxKubetMsg();
 
         if (this.containBadword(username, cmd.message)) {
             msg.Error = 5;
             this.send(msg, user);
-        } else if ((cmd.message.length() >= 40)) {
+        } else if ((cmd.message.length() >= 100)) {
             msg.Error = 6;
             this.send(msg, user);
         } else if (this.allowUserChat(user.getName(), daiLy)) {
@@ -258,9 +258,8 @@ public class ChatMd5Module
             }
             TaiXiuChatMsg obj = new TaiXiuChatMsg(username, cmd.message);
             lstTaiXiuAdminMsg.add(obj);
-            this.chat(username, cmd.message);
+            this.chat(username, cmd.message, cmd.type, cmd.money);
             this.chatService.banChatUser(username, 5000);
-            //cacheService.setObject("lstTaiXiuAdminMsg",lstTaiXiuAdminMsg);
         } else {
             msg.Error = 2;
             this.send(msg, user);
@@ -274,7 +273,7 @@ public class ChatMd5Module
 
         @Override
         public void run() {
-            ChatMd5Module.this.scheduleGetChatAdmin();
+            ChatTXKubetModule.this.scheduleGetChatAdmin();
         }
     }
 
@@ -284,11 +283,13 @@ public class ChatMd5Module
             TaiXiuChatMsg obj = (TaiXiuChatMsg) cacheService.getObject("admin_md5_msg");
             //kiểm tra trạng thái chưa gửi và tên không null thì được phép gửi tới client
             if (!obj.getNickname().isEmpty() && !Objects.equals(obj.getStatus(), 1)) {
-                ChatMd5Msg msg = new ChatMd5Msg();
+                ChatTxKubetMsg msg = new ChatTxKubetMsg();
                 msg.nickname = obj.getNickname();
                 msg.mesasge = obj.getMesasge();
-                ChatMd5Module.lstTaiXiuAdminMsg.add(obj);
-                this.chat(obj.getNickname(), obj.getMesasge());
+                msg.type = TYPE_CHAT;
+                msg.money = 0;
+                ChatTXKubetModule.lstTaiXiuAdminMsg.add(obj);
+                this.chat(obj.getNickname(), obj.getMesasge(), TYPE_CHAT, 0);
                 obj.setStatus(1);
                 cacheService.setObject("admin_md5_msg", obj);
             }
@@ -302,16 +303,18 @@ public class ChatMd5Module
     /*
      * WARNING - Removed try catching itself - possible behaviour change.
      */
-    private void chat(String username, String content) {
+    private void chat(String username, String content, short type, long money) {
         Set<User> set;
         ChatEntry newEntry = new ChatEntry(username, content);
-        ChatMd5Msg msg = new ChatMd5Msg();
+        ChatTxKubetMsg msg = new ChatTxKubetMsg();
 
         String displayName = username;
 
         msg.nickname = displayName;
         msg.mesasge = content;
-        Set<User> set2 = set = this.users;
+        msg.type = type;
+        msg.money = money;
+        Set<User> set2 = this.users;
         synchronized (set2) {
             for (User u : this.users) {
                 if (u == null) continue;

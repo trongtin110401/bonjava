@@ -7,16 +7,16 @@ import game.BaseMsgEx;
 
 import java.nio.ByteBuffer;
 
-public class ChatMd5Msg extends BaseMsgEx {
+public class ChatTxKubetMsg extends BaseMsgEx {
 
     public String nickname = "";
     public String mesasge = "";
 
-    public short type;
-    public long amount;
+    public short type = 0;
+    public long money = 0;
 
-    public ChatMd5Msg() {
-        super(17000);
+    public ChatTxKubetMsg() {
+        super(19000);
     }
 
     public byte[] createData() {
@@ -24,7 +24,7 @@ public class ChatMd5Msg extends BaseMsgEx {
         this.putStr(bf, this.nickname);
         this.putStr(bf, this.mesasge);
         bf.putShort(type);
-        bf.putLong(amount);
+        bf.putLong(money);
         return this.packBuffer(bf);
     }
 
