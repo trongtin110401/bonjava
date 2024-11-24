@@ -398,8 +398,8 @@ public class TaiXiuKubetDAOImpl
                     Timestamp timestamp = rs.getTimestamp("timestamp");
 //                    entry.timestamp = CommonUtils.convertTimestampToString((java.util.Date) timestamp);
                     entry.timestamp = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(timestamp);
-                    entry.setPlantTextResult(rs.getString("plainText"));
-                    entry.setMd5TextResult(rs.getString("md5"));
+//                    entry.setPlantTextResult(rs.getString("plainText"));
+//                    entry.setMd5TextResult(rs.getString("md5"));
                 }
             } catch (SQLException e) {
                 e.printStackTrace(); // Consider using a logging framework
