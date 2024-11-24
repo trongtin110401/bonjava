@@ -264,7 +264,6 @@ public class ChatTXKubetModule extends BaseClientRequestHandler {
             msg.Error = 2;
             this.send(msg, user);
         }
-
     }
 
     class AdminChat implements Runnable {
@@ -305,7 +304,7 @@ public class ChatTXKubetModule extends BaseClientRequestHandler {
      */
     private void chat(String username, String content, short type, long money) {
         Set<User> set;
-        ChatEntry newEntry = new ChatEntry(username, content);
+
         ChatTxKubetMsg msg = new ChatTxKubetMsg();
 
         String displayName = username;
@@ -321,7 +320,7 @@ public class ChatTXKubetModule extends BaseClientRequestHandler {
                 ServerUtil.sendMsgToUser((BaseMsg) msg, u);
             }
         }
-        newEntry = new ChatEntry(displayName, content);
+        ChatEntry newEntry = new ChatEntry(displayName, content);
         this.logChat(newEntry);
     }
 
