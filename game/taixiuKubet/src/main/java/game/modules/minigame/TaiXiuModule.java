@@ -261,7 +261,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         MGRoomTaiXiu roomVin = this.getRoomTX((short) 1);
         String[] strs = {"Jocelyn", "Kelsey", "Fallon", "Maynard", "Mildred", "Aubrey"};
         for (BotTaiXiu b : this.botsVin) {
-            if (b.getTimeBetting() > 25 && b.getTimeBetting() < 4) continue;
+            if (b.getTimeBetting() < 4 && b.getTimeBetting() != count) continue;
             if (!ArrayUtils.contains(strs, b.getNickname())) {
                 roomVin.betTaiXiu(b.getNickname(), 0, b.getBetValue(), b.getTimeBetting(), (short) 1, b.getBetSide(), true, 0);
             }
