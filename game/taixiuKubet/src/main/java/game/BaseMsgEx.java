@@ -8,8 +8,7 @@ package game;
 
 import bitzero.server.extensions.data.BaseMsg;
 
-public class BaseMsgEx
-extends BaseMsg {
+public class BaseMsgEx extends BaseMsg {
     public BaseMsgEx(int type) {
         super((short)type);
     }

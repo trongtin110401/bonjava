@@ -50,7 +50,7 @@ public class BaseMsg implements Serializable {
         return result;
     }
 
-    protected void putStr(ByteBuffer bf, String value) {
+    public void putStr(ByteBuffer bf, String value) {
         String s = value;
         byte[] tempByte = BinaryHelper.toByte(s);
         Integer length = tempByte.length;

@@ -7,8 +7,7 @@ import game.BaseMsgEx;
 
 import java.nio.ByteBuffer;
 
-public class TaiXiuInfoMsg
-extends BaseMsgEx {
+public class TaiXiuInfoMsg extends BaseMsgEx {
     public short gameId;
     public short moneyType;
     public long referenceId;
@@ -27,6 +26,8 @@ extends BaseMsgEx {
     public short dice3 = 0;
     public short remainTimeRutLoc = 0;
     public long moneyHu;
+
+    public String streamUrl = "https://bon2.win/kubet/taixiu.html";
 
     public TaiXiuInfoMsg() {
         super(2111);
@@ -52,6 +53,7 @@ extends BaseMsgEx {
         buffer.putShort(this.dice3);
         buffer.putShort(this.remainTimeRutLoc);
         buffer.putLong(this.moneyHu);
+        this.putStr(buffer, streamUrl);
         return this.packBuffer(buffer);
     }
 }
