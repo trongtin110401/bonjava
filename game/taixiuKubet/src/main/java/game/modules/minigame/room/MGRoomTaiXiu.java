@@ -175,7 +175,7 @@ public class MGRoomTaiXiu extends MGRoom {
 
                     MoneyResponse res = new MoneyResponse(false, "1001");
                     if (!isBot) { // trừ tiền đặt cược
-                        res = this.userService.updateMoney(nickname, -betValue, this.moneyTypeStr, Games.TAI_XIU_KUBET.getName(), "T.Xỉu KUBET: Đặt cược", "Phiên " + this.referenceId + ": đặt " + betSideStr + " (" + inputTime + ")", 0L, this.referenceId, TransType.START_TRANS);
+                        res = this.userService.updateMoney(nickname, -betValue, this.moneyTypeStr, Games.TAI_XIU_KUBET.getName(), "T.Xỉu KUBET: Đặt cược", "Phiên " + this.module.kubetSessionId + ": Đặt " + betSideStr.toUpperCase() + " (" + inputTime + ")", 0L, this.referenceId, TransType.START_TRANS);
                         try {
                             BetTXMD5Message message = new BetTXMD5Message();
                             message.setBetSide(betSide);
@@ -194,7 +194,7 @@ public class MGRoomTaiXiu extends MGRoom {
                         if (!this.enableBetting) { // kiểm tra xem có phải đang trong quá trình đặt cược hay ko , nếu ko
                             result = 1;
                             if (!isBot) { // hoàn trả tiền cược
-                                this.userService.updateMoney(nickname, betValue, this.moneyTypeStr, Games.TAI_XIU_KUBET.getName(), "Tài xỉu: Trả cược", "Hoàn trả đặt cược phiên " + this.referenceId, 0L, this.referenceId, TransType.END_TRANS);
+                                this.userService.updateMoney(nickname, betValue, this.moneyTypeStr, Games.TAI_XIU_KUBET.getName(), "Tài xỉu Kubet: Trả cược", "Hoàn trả đặt cược phiên " + this.module.kubetSessionId, 0L, this.referenceId, TransType.END_TRANS);
                             }
                         } else { // nếu đang trong quá trình đặt cược
                             isBot = this.isBot(nickname);
@@ -376,8 +376,6 @@ public class MGRoomTaiXiu extends MGRoom {
                 if (potLe != null && potLe.contributors != null) { // tính toán tiền thắng cược bên lẻ
                     for (TransactionTaiXiuDetail tran : potLe.contributors) {
                         try {
-
-
                             // giải thưởng, hay nói cách khác là số tiền thắng
                             tran.prize = Math.round((long) ((float) tran.betValue * (100.0f - this.tax) / 100.0f) + tran.betValue);
 
@@ -753,7 +751,7 @@ public class MGRoomTaiXiu extends MGRoom {
                             long fee = Math.round((long) (MGRoomTaiXiu.this.tax * (float) txt.totalPrize / (200.0f - MGRoomTaiXiu.this.tax)));
                             MoneyResponse res2 = new MoneyResponse(false, "1001");
                             if (!MGRoomTaiXiu.this.isBot(username)) {
-                                res2 = MGRoomTaiXiu.this.userService.updateMoney(username, txt.totalPrize, MGRoomTaiXiu.this.moneyTypeStr, Games.TAI_XIU_KUBET.getName(), "Thắng tài xỉu", "Phiên " + MGRoomTaiXiu.this.referenceId, fee, MGRoomTaiXiu.this.referenceId, transType);
+                                res2 = MGRoomTaiXiu.this.userService.updateMoney(username, txt.totalPrize, MGRoomTaiXiu.this.moneyTypeStr, Games.TAI_XIU_KUBET.getName(), "Thắng Tài Xỉu Kubet", "Phiên " + MGRoomTaiXiu.this.module.kubetSessionId, fee, MGRoomTaiXiu.this.referenceId, transType);
                             } else {
                                 res2.setSuccess(true);
                             }
@@ -762,14 +760,6 @@ public class MGRoomTaiXiu extends MGRoom {
                                 long totalExchange = Math.round((long) ((float) txt.totalPrize * (100.0f - MGRoomTaiXiu.this.tax) / (200.0f - MGRoomTaiXiu.this.tax)));
                                 if (MGRoomTaiXiu.this.moneyType == 1 && totalExchange >= (long) BroadcastMessageServiceImpl.MIN_MONEY) {
                                     MGRoomTaiXiu.this.broadcastMsgService.putMessage(Games.TAI_XIU_KUBET.getId(), username, totalExchange);
-                                }
-                            }
-                        }
-                        if (txt.totalRefund > 0L) {
-                            if (!MGRoomTaiXiu.this.isBot(username)) {
-                                res = MGRoomTaiXiu.this.userService.updateMoney(username, txt.totalRefund, MGRoomTaiXiu.this.moneyTypeStr, Games.TAI_XIU_KUBET.getName(), "Hoàn trả tài xỉu", "Phiên " + MGRoomTaiXiu.this.referenceId, 0L, MGRoomTaiXiu.this.referenceId, TransType.END_TRANS);
-                                if (res.isSuccess()) {
-                                    currentMoney = res.getCurrentMoney();
                                 }
                             }
                         }
