@@ -130,7 +130,7 @@ public class MGRoomTaiXiu extends MGRoom {
         this.resultTX.result = msg.result;
         this.resultTX.moneyType = this.moneyType;
         this.resultTX.kubetSessionId = module.kubetSessionId;
-//        this.sendMessageToRoom(msg);
+        this.sendMessageToRoom(msg);
     }
 
     // todo : lấy thời gian còn lại bằng cách lấy thời gian hiện tại trừ đi thời gian bắt đầu
