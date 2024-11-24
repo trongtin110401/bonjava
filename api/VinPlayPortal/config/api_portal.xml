@@ -95,6 +95,11 @@
         </command>
         <!--        MD5-->
         <command>
+            <id>56100</id>
+            <name>lich su giao dich tai xiu</name>
+            <path>com.vinplay.api.processors.minigame.LichSuGiaoDichTXKUBETProcessor</path>
+        </command>
+        <command>
             <id>55100</id>
             <name>lich su giao dich tai xiu</name>
             <path>com.vinplay.api.processors.minigame.LichSuGiaoDichTXMD5Processor</path>
@@ -119,6 +124,11 @@
         </command>
 
         <!--        MD5-->
+        <command>
+            <id>56102</id>
+            <name>chi tiet phien tai xiu</name>
+            <path>com.vinplay.api.processors.minigame.ChiTietPhienTXKUBETProcessor</path>
+        </command>
         <command>
             <id>55102</id>
             <name>chi tiet phien tai xiu</name>

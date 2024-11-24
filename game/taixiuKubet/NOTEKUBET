@@ -43,6 +43,25 @@
         * (OK) 556670 => TaiXiuAdminKubetListChatProcessor
     - (OK) Thêm mới websocket path cho trang Can Thiep Ket Qua MD5
 
+       <command>
+          <id>56102</id>
+          <name>chi tiet phien tai xiu</name>
+          <path>com.vinplay.api.processors.minigame.ChiTietPhienTXKUBETProcessor</path>
+        </command>
+
+        <command>
+            <id>100</id>
+            <name>lich su giao dich tai xiu</name>
+            <path>com.vinplay.api.processors.minigame.LichSuGiaoDichTXProcessor</path>
+        </command>
+
+        // boardName = TaiXiuKubet
+        <command>
+            <id>4108</id>
+            <name>Get top vinh danh by game name</name>
+            <path>com.vinplay.api.processors.GetTopVinhDanhByGameNameProcessor</path>
+        </command>
+
 
 
 

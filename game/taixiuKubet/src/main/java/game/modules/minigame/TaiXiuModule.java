@@ -74,7 +74,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
     private long fundRutLoc = 0L;
     private int countRutLoc = 0;
     private List<BotTaiXiu> botsVin = new ArrayList<>();
-    private short forceBetSide = (short) -1;
     private final List<String> listChatUsers = new ArrayList<>();
     public static String CacheCurrentReference = "Tai_xiu_current_reference_kubet";
     public static long moneyHu = 50000000;
@@ -180,7 +179,9 @@ public class TaiXiuModule extends BaseClientRequestHandler {
 
     private void subscribeMiniGame(User user, DataCmd dataCmd) {
         SubcribeMinigameCmd cmd = new SubcribeMinigameCmd(dataCmd);
+
         this.doSubscribeMiniGame(user, cmd.gameId, cmd.roomId);
+
         LichSuPhienMsg msgLSGD = new LichSuPhienMsg();
         msgLSGD.data = TaiXiuUtils.buildLichSuPhien(this.lichSuPhienTX, 100);
         this.send(msgLSGD, user);
@@ -234,7 +235,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         //update referenceId
         roomTXVin.startNewGame(this.referenceTaiXiuId);
         StartNewGameTaiXiuMsg msg = new StartNewGameTaiXiuMsg();
-        msg.referenceId = this.referenceTaiXiuId;
+        msg.referenceId = this.kubetSessionId;
         msg.moneyHu = moneyHu;
 
         this.sendMessageToTaiXiuNewThread(msg);

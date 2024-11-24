@@ -118,7 +118,7 @@ public class TaiXiuKubetDAOImpl
             rs = call.executeQuery();
             while (rs.next()) {
                 TransactionTaiXiu entry = new TransactionTaiXiu();
-                entry.referenceId = rs.getLong("reference_id");
+                entry.referenceId = rs.getLong("kubet_session_id");
                 entry.userId = rs.getInt("user_id");
                 entry.username = rs.getString("user_name");
                 entry.betValue = rs.getLong("bet_value");
@@ -294,7 +294,7 @@ public class TaiXiuKubetDAOImpl
             rs = call.executeQuery();
             while (rs.next()) {
                 TransactionTaiXiuDetail entry = new TransactionTaiXiuDetail();
-                entry.referenceId = rs.getLong("reference_id");
+                entry.referenceId = rs.getLong("kubet_session_id");
                 entry.userId = rs.getInt("user_id");
                 entry.username = rs.getString("user_name");
                 entry.betValue = rs.getLong("bet_value");
@@ -363,7 +363,7 @@ public class TaiXiuKubetDAOImpl
     @Override
     public ResultTaiXiu getKetQuaPhien(long referenceId, int moneyType) throws SQLException {
         ResultTaiXiuMd5 entry = null;
-        String sql = "SELECT * FROM result_tai_xiu_kubet WHERE reference_id = ? AND money_type = ?";
+        String sql = "SELECT * FROM result_tai_xiu_kubet WHERE kubet_session_id = ? AND money_type = ?";
 
         try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -374,7 +374,7 @@ public class TaiXiuKubetDAOImpl
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     entry = new ResultTaiXiuMd5();
-                    entry.referenceId = rs.getLong("reference_id");
+                    entry.referenceId = rs.getLong("kubet_session_id");
                     entry.result = rs.getInt("result");
                     entry.dice1 = rs.getInt("dice1");
                     entry.dice2 = rs.getInt("dice2");

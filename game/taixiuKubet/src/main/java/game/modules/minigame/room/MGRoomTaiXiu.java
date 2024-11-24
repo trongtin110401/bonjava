@@ -135,10 +135,6 @@ public class MGRoomTaiXiu extends MGRoom {
 
     // todo : lấy thời gian còn lại bằng cách lấy thời gian hiện tại trừ đi thời gian bắt đầu
     public short getRemainTime() {
-//        if (this.bettingRound) {
-//            return (short) (50 - this.module.count);
-//        }
-//        return (short) (65 - this.module.count);
         return (short) this.module.count;
     }
 
@@ -565,7 +561,7 @@ public class MGRoomTaiXiu extends MGRoom {
         TaiXiuInfoMsg msg = new TaiXiuInfoMsg();
         msg.gameId = (short) 2;
         msg.moneyType = this.moneyType;
-        msg.referenceId = this.referenceId;
+        msg.referenceId = this.module.kubetSessionId;
         msg.remainTime = this.getRemainTime();
         msg.bettingState = this.bettingRound;
         msg.potTai = this.getPotTai();
