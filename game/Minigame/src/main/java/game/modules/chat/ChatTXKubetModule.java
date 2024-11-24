@@ -44,9 +44,12 @@ import com.vinplay.dal.service.impl.ChatLobbyServiceImpl;
 import com.vinplay.usercore.service.UserService;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.vbee.common.config.VBeePath;
+import com.vinplay.vbee.common.enums.Games;
 import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
 import com.vinplay.vbee.common.models.UserModel;
+import com.vinplay.vbee.common.response.MoneyResponse;
 import com.vinplay.vbee.common.response.minigame.TaiXiuChatMsg;
+import com.vinplay.vbee.common.statics.TransType;
 import com.vinplay.vbee.common.utils.DateTimeUtils;
 import game.modules.chat.cmd.rev.ChatCmd;
 import game.modules.chat.cmd.send.ChatInfoMd5Msg;
@@ -228,41 +231,51 @@ public class ChatTXKubetModule extends BaseClientRequestHandler {
         String username = user.getName();
         ChatTxKubetMsg msg = new ChatTxKubetMsg();
 
-        if (this.containBadword(username, cmd.message)) {
-            msg.Error = 5;
-            this.send(msg, user);
-        } else if ((cmd.message.length() >= 100)) {
-            msg.Error = 6;
-            this.send(msg, user);
-        } else if (this.allowUserChat(user.getName(), daiLy)) {
-            try {
-                HazelcastInstance client = HazelcastClientFactory.getInstance();
-                IMap<String, UserModel> userMap = client.getMap("users");
-                if (userMap.containsKey(username)) {
-                    UserModel model = userMap.get(username);
-                    if (model.getVinTotal() < 1000) {
-                        msg.Error = 7;
-                        this.send(msg, user);
-                        return;
-                    }
+        HazelcastInstance client = HazelcastClientFactory.getInstance();
+        IMap<String, UserModel> userMap = client.getMap("users");
+        UserModel model = userMap.get(username);
+        if (cmd.type == TYPE_TIP) {
+            if (cmd.money >= 2000 && model.getVinTotal() >= cmd.money) {
+                MoneyResponse response = this.userService.updateMoney(username, cmd.money, "vin", Games.TAI_XIU_KUBET.getName(), "TaiXiuKubet tặng quà", "TaiXiuKubet tặng quà dealer", 0L, 0L, TransType.END_TRANS);
+                if (response.isSuccess()) {
+                    cmd.message = username + "đã tip " + cmd.money + " cho dealer";
+                    this.chat(username, cmd.message, cmd.type, cmd.money);
                 }
-
-                cmd.message = cmd.message.replaceAll("[\\.\\|,-]", "");
-                cmd.message = cmd.message.replaceAll("\\d{9,11}", "xxx");
-                cmd.message = cmd.message.replaceAll("(\\d{2,} )+", "xxx");
-            } catch (Exception e) {
-                e.printStackTrace();
             }
-            if (daiLy == 100) {
-                username = "Admin";
-            }
-            TaiXiuChatMsg obj = new TaiXiuChatMsg(username, cmd.message);
-            lstTaiXiuAdminMsg.add(obj);
-            this.chat(username, cmd.message, cmd.type, cmd.money);
-            this.chatService.banChatUser(username, 5000);
         } else {
-            msg.Error = 2;
-            this.send(msg, user);
+            if (this.containBadword(username, cmd.message)) {
+                msg.Error = 5;
+                this.send(msg, user);
+            } else if ((cmd.message.length() >= 100)) {
+                msg.Error = 6;
+                this.send(msg, user);
+            } else if (this.allowUserChat(user.getName(), daiLy)) {
+                try {
+                    if (userMap.containsKey(username)) {
+                        if (model.getVinTotal() < 1000) {
+                            msg.Error = 7;
+                            this.send(msg, user);
+                            return;
+                        }
+                    }
+
+                    cmd.message = cmd.message.replaceAll("[\\.\\|,-]", "");
+                    cmd.message = cmd.message.replaceAll("\\d{9,11}", "xxx");
+                    cmd.message = cmd.message.replaceAll("(\\d{2,} )+", "xxx");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                if (daiLy == 100) {
+                    username = "Admin";
+                }
+                TaiXiuChatMsg obj = new TaiXiuChatMsg(username, cmd.message);
+                lstTaiXiuAdminMsg.add(obj);
+                this.chat(username, cmd.message, cmd.type, cmd.money);
+                this.chatService.banChatUser(username, 5000);
+            } else {
+                msg.Error = 2;
+                this.send(msg, user);
+            }
         }
     }
 
