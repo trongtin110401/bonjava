@@ -333,8 +333,8 @@ public class BotMinigame {
                     //random số tiền cho bot trong mảng đã add "betValues"
                     long betValue = betValues.get(n).intValue();
                     short bettingTime = (short) BotMinigame.randomBettingTime(minBettingTime, maxBettingTime, phanTramVaoMuon);
-                    if(bettingTime > 55){
-                        bettingTime = (short) BotMinigame.randomBettingTime(minBettingTime, 48, phanTramVaoMuon);
+                    if(bettingTime > 25){
+                        bettingTime = (short) BotMinigame.randomBettingTime(minBettingTime, 23, phanTramVaoMuon);
                     }
                     short betSide = 0;
                     if (i < numBetTai) {
@@ -370,7 +370,7 @@ public class BotMinigame {
                 String nickname = botsName.get(i);
                 long betValue = minBetValue + (long) (Math.random() * (maxBetValue - minBetValue));
                 short bettingTime = (short) BotMinigame.randomBettingTime(minBettingTime, maxBettingTime, phanTramVaoMuon);
-                if(bettingTime > 55){
+                if(bettingTime > 25){
                     bettingTime = (short) BotMinigame.randomBettingTime(minBettingTime, 48, phanTramVaoMuon);
                 }
                 short betSide = 0;
