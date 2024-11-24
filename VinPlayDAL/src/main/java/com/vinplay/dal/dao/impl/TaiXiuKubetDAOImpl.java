@@ -50,6 +50,7 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class TaiXiuKubetDAOImpl
@@ -395,7 +396,8 @@ public class TaiXiuKubetDAOImpl
                     entry.totalRevenue = rs.getLong("total_revenue");
                     entry.moneyType = rs.getInt("money_type");
                     Timestamp timestamp = rs.getTimestamp("timestamp");
-                    entry.timestamp = CommonUtils.convertTimestampToString((java.util.Date) timestamp);
+//                    entry.timestamp = CommonUtils.convertTimestampToString((java.util.Date) timestamp);
+                    entry.timestamp = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(timestamp);
                     entry.setPlantTextResult(rs.getString("plainText"));
                     entry.setMd5TextResult(rs.getString("md5"));
                 }
