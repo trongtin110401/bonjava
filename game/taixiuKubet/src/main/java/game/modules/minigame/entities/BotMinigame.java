@@ -262,8 +262,14 @@ public class BotMinigame {
         ArrayList<Integer> betValues = new ArrayList<Integer>(betValueDefault);
         try {
             //Kiểm tra xem có thông tin setbot từ bên admin bắn sang không
-            Object object = cacheService.getObject("tai_xiu_set_bot_md5");
-            TaiXiuBotSetUpObj obj = (TaiXiuBotSetUpObj) object;
+            Object object;
+            TaiXiuBotSetUpObj obj = null;
+            try {
+                object = cacheService.getObject("tai_xiu_set_bot_kubet");
+                obj = (TaiXiuBotSetUpObj) object;
+            } catch (Exception ex) {
+            }
+
             if (obj != null && obj.getMoneyMax() > 0) {
                 results = addMoneyBot(obj, moneyType, results, phanTramVaoMuon);
             } else {
@@ -271,6 +277,10 @@ public class BotMinigame {
                 int numBetTai = 0;
                 //số lương bot là xỉu
                 int numBetXiu = 0;
+                //số lượng bot là chan
+                int numBetChan = 0;
+                //số lương bot là le
+                int numBetLe = 0;
                 // giá trị tiền nhỏ nhất
                 int minBetValue = 0;
                 // giá trị tiền lớn nhất
@@ -333,7 +343,7 @@ public class BotMinigame {
                     //random số tiền cho bot trong mảng đã add "betValues"
                     long betValue = betValues.get(n).intValue();
                     short bettingTime = (short) BotMinigame.randomBettingTime(minBettingTime, maxBettingTime, phanTramVaoMuon);
-                    if(bettingTime > 25){
+                    if (bettingTime > 25) {
                         bettingTime = (short) BotMinigame.randomBettingTime(minBettingTime, 23, phanTramVaoMuon);
                     }
                     short betSide = 0;
@@ -364,18 +374,24 @@ public class BotMinigame {
             long maxBetValue = obj.getMoneyMax();
             int numberUserTaiMax = obj.getNumberUserTaiMax();
             int numberUserXiuMax = obj.getNumberUserXiuMax();
-            int totalBot = numberUserTaiMax + numberUserXiuMax;
+            int numberUserChanMax = obj.getNumberUserChan();
+            int numberUserLeMax = obj.getNumberUserLe();
+            int totalBot = numberUserTaiMax + numberUserXiuMax + numberUserChanMax + numberUserLeMax;
             List<String> botsName = BotMinigame.getBots(totalBot, moneyType);
-            for (int i = 0; i < totalBot && i < botsName.size() ; i++) {
+            for (int i = 0; i < totalBot && i < botsName.size(); i++) {
                 String nickname = botsName.get(i);
                 long betValue = minBetValue + (long) (Math.random() * (maxBetValue - minBetValue));
                 short bettingTime = (short) BotMinigame.randomBettingTime(minBettingTime, maxBettingTime, phanTramVaoMuon);
-                if(bettingTime > 25){
-                    bettingTime = (short) BotMinigame.randomBettingTime(minBettingTime, 48, phanTramVaoMuon);
+                if (bettingTime > 25) {
+                    bettingTime = (short) BotMinigame.randomBettingTime(minBettingTime, 25, phanTramVaoMuon);
                 }
-                short betSide = 0;
+                short betSide = 3;
                 if (i < numberUserTaiMax) {
                     betSide = 1;
+                } else if (i < numberUserTaiMax + numberUserXiuMax) {
+                    betSide = 0;
+                } else if (i < numberUserTaiMax + numberUserXiuMax + numberUserChanMax) {
+                    betSide = 2;
                 }
                 BotTaiXiu bot = new BotTaiXiu(nickname, bettingTime, betValue, betSide);
                 results.add(bot);

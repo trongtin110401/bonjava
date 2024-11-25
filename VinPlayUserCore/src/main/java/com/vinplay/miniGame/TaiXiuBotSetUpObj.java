@@ -9,14 +9,9 @@ public class TaiXiuBotSetUpObj  extends BaseResponseModel implements Serializabl
   long moneyMax;
   int numberUserTaiMax;
   int numberUserXiuMax;
+  int numberUserChan;
+  int numberUserLe;
 
-  public TaiXiuBotSetUpObj(boolean success, String errorCode, long moneyMin, long moneyMax, int numberUserTaiMax, int numberUserXiuMax) {
-    super(success, errorCode);
-    this.moneyMin = moneyMin;
-    this.moneyMax = moneyMax;
-    this.numberUserTaiMax = numberUserTaiMax;
-    this.numberUserXiuMax = numberUserXiuMax;
-  }
 
   public TaiXiuBotSetUpObj(boolean success, String errorCode) {
     super(success, errorCode);
@@ -52,5 +47,21 @@ public class TaiXiuBotSetUpObj  extends BaseResponseModel implements Serializabl
 
   public void setNumberUserXiuMax(int numberUserXiuMax) {
     this.numberUserXiuMax = numberUserXiuMax;
+  }
+
+  public int getNumberUserChan() {
+    return numberUserChan;
+  }
+
+  public void setNumberUserChan(int numberUserChan) {
+    this.numberUserChan = numberUserChan;
+  }
+
+  public int getNumberUserLe() {
+    return numberUserLe;
+  }
+
+  public void setNumberUserLe(int numberUserLe) {
+    this.numberUserLe = numberUserLe;
   }
 }

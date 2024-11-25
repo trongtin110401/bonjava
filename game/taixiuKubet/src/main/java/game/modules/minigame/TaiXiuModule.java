@@ -46,6 +46,8 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import java.io.IOException;
 import java.net.URI;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -237,6 +239,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         StartNewGameTaiXiuMsg msg = new StartNewGameTaiXiuMsg();
         msg.referenceId = this.kubetSessionId;
         msg.moneyHu = moneyHu;
+        msg.startSessionTime = startSessionTime;
 
         this.sendMessageToTaiXiuNewThread(msg);
 
@@ -293,7 +296,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         taiXiuAdminReportObj.setNumberUserAndBotBetLe(roomVin.getNumberUserAndBotLe());
 
         taiXiuAdminReportObj.setContributors(roomVin.getListRealTransaction());
-        taiXiuAdminReportObj.setRealTime(roomVin.getRemainTime());
+        taiXiuAdminReportObj.setRealTime(roomVin.getRemainTime() - 4);
         taiXiuAdminReportObj.setBettingRound(roomVin.bettingRound);
         List<TaiXiuChatMsg> listChat;
         try {
@@ -352,6 +355,8 @@ public class TaiXiuModule extends BaseClientRequestHandler {
     public TxKubetState CURRENT_GAME_STATE = TxKubetState.INIT;
     public long kubetSessionId = 0;
 
+    public String startSessionTime = "";
+
     public synchronized void handleGameState(long kubetSessionId, TxKubetState state, int count, int dice1, int dice2, int dice3) {
         try {
             if (CURRENT_GAME_STATE == TxKubetState.INIT && state != TxKubetState.GENERATE_RESULT) {
@@ -371,6 +376,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                     amountBotTaiFake = 0;
                     amountBotXiuFake = 0;
                     roomTXVin.resultTX = null;
+                    startSessionTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss dd/MM/yyyy"));
                     break;
                 case BETTING:
                     System.out.println("BETTING: " + this.count);

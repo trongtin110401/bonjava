@@ -279,8 +279,18 @@
             <name>SetBot TaiXiu</name>
             <path>com.vinplay.api.backend.processors.taixiu.SetBotTaiXiuProcessor</path>
         </command>
+        <command>
+            <id>5670</id>
+            <name>SetBot TaiXiu</name>
+            <path>com.vinplay.api.backend.processors.taixiu.SetBotTaiXiuKubetProcessor</path>
+        </command>
 
         <!--        MD5-->
+        <command>
+            <id>566699</id>
+            <name>Get info SetBot TaiXiu</name>
+            <path>com.vinplay.api.backend.processors.taixiu.GetInfSetBotTaiXiuKubetProcessor</path>
+        </command>
         <command>
             <id>556699</id>
             <name>Get info SetBot TaiXiu</name>

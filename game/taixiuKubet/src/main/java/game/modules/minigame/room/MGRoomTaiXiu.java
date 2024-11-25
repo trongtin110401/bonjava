@@ -568,6 +568,7 @@ public class MGRoomTaiXiu extends MGRoom {
         msg.myBetChan = this.getTotalBettingChanByUsername(user.getName());
         msg.myBetLe = this.getTotalBettingLeByUsername(user.getName());
         msg.moneyHu = TaiXiuModule.moneyHu;
+        msg.startSessionTime = module.startSessionTime;
         if (this.resultTX != null
                 && !bettingRound
                 && module.count >= TaiXiuModule.TOTAL_BETTING_TIME) {
