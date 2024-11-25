@@ -52,6 +52,7 @@ import com.vinplay.vbee.common.response.minigame.TaiXiuChatMsg;
 import com.vinplay.vbee.common.statics.TransType;
 import com.vinplay.vbee.common.utils.DateTimeUtils;
 import game.modules.chat.cmd.rev.ChatCmd;
+import game.modules.chat.cmd.send.ChatInfoKubetMsg;
 import game.modules.chat.cmd.send.ChatInfoMd5Msg;
 //import game.modules.chat.cmd.send.ChatMd5Msg;
 import game.modules.chat.cmd.send.ChatTxKubetMsg;
@@ -167,8 +168,7 @@ public class ChatTXKubetModule extends BaseClientRequestHandler {
      * WARNING - Removed try catching itself - possible behaviour change.
      */
     private void subscribe(User user) {
-        Set<User> set;
-        Set<User> set2 = set = this.users;
+        Set<User> set2 = this.users;
         synchronized (set2) {
             this.users.add(user);
         }
@@ -179,10 +179,9 @@ public class ChatTXKubetModule extends BaseClientRequestHandler {
      * WARNING - Removed try catching itself - possible behaviour change.
      */
     private void unsubscribe(User user) {
-        Set<User> set;
-        Set<User> set2 = set = this.users;
+        Set<User> set2 = this.users;
         synchronized (set2) {
-            this.users.remove((Object) user);
+            this.users.remove(user);
         }
     }
 
@@ -366,7 +365,7 @@ public class ChatTXKubetModule extends BaseClientRequestHandler {
             arr.add((Object) entry.toJson());
         }
         String str = arr.toString();
-        ChatInfoMd5Msg chatInfoMsg = new ChatInfoMd5Msg();
+        ChatInfoKubetMsg chatInfoMsg = new ChatInfoKubetMsg();
         chatInfoMsg.msg = str;
         chatInfoMsg.minVipPointRequire = (byte) ConfigGame.getIntValue("chat_min_vp_require", 20);
         chatInfoMsg.timeUnBan = this.chatService.getBanTime(user.getName());
