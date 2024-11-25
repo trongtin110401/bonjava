@@ -296,7 +296,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         taiXiuAdminReportObj.setNumberUserAndBotBetLe(roomVin.getNumberUserAndBotLe());
 
         taiXiuAdminReportObj.setContributors(roomVin.getListRealTransaction());
-        taiXiuAdminReportObj.setRealTime(roomVin.getRemainTime() - 4);
+        taiXiuAdminReportObj.setRealTime(roomVin.getRemainTime());
         taiXiuAdminReportObj.setBettingRound(roomVin.bettingRound);
         List<TaiXiuChatMsg> listChat;
         try {
