@@ -769,6 +769,7 @@ public class MGRoomTaiXiu extends MGRoom {
                     msg.moneyHu = TaiXiuModule.moneyHu;
                     MGRoomTaiXiu.this.sendMessageToUser(msg, username);
                 } catch (Exception e) {
+                    e.printStackTrace();
                     Debug.trace("Update tai xiu money phien " + MGRoomTaiXiu.this.referenceId + " error: " + e.getMessage());
                 }
             }
