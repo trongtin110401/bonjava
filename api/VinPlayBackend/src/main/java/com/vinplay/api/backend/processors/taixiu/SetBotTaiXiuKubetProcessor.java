@@ -27,7 +27,7 @@ public class SetBotTaiXiuKubetProcessor implements BaseProcessor<HttpServletRequ
             obj.setNumberUserXiuMax(Integer.parseInt(numberUserXiuMax));
             obj.setNumberUserTaiMax(Integer.parseInt(numberUserTaiMax));
             obj.setNumberUserChan(Integer.parseInt(numberUserChanMax));
-            obj.setNumberUserChan(Integer.parseInt(numberUserLeMax));
+            obj.setNumberUserLe(Integer.parseInt(numberUserLeMax));
             cacheService.setObject("tai_xiu_set_bot_kubet", obj);
             return "1";
         } catch (Exception e) {
