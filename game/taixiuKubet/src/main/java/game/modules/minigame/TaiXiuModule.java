@@ -239,7 +239,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         StartNewGameTaiXiuMsg msg = new StartNewGameTaiXiuMsg();
         msg.referenceId = this.kubetSessionId;
         msg.moneyHu = moneyHu;
-        msg.startSessionTime = startSessionTime;
+        msg.startSessionTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss dd/MM/yyyy"));
 
         this.sendMessageToTaiXiuNewThread(msg);
 
