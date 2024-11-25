@@ -12,6 +12,7 @@ package com.vinplay.api.processors.minigame;
 
 import com.vinplay.api.processors.minigame.response.LichSuGiaoDichTXResponse;
 import com.vinplay.dal.dao.TaiXiuDAO;
+import com.vinplay.dal.dao.impl.TaiXiuKubetDAOImpl;
 import com.vinplay.dal.dao.impl.TaiXiuMd5DAOImpl;
 import com.vinplay.dal.service.impl.TaiXiuKubetServiceImpl;
 import com.vinplay.dal.service.impl.TaiXiuMd5ServiceImpl;
@@ -39,7 +40,7 @@ public class LichSuGiaoDichTXKUBETProcessor
         TaiXiuKubetServiceImpl service = new TaiXiuKubetServiceImpl();
         try {
             List trans = service.getLichSuGiaoDich(username, page, moneyType);
-            TaiXiuDAO dao = new TaiXiuMd5DAOImpl();
+            TaiXiuDAO dao = new TaiXiuKubetDAOImpl();
             int totalRecord = dao.countLichSuGiaoDichTX(username, moneyType);
             int totalPages = (int) Math.ceil((double) totalRecord / 10);
             response.setTotalPages(totalPages);
