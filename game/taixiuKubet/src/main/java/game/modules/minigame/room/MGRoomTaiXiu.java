@@ -372,7 +372,7 @@ public class MGRoomTaiXiu extends MGRoom {
         boolean isChan = resultTX.isChan();
         int chanOrLe = isChan ? 1 : 0;
         switch (chanOrLe) {
-            case 0: { // kết quả xỉu
+            case 0: { // kết quả lẻ
                 if (potLe != null && potLe.contributors != null) { // tính toán tiền thắng cược bên lẻ
                     for (TransactionTaiXiuDetail tran : potLe.contributors) {
                         try {
@@ -411,16 +411,12 @@ public class MGRoomTaiXiu extends MGRoom {
                 }
                 break;
             }
-            case 1: { // kết quả về tài
+            case 1: { // kết quả về chẵn
                 if (potChan != null && potChan.contributors != null) {
                     for (TransactionTaiXiuDetail tran : potChan.contributors) {
                         try {
-
-
                             tran.prize = Math.round((long) ((float) tran.betValue * (100.0f - this.tax) / 100.0f) + tran.betValue);
-
                             rs.totalPrize += tran.prize;
-
 
                             // Tổng tiền lỗ lãi
                             this.updateSumTran(sumTXTMap, tran);
@@ -519,13 +515,14 @@ public class MGRoomTaiXiu extends MGRoom {
     }
 
     private void updateSumTran(Map<String, TransactionTaiXiu> map, TransactionTaiXiuDetail tranDetail) {
-        if (map.containsKey(tranDetail.username)) {
-            TransactionTaiXiu txt = map.get(tranDetail.username);
+        String mapKey = tranDetail.username + "_" + tranDetail.betSide;
+        if (map.containsKey(mapKey)) {
+            TransactionTaiXiu txt = map.get(mapKey);
             if (txt.betSide == tranDetail.betSide) {
                 txt.betValue += tranDetail.betValue;
                 txt.totalPrize += tranDetail.prize;
                 txt.totalRefund += tranDetail.refund;
-                map.put(tranDetail.username, txt);
+                map.put(mapKey, txt);
             }
         } else {
             TransactionTaiXiu tran = new TransactionTaiXiu();
@@ -538,7 +535,7 @@ public class MGRoomTaiXiu extends MGRoom {
             tran.totalPrize = tranDetail.prize;
             tran.totalRefund = tranDetail.refund;
             tran.kubetSessionId = tranDetail.kubetSessionId;
-            map.put(tranDetail.username, tran);
+            map.put(mapKey, tran);
         }
     }
 
