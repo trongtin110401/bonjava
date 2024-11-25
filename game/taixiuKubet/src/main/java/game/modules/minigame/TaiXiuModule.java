@@ -239,7 +239,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
         StartNewGameTaiXiuMsg msg = new StartNewGameTaiXiuMsg();
         msg.referenceId = this.kubetSessionId;
         msg.moneyHu = moneyHu;
-        msg.startSessionTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss dd/MM/yyyy"));
+        msg.startSessionTime = this.startSessionTime;
 
         this.sendMessageToTaiXiuNewThread(msg);
 
@@ -372,11 +372,11 @@ public class TaiXiuModule extends BaseClientRequestHandler {
             switch (state) {
                 case GENERATE_RESULT:
                     System.out.println("GENERATE_RESULT: " + this.count);
+                    startSessionTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss dd/MM/yyyy"));
                     this.startNewRoundTX();
                     amountBotTaiFake = 0;
                     amountBotXiuFake = 0;
                     roomTXVin.resultTX = null;
-                    startSessionTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss dd/MM/yyyy"));
                     break;
                 case BETTING:
                     System.out.println("BETTING: " + this.count);

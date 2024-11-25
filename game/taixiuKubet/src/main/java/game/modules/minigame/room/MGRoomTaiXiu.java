@@ -242,7 +242,7 @@ public class MGRoomTaiXiu extends MGRoom {
         return msg;
     }
 
-    public void updateTaiXiuPerSecond(int amountBotTaiFake, int amountBotXiuFake, int amountBotChanFake, int amountBotLeFake) {
+    public void     updateTaiXiuPerSecond(int amountBotTaiFake, int amountBotXiuFake, int amountBotChanFake, int amountBotLeFake) {
         UpdateTaiXiuPerSecondMsg msg = new UpdateTaiXiuPerSecondMsg();
         msg.remainTime = this.getRemainTime();
         msg.bettingState = this.bettingRound;
@@ -689,7 +689,10 @@ public class MGRoomTaiXiu extends MGRoom {
 
     public boolean isBot(String username) {
         UserCacheModel model = this.userService.getUser(username);
-        return model.isBot();
+        if (model != null)
+            return model.isBot();
+        else
+            return true;
     }
 
     public static short getMoneyType(int roomId) {
