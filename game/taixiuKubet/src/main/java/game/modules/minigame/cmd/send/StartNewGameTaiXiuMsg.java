@@ -12,7 +12,7 @@ public class StartNewGameTaiXiuMsg
     public long referenceId;
     public long moneyHu;
     public short remainTimeRutLoc;
-    public String startSessionTime;
+    public String startSessionTime = "";
 
     public StartNewGameTaiXiuMsg() {
         super(2115);
