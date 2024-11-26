@@ -371,8 +371,8 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                 return;
             }
 
-            this.kubetSessionId = kubetSessionId;
-            if (count == this.count) {
+            this.kubetSessionId = referenceTaiXiuId;
+            if (count == 1 && count == this.count) {
                 count -= 1;
             }
             this.count = count;
