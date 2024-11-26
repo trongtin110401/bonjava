@@ -35,6 +35,7 @@ import game.modules.minigame.cmd.send.StartNewGameTaiXiuMsg;
 import game.modules.minigame.entities.BotMinigame;
 import game.modules.minigame.entities.BotTaiXiu;
 import game.modules.minigame.game79.DynamicReconnectWebSocketClient;
+import game.modules.minigame.game79.DynamicXocDia88ReconnectWebSocketClient;
 import game.modules.minigame.room.MGRoom;
 import game.modules.minigame.room.MGRoomTaiXiu;
 import game.modules.minigame.utils.GenerationTaiXiu;
@@ -101,7 +102,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
 
         // websocket ket qua kubet
         URI uri = DynamicReconnectWebSocketClient.buildDynamicURI();
-        DynamicReconnectWebSocketClient.currentClient = new DynamicReconnectWebSocketClient(this, uri);
+        DynamicXocDia88ReconnectWebSocketClient.currentClient = new DynamicXocDia88ReconnectWebSocketClient(this, uri);
         DynamicReconnectWebSocketClient.currentClient.connect();
     }
 
