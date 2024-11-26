@@ -371,8 +371,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                 return;
             }
 
-            CURRENT_GAME_STATE = state;
-
             this.kubetSessionId = kubetSessionId;
             this.count = count;
             MGRoomTaiXiu roomTXVin = this.getRoomTX((short) 1);
@@ -381,6 +379,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                     if (CURRENT_GAME_STATE == state) {
                         return;
                     }
+                    CURRENT_GAME_STATE = state;
                     System.out.println("GENERATE_RESULT: " + this.count);
                     startSessionTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss dd/MM/yyyy"));
                     this.startNewRoundTX();
@@ -389,6 +388,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                     roomTXVin.resultTX = null;
                     break;
                 case BETTING:
+                    CURRENT_GAME_STATE = state;
                     if (!roomTXVin.isBetting()) {
                         startSessionTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss dd/MM/yyyy"));
                         this.startNewRoundTX();
@@ -399,6 +399,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                     System.out.println("BETTING: " + this.count);
                     break;
                 case SHOW_RESULT:
+                    CURRENT_GAME_STATE = state;
                     System.out.println("SHOW_RESULT: " + this.count);
                     roomTXVin.disableBetting();
                     roomTXVin.finish();
@@ -407,6 +408,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                     if (CURRENT_GAME_STATE == state) {
                         return;
                     }
+                    CURRENT_GAME_STATE = state;
                     System.out.println("CONFIRM_RESULT: " + this.count);
                     this.generateResult(dice1, dice2, dice3);
                     BitZeroServer.getInstance().getTaskScheduler().schedule(this.calculatingTXVinTask, 1, TimeUnit.SECONDS);
