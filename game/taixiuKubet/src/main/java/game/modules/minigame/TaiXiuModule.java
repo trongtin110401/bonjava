@@ -366,7 +366,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
 
     public synchronized void handleGameState(long kubetSessionId, TxKubetState state, int count, int dice1, int dice2, int dice3) {
         try {
-            if (CURRENT_GAME_STATE == TxKubetState.INIT && state != TxKubetState.GENERATE_RESULT) {
+            if (CURRENT_GAME_STATE == TxKubetState.INIT && state != TxKubetState.GENERATE_RESULT && state != TxKubetState.BETTING) {
                 System.out.println("Waiting for old session to end to starting new session...." + count);
                 return;
             }
