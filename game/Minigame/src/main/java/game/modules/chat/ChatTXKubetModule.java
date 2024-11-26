@@ -235,7 +235,7 @@ public class ChatTXKubetModule extends BaseClientRequestHandler {
         UserModel model = userMap.get(username);
         if (cmd.type == TYPE_TIP) {
             if (cmd.money >= 2000 && model.getVinTotal() >= cmd.money) {
-                MoneyResponse response = this.userService.updateMoney(username, cmd.money, "vin", Games.TAI_XIU_KUBET.getName(), "TaiXiuKubet tặng quà", "TaiXiuKubet tặng quà dealer", 0L, 0L, TransType.END_TRANS);
+                MoneyResponse response = this.userService.updateMoney(username, -cmd.money, "vin", Games.TAI_XIU_KUBET.getName(), "TaiXiuKubet tặng quà", "TaiXiuKubet tặng quà dealer", 0L, 0L, TransType.END_TRANS);
                 if (response.isSuccess()) {
                     cmd.message = username + "đã tip " + cmd.money + " cho dealer";
                     this.chat(username, cmd.message, cmd.type, cmd.money);

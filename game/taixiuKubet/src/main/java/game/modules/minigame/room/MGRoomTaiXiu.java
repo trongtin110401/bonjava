@@ -183,7 +183,7 @@ public class MGRoomTaiXiu extends MGRoom {
                             message.setBetValue(betValue);
                             message.setReferenceId(referenceId);
                             message.setUserId(userId);
-                            RMQApi.publishMessage("queue_message_tx", message, 55);
+                            RMQApi.publishMessage("queue_message_tx", message, 56);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -285,13 +285,11 @@ public class MGRoomTaiXiu extends MGRoom {
                 if (potX != null && potX.contributors != null) { // tính toán tiền thắng cược bên xỉu
                     for (TransactionTaiXiuDetail tran : potX.contributors) {
                         try {
-
                             // giải thưởng, hay nói cách khác là số tiền thắng
                             tran.prize = Math.round((long) ((float) tran.betValue * (100.0f - this.tax) / 100.0f) + tran.betValue);
 
                             // Cộng dồn để tính tổng số tiền trả lại
                             rs.totalPrize += tran.prize;
-
 
                             // Tổng tiền lỗ lãi
                             this.updateSumTran(sumTXTMap, tran);
@@ -310,8 +308,6 @@ public class MGRoomTaiXiu extends MGRoom {
                 }
                 for (TransactionTaiXiuDetail tran : potT.contributors) {
                     try {
-
-
                         // Tổng tiền lỗ lãi
                         this.updateSumTran(sumTXTMap, tran);
                         this.updateSumTran(sumTai, tran);
@@ -329,9 +325,7 @@ public class MGRoomTaiXiu extends MGRoom {
                     for (TransactionTaiXiuDetail tran : potT.contributors) {
                         try {
 
-
                             tran.prize = Math.round((long) ((float) tran.betValue * (100.0f - this.tax) / 100.0f) + tran.betValue);
-
                             rs.totalPrize += tran.prize;
 
 
@@ -349,8 +343,6 @@ public class MGRoomTaiXiu extends MGRoom {
                 if (potX == null || potX.contributors == null) break;
                 for (TransactionTaiXiuDetail tran : potX.contributors) {
                     try {
-
-
                         // Tổng tiền lỗ lãi
                         this.updateSumTran(sumTXTMap, tran);
                         this.updateSumTran(sumXiu, tran);
@@ -737,13 +729,12 @@ public class MGRoomTaiXiu extends MGRoom {
         public void run() {
             for (Map.Entry<String, TransactionTaiXiu> entry : this.trans.entrySet()) {
                 try {
-                    String username = entry.getKey();
                     TransactionTaiXiu txt = entry.getValue();
+                    String username = txt.getUsername();
                     long currentMoney = MGRoomTaiXiu.this.userService.getCurrentMoneyUserCache(username, MGRoomTaiXiu.this.moneyTypeStr);
                     if (txt.totalPrize == 0L && txt.totalRefund == 0L) {
                         MGRoomTaiXiu.this.userService.updateMoney(username, 0L, MGRoomTaiXiu.this.moneyTypeStr, Games.TAI_XIU_KUBET.getName(), "", "", 0L, MGRoomTaiXiu.this.referenceId, TransType.END_TRANS);
                     } else {
-                        MoneyResponse res;
                         if (txt.totalPrize > 0L) {
                             TransType transType = TransType.END_TRANS;
                             if (txt.totalRefund > 0L) {

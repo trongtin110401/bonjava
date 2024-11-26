@@ -182,4 +182,22 @@ public class TelegramAlert {
             return false;
         }
     }
+
+    public static boolean SendMessageBetTXKUBET(String nickname, long money, short betSize, long referenceId, int userId) {
+        try {
+            NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.forLanguageTag("vi-VN"));
+            String formattedNumber = numberFormat.format(money);
+            String message = "Phiên : <b> " + referenceId + "</b>";
+            message += "\nTài Khoản : <b> " + nickname + "</b> / <b>" + userId + "</b>";
+            if (betSize == 0) {
+                message += "\nCửa Đặt : <b> Xỉu </b>";
+            } else {
+                message += "\nCửa Đặt : <b> Tài </b>";
+            }
+            message += "\nSố Tiền Đặt : <b>" + formattedNumber + "</b>";
+            return SendMessageTXMD5(message);
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

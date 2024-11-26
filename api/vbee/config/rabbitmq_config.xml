@@ -540,6 +540,12 @@
                     </path>
                 </command>
                 <command>
+                    <id>56</id>
+                    <name>Send bet tx md5 message to tele</name>
+                    <path>com.vinplay.vbee.rmq.log.processor.SendMessageBetTXKubetToTeleProcessor
+                    </path>
+                </command>
+                <command>
                     <id>50</id>
                     <name>Send bet tx message to tele</name>
                     <path>com.vinplay.vbee.rmq.log.processor.SendMessageBetTXToTeleProcessor
