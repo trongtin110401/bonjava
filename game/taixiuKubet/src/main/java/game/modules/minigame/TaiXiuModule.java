@@ -86,24 +86,29 @@ public class TaiXiuModule extends BaseClientRequestHandler {
     private int amountBotLeFake = 0;
 
     public void init() {
-        TaiXiuChatMsg taiXiuChatMsg = new TaiXiuChatMsg();
-        cacheService.setObject("admin_lst_msg_kubet", taiXiuChatMsg);
-        cacheService.setObject("admin_msg_kubet", taiXiuChatMsg);
-        Debug.info("referentTaiXiuId là " + this.referenceTaiXiuId);
-        this.rooms.put(MGRoomTaiXiu.getKeyRoom((short) 1), new MGRoomTaiXiu("TaiXiu_1", this.referenceTaiXiuId, (byte) 1, this));
+        try {
+            TaiXiuChatMsg taiXiuChatMsg = new TaiXiuChatMsg();
+            cacheService.setObject("admin_lst_msg_kubet", taiXiuChatMsg);
+            cacheService.setObject("admin_msg_kubet", taiXiuChatMsg);
+            Debug.info("referentTaiXiuId là " + this.referenceTaiXiuId);
+            this.rooms.put(MGRoomTaiXiu.getKeyRoom((short) 1), new MGRoomTaiXiu("TaiXiu_1", this.referenceTaiXiuId, (byte) 1, this));
 
-        this.loadData();
+            this.loadData();
 
-        Debug.info("referentTaiXiuId sau khi load data là " + this.referenceTaiXiuId);
-        BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
-        BitZeroServer.getInstance().getTaskScheduler().schedule(this.serverReadyTask, 10, TimeUnit.SECONDS);
-        Debug.trace("SERVER READY TASK RUNNING...");
-        this.getParentExtension().addEventListener(BZEventType.USER_DISCONNECT, this);
+            Debug.info("referentTaiXiuId sau khi load data là " + this.referenceTaiXiuId);
+            BitZeroServer.getInstance().getTaskScheduler().scheduleAtFixedRate(this.gameLoopTask, 10, 1, TimeUnit.SECONDS);
+            BitZeroServer.getInstance().getTaskScheduler().schedule(this.serverReadyTask, 10, TimeUnit.SECONDS);
+            Debug.trace("SERVER READY TASK RUNNING...");
+            this.getParentExtension().addEventListener(BZEventType.USER_DISCONNECT, this);
 
-        // websocket ket qua kubet
-        URI uri = DynamicXocDia88ReconnectWebSocketClient.buildDynamicURI();
-        DynamicXocDia88ReconnectWebSocketClient.currentClient = new DynamicXocDia88ReconnectWebSocketClient(this, uri);
-        DynamicReconnectWebSocketClient.currentClient.connect();
+            // websocket ket qua kubet
+            URI uri = DynamicXocDia88ReconnectWebSocketClient.buildDynamicURI();
+            DynamicXocDia88ReconnectWebSocketClient.currentClient = new DynamicXocDia88ReconnectWebSocketClient(this, uri);
+            DynamicReconnectWebSocketClient.currentClient.connect();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw new RuntimeException(ex);
+        }
     }
 
     public void handleServerEvent(IBZEvent ibzevent) {
