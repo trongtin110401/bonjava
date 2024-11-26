@@ -46,7 +46,7 @@ public class SaveTransactionTaiXiuKubetProcessor
             TopVinhDanhDto topVinhDanhDto = new TopVinhDanhDto();
             topVinhDanhDto.setUsername(message.username);
             topVinhDanhDto.setScore(message.prize - message.betValue);
-            topVinhDanhDto.setBoardName(Games.TAI_XIU_MD5.getName());
+            topVinhDanhDto.setBoardName(Games.TAI_XIU_KUBET.getName());
             TopVinhDanhProcessor.addTopVinhDanh(topVinhDanhDto);
         } catch (Exception e) {
             e.printStackTrace();
