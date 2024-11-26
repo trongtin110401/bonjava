@@ -372,10 +372,12 @@ public class TaiXiuModule extends BaseClientRequestHandler {
             }
 
             this.kubetSessionId = referenceTaiXiuId;
-            if (count == 1 && count == this.count) {
-                count -= 1;
+            if (count == 1 && this.count == 1) {
+                this.count = 0;
+            } else {
+                this.count = count;
             }
-            this.count = count;
+
             MGRoomTaiXiu roomTXVin = this.getRoomTX((short) 1);
             switch (state) {
                 case GENERATE_RESULT:
