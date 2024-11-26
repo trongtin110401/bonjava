@@ -364,6 +364,10 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                 return;
             }
 
+            if (CURRENT_GAME_STATE == state) {
+                return;
+            }
+
             CURRENT_GAME_STATE = state;
 
             this.kubetSessionId = kubetSessionId;
@@ -379,6 +383,13 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                     roomTXVin.resultTX = null;
                     break;
                 case BETTING:
+                    if (!roomTXVin.isBetting()) {
+                        startSessionTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss dd/MM/yyyy"));
+                        this.startNewRoundTX();
+                        amountBotTaiFake = 0;
+                        amountBotXiuFake = 0;
+                        roomTXVin.resultTX = null;
+                    }
                     System.out.println("BETTING: " + this.count);
                     break;
                 case SHOW_RESULT:
