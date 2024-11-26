@@ -41,7 +41,7 @@ public class SaveTransactionTaiXiuKubetProcessor
         return false;
     }
 
-    public void addTopVinhDanh(TransactionTaiXiuMessage message) {so
+    public void addTopVinhDanh(TransactionTaiXiuMessage message) {
         try {
             TopVinhDanhDto topVinhDanhDto = new TopVinhDanhDto();
             topVinhDanhDto.setUsername(message.username);
