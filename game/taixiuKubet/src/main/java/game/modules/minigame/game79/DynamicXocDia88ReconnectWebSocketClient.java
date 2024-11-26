@@ -1,5 +1,6 @@
 package game.modules.minigame.game79;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -37,6 +38,7 @@ public class DynamicXocDia88ReconnectWebSocketClient extends WebSocketClient {
 
         SimpleModule module = new SimpleModule();
         module.addDeserializer(MainModel.class, new XocDia88MainModelDeserializer());
+        objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         objectMapper.registerModule(module);
     }
 
@@ -55,7 +57,7 @@ public class DynamicXocDia88ReconnectWebSocketClient extends WebSocketClient {
 
             MainModel model = objectMapper.readValue(message, MainModel.class);
             switch (model.getM().get(0).getMethod()) {
-                case "sessionInfo":
+                case "LivestreamsessionInfo":
                     SessionInfo sessionInfo = (SessionInfo) model.getM().get(0).getArguments().get(0);
                     TxKubetState kubetState = TxKubetState.getByStep(sessionInfo.getCurrentState());
                     int countDownTime = sessionInfo.getEllapsed();
