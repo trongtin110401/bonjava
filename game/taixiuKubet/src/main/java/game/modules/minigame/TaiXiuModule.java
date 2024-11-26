@@ -365,10 +365,6 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                 return;
             }
 
-            if (CURRENT_GAME_STATE == state) {
-                return;
-            }
-
             CURRENT_GAME_STATE = state;
 
             this.kubetSessionId = kubetSessionId;
@@ -376,6 +372,9 @@ public class TaiXiuModule extends BaseClientRequestHandler {
             MGRoomTaiXiu roomTXVin = this.getRoomTX((short) 1);
             switch (state) {
                 case GENERATE_RESULT:
+                    if (CURRENT_GAME_STATE == state) {
+                        return;
+                    }
                     System.out.println("GENERATE_RESULT: " + this.count);
                     startSessionTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss dd/MM/yyyy"));
                     this.startNewRoundTX();
@@ -399,6 +398,9 @@ public class TaiXiuModule extends BaseClientRequestHandler {
                     roomTXVin.finish();
                     break;
                 case CONFIRM_RESULT:
+                    if (CURRENT_GAME_STATE == state) {
+                        return;
+                    }
                     System.out.println("CONFIRM_RESULT: " + this.count);
                     this.generateResult(dice1, dice2, dice3);
                     BitZeroServer.getInstance().getTaskScheduler().schedule(this.calculatingTXVinTask, 1, TimeUnit.SECONDS);
