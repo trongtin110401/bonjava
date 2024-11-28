@@ -144,8 +144,9 @@ public class TelegramUtil {
             String chatId = "-4138070971";
             String bootToken = GameCommon.getValueStr("Telegram_boot_token");
             OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
-                    .connectTimeout(3, TimeUnit.SECONDS)
-                    .readTimeout(3, TimeUnit.SECONDS)
+                    .connectTimeout(10, TimeUnit.SECONDS)
+                    .writeTimeout(10, TimeUnit.SECONDS)
+                    .readTimeout(10, TimeUnit.SECONDS)
                     .build();
             Request request = new Request.Builder()
                     .url("https://api.telegram.org/bot" + bootToken + "/sendMessage?text=" + encodeValue(message) + "&chat_id=" + chatId + "&parse_mode=HTML")
@@ -171,6 +172,7 @@ public class TelegramUtil {
 
             OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
                     .connectTimeout(10, TimeUnit.SECONDS)
+                    .writeTimeout(10, TimeUnit.SECONDS)
                     .readTimeout(10, TimeUnit.SECONDS)
                     .build();
 
@@ -196,6 +198,7 @@ public class TelegramUtil {
             String bootToken = GameCommon.getValueStr("Telegram_boot_token");
             OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
                     .connectTimeout(10, TimeUnit.SECONDS)
+                    .writeTimeout(10, TimeUnit.SECONDS)
                     .readTimeout(10, TimeUnit.SECONDS)
                     .build();
             Request request = new Request.Builder()
