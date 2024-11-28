@@ -109,7 +109,7 @@ public class TelegramUtil {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if (response != null){
+            if (response != null) {
                 response.close();
             }
         }
@@ -130,7 +130,7 @@ public class TelegramUtil {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if (response != null){
+            if (response != null) {
                 response.close();
             }
         }
@@ -156,7 +156,7 @@ public class TelegramUtil {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if (response != null){
+            if (response != null) {
                 response.close();
             }
         }
@@ -170,8 +170,8 @@ public class TelegramUtil {
             String bootToken = GameCommon.getValueStr("Telegram_boot_token");
 
             OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
-                    .connectTimeout(3, TimeUnit.SECONDS)
-                    .readTimeout(3, TimeUnit.SECONDS)
+                    .connectTimeout(10, TimeUnit.SECONDS)
+                    .readTimeout(10, TimeUnit.SECONDS)
                     .build();
 
             Request request = new Request.Builder()
@@ -182,7 +182,7 @@ public class TelegramUtil {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if (response != null){
+            if (response != null) {
                 response.close();
             }
         }
@@ -195,8 +195,8 @@ public class TelegramUtil {
             String chatId = "-1002101792441";
             String bootToken = GameCommon.getValueStr("Telegram_boot_token");
             OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
-                    .connectTimeout(3, TimeUnit.SECONDS)
-                    .readTimeout(3, TimeUnit.SECONDS)
+                    .connectTimeout(10, TimeUnit.SECONDS)
+                    .readTimeout(10, TimeUnit.SECONDS)
                     .build();
             Request request = new Request.Builder()
                     .url("https://api.telegram.org/bot" + bootToken + "/sendMessage?text=" + encodeValue(message) + "&chat_id=" + chatId + "&parse_mode=HTML")
@@ -206,7 +206,7 @@ public class TelegramUtil {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if (response != null){
+            if (response != null) {
                 response.close();
             }
         }
@@ -219,8 +219,8 @@ public class TelegramUtil {
             String chatId = "-1002101792441";
             String bootToken = GameCommon.getValueStr("Telegram_boot_token");
             OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
-                    .connectTimeout(3, TimeUnit.SECONDS)
-                    .readTimeout(3, TimeUnit.SECONDS)
+                    .connectTimeout(10, TimeUnit.SECONDS)
+                    .readTimeout(10, TimeUnit.SECONDS)
                     .build();
             Request request = new Request.Builder()
                     .url("https://api.telegram.org/bot" + bootToken + "/sendMessage?text=" + encodeValue(message) + "&chat_id=" + chatId + "&parse_mode=HTML")
@@ -230,7 +230,7 @@ public class TelegramUtil {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if (response != null){
+            if (response != null) {
                 response.close();
             }
         }
