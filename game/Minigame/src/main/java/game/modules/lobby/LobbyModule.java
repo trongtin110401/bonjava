@@ -2760,7 +2760,7 @@ public class LobbyModule extends BaseClientRequestHandler {
             this.updateJackpot();
             this.txJackpot();
             this.txMd5Jackpot();
-            this.txKubetJackpot();
+//            this.txKubetJackpot();
             this.countUpdateJackpot = 0L;
         }
 
