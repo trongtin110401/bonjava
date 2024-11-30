@@ -51,7 +51,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
     private static final String SC_TAI_XIU_MD5 = "SC_TAI_XIU_MD5";
     private static final String SC_TAI_XIU_KUBET = "SC_TAI_XIU_KUBET";
     private static final String USER_TAI_XIU_MD5 = "user_tai_xiu_md5";
-    private static final String USER_TAI_XIU_KUBET= "user_tai_xiu_kubet";
+    private static final String USER_TAI_XIU_KUBET = "user_tai_xiu_kubet";
     private static final String CASHOUTBYBANK_ADMIN = "cashoutbybank_admin";
     private static final String CASHOUTBYCARDMANUAL_ADMIN = "cashoutbycardmanual_admin";
     private static final String RECHARGEBYBANK_ADMIN = "rechargebybank_admin";
@@ -671,19 +671,16 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
                 List<TopWin> topWins = getTopWin(response.body().string());
                 cache = HazelcastClientFactory.getInstance();
                 for (TopWin topWin : topWins) {
-                    userList.stream()
-                            .filter(taiXiuAdmin -> taiXiuAdmin.getUsername().equals(topWin.getUsername()))
-                            .findFirst()
-                            .ifPresent(taiXiuAdmin -> {
-                                taiXiuAdmin.setReportMoneyToday(topWin.getMoney());
-                                if (cache != null) {
-                                    userMap = cache.getMap("users");
-                                    UserCacheModel user = userMap.get(topWin.getUsername());
-                                    if (user != null) {
-                                        taiXiuAdmin.setTotalMoney(user.getVinTotal());
-                                    }
-                                }
-                            });
+                    userList.forEach(taiXiuAdmin -> {
+                        if (taiXiuAdmin.getUsername().equals(topWin.getUsername())) {
+                            taiXiuAdmin.setReportMoneyToday(topWin.getMoney());
+                            userMap = cache.getMap("users");
+                            UserCacheModel user = userMap.get(topWin.getUsername());
+                            if (user != null) {
+                                taiXiuAdmin.setTotalMoney(user.getVinTotal());
+                            }
+                        }
+                    });
                 }
             }
         } catch (Exception e) {
