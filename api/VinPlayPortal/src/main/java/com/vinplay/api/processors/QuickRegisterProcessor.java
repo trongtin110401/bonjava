@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.144.
- * 
+ *
  * Could not load the following classes:
  *  com.vinplay.usercore.dao.impl.UserDaoImpl
  *  com.vinplay.usercore.service.impl.MarketingServiceImpl
@@ -21,139 +21,127 @@
 package com.vinplay.api.processors;
 
 import com.vinplay.api.utils.PortalUtils;
+import com.vinplay.marketing.MARKETING_KEYWORD;
+import com.vinplay.marketing.entity.UTMTracking;
+import com.vinplay.marketing.service.MarketingService;
 import com.vinplay.usercore.dao.impl.SecurityDaoImpl;
 import com.vinplay.usercore.dao.impl.UserDaoImpl;
-import com.vinplay.usercore.service.impl.MarketingServiceImpl;
 import com.vinplay.usercore.service.impl.SecurityServiceImpl;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.usercore.utils.GameCommon;
-import com.vinplay.usercore.utils.UserMakertingUtil;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.enums.StatusGames;
-import com.vinplay.vbee.common.messages.UserMarketingMessage;
 import com.vinplay.vbee.common.response.BaseResponseModel;
 import com.vinplay.vbee.common.utils.UserValidaton;
-import com.vinplay.vbee.common.utils.VinPlayUtils;
+
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 public class QuickRegisterProcessor
-implements BaseProcessor<HttpServletRequest, String> {
-    private static final Logger logger = Logger.getLogger((String)"api");
+        implements BaseProcessor<HttpServletRequest, String> {
+    private static final Logger logger = Logger.getLogger((String) "api");
     private static Set<String> listIp = new HashSet<>();
     private HashMap<String, Integer> map = new HashMap<>();
+
     public String execute(Param<HttpServletRequest> param) {
         BaseResponseModel res;
-        block10 : {
-            HttpServletRequest request = (HttpServletRequest)param.get();
+        block10:
+        {
+            HttpServletRequest request = (HttpServletRequest) param.get();
             String username = request.getParameter("un");
             String password = request.getParameter("pw");
-         //   String captcha = request.getParameter("cp");
-         //   String captchaId = request.getParameter("cid");
+            //   String captcha = request.getParameter("cp");
+            //   String captchaId = request.getParameter("cid");
             String nickname = request.getParameter("nn");
             String campaign = request.getParameter("utm_campaign");
             String medium = request.getParameter("utm_medium");
             String source = request.getParameter("utm_source");
             String c = request.getParameter("cl");
             String codeDaiLy = request.getParameter("code_daily");
-            logger.debug((Object)("Request quickRegister: username: " + username + ", password: " + password));
+            logger.debug((Object) ("Request quickRegister: username: " + username + ", password: " + password));
             res = new BaseResponseModel(false, "1001");
-            if(username == null || username.length() > 20 || username.length() < 6 || nickname == null || nickname.isEmpty()) {
+            if (username == null || username.length() > 20 || username.length() < 6 || nickname == null || nickname.isEmpty()) {
                 res.setErrorCode("tên đăng nhập hoặc tên hiển thị không được để trống.");
                 return res.toJson();
             }
             String ip = this.getIpAddress(request);
             try {
-                if(map.containsKey(ip)) {
+                if (map.containsKey(ip)) {
                     Integer data = map.get(ip);
-                    if(data > 10) {
+                    if (data > 10) {
                         return res.toJson();
                     }
                 }
-            }catch (Exception e) {
+            } catch (Exception e) {
                 e.getMessage();
             }
             try {
-                int statusGame = GameCommon.getValueInt((String)"STATUS_GAME");
+                int statusGame = GameCommon.getValueInt((String) "STATUS_GAME");
                 if (statusGame == StatusGames.MAINTAIN.getId() || statusGame == StatusGames.SANDBOX.getId()) {
                     res.setErrorCode("1114");
-                    logger.debug((Object)("Response login: " + res.toJson()));
+                    logger.debug((Object) ("Response login: " + res.toJson()));
                     return res.toJson();
                 }
-                if (username == null || password == null ) break block10;
+                if (username == null || password == null) break block10;
                 if (true) {
-                    if (UserValidaton.validateUserName((String)username)) {
+                    if (UserValidaton.validateUserName((String) username)) {
                         try {
                             UserServiceImpl userService = new UserServiceImpl();
                             res.setErrorCode(userService.insertUser(username, password));
                             if (!res.getErrorCode().equals("0")) break block10;
                             res.setSuccess(true);
                             try {
-                                if (campaign != null && medium != null && source != null) {
-                                    MarketingServiceImpl mktService = new MarketingServiceImpl();
-                                    UserMarketingMessage message = new UserMarketingMessage(username, "", 0, VinPlayUtils.getCurrentDateMarketing(), campaign, medium, source);
-                                    mktService.saveUserMarketing(message);
-                                    UserMakertingUtil.newRegisterUser((String)campaign, (String)medium, (String)source);
-                                }
                                 UserDaoImpl dao = new UserDaoImpl();
                                 int userId = dao.getIdByUsername(username);
+
+                                // MARKETING
+                                try {
+                                    marketing(campaign, source, medium, username);
+                                } catch (Exception ignored) {
+                                }
+
                                 SecurityServiceImpl sercuSer = new SecurityServiceImpl();
                                 sercuSer.saveLoginInfo(userId, username, "", PortalUtils.getIpAddress(request), PortalUtils.getUserAgent(request), 0, "web");
-                                // Leon: 
+                                // Leon:
                                 if (codeDaiLy != null && !codeDaiLy.isEmpty()) {
                                     sercuSer.saveUserMapToDailyInfo(userId, username, "", codeDaiLy);
                                 }
                                 // END - Leon:
 
-                                try
-                                {
-                                    if (c != null)
-                                    {
+                                try {
+                                    if (c != null) {
                                         SecurityDaoImpl securDao = new SecurityDaoImpl();
-                                        if (c.toLowerCase().equals("m") || c.toLowerCase().equals("man"))
-                                        {
+                                        if (c.toLowerCase().equals("m") || c.toLowerCase().equals("man")) {
                                             securDao.updateClient(userId, "M");
-                                        }
-                                        else if (c.toLowerCase().equals("r") )
-                                        {
+                                        } else if (c.toLowerCase().equals("r")) {
                                             securDao.updateClient(userId, "R");
-                                        }
-                                        else if (c.toLowerCase().equals("v") )
-                                        {
+                                        } else if (c.toLowerCase().equals("v")) {
                                             securDao.updateClient(userId, "V");
-                                        }
-                                        else if (c.toLowerCase().equals("k"))
-                                        {
+                                        } else if (c.toLowerCase().equals("k")) {
                                             securDao.updateClient(userId, "K");
-                                        }
-                                        else
-                                        {
+                                        } else {
                                             securDao.updateClient(userId, "X");
                                         }
-                                    }
-                                    else
-                                    {
+                                    } else {
                                         SecurityDaoImpl securDao = new SecurityDaoImpl();
                                         securDao.updateClient(userId, "X");
                                     }
-                                }
-                                catch (Exception ex)
-                                {
-                                    
+                                } catch (Exception ex) {
+
                                 }
                                 break block10;
+                            } catch (Exception e) {
+                                logger.debug((Object) e);
                             }
-                            catch (Exception e) {
-                                logger.debug((Object)e);
-                            }
-                        }
-                        catch (SQLException e2) {
-                            logger.debug((Object)e2);
+                        } catch (SQLException e2) {
+                            logger.debug((Object) e2);
                         }
                         break block10;
                     }
@@ -161,8 +149,7 @@ implements BaseProcessor<HttpServletRequest, String> {
                     break block10;
                 }
                 res.setErrorCode("115");
-            }
-            catch (Exception e3) {
+            } catch (Exception e3) {
                 e3.printStackTrace();
             }
         }
@@ -188,8 +175,29 @@ implements BaseProcessor<HttpServletRequest, String> {
             }
 
         }
-        logger.debug((Object)("Response quickRegister: " + res.toJson()));
+        logger.debug((Object) ("Response quickRegister: " + res.toJson()));
         return res.toJson();
+    }
+
+    /**
+     * @param campaign
+     * @param source
+     * @param medium
+     * @param username
+     * @throws Exception
+     */
+    private static void marketing(String campaign, String source, String medium, String username) throws Exception {
+        if (StringUtils.isEmpty(campaign)) campaign = "UNKNOWN";
+        if (StringUtils.isEmpty(source)) source = MARKETING_KEYWORD.UTM_SOURCE_NATURAL;
+        if (StringUtils.isEmpty(medium)) medium = MARKETING_KEYWORD.UTM_MEDIUM_UNKNOWN;
+        int utmId = 1;
+
+        MarketingService marketingService = new MarketingService();
+        UTMTracking utmTracking = marketingService.getUTMTrackingByCampaign(campaign.toUpperCase());
+        if (utmTracking != null) {
+            utmId = utmTracking.getId();
+        }
+        marketingService.createUser(username, "email", utmId, "", "");
     }
 
     private String getIpAddress(HttpServletRequest request) {

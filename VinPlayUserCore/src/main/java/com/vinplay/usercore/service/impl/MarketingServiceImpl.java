@@ -29,8 +29,7 @@ import java.util.Collection;
 import java.util.List;
 import org.apache.log4j.Logger;
 
-public class MarketingServiceImpl
-implements MarketingService {
+public class MarketingServiceImpl implements MarketingService {
     private UserMarketingDao dao = new UserMarketingDaoImpl();
     private Logger logger = Logger.getLogger((String)"backend");
 

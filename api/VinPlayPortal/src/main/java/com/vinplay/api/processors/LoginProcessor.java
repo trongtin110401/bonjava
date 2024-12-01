@@ -22,25 +22,22 @@
 package com.vinplay.api.processors;
 
 import bitzero.util.common.business.Debug;
-import com.hazelcast.core.IMap;
 import com.vinplay.api.utils.PortalUtils;
-import com.vinplay.api.utils.SocialUtils;
+import com.vinplay.marketing.entity.MarketingUser;
+import com.vinplay.marketing.service.MarketingService;
 import com.vinplay.usercore.service.CacheService;
 import com.vinplay.usercore.service.OtpService;
 import com.vinplay.usercore.service.impl.CacheServiceImpl;
-import com.vinplay.usercore.service.impl.MarketingServiceImpl;
 import com.vinplay.usercore.service.impl.OtpServiceImpl;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.usercore.utils.GameCommon;
-import com.vinplay.usercore.utils.UserMakertingUtil;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.enums.StatusGames;
-import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
-import com.vinplay.vbee.common.messages.UserMarketingMessage;
-import com.vinplay.vbee.common.models.SocialModel;
+import com.vinplay.vbee.common.messages.marketing.UserAccessLogMessage;
 import com.vinplay.vbee.common.models.UserModel;
 import com.vinplay.vbee.common.response.LoginResponse;
+import com.vinplay.vbee.common.rmq.RMQApi;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
 import org.apache.log4j.Logger;
 
@@ -56,7 +53,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.util.Arrays;
 import java.util.Base64;
-import java.util.Date;
 
 public class LoginProcessor
         implements BaseProcessor<HttpServletRequest, String> {
@@ -100,83 +96,14 @@ public class LoginProcessor
                 CacheService cacheService = new CacheServiceImpl();
                 cacheService.setValue("login_noti", "true");
                 UserServiceImpl userService = new UserServiceImpl();
-//                if (social != null && (social.equals("fb") || social.equals("gg"))) {
-//                    String cache = social.equals("fb") ? "cacheFacebook" : "cacheGoogle";
-//                    IMap socialMap = HazelcastClientFactory.getInstance().getMap(cache);
-//                    String socialId = SocialUtils.getSocialId((IMap<String, SocialModel>) socialMap, accessToken, social);
-//                    if (socialId == null) {
-//                        logger.debug((Object) ("Response login: " + res.toJson()));
-//                        return res.toJson();
-//                    }
-//                    if (socialId.isEmpty()) {
-//                        res.setErrorCode("1009");
-//                        logger.debug((Object) ("Response login: " + res.toJson()));
-//                        return res.toJson();
-//                    }
-//                    UserModel userModel = userService.getUserBySocialId(socialId, social);
-//                    if (userModel == null) {
-//                        if (statusGame == StatusGames.SANDBOX.getId()) {
-//                            res.setErrorCode("1114");
-//                            return res.toJson();
-//                        }
-//                        if (userModel.isBot()) {
-//                            res.setErrorCode("1114");
-//                            return res.toJson();
-//                        }
-//                        if (userService.insertUserBySocial(socialId, social)) {
-//                            socialMap.put((Object) socialId, (Object) new SocialModel(accessToken, socialId, new Date()));
-//                            String campaign = request.getParameter("utm_campaign");
-//                            String medium = request.getParameter("utm_medium");
-//                            String source = request.getParameter("utm_source");
-//                            if (campaign != null && medium != null && source != null) {
-//                                MarketingServiceImpl mktService = new MarketingServiceImpl();
-//                                UserMarketingMessage message = new UserMarketingMessage(username, "", 0, VinPlayUtils.getCurrentDateMarketing(), campaign, medium, source);
-//                                mktService.saveUserMarketing(message);
-//                                UserMakertingUtil.newRegisterUser((String) campaign, (String) medium, (String) source);
-//                            }
-//                            res.setErrorCode("2001");
-//                        }
-//                    } else {
-//                        if (statusGame == StatusGames.SANDBOX.getId() && !userModel.isCanLoginSandbox()) {
-//                            res.setErrorCode("1114");
-//                            logger.debug((Object) ("Response login: " + res.toJson()));
-//                            return res.toJson();
-//                        }
-//                        if (!userModel.isBanLogin()) {
-//                            if (userModel.getNickname() != null && !userModel.getNickname().trim().isEmpty()) {
-//                                if (userModel.isHasLoginSecurity() && userModel.getLoginOtp() >= 0L && userModel.getLoginOtp() <= userModel.getVinTotal()) {
-//                                    // send otp
-//                                    OtpService otpService = new OtpServiceImpl();
-//                                    int ret = otpService.sendVoiceOtp(userModel.getNickname(), "", true);
-//                                    if (ret != 0) {
-//                                        Debug.trace("Cannot send OTP message!");
-//                                        res.setErrorCode("116");
-//                                        return res.toJson();
-//                                    }
-//                                    res.setErrorCode("1012");
-//                                } else {
-//                                    SocialUtils.socialSuccess((IMap<String, SocialModel>) socialMap, socialId, accessToken);
-//                                    res = PortalUtils.loginSuccess(userModel, request);
-//                                }
-//                            } else {
-//                                res.setErrorCode("2001");
-//                            }
-//                        } else {
-//                            res.setErrorCode("1109");
-//                        }
-//                    }
-//                } else {
+
                 UserModel userModel2 = userService.getUserByUserName(username);
                 if (userModel2 != null) {
                     if (userModel2.isBot()) {
                         res.setErrorCode("1114");
                         return res.toJson();
                     }
-//                        if (statusGame == StatusGames.SANDBOX.getId() && !userModel2.isCanLoginSandbox()) {
-//                            res.setErrorCode("1114");
-//                            logger.debug((Object) ("Response login: " + res.toJson()));
-//                            return res.toJson();
-//                        }
+
                     if (!userModel2.isBanLogin()) {
                         if (userModel2.getPassword().equals(password)) {
                             if (userModel2.getNickname() != null && !userModel2.getNickname().trim().isEmpty()) {
@@ -192,6 +119,8 @@ public class LoginProcessor
                                     res.setErrorCode("1012");
                                 } else {
                                     res = PortalUtils.loginSuccess(userModel2, request);
+                                    // marketing
+                                    marketing(res, username);
                                 }
                             } else {
                                 res.setErrorCode("2001");
@@ -213,6 +142,23 @@ public class LoginProcessor
             return res.toJson();
         }
         return "MISSING PARAMETTER";
+    }
+
+    private static void marketing(LoginResponse res, String username) {
+        if (res.isSuccess()) {
+            try {
+                MarketingService marketingService = new MarketingService();
+                MarketingUser marketingUser = marketingService.getUsersByName(username);
+
+                if (marketingUser != null) {
+                    UserAccessLogMessage userAccessLogMessage = new UserAccessLogMessage();
+                    userAccessLogMessage.setUserId(marketingUser.getId());
+                    userAccessLogMessage.setAccessTime(System.currentTimeMillis());
+                    RMQApi.publishMessage("queue_marketing", userAccessLogMessage, 100);
+                }
+            } catch (Exception ignored) {
+            }
+        }
     }
 
     public String getRealPass(String encryptPass, String username) {

@@ -41,10 +41,8 @@ import com.hazelcast.core.IMap;
 import com.hazelcast.core.IQueue;
 import com.vinplay.api.processors.GetAppConfigProcesscor;
 import com.vinplay.dal.service.impl.AceMoneyService;
-import com.vinplay.dal.service.impl.CardBanMoneyService;
 import com.vinplay.dichvuthe.dao.impl.CashoutDaoImpl;
 import com.vinplay.dichvuthe.response.CashoutUserDailyResponse;
-import com.vinplay.dichvuthe.service.impl.AlertServiceImpl;
 import com.vinplay.usercore.dao.impl.VippointDaoImpl;
 import com.vinplay.usercore.service.MarketingService;
 import com.vinplay.usercore.service.OtherService;
@@ -59,9 +57,13 @@ import com.vinplay.vbee.common.models.cache.UserCacheModel;
 import com.vinplay.vbee.common.models.cache.UserExtraInfoModel;
 import com.vinplay.vbee.common.models.vippoint.UserVPEventModel;
 import com.vinplay.vbee.common.response.LoginResponse;
-import com.vinplay.vbee.common.utils.DateTimeUtils;
+import com.vinplay.vbee.common.rmq.RMQApi;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.json.JSONException;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
@@ -69,14 +71,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.json.JSONException;
-import org.python.parser.ast.Str;
 
 public class PortalUtils {
     private static final Logger logger = Logger.getLogger((String) "api");
@@ -185,8 +180,8 @@ public class PortalUtils {
             }
             boolean appSec = otherService.checkActiveByNickname(userModel.getNickname());
             int appSecure = 0;
-            if (appSec){
-                appSecure= 1;
+            if (appSec) {
+                appSecure = 1;
             }
             String birthday = "";
             if (userCache.getBirthday() != null && !userCache.getBirthday().isEmpty()) {
