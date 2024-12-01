@@ -98,14 +98,14 @@ public class QuickRegisterProcessor
                             if (!res.getErrorCode().equals("0")) break block10;
                             res.setSuccess(true);
                             try {
-                                UserDaoImpl dao = new UserDaoImpl();
-                                int userId = dao.getIdByUsername(username);
-
                                 // MARKETING
                                 try {
                                     marketing(campaign, source, medium, username);
                                 } catch (Exception ignored) {
                                 }
+
+                                UserDaoImpl dao = new UserDaoImpl();
+                                int userId = dao.getIdByUsername(username);
 
                                 SecurityServiceImpl sercuSer = new SecurityServiceImpl();
                                 sercuSer.saveLoginInfo(userId, username, "", PortalUtils.getIpAddress(request), PortalUtils.getUserAgent(request), 0, "web");
@@ -191,6 +191,8 @@ public class QuickRegisterProcessor
         if (StringUtils.isEmpty(source)) source = MARKETING_KEYWORD.UTM_SOURCE_NATURAL;
         if (StringUtils.isEmpty(medium)) medium = MARKETING_KEYWORD.UTM_MEDIUM_UNKNOWN;
         int utmId = 1;
+
+        System.out.println("Marketing: " + campaign + " - " + source + " - " + medium + " - " + username);
 
         MarketingService marketingService = new MarketingService();
         UTMTracking utmTracking = marketingService.getUTMTrackingByCampaign(campaign.toUpperCase());
