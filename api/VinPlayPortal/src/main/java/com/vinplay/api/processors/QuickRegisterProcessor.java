@@ -102,6 +102,7 @@ public class QuickRegisterProcessor
                                 try {
                                     marketing(campaign, source, medium, username);
                                 } catch (Exception ignored) {
+                                    ignored.printStackTrace();
                                 }
 
                                 UserDaoImpl dao = new UserDaoImpl();
