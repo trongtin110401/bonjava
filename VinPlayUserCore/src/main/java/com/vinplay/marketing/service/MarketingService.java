@@ -22,11 +22,6 @@ public class MarketingService {
             throw new Exception("No UTMTracking found for campaign: " + campaign);
         }
 
-        System.out.println("Found UTMTracking for campaign: " + campaign);
-        System.out.println("Source: " + utmTracking.getUtmSource());
-        System.out.println("Medium: " + utmTracking.getUtmMedium());
-        System.out.println("Term: " + utmTracking.getUtmTerm());
-        System.out.println("Content: " + utmTracking.getUtmContent());
         return utmTracking;
     }
 
@@ -45,7 +40,6 @@ public class MarketingService {
 
         // Thêm chiến dịch marketing và trả về ID
         utmTrackingDAO.addUTMTracking(utmTracking);
-        System.out.println("Added new marketing campaign: " + campaign);
         return utmTracking.getId();
     }
 
@@ -63,7 +57,6 @@ public class MarketingService {
         marketingUser.setUtmId(utmId);
 
         MarketingUser createdMarketingUser = marketingUserDAO.addUser(marketingUser); // Lấy User bao gồm ID
-        System.out.println("Created new user: " + createdMarketingUser.getId() + " - " + createdMarketingUser.getName());
     }
 
 
