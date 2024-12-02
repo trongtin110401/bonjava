@@ -1,5 +1,6 @@
 package com.vinplay.marketing.entity;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 public class MarketingUser {
@@ -7,7 +8,7 @@ public class MarketingUser {
     private String name;
     private String email;
     private int utmId; // Mới thêm
-    private LocalDateTime createdAt;
+    private Timestamp createdAt;
 
     public int getUtmId() {
         return utmId;
@@ -42,11 +43,11 @@ public class MarketingUser {
         this.email = email;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public Timestamp getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }
 }

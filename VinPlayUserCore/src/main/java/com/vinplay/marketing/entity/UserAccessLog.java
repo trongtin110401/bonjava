@@ -1,5 +1,6 @@
 package com.vinplay.marketing.entity;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 public class UserAccessLog {
@@ -9,7 +10,7 @@ public class UserAccessLog {
     private int utmId;
     private String device;
     private String browser;
-    private LocalDateTime createdAt;
+    private Timestamp createdAt;
 
     public long getId() {
         return id;
@@ -59,11 +60,11 @@ public class UserAccessLog {
         this.browser = browser;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public Timestamp getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }
 }

@@ -4,7 +4,6 @@ import com.vinplay.marketing.entity.MarketingUser;
 import com.vinplay.vbee.common.pools.ConnectionPool;
 
 import java.sql.*;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,14 +20,13 @@ public class MarketingUserDAO {
     // Thêm một user mới
     // Thêm một user mới và trả về đối tượng User với ID đã sinh ra
     public MarketingUser addUser(MarketingUser marketingUser) throws SQLException {
-        System.out.println("============> " + marketingUser.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
         String sql = "INSERT INTO users (name, email, utm_id, created_at) VALUES (?, ?, ?, ?)";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, marketingUser.getName());
             stmt.setString(2, marketingUser.getEmail());
             stmt.setInt(3, marketingUser.getUtmId());
-            stmt.setTimestamp(4, Timestamp.valueOf(marketingUser.getCreatedAt()));
+            stmt.setTimestamp(4, marketingUser.getCreatedAt());
 
             // Thực hiện thêm user
             int affectedRows = stmt.executeUpdate();
@@ -63,7 +61,7 @@ public class MarketingUserDAO {
                     marketingUser.setName(rs.getString("name"));
                     marketingUser.setEmail(rs.getString("email"));
                     marketingUser.setUtmId(rs.getInt("utm_id")); // Lấy giá trị utm_id
-                    marketingUser.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+                    marketingUser.setCreatedAt(rs.getTimestamp("created_at"));
                     return marketingUser;
                 }
             }
@@ -88,7 +86,7 @@ public class MarketingUserDAO {
                     marketingUser.setName(rs.getString("name"));
                     marketingUser.setEmail(rs.getString("email"));
                     marketingUser.setUtmId(rs.getInt("utm_id")); // Nếu có UTM ID
-                    marketingUser.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+                    marketingUser.setCreatedAt(rs.getTimestamp("created_at"));
                 }
                 return marketingUser;
             }
@@ -109,7 +107,7 @@ public class MarketingUserDAO {
                 marketingUser.setName(rs.getString("name"));
                 marketingUser.setEmail(rs.getString("email"));
                 marketingUser.setUtmId(rs.getInt("utm_id"));
-                marketingUser.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+                marketingUser.setCreatedAt(rs.getTimestamp("created_at"));
                 marketingUsers.add(marketingUser);
             }
         }
@@ -124,7 +122,7 @@ public class MarketingUserDAO {
             stmt.setString(1, marketingUser.getName());
             stmt.setString(2, marketingUser.getEmail());
             stmt.setInt(3, marketingUser.getUtmId());
-            stmt.setTimestamp(4, Timestamp.valueOf(marketingUser.getCreatedAt()));
+            stmt.setTimestamp(4, marketingUser.getCreatedAt());
             stmt.setLong(5, marketingUser.getId());
             stmt.executeUpdate();
         }

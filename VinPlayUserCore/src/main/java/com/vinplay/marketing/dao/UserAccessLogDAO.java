@@ -26,7 +26,7 @@ public class UserAccessLogDAO {
             stmt.setInt(3, accessLog.getUtmId());
             stmt.setString(4, accessLog.getDevice());
             stmt.setString(5, accessLog.getBrowser());
-            stmt.setTimestamp(6, Timestamp.valueOf(accessLog.getCreatedAt()));
+            stmt.setTimestamp(6, accessLog.getCreatedAt());
             stmt.executeUpdate();
         }
     }
@@ -47,7 +47,7 @@ public class UserAccessLogDAO {
                     log.setUtmId(rs.getInt("utm_id"));
                     log.setDevice(rs.getString("device"));
                     log.setBrowser(rs.getString("browser"));
-                    log.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+                    log.setCreatedAt(rs.getTimestamp("created_at"));
                     logs.add(log);
                 }
             }
@@ -70,7 +70,7 @@ public class UserAccessLogDAO {
                 log.setUtmId(rs.getInt("utm_id"));
                 log.setDevice(rs.getString("device"));
                 log.setBrowser(rs.getString("browser"));
-                log.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+                log.setCreatedAt(rs.getTimestamp("created_at"));
                 logs.add(log);
             }
         }
