@@ -155,6 +155,8 @@ game/modules/tour/control/TourManager.java
  game.modules.tour.control.TourManager
 game/modules/player/entities/RankingTableVip.java
  game.modules.player.entities.RankingTableVip
+game/Test.java
+ game.Test
 game/entities/CMD.java
  game.entities.CMD
 game/modules/player/entities/MoneyRanking.java
@@ -232,6 +234,8 @@ game/modules/gameRoom/entities/BlockingData.java
  game.modules.gameRoom.entities.BlockingData
 game/modules/gameRoom/entities/GameRoomIdGenerator.java
  game.modules.gameRoom.entities.GameRoomIdGenerator
+game/modules/gameRoom/cmd/send/PongMessage.java
+ game.modules.gameRoom.cmd.send.PongMessage
 game/modules/tour/TourModule.java
  game.modules.tour.TourModule
 game/modules/gameRoom/entities/GameMoneyInfo.java
