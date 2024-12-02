@@ -117,7 +117,7 @@ public class MarketingService {
                 // add user service
                 UserServiceDAO userServiceDAO = new UserServiceDAO();
                 int userServiceId = userServiceDAO.addUserService(us);
-                System.out.println("=============> addUserServiceAndServiceLog 2: user service id" + userServiceId);
+                System.out.println("=============> addUserServiceAndServiceLog 2: user service id " + userServiceId);
 
 
                 // add service log

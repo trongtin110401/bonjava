@@ -18,15 +18,14 @@ public class ServiceLogDAO {
 
     // Thêm một ServiceLog mới
     public void addServiceLog(ServiceLog log) throws SQLException {
-        String sql = "INSERT INTO service_logs (user_service_id, action, action_time, details, created_at, action_value) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO service_logs (user_service_id, action, action_time, details,  action_value) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, log.getUserServiceId());
             stmt.setString(2, log.getAction());
             stmt.setTimestamp(3, Timestamp.valueOf(log.getActionTime()));
             stmt.setString(4, log.getDetails());
-            stmt.setTimestamp(5, Timestamp.valueOf(log.getCreatedAt()));
-            stmt.setLong(6, log.getActionValue());
+            stmt.setLong(5, log.getActionValue());
             stmt.executeUpdate();
         }
     }
