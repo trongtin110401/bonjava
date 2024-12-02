@@ -20,17 +20,17 @@ public class UserAccessLogProcessor implements BaseProcessor<byte[], Boolean> {
     public Boolean execute(Param<byte[]> params) throws SQLException {
         byte[] body = (byte[]) params.get();
         try {
-            System.out.println("==========> user access log");
+            System.out.println("==========> user access log 1");
             UserAccessLogMessage message = (UserAccessLogMessage) NoHuTaiXiuMessage.fromBytes((byte[]) body);
             LocalDateTime accessTime =
                     LocalDateTime.ofInstant(Instant.ofEpochMilli(message.getAccessTime()),
                             TimeZone.getDefault().toZoneId());
-
+            System.out.println("==========> user access log 2");
             MarketingService marketingService = new MarketingService();
             marketingService.logUserAccess(message.getUserId(), message.getUtmId(), message.getDevice(), accessTime);
             return true;
         } catch (Exception e) {
-            logger.error((Object) "Handle save transaction error ", (Throwable) e);
+            e.printStackTrace();
         }
         return false;
     }
