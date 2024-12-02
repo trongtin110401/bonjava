@@ -120,7 +120,7 @@ public class LoginProcessor
                                 } else {
                                     res = PortalUtils.loginSuccess(userModel2, request);
                                     // marketing
-                                    marketing(res, username);
+                                    marketing(res, userModel2.getNickname());
                                 }
                             } else {
                                 res.setErrorCode("2001");
