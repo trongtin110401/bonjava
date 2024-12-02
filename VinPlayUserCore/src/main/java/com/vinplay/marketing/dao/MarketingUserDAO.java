@@ -4,6 +4,7 @@ import com.vinplay.marketing.entity.MarketingUser;
 import com.vinplay.vbee.common.pools.ConnectionPool;
 
 import java.sql.*;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +21,7 @@ public class MarketingUserDAO {
     // Thêm một user mới
     // Thêm một user mới và trả về đối tượng User với ID đã sinh ra
     public MarketingUser addUser(MarketingUser marketingUser) throws SQLException {
+        System.out.println("============> " + marketingUser.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
         String sql = "INSERT INTO users (name, email, utm_id, created_at) VALUES (?, ?, ?, ?)";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
