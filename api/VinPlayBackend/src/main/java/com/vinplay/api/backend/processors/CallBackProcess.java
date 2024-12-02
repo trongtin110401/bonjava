@@ -191,33 +191,12 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
             String userApprove = "AutoBank";
             long tien = Long.parseLong(callBackModel.getRegAmount());
 
-
             RechargeDao dao = new RechargeDaoImpl();
             // find transaction in db
             DepositMomoModel trans = dao.FindDepositMomoById(transId);
             if (trans == null) {
                 return response.toJson();
             }
-
-            // check nếu giao dịch đã bị hủy hoặc không hợp lệ thì không xử lý
-//            if (trans.Status != DvtConst.STATUS_PENDING) {
-//                return response.toJson();
-//            }
-//            EventResponse eventResponse = checkEventNapTien(trans.Nickname);
-//            if (eventResponse.isSuccess()) {
-//                long eventAmount = tien * eventResponse.getRate() / 100;
-//                tien += eventAmount;
-//                UserEvent userEvent = new UserEvent();
-//                userEvent.setEventName(eventResponse.getEventName());
-//                userEvent.setEventAmount(eventAmount);
-//                userEvent.setActualAmount(tien);
-//                userEvent.setId(System.currentTimeMillis());
-//                userEvent.setEventId(eventResponse.getId());
-//                userEvent.setNickname(trans.Nickname);
-//                userEvent.setCreatedDate(VinPlayUtils.getCurrentDateTime());
-//                OtherService otherService = new OtherServiceImpl();
-//                otherService.saveUserNapTienEvent(userEvent);
-//            }
 
             // update trans in db
             int status = type == 0 ? DvtConst.STATUS_APPROVE : DvtConst.STATUS_REJECT;
@@ -230,12 +209,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
                 } catch (Exception ex) {
                 }
             }
-//            if (resultUpdateTrans) {
-//                EventactionAdminObj model = new EventactionAdminObj();
-//                model.setId(transId);
-//                model.setStatus(status);
-//                model.setType("DEPOSIT_MOMO");
-//            }
+
             if (!resultUpdateTrans) {
                 return response.toJson();
             }
@@ -284,6 +258,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
 
     private void marketing(String nickname, String action, long amount) {
         try {
+            System.out.println("=============> " + nickname + " | " + action + " | " + amount);
             UserServiceActionMessage message = new UserServiceActionMessage();
             message.setNickname(nickname);
             message.setAction(action);

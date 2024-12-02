@@ -112,9 +112,13 @@ public class MarketingService {
                 us.setStartTime(actionTime);
                 us.setServiceId(serviceId);
 
+                System.out.println("=============> addUserServiceAndServiceLog 1: " + marketingUserId + " | " + serviceId + " | " + utmId);
+
                 // add user service
                 UserServiceDAO userServiceDAO = new UserServiceDAO();
                 int userServiceId = userServiceDAO.addUserService(us);
+                System.out.println("=============> addUserServiceAndServiceLog 2: user service id" + userServiceId);
+
 
                 // add service log
                 ServiceLog log = new ServiceLog();
@@ -125,6 +129,8 @@ public class MarketingService {
 
                 ServiceLogDAO serviceLogDAO = new ServiceLogDAO();
                 serviceLogDAO.addServiceLog(log);
+            } else {
+                System.out.println("=============> user action: " + nickname + " is null ");
             }
         } catch (Exception ex) {
             ex.printStackTrace();

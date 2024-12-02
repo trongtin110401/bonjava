@@ -909,7 +909,7 @@
                 </command>
                 <command>
                     <id>101</id>
-                    <name>store user access log</name>
+                    <name>user action log</name>
                     <path>com.vinplay.vbee.rmq.marketing.UserServiceActionProcessor</path>
                 </command>
             </commands>

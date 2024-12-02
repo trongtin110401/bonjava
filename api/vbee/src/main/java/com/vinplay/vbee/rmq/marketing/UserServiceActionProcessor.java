@@ -22,6 +22,7 @@ public class UserServiceActionProcessor implements BaseProcessor<byte[], Boolean
         byte[] body = params.get();
         try {
             UserServiceActionMessage message = (UserServiceActionMessage) NoHuTaiXiuMessage.fromBytes(body);
+            System.out.println("==============> user action: " + message.getNickname() + " > " + message.getAction() + " | " + message.getActionValue());
             MarketingService marketingService = new MarketingService();
             marketingService.addUserServiceAndServiceLog(message.getNickname(), message.getAction(), message.getActionValue(), LocalDateTime.parse(message.getCreateTime(), DateTimeFormatter.ofPattern("\"yyyy-MM-dd HH:mm:ss")));
             return true;
