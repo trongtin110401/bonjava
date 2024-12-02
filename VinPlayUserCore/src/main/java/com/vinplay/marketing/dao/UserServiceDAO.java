@@ -16,34 +16,30 @@ public class UserServiceDAO {
         return ConnectionPool.getInstance().getConnection(CONNECTION_POOL_NAME);
     }
 
-    // Thêm một UserService mới
-// Thêm một UserService mới và trả về ID của bản ghi mới
+    // Thêm một UserService mới và trả về ID của bản ghi mới
     public int addUserService(UserService userService) throws SQLException {
         String sql = "INSERT INTO user_services (user_id, service_id, utm_id, status, start_time, end_time, created_at, updated_at) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                "VALUES (?, ?, ?, ?, ?, ?) " +
+                "ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id), updated_at = VALUES(updated_at)";
+
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setInt(1, userService.getUserId());
+            stmt.setLong(1, userService.getUserId());
             stmt.setInt(2, userService.getServiceId());
             stmt.setInt(3, userService.getUtmId());
             stmt.setString(4, userService.getStatus());
             stmt.setTimestamp(5, Timestamp.valueOf(userService.getStartTime()));
             stmt.setTimestamp(6, userService.getEndTime() != null ? Timestamp.valueOf(userService.getEndTime()) : null);
-            stmt.setTimestamp(7, Timestamp.valueOf(userService.getCreatedAt()));
-            stmt.setTimestamp(8, Timestamp.valueOf(userService.getUpdatedAt()));
 
-            // Thực hiện chèn dữ liệu
-            int affectedRows = stmt.executeUpdate();
-            if (affectedRows == 0) {
-                throw new SQLException("Creating UserService failed, no rows affected.");
-            }
+            // Thực hiện chèn hoặc cập nhật
+            stmt.executeUpdate();
 
-            // Lấy ID của bản ghi vừa chèn
+            // Lấy ID của bản ghi (dù là mới chèn hay đã tồn tại)
             try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     return generatedKeys.getInt(1); // Trả về ID
                 } else {
-                    throw new SQLException("Creating UserService failed, no ID obtained.");
+                    throw new SQLException("Failed to retrieve ID for UserService.");
                 }
             }
         }

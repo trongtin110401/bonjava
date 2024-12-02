@@ -10,6 +10,16 @@ public class ServiceLog {
     private String details;
     private LocalDateTime createdAt;
 
+    private long actionValue;
+
+    public long getActionValue() {
+        return actionValue;
+    }
+
+    public void setActionValue(long actionValue) {
+        this.actionValue = actionValue;
+    }
+
     // Getters and Setters
     public int getId() {
         return id;

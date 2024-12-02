@@ -1,11 +1,9 @@
 package com.vinplay.marketing.service;
 
-import com.vinplay.marketing.dao.UTMTrackingDAO;
-import com.vinplay.marketing.dao.UserAccessLogDAO;
-import com.vinplay.marketing.dao.MarketingUserDAO;
-import com.vinplay.marketing.entity.MarketingUser;
-import com.vinplay.marketing.entity.UTMTracking;
-import com.vinplay.marketing.entity.UserAccessLog;
+import com.vinplay.marketing.dao.*;
+import com.vinplay.marketing.entity.*;
+import com.vinplay.usercore.service.impl.UserServiceImpl;
+import com.vinplay.vbee.common.enums.UserAction;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -100,4 +98,38 @@ public class MarketingService {
         return marketingUserDAO.getUserByName(name);
     }
 
+    public void addUserServiceAndServiceLog(String nickname, String action, long value, LocalDateTime actionTime) {
+        try {
+            UserServiceImpl userService = new UserServiceImpl();
+            String username = userService.getUser(nickname).getUsername();
+            MarketingUser user = getUsersByName(username);
+            if (user != null) {
+                long marketingUserId = getUsersByName(username).getId();
+                int serviceId = UserAction.getByName(action).getId();
+                int utmId = user.getUtmId();
+
+                UserService us = new UserService();
+                us.setUserId(marketingUserId);
+                us.setUtmId(utmId);
+                us.setStartTime(actionTime);
+                us.setServiceId(serviceId);
+
+                // add user service
+                UserServiceDAO userServiceDAO = new UserServiceDAO();
+                int userServiceId = userServiceDAO.addUserService(us);
+
+                // add service log
+                ServiceLog log = new ServiceLog();
+                log.setUserServiceId(userServiceId);
+                log.setAction(action);
+                log.setActionTime(actionTime);
+                log.setActionValue(value);
+
+                ServiceLogDAO serviceLogDAO = new ServiceLogDAO();
+                serviceLogDAO.addServiceLog(log);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 }

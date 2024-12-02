@@ -33,11 +33,13 @@ import com.vinplay.usercore.utils.GameCommon;
 import com.vinplay.utils.TelegramAlert;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
+import com.vinplay.vbee.common.enums.UserAction;
+import com.vinplay.vbee.common.messages.marketing.UserServiceActionMessage;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.response.BaseResponseModel;
 import com.vinplay.vbee.common.response.EventResponse;
 import com.vinplay.vbee.common.response.RechargeByCardReponse;
-import com.vinplay.vbee.common.response.UserEvent;
+import com.vinplay.vbee.common.rmq.RMQApi;
 import com.vinplay.vbee.common.statics.Consts;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
 import org.bson.Document;
@@ -47,7 +49,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 public class CallBackProcess implements BaseProcessor<HttpServletRequest, String> {
-    StatMoneyInOutDaoImpl moneyInOut= StatMoneyInOutDaoImpl.getInstance();
+    StatMoneyInOutDaoImpl moneyInOut = StatMoneyInOutDaoImpl.getInstance();
+
     @Override
     public String execute(Param<HttpServletRequest> param) {
         HttpServletRequest request = param.get();
@@ -94,9 +97,13 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
 
             //20240914
             try {
-                moneyInOut.upsertStatisticMoneyInOut(userWithdraw.Nickname, 0L, 0L, 0L, userWithdraw.Amount, 0L,0L,0L);
+                moneyInOut.upsertStatisticMoneyInOut(userWithdraw.Nickname, 0L, 0L, 0L, userWithdraw.Amount, 0L, 0L, 0L);
             } catch (Exception ex) {
             }
+
+            // marketing
+            marketing(userWithdraw.Nickname, UserAction.RUT_TIEN.getName(), userWithdraw.Amount);
+
             // send tele
             TelegramAlert.SendMessageCashoutMomo(userWithdraw);
         } else {
@@ -139,10 +146,11 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
             cashoutDao.UpdateCashoutBank(callBackModel.getRequestId(), CashoutUtil.STATUS_SUCCESS, "Auto_Bank");
             try {
                 //20240914
-                moneyInOut.upsertStatisticMoneyInOut(userWithdraw.Username, 0L, 0L, userWithdraw.Amount, 0L, 0L,0L, 0L);
+                moneyInOut.upsertStatisticMoneyInOut(userWithdraw.Username, 0L, 0L, userWithdraw.Amount, 0L, 0L, 0L, 0L);
+                marketing(userWithdraw.Username, UserAction.RUT_TIEN.getName(), userWithdraw.Amount);
+                TelegramAlert.SendMessageCashout(userWithdraw);
             } catch (Exception ex) {
             }
-            TelegramAlert.SendMessageCashout(userWithdraw);
         } else {
             UserServiceImpl userService = new UserServiceImpl();
             long fee = userWithdraw.AmountReal - userWithdraw.Amount;
@@ -167,8 +175,6 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
 
         return "true";
     }
-
-
 
 
     public String ApproveDepositMomoProcessor(CallBackModel callBackModel) {
@@ -197,21 +203,21 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
 //            if (trans.Status != DvtConst.STATUS_PENDING) {
 //                return response.toJson();
 //            }
-            EventResponse eventResponse = checkEventNapTien(trans.Nickname);
-            if (eventResponse.isSuccess()) {
-                long eventAmount = tien * eventResponse.getRate() / 100;
-                tien += eventAmount;
-                UserEvent userEvent = new UserEvent();
-                userEvent.setEventName(eventResponse.getEventName());
-                userEvent.setEventAmount(eventAmount);
-                userEvent.setActualAmount(tien);
-                userEvent.setId(System.currentTimeMillis());
-                userEvent.setEventId(eventResponse.getId());
-                userEvent.setNickname(trans.Nickname);
-                userEvent.setCreatedDate(VinPlayUtils.getCurrentDateTime());
-                OtherService otherService = new OtherServiceImpl();
-                otherService.saveUserNapTienEvent(userEvent);
-            }
+//            EventResponse eventResponse = checkEventNapTien(trans.Nickname);
+//            if (eventResponse.isSuccess()) {
+//                long eventAmount = tien * eventResponse.getRate() / 100;
+//                tien += eventAmount;
+//                UserEvent userEvent = new UserEvent();
+//                userEvent.setEventName(eventResponse.getEventName());
+//                userEvent.setEventAmount(eventAmount);
+//                userEvent.setActualAmount(tien);
+//                userEvent.setId(System.currentTimeMillis());
+//                userEvent.setEventId(eventResponse.getId());
+//                userEvent.setNickname(trans.Nickname);
+//                userEvent.setCreatedDate(VinPlayUtils.getCurrentDateTime());
+//                OtherService otherService = new OtherServiceImpl();
+//                otherService.saveUserNapTienEvent(userEvent);
+//            }
 
             // update trans in db
             int status = type == 0 ? DvtConst.STATUS_APPROVE : DvtConst.STATUS_REJECT;
@@ -220,7 +226,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
             //20240914
             if (callBackModel.getStatus().equals("success")) {
                 try {
-                    moneyInOut.upsertStatisticMoneyInOut(trans.Nickname, Long.parseLong(callBackModel.getRegAmount()), 0L, 0L, 0L, 0L,0L, 0L);
+                    moneyInOut.upsertStatisticMoneyInOut(trans.Nickname, Long.parseLong(callBackModel.getRegAmount()), 0L, 0L, 0L, 0L, 0L, 0L);
                 } catch (Exception ex) {
                 }
             }
@@ -246,6 +252,9 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
                     historyTransDao.insertTransaction(new HistoryTransModel(transId, "MoMo", "Nạp tiền", String.valueOf(tien), "Thành công", "Nạp Tiền Thành công ", trans.Nickname, HistoryTransConst.MOMO, transId));
                     TelegramAlert.SendMessageDepositMomo(trans);
                     BroadCastUserMoney.pushBroadCast(trans.Nickname);
+
+                    // marketing
+                    marketing(trans.Nickname, UserAction.NAP_TIEN.getName(), trans.Amount);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -270,6 +279,18 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
             return response.toJson();
         } catch (Exception e) {
             return response.toJson();
+        }
+    }
+
+    private void marketing(String nickname, String action, long amount) {
+        try {
+            UserServiceActionMessage message = new UserServiceActionMessage();
+            message.setNickname(nickname);
+            message.setAction(action);
+            message.setActionValue(amount);
+            RMQApi.publishMessage("queue_marketing", message, 101);
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -298,22 +319,6 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
                 return response.toJson();
             }
 
-
-            EventResponse eventResponse = checkEventNapTien(trans.nickName);
-            if (eventResponse.isSuccess()) {
-                long eventAmount = tien * eventResponse.getRate() / 100;
-                tien += eventAmount;
-                UserEvent userEvent = new UserEvent();
-                userEvent.setEventName(eventResponse.getEventName());
-                userEvent.setEventAmount(eventAmount);
-                userEvent.setActualAmount(tien);
-                userEvent.setId(System.currentTimeMillis());
-                userEvent.setEventId(eventResponse.getId());
-                userEvent.setNickname(trans.nickName);
-                userEvent.setCreatedDate(VinPlayUtils.getCurrentDateTime());
-                OtherService otherService = new OtherServiceImpl();
-                otherService.saveUserNapTienEvent(userEvent);
-            }
             int status;
             if (type == 0) {//success
                 status = DvtConst.STATUS_APPROVE;
@@ -335,7 +340,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
             //20240914
             if (callBackModel.getStatus().equals("success")) {
                 try {
-                    moneyInOut.upsertStatisticMoneyInOut(trans.nickName, 0L, 0L, 0L, 0L, Long.parseLong(callBackModel.getRegAmount()),0L,0L);
+                    moneyInOut.upsertStatisticMoneyInOut(trans.nickName, 0L, 0L, 0L, 0L, Long.parseLong(callBackModel.getRegAmount()), 0L, 0L);
                 } catch (Exception ex) {
                 }
             }
@@ -344,6 +349,8 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
             UserServiceImpl service = new UserServiceImpl();
             try {
                 response = service.updateMoneyFromAdmin(trans.nickName, tien, "vin", Consts.RECHARGE_BY_CARD, Consts.RECHARGE_BY_CARD, "Deposit Cart", 0);
+                // marketing
+                marketing(trans.nickName, UserAction.NAP_TIEN.getName(), tien);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -370,6 +377,8 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
             }
             response.setErrorCode("200");
             response.setSuccess(true);
+
+
             return response.toJson();
         } catch (Exception e) {
             return response.toJson();
@@ -399,21 +408,6 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
                     return response.toJson();
                 }
 
-                EventResponse eventResponse = checkEventNapTien(trans.Nickname);
-                if (eventResponse.isSuccess()) {
-                    long eventAmount = tien * eventResponse.getRate() / 100;
-                    tien += eventAmount;
-                    UserEvent userEvent = new UserEvent();
-                    userEvent.setEventName(eventResponse.getEventName());
-                    userEvent.setEventAmount(eventAmount);
-                    userEvent.setActualAmount(tien);
-                    userEvent.setId(System.currentTimeMillis());
-                    userEvent.setEventId(eventResponse.getId());
-                    userEvent.setNickname(trans.Nickname);
-                    userEvent.setCreatedDate(VinPlayUtils.getCurrentDateTime());
-                    OtherService otherService = new OtherServiceImpl();
-                    otherService.saveUserNapTienEvent(userEvent);
-                }
                 // update trans in db
                 int status = type == 1 ? DvtConst.STATUS_APPROVE : DvtConst.STATUS_REJECT;
                 trans.Status = status;
@@ -425,7 +419,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
                 //20240914
                 if (callBackModel.getStatus().equals("success")) {
                     try {
-                        moneyInOut.upsertStatisticMoneyInOut(trans.Nickname, 0L, Long.parseLong(callBackModel.getRegAmount()), 0L, 0L, 0L,0L, 0L);
+                        moneyInOut.upsertStatisticMoneyInOut(trans.Nickname, 0L, Long.parseLong(callBackModel.getRegAmount()), 0L, 0L, 0L, 0L, 0L);
                     } catch (Exception ex) {
 
                     }
@@ -439,6 +433,9 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
                 UserServiceImpl service = new UserServiceImpl();
                 try {
                     response = service.updateMoneyFromAdmin(trans.getNickname(), tien, "vin", Consts.RECHARGE_BY_BANK, "Deposit bank", "Deposit bank", 0);
+
+                    // marketing
+                    marketing(trans.Nickname, UserAction.NAP_TIEN.getName(), tien);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -581,7 +578,7 @@ public class CallBackProcess implements BaseProcessor<HttpServletRequest, String
     }
 
     public EventResponse checkEventNapTien(String nickname) {
-        EventResponse eventResponse = new EventResponse(false, "1001");
+        EventResponse eventResponse;
         OtherService service = new OtherServiceImpl();
         eventResponse = service.getCurrentEvent();
         if (eventResponse == null) {

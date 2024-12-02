@@ -18,7 +18,7 @@ public class ServiceLogDAO {
 
     // Thêm một ServiceLog mới
     public void addServiceLog(ServiceLog log) throws SQLException {
-        String sql = "INSERT INTO service_logs (user_service_id, action, action_time, details, created_at) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO service_logs (user_service_id, action, action_time, details, created_at) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, log.getUserServiceId());
@@ -26,6 +26,7 @@ public class ServiceLogDAO {
             stmt.setTimestamp(3, Timestamp.valueOf(log.getActionTime()));
             stmt.setString(4, log.getDetails());
             stmt.setTimestamp(5, Timestamp.valueOf(log.getCreatedAt()));
+            stmt.setLong(6, log.getActionValue());
             stmt.executeUpdate();
         }
     }
@@ -46,6 +47,7 @@ public class ServiceLogDAO {
                     log.setActionTime(rs.getTimestamp("action_time").toLocalDateTime());
                     log.setDetails(rs.getString("details"));
                     log.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+                    log.setActionValue(rs.getLong("action_value"));
                     logs.add(log);
                 }
             }
@@ -68,6 +70,7 @@ public class ServiceLogDAO {
                 log.setActionTime(rs.getTimestamp("action_time").toLocalDateTime());
                 log.setDetails(rs.getString("details"));
                 log.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+                log.setActionValue(rs.getLong("action_value"));
                 logs.add(log);
             }
         }

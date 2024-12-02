@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 public class UserService {
     private int id;
-    private int userId;
+    private long userId;
     private int serviceId;
     private int utmId;
     private String status;
@@ -22,11 +22,11 @@ public class UserService {
         this.id = id;
     }
 
-    public int getUserId() {
+    public long getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 

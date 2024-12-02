@@ -900,12 +900,17 @@
         </queue>
         <queue>
             <name>queue_marketing</name>
-            <threads>5</threads>
+            <threads>20</threads>
             <commands>
                 <command>
                     <id>100</id>
                     <name>store user access log</name>
                     <path>com.vinplay.vbee.rmq.marketing.UserAccessLogProcessor</path>
+                </command>
+                <command>
+                    <id>101</id>
+                    <name>store user access log</name>
+                    <path>com.vinplay.vbee.rmq.marketing.UserServiceActionProcessor</path>
                 </command>
             </commands>
         </queue>
