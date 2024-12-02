@@ -68,12 +68,10 @@ public class MarketingService {
      */
     public void logUserAccess(long userId, int utmId, String device, LocalDateTime accessTime) throws Exception {
         // Kiểm tra xem user có tồn tại hay không
-        System.out.println("==========> user access log 3");
         MarketingUser marketingUser = marketingUserDAO.getUserById(userId);
         if (marketingUser == null) {
             return;
         }
-        System.out.println("==========> user access log 4");
         // Tạo bản ghi UserAccessLog
         UserAccessLog accessLog = new UserAccessLog();
         accessLog.setUserId(userId);
