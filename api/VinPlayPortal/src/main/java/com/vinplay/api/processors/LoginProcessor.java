@@ -151,7 +151,7 @@ public class LoginProcessor
             try {
                 MarketingService marketingService = new MarketingService();
                 MarketingUser marketingUser = marketingService.getUsersByName(nickname);
-                System.out.println("====> login 3");
+                System.out.println("====> login 3  " + nickname);
                 if (marketingUser != null) {
                     System.out.println("====> login 4");
                     UserAccessLogMessage userAccessLogMessage = new UserAccessLogMessage();
