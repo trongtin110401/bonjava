@@ -7,6 +7,7 @@ import com.vinplay.marketing.entity.MarketingUser;
 import com.vinplay.marketing.entity.UTMTracking;
 import com.vinplay.marketing.entity.UserAccessLog;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 public class MarketingService {
@@ -58,7 +59,7 @@ public class MarketingService {
         MarketingUser marketingUser = new MarketingUser();
         marketingUser.setName(userName);
         marketingUser.setEmail(userEmail);
-        marketingUser.setCreatedAt(LocalDateTime.now());
+        marketingUser.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         marketingUser.setUtmId(utmId);
 
         MarketingUser createdMarketingUser = marketingUserDAO.addUser(marketingUser); // Lấy User bao gồm ID
@@ -88,7 +89,7 @@ public class MarketingService {
         accessLog.setDevice(device);
         accessLog.setBrowser("");
         accessLog.setAccessTime(accessTime);
-        accessLog.setCreatedAt(LocalDateTime.now());
+        accessLog.setCreatedAt(new Timestamp(System.currentTimeMillis()));
 
         // Lưu UserAccessLog vào cơ sở dữ liệu
         userAccessLogDAO.addUserAccessLog(accessLog);
