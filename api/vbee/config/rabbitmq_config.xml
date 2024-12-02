@@ -898,5 +898,16 @@
                 </command>
             </commands>
         </queue>
+        <queue>
+            <name>queue_marketing</name>
+            <threads>5</threads>
+            <commands>
+                <command>
+                    <id>100</id>
+                    <name>store user access log</name>
+                    <path>com.vinplay.vbee.rmq.marketing.UserAccessLogProcessor</path>
+                </command>
+            </commands>
+        </queue>
     </queues>
 </rabbitmq>
