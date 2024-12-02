@@ -18,7 +18,7 @@ public class UserServiceDAO {
 
     // Thêm một UserService mới và trả về ID của bản ghi mới
     public int addUserService(UserService userService) throws SQLException {
-        String sql = "INSERT INTO user_services (user_id, service_id, utm_id, status, start_time, end_time, created_at, updated_at) " +
+        String sql = "INSERT INTO user_services (user_id, service_id, utm_id, status, start_time, end_time) " +
                 "VALUES (?, ?, ?, ?, ?, ?) " +
                 "ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id), updated_at = VALUES(updated_at)";
 

@@ -18,7 +18,7 @@ public class ServiceLogDAO {
 
     // Thêm một ServiceLog mới
     public void addServiceLog(ServiceLog log) throws SQLException {
-        String sql = "INSERT INTO service_logs (user_service_id, action, action_time, details, created_at) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO service_logs (user_service_id, action, action_time, details, created_at, action_value) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, log.getUserServiceId());
