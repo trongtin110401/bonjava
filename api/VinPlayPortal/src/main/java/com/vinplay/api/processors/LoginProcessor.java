@@ -157,6 +157,7 @@ public class LoginProcessor
                     UserAccessLogMessage userAccessLogMessage = new UserAccessLogMessage();
                     userAccessLogMessage.setUserId(marketingUser.getId());
                     userAccessLogMessage.setAccessTime(System.currentTimeMillis());
+                    userAccessLogMessage.setUtmId(marketingUser.getUtmId());
                     RMQApi.publishMessage("queue_marketing", userAccessLogMessage, 100);
                 }
             } catch (Exception ignored) {
