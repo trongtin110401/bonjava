@@ -144,13 +144,16 @@ public class LoginProcessor
         return "MISSING PARAMETTER";
     }
 
-    private static void marketing(LoginResponse res, String username) {
+    private static void marketing(LoginResponse res, String nickname) {
+        System.out.println("====> login 1");
         if (res.isSuccess()) {
+            System.out.println("====> login 2");
             try {
                 MarketingService marketingService = new MarketingService();
-                MarketingUser marketingUser = marketingService.getUsersByName(username);
-
+                MarketingUser marketingUser = marketingService.getUsersByName(nickname);
+                System.out.println("====> login 3");
                 if (marketingUser != null) {
+                    System.out.println("====> login 4");
                     UserAccessLogMessage userAccessLogMessage = new UserAccessLogMessage();
                     userAccessLogMessage.setUserId(marketingUser.getId());
                     userAccessLogMessage.setAccessTime(System.currentTimeMillis());

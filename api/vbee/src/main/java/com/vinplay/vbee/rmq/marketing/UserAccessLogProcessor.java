@@ -20,6 +20,7 @@ public class UserAccessLogProcessor implements BaseProcessor<byte[], Boolean> {
     public Boolean execute(Param<byte[]> params) throws SQLException {
         byte[] body = (byte[]) params.get();
         try {
+            System.out.println("==========> user access log");
             UserAccessLogMessage message = (UserAccessLogMessage) NoHuTaiXiuMessage.fromBytes((byte[]) body);
             LocalDateTime accessTime =
                     LocalDateTime.ofInstant(Instant.ofEpochMilli(message.getAccessTime()),
