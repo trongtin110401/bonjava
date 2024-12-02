@@ -193,8 +193,6 @@ public class QuickRegisterProcessor
         if (StringUtils.isEmpty(medium)) medium = MARKETING_KEYWORD.UTM_MEDIUM_UNKNOWN;
         int utmId = 1;
 
-        System.out.println("Marketing: " + campaign + " - " + source + " - " + medium + " - " + username);
-
         MarketingService marketingService = new MarketingService();
         UTMTracking utmTracking = marketingService.getUTMTrackingByCampaign(campaign.toUpperCase());
         if (utmTracking != null) {
