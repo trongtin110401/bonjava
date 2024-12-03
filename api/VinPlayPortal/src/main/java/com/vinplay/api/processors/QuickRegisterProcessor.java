@@ -194,7 +194,7 @@ public class QuickRegisterProcessor
         int utmId = 1;
 
         MarketingService marketingService = new MarketingService();
-        UTMTracking utmTracking = marketingService.getUTMTrackingByCampaign(campaign.toUpperCase());
+        UTMTracking utmTracking = marketingService.getUTMTrackingByCampaign(campaign);
         if (utmTracking != null) {
             utmId = utmTracking.getId();
         }
