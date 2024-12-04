@@ -22,36 +22,36 @@ import java.sql.SQLException;
 public class KubetStreamUrlProcessor implements BaseProcessor<HttpServletRequest, String> {
     @Override
     public String execute(Param<HttpServletRequest> param) throws SQLException {
-//        HttpServletRequest request = param.get();
-//        String game = request.getParameter("game");
-//        if (game.equals("taixiu")) {
-//            CloseableHttpClient httpClient = HttpClients.createDefault();
-//            HttpGet httpget = new HttpGet("https://newjson.thietkewebcobac.com/?ID=taixiua");
-//            try {
-//                HttpResponse httpResponse = httpClient.execute(httpget);
-//                return EntityUtils.toString(httpResponse.getEntity());
-//            } catch (IOException e) {
-//                throw new RuntimeException(e);
-//            }
-//        } else {
-//            CloseableHttpClient httpClient = HttpClients.createDefault();
-//            HttpGet httpget = new HttpGet("https://newjson.thietkewebcobac.com/?ID=xocdiaa");
-//            try {
-//                HttpResponse httpResponse = httpClient.execute(httpget);
-//                return EntityUtils.toString(httpResponse.getEntity());
-//            } catch (IOException e) {
-//                throw new RuntimeException(e);
-//            }
-//        }
+        HttpServletRequest request = param.get();
+        String game = request.getParameter("game");
+        if (game.equals("taixiu")) {
+            CloseableHttpClient httpClient = HttpClients.createDefault();
+            HttpGet httpget = new HttpGet("https://newjson.thietkewebcobac.com/?ID=taixiua");
+            try {
+                HttpResponse httpResponse = httpClient.execute(httpget);
+                return EntityUtils.toString(httpResponse.getEntity());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            CloseableHttpClient httpClient = HttpClients.createDefault();
+            HttpGet httpget = new HttpGet("https://newjson.thietkewebcobac.com/?ID=xocdiaa");
+            try {
+                HttpResponse httpResponse = httpClient.execute(httpget);
+                return EntityUtils.toString(httpResponse.getEntity());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
         // URL của API
-        String url = "https://ga88.ku6696.net/Api/Common/GetSKAll";
-
-        // Dữ liệu JSON cho request
-        String requestBody = "{\"SKey\":\"1\",\"CKey\":\"71101\",\"DType\":1,\"CType\":1,\"IsS\":1,\"PlayTool\":4}";
-
-        // Cookie header
-        String cookie = "_videogameCulture=vi-VN; PHPSESSID=napn3rnr8vg5q4ecjhi6rop1m4";
-        return "dataJson = '{\"Data\":{\"channelAllTable\":[],\"channelLive\":[],\"channelSource\":[{\"key\":\"1\",\"name\":\"HAPVN01\",\"Protocol\":\"vigo\",\"url\":\"wss://gcphkmgtm.vnkuvideo.com:8882/\"},{\"key\":\"2\",\"name\":\"HAPVN02\",\"Protocol\":\"vigo\",\"url\":\"wss://awshkmgtm.vnkuvideo.com:8882/\"},{\"key\":\"3\",\"name\":\"HAPVN03\",\"Protocol\":\"vigo\",\"url\":\"wss://hwhkmgtm.vnkuvideo.com:8882/\"},{\"key\":\"4\",\"name\":\"HAPVN04\",\"Protocol\":\"vigo\",\"url\":\"wss://hollyvnmgtm.vnkuvideo.com:8882/\"},{\"key\":\"5\",\"name\":\"CDNVN05\",\"Protocol\":\"vigo\",\"url\":\"wss://mvnws.vnkuvideo.com:8882/\"},{\"key\":\"6\",\"name\":\"CDNVN06\",\"Protocol\":\"vigo\",\"url\":\"wss://inmvn.vnkuvideo.com:8882/\"},{\"key\":\"7\",\"name\":\"s1\",\"Protocol\":\"vigo\",\"url\":\"wss://inmvn.vnkuvideo.com:8882/\"},{\"key\":\"8\",\"name\":\"s2\",\"Protocol\":\"vigo\",\"url\":\"wss://mvnws.vnkuvideo.com:8882/\"},{\"key\":\"9\",\"name\":\"s3\",\"Protocol\":\"vigo\",\"url\":\"wss://hollyvnmgtm.vnkuvideo.com:8882/\"},{\"key\":\"10\",\"name\":\"s4\",\"Protocol\":\"vigo\",\"url\":\"wss://hwhkmgtm.vnkuvideo.com:8882/\"},{\"key\":\"11\",\"name\":\"s5\",\"Protocol\":\"vigo\",\"url\":\"wss://awshkmgtm.vnkuvideo.com:8882/\"},{\"key\":\"12\",\"name\":\"s6\",\"Protocol\":\"vigo\",\"url\":\"wss://gcphkmgtm.vnkuvideo.com:8882/\"},{\"key\":\"13\",\"name\":\"s7\",\"Protocol\":\"vigo\",\"url\":\"wss://ucvngtm.vnkuvideo.com:8882/\"},{\"key\":\"14\",\"name\":\"s8\",\"Protocol\":\"vigo\",\"url\":\"wss://vn08.vnkuvideo.com:8882/\"}],\"channelTable\":{\"closeup\":\"fxytb0142\",\"CreateDate\":\"0001-01-01T00:00:00\",\"d3\":\"close3d\",\"front\":\"fxytb0111\",\"key\":\"611011\",\"ModifyDate\":\"0001-01-01T00:00:00\",\"multi\":\"fxytb012\",\"name\":\"å\u0085\u0088æ\u0090\u0096éª°å¯¶A-1\",\"phone\":\"fxytb0122\",\"sd3\":\"close3d\",\"sfront\":\"fxytb0112\",\"Sort\":null},\"StreamTimestampKey\":\"" +  fetchStreamTimestampKey(url, requestBody, cookie) + "\"}}';";
+//        String url = "https://ga88.ku6696.net/Api/Common/GetSKAll";
+//
+//        // Dữ liệu JSON cho request
+//        String requestBody = "{\"SKey\":\"1\",\"CKey\":\"71101\",\"DType\":1,\"CType\":1,\"IsS\":1,\"PlayTool\":4}";
+//
+//        // Cookie header
+//        String cookie = "_videogameCulture=vi-VN; PHPSESSID=napn3rnr8vg5q4ecjhi6rop1m4";
+//        return "dataJson = '{\"Data\":{\"channelAllTable\":[],\"channelLive\":[],\"channelSource\":[{\"key\":\"1\",\"name\":\"HAPVN01\",\"Protocol\":\"vigo\",\"url\":\"wss://gcphkmgtm.vnkuvideo.com:8882/\"},{\"key\":\"2\",\"name\":\"HAPVN02\",\"Protocol\":\"vigo\",\"url\":\"wss://awshkmgtm.vnkuvideo.com:8882/\"},{\"key\":\"3\",\"name\":\"HAPVN03\",\"Protocol\":\"vigo\",\"url\":\"wss://hwhkmgtm.vnkuvideo.com:8882/\"},{\"key\":\"4\",\"name\":\"HAPVN04\",\"Protocol\":\"vigo\",\"url\":\"wss://hollyvnmgtm.vnkuvideo.com:8882/\"},{\"key\":\"5\",\"name\":\"CDNVN05\",\"Protocol\":\"vigo\",\"url\":\"wss://mvnws.vnkuvideo.com:8882/\"},{\"key\":\"6\",\"name\":\"CDNVN06\",\"Protocol\":\"vigo\",\"url\":\"wss://inmvn.vnkuvideo.com:8882/\"},{\"key\":\"7\",\"name\":\"s1\",\"Protocol\":\"vigo\",\"url\":\"wss://inmvn.vnkuvideo.com:8882/\"},{\"key\":\"8\",\"name\":\"s2\",\"Protocol\":\"vigo\",\"url\":\"wss://mvnws.vnkuvideo.com:8882/\"},{\"key\":\"9\",\"name\":\"s3\",\"Protocol\":\"vigo\",\"url\":\"wss://hollyvnmgtm.vnkuvideo.com:8882/\"},{\"key\":\"10\",\"name\":\"s4\",\"Protocol\":\"vigo\",\"url\":\"wss://hwhkmgtm.vnkuvideo.com:8882/\"},{\"key\":\"11\",\"name\":\"s5\",\"Protocol\":\"vigo\",\"url\":\"wss://awshkmgtm.vnkuvideo.com:8882/\"},{\"key\":\"12\",\"name\":\"s6\",\"Protocol\":\"vigo\",\"url\":\"wss://gcphkmgtm.vnkuvideo.com:8882/\"},{\"key\":\"13\",\"name\":\"s7\",\"Protocol\":\"vigo\",\"url\":\"wss://ucvngtm.vnkuvideo.com:8882/\"},{\"key\":\"14\",\"name\":\"s8\",\"Protocol\":\"vigo\",\"url\":\"wss://vn08.vnkuvideo.com:8882/\"}],\"channelTable\":{\"closeup\":\"fxytb0142\",\"CreateDate\":\"0001-01-01T00:00:00\",\"d3\":\"close3d\",\"front\":\"fxytb0111\",\"key\":\"611011\",\"ModifyDate\":\"0001-01-01T00:00:00\",\"multi\":\"fxytb012\",\"name\":\"å\u0085\u0088æ\u0090\u0096éª°å¯¶A-1\",\"phone\":\"fxytb0122\",\"sd3\":\"close3d\",\"sfront\":\"fxytb0112\",\"Sort\":null},\"StreamTimestampKey\":\"" +  fetchStreamTimestampKey(url, requestBody, cookie) + "\"}}';";
     }
 
 
