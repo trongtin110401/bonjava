@@ -27,7 +27,7 @@ public class MarketingUserDAO {
             stmt.setString(2, marketingUser.getEmail());
             stmt.setInt(3, marketingUser.getUtmId());
             stmt.setTimestamp(4, marketingUser.getCreatedAt());
-            stmt.setInt(4, marketingUser.getAgencyId());
+            stmt.setInt(5, marketingUser.getAgencyId());
 
             // Thực hiện thêm user
             int affectedRows = stmt.executeUpdate();
