@@ -18,7 +18,7 @@ public class AgencyDAO {
     private static final String SELECT_ALL_AGENCIES = "SELECT * FROM agency";
     private static final String UPDATE_AGENCY = "UPDATE agency SET code = ?, name = ?, status = ? WHERE id = ?";
     private static final String DELETE_AGENCY = "DELETE FROM agency WHERE id = ?";
-    private static final String CONNECTION_POOL_NAME = "your_connection_pool_name";
+    private static final String CONNECTION_POOL_NAME = "mysqlpool_marketing";
 
     // Method to get connection from ConnectionPool
     private Connection getConnection() throws SQLException {
