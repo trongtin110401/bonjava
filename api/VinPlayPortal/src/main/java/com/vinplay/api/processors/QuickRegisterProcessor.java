@@ -22,6 +22,7 @@ package com.vinplay.api.processors;
 
 import com.vinplay.api.utils.PortalUtils;
 import com.vinplay.marketing.MARKETING_KEYWORD;
+import com.vinplay.marketing.entity.Agency;
 import com.vinplay.marketing.entity.UTMTracking;
 import com.vinplay.marketing.service.MarketingService;
 import com.vinplay.usercore.dao.impl.SecurityDaoImpl;
@@ -43,6 +44,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.python.parser.ast.Str;
 
 public class QuickRegisterProcessor
         implements BaseProcessor<HttpServletRequest, String> {
@@ -63,6 +65,7 @@ public class QuickRegisterProcessor
             String campaign = request.getParameter("utm_campaign");
             String medium = request.getParameter("utm_medium");
             String source = request.getParameter("utm_source");
+            String agencyCode = StringUtils.isEmpty(request.getParameter("agent")) ? "BONWIN" : request.getParameter("agent");
             String c = request.getParameter("cl");
             String codeDaiLy = request.getParameter("code_daily");
             logger.debug((Object) ("Request quickRegister: username: " + username + ", password: " + password));
@@ -100,7 +103,7 @@ public class QuickRegisterProcessor
                             try {
                                 // MARKETING
                                 try {
-                                    marketing(campaign, source, medium, username);
+                                    marketing(campaign, source, medium, username, agencyCode);
                                 } catch (Exception ignored) {
                                     ignored.printStackTrace();
                                 }
@@ -187,18 +190,26 @@ public class QuickRegisterProcessor
      * @param username
      * @throws Exception
      */
-    private static void marketing(String campaign, String source, String medium, String username) throws Exception {
+    private static void marketing(String campaign, String source, String medium, String username, String agencyCode) throws Exception {
         if (StringUtils.isEmpty(campaign)) campaign = "UNKNOWN";
         if (StringUtils.isEmpty(source)) source = MARKETING_KEYWORD.UTM_SOURCE_NATURAL;
         if (StringUtils.isEmpty(medium)) medium = MARKETING_KEYWORD.UTM_MEDIUM_UNKNOWN;
         int utmId = 1;
+        int agencyId = 1;
 
         MarketingService marketingService = new MarketingService();
+        // processing campaign
         UTMTracking utmTracking = marketingService.getUTMTrackingByCampaign(campaign);
         if (utmTracking != null) {
             utmId = utmTracking.getId();
         }
-        marketingService.createUser(username, "email", utmId, "", "");
+        // processing agency
+        Agency agency = marketingService.getAgencyByCode(agencyCode);
+        if (agency != null) {
+            agencyId = agency.getId();
+        }
+        // creating user
+        marketingService.createUser(username, "email", utmId, agencyId, "", "");
     }
 
     private String getIpAddress(HttpServletRequest request) {

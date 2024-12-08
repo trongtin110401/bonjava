@@ -9,6 +9,7 @@ public class MarketingUser {
     private String email;
     private int utmId; // Mới thêm
     private Timestamp createdAt;
+    private int agencyId;
 
     public int getUtmId() {
         return utmId;
@@ -49,6 +50,14 @@ public class MarketingUser {
 
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public int getAgencyId() {
+        return agencyId;
+    }
+
+    public void setAgencyId(int agencyId) {
+        this.agencyId = agencyId;
     }
 }
 

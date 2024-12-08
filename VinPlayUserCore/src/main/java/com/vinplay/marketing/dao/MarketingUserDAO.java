@@ -20,13 +20,14 @@ public class MarketingUserDAO {
     // Thêm một user mới
     // Thêm một user mới và trả về đối tượng User với ID đã sinh ra
     public MarketingUser addUser(MarketingUser marketingUser) throws SQLException {
-        String sql = "INSERT INTO users (name, email, utm_id, created_at) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO users (name, email, utm_id, created_at) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, marketingUser.getName());
             stmt.setString(2, marketingUser.getEmail());
             stmt.setInt(3, marketingUser.getUtmId());
             stmt.setTimestamp(4, marketingUser.getCreatedAt());
+            stmt.setInt(4, marketingUser.getAgencyId());
 
             // Thực hiện thêm user
             int affectedRows = stmt.executeUpdate();
@@ -62,6 +63,7 @@ public class MarketingUserDAO {
                     marketingUser.setEmail(rs.getString("email"));
                     marketingUser.setUtmId(rs.getInt("utm_id")); // Lấy giá trị utm_id
                     marketingUser.setCreatedAt(rs.getTimestamp("created_at"));
+                    marketingUser.setAgencyId(rs.getInt("agency_id"));
                     return marketingUser;
                 }
             }
@@ -87,6 +89,7 @@ public class MarketingUserDAO {
                     marketingUser.setEmail(rs.getString("email"));
                     marketingUser.setUtmId(rs.getInt("utm_id")); // Nếu có UTM ID
                     marketingUser.setCreatedAt(rs.getTimestamp("created_at"));
+                    marketingUser.setAgencyId(rs.getInt("agency_id"));
                 }
                 return marketingUser;
             }
@@ -108,6 +111,7 @@ public class MarketingUserDAO {
                 marketingUser.setEmail(rs.getString("email"));
                 marketingUser.setUtmId(rs.getInt("utm_id"));
                 marketingUser.setCreatedAt(rs.getTimestamp("created_at"));
+                marketingUser.setAgencyId(rs.getInt("agency_id"));
                 marketingUsers.add(marketingUser);
             }
         }

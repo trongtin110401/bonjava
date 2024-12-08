@@ -7,11 +7,14 @@ import com.vinplay.vbee.common.enums.UserAction;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class MarketingService {
     private final UTMTrackingDAO utmTrackingDAO = new UTMTrackingDAO();
     private final MarketingUserDAO marketingUserDAO = new MarketingUserDAO();
     private final UserAccessLogDAO userAccessLogDAO = new UserAccessLogDAO();
+
+    private final AgencyDAO agencyDAO = new AgencyDAO();
 
     public UTMTracking getUTMTrackingByCampaign(String campaign) throws Exception {
         UTMTracking utmTracking = utmTrackingDAO.getUTMTrackingByCampaign(campaign);
@@ -46,17 +49,17 @@ public class MarketingService {
      * Bước 1: Tạo bản ghi user
      * Bước 2: Tạo bản ghi UserAccessLog
      */
-    public void createUser(String userName, String userEmail, int utmId, String device, String browser) throws Exception {
+    public void createUser(String userName, String userEmail, int utmId, int agencyId, String device, String browser) throws Exception {
         // Bước 1: Tạo bản ghi user và lấy lại đối tượng
         MarketingUser marketingUser = new MarketingUser();
         marketingUser.setName(userName);
         marketingUser.setEmail(userEmail);
         marketingUser.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         marketingUser.setUtmId(utmId);
+        marketingUser.setAgencyId(agencyId);
 
-        MarketingUser createdMarketingUser = marketingUserDAO.addUser(marketingUser); // Lấy User bao gồm ID
+        marketingUserDAO.addUser(marketingUser); // Lấy User bao gồm ID
     }
-
 
     /**
      * Phương thức lưu trữ thông tin UserAccessLog
@@ -112,13 +115,9 @@ public class MarketingService {
                 us.setStartTime(actionTime);
                 us.setServiceId(serviceId);
 
-                System.out.println("=============> addUserServiceAndServiceLog 1: " + marketingUserId + " | " + serviceId + " | " + utmId);
-
                 // add user service
                 UserServiceDAO userServiceDAO = new UserServiceDAO();
                 int userServiceId = userServiceDAO.addUserService(us);
-                System.out.println("=============> addUserServiceAndServiceLog 2: user service id " + userServiceId);
-
 
                 // add service log
                 ServiceLog log = new ServiceLog();
@@ -129,11 +128,99 @@ public class MarketingService {
 
                 ServiceLogDAO serviceLogDAO = new ServiceLogDAO();
                 serviceLogDAO.addServiceLog(log);
-            } else {
-                System.out.println("=============> user action: " + nickname + " is null ");
             }
         } catch (Exception ex) {
             ex.printStackTrace();
+        }
+    }
+
+    // Add a new agency
+    public void addAgency(String code, String name, int status) {
+        try {
+            // Check for duplicate code or other business validations
+            if (isCodeDuplicate(code)) {
+                throw new IllegalArgumentException("Agency code already exists: " + code);
+            }
+            agencyDAO.addAgency(code, name, status);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to add agency", e);
+        }
+    }
+
+    // Retrieve an agency by ID
+    public Agency getAgencyById(int id) {
+        try {
+            Agency agency = agencyDAO.getAgencyById(id);
+            if (agency == null) {
+                throw new IllegalArgumentException("Agency not found with ID: " + id);
+            }
+            return agency;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to fetch agency by ID", e);
+        }
+    }
+
+    // Retrieve an agency by code
+    public Agency getAgencyByCode(String code) {
+        try {
+            Agency agency = agencyDAO.getAgencyByCode(code);
+            if (agency == null) {
+                throw new IllegalArgumentException("Agency not found with code: " + code);
+            }
+            return agency;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to fetch agency by code", e);
+        }
+    }
+
+    // Retrieve all agencies
+    public List<Agency> getAllAgencies() {
+        try {
+            return agencyDAO.getAllAgencies();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to fetch all agencies", e);
+        }
+    }
+
+    // Update an existing agency
+    public void updateAgency(int id, String code, String name, int status) {
+        try {
+            Agency existingAgency = getAgencyById(id); // Ensure the agency exists
+            if (existingAgency == null) {
+                throw new IllegalArgumentException("Agency not found with ID: " + id);
+            }
+
+            // Check for duplicate code (only if the code is changing)
+            if (!existingAgency.getCode().equals(code) && isCodeDuplicate(code)) {
+                throw new IllegalArgumentException("Agency code already exists: " + code);
+            }
+
+            agencyDAO.updateAgency(id, code, name, status);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to update agency", e);
+        }
+    }
+
+    // Delete an agency
+    public void deleteAgency(int id) {
+        try {
+            Agency agency = getAgencyById(id); // Ensure the agency exists
+            if (agency == null) {
+                throw new IllegalArgumentException("Agency not found with ID: " + id);
+            }
+            agencyDAO.deleteAgency(id);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to delete agency", e);
+        }
+    }
+
+    // Check if a code is already in use
+    private boolean isCodeDuplicate(String code) {
+        try {
+            List<Agency> agencies = getAllAgencies();
+            return agencies.stream().anyMatch(agency -> agency.getCode().equals(code));
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Failed to validate agency code", e);
         }
     }
 }
