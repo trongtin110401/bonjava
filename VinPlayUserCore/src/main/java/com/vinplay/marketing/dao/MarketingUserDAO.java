@@ -20,7 +20,7 @@ public class MarketingUserDAO {
     // Thêm một user mới
     // Thêm một user mới và trả về đối tượng User với ID đã sinh ra
     public MarketingUser addUser(MarketingUser marketingUser) throws SQLException {
-        String sql = "INSERT INTO users (name, email, utm_id, created_at) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO users (name, email, utm_id, created_at, agency_id) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, marketingUser.getName());
