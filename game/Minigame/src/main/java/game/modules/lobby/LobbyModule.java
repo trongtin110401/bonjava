@@ -1788,10 +1788,16 @@ public class LobbyModule extends BaseClientRequestHandler {
                 UserModel userReceive = userService.getUserByNickName(cmd.receiver);
                 if (userReceive != null) {
                     if (!cmd.receiver.equals("")) {
-                        res = this.userService.transferMoneyToAnUser(user.getName(), userReceive.getNickname(), cmd.moneyExchange, cmd.description, false);
-                        if (res.getCode() == 0) {
-                            user.setProperty(CURRENT_COMMAND, dataCmd.getId());
-                            user.setProperty(CURRENT_OBJECT_COMMAND, cmd);
+                        OtherServiceImpl otherService = new OtherServiceImpl();
+                        UserTele userTele = otherService.getUserTeleInfoByNickname(userReceive.getNickname());
+                        if(userTele == null || !userTele.isActive()) {
+                            res = new TransferMoneyResponse((byte) 22, 0, 0);
+                        } else {
+                            res = this.userService.transferMoneyToAnUser(user.getName(), userReceive.getNickname(), cmd.moneyExchange, cmd.description, false);
+                            if (res.getCode() == 0) {
+                                user.setProperty(CURRENT_COMMAND, dataCmd.getId());
+                                user.setProperty(CURRENT_OBJECT_COMMAND, cmd);
+                            }
                         }
                     } else {
                         res = new TransferMoneyResponse((byte) 22, 0, 0);
