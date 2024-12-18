@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import game.modules.minigame.TaiXiuModule;
 import game.modules.minigame.TxKubetState;
+import org.apache.commons.collections.CollectionUtils;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONObject;
@@ -54,22 +55,25 @@ public class DynamicXocDia88ReconnectWebSocketClient extends WebSocketClient {
             if (message.equals("{}")) {
                 return;
             }
-
             MainModel model = objectMapper.readValue(message, MainModel.class);
-            switch (model.getM().get(0).getMethod()) {
-                case "LivestreamsessionInfo":
-                    SessionInfo sessionInfo = (SessionInfo) model.getM().get(0).getArguments().get(0);
-                    TxKubetState kubetState = TxKubetState.getByStep(sessionInfo.getCurrentState());
-                    int countDownTime = sessionInfo.getEllapsed();
-                    int dice1 = sessionInfo.getResult().getDice1();
-                    int dice2 = sessionInfo.getResult().getDice2();
-                    int dice3 = sessionInfo.getResult().getDice3();
-                    taiXiuModule.handleGameState(sessionInfo.getGid(), kubetState, countDownTime, dice1, dice2, dice3);
-                    break;
-                case "gameHistory":
-                    break;
-                case "changeDealer":
-                    break;
+            if(CollectionUtils.isNotEmpty(model.getM())) {
+                switch (model.getM().get(0).getMethod()) {
+                    case "LivestreamsessionInfo":
+                        SessionInfo sessionInfo = (SessionInfo) model.getM().get(0).getArguments().get(0);
+                        TxKubetState kubetState = TxKubetState.getByStep(sessionInfo.getCurrentState());
+                        int countDownTime = sessionInfo.getEllapsed();
+                        int dice1 = sessionInfo.getResult().getDice1();
+                        int dice2 = sessionInfo.getResult().getDice2();
+                        int dice3 = sessionInfo.getResult().getDice3();
+                        if (taiXiuModule != null) {
+                            taiXiuModule.handleGameState(sessionInfo.getGid(), kubetState, countDownTime, dice1, dice2, dice3);
+                        }
+                        break;
+                    case "gameHistory":
+                        break;
+                    case "changeDealer":
+                        break;
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
