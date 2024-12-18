@@ -103,7 +103,7 @@ public class TaiXiuModule extends BaseClientRequestHandler {
 
             // websocket ket qua kubet
             URI uri = DynamicXocDia88ReconnectWebSocketClient.buildDynamicURI();
-            DynamicXocDia88ReconnectWebSocketClient.currentClient = new DynamicXocDia88ReconnectWebSocketClient(this, uri);
+            DynamicReconnectWebSocketClient.currentClient = new DynamicReconnectWebSocketClient(this, uri);
             System.out.println(DynamicXocDia88ReconnectWebSocketClient.currentClient != null ? "NNNNNNNNNNNNNN" : "YYYYYYYYYYYYYYYYYYYYYY");
             DynamicXocDia88ReconnectWebSocketClient.currentClient.connect();
         } catch (Exception ex) {
