@@ -102,10 +102,9 @@ public class TaiXiuModule extends BaseClientRequestHandler {
             this.getParentExtension().addEventListener(BZEventType.USER_DISCONNECT, this);
 
             // websocket ket qua kubet
-            URI uri = DynamicReconnectWebSocketClient.buildDynamicURI();
-            DynamicReconnectWebSocketClient.currentClient = new DynamicReconnectWebSocketClient(this, uri);
-            System.out.println(DynamicReconnectWebSocketClient.currentClient != null ? "NNNNNNNNNNNNNN" : "YYYYYYYYYYYYYYYYYYYYYY");
-            DynamicReconnectWebSocketClient.currentClient.connect();
+            URI uri = DynamicXocDia88ReconnectWebSocketClient.buildDynamicURI();
+            DynamicXocDia88ReconnectWebSocketClient.currentClient = new DynamicXocDia88ReconnectWebSocketClient(this, uri);
+            DynamicXocDia88ReconnectWebSocketClient.currentClient.connect();
         } catch (Exception ex) {
             ex.printStackTrace();
             throw new RuntimeException(ex);
