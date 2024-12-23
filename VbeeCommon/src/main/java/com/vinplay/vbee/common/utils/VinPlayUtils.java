@@ -378,7 +378,8 @@ public class VinPlayUtils {
      */
     public static String genGiftCode(int length) {
 
-        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+//        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         StringBuilder randomString = new StringBuilder();
 
         SecureRandom secureRandom = new SecureRandom();
