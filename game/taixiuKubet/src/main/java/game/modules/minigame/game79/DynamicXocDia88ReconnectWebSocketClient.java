@@ -23,7 +23,7 @@ import java.util.TimerTask;
 public class DynamicXocDia88ReconnectWebSocketClient extends WebSocketClient {
 
     private static final int RECONNECT_INTERVAL = 5000; // 5 seconds
-    private static final String BASE_URI = "wss://taixiukulive.system32-cloudfare-356783752985678522.monster/signalr/connect?transport=webSockets&connectionToken=hHxI8ZL1FkS%2Fn%2FSbJVY7GkEPqbcWO4nJ5qXbfYqX9msrwTkFs2CtXKonYYMODm%2F9Ci%2FpC0rqsizu71vVrKuJzlod6u502ptzgQiXC87ePnCaK2o%2B%2BzoNqLt652PBgTE%2B&connectionData=%5B%7B%22name%22%3A%22taixiukuahub%22%7D%5D&tid=1&access_token=";
+    private static final String BASE_URI = "wss://taixiukulive.system32-cloudfare-356783752985678522.monster/signalr/connect?transport=webSockets&connectionToken=L8E%2BYcS6McCNrPXjBYz0G58TJkzjOobXbIjshiwTd106%2FIohI0rBYsV9MDgZg2pwrtbzd2H%2FAaeoVA2szXkAOPrRofpnERT3wYBQ5ojzOwHMq5taq%2FrUE4%2F55oibAB1H&connectionData=%5B%7B%22name%22%3A%22taixiukuahub%22%7D%5D&tid=6&access_token=";
 
     public static WebSocketClient currentClient; // Track the active WebSocket client
     private boolean reconnecting = false;
