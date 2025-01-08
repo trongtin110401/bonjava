@@ -22,7 +22,7 @@ import java.util.TimerTask;
 public class DynamicReconnectWebSocketClient extends WebSocketClient {
 
     private static final int RECONNECT_INTERVAL = 5000; // 5 seconds
-    private static final String BASE_URI = "wss://dicelive.79club.biz/dicelive/signalr/connect?connectionToken=";
+    private static final String BASE_URI = "wss://dicelive.79club2.win/dicelive/signalr/connect?connectionToken=";
 
     public static WebSocketClient currentClient; // Track the active WebSocket client
     private boolean reconnecting = false;
@@ -136,7 +136,7 @@ public class DynamicReconnectWebSocketClient extends WebSocketClient {
     }
 
     public static URI buildDynamicURI() {
-        String loginUrl = "https://login.79club.biz/acc/Login";
+        String loginUrl = "https://login.79club2.win/acc/Login";
         String parameters = "AccountName=baotohn2024&md5=111111";
         String cookie;
         String connectionToken;
@@ -177,7 +177,7 @@ public class DynamicReconnectWebSocketClient extends WebSocketClient {
         // Step 2: Use the retrieved cookie to execute the GET request
         String responseBody = null;
         try {
-            String getUrl = "https://dicelive.79club.biz/dicelive/signalr/negotiate?cp=R&cl=R&pf=web";
+            String getUrl = "https://dicelive.79club2.win/dicelive/signalr/negotiate?cp=R&cl=R&pf=web";
             URL url = new URL(getUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
