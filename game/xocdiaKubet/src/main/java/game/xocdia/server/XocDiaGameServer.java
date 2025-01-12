@@ -392,6 +392,7 @@ public class XocDiaGameServer extends GameServer {
                         if (CURRENT_GAME_STATE == state || CURRENT_GAME_STATE == XocDiaKubetState.BETTING) {
                             break;
                         }
+                        CURRENT_GAME_STATE = state;
                         this.startNewGame();
                         this.finishStep = true;
                         break;
