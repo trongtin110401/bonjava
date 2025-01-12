@@ -141,12 +141,12 @@ public class GamePlayer {
         if (this.reqKickRoom) {
             return 7;
         }
-        if (!this.isBanker && XocDiaConfig.noPlayNumber > 0 && this.cntNoPlay > XocDiaConfig.noPlayNumber) {
-            return 5;
-        }
-        if (!this.checkMoneyCanPlay()) {
-            return 1;
-        }
+//        if (!this.isBanker && XocDiaConfig.noPlayNumber > 0 && this.cntNoPlay > XocDiaConfig.noPlayNumber) {
+//            return 5;
+//        }
+//        if (!this.checkMoneyCanPlay()) {
+//            return 1;
+//        }
         if (this.isBot && this.numPLay > (maxNumPlay = NumberUtils.ranDomIntMinMax((int)XocDiaConfig.normalMaxNumPlayMin, (int)XocDiaConfig.normalMaxNumPlayMin))) {
             return 3;
         }
