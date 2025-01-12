@@ -15,6 +15,7 @@ public class GameStateMsg
 
     public byte gameState;
     public byte time;
+    public long sessionId;
 
     public GameStateMsg() {
         super((short) 3155);
@@ -24,6 +25,7 @@ public class GameStateMsg
         ByteBuffer bf = this.makeBuffer();
         bf.put(this.gameState);
         bf.put(this.time);
+        bf.putLong(sessionId);
         return this.packBuffer(bf);
     }
 }

@@ -363,6 +363,7 @@ public class XocDiaGameServer extends GameServer {
         GameStateMsg msg = new GameStateMsg();
         msg.time = (byte) countTime;
         msg.gameState = gameState;
+        msg.sessionId = referenceId;
         MsgUtils.sendToRoom(msg, this.playerList);
     }
 
