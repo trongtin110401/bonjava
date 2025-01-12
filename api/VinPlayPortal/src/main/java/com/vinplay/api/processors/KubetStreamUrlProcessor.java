@@ -37,6 +37,8 @@ public class KubetStreamUrlProcessor implements BaseProcessor<HttpServletRequest
 //            return getDataXocDia();
             CloseableHttpClient httpClient = HttpClients.createDefault();
             HttpGet httpget = new HttpGet("https://newjson.thietkewebcobac.com/?ID=xocdiaa");
+            // Thiết lập header Content-Type
+            httpget.setHeader("Content-Type", "application/json");
             try {
                 HttpResponse httpResponse = httpClient.execute(httpget);
                 return EntityUtils.toString(httpResponse.getEntity());
