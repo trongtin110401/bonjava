@@ -25,11 +25,20 @@ public class SendingBeService {
     CacheService cacheService;
 
     @Async
-    public CompletableFuture<Long> sendAdmin() {
+    public CompletableFuture<Long> sendAdmin(String gameName) {
+        if (gameName.equals("XocDia")) {
+            return processForXocDia();
+        } else {
+            return processForXocDiaKubet();
+        }
+    }
 
+    /**
+     * @return
+     */
+    private CompletableFuture<Long> processForXocDia() {
         final long start = System.currentTimeMillis();
         try {
-
             ArrayList<GamePotReportModel> gamePotReportModels = new ArrayList<>();
             for (int i = 0; i < 6; i++) {
                 GamePotReportModel gamePotReportModel = MapperUtils.mapper.readValue(cacheService.getValueStr("XocDia_Pot" + i), GamePotReportModel.class);
@@ -37,24 +46,55 @@ public class SendingBeService {
             }
             XocDiaReportResponse xocDiaReportResponse = convertModel(gamePotReportModels);
             String json = MapperUtils.mapper.writeValueAsString(xocDiaReportResponse);
-            this.sendMessToAdmin(json);
-
-
+            this.sendMessToXocDiaAdmin(json);
         } catch (KeyNotFoundException | JsonProcessingException e) {
             e.printStackTrace();
-            System.out.println("lloi duoi");
-
         }
         return CompletableFuture.completedFuture(start);
     }
 
+    /**
+     * @return
+     */
+    private CompletableFuture<Long> processForXocDiaKubet() {
+        final long start = System.currentTimeMillis();
+        try {
+            ArrayList<GamePotReportModel> gamePotReportModels = new ArrayList<>();
+            for (int i = 0; i < 6; i++) {
+                GamePotReportModel gamePotReportModel = MapperUtils.mapper.readValue(cacheService.getValueStr("XocDiaKubet_Pot" + i), GamePotReportModel.class);
+                gamePotReportModels.add(gamePotReportModel);
+            }
+            XocDiaReportResponse xocDiaReportResponse = convertModel(gamePotReportModels);
+            String json = MapperUtils.mapper.writeValueAsString(xocDiaReportResponse);
+            this.sendMessToXocDiaKubetAdmin(json);
+        } catch (KeyNotFoundException | JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return CompletableFuture.completedFuture(start);
+    }
 
-    private void sendMessToAdmin(String mess) {
+    /**
+     * @param mess
+     */
+    private void sendMessToXocDiaAdmin(String mess) {
         for (Session session : ServerGame.sessions) {
             session.sendText(mess);
         }
     }
 
+    /**
+     * @param mess
+     */
+    private void sendMessToXocDiaKubetAdmin(String mess) {
+        for (Session session : ServerGame.sessions) {
+            session.sendText(mess);
+        }
+    }
+
+    /**
+     * @param gamePotReportModels
+     * @return
+     */
     static XocDiaReportResponse convertModel(ArrayList<GamePotReportModel> gamePotReportModels) {
         XocDiaReportResponse xocDiaResponse = new XocDiaReportResponse();
         xocDiaResponse.setCode("2");
@@ -76,11 +116,4 @@ public class SendingBeService {
         xocDiaResponse.setPotList(gamePotReportModels);
         return xocDiaResponse;
     }
-
-    public static void main(String[] args) {
-        ArrayList<GamePotReportModel> gamePotReportModels = new ArrayList<>();
-        convertModel(gamePotReportModels);
-    }
-
-
 }

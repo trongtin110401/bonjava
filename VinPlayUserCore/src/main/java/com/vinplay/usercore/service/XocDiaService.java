@@ -32,5 +32,7 @@ public interface XocDiaService {
     public List<BossXocDiaModel> getListRoomBoss(String var1, int var2, int var3, int var4) throws SQLException, JSONException;
 
     public void saveTransactionXocDia(TransactionXocDiaMessage message);
+
+    public void saveTransactionXocDiaKubet(TransactionXocDiaMessage message);
 }
 

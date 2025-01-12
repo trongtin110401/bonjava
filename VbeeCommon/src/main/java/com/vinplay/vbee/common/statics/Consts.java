@@ -210,7 +210,7 @@ public class Consts {
             "BaiCao", "Poker", "PokerTour", "XocDia", "XiDzach", "Caro", "CoTuong", "CoVua", "CoUp", Games.HAM_CA_MAP.getName(), CANDY, AUDITION, MAYBACH, BENLEY, RANGE_ROVER, Spartan, TAMHUNG, ROLL_ROYE,
             AUDITION_FREE, MAYBACH_FREE, BENLEY_FREE, RANGE_ROVER_FREE, Spartan_FREE, TAMHUNG_FREE, TAMHUNG_FREE, ROLL_ROYE_FREE, Games.COWBOY.getName(), Games.FAST_AND_FURIOUS.getName(),
             Games.LADY_NIGHT.getName(), Games.BIG_CITY_BOY.getName(), Games.BONG_LAI_CAC.getName(), Games.HALLOWEEN.getName(), Games.LAS_VEGAS.getName(),
-            Games.SEXY_DANCE.getName(), Games.LIEN_MINH.getName(), Games.TAI_XIU_MD5.getName(), "BauCuaTo", Games.TAI_XIU_KUBET.getName()
+            Games.SEXY_DANCE.getName(), Games.LIEN_MINH.getName(), Games.TAI_XIU_MD5.getName(), "BauCuaTo", Games.TAI_XIU_KUBET.getName(), Games.XOC_DIA_KUBET.getName()
     );
 
     public static final Map<String, Boolean> GAMES_WITH_OUT_BAN_CA = new HashMap<>();

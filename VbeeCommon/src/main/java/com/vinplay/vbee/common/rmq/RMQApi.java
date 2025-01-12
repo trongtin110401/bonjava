@@ -20,29 +20,29 @@ public class RMQApi {
     }
 
     public static void publishMessagePayment(BaseMessage message, int command) throws IOException, TimeoutException, InterruptedException {
-        ELKrmq elk = new ELKrmq();
+//        ELKrmq elk = new ELKrmq();
         String queueName = "queue_payment";
         switch (command) {
             case 16: {
-                elk.InsertLog30((MoneyMessageInMinigame)message);
+//                elk.InsertLog30((MoneyMessageInMinigame)message);
                 queueName = "queue_payment_minigame";
                 command = 30;
                 break;
             }
             case 10: {
-                elk.InsertLog40((MoneyMessageInGame)message);
+//                elk.InsertLog40((MoneyMessageInGame)message);
                 queueName = "queue_payment_gamebai";
                 command = 40;
                 break;
             }
             case 12: {
-                elk.InsertLog41((FreezeMoneyMessage)message);
+//                elk.InsertLog41((FreezeMoneyMessage)message);
                 queueName = "queue_payment_gamebai";
                 command = 41;
                 break;
             }
             case 13: {
-                elk.InsertLog42((FreezeMoneyMessage)message);
+//                elk.InsertLog42((FreezeMoneyMessage)message);
                 queueName = "queue_payment_gamebai";
                 command = 42;
             }

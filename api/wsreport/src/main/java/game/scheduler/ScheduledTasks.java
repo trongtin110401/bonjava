@@ -71,7 +71,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
 
 
     @Scheduled(fixedRate = 1000)
-    public void getCacheXocDia() {
+    public void sendXocDiaStateToCMS() {
         try {
 
             String timmer = cacheService.getValueStr("XocDia_Flag_Time");
@@ -82,22 +82,31 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
 
             XocDiaGameStatus xocDiaGameStatus = new XocDiaGameStatus("1", String.valueOf(iTimer >= 11 ? iTimer - 11 : iTimer), String.valueOf(gameState), isBetting, session);
             String json = MapperUtils.mapper.writeValueAsString(xocDiaGameStatus);
-            this.sendMessToAdmin(json);
-
-//            cacheService.removeKey("XocDia_Flag_Time");
-//            cacheService.removeKey("XocDia_Flag_GameState");
-//            cacheService.removeKey("XocDia_Flag_betting");
-//            cacheService.removeKey("XocDia_Flag_session");
+            this.sendMessXocDiaToAdmin(json);
         } catch (KeyNotFoundException | JsonProcessingException ignored) {
         }
     }
 
-    //   @Scheduled(fixedRate = 1000)
+    @Scheduled(fixedRate = 1000)
+    public void sendXocDiaKubetStateToCMS() {
+        try {
+
+            String timmer = cacheService.getValueStr("XocDiaKubet_Flag_Time");
+            int iTimer = Integer.parseInt(timmer);
+            int gameState = cacheService.getValueInt("XocDiaKubet_Flag_GameState");
+            String isBetting = cacheService.getValueStr("XocDiaKubet_Flag_betting");
+            String session = cacheService.getValueStr("XocDiaKubet_Flag_session");
+
+            XocDiaGameStatus xocDiaGameStatus = new XocDiaGameStatus("1", String.valueOf(iTimer >= 11 ? iTimer - 11 : iTimer), String.valueOf(gameState), isBetting, session);
+            String json = MapperUtils.mapper.writeValueAsString(xocDiaGameStatus);
+            this.sendMessXocDiaKubetToAdmin(json);
+        } catch (KeyNotFoundException | JsonProcessingException ignored) {
+        }
+    }
 
     @Scheduled(fixedRate = 800)
     public void sendStateUser() {
         try {
-
             HashMap<String, String> mapState = (HashMap<String, String>) cacheService.getObject("List_UserState_Slot");
             ArrayList<String> listState = new ArrayList<>(mapState.values());
             StateGameResponse response = new StateGameResponse("2", listState);
@@ -319,8 +328,14 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
     }
 
 
-    private void sendMessToAdmin(String mess) {
+    private void sendMessXocDiaToAdmin(String mess) {
         for (Session session : ServerGame.sessions) {
+            session.sendText(mess);
+        }
+    }
+
+    private void sendMessXocDiaKubetToAdmin(String mess) {
+        for (Session session : ServerXocDiaKubetGame.sessions) {
             session.sendText(mess);
         }
     }

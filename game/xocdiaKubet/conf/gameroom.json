@@ -1,0 +1,17 @@
+{
+	"join_room_interval_time": 1000,
+	"big_win": 100000,
+	"roomList": [
+		{
+			"moneyType": 1,
+			"moneyBet": 1000,
+			"requiredMoney": 1000,
+			"outMoney": 1000,
+			"maxUserPerRoom": 5000,
+			"commisionRate": 2,
+			"rule": 1,
+			"numberOfInitialRoom": 1,
+			"roomName": "Kênh thế giới"
+		}
+	]
+}

@@ -70,4 +70,6 @@ include 'game:taixiuMd5'
 findProject(':game:taixiuMd5')?.name = 'taixiuMd5'
 include 'game:taixiuKubet'
 findProject(':game:taixiuKubet')?.name = 'taixiuKubet'
+include 'game:xocdiaKubet'
+findProject(':game:xocdiaKubet')?.name = 'xocdiaKubet'
 

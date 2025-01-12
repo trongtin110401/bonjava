@@ -936,6 +936,11 @@
             <path>com.vinplay.api.processors.minigame.GetLichSuXocDiaProcessor</path>
         </command>
         <command>
+            <id>44106</id>
+            <name>get lich su xoc dia</name>
+            <path>com.vinplay.api.processors.minigame.GetLichSuXocDiaKubetProcessor</path>
+        </command>
+        <command>
             <id>4107</id>
             <name>get game name</name>
             <path>com.vinplay.api.processors.GetGameNameProcessor</path>

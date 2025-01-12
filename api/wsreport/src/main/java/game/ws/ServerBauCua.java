@@ -31,9 +31,6 @@ public class ServerBauCua {
 
     @BeforeHandshake
     public void handshake(Session session) {
-
-        // todo: add to hashmap
-        //session.setSubprotocols("stomp");
         sessions.add(session);
     }
 
@@ -44,9 +41,6 @@ public class ServerBauCua {
 
     @OnClose
     public void onClose(Session session) throws IOException {
-        // CacheService cacheService = new CacheServiceImpl();
-        // remove session connect
-        // mapUser.remove()
         sessions.remove(session);
     }
 
@@ -58,34 +52,13 @@ public class ServerBauCua {
 
     @OnMessage
     public void onMessage(Session session, String message) throws IOException {
-
-
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         Message mess = new ObjectMapper().readValue(message, Message.class);
-//        LoginRequestBody loginRequestBody = null;
-//        if (mess.getType().equals("login")) {
-//            //loginRequestBody =  new ObjectMapper().readValue(message, (JavaType) mess.getRequestBody());
-//            loginRequestBody = new ObjectMapper().convertValue(mess.getRequestBody(), LoginRequestBody.class);
-//        }
-
-
-        //     wsHandlerManagement.mapHandler.get(mess.getType()).handleMessage(session, mess);
-//        System.out.println(mapSessionUser.keySet().toString());
-//        for (Session userSession : mapSessionUser.keySet()) {
-//            Message mess1 = new Message(mapSessionUser.get(session), message);
-//            mess1.setRequestBody(loginRequestBody);
-//            String json = ow.writeValueAsString(mess1);
-//            userSession.sendText(json);
-//        }
-
-
     }
 
 
     @OnBinary
     public void onBinary(Session session, byte[] bytes) {
-        for (byte b : bytes) {
-        }
         session.sendBinary(bytes);
     }
 

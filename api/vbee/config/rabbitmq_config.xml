@@ -866,19 +866,24 @@
 
         <queue>
             <name>queue_xocdia</name>
-            <threads>1</threads>
+            <threads>5</threads>
             <commands>
                 <command>
                     <id>1501</id>
                     <name></name>
                     <path>com.vinplay.vbee.rmq.minigame.processor.SaveTransactionXocDiaProcessor</path>
                 </command>
+                <command>
+                    <id>1502</id>
+                    <name></name>
+                    <path>com.vinplay.vbee.rmq.minigame.processor.SaveTransactionDetailTaiXiuKubetProcessor</path>
+                </command>
             </commands>
         </queue>
 
         <queue>
             <name>queue_backcode</name>
-            <threads>1</threads>
+            <threads>5</threads>
             <commands>
                 <command>
                     <id>1502</id>
@@ -889,7 +894,7 @@
         </queue>
         <queue>
             <name>queue_send_mail</name>
-            <threads>1</threads>
+            <threads>5</threads>
             <commands>
                 <command>
                     <id>1503</id>
@@ -900,7 +905,7 @@
         </queue>
         <queue>
             <name>queue_marketing</name>
-            <threads>20</threads>
+            <threads>10</threads>
             <commands>
                 <command>
                     <id>100</id>

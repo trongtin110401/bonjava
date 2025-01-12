@@ -1,0 +1,25 @@
+- game name: XocDiaKubet
+
+I. KEYS
+
+    XOC_DIA_RESULT_LIST => XOC_DIA_KUBET_RESULT_LIST
+    Xocdia_Change => XocdiaKubet_Change
+    XocDia_Pot0 => XocDiaKubet_Pot0
+    XocDia_Pot1 => XocDiaKubet_Pot1
+    XocDia_Pot2 => XocDiaKubet_Pot2
+    XocDia_Pot3 => XocDiaKubet_Pot3
+    XocDia_Pot4 => XocDiaKubet_Pot4
+    XocDia_Pot5 => XocDiaKubet_Pot5
+
+    XocDia_Flag_Time => XocDiaKubet_Flag_Time
+    XocDia_Flag_GameState => XocDiaKubet_Flag_GameState
+    XocDia_Flag_betting => XocDiaKubet_Flag_betting
+    XocDia_Flag_session => XocDiaKubet_Flag_session
+
+II. API
+    1. GameStateMsg (new Response Message Command)
+II. KUBET GAME STATE
+    0 - dealer xóc
+    2 - bắt đầu đặt cược
+    3 - mở bát
+    4- confirm kết quả

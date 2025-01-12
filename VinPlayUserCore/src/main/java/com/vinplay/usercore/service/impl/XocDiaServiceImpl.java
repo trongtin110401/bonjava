@@ -71,5 +71,14 @@ public class XocDiaServiceImpl
             e.printStackTrace();
         }
     }
+
+    @Override
+    public void saveTransactionXocDiaKubet(TransactionXocDiaMessage message) {
+        try {
+            RMQApi.publishMessage("queue_xocdia", message, 1502);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
 

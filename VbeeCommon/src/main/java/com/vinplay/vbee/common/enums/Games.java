@@ -27,6 +27,7 @@ Games {
     LIENG(13, "Lieng", "Li�ng"),
     XI_TO(14, "XiTo", "X� t?"),
     XOC_DIA(15, "XocDia", "X�c ??a"),
+    XOC_DIA_KUBET(1500, "XocDiaKubet", "Xóc Đĩa Kubet"),
     BAI_CAO(16, "BaiCao", "B�i c�o"),
     POKER(17, "Poker", "Poker"),
     AVENGERS(18, "SieuAnhHung", "Si�u anh h�ng"),
