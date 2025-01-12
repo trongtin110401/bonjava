@@ -390,7 +390,7 @@ public class XocDiaGameServer extends GameServer {
                 switch (state) {
                     case GENERATE_RESULT: {
                         if (CURRENT_GAME_STATE == state || CURRENT_GAME_STATE == XocDiaKubetState.BETTING) {
-                            return;
+                            break;
                         }
                         this.startNewGame();
                         this.finishStep = true;
@@ -422,7 +422,7 @@ public class XocDiaGameServer extends GameServer {
 
                     case CONFIRM_RESULT: {
                         if (CURRENT_GAME_STATE == state) {
-                            return;
+                            break;
                         }
                         CURRENT_GAME_STATE = state;
                         if (this.finishStep) {
