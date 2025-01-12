@@ -19,6 +19,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class DynamicXocDia88ReconnectWebSocketClient extends WebSocketClient {
 
@@ -49,6 +50,8 @@ public class DynamicXocDia88ReconnectWebSocketClient extends WebSocketClient {
         reconnecting = false; // Reset the reconnect flag
     }
 
+    AtomicInteger countTime = new AtomicInteger(0);
+
     @Override
     public void onMessage(String m) {
         try {
@@ -65,7 +68,8 @@ public class DynamicXocDia88ReconnectWebSocketClient extends WebSocketClient {
                     switch (message.getM()) {
                         case "updateRoomTime":
                             List<Object> times = message.getA();
-                            xocDiaGameServer.handleGameState(null, (Integer) times.get(0), -1, -1, -1, -1);
+                            countTime.set((Integer) times.get(0));
+                            xocDiaGameServer.handleGameState(null, countTime.get(), -1, -1, -1, -1);
                             break;
                         case "startActionTimer":
                             System.out.println(new Gson().toJson(message));
@@ -76,7 +80,7 @@ public class DynamicXocDia88ReconnectWebSocketClient extends WebSocketClient {
                             int dice2 = actionArgument.getResult().getDice2();
                             int dice3 = actionArgument.getResult().getDice3();
                             int dice4 = actionArgument.getResult().getDice4();
-                            xocDiaGameServer.handleGameState(state, time, dice1, dice2, dice3, dice4);
+                            xocDiaGameServer.handleGameState(state, countTime.get(), dice1, dice2, dice3, dice4);
                             break;
                         case "sessionInfo":
                             break;
