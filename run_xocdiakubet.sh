@@ -22,7 +22,7 @@ SCRIPT_PATH=$(pwd)
 # kill java process
 killProcess() {
   echo "Working path: " . $SCRIPT_PATH
-  kill -9 $(ps aux | grep "xocdia.jar" | grep -v 'grep' | awk '{print $2}')
+  kill -9 $(ps aux | grep "xocdiaKubet.jar" | grep -v 'grep' | awk '{print $2}')
 }
 
 runXocDia() {
@@ -31,7 +31,7 @@ runXocDia() {
   cd $currentDir
 
   echo "Starting Xoc Dia Kubet..."
-  nohup java -cp "libs/*:build/libs/xocdiaKubet.jar.jar" game.xocdia.server.XocDiaMain >/home/server/logs/xocdiakubet.log 2>&1 &
+  nohup java -cp "libs/*:build/libs/xocdiaKubet.jar" game.xocdia.server.XocDiaMain >/home/server/logs/xocdiakubet.log 2>&1 &
 }
 
 main() {
