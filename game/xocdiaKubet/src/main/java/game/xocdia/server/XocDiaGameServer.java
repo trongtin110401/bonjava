@@ -180,7 +180,7 @@ public class XocDiaGameServer extends GameServer {
             }
 
             URI initialUri = DynamicXocDia88ReconnectWebSocketClient.buildDynamicURI(); // Replace with real initial token
-            DynamicXocDia88ReconnectWebSocketClient.currentClient = new DynamicXocDia88ReconnectWebSocketClient(null, initialUri);
+            DynamicXocDia88ReconnectWebSocketClient.currentClient = new DynamicXocDia88ReconnectWebSocketClient(this, initialUri);
             DynamicXocDia88ReconnectWebSocketClient.currentClient.connect();
         } catch (Exception e) {
             Debug.trace("INIT ROOM ERROR: " + e.getMessage());
