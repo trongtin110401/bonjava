@@ -65,7 +65,6 @@ public class DynamicXocDia88ReconnectWebSocketClient extends WebSocketClient {
                     switch (message.getM()) {
                         case "updateRoomTime":
                             List<Object> times = message.getA();
-                            System.out.println(times.get(0));
                             xocDiaGameServer.handleGameState(null, (Integer) times.get(0), -1, -1, -1, -1);
                             break;
                         case "startActionTimer":
