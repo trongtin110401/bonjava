@@ -41,7 +41,7 @@ public class KubetStreamUrlProcessor implements BaseProcessor<HttpServletRequest
             httpget.setHeader("Content-Type", "application/json");
             try {
                 HttpResponse httpResponse = httpClient.execute(httpget);
-                return EntityUtils.toString(httpResponse.getEntity());
+                return EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
