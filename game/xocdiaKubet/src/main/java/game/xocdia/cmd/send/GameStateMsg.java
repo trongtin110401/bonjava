@@ -17,6 +17,8 @@ public class GameStateMsg
     public byte time;
     public long sessionId;
 
+    public String kubetLiveUrl = "https://bon2.win/kubet/xocdia.html";
+
     public GameStateMsg() {
         super((short) 3155);
     }
@@ -26,6 +28,7 @@ public class GameStateMsg
         bf.put(this.gameState);
         bf.put(this.time);
         bf.putLong(sessionId);
+        this.putStr(bf, this.kubetLiveUrl);
         return this.packBuffer(bf);
     }
 }
