@@ -31,7 +31,7 @@ runXocDia() {
   cd $currentDir
 
   echo "Starting Xoc Dia Kubet..."
-  nohup java -cp "libs/*:build/libs/xocdiaKubet.jar.jar" game.xocdia.server.XocDiaMain >/home/server/logs/xocdia.log 2>&1 &
+  nohup java -cp "libs/*:build/libs/xocdiaKubet.jar.jar" game.xocdia.server.XocDiaMain >/home/server/logs/xocdiakubet.log 2>&1 &
 }
 
 main() {
