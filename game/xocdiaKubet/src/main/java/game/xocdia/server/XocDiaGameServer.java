@@ -5,6 +5,7 @@ import bitzero.server.BitZeroServer;
 import bitzero.server.entities.User;
 import bitzero.server.extensions.data.DataCmd;
 import bitzero.util.common.business.Debug;
+import com.google.gson.Gson;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.vinplay.common.HttpCommon;
@@ -1195,6 +1196,7 @@ public class XocDiaGameServer extends GameServer {
                 this.gameLog.append(">").append("XDTT<");
                 List<Byte> potsWin = xdResult.getPotsWin();
                 String result = xdResult.getResult();
+                System.out.println("PORTWIN: " + new Gson().toJson(potsWin));
                 for (Byte bt : potsWin) {
                     GamePot gPot = this.getPot(bt);
                     gPot.isWin = true;
