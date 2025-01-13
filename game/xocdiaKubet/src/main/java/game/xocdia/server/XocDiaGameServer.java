@@ -390,6 +390,11 @@ public class XocDiaGameServer extends GameServer {
                 this.countTime = count - 1;
             }
 
+            if (CURRENT_GAME_STATE == XocDiaKubetState.CONFIRM_RESULT && count <= 0 && finishStep) {
+                this.finish();
+                Debug.trace((Object[]) new Object[]{"Waiting REWARD", this.roomId, this.gameId});
+            }
+
             // get when join user or betting
             if (state != null) {
                 switch (state) {
@@ -428,9 +433,6 @@ public class XocDiaGameServer extends GameServer {
 
                     case CONFIRM_RESULT: {
                         if (CURRENT_GAME_STATE == state) {
-                            if (count <= 0 && finishStep) {
-                                this.finish();
-                            }
                             break;
                         }
                         CURRENT_GAME_STATE = state;
@@ -439,6 +441,7 @@ public class XocDiaGameServer extends GameServer {
                             this.startReward(dice1, dice2, dice3, dice4);
                             this.finishStep = true;
                         }
+                        Debug.trace(new Object[]{"Waiting BALANCE", this.roomId, this.gameId});
                         break;
                     }
                 }
