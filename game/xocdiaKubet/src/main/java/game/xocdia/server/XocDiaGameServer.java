@@ -327,7 +327,7 @@ public class XocDiaGameServer extends GameServer {
         OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
                 .build();
         Request request = new Request.Builder()
-                .url(XocDiaConfig.NOTIFY_TO_BACKEND_URL+"?game-name=XocDiaKubet")
+                .url(XocDiaConfig.NOTIFY_TO_BACKEND_URL + "?game-name=XocDiaKubet")
                 .method("GET", null)
                 .build();
         try (Response response = client.newCall(request).execute()) {
@@ -389,13 +389,13 @@ public class XocDiaGameServer extends GameServer {
                 return;
             }
 
-            if (count == 1 && (this.countTime == 1 || this.countTime == 0)) {
+            if (count == 1 && this.countTime == 1) {
                 this.countTime = 0;
             } else {
                 this.countTime = count - 1;
             }
 
-            if (CURRENT_GAME_STATE == XocDiaKubetState.CONFIRM_RESULT && count <= 0 && finishStep) {
+            if (CURRENT_GAME_STATE == XocDiaKubetState.CONFIRM_RESULT && countTime <= 0 && finishStep) {
                 System.out.println("========> ENTER FINISH FUNCTION");
                 this.finish();
                 Debug.trace((Object[]) new Object[]{"Waiting REWARD", this.roomId, this.gameId});
