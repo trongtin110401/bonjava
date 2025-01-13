@@ -97,7 +97,7 @@ public class ScheduledTasks { // chay schedule lien tuc // cach nay chi dung cho
             String isBetting = cacheService.getValueStr("XocDiaKubet_Flag_betting");
             String session = cacheService.getValueStr("XocDiaKubet_Flag_session");
 
-            XocDiaGameStatus xocDiaGameStatus = new XocDiaGameStatus("1", String.valueOf(iTimer >= 11 ? iTimer - 11 : iTimer), String.valueOf(gameState), isBetting, session);
+            XocDiaGameStatus xocDiaGameStatus = new XocDiaGameStatus("1", timmer, String.valueOf(gameState), isBetting, session);
             String json = MapperUtils.mapper.writeValueAsString(xocDiaGameStatus);
             this.sendMessXocDiaKubetToAdmin(json);
         } catch (KeyNotFoundException | JsonProcessingException ignored) {
