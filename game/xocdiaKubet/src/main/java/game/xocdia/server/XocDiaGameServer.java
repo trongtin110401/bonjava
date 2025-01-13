@@ -1386,6 +1386,7 @@ public class XocDiaGameServer extends GameServer {
                 msg.moneyBankerExchange = moneyBankerExchange;
                 msg.rewardMap = rewardMap;
                 msg.subListMsg = subListMsg;
+                System.out.println("Response Result Message: " + new Gson().toJson(msg));
                 MsgUtils.sendToRoom(msg, this.playerList);
 
             }
