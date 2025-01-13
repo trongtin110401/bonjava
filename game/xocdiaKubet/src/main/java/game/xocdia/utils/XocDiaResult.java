@@ -66,33 +66,17 @@ public class XocDiaResult {
      * @return
      */
     public long sinhKetQuaVaTraVeTienChenhLech(Vector<GamePot> potList, int dice1, int dice2, int dice3, int dice4) {
-//        try {
-
+        try {
             dinces.add(dice1);
             dinces.add(dice2);
             dinces.add(dice3);
             dinces.add(dice4);
             this.blackCount = (byte) dinces.stream().mapToInt(value -> value).sum();
-            return 0;
-
-//            SetBauCuaKetqua setBauCuaKetqua = checkBeCauTuCms();
-//            if (setBauCuaKetqua != null && setBauCuaKetqua.getStatus().equals("be")) {  // nếu có lệnh bẻ cầu từ CMS
-//                this.dinces = new ArrayList<>();
-//                byte[] listDices = setBauCuaKetqua.getListDices();
-//                dinces.add((int) listDices[0]);
-//                dinces.add((int) listDices[1]);
-//                dinces.add((int) listDices[2]);
-//                dinces.add((int) listDices[3]);
-//                this.blackCount = (byte) dinces.stream().mapToInt(value -> value).sum();
-//                cacheService.setObject("BeCauXocDia", new SetBauCuaKetqua("auto", new byte[]{}));
-//                return tinhToanTienChenhLech(potList);
-//            } else { // Không có lệnh bẻ cầu từ CMS, tự động sinh kết quả
-//                return this.autoGenerateValue2(potList);
-//            }
-//        } catch (Exception e) {
-//            Debug.trace(e);
-//            throw new RuntimeException(e);
-//        }
+            return this.autoGenerateValue2(potList, dice1, dice2, dice3, dice4);
+        } catch (Exception e) {
+            Debug.trace(e);
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -126,25 +110,30 @@ public class XocDiaResult {
         }
     }
 
-    public long autoGenerateValue2(Vector<GamePot> potList) {
-        // tinh toan hu
-        long fund = getFundValue();
-        ArrayList<List<Integer>> listDiceRandom = listDicesRandom();
+    public long autoGenerateValue2(Vector<GamePot> potList, int dice1, int dice2, int dice3, int dice4) {
+        // random ket qua
+        this.dinces = Arrays.asList(dice1, dice2, dice3, dice4);
+        // tổng số vị màu đen
+        this.blackCount = (byte) dinces.stream().mapToInt(value -> value).sum();
+
+//        // tinh toan hu
+//        long fund = getFundValue();
+//        ArrayList<List<Integer>> listDiceRandom = listDicesRandom();
         long tienChenhLech = 0;
-        int TONG_SO_KET_QUA = 16;
-        for (int i = 0; i < TONG_SO_KET_QUA; i++) {
-            // random ket qua
-            this.dinces = listDiceRandom.get(i);
-            // tổng số vị màu đen
-            this.blackCount = (byte) dinces.stream().mapToInt(value -> value).sum();
-            // tính toán tiền chênh lệch
-            tienChenhLech = tinhToanTienChenhLech(potList);
-            if (tienChenhLech >= 0) { // nhà cái thắng
-                break;
-            } else if (fund >= tienChenhLech * -1) { // Qũy vẫn còn đủ để bù lỗ
-                break;
-            }
-        }
+//        int TONG_SO_KET_QUA = 16;
+//        for (int i = 0; i < TONG_SO_KET_QUA; i++) {
+//            // random ket qua
+//            this.dinces = Arrays.asList(dice1, dice2, dice3, dice4);
+//            // tổng số vị màu đen
+//            this.blackCount = (byte) dinces.stream().mapToInt(value -> value).sum();
+//            // tính toán tiền chênh lệch
+//            tienChenhLech = tinhToanTienChenhLech(potList);
+//            if (tienChenhLech >= 0) { // nhà cái thắng
+//                break;
+//            } else if (fund >= tienChenhLech * -1) { // Qũy vẫn còn đủ để bù lỗ
+//                break;
+//            }
+//        }
         return tienChenhLech;
     }
 
