@@ -89,6 +89,10 @@ public class XocDiaGameServer extends GameServer {
     private ArrayList<Byte> rsList;
     private int totalEven;
     private int totalOdd;
+    private int total3White;
+    private int total4White;
+    private int total3Black;
+    private int total4Black;
     private volatile String bankerName;
     private volatile StringBuilder gameLog;
     private volatile String lastBetting;
@@ -1085,6 +1089,10 @@ public class XocDiaGameServer extends GameServer {
             RsListMsg msg = new RsListMsg();
             msg.totalEven = this.totalEven;
             msg.totalOdd = this.totalOdd;
+            msg.total3White = this.total3White;
+            msg.total4White = this.total4White;
+            msg.total3Black = this.total3Black;
+            msg.total4Black = this.total4Black;
             msg.rsList = this.rsList;
             MsgUtils.send(msg, user, true);
         } catch (Exception e) {
@@ -1158,16 +1166,34 @@ public class XocDiaGameServer extends GameServer {
                     this.setPot(bt, gPot);
                     if (bt == PotType.EVEN.getId()) {
                         ++this.totalEven;
-                        if (rsList.size() >= 32) {
+                        if (rsList.size() >= 52) {
                             this.rsList.remove(0);
                         }
                         this.rsList.add(bt);
-
                         continue;
-                    } else {
-                        if (bt != PotType.ODD.getId()) continue;
+                    } else if (bt == PotType.ODD.getId()) {
                         ++this.totalOdd;
-                        if (rsList.size() >= 32) {
+                        if (rsList.size() >= 52) {
+                            this.rsList.remove(0);
+                        }
+                    } else if (bt == PotType.ONE_BLACK.getId()) {
+                        ++this.total3White;
+                        if (rsList.size() >= 52) {
+                            this.rsList.remove(0);
+                        }
+                    } else if (bt == PotType.FOUR_WHITE.getId()) {
+                        ++this.total4White;
+                        if (rsList.size() >= 52) {
+                            this.rsList.remove(0);
+                        }
+                    } else if (bt == PotType.ONE_WHITE.getId()) {
+                        ++this.total3Black;
+                        if (rsList.size() >= 52) {
+                            this.rsList.remove(0);
+                        }
+                    } else if (bt == PotType.FOUR_BLACK.getId()) {
+                        ++this.total4Black;
+                        if (rsList.size() >= 52) {
                             this.rsList.remove(0);
                         }
                     }
