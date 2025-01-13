@@ -1208,34 +1208,21 @@ public class XocDiaGameServer extends GameServer {
                             this.rsList.remove(0);
                         }
                         this.rsList.add(bt);
-                        continue;
                     } else if (bt == PotType.ODD.getId()) {
                         ++this.totalOdd;
                         if (rsList.size() >= 52) {
                             this.rsList.remove(0);
                         }
+                        this.rsList.add(bt);
                     } else if (bt == PotType.ONE_BLACK.getId()) {
                         ++this.total3White;
-                        if (rsList.size() >= 52) {
-                            this.rsList.remove(0);
-                        }
                     } else if (bt == PotType.FOUR_WHITE.getId()) {
                         ++this.total4White;
-                        if (rsList.size() >= 52) {
-                            this.rsList.remove(0);
-                        }
                     } else if (bt == PotType.ONE_WHITE.getId()) {
                         ++this.total3Black;
-                        if (rsList.size() >= 52) {
-                            this.rsList.remove(0);
-                        }
                     } else if (bt == PotType.FOUR_BLACK.getId()) {
                         ++this.total4Black;
-                        if (rsList.size() >= 52) {
-                            this.rsList.remove(0);
-                        }
                     }
-                    this.rsList.add(bt);
                 }
 
 
