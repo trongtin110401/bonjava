@@ -16,6 +16,9 @@ extends BaseCmd {
     public boolean isIcon;
     public String content;
 
+    public short type = 0;
+    public long money = 0;
+
     public ChatCmd(DataCmd dataCmd) {
         super(dataCmd);
         this.unpackData();
@@ -25,6 +28,8 @@ extends BaseCmd {
         ByteBuffer bf = this.makeBuffer();
         this.isIcon = this.readBoolean(bf);
         this.content = this.readString(bf);
+        this.type = this.readShort(bf);
+        this.money = this.readLong(bf);
     }
 }
 

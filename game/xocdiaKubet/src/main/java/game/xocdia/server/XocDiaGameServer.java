@@ -5,6 +5,8 @@ import bitzero.server.BitZeroServer;
 import bitzero.server.entities.User;
 import bitzero.server.extensions.data.DataCmd;
 import bitzero.util.common.business.Debug;
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.IMap;
 import com.vinplay.common.HttpCommon;
 import com.vinplay.dal.service.MiniGameService;
 import com.vinplay.dal.service.impl.MiniGameServiceImpl;
@@ -16,7 +18,9 @@ import com.vinplay.usercore.service.impl.CacheServiceImpl;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.usercore.service.impl.XocDiaServiceImpl;
 import com.vinplay.vbee.common.enums.Games;
+import com.vinplay.vbee.common.hazelcast.HazelcastClientFactory;
 import com.vinplay.vbee.common.messages.TransactionXocDiaMessage;
+import com.vinplay.vbee.common.models.UserModel;
 import com.vinplay.vbee.common.response.MoneyResponse;
 import com.vinplay.vbee.common.statics.TransType;
 import com.vinplay.vbee.common.utils.DateTimeUtils;
@@ -1099,6 +1103,9 @@ public class XocDiaGameServer extends GameServer {
         }
     }
 
+    public short TYPE_CHAT = 0;
+    public short TYPE_TIP = 1;
+
     /*
      * WARNING - Removed try catching itself - possible behaviour change.
      */
@@ -1107,21 +1114,50 @@ public class XocDiaGameServer extends GameServer {
             Map<String, GamePlayer> map = this.playerList;
             synchronized (map) {
                 long now;
+                ChatCmd cmd = new ChatCmd(data);
                 GamePlayer gp = this.getPlayer(user.getName());
-                if (gp != null && (now = System.currentTimeMillis()) - gp.lastChatTime >= 3000L) {
-                    gp.lastChatTime = now;
-                    this.setPlayer(user.getName(), gp);
-                    ChatCmd cmd = new ChatCmd(data);
-                    ChatMsg msg = new ChatMsg();
-                    msg.nickname = user.getName();
-                    msg.isIcon = cmd.isIcon;
-                    try {
-                        msg.content = URLDecoder.decode(cmd.content, "UTF-8");
-                    } catch (UnsupportedEncodingException e) {
-                        Debug.trace((Object) e);
-                        msg.content = cmd.content;
+                if (cmd.type == TYPE_CHAT) {
+                    if (gp != null && (now = System.currentTimeMillis()) - gp.lastChatTime >= 3000L) {
+                        gp.lastChatTime = now;
+                        this.setPlayer(user.getName(), gp);
+                        ChatMsg msg = new ChatMsg();
+                        msg.nickname = user.getName();
+                        msg.isIcon = cmd.isIcon;
+                        msg.type = cmd.type;
+                        msg.money = cmd.money;
+                        try {
+                            msg.content = URLDecoder.decode(cmd.content, "UTF-8");
+                        } catch (UnsupportedEncodingException e) {
+                            Debug.trace((Object) e);
+                            msg.content = cmd.content;
+                        }
+                        MsgUtils.sendToRoom(msg, this.playerList);
                     }
-                    MsgUtils.sendToRoom(msg, this.playerList);
+                } else {
+                    String nickname = user.getName();
+                    HazelcastInstance client = HazelcastClientFactory.getInstance();
+                    IMap<String, UserModel> userMap = client.getMap("users");
+                    UserModel model = userMap.get(nickname);
+                    if (cmd.type == TYPE_TIP) {
+                        if (cmd.money >= 2000 && model.getVinTotal() >= cmd.money) {
+                            MoneyResponse response = userService.updateMoney(nickname, -cmd.money, "vin", Games.XOC_DIA_KUBET.getName(), "XocDiaKuBet tặng quà", "XocDiaKuBet tặng quà dealer", 0L, 0L, TransType.END_TRANS);
+                            if (response.isSuccess()) {
+                                cmd.content = nickname + "đã tip " + cmd.money + " cho dealer";
+                                ChatMsg msg = new ChatMsg();
+                                msg.nickname = user.getName();
+                                msg.isIcon = cmd.isIcon;
+                                msg.type = cmd.type;
+                                msg.money = cmd.money;
+                                try {
+                                    msg.content = URLDecoder.decode(cmd.content, "UTF-8");
+                                } catch (UnsupportedEncodingException e) {
+                                    Debug.trace((Object) e);
+                                    msg.content = cmd.content;
+                                }
+                                MsgUtils.sendToRoom(msg, this.playerList);
+                            }
+                        }
+                    }
                 }
             }
         } catch (Exception e) {
