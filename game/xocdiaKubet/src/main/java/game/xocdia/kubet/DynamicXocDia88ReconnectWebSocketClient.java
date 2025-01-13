@@ -72,7 +72,7 @@ public class DynamicXocDia88ReconnectWebSocketClient extends WebSocketClient {
                             xocDiaGameServer.handleGameState(null, countTime.get(), -1, -1, -1, -1);
                             break;
                         case "startActionTimer":
-                            System.out.println(new Gson().toJson(message));
+//                            System.out.println(new Gson().toJson(message));
                             ActionArgument actionArgument = (ActionArgument) (message.getA().get(0));
                             XocDiaKubetState state = XocDiaKubetState.getByStep(actionArgument.getPhrase());
                             int time = actionArgument.getElapsed();

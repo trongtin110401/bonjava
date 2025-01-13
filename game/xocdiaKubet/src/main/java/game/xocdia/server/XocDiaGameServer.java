@@ -396,7 +396,6 @@ public class XocDiaGameServer extends GameServer {
             }
 
             if (CURRENT_GAME_STATE == XocDiaKubetState.CONFIRM_RESULT && countTime <= 0 && finishStep) {
-                System.out.println("========> ENTER FINISH FUNCTION");
                 this.finish();
                 Debug.trace((Object[]) new Object[]{"Waiting REWARD", this.roomId, this.gameId});
             }
@@ -1197,7 +1196,6 @@ public class XocDiaGameServer extends GameServer {
                 this.gameLog.append(">").append("XDTT<");
                 List<Byte> potsWin = xdResult.getPotsWin();
                 String result = xdResult.getResult();
-                System.out.println("PORTWIN: " + new Gson().toJson(potsWin));
                 for (Byte bt : potsWin) {
                     GamePot gPot = this.getPot(bt);
                     gPot.isWin = true;
@@ -1374,7 +1372,6 @@ public class XocDiaGameServer extends GameServer {
                 msg.moneyBankerExchange = moneyBankerExchange;
                 msg.rewardMap = rewardMap;
                 msg.subListMsg = subListMsg;
-                System.out.println("Response Result Message: " + new Gson().toJson(msg.potList));
                 MsgUtils.sendToRoom(msg, this.playerList);
 
             }
