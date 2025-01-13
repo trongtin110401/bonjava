@@ -10,8 +10,7 @@ import bitzero.server.extensions.data.BaseMsg;
 
 import java.nio.ByteBuffer;
 
-public class GameStateMsg
-        extends BaseMsg {
+public class GameStateMsg extends BaseMsg {
 
     public byte gameState;
     public byte time;
