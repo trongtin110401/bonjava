@@ -8,6 +8,7 @@ import game.entity.response.XocDiaReportResponse;
 import game.exceptions.KeyNotFoundException;
 import game.scheduler.ScheduledTasks;
 import game.ws.ServerGame;
+import game.ws.ServerXocDiaKubetGame;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -86,7 +87,7 @@ public class SendingBeService {
      * @param mess
      */
     private void sendMessToXocDiaKubetAdmin(String mess) {
-        for (Session session : ServerGame.sessions) {
+        for (Session session : ServerXocDiaKubetGame.sessions) {
             session.sendText(mess);
         }
     }

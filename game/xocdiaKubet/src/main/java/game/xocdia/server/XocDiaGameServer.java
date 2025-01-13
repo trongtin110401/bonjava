@@ -327,7 +327,7 @@ public class XocDiaGameServer extends GameServer {
         OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
                 .build();
         Request request = new Request.Builder()
-                .url(XocDiaConfig.NOTIFY_TO_BACKEND_URL)
+                .url(XocDiaConfig.NOTIFY_TO_BACKEND_URL+"?game-name=XocDiaKubet")
                 .method("GET", null)
                 .build();
         try (Response response = client.newCall(request).execute()) {
