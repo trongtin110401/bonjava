@@ -5,7 +5,6 @@ import bitzero.server.BitZeroServer;
 import bitzero.server.entities.User;
 import bitzero.server.extensions.data.DataCmd;
 import bitzero.util.common.business.Debug;
-import com.google.gson.Gson;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.vinplay.common.HttpCommon;
@@ -57,6 +56,7 @@ import java.net.URLDecoder;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.stream.Stream;
 
 public class XocDiaGameServer extends GameServer {
     private final Runnable gameLoopTask = new GameLoopTask();
@@ -92,12 +92,13 @@ public class XocDiaGameServer extends GameServer {
     private List<String> playerListrp;
     private volatile boolean isRegisterLoop;
     private ArrayList<Byte> rsList;
-    private int totalEven;
+    private ArrayList<Integer> listDiceResult;
+    //    private int totalEven;
     private int totalOdd;
-    private int total3White;
-    private int total4White;
-    private int total3Black;
-    private int total4Black;
+    //    private int total3White;
+//    private int total4White;
+//    private int total3Black;
+//    private int total4Black;
     private volatile String bankerName;
     private volatile StringBuilder gameLog;
     private volatile String lastBetting;
@@ -163,8 +164,8 @@ public class XocDiaGameServer extends GameServer {
             this.countTime = -1;
             this.isRegisterLoop = false;
             getXocDiaResultFromCache();
-            this.totalEven = 0;
-            this.totalOdd = 0;
+//            this.totalEven = 0;
+//            this.totalOdd = 0;
             this.bankerName = "";
             this.reqBankerList = new LinkedBlockingDeque<>();
             this.subBankerList = new ConcurrentHashMap<>();
@@ -206,6 +207,11 @@ public class XocDiaGameServer extends GameServer {
         } catch (Exception ex) {
             this.rsList = new ArrayList<>();
         }
+        try {
+            this.listDiceResult = (ArrayList<Integer>) cacheService.getObject("XOC_DIA_KUBET_RESULT_LIST_DICE");
+        } catch (Exception ex) {
+            listDiceResult = new ArrayList<>();
+        }
     }
 
     /**
@@ -213,6 +219,7 @@ public class XocDiaGameServer extends GameServer {
      */
     private void saveXocDiaResultIntoCache() {
         cacheService.setObject("XOC_DIA_KUBET_RESULT_LIST", this.rsList);
+        cacheService.setObject("XOC_DIA_KUBET_RESULT_LIST_DICE", this.listDiceResult);
     }
 
     public synchronized void init() {
@@ -392,7 +399,11 @@ public class XocDiaGameServer extends GameServer {
             if (count == 1 && this.countTime == 1) {
                 this.countTime = 0;
             } else {
-                this.countTime = count - 1;
+                if (count > 0) {
+                    this.countTime = count - 1;
+                } else {
+                    this.countTime = count;
+                }
             }
 
             if (CURRENT_GAME_STATE == XocDiaKubetState.CONFIRM_RESULT && countTime <= 0 && finishStep) {
@@ -731,6 +742,7 @@ public class XocDiaGameServer extends GameServer {
             this.gameLog.append(">").append("XDKQ<");
             this.notifyActionGamme((byte) 6, (byte) 10);
             this.reward(dice1, dice2, dice3, dice4);
+
         } catch (Exception e) {
             String content = "Xoc Dia exception: " + e.getMessage() + ", function: startReward() " + this.roomId + " " + this.gameId;
             MsgUtils.alertServer(content, false, true);
@@ -762,9 +774,10 @@ public class XocDiaGameServer extends GameServer {
             String content = "Xoc Dia exception: " + e.getMessage() + ", function: finish() " + this.roomId + " " + this.gameId;
             MsgUtils.alertServer(content, false, true);
             Debug.trace((Object) e);
+        } finally {
+            // save Results into Hazelcast cache
+            saveXocDiaResultIntoCache();
         }
-        // save Results into Hazelcast cache
-        saveXocDiaResultIntoCache();
     }
 
     public synchronized void onGameMessage(User user, DataCmd dataCmd) {
@@ -1091,12 +1104,37 @@ public class XocDiaGameServer extends GameServer {
     private void getRsList(User user, DataCmd dataCmd) {
         try {
             RsListMsg msg = new RsListMsg();
-            msg.totalEven = this.totalEven;
-            msg.totalOdd = this.totalOdd;
-            msg.total3White = this.total3White;
-            msg.total4White = this.total4White;
-            msg.total3Black = this.total3Black;
-            msg.total4Black = this.total4Black;
+//            msg.totalEven = this.totalEven;
+//            msg.totalOdd = this.totalOdd;
+//            msg.total3White = this.total3White;
+//            msg.total4White = this.total4White;
+//            msg.total3Black = this.total3Black;
+//            msg.total4Black = this.total4Black;
+
+            listDiceResult.forEach(rs -> {
+                switch (rs) {
+                    case 0:
+                        msg.total4White = msg.total4White + 1;
+                        msg.totalEven = msg.totalEven + 1;
+                        break;
+                    case 1:
+                        msg.total3White = msg.total3White + 1;
+                        msg.totalOdd = msg.totalOdd + 1;
+                        break;
+                    case 2:
+                        msg.total4White = msg.totalEven + 1;
+                        msg.totalEven = msg.totalEven + 1;
+                        break;
+                    case 3:
+                        msg.total3Black = msg.total3White + 1;
+                        msg.totalOdd = msg.totalOdd + 1;
+                        break;
+                    case 4:
+                        msg.total4Black = msg.total4White + 1;
+                        msg.totalEven = msg.totalEven + 1;
+                        break;
+                }
+            });
             msg.rsList = this.rsList;
             MsgUtils.send(msg, user, true);
         } catch (Exception e) {
@@ -1201,26 +1239,43 @@ public class XocDiaGameServer extends GameServer {
                     gPot.isWin = true;
                     this.setPot(bt, gPot);
                     if (bt == PotType.EVEN.getId()) {
-                        ++this.totalEven;
                         if (rsList.size() >= 52) {
                             this.rsList.remove(0);
                         }
                         this.rsList.add(bt);
+
+                        // thống kê số lần ra chẵn
                     } else if (bt == PotType.ODD.getId()) {
                         ++this.totalOdd;
                         if (rsList.size() >= 52) {
                             this.rsList.remove(0);
                         }
                         this.rsList.add(bt);
-                    } else if (bt == PotType.ONE_BLACK.getId()) {
-                        ++this.total3White;
-                    } else if (bt == PotType.FOUR_WHITE.getId()) {
-                        ++this.total4White;
-                    } else if (bt == PotType.ONE_WHITE.getId()) {
-                        ++this.total3Black;
-                    } else if (bt == PotType.FOUR_BLACK.getId()) {
-                        ++this.total4Black;
                     }
+                }
+
+                long countDiceBlack = Stream.of(dice1, dice2, dice3, dice4)
+                        .filter(dice -> dice == 1)
+                        .count();
+                switch ((int) countDiceBlack) {
+                    case 0:
+                        listDiceResult.add(0);
+                        break;
+                    case 1:
+                        listDiceResult.add(1);
+                        break;
+                    case 2:
+                        listDiceResult.add(2);
+                        break;
+                    case 3:
+                        listDiceResult.add(3);
+                        break;
+                    case 4:
+                        listDiceResult.add(4);
+                        break;
+                }
+                if (listDiceResult.size() > 52) {
+                    listDiceResult.remove(0);
                 }
 
 
