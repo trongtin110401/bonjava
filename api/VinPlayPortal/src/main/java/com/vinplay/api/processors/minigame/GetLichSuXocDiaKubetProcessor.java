@@ -25,16 +25,20 @@ public class GetLichSuXocDiaKubetProcessor
 
     public String execute(Param<HttpServletRequest> param) {
         LichSuGiaoDichXocDiaResponse response = new LichSuGiaoDichXocDiaResponse(false, "1001");
+        System.out.println("===> 1");
         HttpServletRequest request = param.get();
         String username = request.getParameter("un");
         int page = Integer.parseInt(request.getParameter("p"));
         if (page < 0) {
+            System.out.println("===> 2");
             return response.toJson();
         }
+        System.out.println("===> 3");
         return getLichSuXocDia(username, page).toJson();
     }
 
     public LichSuGiaoDichXocDiaResponse getLichSuXocDia(String username, int page) {
+        System.out.println("===> 4");
         LichSuGiaoDichXocDiaResponse response = new LichSuGiaoDichXocDiaResponse(true, "0");
 
         XocDiaKubetDaoImpl xocDiaDao = new XocDiaKubetDaoImpl();
@@ -46,6 +50,7 @@ public class GetLichSuXocDiaKubetProcessor
         response.setTotalPages(totalPages);
         response.setTransactions(transactionXocDias);
 
+        System.out.println("===> 5");
         return response;
     }
 
