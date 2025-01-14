@@ -1791,7 +1791,6 @@ public class XocDiaGameServer extends GameServer {
             this.gameState = 0;
             this.gameId = 0;
             this.rsList.clear();
-            this.totalEven = 0;
             this.totalOdd = 0;
             this.bankerName = "";
             this.subBankerList.clear();
