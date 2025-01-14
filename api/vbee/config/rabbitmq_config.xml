@@ -876,7 +876,7 @@
                 <command>
                     <id>1502</id>
                     <name></name>
-                    <path>com.vinplay.vbee.rmq.minigame.processor.SaveTransactionDetailTaiXiuKubetProcessor</path>
+                    <path>com.vinplay.vbee.rmq.minigame.processor.SaveTransactionXocDiaKubetProcessor</path>
                 </command>
             </commands>
         </queue>
