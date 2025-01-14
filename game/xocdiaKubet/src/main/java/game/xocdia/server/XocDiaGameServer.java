@@ -400,7 +400,7 @@ public class XocDiaGameServer extends GameServer {
                 this.countTime = count;
             }
 
-            if(count - 1 < 0) {
+            if (count - 1 == 0) {
                 this.countTime = 0;
             } else {
                 this.countTime = count - 1;
@@ -525,7 +525,7 @@ public class XocDiaGameServer extends GameServer {
     private synchronized void destroyLoop() {
         try {
             Debug.trace((Object[]) new Object[]{"DESTROY LOOP", this.roomId, this.gameId});
-            this.countTime = -1;
+            this.countTime = 0;
             if (this.task != null && !this.task.isCancelled()) {
                 this.task.cancel(false);
             }
