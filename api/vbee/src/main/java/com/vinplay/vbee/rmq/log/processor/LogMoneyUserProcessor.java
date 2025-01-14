@@ -110,8 +110,6 @@ public class LogMoneyUserProcessor implements BaseProcessor<byte[], Boolean> {
 
         // Perform the update operation with upsert
         col.updateOne(query, update, options);
-
-
     }
 
     private ReportMoneyModelNew createReportMoney(LogMoneyUserMessage log) {
