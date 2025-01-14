@@ -396,15 +396,19 @@ public class XocDiaGameServer extends GameServer {
                 return;
             }
 
-            if (count == 1 && this.countTime == 1) {
-                this.countTime = 0;
-            } else {
-                if (count > 0) {
-                    this.countTime = count - 1;
-                } else {
-                    this.countTime = count;
-                }
+            if (state != XocDiaKubetState.SHOW_RESULT) {
+                this.countTime = count;
             }
+
+//            if (count == 1 && this.countTime == 1) {
+//                this.countTime = 0;
+//            } else {
+//                if (count > 0) {
+//                    this.countTime = count - 1;
+//                } else {
+//                    this.countTime = count;
+//                }
+//            }
 
             if (CURRENT_GAME_STATE == XocDiaKubetState.CONFIRM_RESULT && countTime <= 0 && finishStep) {
                 this.finish();
@@ -1122,15 +1126,15 @@ public class XocDiaGameServer extends GameServer {
                         msg.totalOdd = msg.totalOdd + 1;
                         break;
                     case 2:
-                        msg.total4White = msg.totalEven + 1;
+//                        msg.total4White = msg.totalEven + 1;
                         msg.totalEven = msg.totalEven + 1;
                         break;
                     case 3:
-                        msg.total3Black = msg.total3White + 1;
+                        msg.total3Black = msg.total3Black + 1;
                         msg.totalOdd = msg.totalOdd + 1;
                         break;
                     case 4:
-                        msg.total4Black = msg.total4White + 1;
+                        msg.total4Black = msg.total4Black + 1;
                         msg.totalEven = msg.totalEven + 1;
                         break;
                 }
@@ -1257,23 +1261,7 @@ public class XocDiaGameServer extends GameServer {
                 long countDiceBlack = Stream.of(dice1, dice2, dice3, dice4)
                         .filter(dice -> dice == 1)
                         .count();
-                switch ((int) countDiceBlack) {
-                    case 0:
-                        listDiceResult.add(0);
-                        break;
-                    case 1:
-                        listDiceResult.add(1);
-                        break;
-                    case 2:
-                        listDiceResult.add(2);
-                        break;
-                    case 3:
-                        listDiceResult.add(3);
-                        break;
-                    case 4:
-                        listDiceResult.add(4);
-                        break;
-                }
+                listDiceResult.add((int) countDiceBlack);
                 if (listDiceResult.size() > 52) {
                     listDiceResult.remove(0);
                 }
