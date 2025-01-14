@@ -400,17 +400,23 @@ public class XocDiaGameServer extends GameServer {
                 this.countTime = count;
             }
 
+            if(count - 1 < 0) {
+                this.countTime = 0;
+            } else {
+                this.countTime = count - 1;
+            }
+
 //            if (count == 1 && this.countTime == 1) {
 //                this.countTime = 0;
 //            } else {
 //                if (count > 0) {
-//                    this.countTime = count - 1;
+//
 //                } else {
 //                    this.countTime = count;
 //                }
 //            }
 
-            if (CURRENT_GAME_STATE == XocDiaKubetState.CONFIRM_RESULT && countTime <= 0 && finishStep) {
+            if (CURRENT_GAME_STATE == XocDiaKubetState.CONFIRM_RESULT && countTime == 0 && finishStep) {
                 this.finish();
                 Debug.trace((Object[]) new Object[]{"Waiting REWARD", this.roomId, this.gameId});
             }
