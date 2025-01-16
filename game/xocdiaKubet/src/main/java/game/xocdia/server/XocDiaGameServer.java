@@ -372,7 +372,7 @@ public class XocDiaGameServer extends GameServer {
         cacheService.setValue("XocDiaKubet_Flag_Time", countTime); // get all time
         cacheService.setValue("XocDiaKubet_Flag_GameState", this.gameState); // get all time
         cacheService.setValue("XocDiaKubet_Flag_betting", String.valueOf(this.enableBetting));
-        cacheService.setValue("XocDiaKubet_Flag_session", String.valueOf(this.gameId));
+        cacheService.setValue("XocDiaKubet_Flag_session", String.valueOf(this.referenceId));
     }
 
     private void sendGameStateToAllClients() {
