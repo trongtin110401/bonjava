@@ -398,16 +398,10 @@ public class XocDiaGameServer extends GameServer {
                 return;
             }
 
-            if (state != XocDiaKubetState.SHOW_RESULT) {
-                this.countTime = count;
-            }
-
-            if (state == XocDiaKubetState.SHOW_RESULT && count > countTime) {
+            if (state == XocDiaKubetState.SHOW_RESULT) {
                 count = countTime;
-            }
-
-            if (count < 0) {
-                count = 0;
+            } else {
+                this.countTime = count;
             }
 
             if (count - 1 == 0) {
