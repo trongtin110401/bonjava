@@ -1044,7 +1044,7 @@ public class XocDiaGameServer extends GameServer {
                 BetMsg msg = new BetMsg(user.getName());
                 msg.potId = potId;
                 MoneyResponse response;
-                response = userService.updateMoney(user.getName(), -betValue, "vin", Games.XOC_DIA_KUBET.getName(), "xoc dia kubet: Đặt cược", "Phiên " + this.gameId, 0L, (long) this.gameId, TransType.START_TRANS);
+                response = userService.updateMoney(user.getName(), -betValue, "vin", Games.XOC_DIA_KUBET.getName(), "xoc dia kubet: Đặt cược", "Phiên " + this.referenceId, 0L, (long) this.gameId, TransType.START_TRANS);
                 if (response.isSuccess()) {
                     gamePlayer.setPlaying(this.roomId);
                     long mnBet = gamePot.bet(user.getName(), betValue, false, this.moneyType, gamePlayer.isBot);
@@ -1389,7 +1389,7 @@ public class XocDiaGameServer extends GameServer {
                     GamePlayer gPlayer = this.getPlayer((String) entry.getKey());
                     RewardModel model = (RewardModel) entry.getValue();
                     if (model.moneyWin > 0L) {
-                        mnres = this.userService.updateMoney(gPlayer.user.getName(), model.moneyWin, "vin", Games.XOC_DIA_KUBET.getName(), "xoc dia kubet: Tra thuong ", "Phiên " + this.gameId, model.fee, (long) this.gameId, TransType.START_TRANS);
+                        mnres = this.userService.updateMoney(gPlayer.user.getName(), model.moneyWin, "vin", Games.XOC_DIA_KUBET.getName(), "xoc dia kubet: Tra thuong ", "Phiên " + this.referenceId, model.fee, (long) this.gameId, TransType.START_TRANS);
                         this.totalFee += model.fee;
                         this.totalReveneu += model.moneyWin;
                         model.currentMoney = userService.getCurrentMoneyUserCache(gPlayer.user.getName(), "vin");
