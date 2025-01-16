@@ -385,6 +385,9 @@ public class XocDiaGameServer extends GameServer {
 
     public XocDiaKubetState CURRENT_GAME_STATE = XocDiaKubetState.INIT;
 
+    boolean FINISHED_FLAG = false;
+    boolean START_NEW_GAME_FLAG = false;
+
     public synchronized void handleGameState(XocDiaKubetState state, int count, int dice1, int dice2, int dice3, int dice4) {
         try {
             System.out.println("STATE = " + CURRENT_GAME_STATE.getStep() + " - TIME = " + count);
@@ -401,7 +404,7 @@ public class XocDiaGameServer extends GameServer {
             }
 
             if (state == XocDiaKubetState.SHOW_RESULT && count > countTime) {
-                count = countTime - 1;
+                count = countTime;
             }
 
             if (count < 0) {
@@ -415,8 +418,13 @@ public class XocDiaGameServer extends GameServer {
             }
 
             if (CURRENT_GAME_STATE == XocDiaKubetState.CONFIRM_RESULT && countTime == 0 && finishStep) {
+
+                FINISHED_FLAG = true;
+                START_NEW_GAME_FLAG = false;
+
                 this.finish();
                 Debug.trace((Object[]) new Object[]{"Waiting REWARD", this.roomId, this.gameId});
+
             }
 
             // get when join user or betting
@@ -426,9 +434,18 @@ public class XocDiaGameServer extends GameServer {
                         if (CURRENT_GAME_STATE == state || CURRENT_GAME_STATE == XocDiaKubetState.BETTING) {
                             break;
                         }
+
+                        if (!FINISHED_FLAG) {
+                            finish();
+                            FINISHED_FLAG = true;
+                        }
+
+                        START_NEW_GAME_FLAG = true;
                         CURRENT_GAME_STATE = state;
                         this.startNewGame();
                         this.finishStep = true;
+
+
                         break;
                     }
                     case BETTING: {
@@ -437,6 +454,15 @@ public class XocDiaGameServer extends GameServer {
                             this.startNewGame();
                             this.finishStep = true;
                             break;
+                        }
+
+                        if (!FINISHED_FLAG) {
+                            finish();
+                            FINISHED_FLAG = true;
+                        }
+                        if (!START_NEW_GAME_FLAG) {
+                            startNewGame();
+                            START_NEW_GAME_FLAG = true;
                         }
 
                         CURRENT_GAME_STATE = state;
@@ -454,7 +480,6 @@ public class XocDiaGameServer extends GameServer {
                         this.finishStep = true;
                         break;
                     }
-
                     case CONFIRM_RESULT: {
                         if (CURRENT_GAME_STATE == state) {
                             break;
@@ -465,6 +490,7 @@ public class XocDiaGameServer extends GameServer {
                             this.startReward(dice1, dice2, dice3, dice4);
                             this.finishStep = true;
                         }
+                        FINISHED_FLAG = false;
                         Debug.trace(new Object[]{"Waiting BALANCE", this.roomId, this.gameId});
                         break;
                     }
