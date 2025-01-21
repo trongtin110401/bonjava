@@ -224,6 +224,7 @@ public class DynamicReconnectWebSocketClient extends WebSocketClient {
             URI initialUri = buildDynamicURI(); // Replace with real initial token
             currentClient = new DynamicReconnectWebSocketClient(null, initialUri);
             currentClient.connect();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
