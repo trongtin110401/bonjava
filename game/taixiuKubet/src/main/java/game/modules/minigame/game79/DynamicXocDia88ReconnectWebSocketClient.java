@@ -51,7 +51,7 @@ public class DynamicXocDia88ReconnectWebSocketClient extends WebSocketClient {
 
     @Override
     public void onMessage(String message) {
-        System.out.println(message);
+//        System.out.println(message);
         try {
             if (message.equals("{}")) {
                 return;
