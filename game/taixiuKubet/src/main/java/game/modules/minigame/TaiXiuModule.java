@@ -110,6 +110,8 @@ public class TaiXiuModule extends BaseClientRequestHandler {
             URI uri = DynamicReconnectWebSocketClient.buildDynamicURI();
             DynamicReconnectWebSocketClient.currentClient = new DynamicReconnectWebSocketClient(this, uri);
             DynamicReconnectWebSocketClient.currentClient.connect();
+
+
         } catch (Exception ex) {
             ex.printStackTrace();
             throw new RuntimeException(ex);
