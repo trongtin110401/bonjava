@@ -138,7 +138,7 @@ public class DynamicReconnectWebSocketClient extends WebSocketClient {
 
     public static URI buildDynamicURI() {
         String loginUrl = "https://login.79club3.win/acc/Login";
-            String parameters = "AccountName=baotohn2024&md5=111111";
+            String parameters = "AccountName=hn20250121&md5=111111";
         String cookie;
         String connectionToken;
 
