@@ -620,7 +620,7 @@ public class XocDiaGameServer extends GameServer {
                 if (NumberUtils.isDoWithRatio(XocDiaConfig.normalRatioBetChanLe)) {
                     potChanLe = (byte) this.rd.nextInt(2);
                     long money2 = 0L;
-                    money2 = this.moneyBet == 50000 ? ((long) this.moneyBet * NumberUtils.randomIntLimit(XocDiaConfig._100BetChanLeMin, XocDiaConfig._100BetChanLeMax)) : ((long) this.moneyBet * NumberUtils.randomIntLimit(1000, 100000*));
+                    money2 = this.moneyBet == 50000 ? ((long) this.moneyBet * NumberUtils.randomIntLimit(XocDiaConfig._100BetChanLeMin, XocDiaConfig._100BetChanLeMax)) : ((long) this.moneyBet * NumberUtils.randomIntLimit(1000, 200000));
                     if ((totalBet += money2) > moneyUser) {
                         money2 = moneyUser;
                         isNext = false;
