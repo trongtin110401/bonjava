@@ -620,12 +620,12 @@ public class XocDiaGameServer extends GameServer {
                 if (NumberUtils.isDoWithRatio(XocDiaConfig.normalRatioBetChanLe)) {
                     potChanLe = (byte) this.rd.nextInt(2);
                     long money2 = 0L;
-                    money2 = this.moneyBet == 50000 ? ((long) this.moneyBet * NumberUtils.randomIntLimit(XocDiaConfig._100BetChanLeMin, XocDiaConfig._100BetChanLeMax)) : ((long) this.moneyBet * NumberUtils.randomIntLimit(500, 1000));
+                    money2 = this.moneyBet == 50000 ? ((long) this.moneyBet * NumberUtils.randomIntLimit(XocDiaConfig._100BetChanLeMin, XocDiaConfig._100BetChanLeMax)) : ((long) this.moneyBet * NumberUtils.randomIntLimit(1000, 100000*));
                     if ((totalBet += money2) > moneyUser) {
                         money2 = moneyUser;
                         isNext = false;
                     }
-                    int betStartTime2 = NumberUtils.randomIntLimit(1, 19);
+                    int betStartTime2 = NumberUtils.randomIntLimit(6, 19);
                     this.botBettingList.add(new BotBettingModel(gp.user, potChanLe, money2, betStartTime2));
                 }
                 if (!(!isNext || potChanLe == PotType.EVEN.getId() || !NumberUtils.isDoWithRatio(XocDiaConfig.normalRatioBet1))) {
@@ -636,7 +636,7 @@ public class XocDiaGameServer extends GameServer {
                         money = moneyUser - totalBet + money;
                         isNext = false;
                     }
-                    betStartTime = NumberUtils.randomIntLimit((int) 1, (int) 19);
+                    betStartTime = NumberUtils.randomIntLimit((int) 6, (int) 19);
                     this.botBettingList.add(new BotBettingModel(gp.user, potId, money, betStartTime));
                 }
                 if (!(!isNext || potChanLe == PotType.ODD.getId() || !NumberUtils.isDoWithRatio((double) XocDiaConfig.normalRatioBet4))) {
@@ -647,7 +647,7 @@ public class XocDiaGameServer extends GameServer {
                         money = moneyUser - totalBet + money;
                         isNext = false;
                     }
-                    betStartTime = NumberUtils.randomIntLimit((int) 1, (int) 19);
+                    betStartTime = NumberUtils.randomIntLimit((int) 6, (int) 19);
                     this.botBettingList.add(new BotBettingModel(gp.user, potId, money, betStartTime));
                 }
                 if (isNext && NumberUtils.isDoWithRatio((double) XocDiaConfig.normalRatioBuyPot)) {

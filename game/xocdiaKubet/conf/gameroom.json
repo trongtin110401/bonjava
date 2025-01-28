@@ -5,7 +5,7 @@
 		{
 			"moneyType": 1,
 			"moneyBet": 1000,
-			"requiredMoney": 1000,
+			"requiredMoney": 0,
 			"outMoney": 1000,
 			"maxUserPerRoom": 5000,
 			"commisionRate": 2,
