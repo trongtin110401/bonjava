@@ -187,6 +187,15 @@ runXocDia() {
   nohup java -cp "libs/*:build/libs/xocdia.jar" game.xocdia.server.XocDiaMain >/home/server/logs/xocdia.log 2>&1 &
 }
 
+runXocDiaKubet() {
+  cd ${SCRIPT_PATH}
+  currentDir="game/xocdiaKubet"
+  cd $currentDir
+
+  echo "Starting Xoc Dia..."
+  nohup java -cp "libs/*:build/libs/xocdiaKubet.jar" game.xocdia.server.XocDiaMain >/home/server/logs/xocdiakubet.log 2>&1 &
+}
+
 ### run Sam ###
 runSam() {
   cd ${SCRIPT_PATH}
@@ -226,6 +235,7 @@ main() {
   runSam
   runBinh
   runPoker
+  runXocDiaKubet
 }
 
 main
