@@ -135,19 +135,20 @@ public class TaiXiuDaoImpl
 
     @Override
     public boolean updateThanhDu(ThanhDuMessage message) throws SQLException {
-        boolean success = false;
-        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");
-             CallableStatement call = conn.prepareCall("CALL tx_update_thanh_du(?, ?, ?, ?, ?, ?)")) {
-            int param = 1;
-            call.setString(param++, message.getUsername());
-            call.setInt(param++, message.getNumber());
-            call.setLong(param++, message.getTotalValue());
-            call.setLong(param++, message.getCurrentReferenceId());
-            call.setString(param++, message.getReferences());
-            call.setByte(param++, (byte) message.getType());
-            success = call.execute();
-            return success;
-        }
+//        boolean success = false;
+//        try (Connection conn = ConnectionPool.getInstance().getConnection("mysqlpool_minigame");
+//             CallableStatement call = conn.prepareCall("CALL tx_update_thanh_du(?, ?, ?, ?, ?, ?)")) {
+//            int param = 1;
+//            call.setString(param++, message.getUsername());
+//            call.setInt(param++, message.getNumber());
+//            call.setLong(param++, message.getTotalValue());
+//            call.setLong(param++, message.getCurrentReferenceId());
+//            call.setString(param++, message.getReferences());
+//            call.setByte(param++, (byte) message.getType());
+//            success = call.execute();
+//            return success;
+//        }
+        return true;
     }
 
     @Override
