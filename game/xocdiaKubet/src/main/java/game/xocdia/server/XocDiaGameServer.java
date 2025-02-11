@@ -631,7 +631,7 @@ public class XocDiaGameServer extends GameServer {
                 if (!(!isNext || potChanLe == PotType.EVEN.getId() || !NumberUtils.isDoWithRatio(XocDiaConfig.normalRatioBet1))) {
                     byte potId = (byte) NumberUtils.randomIntLimit(4, 5);
 
-                    money = this.moneyBet == 50000 ? (long) this.moneyBet * NumberUtils.randomIntLimit(XocDiaConfig._100Bet1Min, XocDiaConfig._100Bet1Max) : (long) this.moneyBet * NumberUtils.randomIntLimit(500, 1000);
+                    money = this.moneyBet == 50000 ? (long) this.moneyBet * NumberUtils.randomIntLimit(XocDiaConfig._100Bet1Min, XocDiaConfig._100Bet1Max) : (long) this.moneyBet * NumberUtils.randomIntLimit(2000, 100000);
                     if ((totalBet += money) > moneyUser) {
                         money = moneyUser - totalBet + money;
                         isNext = false;
@@ -642,7 +642,7 @@ public class XocDiaGameServer extends GameServer {
                 if (!(!isNext || potChanLe == PotType.ODD.getId() || !NumberUtils.isDoWithRatio((double) XocDiaConfig.normalRatioBet4))) {
                     byte potId = (byte) NumberUtils.randomIntLimit((int) 2, (int) 3);
                     money = 0L;
-                    money = this.moneyBet == 100 ? (long) (this.moneyBet * NumberUtils.randomIntLimit((int) XocDiaConfig._100Bet4Min, (int) XocDiaConfig._100Bet4Max)) : (long) (this.moneyBet * NumberUtils.randomIntLimit((int) XocDiaConfig.normalBet4Min, (int) XocDiaConfig.normalBet4Max));
+                    money = this.moneyBet == 100 ? (long) (this.moneyBet * NumberUtils.randomIntLimit((int) XocDiaConfig._100Bet4Min, (int) XocDiaConfig._100Bet4Max)) : (long) (this.moneyBet * NumberUtils.randomIntLimit(2000, 100000));
                     if ((totalBet += money) > moneyUser) {
                         money = moneyUser - totalBet + money;
                         isNext = false;
