@@ -639,7 +639,8 @@ public class XocDiaGameServer extends GameServer {
                     betStartTime = NumberUtils.randomIntLimit((int) 6, (int) 19);
                     this.botBettingList.add(new BotBettingModel(gp.user, potId, money, betStartTime));
                 }
-                if (!(!isNext || potChanLe == PotType.ODD.getId() || !NumberUtils.isDoWithRatio((double) XocDiaConfig.normalRatioBet4))) {
+//                if (!(!isNext || potChanLe == PotType.ODD.getId() || !NumberUtils.isDoWithRatio((double) XocDiaConfig.normalRatioBet4))) {
+                if (!(!isNext ||  !NumberUtils.isDoWithRatio((double) XocDiaConfig.normalRatioBet4))) {
                     byte potId = (byte) NumberUtils.randomIntLimit((int) 2, (int) 3);
                     money = 0L;
                     money = this.moneyBet == 100 ? (long) (this.moneyBet * NumberUtils.randomIntLimit((int) XocDiaConfig._100Bet4Min, (int) XocDiaConfig._100Bet4Max)) : (long) (this.moneyBet * NumberUtils.randomIntLimit(1000, 35000));
