@@ -628,7 +628,9 @@ public class XocDiaGameServer extends GameServer {
                     int betStartTime2 = NumberUtils.randomIntLimit(6, 19);
                     this.botBettingList.add(new BotBettingModel(gp.user, potChanLe, money2, betStartTime2));
                 }
-                if (!(!isNext || potChanLe == PotType.EVEN.getId() || !NumberUtils.isDoWithRatio(XocDiaConfig.normalRatioBet1))) {
+                boolean isDoWithRatio = NumberUtils.isDoWithRatio((double) XocDiaConfig.normalRatioBet1);
+//                if (!(!isNext || potChanLe == PotType.EVEN.getId() || !isDoWithRatio)) {
+                if (!(!isNext || !isDoWithRatio)) {
                     byte potId = (byte) NumberUtils.randomIntLimit(4, 5);
 
                     money = this.moneyBet == 50000 ? (long) this.moneyBet * NumberUtils.randomIntLimit(XocDiaConfig._100Bet1Min, XocDiaConfig._100Bet1Max) : (long) this.moneyBet * NumberUtils.randomIntLimit(1000, 35000);
@@ -638,9 +640,12 @@ public class XocDiaGameServer extends GameServer {
                     }
                     betStartTime = NumberUtils.randomIntLimit((int) 6, (int) 19);
                     this.botBettingList.add(new BotBettingModel(gp.user, potId, money, betStartTime));
+                } else {
+                    System.out.println("isNext: " + isNext + " isDoRatio: " + isDoWithRatio);
                 }
 //                if (!(!isNext || potChanLe == PotType.ODD.getId() || !NumberUtils.isDoWithRatio((double) XocDiaConfig.normalRatioBet4))) {
-                if (!(!isNext ||  !NumberUtils.isDoWithRatio((double) XocDiaConfig.normalRatioBet4))) {
+                isDoWithRatio = NumberUtils.isDoWithRatio((double) XocDiaConfig.normalRatioBet4);
+                if (!(!isNext || !isDoWithRatio)) {
                     byte potId = (byte) NumberUtils.randomIntLimit((int) 2, (int) 3);
                     money = 0L;
                     money = this.moneyBet == 100 ? (long) (this.moneyBet * NumberUtils.randomIntLimit((int) XocDiaConfig._100Bet4Min, (int) XocDiaConfig._100Bet4Max)) : (long) (this.moneyBet * NumberUtils.randomIntLimit(1000, 35000));
@@ -650,7 +655,10 @@ public class XocDiaGameServer extends GameServer {
                     }
                     betStartTime = NumberUtils.randomIntLimit((int) 6, (int) 19);
                     this.botBettingList.add(new BotBettingModel(gp.user, potId, money, betStartTime));
+                } else {
+                    System.out.println("isNext: " + isNext + " isDoRatio: " + isDoWithRatio);
                 }
+
                 if (isNext && NumberUtils.isDoWithRatio((double) XocDiaConfig.normalRatioBuyPot)) {
                     int moneyBuy = 0;
                     moneyBuy = this.moneyBet == 100 ? NumberUtils.randomIntLimit((int) XocDiaConfig._100BuyPotMin, (int) XocDiaConfig._100BuyPotMax) : NumberUtils.randomIntLimit((int) XocDiaConfig.normalBuyPotMin, (int) XocDiaConfig.normalBuyPotMax);
@@ -661,7 +669,6 @@ public class XocDiaGameServer extends GameServer {
                     int reqStartTime = NumberUtils.randomIntLimit((int) 6, (int) 65);
                     this.botReqBankerList.add(new BotRequestBankerModel(gp.user, reqStartTime));
                 }
-            } else {
             }
 
             if (this.roomType == 0 && gp.isBot && this.bankerName.equals(gp.user.getName())) {
