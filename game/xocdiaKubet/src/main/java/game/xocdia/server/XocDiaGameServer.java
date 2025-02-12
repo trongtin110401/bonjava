@@ -631,8 +631,7 @@ public class XocDiaGameServer extends GameServer {
                 boolean isDoWithRatio = NumberUtils.isDoWithRatio((double) XocDiaConfig.normalRatioBet1);
 //                if (!(!isNext || potChanLe == PotType.EVEN.getId() || !isDoWithRatio)) {
                 if (!(!isNext || !isDoWithRatio)) {
-                    byte potId = (byte) NumberUtils.randomIntLimit(4, 5);
-
+                    byte potId = NumberUtils.randomIntLimit(1, 100) > 50 ? (byte) 5 : (byte) 4;
                     money = this.moneyBet == 50000 ? (long) this.moneyBet * NumberUtils.randomIntLimit(XocDiaConfig._100Bet1Min, XocDiaConfig._100Bet1Max) : (long) this.moneyBet * NumberUtils.randomIntLimit(1000, 35000);
                     if ((totalBet += money) > moneyUser) {
                         money = moneyUser - totalBet + money;
@@ -641,12 +640,13 @@ public class XocDiaGameServer extends GameServer {
                     betStartTime = NumberUtils.randomIntLimit((int) 6, (int) 19);
                     this.botBettingList.add(new BotBettingModel(gp.user, potId, money, betStartTime));
                 } else {
-                    System.out.println("isNext: " + isNext + " isDoRatio: " + isDoWithRatio);
+//                    System.out.println("isNext: " + isNext + " isDoRatio: " + isDoWithRatio);
                 }
 //                if (!(!isNext || potChanLe == PotType.ODD.getId() || !NumberUtils.isDoWithRatio((double) XocDiaConfig.normalRatioBet4))) {
                 isDoWithRatio = NumberUtils.isDoWithRatio((double) XocDiaConfig.normalRatioBet4);
                 if (!(!isNext || !isDoWithRatio)) {
-                    byte potId = (byte) NumberUtils.randomIntLimit((int) 2, (int) 3);
+                    byte potId = NumberUtils.randomIntLimit(1, 100) > 50 ? (byte) 3 : (byte) 2;
+//                    byte potId = (byte) NumberUtils.randomIntLimit((int) 2, (int) 3);
                     money = 0L;
                     money = this.moneyBet == 100 ? (long) (this.moneyBet * NumberUtils.randomIntLimit((int) XocDiaConfig._100Bet4Min, (int) XocDiaConfig._100Bet4Max)) : (long) (this.moneyBet * NumberUtils.randomIntLimit(1000, 35000));
                     if ((totalBet += money) > moneyUser) {
@@ -656,7 +656,7 @@ public class XocDiaGameServer extends GameServer {
                     betStartTime = NumberUtils.randomIntLimit((int) 6, (int) 19);
                     this.botBettingList.add(new BotBettingModel(gp.user, potId, money, betStartTime));
                 } else {
-                    System.out.println("isNext: " + isNext + " isDoRatio: " + isDoWithRatio);
+//                    System.out.println("isNext: " + isNext + " isDoRatio: " + isDoWithRatio);
                 }
 
                 if (isNext && NumberUtils.isDoWithRatio((double) XocDiaConfig.normalRatioBuyPot)) {
