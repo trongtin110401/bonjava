@@ -1089,81 +1089,81 @@ public class LobbyModule extends BaseClientRequestHandler {
     }
 
     public void InsertCodeUserBankELK(String nickname, String code) {
-        try {
-            boolean check = false;
-            String sig = "\"successful\":1";
-            int retry = 3;
-            do {
-                retry--;
-                if (retry < 0) {
-                    break;
-                }
-                OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
-                        .build();
-                MediaType mediaType = MediaType.parse("application/json");
-                RequestBody body = RequestBody.create(mediaType, "{\"nickname\":\"" + nickname + "\", \"code\":\"" + code + "\"}");
-                Request request = new Request.Builder()
-                        .url(System.getenv("ELASTICSEARCH_URL") + "/codeuserbank/_doc")
-                        .method("POST", body)
-                        .addHeader("Content-Type", "application/json")
-                        .build();
-                Response response = client.newCall(request).execute();
-                String data = response.body().string();
-                if (data.contains(sig) == true) {
-                    check = true;
-                }
-            } while (check == false);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            boolean check = false;
+//            String sig = "\"successful\":1";
+//            int retry = 3;
+//            do {
+//                retry--;
+//                if (retry < 0) {
+//                    break;
+//                }
+//                OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
+//                        .build();
+//                MediaType mediaType = MediaType.parse("application/json");
+//                RequestBody body = RequestBody.create(mediaType, "{\"nickname\":\"" + nickname + "\", \"code\":\"" + code + "\"}");
+//                Request request = new Request.Builder()
+//                        .url(System.getenv("ELASTICSEARCH_URL") + "/codeuserbank/_doc")
+//                        .method("POST", body)
+//                        .addHeader("Content-Type", "application/json")
+//                        .build();
+//                Response response = client.newCall(request).execute();
+//                String data = response.body().string();
+//                if (data.contains(sig) == true) {
+//                    check = true;
+//                }
+//            } while (check == false);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
     public String GetNicknameByCode(String code) {
-        try {
-            String nick = "";
-            String code1 = code.toUpperCase();
-            boolean check = false;
-            String sig = "\"successful\":1";
-            int retry = 3;
-            do {
-                retry--;
-                if (retry < 0) {
-                    break;
-                }
-                OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
-                        .build();
-                MediaType mediaType = MediaType.parse("application/json");
-                RequestBody body = RequestBody.create(mediaType, "{\"query\":{\"bool\":{\"must\":[{\"match\":{\"code.keyword\":\"" + code1 + "\"}}],\"must_not\":[],\"should\":[]}},\"from\":0,\"size\":10,\"sort\":[],\"aggs\":{}}");
-                Request request = new Request.Builder()
-                        .url(System.getenv("ELASTICSEARCH_URL") + "/codeuserbank/_search")
-                        .method("POST", body)
-                        .addHeader("Content-Type", "application/json")
-                        .build();
-                Response response = client.newCall(request).execute();
-                String data = response.body().string();
-                if (data.contains(sig) == true) {
-                    check = true;
-                }
-                JSONObject obj = new JSONObject(data);
-                JSONArray jsonArray = obj.getJSONObject("hits").getJSONArray("hits");
-                final int n = jsonArray.length();
-                if (n == 0) {
-                    nick = null;
-                } else {
-                    for (int i = 0; i < n; ++i) {
-                        final JSONObject person = jsonArray.getJSONObject(i);
-                        JSONObject test = person.getJSONObject("_source");
-                        String nickname = test.getString("nickname");
-                        nick = nickname;
-                    }
-                }
-
-            } while (check == false);
-            return nick;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            String nick = "";
+//            String code1 = code.toUpperCase();
+//            boolean check = false;
+//            String sig = "\"successful\":1";
+//            int retry = 3;
+//            do {
+//                retry--;
+//                if (retry < 0) {
+//                    break;
+//                }
+//                OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
+//                        .build();
+//                MediaType mediaType = MediaType.parse("application/json");
+//                RequestBody body = RequestBody.create(mediaType, "{\"query\":{\"bool\":{\"must\":[{\"match\":{\"code.keyword\":\"" + code1 + "\"}}],\"must_not\":[],\"should\":[]}},\"from\":0,\"size\":10,\"sort\":[],\"aggs\":{}}");
+//                Request request = new Request.Builder()
+//                        .url(System.getenv("ELASTICSEARCH_URL") + "/codeuserbank/_search")
+//                        .method("POST", body)
+//                        .addHeader("Content-Type", "application/json")
+//                        .build();
+//                Response response = client.newCall(request).execute();
+//                String data = response.body().string();
+//                if (data.contains(sig) == true) {
+//                    check = true;
+//                }
+//                JSONObject obj = new JSONObject(data);
+//                JSONArray jsonArray = obj.getJSONObject("hits").getJSONArray("hits");
+//                final int n = jsonArray.length();
+//                if (n == 0) {
+//                    nick = null;
+//                } else {
+//                    for (int i = 0; i < n; ++i) {
+//                        final JSONObject person = jsonArray.getJSONObject(i);
+//                        JSONObject test = person.getJSONObject("_source");
+//                        String nickname = test.getString("nickname");
+//                        nick = nickname;
+//                    }
+//                }
+//
+//            } while (check == false);
+//            return nick;
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
         return null;
     }
 

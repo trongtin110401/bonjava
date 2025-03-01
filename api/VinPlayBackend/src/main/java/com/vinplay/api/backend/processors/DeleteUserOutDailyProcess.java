@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class DeleteUserOutDailyProcess implements BaseProcessor<HttpServletRequest, String> {
+
     public String execute(Param<HttpServletRequest> param) {
         HttpServletRequest request = (HttpServletRequest)param.get();
         String idDaily = request.getParameter("maDaily");
@@ -40,7 +41,5 @@ public class DeleteUserOutDailyProcess implements BaseProcessor<HttpServletReque
         }else {
             return "{\"trangthai\":\"That bai\"}";
         }
-
-
     }
 }

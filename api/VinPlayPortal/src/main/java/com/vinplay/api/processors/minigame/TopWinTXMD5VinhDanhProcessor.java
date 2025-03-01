@@ -31,8 +31,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-public class TopWinTXMD5VinhDanhProcessor
-        implements BaseProcessor<HttpServletRequest, String> {
+public class TopWinTXMD5VinhDanhProcessor implements BaseProcessor<HttpServletRequest, String> {
     private static final Object BY_DAY = "byDay";
     public String execute(Param<HttpServletRequest> param) {
         HttpServletRequest request =  param.get();

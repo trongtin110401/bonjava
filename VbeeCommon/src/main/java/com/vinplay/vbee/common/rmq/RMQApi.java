@@ -52,8 +52,6 @@ public class RMQApi {
     }
 
     public static void publishMessageLogMoney(LogMoneyUserMessage message) throws IOException, TimeoutException, InterruptedException {
-//        ELKrmq elk = new ELKrmq();
-//        elk.InsertLog601(message);
         RMQPublishTask task = new RMQPublishTask(message, "queue_log_money", 601);
         task.start();
         RMQPublishTask taskExtra = new RMQPublishTask(message, "queue_log_money_extra", 1001);

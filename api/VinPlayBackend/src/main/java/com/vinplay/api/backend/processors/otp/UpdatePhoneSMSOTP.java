@@ -11,18 +11,18 @@ import javax.servlet.http.HttpServletRequest;
 public class UpdatePhoneSMSOTP implements BaseProcessor<HttpServletRequest, String> {
     public String execute(Param<HttpServletRequest> param) {
         try {
-            HttpServletRequest request = (HttpServletRequest)param.get();
+            HttpServletRequest request = (HttpServletRequest) param.get();
             String nickname = request.getParameter("nickname");
             String phone = request.getParameter("phone");
             OTPDAO otp_pro = new OTPDAO();
             OTPELK oelk = new OTPELK();
             String id_elk = oelk.GetIDActivebyNickname(nickname);
-            otp_pro.UpdateSDTOTP(nickname,phone);
+            otp_pro.UpdateSDTOTP(nickname, phone);
             UserOTP uotp = oelk.GetListActivebyNickname(nickname);
             uotp.setPhone(phone);
             oelk.DeleteActiveELK(uotp, id_elk);
             return "1";
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return "0";

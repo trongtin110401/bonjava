@@ -41,21 +41,6 @@ public class SaveTransactionTaiXiuProcessor
         return false;
     }
 
-    public void saveToElk(TransactionTaiXiuMessage message) {
-        long total_exchange = 0;
-        if (message.prize > 0) {
-            if (message.moneyType == 1) {
-                total_exchange = Math.round(message.prize * 98 / 198);
-            } else {
-                total_exchange = Math.round(message.prize * 95 / 195);
-            }
-        } else {
-            total_exchange = -(message.betValue - message.refund);
-        }
-        ELKrmq elKrmq = new ELKrmq();
-        elKrmq.InsertLogTranSactionTaiXiu(0L, message.referenceId, message.userId, message.username, message.betValue, message.betSide, message.prize, message.refund, total_exchange, message.moneyType, new Date().getTime());
-    }
-
     public void addTopVinhDanh(TransactionTaiXiuMessage message) {
         try {
             TopVinhDanhDto topVinhDanhDto = new TopVinhDanhDto();

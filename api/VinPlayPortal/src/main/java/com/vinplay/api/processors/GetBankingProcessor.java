@@ -116,63 +116,63 @@ public class GetBankingProcessor implements BaseProcessor<HttpServletRequest, St
     }
 
     public HistoryTransModel GetHistorybynickname(String nickname){
-        try {
-            boolean check = false;
-            String sig = "\"successful\":1";
-            HistoryTransModel his = null;
-            ArrayList<HistoryTransModel> list_his = new ArrayList<>();
-
-            int retry = 3;
-            do{
-                retry--;
-                if(retry < 0) {
-                    break;
-                }
-                OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
-                        .build();
-                MediaType mediaType = MediaType.parse("application/json");
-                RequestBody body = RequestBody.create(mediaType, "{\"query\":{\"bool\":{\"must\":[{\"match\":{\"nickName.keyword\":\""+nickname+"\"}},{\"match\":{\"congGiaoDich.keyword\":\"Ngân Hàng\"}},{\"match\":{\"trangthai.keyword\":\"Đang xử lý\"}}],\"must_not\":[],\"should\":[]}},\"from\":0,\"size\":1000,\"sort\":[],\"aggs\":{}}");
-                Request request = new Request.Builder()
-                        .url(System.getenv("ELASTICSEARCH_URL") + "/history_user_transaction/_search")
-                        .method("POST", body)
-                        .addHeader("Content-Type", "application/json")
-                        .build();
-                Response response = client.newCall(request).execute();
-                String data = response.body().string();
-                if(data.contains(sig) == true){
-                    check = true;
-                }
-                JSONObject obj = new JSONObject(data);
-                JSONArray jsonArray = obj.getJSONObject("hits").getJSONArray("hits");
-                final int n = jsonArray.length();
-                if(n == 0){
-                    return null;
-                }else{
-                    for (int i = 0; i < n; ++i) {
-                        final JSONObject person = jsonArray.getJSONObject(i);
-                        JSONObject test = person.getJSONObject("_source");
-                        String nickName = test.getString("nickName");
-                        String id = test.getString("id");
-                        String giaodich = test.getString("giaodich");
-                        String congGiaoDich = test.getString("congGiaoDich");
-                        String hinhthuc = test.getString("hinhthuc");
-                        String sotien = test.getString("sotien");
-                        String trangthai = test.getString("trangthai");
-                        String ghiChu = test.getString("ghiChu");
-                        String hinhthucTrans = test.getString("hinhthucTrans");
-                        String transId = test.getString("transId");
-                        String createAt = test.getString("createAt");
-                        HistoryTransModel hisx = new HistoryTransModel(giaodich, congGiaoDich, hinhthuc, sotien, trangthai, ghiChu, nickName, hinhthucTrans, transId, id, createAt);
-                        list_his.add(hisx);
-                    }
-                }
-
-
-            }while (check == false);
-            return list_his.get(0);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+//        try {
+//            boolean check = false;
+//            String sig = "\"successful\":1";
+//            HistoryTransModel his = null;
+//            ArrayList<HistoryTransModel> list_his = new ArrayList<>();
+//
+//            int retry = 3;
+//            do{
+//                retry--;
+//                if(retry < 0) {
+//                    break;
+//                }
+//                OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
+//                        .build();
+//                MediaType mediaType = MediaType.parse("application/json");
+//                RequestBody body = RequestBody.create(mediaType, "{\"query\":{\"bool\":{\"must\":[{\"match\":{\"nickName.keyword\":\""+nickname+"\"}},{\"match\":{\"congGiaoDich.keyword\":\"Ngân Hàng\"}},{\"match\":{\"trangthai.keyword\":\"Đang xử lý\"}}],\"must_not\":[],\"should\":[]}},\"from\":0,\"size\":1000,\"sort\":[],\"aggs\":{}}");
+//                Request request = new Request.Builder()
+//                        .url(System.getenv("ELASTICSEARCH_URL") + "/history_user_transaction/_search")
+//                        .method("POST", body)
+//                        .addHeader("Content-Type", "application/json")
+//                        .build();
+//                Response response = client.newCall(request).execute();
+//                String data = response.body().string();
+//                if(data.contains(sig) == true){
+//                    check = true;
+//                }
+//                JSONObject obj = new JSONObject(data);
+//                JSONArray jsonArray = obj.getJSONObject("hits").getJSONArray("hits");
+//                final int n = jsonArray.length();
+//                if(n == 0){
+//                    return null;
+//                }else{
+//                    for (int i = 0; i < n; ++i) {
+//                        final JSONObject person = jsonArray.getJSONObject(i);
+//                        JSONObject test = person.getJSONObject("_source");
+//                        String nickName = test.getString("nickName");
+//                        String id = test.getString("id");
+//                        String giaodich = test.getString("giaodich");
+//                        String congGiaoDich = test.getString("congGiaoDich");
+//                        String hinhthuc = test.getString("hinhthuc");
+//                        String sotien = test.getString("sotien");
+//                        String trangthai = test.getString("trangthai");
+//                        String ghiChu = test.getString("ghiChu");
+//                        String hinhthucTrans = test.getString("hinhthucTrans");
+//                        String transId = test.getString("transId");
+//                        String createAt = test.getString("createAt");
+//                        HistoryTransModel hisx = new HistoryTransModel(giaodich, congGiaoDich, hinhthuc, sotien, trangthai, ghiChu, nickName, hinhthucTrans, transId, id, createAt);
+//                        list_his.add(hisx);
+//                    }
+//                }
+//
+//
+//            }while (check == false);
+//            return list_his.get(0);
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }
         return null;
 
     }

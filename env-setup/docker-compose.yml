@@ -57,15 +57,20 @@ services:
     ports:
         - '5672:5672'
         - '15672:15672'
-#  redis:
-#    image: bitnami/redis:latest
-#    ports:
-#      - '6379:6379'
-#    expose:
-#      - 6379
-#    environment:
-#      - ALLOW_EMPTY_PASSWORD=yes
-#    restart: always
+
+ # redis
+  redis:
+    image: bitnami/redis:latest
+    ports:
+      - '6379:6379'
+    expose:
+      - 6379
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_AOF_ENABLED=yes
+    volumes:
+      - /home/data/redis:/bitnami/redis/data
+    restart: always
 
 #  elasticsearch:
 #    image: docker.elastic.co/elasticsearch/elasticsearch:6.8.23

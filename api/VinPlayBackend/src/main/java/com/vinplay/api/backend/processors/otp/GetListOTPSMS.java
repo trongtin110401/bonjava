@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 
 public class GetListOTPSMS implements BaseProcessor<HttpServletRequest, String> {
+
     public String execute(Param<HttpServletRequest> param) {
         ListOtpResponse res = new ListOtpResponse(false, "1001");
         try {
@@ -23,7 +24,7 @@ public class GetListOTPSMS implements BaseProcessor<HttpServletRequest, String> 
             res.setErrorCode("0");
             res.setSuccess(true);
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return res.toJson();

@@ -28,8 +28,7 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
-public class TopWinTXMD5Processor
-        implements BaseProcessor<HttpServletRequest, String> {
+public class TopWinTXMD5Processor implements BaseProcessor<HttpServletRequest, String> {
     public static long requestCache = new Date().getTime();
     public static String listBankData = "";
 

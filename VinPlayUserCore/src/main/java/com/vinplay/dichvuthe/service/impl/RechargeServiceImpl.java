@@ -1188,104 +1188,104 @@ public class RechargeServiceImpl
     public void InsertCodepayDonELK(String Id, String Nickname, String CreatedAt, String UpdatedAt, long Amount,
                                     int Status, String BankBrandName, String BankAccountNumber, String BankAccountName,
                                     String Description, String UserApprove, String UserSender) {
-        try {
-            boolean check = false;
-            String sig = "\"successful\":1";
-            int timeretry = 10;
-            int retry = 3;
-            do {
-                retry--;
-                if (retry < 0) {
-                    return;
-                }
-                OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
-                        .build();
-                MediaType mediaType = MediaType.parse("application/json");
-                RequestBody body = RequestBody.create(mediaType, "{\"Id\":\"" + Id + "\",\"Nickname\":\"" + Nickname + "\",\"CreatedAt\":\"" + CreatedAt + "\",\"UpdatedAt\":\"" + UpdatedAt + "\",\"Amount\":" + Amount + ",\"Status\":1,\"BankBrandName\":\"" + BankBrandName + "\",\"BankAccountNumber\":\"" + BankAccountNumber + "\",\"BankAccountName\":\"" + BankAccountName + "\",\"Description\":\"" + Description + "\",\"UserApprove\":\"" + UserApprove + "\",\"UserSender\":\"" + UserSender + "\",\"Note1\":\"\",\"Note2\":\"\",\"Note3\":\"\"}");
-                Request request = new Request.Builder()
-                        .url(System.getenv("ELASTICSEARCH_URL") + "/deposit_codepay_manual/_doc")
-                        .method("POST", body)
-                        .addHeader("Content-Type", "application/json")
-                        .build();
-                Response response = client.newCall(request).execute();
-                String data = response.body().string();
-                if (data.contains(sig) == true) {
-                    check = true;
-                }
-                timeretry--;
-
-            } while (check == false && timeretry > 0);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            boolean check = false;
+//            String sig = "\"successful\":1";
+//            int timeretry = 10;
+//            int retry = 3;
+//            do {
+//                retry--;
+//                if (retry < 0) {
+//                    return;
+//                }
+//                OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
+//                        .build();
+//                MediaType mediaType = MediaType.parse("application/json");
+//                RequestBody body = RequestBody.create(mediaType, "{\"Id\":\"" + Id + "\",\"Nickname\":\"" + Nickname + "\",\"CreatedAt\":\"" + CreatedAt + "\",\"UpdatedAt\":\"" + UpdatedAt + "\",\"Amount\":" + Amount + ",\"Status\":1,\"BankBrandName\":\"" + BankBrandName + "\",\"BankAccountNumber\":\"" + BankAccountNumber + "\",\"BankAccountName\":\"" + BankAccountName + "\",\"Description\":\"" + Description + "\",\"UserApprove\":\"" + UserApprove + "\",\"UserSender\":\"" + UserSender + "\",\"Note1\":\"\",\"Note2\":\"\",\"Note3\":\"\"}");
+//                Request request = new Request.Builder()
+//                        .url(System.getenv("ELASTICSEARCH_URL") + "/deposit_codepay_manual/_doc")
+//                        .method("POST", body)
+//                        .addHeader("Content-Type", "application/json")
+//                        .build();
+//                Response response = client.newCall(request).execute();
+//                String data = response.body().string();
+//                if (data.contains(sig) == true) {
+//                    check = true;
+//                }
+//                timeretry--;
+//
+//            } while (check == false && timeretry > 0);
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
     public void InsertMomoDonELK(String Id, String Nickname, String CreatedAt, String UpdatedAt, long Amount,
                                  int Status, String BankBrandName, String BankAccountNumber, String BankAccountName,
                                  String Description, String UserApprove, String UserSender) {
-        try {
-            boolean check = false;
-            String sig = "\"successful\":1";
-            int timeretry = 10;
-            int retry = 3;
-            do {
-                retry--;
-                if (retry < 0) {
-                    return;
-                }
-                OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
-                        .build();
-                MediaType mediaType = MediaType.parse("application/json");
-                RequestBody body = RequestBody.create(mediaType, "{\"Id\":\"" + Id + "\",\"Nickname\":\"" + Nickname + "\",\"CreatedAt\":\"" + CreatedAt + "\",\"UpdatedAt\":\"" + UpdatedAt + "\",\"Amount\":" + Amount + ",\"Status\":1,\"BankBrandName\":\"" + BankBrandName + "\",\"BankAccountNumber\":\"" + BankAccountNumber + "\",\"BankAccountName\":\"" + BankAccountName + "\",\"Description\":\"" + Description + "\",\"UserApprove\":\"" + UserApprove + "\",\"UserSender\":\"" + UserSender + "\",\"Note1\":\"\",\"Note2\":\"\",\"Note3\":\"\"}");
-                Request request = new Request.Builder()
-                        .url(System.getenv("ELASTICSEARCH_URL") + "/deposit_momo2_manual/_doc")
-                        .method("POST", body)
-                        .addHeader("Content-Type", "application/json")
-                        .build();
-                Response response = client.newCall(request).execute();
-                String data = response.body().string();
-                if (data.contains(sig) == true) {
-                    check = true;
-                }
-                timeretry--;
-
-            } while (check == false && timeretry > 0);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            boolean check = false;
+//            String sig = "\"successful\":1";
+//            int timeretry = 10;
+//            int retry = 3;
+//            do {
+//                retry--;
+//                if (retry < 0) {
+//                    return;
+//                }
+//                OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
+//                        .build();
+//                MediaType mediaType = MediaType.parse("application/json");
+//                RequestBody body = RequestBody.create(mediaType, "{\"Id\":\"" + Id + "\",\"Nickname\":\"" + Nickname + "\",\"CreatedAt\":\"" + CreatedAt + "\",\"UpdatedAt\":\"" + UpdatedAt + "\",\"Amount\":" + Amount + ",\"Status\":1,\"BankBrandName\":\"" + BankBrandName + "\",\"BankAccountNumber\":\"" + BankAccountNumber + "\",\"BankAccountName\":\"" + BankAccountName + "\",\"Description\":\"" + Description + "\",\"UserApprove\":\"" + UserApprove + "\",\"UserSender\":\"" + UserSender + "\",\"Note1\":\"\",\"Note2\":\"\",\"Note3\":\"\"}");
+//                Request request = new Request.Builder()
+//                        .url(System.getenv("ELASTICSEARCH_URL") + "/deposit_momo2_manual/_doc")
+//                        .method("POST", body)
+//                        .addHeader("Content-Type", "application/json")
+//                        .build();
+//                Response response = client.newCall(request).execute();
+//                String data = response.body().string();
+//                if (data.contains(sig) == true) {
+//                    check = true;
+//                }
+//                timeretry--;
+//
+//            } while (check == false && timeretry > 0);
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
     public void InsertNHDonELK(String Id, String Nickname, String CreatedAt, String UpdatedAt, long Amount,
                                int Status, String BankBrandName, String BankAccountNumber, String BankAccountName,
                                String Description, String UserApprove, String UserSender) {
-        try {
-            boolean check = false;
-            String sig = "\"successful\":1";
-            int timeretry = 10;
-            do {
-                OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
-                        .build();
-                MediaType mediaType = MediaType.parse("application/json");
-                RequestBody body = RequestBody.create(mediaType, "{\"Id\":\"" + Id + "\",\"Nickname\":\"" + Nickname + "\",\"CreatedAt\":\"" + CreatedAt + "\",\"UpdatedAt\":\"" + UpdatedAt + "\",\"Amount\":" + Amount + ",\"Status\":1,\"BankBrandName\":\"" + BankBrandName + "\",\"BankAccountNumber\":\"" + BankAccountNumber + "\",\"BankAccountName\":\"" + BankAccountName + "\",\"Description\":\"" + Description + "\",\"UserApprove\":\"" + UserApprove + "\",\"UserSender\":\"" + UserSender + "\",\"Note1\":\"\",\"Note2\":\"\",\"Note3\":\"\"}");
-                Request request = new Request.Builder()
-                        .url(System.getenv("ELASTICSEARCH_URL") + "/deposit_nh_manual/_doc")
-                        .method("POST", body)
-                        .addHeader("Content-Type", "application/json")
-                        .build();
-                Response response = client.newCall(request).execute();
-                String data = response.body().string();
-                if (data.contains(sig) == true) {
-                    check = true;
-                }
-                timeretry--;
-
-            } while (check == false && timeretry > 0);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            boolean check = false;
+//            String sig = "\"successful\":1";
+//            int timeretry = 10;
+//            do {
+//                OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
+//                        .build();
+//                MediaType mediaType = MediaType.parse("application/json");
+//                RequestBody body = RequestBody.create(mediaType, "{\"Id\":\"" + Id + "\",\"Nickname\":\"" + Nickname + "\",\"CreatedAt\":\"" + CreatedAt + "\",\"UpdatedAt\":\"" + UpdatedAt + "\",\"Amount\":" + Amount + ",\"Status\":1,\"BankBrandName\":\"" + BankBrandName + "\",\"BankAccountNumber\":\"" + BankAccountNumber + "\",\"BankAccountName\":\"" + BankAccountName + "\",\"Description\":\"" + Description + "\",\"UserApprove\":\"" + UserApprove + "\",\"UserSender\":\"" + UserSender + "\",\"Note1\":\"\",\"Note2\":\"\",\"Note3\":\"\"}");
+//                Request request = new Request.Builder()
+//                        .url(System.getenv("ELASTICSEARCH_URL") + "/deposit_nh_manual/_doc")
+//                        .method("POST", body)
+//                        .addHeader("Content-Type", "application/json")
+//                        .build();
+//                Response response = client.newCall(request).execute();
+//                String data = response.body().string();
+//                if (data.contains(sig) == true) {
+//                    check = true;
+//                }
+//                timeretry--;
+//
+//            } while (check == false && timeretry > 0);
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
 
