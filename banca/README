@@ -1,0 +1,4 @@
+BẮN CÁ CHẠY MÔI TRƯỜNG dotnet environemnt trên linux, phiên bản 3.0.103. Chi tiết xem lệnh bên dưới
+
+root@vultr:~# dotnet --version
+3.0.103
