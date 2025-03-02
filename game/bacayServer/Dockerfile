@@ -6,7 +6,7 @@ COPY ./game/bacayServer/conf conf/
 COPY ./data .
 ADD ./libs libs/
 ADD ./game/bacayServer/libs libs/
-EXPOSE 1143
-EXPOSE 1144
-EXPOSE 1145
-ENTRYPOINT ["java", "-cp", "libs/*:bacayServer.jar", "game.bacayServer.server.BacayMain"]
+EXPOSE 1043
+EXPOSE 1044
+EXPOSE 1045
+ENTRYPOINT ["java", "-cp", "libs/*:bacayServer.jar", "game.bacay.server.BacayMain"]

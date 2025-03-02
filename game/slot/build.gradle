@@ -18,6 +18,7 @@ dependencies {
     compile project(':VinPlayCardLib')
     compile project(':BitZeroMinigame')
     compile fileTree(excludes:['bz-allinone.jar'], dir: '../../libs', include: ['*.jar'])
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
 }
 task copyJar(type: Copy) {
     from configurations.compile {

@@ -32,8 +32,9 @@ public class TopVinhDanhProcessor {
                 RequestBody body = RequestBody.create(mediaType, topVinhDanh.toJson());
                 String host = GameCommon.getValueStr("url_leaderboard");
 
+                String url = "http://" + host + ":8087/leaderboard?boardName";
                 Request request = new Request.Builder()
-                        .url("http://" + host + ":8087/leaderboard?boardName")
+                        .url(url)
                         .method("POST", body)
                         .addHeader("Content-Type", "application/json")
                         .build();

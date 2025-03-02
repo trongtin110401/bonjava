@@ -20,6 +20,7 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: '../../libs', exclude: 'bz-allinone.jar')
     // https://mvnrepository.com/artifact/org.java-websocket/Java-WebSocket
     implementation group: 'org.java-websocket', name: 'Java-WebSocket', version: '1.5.7'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
 
 }
 task copyJar(type: Copy) {

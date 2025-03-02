@@ -1,11 +1,11 @@
 FROM openjdk:8
 WORKDIR /app
-COPY ./game/xocdia/build/libs .
-COPY ./game/xocdia/config config/
-COPY ./game/xocdia/conf conf/
+COPY ./game/xocdiaKubet/build/libs .
+COPY ./game/xocdiaKubet/config config/
+COPY ./game/xocdiaKubet/conf conf/
 COPY ./data data/
 ADD ./libs libs/
-ADD ./game/xocdia/libs libs/
+ADD ./game/xocdiaKubet/libs libs/
 EXPOSE 22343
 EXPOSE 22344
 EXPOSE 22345

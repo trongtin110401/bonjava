@@ -10,7 +10,10 @@ services:
     ports:
       - '3306:3306'
     volumes:
-      - /home/data/mysql:/var/lib/mysql
+      - ./data/mysql:/var/lib/mysql
+    networks:
+      mynetwork:
+        ipv4_address: 10.5.0.2
   mongo:
     image: mongo:4.0.16-xenial
     restart: always
@@ -25,11 +28,15 @@ services:
       - '--auth'
       - '-f'
       - '/configFolder/mongod.conf'
-      - '--wiredTigerCacheSizeGB 1.5'
+      - '--wiredTigerCacheSizeGB'
+      - '1.5'
     volumes:
       - ./config/mongod:/configFolder
-      - /home/data/mongo:/data/db
+      - ./data/mongo:/data/db
       - $PWD/replset88.key:/data/replica.key
+    networks:
+      mynetwork:
+        ipv4_address: 10.5.0.3
 
     # hazelcast imdg
   hazelcast:
@@ -43,7 +50,9 @@ services:
       - JAVA_OPTS=-Dhazelcast.config=/configFolder/hazelcast.xml -Dgroup.name=dev -Dgroup.password=MgqzAtRymcxyNoFnkwX7sGUlmj0YQI
     ports:
       - '5701:5701'
-  ## manage center
+    networks:
+      mynetwork:
+        ipv4_address: 10.5.0.4
 
     # rabbitmq
   rabbitmq:
@@ -55,10 +64,13 @@ services:
       - "RABBITMQ_DEFAULT_PASS=MgqzAtRymcxyNoFnkwX7sGUlmj0YQI"
       - "RABBITMQ_VM_MEMORY_HIGH_WATERMARK=0.31"
     ports:
-        - '5672:5672'
-        - '15672:15672'
+      - '5672:5672'
+      - '15672:15672'
+    networks:
+      mynetwork:
+        ipv4_address: 10.5.0.5
 
- # redis
+  # redis
   redis:
     image: bitnami/redis:latest
     ports:
@@ -67,10 +79,14 @@ services:
       - 6379
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_PASSWORD=hiBONwin
       - REDIS_AOF_ENABLED=yes
     volumes:
-      - /home/data/redis:/bitnami/redis/data
+      - ./data/redis:/bitnami/redis/data
     restart: always
+    networks:
+      mynetwork:
+        ipv4_address: 10.5.0.6
 
 #  elasticsearch:
 #    image: docker.elastic.co/elasticsearch/elasticsearch:6.8.23
@@ -96,3 +112,11 @@ services:
 #    external:
 #      name: mongo-db
 #  hazelcast-vl:
+
+networks:
+  mynetwork:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/16
+          gateway: 10.5.0.1

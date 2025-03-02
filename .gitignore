@@ -141,7 +141,6 @@ game-logs/
 /.idea/modules/you88-server-be.iml
 /api/VinPlayBackend/libs/
 /api/vbee/libs/
-/api/VinPlayBackend/libs/
 /api/VinPlayPortal/libs/
 /game/bacayServer/libs/
 /game/baicao/libs/
@@ -157,6 +156,7 @@ game-logs/
 /game/taixiuMini/libs/
 /game/tlmn/libs/
 /game/xizach/libs/
-/game/xocdia/libs/
+/game/xocdia/libs/git
 /api/wspay/libs/
 /.idea/encodings.xml
+/env-setup/data/**
