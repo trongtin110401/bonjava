@@ -16,7 +16,7 @@ public class GameStateMsg extends BaseMsg {
     public byte time;
     public long sessionId;
 
-    public String kubetLiveUrl = "https://bon6.win/kubet/xocdia.html";
+    public String kubetLiveUrl = "http://139.180.155.96/xocdia.html";
 
     public GameStateMsg() {
         super((short) 3155);

@@ -28,7 +28,7 @@ public class TaiXiuInfoMsg extends BaseMsgEx {
     public long moneyHu;
     public String startSessionTime = "";
 
-    public String streamUrl = "https://bon6.win/kubet/taixiu.html";
+    public String streamUrl = "http://139.180.155.96/taixiu.html";
 
     public TaiXiuInfoMsg() {
         super(2111);
