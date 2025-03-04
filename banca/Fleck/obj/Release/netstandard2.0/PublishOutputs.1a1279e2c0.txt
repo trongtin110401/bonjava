@@ -1,0 +1,3 @@
+C:\game\sunwin\banca\BanCaLiteNet\out\Fleck.dll
+C:\game\sunwin\banca\BanCaLiteNet\out\Fleck.deps.json
+C:\game\sunwin\banca\BanCaLiteNet\out\Fleck.pdb

@@ -1,0 +1,3 @@
+C:\game\sunwin\banca\BanCaLiteNet\out\websocket-sharp.dll
+C:\game\sunwin\banca\BanCaLiteNet\out\websocket-sharp.deps.json
+C:\game\sunwin\banca\BanCaLiteNet\out\websocket-sharp.pdb

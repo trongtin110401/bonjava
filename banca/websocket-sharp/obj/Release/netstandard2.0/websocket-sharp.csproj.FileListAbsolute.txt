@@ -1,0 +1,11 @@
+C:\game\sunwin\banca\websocket-sharp\bin\Release\netstandard2.0\websocket-sharp.deps.json
+C:\game\sunwin\banca\websocket-sharp\bin\Release\netstandard2.0\websocket-sharp.dll
+C:\game\sunwin\banca\websocket-sharp\bin\Release\netstandard2.0\websocket-sharp.pdb
+C:\game\sunwin\banca\websocket-sharp\obj\Release\netstandard2.0\websocket-sharp.csproj.AssemblyReference.cache
+C:\game\sunwin\banca\websocket-sharp\obj\Release\netstandard2.0\websocket-sharp.GeneratedMSBuildEditorConfig.editorconfig
+C:\game\sunwin\banca\websocket-sharp\obj\Release\netstandard2.0\websocket-sharp.AssemblyInfoInputs.cache
+C:\game\sunwin\banca\websocket-sharp\obj\Release\netstandard2.0\websocket-sharp.AssemblyInfo.cs
+C:\game\sunwin\banca\websocket-sharp\obj\Release\netstandard2.0\websocket-sharp.csproj.CoreCompileInputs.cache
+C:\game\sunwin\banca\websocket-sharp\obj\Release\netstandard2.0\websocket-sharp.sourcelink.json
+C:\game\sunwin\banca\websocket-sharp\obj\Release\netstandard2.0\websocket-sharp.dll
+C:\game\sunwin\banca\websocket-sharp\obj\Release\netstandard2.0\websocket-sharp.pdb
