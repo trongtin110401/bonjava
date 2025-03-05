@@ -10,6 +10,7 @@ services:
       - old_host=xxx
     ports: 
       - "8888:8888"
+      - "2083:2083"
     restart: always
     networks:
       env-setup_mynetwork:
