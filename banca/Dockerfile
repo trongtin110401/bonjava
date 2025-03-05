@@ -6,4 +6,6 @@ RUN dotnet publish -c Release -o /build
 
 WORKDIR /build
 
+EXPOSE 8888
+
 ENTRYPOINT ["dotnet", "BanCaLiteNet.dll"]

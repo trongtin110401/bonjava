@@ -1,0 +1,20 @@
+version: '3.0'
+services:
+  banca:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: 'bancodegame/banca'
+    environment: 
+      - host_new=xxx
+      - old_host=xxx
+    ports: 
+      - "8888:8888"
+    restart: always
+    networks:
+      env-setup_mynetwork:
+        ipv4_address: 10.5.0.28
+
+networks:
+  env-setup_mynetwork:
+    external: true
