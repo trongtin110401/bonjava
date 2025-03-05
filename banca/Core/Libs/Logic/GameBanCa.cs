@@ -184,7 +184,7 @@ namespace BanCa.Libs
             for (int i = 0; i < Config.NUMBER_OF_BULLETS; i++)
             {
                 var b = new BanCaBullet(this);
-                b.ID = 1000 + objIdCount++;
+                b.ID = (int)(1000 + objIdCount++);
                 bulletPool.Add(b);
             }
 
@@ -295,7 +295,7 @@ namespace BanCa.Libs
                 for (int i = 0; i < Config.NUMBER_OF_OBJECTS; i++)
                 {
                     var o = new BanCaObject(this);
-                    o.ID = objIdCount++;
+                    o.ID = (int) objIdCount++;
                     FishFactory.RandomFish(TableBlindIndex, o, this.Random, common, constrain);
                     o.isSpecial = false;
                     o.OriginalType = o.Type;
@@ -306,7 +306,7 @@ namespace BanCa.Libs
                 // special fish
                 {
                     var o = new BanCaObject(this);
-                    o.ID = objIdCount++;
+                    o.ID = (int) objIdCount++;
                     FishFactory.BuildFish(TableBlindIndex, Config.FishType.GoldenFrog, o, this.Random);
                     o.isSpecial = true;
                     o.OriginalType = o.Type;
