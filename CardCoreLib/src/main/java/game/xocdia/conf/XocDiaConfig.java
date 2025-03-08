@@ -285,7 +285,7 @@ public class XocDiaConfig {
         FileInputStream input2 = new FileInputStream(VBeePath.basePath.concat("config/api.properties"));
         prop2.load(input2);
 
-        NOTIFY_TO_BACKEND_URL = prop2.getProperty("WSREPORT_NOTIFY_URL");
+        NOTIFY_TO_BACKEND_URL = System.getenv("WSREPORT_XOCDIA_NOTIFY_URL");
 
         Debug.trace((Object) ("NOTIFY TO BACKEND URL: " + NOTIFY_TO_BACKEND_URL));
     }

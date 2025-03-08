@@ -10,8 +10,6 @@ services:
     ports:
       - '8087:8087'
     restart: always
-    environment:
-      - A=a
     volumes:
       - ./game-logs/portal_api:/app/logs
     networks:
@@ -24,8 +22,6 @@ services:
       context: .
       dockerfile: api/vbee/Dockerfile
     restart: always
-    environment:
-      - A=a
     volumes:
       - ./game-logs/vbee_api:/app/logs
     depends_on:
@@ -42,8 +38,6 @@ services:
     ports:
       - '8081:8081'
     restart: always
-    environment:
-      - A=a
     volumes:
     - ./game-logs/portal_api:/app/logs
     networks:
@@ -58,8 +52,6 @@ services:
     ports:
       - '8082:8082'
     restart: always
-    environment:
-      - A=a
     volumes:
       - ./game-logs/backend_api:/app/logs
     networks:
@@ -92,8 +84,6 @@ services:
       - '8089:8089'
       - '7777:7777'
     restart: always
-    environment:
-      - A=a
     volumes:
       - ./game-logs/wsreport_api:/app/logs
     networks:
@@ -108,8 +98,6 @@ services:
     ports:
       - '1644:1644'
     restart: always
-    environment:
-      - A=a
     depends_on:
       - gameplatform_vbee_api
     volumes:
@@ -126,8 +114,6 @@ services:
     ports:
       - '1844:1844'
     restart: always
-    environment:
-      - A=a
     volumes:
       - ./game-logs/slot:/app/logs
     depends_on:
@@ -147,8 +133,6 @@ services:
       - '2044:2044'
       - '2045:2045'
     restart: always
-    environment:
-      - A=a
     volumes:
       - ./game-logs/taixiu:/app/logs
     depends_on:
@@ -189,8 +173,6 @@ services:
       - '12044:12044'
       - '12045:12045'
     restart: always
-    environment:
-      - A=a
     volumes:
       - ./game-logs/taixiu:/app/logs
     depends_on:
@@ -211,7 +193,7 @@ services:
       - '2345:2345'
     restart: always
     environment:
-      - A=a
+      - WSREPORT_XOCDIA_NOTIFY_URL=http://10.5.0.12:8089/sendBe
     volumes:
       - ./game-logs/xocdia:/app/logs
     depends_on:
@@ -232,7 +214,7 @@ services:
       - '22345:22345'
     restart: always
     environment:
-      - A=a
+      - WSREPORT_XOCDIA_NOTIFY_URL=http://10.5.0.12:8089/sendBe
     volumes:
       - ./game-logs/xocdiakubet:/app/logs
     depends_on:
@@ -292,8 +274,6 @@ services:
       - '1244:1244'
       - '1245:1245'
     restart: always
-    environment:
-      - A=a
     volumes:
       - ./game-logs/binh:/app/logs
     depends_on:
@@ -313,8 +293,6 @@ services:
       - '2144:2144'
       - '2145:2145'
     restart: always
-    environment:
-      - A=a
     volumes:
       - ./game-logs/tlmn:/app/logs
     depends_on:
@@ -376,8 +354,6 @@ services:
       - '1944:1944'
       - '1945:1945'
     restart: always
-    environment:
-      - A=a
     volumes:
       - ./game-logs/sam:/app/logs
     depends_on:
