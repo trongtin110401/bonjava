@@ -7,6 +7,9 @@
   "redis-address": "10.5.0.6",
   "redis-password": "hiBONwin",
 
+  "xxeng-backend": "http://10.5.0.10:8082",
+  "xxeng-host": "http://10.5.0.9:8081",
+
   "usd-price": 23000,
   "webservice-ip": "new-banca-service-2.default",
   "webservice-port": 8080,
@@ -22,9 +25,6 @@
   // try to call when server finished stop request
   "quit-cmd": "pm2",
   "quit-arg": "stop cgame",
-
-  "xxeng-backend": "http://10.5.0.10:8082",
-  "xxeng-host": "http://10.5.0.9:8081",
 
   "coinpayment_privkey": "E64F4Fc62682D52a49BB19A82a304bA62fa3c6eB5D35F1F675651e0935ed2d4b",
   "coinpayment_pubkey": "27162ceb6f7b9b5412d691b74eefde7d0d3676ea7632f008c7817c4ee61d791c"

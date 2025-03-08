@@ -88,31 +88,6 @@ services:
       mynetwork:
         ipv4_address: 10.5.0.6
 
-#  elasticsearch:
-#    image: docker.elastic.co/elasticsearch/elasticsearch:6.8.23
-#    container_name: elasticsearch
-#    environment:
-#      - cluster.name=docker-cluster
-#      - bootstrap.memory_lock=true
-#      - "ES_JAVA_OPTS=-Xms4g -Xmx4g"
-#    ulimits:
-#      memlock:
-#        soft: -1
-#        hard: -1
-#    ports:
-#      - '9200:9200'
-#    restart: always
-
-# Names our volume
-#volumes:
-#  game-db:
-#    external:
-#      name: game-db
-#  game-mongo:
-#    external:
-#      name: mongo-db
-#  hazelcast-vl:
-
 networks:
   mynetwork:
     driver: bridge
