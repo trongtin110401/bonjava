@@ -16,7 +16,8 @@ public class GameStateMsg extends BaseMsg {
     public byte time;
     public long sessionId;
 
-    public String kubetLiveUrl = "http://139.180.155.96/xocdia.html";
+//    public String kubetLiveUrl = "http://139.180.155.96/xocdia.html";
+    public String kubetLiveUrl = System.getenv("XOC_DIA_KUBET_STREAM_URL");
 
     public GameStateMsg() {
         super((short) 3155);

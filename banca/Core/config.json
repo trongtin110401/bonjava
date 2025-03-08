@@ -7,7 +7,9 @@
   "redis-address": "10.5.0.6",
   "redis-password": "hiBONwin",
 
+  // API PORTAL
   "xxeng-backend": "http://10.5.0.10:8082",
+  // API BACKEND
   "xxeng-host": "http://10.5.0.9:8081",
 
   "usd-price": 23000,
