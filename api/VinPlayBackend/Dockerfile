@@ -1,4 +1,4 @@
-FROM openjdk:8
+FROM  eclipse-temurin:8-jdk
 WORKDIR /app
 COPY ./api/VinPlayBackend/build/libs .
 COPY ./api/VinPlayBackend/config config/

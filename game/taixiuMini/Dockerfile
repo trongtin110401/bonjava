@@ -1,4 +1,4 @@
-FROM openjdk:8
+FROM eclipse-temurin:8-jdk
 WORKDIR /app
 COPY ./game/taixiuMini/build/libs .
 COPY ./game/taixiuMini/config config/

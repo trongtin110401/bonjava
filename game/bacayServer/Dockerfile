@@ -1,4 +1,4 @@
-FROM openjdk:8
+FROM  eclipse-temurin:8-jdk
 WORKDIR /app
 COPY ./game/bacayServer/build/libs .
 COPY ./game/bacayServer/config config/

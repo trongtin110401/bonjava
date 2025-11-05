@@ -1,4 +1,4 @@
-FROM openjdk:8
+FROM  eclipse-temurin:8-jdk
 WORKDIR /app
 COPY ./api/vbee/build/libs .
 COPY ./api/vbee/config config/
