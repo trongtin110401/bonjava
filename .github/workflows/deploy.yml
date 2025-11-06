@@ -19,7 +19,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          insecure: true   # 👈 Bỏ qua kiểm tra fingerprint để đỡ bị host key error
+          use_insecure_cipher: true   # 👈 Bỏ qua kiểm tra fingerprint để đỡ bị host key error
           script: |
             echo "==== PULLING LATEST CODE ===="
             cd /home/game/bonjava || exit 1
