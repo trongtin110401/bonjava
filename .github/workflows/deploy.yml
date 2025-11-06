@@ -1,0 +1,24 @@
+name: Pull latest code to VPS
+
+on:
+  push:
+    branches:
+      - remove_elk
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: SSH into VPS and pull latest code
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /home/game
+            git reset --hard
+            git pull origin main
