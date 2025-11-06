@@ -1,1 +1,2 @@
 restart redis to fix delay can thiep kq
+test
