@@ -1,9 +1,10 @@
-name: Pull latest code to VPS
+name: Auto Pull Code to VPS
 
 on:
   push:
     branches:
-      - remove_elk
+      - remove_elk   # ✅ Tự chạy khi push lên nhánh remove_elk
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -18,7 +19,10 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          insecure: true   # 👈 Bỏ qua kiểm tra fingerprint để đỡ bị host key error
           script: |
-            cd /home/game
-            git reset --hard
-            git pull origin main
+            echo "==== PULLING LATEST CODE ===="
+            cd /home/game/bonjava || exit 1
+            git fetch origin remove_elk
+            git reset --hard origin/remove_elk
+            echo "==== DEPLOY DONE ===="
