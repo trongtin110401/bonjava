@@ -1,9 +1,11 @@
+version: '3.8'
+
 services:
-  gameplatform_portal:
+  gameplatform_portal_api:
+    image: bancodegame/gameplatform_portal_api:v1.1
     build:
       context: .
       dockerfile: api/VinPlayPortal/Dockerfile
-    image: 'bancodegame/gameplatform_portal_api:v1.1'
     ports:
       - '8081:8081'
     restart: always
@@ -12,3 +14,7 @@ services:
     networks:
       env-setup_mynetwork:
         ipv4_address: 10.5.0.9
+
+networks:
+  env-setup_mynetwork:
+    external: true
