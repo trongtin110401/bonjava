@@ -5,12 +5,12 @@ services:
     image: bancodegame/gameplatform_portal_api:v1.1
     build:
       context: .
-      dockerfile: api/VinPlayPortal/Dockerfile
+      dockerfile: Dockerfile
     ports:
       - '8081:8081'
     restart: always
     volumes:
-      - ./game-logs/portal_api:/app/logs
+      - ../../../game-logs/portal_api:/app/logs
     networks:
       env-setup_mynetwork:
         ipv4_address: 10.5.0.9
