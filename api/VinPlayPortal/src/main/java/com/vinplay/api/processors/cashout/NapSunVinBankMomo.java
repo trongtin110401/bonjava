@@ -85,26 +85,52 @@ public class NapSunVinBankMomo {
         return resBody;
     }
 
-    public BankPartnerModel sendBenThuBaTaoCodePay(String bankCode, String type, long amount, String requestId) {
+    public BankPartnerModel sendBenThuBaTaoCodePay(String requestId) {
         try {
-            String sign = amount + type + requestId + UUID.randomUUID();
-            sign = DigestUtils.md5Hex(sign);
-
             AutoBankEntity autoBank = new AutoBankEntity();
-            String url = autoBank.getUrl() + ":" + autoBank.getPort() + autoBank.getApiRegCharge()
-                    + "?apiKey=" + autoBank.getApiKey() + "&chargeType="+type+"&amount="+amount+
-                    "&requestId="+requestId+"&subType="+bankCode+
-                    "&sign="+sign;
+            String partnerCode = autoBank.partnerCode;
+            String bankCode = "MOMO";
+            String refCode = requestId;
+            int amount = 1;
+            String callbackUrl = "https://9577d28839e4.ngrok-free.app/api?c=4037";
+            String partnerKey = autoBank.partnerKey;
+            String sign = partnerCode + bankCode + amount + refCode + callbackUrl + partnerKey;
+            System.out.println("String sign AutoBank tao code pay: " + sign);
+            String signature = DigestUtils.md5Hex(sign).toLowerCase();
+
+//            String url = autoBank.getUrl() + ":" + autoBank.getPort() + autoBank.getApiRegCharge()
+//                    + "?apiKey=" + autoBank.getApiKey() + "&chargeType="+type+"&amount="+amount+
+//                    "&requestId="+requestId+"&subType="+bankCode+
+//                    "&sign="+sign;
+
+            String json = "{"
+                    + "\"PartnerCode\":\"" + partnerCode + "\","
+                    + "\"BankCode\":\"" + bankCode + "\","
+                    + "\"RefCode\":\"" + refCode + "\","
+                    + "\"Amount\":" + amount + ","
+                    + "\"CallbackUrl\":\"" + callbackUrl + "\","
+                    + "\"Signature\":\"" + signature + "\""
+                    + "}";
+
+            System.out.println("Request AutoBank tao code pay: " + json);
+            RequestBody body = RequestBody.create(
+                    MediaType.parse("application/json; charset=utf-8"),
+                    json
+            );
+
             Request request = new Request.Builder()
-                    .url(url)
-                    .method("GET", null)
+                    .url(autoBank.urlOrder)
+                    .post(body)
                     .build();
+
             Response response = HttpCommon.getInstance().httpClient.newCall(request).execute();
             String data = response.body().string();
-            if (data.contains("\"stt\":1")) {
+            System.out.println("Response AutoBank tao code pay: " + data);
+            if (data.contains("\"ResponseCode\":1")) {
                 JSONObject obj = new JSONObject(data);
-                JSONObject jsonArray = obj.getJSONObject("data");
-                return convertJsonObjectToDate(jsonArray);
+                String contentStr = obj.getString("ResponseContent");
+                JSONObject jsonContent = new JSONObject(contentStr);
+                return convertJsonObjectToDate(jsonContent);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -114,18 +140,29 @@ public class NapSunVinBankMomo {
     public BankPartnerModel convertJsonObjectToDate(JSONObject jsonObject) {
         try {
             BankPartnerModel bankPartnerModel = new BankPartnerModel();
-            bankPartnerModel.id = jsonObject.getInt("id");
-            bankPartnerModel.qr_url = jsonObject.getString("qr_url");
-            bankPartnerModel.payment_url = jsonObject.getString("payment_url");
-            bankPartnerModel.code = jsonObject.getString("code");
-            bankPartnerModel.phoneNum = jsonObject.getString("phoneNum");
-            bankPartnerModel.amount = jsonObject.getLong("amount");
-            bankPartnerModel.phoneName = jsonObject.getString("phoneName");
-            bankPartnerModel.chargeType = jsonObject.getString("chargeType");
-            bankPartnerModel.bank_provider = jsonObject.getString("bank_provider");
-            bankPartnerModel.timeToExpired = jsonObject.getInt("timeToExpired");
+            System.out.println("RefCode: " + jsonObject.getString("RefCode"));
+            bankPartnerModel.id = jsonObject.getString("RefCode");
+            System.out.println("QR URL: " + jsonObject.getString("Url"));
+            bankPartnerModel.qr_url = jsonObject.getString("Url");
+            System.out.println("Payment URL: " + jsonObject.getString("LinkWebView"));
+            bankPartnerModel.payment_url = jsonObject.getString("LinkWebView");
+            System.out.println("OrderNo: " + jsonObject.getString("OrderNo"));
+            bankPartnerModel.code = jsonObject.getString("OrderNo");
+            System.out.println("BankAccountNumber: " + jsonObject.getString("BankAccountNumber"));
+            bankPartnerModel.phoneNum = jsonObject.getString("BankAccountNumber");
+            System.out.println("Amount: " + jsonObject.getInt("Amount"));
+            bankPartnerModel.amount = jsonObject.getInt("Amount");
+            System.out.println("BankAccountName: " + jsonObject.getString("BankAccountName"));
+            bankPartnerModel.phoneName = jsonObject.getString("BankAccountName");
+            System.out.println("BankName: " + jsonObject.getString("BankName"));
+            bankPartnerModel.chargeType = jsonObject.getString("BankName");
+            System.out.println("Timeout: " + jsonObject.getInt("Timeout"));
+            bankPartnerModel.bank_provider = jsonObject.getString("BankName");
+            System.out.println("Time to expired: " + jsonObject.getInt("Timeout"));
+            bankPartnerModel.timeToExpired = jsonObject.getInt("Timeout");
             return bankPartnerModel;
         } catch (Exception e) {
+            System.out.println(e);
         }
         return null;
     }

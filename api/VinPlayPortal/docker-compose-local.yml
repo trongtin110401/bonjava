@@ -1,0 +1,12 @@
+services:
+  gameplatform_portal:
+    build:
+      context: .   # context = thư mục chứa Dockerfile
+      dockerfile: Dockerfile
+    image: gameplatform_portal:local
+    ports:
+      - '8080:8081'
+    restart: always
+    volumes:
+      - ./logs:/app/logs
+      - ./libs:/app/libs

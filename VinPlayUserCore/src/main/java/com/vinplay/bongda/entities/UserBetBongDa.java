@@ -6,7 +6,7 @@ public class UserBetBongDa {
     String idTran;
     String nickname;
     long moneyBet;
-    int result; // kết quả , 0 là chưa 1 là win ăn tiền phải tr<ả
+    int result;
     long moneyWin;
     int betType; // 1-2 , 1: Doi A , 2  doi B
     double chapTrai; // mac dinh la 0

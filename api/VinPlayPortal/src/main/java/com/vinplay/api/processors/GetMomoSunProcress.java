@@ -35,41 +35,43 @@ public class GetMomoSunProcress implements BaseProcessor<HttpServletRequest, Str
             HttpServletRequest request = (HttpServletRequest) param.get();
             Gson gson = new Gson();
             String accessToken = request.getParameter("at");
-
-            RechargeServiceImpl rechargeService = new RechargeServiceImpl();
+            System.out.println("AccessToken nap momo sunvin: " + accessToken);
             String nickname = this.getUserNameByAccessToken(accessToken);
-            DepositBankModel depositBankModel = rechargeService.finMoMoDeposit(nickname);
-            SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            if (depositBankModel != null) {
-                Date currentDate = new Date();
-                Date dateCreate = sim.parse(depositBankModel.getCreatedAt());
-                Long time_con = (currentDate.getTime() - dateCreate.getTime()) / 1000;
-                if (time_con > 900) {
-                    //qua thoi gian
-                    rechargeService.cancelMomoById(depositBankModel.getId());
-                } else {
-                    //con han
-                    BankPartnerModel requestTaoCode = new BankPartnerModel();
-                    requestTaoCode.id = Integer.parseInt(depositBankModel.getId());
-                    requestTaoCode.qr_url = depositBankModel.getQRCode();
-                    requestTaoCode.payment_url = depositBankModel.getPaymentURL();
-                    requestTaoCode.code = depositBankModel.getDescription();
-                    requestTaoCode.phoneNum = depositBankModel.BankAccountNumber;
-                    requestTaoCode.amount = depositBankModel.Amount;
-                    requestTaoCode.phoneName = depositBankModel.BankAccountName;
-                    requestTaoCode.chargeType = depositBankModel.getBankBrandName();
-                    requestTaoCode.bank_provider = depositBankModel.getBankBrandName();
-                    requestTaoCode.timeToExpired = depositBankModel.getTimeToExpired();
-                    return requestTaoCode.toJson();
-
-                }
-            }
+//            DepositBankModel depositBankModel = rechargeService.finMoMoDeposit(nickname);
+//            SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//            if (depositBankModel != null) {
+//                Date currentDate = new Date();
+//                Date dateCreate = sim.parse(depositBankModel.getCreatedAt());
+//                Long time_con = (currentDate.getTime() - dateCreate.getTime()) / 1000;
+//                if (time_con > 900) {
+//                    //qua thoi gian
+//                    rechargeService.cancelMomoById(depositBankModel.getId());
+//                } else {
+//                    //con han
+//                    BankPartnerModel requestTaoCode = new BankPartnerModel();
+//                    requestTaoCode.id = Integer.parseInt(depositBankModel.getId());
+//                    requestTaoCode.qr_url = depositBankModel.getQRCode();
+//                    requestTaoCode.payment_url = depositBankModel.getPaymentURL();
+//                    requestTaoCode.code = depositBankModel.getDescription();
+//                    requestTaoCode.phoneNum = depositBankModel.BankAccountNumber;
+//                    requestTaoCode.amount = depositBankModel.Amount;
+//                    requestTaoCode.phoneName = depositBankModel.BankAccountName;
+//                    requestTaoCode.chargeType = depositBankModel.getBankBrandName();
+//                    requestTaoCode.bank_provider = depositBankModel.getBankBrandName();
+//                    requestTaoCode.timeToExpired = depositBankModel.getTimeToExpired();
+//                    return requestTaoCode.toJson();
+//
+//                }
+//            }
             NapSunVinBankMomo napsun = new NapSunVinBankMomo();
             String TranID = String.valueOf(VinPlayUtils.generateTransId());
             //send deposit request
-            BankPartnerModel requestTaoCode = napsun.sendBenThuBaTaoCodePay("momo", "momo", 1, TranID);
+            System.out.println("Nick nap momo sunvin: " + nickname);
+            BankPartnerModel requestTaoCode = napsun.sendBenThuBaTaoCodePay(TranID);
+            System.out.println("Response tao code momo sunvin: " + gson.toJson((Object) requestTaoCode));
             RechargeServiceImpl reg = new RechargeServiceImpl();
             reg.rechargeByAutoMomo(nickname, requestTaoCode, TranID);
+            System.out.println("requestTaoCode: " + requestTaoCode.toJson());
             return requestTaoCode.toJson();
         } catch (Exception e) {
             e.printStackTrace();

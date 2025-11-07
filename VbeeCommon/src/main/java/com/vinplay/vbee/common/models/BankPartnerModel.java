@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class BankPartnerModel {
-    public int id;
+    public String id;
     public String qr_url;
     public String payment_url;
     public String code;

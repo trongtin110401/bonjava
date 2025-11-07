@@ -1,9 +1,13 @@
 package com.vinplay.api.processors.AutoXuLyBank;
 
 public class AutoBankEntity {
-    private String url = "http://cao69.vnm.bz";
-    private int port = 10007;
+    public String url = "https://bankgate.coroach.xyz/bankin/";
 
+    public String urlOrder = url + "Order.ashx";
+    public int port = 10007;
+
+    public String partnerCode = "snap";
+    public String partnerKey = "9a869182e29f47bb42eb28fb07d9ce6b";
     private String apiSecret = "mJkf80kZOp";
 
     private String apiKey = "ddff2ef1-3a4d-405a-bbe4-9d421414147b";

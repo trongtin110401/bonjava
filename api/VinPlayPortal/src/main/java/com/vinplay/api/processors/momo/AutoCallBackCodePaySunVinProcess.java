@@ -6,6 +6,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.vinplay.api.entities.BankCallBack;
 import com.vinplay.api.entities.BankCallBackResponse;
+import com.vinplay.api.processors.AutoXuLyBank.AutoBankEntity;
 import com.vinplay.api.processors.cashout.NapRutGame;
 import com.vinplay.api.processors.cashout.NapRutModel;
 import com.vinplay.dal.common.BroadCastUserMoney;
@@ -22,11 +23,14 @@ import com.vinplay.usercore.service.impl.UserServiceImpl;
 import com.vinplay.usercore.utils.GameCommon;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
+import com.vinplay.vbee.common.models.BankPartnerModel;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.statics.Consts;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.json.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
@@ -38,23 +42,53 @@ public class AutoCallBackCodePaySunVinProcess implements BaseProcessor<HttpServl
     @Override
     public synchronized String execute(Param<HttpServletRequest> param) {
         HttpServletRequest request = (HttpServletRequest) param.get();
+        String tranID = null;
+        String keyID = null;
+        String phoneAccount = null;
+        String phoneCustomer = null;
+        String nameCustomer = null;
+        String comment = null;
+        int mamount = 0;
+        String type = null;
+        String money = null;
+        String signature = null;
+        int status = 0;
+        String body = null;
+        try {
+            StringBuilder sb = new StringBuilder();
+            String line;
+            java.io.BufferedReader reader = request.getReader();
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+            body = sb.toString();
+
+            System.out.println("body nap momo sunvin: " + body);
+            if (body.contains("\"ResponseCode\":1")) {
+                JSONObject obj = new JSONObject(body);
+                String contentStr = obj.getString("ResponseContent");
+                JSONObject jsonObject = new JSONObject(contentStr);
+                tranID = jsonObject.getString("OrderInfo");
+                keyID = jsonObject.getString("RefCode");
+                phoneAccount = jsonObject.getString("Mobile");
+                phoneCustomer = jsonObject.getString("Mobile");
+                nameCustomer = jsonObject.getString("MomoName");
+                comment = jsonObject.getString("OrderNo");
+                mamount = jsonObject.getInt("Amount");
+                type = jsonObject.getString("Type");
+                money = jsonObject.getString("Amount");
+                signature = obj.getString("Signature");
+                status = obj.getInt("ResponseCode");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         BankCallBack bankcallback;
         BankCallBackResponse response = new BankCallBackResponse(200, "Thành công");
-        String tranID = request.getParameter("tranID");
-        String keyID = request.getParameter("keyID");
-        String phoneAccount = request.getParameter("phoneAccount");
-        String phoneCustomer = request.getParameter("phoneCustomer");
-        String nameCustomer = request.getParameter("nameCustomer");
-        String comment = request.getParameter("comment");
-        String mamount = request.getParameter("amount");
-        String type = request.getParameter("type");
-        String money = request.getParameter("money");
-        String signature = request.getParameter("signature");
-        String status = request.getParameter("status");
         RechargeDao dao = new RechargeDaoImpl();
         HistoryTransService historyTransService = new HistoryTransServiceImpl();
         DepositBankModel trans = FindDesploitCodepay(keyID);
-        if(status.equalsIgnoreCase("2") == true & trans.getStatus() != 100 & trans.getStatus() != 2){
+        if(status != 1 & trans.getStatus() != 100 & trans.getStatus() != 2){
             //boolean resultUpdateTrans = dao.UpdateDepositBankManualStatus(keyID, DvtConst.STATUS_REJECT, "giao dịch bị hủy", "Nap Bank Auto");
             //updateSttCodePayMomoSunThatBai(keyID);
             historyTransService.update(keyID, trans.Nickname, HistoryTransConst.BANK, " Từ Chối", " giao dịch bị hủy");
@@ -65,10 +99,8 @@ public class AutoCallBackCodePaySunVinProcess implements BaseProcessor<HttpServl
             return response.toJson();
         }
 
-        long tien = Long.parseLong(mamount);
+        long tien = Long.parseLong(String.valueOf(mamount));
         long tien_final = 0;
-
-        bankcallback = new BankCallBack(tranID,keyID,phoneAccount,phoneCustomer,nameCustomer,comment,mamount,type,money,signature);
 
         // find transaction in db
         synchronized (this){
@@ -87,7 +119,7 @@ public class AutoCallBackCodePaySunVinProcess implements BaseProcessor<HttpServl
             }
 
 
-            if (verifySignature(bankcallback)){
+            if (verifySignature(body)){
                 // update trạng thái thành công
                 if (trans.getStatus() !=100) { // đúng mới cộng tiền
                     //boolean resultUpdateTrans = dao.UpdateDepositBankManualStatus(bankcallback.getKeyID(), DvtConst.STATUS_APPROVE, "Comment: "+trans.getDescription()+", Tien: "+tien, "Nap Bank Auto");
@@ -152,24 +184,24 @@ public class AutoCallBackCodePaySunVinProcess implements BaseProcessor<HttpServl
 //        return response.toJson();
 
     }
-    private boolean verifySignature(BankCallBack bankcallback) {
-
-        String accessToken = "DL5LdXp6r71Nq0YKccM5jAyMS0xMi0xMiAxNDoxODowNg==";
-        String key = "22a7b2091adfac0a0bb4a4b6a2a0028";
-        String builderContent = bankcallback.getTranID() + "|" + bankcallback.getAmount() + "|" + bankcallback.getComment() + "|" + key + "|" + accessToken;
-        String myHash = "";
+    private boolean verifySignature(String body) {
         try {
-            myHash = VinPlayUtils.getMD5Hash(builderContent);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
+            JSONObject obj = new JSONObject(body);
+            String responseCode = obj.get("ResponseCode").toString();
+            String description = obj.getString("Description");
+            String responseContent = obj.getString("ResponseContent");
+            String signatureFromServer = obj.getString("Signature");
+            AutoBankEntity autoBank = new AutoBankEntity();
+            String partnerKey = autoBank.partnerKey;
+            String raw = responseCode + description + responseContent + partnerKey;
+            String signatureLocal = DigestUtils.md5Hex(raw).toLowerCase();
+            System.out.println("Signature from server: " + signatureFromServer);
+            System.out.println("Signature local: " + signatureLocal);
+            return signatureLocal.equals(signatureFromServer);
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        if (myHash.equals(bankcallback.getSignature())) {
-            return true;
-        } else {
-            return false;
-        }
+        return false;
     }
 
     private void updateMoneyCodePayMomoSun(String TrainID, long tien) {
@@ -194,9 +226,9 @@ public class AutoCallBackCodePaySunVinProcess implements BaseProcessor<HttpServl
             Document doc = new Document();
             doc.append("sotien",tien);
             col.updateOne((Bson) new Document("transId", TrainID), (Bson) new Document("$set", (Object) doc));
-            HistoryTransModel his = elk.GetHistorybyTransID(TrainID);
-            his.setSotien(tien);
-            elk.InsertHistoryUserTransOK(his, Long.parseLong(his.getId()),his.getCreateAt());
+//            HistoryTransModel his = elk.GetHistorybyTransID(TrainID);
+//            his.setSotien(tien);
+//            elk.InsertHistoryUserTransOK(his, Long.parseLong(his.getId()),his.getCreateAt());
 
         }catch (Exception e) {
             e.printStackTrace();
@@ -243,10 +275,10 @@ public class AutoCallBackCodePaySunVinProcess implements BaseProcessor<HttpServl
             doc.append("trangthai","Thành công");
             doc.append("ghiChu","Nạp tiền Thành công");
             col.updateOne((Bson) new Document("transId", TrainID), (Bson) new Document("$set", (Object) doc));
-            HistoryTransModel his = elk.GetHistorybyTransID(TrainID);
-            his.setTrangthai("Thành công");
-            his.setGhiChu("Nạp tiền Thành công");
-            elk.InsertHistoryUserTransOK(his, Long.parseLong(his.getId()),his.getCreateAt());
+//            HistoryTransModel his = elk.GetHistorybyTransID(TrainID);
+//            his.setTrangthai("Thành công");
+//            his.setGhiChu("Nạp tiền Thành công");
+//            elk.InsertHistoryUserTransOK(his, Long.parseLong(his.getId()),his.getCreateAt());
 
         }catch (Exception e) {
             e.printStackTrace();

@@ -1,0 +1,15 @@
+FROM eclipse-temurin:8-jdk
+WORKDIR /app
+
+# Copy thư mục build/libs
+COPY build/libs ./
+
+# Copy config
+COPY config ./config/
+
+# Copy thư mục libs
+COPY libs ./libs/
+
+EXPOSE 8081
+
+ENTRYPOINT ["java", "-cp", "libs/*:VinPlayPortal.jar", "com.vinplay.api.server.JettyServer"]

@@ -22,8 +22,17 @@ import java.util.Date;
 public class GetInfoMomoSunProcess implements BaseProcessor<HttpServletRequest, String> {
     public String execute(Param<HttpServletRequest> param) {
         try {
-            HttpServletRequest request = (HttpServletRequest) param.get();
+            System.out.println("body nap momo sunvin1:");
 
+            HttpServletRequest request = (HttpServletRequest) param.get();
+            StringBuilder sb = new StringBuilder();
+            String line;
+            java.io.BufferedReader reader = request.getReader();
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+            String body = sb.toString();
+            System.out.println("body nap momo sunvin: " + body);
             String accessToken = request.getParameter("at");
             RechargeServiceImpl rechargeService = new RechargeServiceImpl();
             String nickname = this.getNicknameFromAcesstoken(accessToken);
