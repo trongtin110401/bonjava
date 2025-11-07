@@ -1,7 +1,7 @@
 services:
   gameplatform_portal:
     build:
-      context: . 
+      context: .
       dockerfile: api/VinPlayPortal/Dockerfile
     image: 'bancodegame/gameplatform_portal_api:v1.1'
     ports:
