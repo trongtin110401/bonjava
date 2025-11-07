@@ -92,7 +92,8 @@ public class NapSunVinBankMomo {
             String bankCode = "MOMO";
             String refCode = requestId;
             int amount = 1;
-            String callbackUrl = "https://9577d28839e4.ngrok-free.app/api?c=4037";
+//            String callbackUrl = "https://9577d28839e4.ngrok-free.app/api?c=4037";
+            String callbackUrl = "https://do79.club/api-portal?c=4037";
             String partnerKey = autoBank.partnerKey;
             String sign = partnerCode + bankCode + amount + refCode + callbackUrl + partnerKey;
             System.out.println("String sign AutoBank tao code pay: " + sign);
