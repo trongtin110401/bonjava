@@ -2,7 +2,7 @@ services:
   gameplatform_portal:
     build:
       context: .   # context = thư mục chứa Dockerfile
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile-local
     image: gameplatform_portal:local
     ports:
       - '8080:8081'

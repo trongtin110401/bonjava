@@ -4,6 +4,7 @@ public class AutoBankEntity {
     public String url = "https://bankgate.coroach.xyz/bankin/";
 
     public String urlOrder = url + "Order.ashx";
+    public String getBank = url + "info.ashx";
     public int port = 10007;
 
     public String partnerCode = "snap";

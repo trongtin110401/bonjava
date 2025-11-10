@@ -1,5 +1,6 @@
 package com.vinplay.api.processors.AutoXuLyBank;
 
+import com.vinplay.api.processors.cashout.NapSunVinBankMomo;
 import com.vinplay.common.notification.NotificationAdminObj;
 import com.vinplay.common.notification.SendToWS;
 import com.vinplay.dichvuthe.dao.impl.RechargeDaoImpl;
@@ -9,6 +10,7 @@ import com.vinplay.utils.TelegramAlert;
 import com.vinplay.utils.TelegramUtil;
 import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
+import com.vinplay.vbee.common.models.BankPartnerModel;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -59,11 +61,25 @@ public class GetBankInfoProcessor implements BaseProcessor<HttpServletRequest, S
         }
 
         AutoBankEntity autoBank = new AutoBankEntity();
-
-        String url = autoBank.getUrl() + ":" + autoBank.getPort() + autoBank.getApiRegCharge()
-                + "?apiKey=" + autoBank.getApiKey() + "&chargeType=" + chargeType + "&amount=" + amount + "&subType=" + subType + "&requestId=" + UUID.randomUUID();
-        depositBankModel = processResponse(APIProcess.responseGetAPI(url, null), nickName);
-        depositBankModel.setSubType(subType);
+        NapSunVinBankMomo napsun = new NapSunVinBankMomo();
+        String TranID = String.valueOf(VinPlayUtils.generateTransId());
+        BankPartnerModel bankPartnerModel = napsun.sendBenThuBaTaoCodePay(TranID, subType, amount.isEmpty() ? (int) Long.parseLong(amount) : 1000);
+        depositBankModel = new DepositBankModel();
+        depositBankModel.setId(bankPartnerModel.id);
+        depositBankModel.setSubType(bankPartnerModel.chargeType);
+        depositBankModel.setAmount(Long.parseLong(amount));
+        depositBankModel.setBankAccountName(bankPartnerModel.phoneName);
+        depositBankModel.setBankAccountNumber(bankPartnerModel.phoneNum);
+        depositBankModel.setQRCode(bankPartnerModel.qr_url);
+        depositBankModel.setPaymentURL(bankPartnerModel.payment_url);
+        depositBankModel.setDescription(bankPartnerModel.code);
+        depositBankModel.setUserSender(bankPartnerModel.chargeType);
+        depositBankModel.setNickname(nickName);
+        depositBankModel.setTransactionID(TranID);
+        depositBankModel.setTimeToExpired(bankPartnerModel.timeToExpired);
+        depositBankModel.setCreatedAt(VinPlayUtils.getCurrentDateTime());
+        depositBankModel.setStatus(DvtConst.STATUS_PENDING);
+        depositBankModel.setDescription(bankPartnerModel.code);
         Date currentDate = new Date();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(currentDate);

@@ -6,6 +6,7 @@ import com.vinplay.vbee.common.models.BankPartnerModel;
 import okhttp3.*;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.json.JSONObject;
+import org.python.parser.ast.Str;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -85,15 +86,19 @@ public class NapSunVinBankMomo {
         return resBody;
     }
 
-    public BankPartnerModel sendBenThuBaTaoCodePay(String requestId) {
+    public BankPartnerModel sendBenThuBaTaoCodePay(String requestId, String bankCode, int amount) {
         try {
             AutoBankEntity autoBank = new AutoBankEntity();
             String partnerCode = autoBank.partnerCode;
-            String bankCode = "MOMO";
             String refCode = requestId;
-            int amount = 1;
-//            String callbackUrl = "https://9577d28839e4.ngrok-free.app/api?c=4037";
-            String callbackUrl = "https://do79.club/api-portal?c=4037";
+            String callbackUrl;
+            if (bankCode == "MOMO") {
+//                callbackUrl = " https://621874f4938e.ngrok-free.app/api?c=4037";
+                callbackUrl = "https://do79.club/api-portal?c=4037";
+            } else  {
+//                callbackUrl = " https://621874f4938e.ngrok-free.app/api?c=4049";
+                callbackUrl = "https://do79.club/api-portal?c=4049";
+            }
             String partnerKey = autoBank.partnerKey;
             String sign = partnerCode + bankCode + amount + refCode + callbackUrl + partnerKey;
             System.out.println("String sign AutoBank tao code pay: " + sign);

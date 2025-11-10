@@ -1192,9 +1192,7 @@ public class RechargeDaoImpl implements RechargeDao {
             MongoDatabase db = MongoDBConnectionFactory.getDB();
             MongoCollection col = db.getCollection(DvtConst.DEPOSIT_BANK_COLLECTION);
             Document doc = new Document();
-            String doubleString = depositBankModel.Id;
-            int integerValue = Double.valueOf(doubleString).intValue();
-            doc.append("Id", integerValue);
+            doc.append("Id", depositBankModel.getTransactionID());
             doc.append("Nickname", depositBankModel.Nickname);
             doc.append("CreatedAt", VinPlayUtils.getCurrentDateTime());
             doc.append("UpdatedAt", VinPlayUtils.getCurrentDateTime());
@@ -2856,10 +2854,10 @@ public class RechargeDaoImpl implements RechargeDao {
         try {
             MongoDatabase db = MongoDBConnectionFactory.getDB();
             Document conditions = new Document();
-            conditions.put("Id", Integer.parseInt(Id));
+            conditions.put("Id", Id);
             Document document = db.getCollection(DvtConst.DEPOSIT_BANK_COLLECTION).find(conditions).first();
             if (document == null) return null;
-            DepositBankModel model = new DepositBankModel(String.valueOf(document.getInteger("Id")), document.getString((Object) "Nickname"), document.getString((Object) "CreatedAt"), document.getString((Object) "UpdatedAt"), document.getLong((Object) "Amount"), document.getInteger((Object) "Status"), document.getString((Object) "BankBrandName"), document.getString((Object) "BankAccountNumber"), document.getString((Object) "BankAccountName"), document.getString((Object) "Description"), document.getString((Object) "UserApprove"));
+            DepositBankModel model = new DepositBankModel(document.getString("Id"), document.getString((Object) "Nickname"), document.getString((Object) "CreatedAt"), document.getString((Object) "UpdatedAt"), document.getLong((Object) "Amount"), document.getInteger((Object) "Status"), document.getString((Object) "BankBrandName"), document.getString((Object) "BankAccountNumber"), document.getString((Object) "BankAccountName"), document.getString((Object) "Description"), document.getString((Object) "UserApprove"));
             model.setUserSender(document.getString((Object) "UserSender"));
             return model;
         } catch (Exception e) {

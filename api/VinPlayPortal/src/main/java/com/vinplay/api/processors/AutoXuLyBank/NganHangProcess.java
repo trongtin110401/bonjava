@@ -18,6 +18,7 @@ import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.json.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -25,7 +26,28 @@ import java.io.IOException;
 public class NganHangProcess implements BaseProcessor<HttpServletRequest, String> {
     public synchronized String execute(Param<HttpServletRequest> param) {
         HttpServletRequest request = (HttpServletRequest) param.get();
-        String transId = request.getParameter("transId");
+        String transId = null;
+        try {
+            StringBuilder sb = new StringBuilder();
+            String line;
+            java.io.BufferedReader reader = request.getReader();
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+            String body = sb.toString();
+
+            System.out.println("body nap bank sunvin: " + body);
+            if (body.contains("\"ResponseCode\":1")) {
+                JSONObject obj = new JSONObject(body);
+                String contentStr = obj.getString("ResponseContent");
+                JSONObject jsonObject = new JSONObject(contentStr);
+                transId = jsonObject.getString("RefCode");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         String userApprove = "Auto Bank Tool";
         long tien_final = 0;
         RechargeDao dao = new RechargeDaoImpl();
