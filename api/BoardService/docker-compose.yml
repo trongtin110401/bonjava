@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  gameplatform_portal_api:
+    image: bancodegame/gameplatform_leaderboard:v1.1
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '8087:8087'
+    restart: always
+    volumes:
+      - ../../../game-logs/portal_api:/app/logs
+    networks:
+      env-setup_mynetwork:
+        ipv4_address: 10.5.0.7
+
+networks:
+  env-setup_mynetwork:
+    external: true
