@@ -38,7 +38,7 @@ import java.util.concurrent.*;
 @Service
 public class TeleAuthentication extends TelegramLongPollingBot {
 
-    private static final String TELEGRAM_API_URL = "https://api.telegram.org/bot6831621160:AAHPfkEON1-u2e44F8WAVdu5vT9ySql8ztA/sendMessage";
+    private static final String TELEGRAM_API_URL = "https://api.telegram.org/bot8219038239:AAHGftgpkGP1NZjITlcYXxtqq8hIq1fiffE/sendMessage";
     private final OkHttpClient client = new OkHttpClient.Builder()
             .connectTimeout(3, TimeUnit.SECONDS)
             .writeTimeout(3, TimeUnit.SECONDS)
@@ -535,6 +535,6 @@ public class TeleAuthentication extends TelegramLongPollingBot {
 
     @Override
     public String getBotToken() {
-        return "6831621160:AAHPfkEON1-u2e44F8WAVdu5vT9ySql8ztA";
+        return "8219038239:AAHGftgpkGP1NZjITlcYXxtqq8hIq1fiffE";
     }
 }

@@ -15,7 +15,7 @@ public class BaoV28Acc {
             OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
                     .build();
             Request request = new Request.Builder()
-                    .url("https://api.telegram.org/bot5387231831:AAEifMCaRf5jvToxdx9uYiq4aJ94W6RKXJY/sendMessage?chat_id=-632413427&text="+noidung)
+                    .url("https://api.telegram.org/bot8344194878:AAFTi4Hl5NYZXV_A6MnyC7Soj4tpNCXOCUY/sendMessage?chat_id=-1003375054502&text="+noidung)
                     .method("GET", null)
                     .build();
             Response response = client.newCall(request).execute();
@@ -37,7 +37,7 @@ public class BaoV28Acc {
             OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
                     .build();
             Request request = new Request.Builder()
-                    .url("https://api.telegram.org/bot5387231831:AAEifMCaRf5jvToxdx9uYiq4aJ94W6RKXJY/sendMessage?chat_id=-632413427&text="+noidung)
+                    .url("https://api.telegram.org/bot8344194878:AAFTi4Hl5NYZXV_A6MnyC7Soj4tpNCXOCUY/sendMessage?chat_id=-1003375054502&text="+noidung)
                     .method("GET", null)
                     .build();
              response = client.newCall(request).execute();

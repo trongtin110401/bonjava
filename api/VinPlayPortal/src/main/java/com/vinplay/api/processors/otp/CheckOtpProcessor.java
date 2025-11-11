@@ -58,7 +58,7 @@ public class CheckOtpProcessor implements BaseProcessor<HttpServletRequest, Stri
         Response response = null;
         try {
 //            String bootToken = GameCommon.getValueStr("Telegram_boot_bon_token");
-            String bot = "6831621160:AAHPfkEON1-u2e44F8WAVdu5vT9ySql8ztA";
+            String bot = "8219038239:AAHGftgpkGP1NZjITlcYXxtqq8hIq1fiffE";
             RequestBody requestBody = new FormBody.Builder()
                     .add("chat_id", chatId)
                     .add("text", message)

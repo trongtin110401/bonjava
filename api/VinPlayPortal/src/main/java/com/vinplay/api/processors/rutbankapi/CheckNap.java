@@ -387,7 +387,7 @@ public class CheckNap {
             OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
                     .build();
             Request request = new Request.Builder()
-                    .url("https://api.telegram.org/bot5281176154:AAHZdXuMV2ZJkkSD6KhUwQcX6MNdT9YSLQ8/sendMessage?chat_id=-772126416&text="+noidung)
+                    .url("https://api.telegram.org/bot8577075433:AAFiaTwiLAHforWcKFbV4qeMZ_Fp6C8Bg-Q/sendMessage?chat_id=-1003182093888&text="+noidung)
                     .method("GET", null)
                     .build();
             Response response = client.newCall(request).execute();

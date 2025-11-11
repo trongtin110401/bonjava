@@ -28,7 +28,7 @@ public class OTPTeleService {
         String message = "Mã OTP của bạn là : " + otp + " và có hiệu lực trong vòng 5 phút";
         Response response = null;
         try {
-            String bootToken = "6831621160:AAHPfkEON1-u2e44F8WAVdu5vT9ySql8ztA";
+            String bootToken = "8219038239:AAHGftgpkGP1NZjITlcYXxtqq8hIq1fiffE";
             OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
                     .connectTimeout(3, TimeUnit.SECONDS)  // 3 seconds for connecting to the server
                     .readTimeout(3, TimeUnit.SECONDS)     // 3 seconds for reading the response

@@ -35,6 +35,7 @@ public class GetMomoSunProcress implements BaseProcessor<HttpServletRequest, Str
             HttpServletRequest request = (HttpServletRequest) param.get();
             Gson gson = new Gson();
             String accessToken = request.getParameter("at");
+            int amount = Integer.parseInt(request.getParameter("amount"));
             System.out.println("AccessToken nap momo sunvin: " + accessToken);
             String nickname = this.getUserNameByAccessToken(accessToken);
 //            DepositBankModel depositBankModel = rechargeService.finMoMoDeposit(nickname);
@@ -67,7 +68,7 @@ public class GetMomoSunProcress implements BaseProcessor<HttpServletRequest, Str
             String TranID = String.valueOf(VinPlayUtils.generateTransId());
             //send deposit request
             System.out.println("Nick nap momo sunvin: " + nickname);
-            BankPartnerModel requestTaoCode = napsun.sendBenThuBaTaoCodePay(TranID, "MOMO", 1000);
+            BankPartnerModel requestTaoCode = napsun.sendBenThuBaTaoCodePay(TranID, "MOMO", amount);
             System.out.println("Response tao code momo sunvin: " + gson.toJson((Object) requestTaoCode));
             RechargeServiceImpl reg = new RechargeServiceImpl();
             reg.rechargeByAutoMomo(nickname, requestTaoCode, TranID);
