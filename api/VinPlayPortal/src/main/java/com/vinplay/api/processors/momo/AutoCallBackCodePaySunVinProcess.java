@@ -125,7 +125,7 @@ public class AutoCallBackCodePaySunVinProcess implements BaseProcessor<HttpServl
                     //boolean resultUpdateTrans = dao.UpdateDepositBankManualStatus(bankcallback.getKeyID(), DvtConst.STATUS_APPROVE, "Comment: "+trans.getDescription()+", Tien: "+tien, "Nap Bank Auto");
                     historyTransService.update(trans.Id, trans.Nickname, HistoryTransConst.BANK, "Thành công", " giao dịch thành công");
                     updateSttCodePayMomoSun(trans.Id);
-                    updateSTTCodePayMomoSun2(trans.Id);
+//                    updateSTTCodePayMomoSun2(trans.Id);
 //                    if (!resultUpdateTrans) {
 //                        response.setErrorCode(500);
 //                        response.setErrorDescription("Cập nhật thất bại");
@@ -150,7 +150,7 @@ public class AutoCallBackCodePaySunVinProcess implements BaseProcessor<HttpServl
                         return response.toJson();
                     }
                     updateMoneyCodePayMomoSun(trans.Id,tien_final);
-                    updateMoneyCodePayMomoSun2(trans.Id, tien_final+"");
+//                    updateMoneyCodePayMomoSun2(trans.Id, tien_final+"");
                 }
 
 
@@ -162,7 +162,7 @@ public class AutoCallBackCodePaySunVinProcess implements BaseProcessor<HttpServl
 
             BroadCastUserMoney.pushBroadCast(trans.Nickname);
             updateMoneyCodePayMomoSun(trans.Id,tien);
-            updateMoneyCodePayMomoSun2(trans.Id, tien+"");
+//            updateMoneyCodePayMomoSun2(trans.Id, tien+"");
             NapRutGame nrg = new NapRutGame();
             String codedl = nrg.getMaDaily(trans.Nickname);
             long SoTien = tien;
