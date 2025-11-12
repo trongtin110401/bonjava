@@ -28,77 +28,85 @@ public class GetBankInfoProcessor implements BaseProcessor<HttpServletRequest, S
     @Override
     public String execute(Param<HttpServletRequest> param) {
 
-        HttpServletRequest request = param.get();
-        String chargeType = request.getParameter("chargeType");
-        String amount = request.getParameter("amount");
-        String subType = request.getParameter("subType");
-        String nickName = request.getParameter("nn");
+        try {
 
-        if (chargeType.isEmpty()) {
-            return "{\"error\":400,\"data\":" + "chargeType invalid " + "}";
-        }
-        RechargeDaoImpl rechargeDao = new RechargeDaoImpl();
+            HttpServletRequest request = param.get();
+            String chargeType = request.getParameter("chargeType");
+            String amount = request.getParameter("amount");
+            String subType = request.getParameter("subType");
+            String nickName = request.getParameter("nn");
+
+            if (chargeType.isEmpty()) {
+                return "{\"error\":400,\"data\":" + "chargeType invalid " + "}";
+            }
+            RechargeDaoImpl rechargeDao = new RechargeDaoImpl();
 
 
-        DepositBankModel depositBankModel;
-        depositBankModel = rechargeDao.isPendingTransDepositBankByNicknameAndBankName(nickName, subType, (int) Long.parseLong(amount));
-        if (depositBankModel != null) {
+            DepositBankModel depositBankModel;
+            depositBankModel = rechargeDao.isPendingTransDepositBankByNicknameAndBankName(nickName, subType, Integer.parseInt(amount));
+            if (depositBankModel != null) {
 
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            boolean isExpired;
-            try {
-                Date createdAt = dateFormat.parse(depositBankModel.getCreatedAt());
-                Date now = new Date();
-                isExpired = now.getTime() - createdAt.getTime() > 900000;
-                if (isExpired) {
-                    rechargeDao.UpdateDepositBankManualStatus(depositBankModel.getId(), DvtConst.STATUS_REJECT, "H?t H?n", "ADMIN");
-                } else {
-                    return depositBankModel.toJson();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                boolean isExpired;
+                try {
+                    Date createdAt = dateFormat.parse(depositBankModel.getCreatedAt());
+                    Date now = new Date();
+                    isExpired = now.getTime() - createdAt.getTime() > 900000;
+                    if (isExpired) {
+                        rechargeDao.UpdateDepositBankManualStatus(depositBankModel.getId(), DvtConst.STATUS_REJECT, "H?t H?n", "ADMIN");
+                    } else {
+                        return depositBankModel.toJson();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+            }
+
+            AutoBankEntity autoBank = new AutoBankEntity();
+            NapSunVinBankMomo napsun = new NapSunVinBankMomo();
+            String TranID = String.valueOf(VinPlayUtils.generateTransId());
+            System.out.println("Auto nap bank momo/viettelbank - TranID: " + TranID + " - Nickname: " + nickName + " - Amount: " + amount + " - SubType: " + subType);
+            BankPartnerModel bankPartnerModel = napsun.sendBenThuBaTaoCodePay(TranID, subType, Integer.parseInt(amount));
+            depositBankModel = new DepositBankModel();
+            depositBankModel.setId(bankPartnerModel.id);
+            depositBankModel.setSubType(bankPartnerModel.chargeType);
+            depositBankModel.setAmount(Long.parseLong(amount));
+            depositBankModel.setBankAccountName(bankPartnerModel.phoneName);
+            depositBankModel.setBankAccountNumber(bankPartnerModel.phoneNum);
+            depositBankModel.setQRCode(bankPartnerModel.qr_url);
+            depositBankModel.setPaymentURL(bankPartnerModel.payment_url);
+            depositBankModel.setDescription(bankPartnerModel.code);
+            depositBankModel.setUserSender(bankPartnerModel.chargeType);
+            depositBankModel.setNickname(nickName);
+            depositBankModel.setTransactionID(TranID);
+            depositBankModel.setTimeToExpired(bankPartnerModel.timeToExpired);
+            depositBankModel.setCreatedAt(VinPlayUtils.getCurrentDateTime());
+            depositBankModel.setStatus(DvtConst.STATUS_PENDING);
+            depositBankModel.setDescription(bankPartnerModel.code);
+            Date currentDate = new Date();
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(currentDate);
+            calendar.add(Calendar.DAY_OF_YEAR, 10);
+            Date expiredDate = calendar.getTime();
+            depositBankModel.setExpiredDate(expiredDate);
+            rechargeDao.InsertDepositBankManual(depositBankModel);
+
+            NotificationAdminObj obj = new NotificationAdminObj();
+            obj.setNapBank(true);
+            try {
+                SendToWS.sendBEExcRechargebybank(depositBankModel);
+                SendToWS.sendBEExcNotification(obj);
             } catch (Exception e) {
+
                 e.printStackTrace();
             }
-        }
-
-        AutoBankEntity autoBank = new AutoBankEntity();
-        NapSunVinBankMomo napsun = new NapSunVinBankMomo();
-        String TranID = String.valueOf(VinPlayUtils.generateTransId());
-        System.out.println("Auto nap bank momo/viettelbank - TranID: " + TranID + " - Nickname: " + nickName + " - Amount: " + amount + " - SubType: " + subType);
-        BankPartnerModel bankPartnerModel = napsun.sendBenThuBaTaoCodePay(TranID, subType, Integer.parseInt(amount));
-        depositBankModel = new DepositBankModel();
-        depositBankModel.setId(bankPartnerModel.id);
-        depositBankModel.setSubType(bankPartnerModel.chargeType);
-        depositBankModel.setAmount(Long.parseLong(amount));
-        depositBankModel.setBankAccountName(bankPartnerModel.phoneName);
-        depositBankModel.setBankAccountNumber(bankPartnerModel.phoneNum);
-        depositBankModel.setQRCode(bankPartnerModel.qr_url);
-        depositBankModel.setPaymentURL(bankPartnerModel.payment_url);
-        depositBankModel.setDescription(bankPartnerModel.code);
-        depositBankModel.setUserSender(bankPartnerModel.chargeType);
-        depositBankModel.setNickname(nickName);
-        depositBankModel.setTransactionID(TranID);
-        depositBankModel.setTimeToExpired(bankPartnerModel.timeToExpired);
-        depositBankModel.setCreatedAt(VinPlayUtils.getCurrentDateTime());
-        depositBankModel.setStatus(DvtConst.STATUS_PENDING);
-        depositBankModel.setDescription(bankPartnerModel.code);
-        Date currentDate = new Date();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(currentDate);
-        calendar.add(Calendar.DAY_OF_YEAR, 10);
-        Date expiredDate = calendar.getTime();
-        depositBankModel.setExpiredDate(expiredDate);
-        rechargeDao.InsertDepositBankManual(depositBankModel);
-
-        NotificationAdminObj obj = new NotificationAdminObj();
-        obj.setNapBank(true);
-        try {
-            SendToWS.sendBEExcRechargebybank(depositBankModel);
-            SendToWS.sendBEExcNotification(obj);
+            return depositBankModel.toJson();
         } catch (Exception e) {
+            System.out.println("GetBankInfoProcessor error: " + e);
             e.printStackTrace();
+            return "{\"error\":500,\"data\":" + "Internal Server Error" + "}";
         }
 
-        return depositBankModel.toJson();
     }
 
 
