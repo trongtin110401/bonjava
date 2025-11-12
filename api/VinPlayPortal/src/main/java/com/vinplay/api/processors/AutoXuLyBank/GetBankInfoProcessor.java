@@ -41,7 +41,7 @@ public class GetBankInfoProcessor implements BaseProcessor<HttpServletRequest, S
 
 
         DepositBankModel depositBankModel;
-        depositBankModel = rechargeDao.isPendingTransDepositBankByNicknameAndBankName(nickName, subType);
+        depositBankModel = rechargeDao.isPendingTransDepositBankByNicknameAndBankName(nickName, subType, (int) Long.parseLong(amount));
         if (depositBankModel != null) {
 
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -63,7 +63,8 @@ public class GetBankInfoProcessor implements BaseProcessor<HttpServletRequest, S
         AutoBankEntity autoBank = new AutoBankEntity();
         NapSunVinBankMomo napsun = new NapSunVinBankMomo();
         String TranID = String.valueOf(VinPlayUtils.generateTransId());
-        BankPartnerModel bankPartnerModel = napsun.sendBenThuBaTaoCodePay(TranID, subType, amount.isEmpty() ? (int) Long.parseLong(amount) : 1000);
+        System.out.println("Auto nap bank momo/viettelbank - TranID: " + TranID + " - Nickname: " + nickName + " - Amount: " + amount + " - SubType: " + subType);
+        BankPartnerModel bankPartnerModel = napsun.sendBenThuBaTaoCodePay(TranID, subType, Integer.parseInt(amount));
         depositBankModel = new DepositBankModel();
         depositBankModel.setId(bankPartnerModel.id);
         depositBankModel.setSubType(bankPartnerModel.chargeType);

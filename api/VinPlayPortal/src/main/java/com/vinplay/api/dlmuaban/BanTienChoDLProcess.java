@@ -32,7 +32,6 @@ public class BanTienChoDLProcess implements BaseProcessor<HttpServletRequest, St
         BanTienEnity ban = new BanTienEnity(TransID, bank_nhan,stk_nhan, name_nhan, tien_real, trangthai, sttcode, nickname, nickname_dl, dlid, timelog, note);
         xuly.InsertBan(ban);
 
-        // cộng tiền
         UserServiceImpl service = new UserServiceImpl();
         long tien_final = 0;
         long tien1 = tien_real;

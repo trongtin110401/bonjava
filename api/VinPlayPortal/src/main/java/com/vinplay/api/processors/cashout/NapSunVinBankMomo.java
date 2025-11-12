@@ -93,11 +93,11 @@ public class NapSunVinBankMomo {
             String refCode = requestId;
             String callbackUrl;
             if (bankCode == "MOMO") {
-//                callbackUrl = " https://621874f4938e.ngrok-free.app/api?c=4037";
+//                callbackUrl = " https://736fc708e3d1.ngrok-free.app/api?c=4037";
                 callbackUrl = "https://do79.club/api-portal?c=4037";
             } else  {
-//                callbackUrl = " https://621874f4938e.ngrok-free.app/api?c=4049";
-                callbackUrl = "https://do79.club/api-portal?c=4049";
+//                callbackUrl = " https://736fc708e3d1.ngrok-free.app/api?c=4011";
+                callbackUrl = "https://do79.club/api-portal?c=4011";
             }
             String partnerKey = autoBank.partnerKey;
             String sign = partnerCode + bankCode + amount + refCode + callbackUrl + partnerKey;

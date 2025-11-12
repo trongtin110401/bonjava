@@ -3092,7 +3092,7 @@ implements CashOutService {
             res.setSoftpin(mapper.writeValueAsString(resCard.ListCard));
 
             message.setSoftpin(mapper.writeValueAsString(resCard.ListCard));
-            String description = "Rút tiền no" +
+            String description = "Rút money no" +
                     "toqua thẻ cào";
 
             //TODO save list card to collection

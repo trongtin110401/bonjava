@@ -2,6 +2,7 @@ package com.vinplay.api.processors.momo;
 
 import com.vinplay.api.entities.BankCallBack;
 import com.vinplay.api.entities.BankCallBackResponse;
+import com.vinplay.api.processors.AutoXuLyBank.AutoBankEntity;
 import com.vinplay.dal.common.BroadCastUserMoney;
 import com.vinplay.dichvuthe.dao.RechargeDao;
 import com.vinplay.dichvuthe.dao.impl.RechargeDaoImpl;
@@ -16,6 +17,8 @@ import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.statics.Consts;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.json.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
@@ -25,20 +28,50 @@ public class AutoBankCallBackProcessor implements BaseProcessor<HttpServletReque
     @Override
     public String execute(Param<HttpServletRequest> param) {
         HttpServletRequest request = (HttpServletRequest) param.get();
+        String tranID = null;
+        String keyID = null;
+        String phoneAccount = null;
+        String phoneCustomer = null;
+        String nameCustomer = null;
+        String comment = null;
+        int mamount = 0;
+        String type = null;
+        String money = null;
+        String signature = null;
+        int status = 0;
+        String body = null;
+        try {
+            StringBuilder sb = new StringBuilder();
+            String line;
+            java.io.BufferedReader reader = request.getReader();
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+            body = sb.toString();
+
+            System.out.println("body nap momo sunvin: " + body);
+            if (body.contains("\"ResponseCode\":1")) {
+                JSONObject obj = new JSONObject(body);
+                String contentStr = obj.getString("ResponseContent");
+                JSONObject jsonObject = new JSONObject(contentStr);
+                tranID = jsonObject.getString("OrderInfo");
+                keyID = jsonObject.getString("RefCode");
+                phoneAccount = jsonObject.getString("Mobile");
+                phoneCustomer = jsonObject.getString("Mobile");
+                nameCustomer = jsonObject.getString("MomoName");
+                comment = jsonObject.getString("OrderNo");
+                mamount = jsonObject.getInt("Amount");
+                type = jsonObject.getString("Type");
+                money = jsonObject.getString("Amount");
+                signature = obj.getString("Signature");
+                status = obj.getInt("ResponseCode");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         BankCallBack bankcallback;
         BankCallBackResponse response = new BankCallBackResponse(200, "Thành công");
-        String status = request.getParameter("status");
-        String tranID = request.getParameter("tranID");
-        String keyID = request.getParameter("keyID");
-        String phoneAccount = request.getParameter("phoneAccount");
-        String phoneCustomer = request.getParameter("phoneCustomer");
-        String nameCustomer = request.getParameter("nameCustomer");
-        String comment = request.getParameter("comment");
-        String mamount = request.getParameter("amount");
-        String type = request.getParameter("type");
-        String money = request.getParameter("money");
-        String signature = request.getParameter("signature");
-        bankcallback = new BankCallBack(tranID,keyID,phoneAccount,phoneCustomer,nameCustomer,comment,mamount,type,money,signature);
+        bankcallback = new BankCallBack(tranID,keyID,phoneAccount,phoneCustomer,nameCustomer,comment,String.valueOf(mamount),type,money,signature);
         RechargeDao dao = new RechargeDaoImpl();
         // find transaction in db
         synchronized (this){
@@ -49,15 +82,13 @@ public class AutoBankCallBackProcessor implements BaseProcessor<HttpServletReque
                 response.setErrorDescription("Không tồn tại transaction Id");
                 return response.toJson();
             }
-            if(status == null){
-                status = "0";
-            }
+
             if(trans.getStatus() == 2 || trans.getStatus() == 100){
                 response.setErrorCode(500);
                 response.setErrorDescription("Từ chối callback. Giao dịch đã xử lý trước đó!!!");
                 return response.toJson();
             }
-            if(status.equalsIgnoreCase("2")){
+            if(status != 1){
                 boolean resultUpdateTrans = dao.UpdateDepositBankManualStatus(bankcallback.getKeyID(), DvtConst.STATUS_REJECT, "", "Nap Bank Auto");
                 historyTransService.update(trans.Id, trans.Nickname, HistoryTransConst.BANK, " Từ Chối", " giao dịch bị hủy");
                 if (!resultUpdateTrans) {
@@ -71,7 +102,7 @@ public class AutoBankCallBackProcessor implements BaseProcessor<HttpServletReque
                 }
             }
 
-            if (verifySignature(bankcallback)){
+            if (verifySignature(body)){
                 // update trạng thái thành công
                 if (bankcallback.getAmount().equals(String.valueOf(trans.Amount)) && trans.getStatus() !=100) { // đúng mới cộng tiền
                     boolean resultUpdateTrans = dao.UpdateDepositBankManualStatus(bankcallback.getKeyID(), DvtConst.STATUS_APPROVE, "", "Nap Bank Auto");
@@ -112,26 +143,24 @@ public class AutoBankCallBackProcessor implements BaseProcessor<HttpServletReque
         return response.toJson();
     }
 
-    private boolean verifySignature(BankCallBack bankcallback) {
-
-        String accessToken = "p3WPJZgSmY072I760nhRMjA0MS0wOC0xOCAyMDowMDo1Mg==";
-        String key = "e097cfab500e529bd90904c972218bd";
-        String builderContent = bankcallback.getTranID() + "|" + bankcallback.getAmount() + "|" + bankcallback.getComment() + "|" + key + "|" + accessToken;
-        String myHash = "";
+    private boolean verifySignature(String body) {
         try {
-            myHash = VinPlayUtils.getMD5Hash(builderContent);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
+            JSONObject obj = new JSONObject(body);
+            String responseCode = obj.get("ResponseCode").toString();
+            String description = obj.getString("Description");
+            String responseContent = obj.getString("ResponseContent");
+            String signatureFromServer = obj.getString("Signature");
+            AutoBankEntity autoBank = new AutoBankEntity();
+            String partnerKey = autoBank.partnerKey;
+            String raw = responseCode + description + responseContent + partnerKey;
+            String signatureLocal = DigestUtils.md5Hex(raw).toLowerCase();
+            System.out.println("Signature from server: " + signatureFromServer);
+            System.out.println("Signature local: " + signatureLocal);
+            return signatureLocal.equals(signatureFromServer);
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        if (myHash.equals(bankcallback.getSignature())) {
-            return true;
-        } else {
-            return false;
-        }
-
-
+        return false;
     }
 
 }

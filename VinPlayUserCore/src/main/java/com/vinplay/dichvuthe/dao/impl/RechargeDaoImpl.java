@@ -2581,13 +2581,14 @@ public class RechargeDaoImpl implements RechargeDao {
         }
     }
 
-    public DepositBankModel isPendingTransDepositBankByNicknameAndBankName(String nickname, String subType) {
+    public DepositBankModel isPendingTransDepositBankByNicknameAndBankName(String nickname, String subType, int amount) {
         DepositBankModel depositBankModel = new DepositBankModel();
         try {
             MongoDatabase db = MongoDBConnectionFactory.getDB();
             Document conditions = new Document();
             conditions.put("Nickname", nickname);
             conditions.put("BankCode", subType);
+            conditions.put("Amount", amount);
             conditions.put("Status", DvtConst.STATUS_PENDING);
             Document doc = db.getCollection(DvtConst.DEPOSIT_BANK_COLLECTION).find(conditions).first();
             if (doc == null) {
