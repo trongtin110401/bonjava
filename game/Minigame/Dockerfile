@@ -1,10 +1,9 @@
 FROM  eclipse-temurin:8-jdk
 WORKDIR /app
-COPY ./game/Minigame/build/libs .
-COPY ./game/Minigame/config config/
-COPY ./game/Minigame/conf conf/
+COPY .build/libs .
+COPY ./config config/
+COPY ./conf conf/
 COPY ./data data/
 ADD ./libs libs/
-ADD ./game/Minigame/libs libs/
 EXPOSE 1644
 ENTRYPOINT ["java", "-cp", "libs/*:Minigame.jar", "game.MiniGameMain"]
