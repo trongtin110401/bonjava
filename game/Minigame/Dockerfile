@@ -1,6 +1,6 @@
 FROM  eclipse-temurin:8-jdk
 WORKDIR /app
-COPY .build/libs .
+COPY ./build/libs .
 COPY ./config config/
 COPY ./conf conf/
 ADD ./libs libs/
