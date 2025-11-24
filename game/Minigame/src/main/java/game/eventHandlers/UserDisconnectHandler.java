@@ -54,7 +54,6 @@ public class UserDisconnectHandler
                 --game.BaseGameExtension.ccuDT;
             }
         }
-        // xóa user ra kh?i key
         HazelcastInstance instance = HazelcastClientFactory.getInstance();
         IMap userOnline = instance.getMap("USER_ONLINE");
         userOnline.remove(user.getName());
