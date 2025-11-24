@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  gameplatform_wminigame:
+    image: bancodegame/gameplatform_wminigame:v1.1
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '1644:1644'
+    restart: always
+    volumes:
+      - ../../../game-logs/wminigame:/app/logs
+    networks:
+      env-setup_mynetwork:
+        ipv4_address: 10.5.0.13
+
+networks:
+  env-setup_mynetwork:
+    external: true

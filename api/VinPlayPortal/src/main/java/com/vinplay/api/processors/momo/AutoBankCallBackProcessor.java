@@ -49,7 +49,7 @@ public class AutoBankCallBackProcessor implements BaseProcessor<HttpServletReque
             }
             body = sb.toString();
 
-            System.out.println("body nap momo sunvin: " + body);
+            System.out.println("body nap bank sunvin: " + body);
             if (body.contains("\"ResponseCode\":1")) {
                 JSONObject obj = new JSONObject(body);
                 String contentStr = obj.getString("ResponseContent");
@@ -105,16 +105,21 @@ public class AutoBankCallBackProcessor implements BaseProcessor<HttpServletReque
             if (verifySignature(body)){
                 // update trạng thái thành công
                 if (bankcallback.getAmount().equals(String.valueOf(trans.Amount)) && trans.getStatus() !=100) { // đúng mới cộng tiền
+                    System.out.println("update status : ");
+
                     boolean resultUpdateTrans = dao.UpdateDepositBankManualStatus(bankcallback.getKeyID(), DvtConst.STATUS_APPROVE, "", "Nap Bank Auto");
-                    historyTransService.update(trans.Id, trans.Nickname, HistoryTransConst.BANK, "Thành công", " giao dịch thành công");
-                    if (!resultUpdateTrans) {
-                        response.setErrorCode(500);
-                        response.setErrorDescription("Cập nhật thất bại");
-                        return response.toJson();
-                    }
+//                    historyTransService.update(trans.Id, trans.Nickname, HistoryTransConst.BANK, "Thành công", " giao dịch thành công");
+//                    if (!resultUpdateTrans) {
+//                        System.out.println("Cập nhật thất bại : ");
+//                        response.setErrorCode(500);
+//                        response.setErrorDescription("Cập nhật thất bại");
+//                        return response.toJson();
+//                    }
                     // cộng tiền
                     UserServiceImpl service = new UserServiceImpl();
                     try {
+                        System.out.println("Tinh tien : ");
+
                         double fee = GameCommon.getValueDouble("RATIO_RECHARGE_BANK");
                         double amount = fee * trans.Amount;
                         long totalFee = Math.round(trans.Amount - amount);
@@ -123,6 +128,7 @@ public class AutoBankCallBackProcessor implements BaseProcessor<HttpServletReque
                                 Consts.RECHARGE_BY_BANK, "Nạp Bank",
                                 "nạp Bank tự động", totalFee);
                     }catch (Exception e) {
+                        System.out.println("Lỗi cộng tiền bank: " + e.getMessage());
                         response.setErrorCode(500);
                         response.setErrorDescription(""+e);
                         return response.toJson();

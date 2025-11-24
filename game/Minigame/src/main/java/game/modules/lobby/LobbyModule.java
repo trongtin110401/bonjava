@@ -644,7 +644,7 @@ public class LobbyModule extends BaseClientRequestHandler {
 //            int ruty = 1;
 //            int tiennap = 20000;
 
-            if (tiennap >= 20000) {
+            if (tiennap >= 0) {
                 if (check_onoff == true && yeu_cau_rut < 10000000 && tongx > ruty) {
 
                     //Auto rut tien bank

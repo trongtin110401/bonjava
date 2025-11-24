@@ -165,7 +165,6 @@ public class JettyServer {
             logger.info((Object) ("PORTAL API SERVER Start error: " + e.getMessage()));
             e.printStackTrace();
         } finally {
-            // Xóa cache
             HazelcastInstance instance = HazelcastClientFactory.getInstance();
             IMap<String, String> map = instance.getMap("LOGIN_OTHER_DEVICE_MAP");
             map.clear();

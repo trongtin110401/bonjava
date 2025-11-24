@@ -490,6 +490,8 @@ public class UserServiceImpl implements UserService {
         BaseResponseModel response;
         block11:
         {
+            System.out.println("Cộng Tiền : $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$: " + money);
+
             //logger.debug((Object)("Request updateMoneyFromAdmin:  nickname: " + nickname + ", money: " + money + ", moneyType: " + moneyType + ", actionName: " + actionName + ", serviceName: " + serviceName + ", description: " + description));
             response = new BaseResponseModel(false, "1001");
             if (nickname != null && !nickname.isEmpty() && money != 0L) {

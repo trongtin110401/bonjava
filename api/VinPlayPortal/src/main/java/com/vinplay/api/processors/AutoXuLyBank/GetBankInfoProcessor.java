@@ -53,7 +53,7 @@ public class GetBankInfoProcessor implements BaseProcessor<HttpServletRequest, S
                     Date now = new Date();
                     isExpired = now.getTime() - createdAt.getTime() > 900000;
                     if (isExpired) {
-                        rechargeDao.UpdateDepositBankManualStatus(depositBankModel.getId(), DvtConst.STATUS_REJECT, "H?t H?n", "ADMIN");
+                        rechargeDao.UpdateDepositBankManualStatus(depositBankModel.getId(), DvtConst.STATUS_REJECT, "Hết Hạn", "ADMIN");
                     } else {
                         return depositBankModel.toJson();
                     }
