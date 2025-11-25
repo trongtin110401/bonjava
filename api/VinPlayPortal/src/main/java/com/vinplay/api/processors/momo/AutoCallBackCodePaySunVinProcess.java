@@ -9,6 +9,7 @@ import com.vinplay.api.entities.BankCallBackResponse;
 import com.vinplay.api.processors.AutoXuLyBank.AutoBankEntity;
 import com.vinplay.api.processors.cashout.NapRutGame;
 import com.vinplay.api.processors.cashout.NapRutModel;
+import com.vinplay.common.HttpCommon;
 import com.vinplay.dal.common.BroadCastUserMoney;
 import com.vinplay.dichvuthe.dao.RechargeDao;
 import com.vinplay.dichvuthe.dao.impl.RechargeDaoImpl;
@@ -27,16 +28,22 @@ import com.vinplay.vbee.common.models.BankPartnerModel;
 import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 import com.vinplay.vbee.common.statics.Consts;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.json.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class AutoCallBackCodePaySunVinProcess implements BaseProcessor<HttpServletRequest, String> {
     @Override
@@ -163,6 +170,10 @@ public class AutoCallBackCodePaySunVinProcess implements BaseProcessor<HttpServl
             BroadCastUserMoney.pushBroadCast(trans.Nickname);
             updateMoneyCodePayMomoSun(trans.Id,tien);
 //            updateMoneyCodePayMomoSun2(trans.Id, tien+"");
+
+            //send tele
+            this.Notify(trans.Nickname, String.valueOf(tien), comment);
+
             NapRutGame nrg = new NapRutGame();
             String codedl = nrg.getMaDaily(trans.Nickname);
             long SoTien = tien;
@@ -184,6 +195,24 @@ public class AutoCallBackCodePaySunVinProcess implements BaseProcessor<HttpServl
 //        return response.toJson();
 
     }
+
+    public void Notify(String nickname, String sotien, String maGiaoDich){
+        try {
+
+            String noidung = "[Hệ thống] Nạp tiền thành công%0A- Nick name: "+nickname+"%0A- Số tiền nạp: "+ sotien +"%0A- Nạp bằng momo" + "%0A- Mã giao dịch: " + maGiaoDich;
+
+            OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
+                    .build();
+            Request request = new Request.Builder()
+                    .url("https://api.telegram.org/bot8577075433:AAFiaTwiLAHforWcKFbV4qeMZ_Fp6C8Bg-Q/sendMessage?chat_id=-1003182093888&text="+noidung)
+                    .method("GET", null)
+                    .build();
+            Response response = client.newCall(request).execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private boolean verifySignature(String body) {
         try {
             JSONObject obj = new JSONObject(body);

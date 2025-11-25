@@ -3,6 +3,7 @@ package com.vinplay.api.processors.momo;
 import com.vinplay.api.entities.BankCallBack;
 import com.vinplay.api.entities.BankCallBackResponse;
 import com.vinplay.api.processors.AutoXuLyBank.AutoBankEntity;
+import com.vinplay.common.HttpCommon;
 import com.vinplay.dal.common.BroadCastUserMoney;
 import com.vinplay.dichvuthe.dao.RechargeDao;
 import com.vinplay.dichvuthe.dao.impl.RechargeDaoImpl;
@@ -17,10 +18,14 @@ import com.vinplay.vbee.common.cp.BaseProcessor;
 import com.vinplay.vbee.common.cp.Param;
 import com.vinplay.vbee.common.statics.Consts;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.json.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 
@@ -143,10 +148,27 @@ public class AutoBankCallBackProcessor implements BaseProcessor<HttpServletReque
                 response.setErrorDescription("Signature sai!");
                 return response.toJson();
             }
-
+            this.Notify(trans.getNickname(), String.valueOf(trans.getAmount()), comment);
             BroadCastUserMoney.pushBroadCast(trans.Nickname);
         }
         return response.toJson();
+    }
+
+    public void Notify(String nickname, String sotien, String maGiaoDich){
+        try {
+
+            String noidung = "[Hệ thống] Nạp tiền thành công%0A- Nick name: "+nickname+"%0A- Số tiền nạp: "+ sotien +"%0A- Nạp bằng ngân hàng" + "%0A- Mã giao dịch: " + maGiaoDich;
+
+            OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
+                    .build();
+            Request request = new Request.Builder()
+                    .url("https://api.telegram.org/bot8577075433:AAFiaTwiLAHforWcKFbV4qeMZ_Fp6C8Bg-Q/sendMessage?chat_id=-1003182093888&text="+noidung)
+                    .method("GET", null)
+                    .build();
+            Response response = client.newCall(request).execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private boolean verifySignature(String body) {
