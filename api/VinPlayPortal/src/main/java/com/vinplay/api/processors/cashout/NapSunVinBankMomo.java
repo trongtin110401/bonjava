@@ -148,8 +148,8 @@ public class NapSunVinBankMomo {
             BankPartnerModel bankPartnerModel = new BankPartnerModel();
             System.out.println("RefCode: " + jsonObject.getString("RefCode"));
             bankPartnerModel.id = jsonObject.getString("RefCode");
-            System.out.println("QR URL: " + jsonObject.getString("Url"));
-            bankPartnerModel.qr_url = jsonObject.getString("Url");
+            System.out.println("QRCode: " + jsonObject.getString("QRCode"));
+            bankPartnerModel.qr_url = jsonObject.getString("QRCode");
             System.out.println("Payment URL: " + jsonObject.getString("LinkWebView"));
             bankPartnerModel.payment_url = jsonObject.getString("LinkWebView");
             System.out.println("OrderNo: " + jsonObject.getString("OrderNo"));
