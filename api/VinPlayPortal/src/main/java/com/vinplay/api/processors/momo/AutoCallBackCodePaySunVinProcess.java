@@ -151,6 +151,8 @@ public class AutoCallBackCodePaySunVinProcess implements BaseProcessor<HttpServl
                         service.updateMoneyFromAdmin(trans.Nickname, tien_final, "vin",
                                 Consts.RECHARGE_BY_BANK, "Nạp Bank",
                                 "nạp Bank tự động", totalFee);
+                        this.insertTransaction(new HistoryTransModel("MoMo", "Momo", "recharge", String.valueOf(amount), "Thành Công", "giao dịch thành công", trans.getNickname(), HistoryTransConst.MOMO, trans.Id));
+
                     }catch (Exception e) {
                         response.setErrorCode(500);
                         response.setErrorDescription(""+e);
@@ -194,6 +196,26 @@ public class AutoCallBackCodePaySunVinProcess implements BaseProcessor<HttpServl
         }
 //        return response.toJson();
 
+    }
+
+    public void insertTransaction(HistoryTransModel historyTransModel) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection col = db.getCollection("History_User_transaction");
+        Document doc = new Document();
+        long idelk = VinPlayUtils.generateTransId();
+        String timeAt = VinPlayUtils.getCurrentDateTime();
+        doc.append("Id", idelk);
+        doc.append("giaodich", historyTransModel.getGiaodich());
+        doc.append("congGiaoDich", historyTransModel.congGiaoDich);
+        doc.append("hinhthuc", historyTransModel.hinhthuc);
+        doc.append("sotien", historyTransModel.sotien);
+        doc.append("trangthai", historyTransModel.trangthai);
+        doc.append("ghiChu", historyTransModel.ghiChu);
+        doc.append("nickName", historyTransModel.nickName);
+        doc.append("hinhthucTrans", historyTransModel.hinhthucTrans);
+        doc.append("transId", historyTransModel.transId);
+        doc.append("createAt", timeAt);
+        col.insertOne(doc);
     }
 
     public void Notify(String nickname, String sotien, String maGiaoDich){

@@ -1,5 +1,7 @@
 package com.vinplay.api.processors.momo;
 
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import com.vinplay.api.entities.BankCallBack;
 import com.vinplay.api.entities.BankCallBackResponse;
 import com.vinplay.api.processors.AutoXuLyBank.AutoBankEntity;
@@ -10,6 +12,7 @@ import com.vinplay.dichvuthe.dao.impl.RechargeDaoImpl;
 import com.vinplay.dichvuthe.entities.DepositBankModel;
 import com.vinplay.dichvuthe.utils.DvtConst;
 import com.vinplay.lognaprut.HistoryTransConst;
+import com.vinplay.lognaprut.entities.HistoryTransModel;
 import com.vinplay.lognaprut.service.HistoryTransService;
 import com.vinplay.lognaprut.service.impl.HistoryTransServiceImpl;
 import com.vinplay.usercore.service.impl.UserServiceImpl;
@@ -23,6 +26,8 @@ import okhttp3.Request;
 import okhttp3.Response;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.json.JSONObject;
+import org.bson.Document;
+import com.vinplay.vbee.common.mongodb.MongoDBConnectionFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -132,6 +137,7 @@ public class AutoBankCallBackProcessor implements BaseProcessor<HttpServletReque
                         service.updateMoneyFromAdmin(trans.Nickname, (long) amount, "vin",
                                 Consts.RECHARGE_BY_BANK, "Nạp Bank",
                                 "nạp Bank tự động", totalFee);
+                        this.insertTransaction(new HistoryTransModel(HistoryTransConst.BANK, HistoryTransConst.BANK, "recharge", String.valueOf(amount), "Thành Công", "giao dịch thành công", trans.getNickname(), HistoryTransConst.BANK, trans.Id));
                     }catch (Exception e) {
                         System.out.println("Lỗi cộng tiền bank: " + e.getMessage());
                         response.setErrorCode(500);
@@ -152,6 +158,26 @@ public class AutoBankCallBackProcessor implements BaseProcessor<HttpServletReque
             BroadCastUserMoney.pushBroadCast(trans.Nickname);
         }
         return response.toJson();
+    }
+
+    public void insertTransaction(HistoryTransModel historyTransModel) {
+        MongoDatabase db = MongoDBConnectionFactory.getDB();
+        MongoCollection col = db.getCollection("History_User_transaction");
+        Document doc = new Document();
+        long idelk = VinPlayUtils.generateTransId();
+        String timeAt = VinPlayUtils.getCurrentDateTime();
+        doc.append("Id", idelk);
+        doc.append("giaodich", historyTransModel.getGiaodich());
+        doc.append("congGiaoDich", historyTransModel.congGiaoDich);
+        doc.append("hinhthuc", historyTransModel.hinhthuc);
+        doc.append("sotien", historyTransModel.sotien);
+        doc.append("trangthai", historyTransModel.trangthai);
+        doc.append("ghiChu", historyTransModel.ghiChu);
+        doc.append("nickName", historyTransModel.nickName);
+        doc.append("hinhthucTrans", historyTransModel.hinhthucTrans);
+        doc.append("transId", historyTransModel.transId);
+        doc.append("createAt", timeAt);
+        col.insertOne(doc);
     }
 
     public void Notify(String nickname, String sotien, String maGiaoDich){

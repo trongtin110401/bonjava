@@ -916,7 +916,7 @@ public class UserServiceImpl implements UserService {
                                                         RMQApi.publishMessageLogMoney((LogMoneyUserMessage) messageLogSend);
                                                         RMQApi.publishMessagePayment((BaseMessage) messageReceive, (int) 16);
                                                         RMQApi.publishMessageLogMoney((LogMoneyUserMessage) messageLogReceive);
-                                                        historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "CK Người Chơi", "Chuyển Khoản", String.valueOf(vin), "Thành Công", nicknameReceive, nicknameSend, HistoryTransConst.GAMER, transactionId));
+                                                        historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "CK Người Chơi", "Chuyển Khoản", String.valueOf(vin), "Thành Công", nicknameReceive, nicknameSend, HistoryTransConst.RUT_BANK, transactionId));
                                                         historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "CK Người Chơi", "Nhận Tiền", String.valueOf(vin), "Thành Công", nicknameSend, nicknameReceive, HistoryTransConst.GAMER, transactionId));
 
 //                                                            if (status != 0) {
@@ -1097,7 +1097,7 @@ public class UserServiceImpl implements UserService {
                                                         RMQApi.publishMessageLogMoney((LogMoneyUserMessage) messageLogSend3);
                                                         RMQApi.publishMessagePayment((BaseMessage) messageReceive2, (int) 16);
                                                         RMQApi.publishMessageLogMoney((LogMoneyUserMessage) messageLogReceive3);
-                                                        historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "CK Người Chơi", "Chuyển Khoản", String.valueOf(vin), "Thành Công", nicknameReceive, nicknameSend, HistoryTransConst.GAMER, transactionId));
+                                                        historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "CK Người Chơi", "Chuyển Khoản", String.valueOf(vin), "Thành Công", nicknameReceive, nicknameSend, HistoryTransConst.RUT_BANK, transactionId));
                                                         historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "CK Người Chơi", "Nhận Tiền", String.valueOf(vin), "Thành Công", nicknameSend, nicknameReceive, HistoryTransConst.GAMER, transactionId));
 
 //                                                        if (status != 0) {
@@ -1322,7 +1322,7 @@ public class UserServiceImpl implements UserService {
                                                 //RMQApi.publishMessagePayment(messageReceive, 16);
                                                 this.updateMoneyUser(messageReceive);
                                                 RMQApi.publishMessageLogMoney(messageLogReceive);
-                                                historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "CK Người Chơi", "Chuyển Khoản", String.valueOf(vin), "Thành Công", nicknameReceive, nicknameSend, HistoryTransConst.GAMER, transactionId));
+                                                historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "CK Người Chơi", "Chuyển Khoản", String.valueOf(vin), "Thành Công", nicknameReceive, nicknameSend, HistoryTransConst.RUT_BANK, transactionId));
                                                 historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "CK Người Chơi", "Nhận Tiền", String.valueOf(vin), "Thành Công", nicknameSend, nicknameReceive, HistoryTransConst.GAMER, transactionId));
                                                 userMap.put(nicknameSend, userSend);
                                                 userMap.put(nicknameReceive, userCacheReceive);
