@@ -1251,7 +1251,7 @@ public class UserServiceImpl implements UserService {
 
     public void Notify(String nguoiGui, String nguoiNhan, String sotien, String maGiaoDich){
         try {
-
+            System.out.println("====================Noti Chuyen khoan");
             String noidung = "[Hệ thống] Chuyển khoản thành công%0A- Người gửi: "+nguoiGui+"%0A- Người nhận: " +nguoiNhan+"%0A- Số tiền: "+ sotien + "%0A- Mã giao dịch: " + maGiaoDich;
 
             OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
