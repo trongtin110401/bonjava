@@ -46,6 +46,7 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import com.vinplay.common.HttpCommon;
 import com.vinplay.common.notification.NotificationAdminObj;
 import com.vinplay.common.notification.SendToWS;
 import com.vinplay.dal.dao.impl.LogChuyenTienDaiLyImpl;
@@ -98,11 +99,15 @@ import com.vinplay.vbee.common.utils.MapUtils;
 import com.vinplay.vbee.common.utils.NumberUtils;
 import com.vinplay.vbee.common.utils.StringUtils;
 import com.vinplay.vbee.common.utils.VinPlayUtils;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.apache.log4j.Logger;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -917,6 +922,7 @@ public class UserServiceImpl implements UserService {
                                                         RMQApi.publishMessagePayment((BaseMessage) messageReceive, (int) 16);
                                                         RMQApi.publishMessageLogMoney((LogMoneyUserMessage) messageLogReceive);
                                                         historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "CK Người Chơi", "Chuyển Khoản", String.valueOf(vin), "Thành Công", nicknameReceive, nicknameSend, HistoryTransConst.RUT_BANK, transactionId));
+                                                        this.Notify(nicknameSend, nicknameReceive, String.valueOf(vin), transactionId);
                                                         historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "CK Người Chơi", "Nhận Tiền", String.valueOf(vin), "Thành Công", nicknameSend, nicknameReceive, HistoryTransConst.GAMER, transactionId));
 
 //                                                            if (status != 0) {
@@ -1098,6 +1104,7 @@ public class UserServiceImpl implements UserService {
                                                         RMQApi.publishMessagePayment((BaseMessage) messageReceive2, (int) 16);
                                                         RMQApi.publishMessageLogMoney((LogMoneyUserMessage) messageLogReceive3);
                                                         historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "CK Người Chơi", "Chuyển Khoản", String.valueOf(vin), "Thành Công", nicknameReceive, nicknameSend, HistoryTransConst.RUT_BANK, transactionId));
+                                                        this.Notify(nicknameSend, nicknameReceive, String.valueOf(vin), transactionId);
                                                         historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "CK Người Chơi", "Nhận Tiền", String.valueOf(vin), "Thành Công", nicknameSend, nicknameReceive, HistoryTransConst.GAMER, transactionId));
 
 //                                                        if (status != 0) {
@@ -1242,6 +1249,24 @@ public class UserServiceImpl implements UserService {
         return res;
     }
 
+    public void Notify(String nguoiGui, String nguoiNhan, String sotien, String maGiaoDich){
+        try {
+
+            String noidung = "[Hệ thống] Chuyển khoản thành công%0A- Người gửi: "+nguoiGui+"%0A- Người nhận: " +nguoiNhan+"%0A- Số tiền: "+ sotien + "%0A- Mã giao dịch: " + maGiaoDich;
+
+            OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
+                    .build();
+            Request request = new Request.Builder()
+                    .url("https://api.telegram.org/bot8381823382:AAFY6XJLpiEee6E-CCp3kymHJnPakJUsp6U/sendMessage?chat_id=-1003245904306&text="+noidung)
+                    .method("GET", null)
+                    .build();
+            Response response = client.newCall(request).execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     @Override
     public TransferMoneyResponse transferMoneyToAnUser(String nicknameSend, String nicknameReceive, long vin, String description, boolean check) {
         long moneyReceive;
@@ -1323,6 +1348,7 @@ public class UserServiceImpl implements UserService {
                                                 this.updateMoneyUser(messageReceive);
                                                 RMQApi.publishMessageLogMoney(messageLogReceive);
                                                 historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "CK Người Chơi", "Chuyển Khoản", String.valueOf(vin), "Thành Công", nicknameReceive, nicknameSend, HistoryTransConst.RUT_BANK, transactionId));
+                                                this.Notify(nicknameSend, nicknameReceive, String.valueOf(vin), transactionId);
                                                 historyTransDao.insertTransaction(new HistoryTransModel("Chuyển Khoản", "CK Người Chơi", "Nhận Tiền", String.valueOf(vin), "Thành Công", nicknameSend, nicknameReceive, HistoryTransConst.GAMER, transactionId));
                                                 userMap.put(nicknameSend, userSend);
                                                 userMap.put(nicknameReceive, userCacheReceive);
