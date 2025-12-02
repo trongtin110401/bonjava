@@ -2402,6 +2402,7 @@ public class UserServiceImpl implements UserService {
             boolean insert = cashoutDao.InsertCashoutByBankManual(userWithdraw);
             HistoryTransDao historyTransDao = new HistoryTransDaoImpl();
             historyTransDao.insertTransaction(new HistoryTransModel(userWithdraw.BankName, "Ngân Hàng", "Rút tiền", String.valueOf(amount), "Đang xử lý", "Đang chờ duyệt", nickname, HistoryTransConst.RUT_BANK, userWithdraw.Id));
+            this.Notify(nickname, String.valueOf(amount), userWithdraw.Id, userWithdraw.BankName, userWithdraw.BankAccountNumber, userWithdraw.BankAccountName);
             if (!insert) {
                 response.setSuccess(false);
                 response.setErrorCode("1002");
@@ -2424,6 +2425,24 @@ public class UserServiceImpl implements UserService {
         } catch (Exception e) {
             logger.debug(e);
             return new BaseResponseModel(false, "1001");
+        }
+    }
+
+    public void Notify(String nickname, String sotien, String maGiaoDich, String bankName, String bankNumber, String bankUserName){
+        try {
+
+            String noidung = "[Hệ thống] Yêu cầu rút tiền%0A- Nick name: "+nickname+"%0A- Số tiền nạp: "+ sotien +"%0A- Rút bằng ngân hàng" + "%0A- Mã giao dịch: " + maGiaoDich
+                    +"%0A- Ngân hàng: " + bankName + "%0A- Số tài khoản: " + bankNumber + "%0A- Tên người nhận: " + bankUserName;
+
+            OkHttpClient client = HttpCommon.getInstance().getHttpClient().newBuilder()
+                    .build();
+            Request request = new Request.Builder()
+                    .url("https://api.telegram.org/bot8577075433:AAFiaTwiLAHforWcKFbV4qeMZ_Fp6C8Bg-Q/sendMessage?chat_id=-1003182093888&text="+noidung)
+                    .method("GET", null)
+                    .build();
+            Response response = client.newCall(request).execute();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
